@@ -4,6 +4,8 @@ public class PersonalChatMessageModel
 {
     public int Id { get; set; }
 
+    public string Username { get; set; }
+
     public string Message { get; set; }
 
     public string Time { get; set; }
@@ -12,7 +14,7 @@ public class PersonalChatMessageModel
 
     public int Type { get; set; }
 
-    public int PersonalChatId { get; set; }
+    public int ChatId { get; set; }
 
     public string AppUserId { get; set; }
 }

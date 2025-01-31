@@ -1,0 +1,14 @@
+imageTags:
+  api:
+    user: 0.3.6
+    communication: 0.3.5
+    chat: 0.3.6
+    parser: 0.3.2
+    health: 0.2.3
+  identity:
+    identity: 0.3.20
+  webApp:
+    webApp: 0.3.63
+    hubs: 0.1.33
+  db:
+    sqlServer: 2019-latest

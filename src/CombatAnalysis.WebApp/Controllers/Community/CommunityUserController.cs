@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Community;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class CommunityUserController : ControllerBase
@@ -18,17 +16,13 @@ public class CommunityUserController : ControllerBase
     public CommunityUserController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.APIUrl = Cluster.Communication;
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -43,15 +37,10 @@ public class CommunityUserController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByCommunityId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByCommunityId(int id)
+    [HttpGet("searchByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> SearchByCommunityId(int communityId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByCommunityId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByCommunityId/{communityId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -66,15 +55,10 @@ public class CommunityUserController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByUserId/{id}")]
-    public async Task<IActionResult> SearchByUserId(string id)
+    [HttpGet("searchByUserId/{userId}")]
+    public async Task<IActionResult> SearchByUserId(string userId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByUserId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByUserId/{userId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -86,39 +70,13 @@ public class CommunityUserController : ControllerBase
             return Ok(communityUsers);
         }
 
-        return BadRequest();
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityUserModel model)
-    {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.PutAsync("CommunityUser", JsonContent.Create(model), accessToken, Port.CommunicationApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-        
         return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CommunityUserModel model)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(model));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -133,15 +91,26 @@ public class CommunityUserController : ControllerBase
         return BadRequest();
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id)
+    [HttpPut]
+    public async Task<IActionResult> Update(CommunityUserModel model)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        var responseMessage = await _httpClient.PutAsync("CommunityUser", JsonContent.Create(model));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
 
-        var responseMessage = await _httpClient.DeletAsync($"CommunityUser/{id}", accessToken, Port.CommunicationApi);
+        return BadRequest();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var responseMessage = await _httpClient.DeletAsync($"CommunityUser/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

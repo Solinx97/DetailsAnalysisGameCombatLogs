@@ -1,13 +1,16 @@
-﻿using System.Net;
+﻿using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace CombatAnalysis.Core.Services;
 
 internal class HttpListenerService
 {
-    private readonly HttpListener _listener = new HttpListener();
+    private readonly HttpListener _listener = new();
+    private readonly ILogger _logger;
 
-    public HttpListenerService(string listeningUrl)
+    public HttpListenerService(string listeningUrl, ILogger logger)
     {
+        _logger = logger;
         _listener.Prefixes.Add(listeningUrl);
     }
 
@@ -19,26 +22,35 @@ internal class HttpListenerService
             while (_listener.IsListening)
             {
                 var context = await _listener.GetContextAsync();
-                var authorizationCode = context.Request.QueryString["code"];
-                var incomingState = context.Request.QueryString["state"];
-
-                onCallbackReceived?.Invoke(authorizationCode, incomingState);
-
+                var request = context.Request;
                 var response = context.Response;
+
+                var authorizationCode = request.QueryString["code"];
+                var state = request.QueryString["state"];
+                if (authorizationCode == null || state == null)
+                {
+                    StopListening();
+
+                    return;
+                }
+
+                onCallbackReceived(authorizationCode, state);
+
                 string responseString = "<html><body>You can close this window.</body></html>";
                 byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
                 response.ContentLength64 = buffer.Length;
 
-                var output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
+                var responseOutput = response.OutputStream;
+                responseOutput.Write(buffer, 0, buffer.Length);
+                responseOutput.Close();
 
                 StopListening();
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error starting HttpListener: {ex.Message}");
+            _logger.LogError(ex, ex.Message);
+
             StopListening();
         }
     }

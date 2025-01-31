@@ -8,9 +8,9 @@
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Home"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
-    xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    xmlns:basicViewModel="clr-namespace:CombatAnalysis.Core.ViewModels.ViewModelTemplates;assembly=CombatAnalysis.Core"
     xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
+    xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d">
 
@@ -33,9 +33,9 @@
             <RowDefinition Height="0.05*"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="5" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="5" Content="{Binding Basic}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
+                <DataTemplate DataType="{x:Type basicViewModel:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
                 </DataTemplate>
             </ContentControl.Resources>
@@ -43,7 +43,8 @@
 
         <TextBlock Grid.Column="3" Grid.Row="0" Text="Details Analysis GCL" VerticalAlignment="Center" Foreground="White" FontSize="20"/>
         
-        <Grid Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="4">
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="4"
+              IsEnabled="{Binding Basic.AuthorizationIsOpen, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -76,7 +77,7 @@
             </Border>
 
             <StackPanel Grid.Row="1">
-                <Button VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
+                <Button VerticalAlignment="Top" Content="{loc:Loc Communication}" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
                         Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenLognCommand"
                         Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
                     <Button.BorderBrush>
@@ -87,7 +88,7 @@
                     </Button.BorderBrush>
                 </Button>
 
-                <Button VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
+                <Button VerticalAlignment="Top" Content="{loc:Loc Communication}" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
                         Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenChatCommand"
                         Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
                     <Button.BorderBrush>

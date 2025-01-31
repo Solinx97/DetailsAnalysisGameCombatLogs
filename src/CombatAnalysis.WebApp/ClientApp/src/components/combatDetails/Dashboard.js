@@ -26,7 +26,7 @@ const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath })
         0: "damageDone",
         1: "healDone",
         2: "damageTaken",
-        3: "energyRecovery"
+        3: "resourcesRecovery"
     };
 
     useEffect(() => {

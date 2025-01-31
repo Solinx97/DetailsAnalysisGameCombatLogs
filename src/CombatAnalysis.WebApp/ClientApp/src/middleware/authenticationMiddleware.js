@@ -1,12 +1,6 @@
 import { isRejectedWithValue } from '@reduxjs/toolkit';
 import { updateCustomer } from '../store/slicers/CustomerSlice';
-
-const statusCode = {
-    notAuthorized: 401
-};
-
-const pageWithoutAuth = ["/", "/login", "/registration", "/main-information", "/general-analysis", "/details-specifical-combat", "/combat-general-details", "/callback"];
-const unautorizedRedirectTo = "/";
+import { statusCode, pageWithoutAuth, unautorizedRedirectTo } from '../config';
 
 const authenticationMiddleware = (store) => (next) => (action) => {
     const pathName = window.location.pathname;

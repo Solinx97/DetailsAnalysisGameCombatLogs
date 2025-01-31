@@ -1,54 +1,96 @@
-﻿using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Patterns;
-using System.Collections.ObjectModel;
+﻿using CombatAnalysis.CombatParser.Details;
+using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace CombatAnalysis.CombatParser.Extensions;
 
 public static class CombatDetailsExtension
 {
-    public static ObservableCollection<DamageDoneGeneral> GetDamageDoneGeneral(this CombatDetailsTemplate extension, List<DamageDone> collection, Combat combat)
+    public static void CalculateGeneralData(this CombatDetails combatDetails, List<string> playersId, string duration)
     {
-        var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+        try
+        {
+            if (playersId == null || playersId.Count == 0)
+            {
+                throw new ArgumentNullException(nameof(playersId));
+            }
+            else if (string.IsNullOrEmpty(duration))
+            {
+                throw new ArgumentNullException(nameof(duration));
+            }
+
+            foreach (var playerId in playersId)
+            {
+                combatDetails.DamageDoneGeneral.TryAdd(playerId, GetDamageDoneGeneral(combatDetails.DamageDone[playerId], duration));
+                combatDetails.HealDoneGeneral.TryAdd(playerId, GetHealDoneGeneral(combatDetails.HealDone[playerId], duration));
+                combatDetails.DamageTakenGeneral.TryAdd(playerId, GetDamageTakenGeneral(combatDetails.DamageTaken[playerId], duration));
+                combatDetails.ResourcesRecoveryGeneral.TryAdd(playerId, GetResourceRecoveryGeneral(combatDetails.ResourcesRecovery[playerId], duration));
+            }
+        }
+        catch (ArgumentNullException ex)
+        {
+            combatDetails.Logger.LogError(ex, ex.Message, ex.ParamName);
+        }
+        catch (Exception ex)
+        {
+            combatDetails.Logger.LogError(ex, ex.Message);
+        }
+    }
+
+    private static List<DamageDoneGeneral> GetDamageDoneGeneral(List<DamageDone> collection, string duration)
+    {
+        var damageDoneCollection = collection
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList()).ToList();
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (!TimeSpan.TryParse(duration, out var durationTime))
+        {
+            return new List<DamageDoneGeneral>();
+        }
 
         var lessDetails = new List<DamageDoneGeneral>();
-        foreach (var item in spells)
+        foreach (var item in damageDoneCollection)
         {
             var averageValue = double.Round(item.Average(x => x.Value), 2);
             var damagePerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
             var damagePerSecondRound = double.Round(damagePerSecond, 2);
+            var critNumber = item.Where(x => x.DamageType == (int)DamageType.Crit).Count();
+            var missNumber = item.Where(x => x.DamageType != (int)DamageType.Crit && x.DamageType != (int)DamageType.Normal).Count();
+            var isPet = item.FirstOrDefault()?.IsPet ?? false;
 
             var damageDoneGeneral = new DamageDoneGeneral
             {
                 Value = item.Sum(x => x.Value),
                 DamagePerSecond = damagePerSecondRound,
-                AverageValue = averageValue,
+                Spell = item[0].Spell,
+                CritNumber = critNumber,
+                MissNumber = missNumber,
+                CastNumber = item.Count,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
-                CastNumber = item.Count,
-                IsPet = item.FirstOrDefault().IsPet
+                AverageValue = averageValue,
+                IsPet = isPet,
             };
 
             lessDetails.Add(damageDoneGeneral);
         }
 
         lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-        var damageDoneGroupBySpellOrItem = new ObservableCollection<DamageDoneGeneral>(lessDetails);
 
-        return damageDoneGroupBySpellOrItem;
+        return lessDetails;
     }
 
-    public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this CombatDetailsTemplate extension, List<HealDone> collection, Combat combat)
+    private static List<HealDoneGeneral> GetHealDoneGeneral(List<HealDone> collection, string duration)
     {
         var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList());
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (!TimeSpan.TryParse(duration, out var durationTime))
+        {
+            return new List<HealDoneGeneral>();
+        }
 
         var lessDetails = new List<HealDoneGeneral>();
         foreach (var item in spells)
@@ -56,6 +98,7 @@ public static class CombatDetailsExtension
             var averageValue = double.Round(item.Average(x => x.Value), 2);
             var healPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
             var healPerSecondRound = double.Round(healPerSecond, 2);
+            var critNumber = item.Where(x => x.IsCrit).Count();
 
             var healDoneGeneral = new HealDoneGeneral
             {
@@ -64,27 +107,29 @@ public static class CombatDetailsExtension
                 AverageValue = averageValue,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
+                Spell = item[0].Spell,
                 CastNumber = item.Count,
-                DamageAbsorbed = string.Empty
+                CritNumber = critNumber,
             };
 
             lessDetails.Add(healDoneGeneral);
         }
 
         lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-        var healDoneGroupBySpellOrItem = new ObservableCollection<HealDoneGeneral>(lessDetails);
 
-        return healDoneGroupBySpellOrItem;
+        return lessDetails;
     }
 
-    public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this CombatDetailsTemplate extension, List<DamageTaken> collection, Combat combat)
+    private static List<DamageTakenGeneral> GetDamageTakenGeneral(List<DamageTaken> collection, string duration)
     {
         var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList());
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (!TimeSpan.TryParse(duration, out var durationTime))
+        {
+            return new List<DamageTakenGeneral>();
+        }
 
         var lessDetails = new List<DamageTakenGeneral>();
         foreach (var item in spells)
@@ -101,7 +146,7 @@ public static class CombatDetailsExtension
                 AverageValue = averageValue,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
+                Spell = item[0].Spell,
                 CastNumber = item.Count,
             };
 
@@ -109,18 +154,20 @@ public static class CombatDetailsExtension
         }
 
         lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-        var damageTakenGroupBySpellOrItem = new ObservableCollection<DamageTakenGeneral>(lessDetails);
 
-        return damageTakenGroupBySpellOrItem;
+        return lessDetails;
     }
 
-    public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this CombatDetailsTemplate extension, List<ResourceRecovery> collection, Combat combat)
+    private static List<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(List<ResourceRecovery> collection, string duration)
     {
         var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList());
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (!TimeSpan.TryParse(duration, out var durationTime))
+        {
+            return new List<ResourceRecoveryGeneral>();
+        }
 
         var lessDetails = new List<ResourceRecoveryGeneral>();
         foreach (var item in spells)
@@ -136,7 +183,7 @@ public static class CombatDetailsExtension
                 AverageValue = averageValue,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
+                Spell = item[0].Spell,
                 CastNumber = item.Count,
             };
 
@@ -144,8 +191,7 @@ public static class CombatDetailsExtension
         }
 
         lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-        var resourceRecoveryGroupBySpellOrItem = new ObservableCollection<ResourceRecoveryGeneral>(lessDetails);
 
-        return resourceRecoveryGroupBySpellOrItem;
+        return lessDetails;
     }
 }

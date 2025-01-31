@@ -1,8 +1,8 @@
-﻿using IdentityServer4.Models;
+﻿using Duende.IdentityServer.Models;
 
 namespace CombatAnalysisIdentity.Core;
 
-public class Config
+internal class Config
 {
     public static IEnumerable<ApiScope> ApiScopes =>
         new List<ApiScope>

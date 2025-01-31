@@ -1,7 +1,7 @@
 ﻿
 const Recomendations = ({ t }) => {
     return (
-        <div className="communication__recomendations">
+        <div className="communication-recomendations">
             <div className="title">{t("Recomendations")}</div>
             <div className="recomendations-list">
                 <div className="form-check">

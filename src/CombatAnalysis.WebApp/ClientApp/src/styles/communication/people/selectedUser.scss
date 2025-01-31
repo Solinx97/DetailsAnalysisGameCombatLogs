@@ -4,24 +4,30 @@
 
     &__container {
         display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 25px;
+        width: 100%;
 
+        .menu-container {
+            display: flex;
+            justify-content: center;
+        }
     }
 
     &__content {
         display: flex;
         align-items: center;
-        margin-left: 25px;
+        justify-content: center;
     }
 
     &__menu {
         display: flex;
-        flex-direction: column;
         justify-content: center;
-        padding: 10px;
+        padding: 5px !important;
         box-shadow: 2px 2px 2px 2px gray;
         border-radius: 15px;
-        gap: 20px;
-        height: 315px;
+        gap: 25px;
 
         .sub-menu {
             display: flex;
@@ -44,7 +50,7 @@
         }
 
         .sub-menu:hover {
-            box-shadow: 2px 2px 2px 2px green;
+            box-shadow: 1px 1px 1px 1px green;
             border-radius: 10px;
         }
     }

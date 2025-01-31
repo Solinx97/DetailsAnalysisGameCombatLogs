@@ -1,10 +1,10 @@
-﻿using CombatAnalysis.ChatDAL.Interfaces;
-using CombatAnalysis.ChatDAL.Data;
+﻿using CombatAnalysis.ChatDAL.Data;
+using CombatAnalysis.ChatDAL.Interfaces;
 using Firebase.Database.Query;
 
 namespace CombatAnalysis.ChatDAL.Repositories.Firebase;
 
-public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+internal class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {

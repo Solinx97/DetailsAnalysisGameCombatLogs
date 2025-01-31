@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Authentication;
@@ -20,27 +20,38 @@ public class AuthenticationController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
+        _httpClient.APIUrl = Cluster.User;
     }
 
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet]
     public async Task<IActionResult> RefreshAccessToken()
     {
         try
         {
-            if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+            if (!HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
             {
-                return Ok();
+                throw new ArgumentNullException(nameof(accessToken));
             }
 
             var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
-            var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
-                return Ok(user);
-            }
+            var response = await _httpClient.GetAsync($"Account/find/{identityUserId}");
+            response.EnsureSuccessStatusCode();
+
+            var user = await response.Content.ReadFromJsonAsync<AppUserModel>();
+            return Ok(user);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
 
             return BadRequest();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Authentication refresh was failed.");
+
+            return BadRequest($"Authentication refresh was failed. Error: {ex.Message}");
         }
         catch (Exception ex)
         {
@@ -57,9 +68,9 @@ public class AuthenticationController : ControllerBase
         var state = PKCEHelper.GenerateCodeVerifier();
         var codeChallenge = PKCEHelper.GenerateCodeChallenge(codeVerifier);
 
-        var uri = $"{Authentication.IdentityServer}{identityPath}?grantType={AuthenticationGrantType.Code}" +
-            $"&clientTd={Authentication.ClientId}&redirectUri={Authentication.RedirectUri}" +
-            $"&scope={Authentication.ClientScope}&state={state}&codeChallengeMethod={Authentication.CodeChallengeMethod}" +
+        var uri = $"{Servers.Identity}{identityPath}?grantType={AuthenticationGrantType.Code}" +
+            $"&clientId={AuthenticationClient.ClientId}&redirectUri={Authentication.RedirectUri}" +
+            $"&scope={AuthenticationClient.Scope}&state={state}&codeChallengeMethod={Authentication.CodeChallengeMethod}" +
             $"&codeChallenge={codeChallenge}";
 
         var identityRedirect = new IdentityRedirect
@@ -67,18 +78,33 @@ public class AuthenticationController : ControllerBase
             Uri = uri
         };
 
-        HttpContext.Response.Cookies.Append(AuthenticationCookie.CodeVerifier.ToString(), codeVerifier, new CookieOptions
+        HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.CodeVerifier), codeVerifier, new CookieOptions
         {
+            Domain = Authentication.CookieDomain,
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
         });
-        HttpContext.Response.Cookies.Append(AuthenticationCookie.State.ToString(), state, new CookieOptions
+        HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.State), state, new CookieOptions
         {
+            Domain = Authentication.CookieDomain,
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
         });
+
+        return Ok(identityRedirect);
+    }
+
+    [HttpGet("verifyEmail")]
+    public IActionResult VerifyEmail(string identityPath, string email)
+    {
+        var uri = $"{Servers.Identity}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
+
+        var identityRedirect = new IdentityRedirect
+        {
+            Uri = uri
+        };
 
         return Ok(identityRedirect);
     }
@@ -86,16 +112,22 @@ public class AuthenticationController : ControllerBase
     [HttpGet("stateValidate")]
     public IActionResult StateValidate(string state)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.State.ToString(), out var stateValue))
+        if (!HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.State), out var stateValue))
         {
             return BadRequest();
         }
 
-        HttpContext.Response.Cookies.Delete(AuthenticationCookie.State.ToString());
+        HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.State), new CookieOptions
+        {
+            Domain = Authentication.CookieDomain,
+            Path = "/",
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
 
         if (stateValue == state)
         {
-            
             return Ok();
         }
 

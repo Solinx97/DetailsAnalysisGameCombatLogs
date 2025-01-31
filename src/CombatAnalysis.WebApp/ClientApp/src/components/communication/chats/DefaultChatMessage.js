@@ -1,24 +1,29 @@
 import { faCircle, faCircleUp, faClock, faCloudArrowUp, faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ChatMessageTitle from './ChatMessageTitle';
 
 import "../../../styles/communication/chats/chatMessage.scss";
 
-const status = {
+const chatStatus = {
     delivery: 0,
     delivered: 1,
     read: 2
 };
 
-const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync, deleteMessageAsync, decreaseChatMessagesCountAsync }) => {
+const DefaultChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync, chatMessagesHubConnection, subscribeToMessageHasBeenRead }) => {
     const { t } = useTranslation("communication/chats/chatMessage");
 
+    const [targetMessage, setTargetMessage] = useState(message);
     const [openMessageMenu, setOpenMessageMenu] = useState(false);
     const [editModeIsOn, setEditModeIsOn] = useState(false);
 
     const editMessageInput = useRef(null);
+
+    useEffect(() => {
+        subscribeToMessageHasBeenRead(message.chatId, reviewerId);
+    }, []);
 
     const handleUpdateMessageAsync = async () => {
         const updateForMessage = Object.assign({}, message);
@@ -31,21 +36,19 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
     }
 
     const updateMessageStatusAsync = async () => {
-        if (message.appUserId === me?.id || messageStatus === status["read"]) {
+        if (reviewerId === messageOwnerId || targetMessage.status === chatStatus["read"]) {
             return;
         }
 
-        const updateForMessage = Object.assign({}, message);
-        updateForMessage.status = 2;
+        await chatMessagesHubConnection?.invoke("SendMessageHasBeenRead", message.id, reviewerId);
 
-        const response = await updateChatMessageAsync(updateForMessage);
-        if (response.error === undefined) {
-            await decreaseChatMessagesCountAsync();
-        }
+        const updatedChat = Object.assign({}, targetMessage);
+        updatedChat.status = 2;
+        setTargetMessage(updatedChat);
     }
 
     const handleOpenMessageMenu = () => {
-        if (me?.id !== message?.customerId) {
+        if (reviewerId !== messageOwnerId) {
             return;
         }
 
@@ -54,19 +57,19 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
 
     const getMessageStatus = () => {
         switch (message.status) {
-            case status["delivery"]:
+            case chatStatus["delivery"]:
                 return <FontAwesomeIcon
                     icon={faClock}
                     className="status"
                     title={t("Delivery")}
                 />;
-            case status["delivered"]:
+            case chatStatus["delivered"]:
                 return <FontAwesomeIcon
                     icon={faCircleUp}
                     className="status"
                     title={t("Delivered")}
                 />;
-            case status["read"]:
+            case chatStatus["read"]:
                 return <FontAwesomeIcon
                     icon={faEye}
                     className="status"
@@ -82,30 +85,31 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
     }
 
     return (
-        <div className={`chat-messages__content${message?.appUserId === me?.id ? ' my-message' : ''}`}>
+        <div className={`chat-messages__content${reviewerId === messageOwnerId ? ' my-message' : ''}`}>
             <ChatMessageTitle
                 me={me}
-                itIsMe={me?.id !== message?.customerId}
+                itIsMe={reviewerId !== messageOwnerId}
                 deleteMessageAsync={deleteMessageAsync}
                 setEditModeIsOn={setEditModeIsOn}
                 openMessageMenu={openMessageMenu}
                 editModeIsOn={editModeIsOn}
                 message={message}
+                meInChatId={meInChatId}
             />
-            {editModeIsOn && me?.id === message?.appUserId
+            {editModeIsOn && reviewerId === messageOwnerId
                 ? <div className="edit-message">
                     <input className="form-control" type="text" defaultValue={message.message} ref={editMessageInput} />
                     <FontAwesomeIcon
                         icon={faCloudArrowUp}
                         title={t("Save")}
-                        onClick={async () => await handleUpdateMessageAsync()}
+                        onClick={handleUpdateMessageAsync}
                     />
                 </div>
                 : <div className="message"
                     onClick={handleOpenMessageMenu}>
-                    {message?.appUserId === me?.id
+                    {reviewerId === messageOwnerId
                         ? getMessageStatus()
-                        : messageStatus === status["delivered"] &&
+                        : targetMessage.status === chatStatus["delivered"] &&
                         <FontAwesomeIcon
                             icon={faCircle}
                             className="status"
@@ -114,9 +118,9 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
                     }
                     {message?.message.startsWith("http")
                         ? <a className="text-of-message link" href={message?.message} target="_blank"
-                            rel="noreferrer" onMouseOver={async () => await updateMessageStatusAsync()}>{message?.message}</a>
-                        : <div className={`text-of-message${messageStatus === status["delivered"] ? "__unread" : "__read"}`}
-                            onMouseOver={async () => await updateMessageStatusAsync()}>{message?.message}</div>
+                            rel="noreferrer" onMouseOver={updateMessageStatusAsync}>{message?.message}</a>
+                        : <div className={`text-of-message${targetMessage.status !== chatStatus["read"] ? "__unread" : "__read"}`}
+                            onMouseOver={updateMessageStatusAsync}>{message?.message}</div>
                     }
                 </div>
             }

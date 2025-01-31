@@ -1,8 +1,8 @@
 
 const SystemChatMessage = ({ message }) => {
     const getMessageTime = () => {
-        const timeItems = message?.time.split(":");
-        const time = `${timeItems[0]}:${timeItems[1]}`;
+        const getDate = new Date(message?.time);
+        const time = `${getDate.getHours()}:${getDate.getMinutes()}`;
 
         return time;
     }

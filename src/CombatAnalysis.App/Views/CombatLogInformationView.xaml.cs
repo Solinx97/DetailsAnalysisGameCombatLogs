@@ -1,5 +1,6 @@
-﻿using CombatAnalysis.Core.ViewModels;
-using CombatAnalysis.Core.ViewModels.Settings;
+﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Settings;
+using CombatAnalysis.Core.ViewModels;
 using Microsoft.Win32;
 using MvvmCross.Platforms.Wpf.Views;
 using System;
@@ -27,7 +28,12 @@ public partial class CombatLogInformationView : MvxWpfView
         };
         fileDialog.ShowDialog();
 
-        viewModel.CombatLogPath = fileDialog.FileName;
+        if (string.IsNullOrEmpty(viewModel.CombatLogPath) || 
+            (!string.IsNullOrEmpty(viewModel.CombatLogPath) && !string.IsNullOrEmpty(fileDialog.FileName)))
+        {
+            viewModel.CombatLogPath = fileDialog.FileName;
+            AppStaticData.SelectedCombatLogFilePath = fileDialog.FileName;
+        }
     }
 
     private static UserSettings? ReadUserSettings(string settingsName)

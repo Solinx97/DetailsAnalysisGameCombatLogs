@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFriendSearchMyFriendsQuery } from '../../../store/api/communication/myEnvironment/Friend.api';
+import { useFriendSearchMyFriendsQuery } from '../../../store/api/user/Friend.api';
+import Loading from '../../Loading';
 import User from '../User';
 
 import '../../../styles/communication/myEnvironment/friends.scss';
-import Loading from '../../Loading';
 
-const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
+const Friends = ({ user, requestsToConnect, allowRemoveFriend }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
-    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
+    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(user?.id);
     const [userInformation, setUserInformation] = useState(null);
 
     if (isLoading) {
@@ -27,14 +27,14 @@ const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
                     ? myFriends?.map((friend) => (
                         <li key={friend.id} className="friend">
                             <User
-                                targetCustomerId={friend.forWhomId === customer?.id ? friend.whoFriendId : friend.forWhomId}
+                                targetUserId={friend.forWhomId === user?.id ? friend.whoFriendId : friend.forWhomId}
                                 setUserInformation={setUserInformation}
                                 allowRemoveFriend={allowRemoveFriend}
                                 friendId={friend.id}
                             />
                         </li>
                     ))
-                    : <div className="friends__empty">Empty</div>
+                    : <div className="friends__empty">{t("Empty")}</div>
                 }
             </ul>
             {userInformation}

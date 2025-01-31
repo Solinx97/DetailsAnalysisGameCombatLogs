@@ -61,11 +61,11 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average value.
+        ///   Looks up a localized string similar to Average.
         /// </summary>
-        public static string AverageValue {
+        public static string Average {
             get {
-                return ResourceManager.GetString("AverageValue", resourceCulture);
+                return ResourceManager.GetString("Average", resourceCulture);
             }
         }
         
@@ -79,20 +79,20 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Count of skills.
+        ///   Looks up a localized string similar to Count.
         /// </summary>
-        public static string CountOfSkills {
+        public static string Count {
             get {
-                return ResourceManager.GetString("CountOfSkills", resourceCulture);
+                return ResourceManager.GetString("Count", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Crit damage.
+        ///   Looks up a localized string similar to Crit.
         /// </summary>
-        public static string CritDamage {
+        public static string Crit {
             get {
-                return ResourceManager.GetString("CritDamage", resourceCulture);
+                return ResourceManager.GetString("Crit", resourceCulture);
             }
         }
         
@@ -106,20 +106,38 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Damage per sec..
-        /// </summary>
-        public static string DamagePerSec {
-            get {
-                return ResourceManager.GetString("DamagePerSec", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Dodge.
         /// </summary>
         public static string Dodge {
             get {
                 return ResourceManager.GetString("Dodge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPS.
+        /// </summary>
+        public static string DPS {
+            get {
+                return ResourceManager.GetString("DPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters.
+        /// </summary>
+        public static string Filters {
+            get {
+                return ResourceManager.GetString("Filters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First.
+        /// </summary>
+        public static string First {
+            get {
+                return ResourceManager.GetString("First", resourceCulture);
             }
         }
         
@@ -133,20 +151,29 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Max. value.
+        ///   Looks up a localized string similar to Last.
         /// </summary>
-        public static string MaxValue {
+        public static string Last {
             get {
-                return ResourceManager.GetString("MaxValue", resourceCulture);
+                return ResourceManager.GetString("Last", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Min. value.
+        ///   Looks up a localized string similar to Max.
         /// </summary>
-        public static string MinValue {
+        public static string Max {
             get {
-                return ResourceManager.GetString("MinValue", resourceCulture);
+                return ResourceManager.GetString("Max", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min.
+        /// </summary>
+        public static string Min {
+            get {
+                return ResourceManager.GetString("Min", resourceCulture);
             }
         }
         
@@ -165,6 +192,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         public static string MoreDetails {
             get {
                 return ResourceManager.GetString("MoreDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
             }
         }
         
@@ -196,6 +232,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prev.
+        /// </summary>
+        public static string Prev {
+            get {
+                return ResourceManager.GetString("Prev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resist.
         /// </summary>
         public static string Resist {
@@ -205,61 +250,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show crit. damage.
-        /// </summary>
-        public static string ShowCritDamage {
-            get {
-                return ResourceManager.GetString("ShowCritDamage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show dodge.
-        /// </summary>
-        public static string ShowDodge {
-            get {
-                return ResourceManager.GetString("ShowDodge", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show filters.
-        /// </summary>
-        public static string ShowFilters {
-            get {
-                return ResourceManager.GetString("ShowFilters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show immune.
-        /// </summary>
-        public static string ShowImmune {
-            get {
-                return ResourceManager.GetString("ShowImmune", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show miss.
-        /// </summary>
-        public static string ShowMiss {
-            get {
-                return ResourceManager.GetString("ShowMiss", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show parry.
-        /// </summary>
-        public static string ShowParry {
-            get {
-                return ResourceManager.GetString("ShowParry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show pets and creatures.
+        ///   Looks up a localized string similar to Pets and creatures.
         /// </summary>
         public static string ShowPets {
             get {
@@ -268,20 +259,11 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show resist.
+        ///   Looks up a localized string similar to Spell.
         /// </summary>
-        public static string ShowResist {
+        public static string Spell {
             get {
-                return ResourceManager.GetString("ShowResist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Source.
-        /// </summary>
-        public static string Source {
-            get {
-                return ResourceManager.GetString("Source", resourceCulture);
+                return ResourceManager.GetString("Spell", resourceCulture);
             }
         }
         
@@ -322,7 +304,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total:.
+        ///   Looks up a localized string similar to Total.
         /// </summary>
         public static string Total {
             get {
@@ -336,6 +318,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         public static string TypeOf {
             get {
                 return ResourceManager.GetString("TypeOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        public static string Value {
+            get {
+                return ResourceManager.GetString("Value", resourceCulture);
             }
         }
     }

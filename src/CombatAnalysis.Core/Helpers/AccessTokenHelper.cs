@@ -4,7 +4,7 @@ namespace CombatAnalysis.Core.Helpers;
 
 internal static class AccessTokenHelper
 {
-    public static string GetUserIdFromToken(string token)
+    public static string? GetUserIdFromToken(string token)
     {
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;

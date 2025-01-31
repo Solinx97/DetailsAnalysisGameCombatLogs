@@ -35,8 +35,8 @@
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
         </Grid.Resources>
 
-        <Border CornerRadius="25 25 25 25" BorderThickness="3" Grid.Column="2" Grid.ColumnSpan="2"
-                Margin="-55 0 0 0 " Grid.RowSpan="3" Background="#283a4b">
+        <Border CornerRadius="25" BorderThickness="3" Grid.Column="2" Grid.ColumnSpan="2"
+                Margin="-55 0 0 0" Grid.RowSpan="3" Background="#283a4b">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#462ADB" Offset="0"/>
@@ -56,153 +56,165 @@
             </TextBlock>
         </Border>
 
-        <Border Grid.Column="1" CornerRadius="0"
-                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="0 3 0 0">
-            <Border.BorderBrush>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#462ADB" Offset="0"/>
-                    <GradientStop Color="#DA34AE" Offset="0.75"/>
-                    <GradientStop Color="#8A16C1" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.BorderBrush>
-
-            <StackPanel>
-                <StackPanel Margin="5 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Icon:PackIconMaterial Kind="Account" Foreground="White" Width="15" Height="15" Margin="10 5"/>
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Text="Account" Foreground="White" />
-                    </StackPanel>
-                    <StackPanel Margin="25 0" Orientation="Horizontal" VerticalAlignment="Top">
-                        <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Login}"
-                            IsEnabled="{Binding IsLoginNotActivated}" mvx:Bi.nd="Command LoginCommand"/>
-                        <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Registration}"
-                            IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel Margin="5 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
-                        <Icon:PackIconMaterial Kind="AccountCircle" Foreground="White" Width="15" Height="15" Margin="10 5"/>
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                               FontSize="16" Text="{Binding Username}" Foreground="White" />
-                    </StackPanel>
-                    <Button Style="{StaticResource showButton}" Content="{loc:Loc Logout}" Width="85" Height="35" mvx:Bi.nd="Command LogoutCommand"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-
-        <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
-                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="3">
-            <Border.BorderBrush>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#462ADB" Offset="0"/>
-                    <GradientStop Color="#DA34AE" Offset="0.75"/>
-                    <GradientStop Color="#8A16C1" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.BorderBrush>
+        <Grid Grid.RowSpan="3" Grid.ColumnSpan="4"
+              IsEnabled="{Binding AuthorizationIsOpen, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.15*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             
-            <StackPanel Margin="0 20">
-                <StackPanel Margin="10 5 0 0">
-                    <uc:MenuButton Title="{loc:Loc Home}" Icon="HomeOutline" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
-                                   OnClick="{Binding ToHomeCommand}"/>
-                </StackPanel>
-                
-                <StackPanel Margin="10 10 0 0">
-                    <uc:MenuButton Title="{loc:Loc Logs}" Icon="MathLog" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}"
-                                   OnClick="{Binding LogPanelStatusCommand}"/>
-                </StackPanel>
+            <Border Grid.Column="1" CornerRadius="0"
+                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="0 3 0 0">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#462ADB" Offset="0"/>
+                        <GradientStop Color="#DA34AE" Offset="0.75"/>
+                        <GradientStop Color="#8A16C1" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
 
-                <StackPanel Margin="30 0 0 0" Visibility="{Binding LogPanelStatusIsVisibly, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
-                    <uc:MenuButton x:Name="combatLogUpload" Title="{loc:Loc Upload}" Icon="Upload" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>=,-1'}" 
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter= 0}" OnClick="{Binding UploadCombatsCommand}"/>
-                    <uc:MenuButton Title="{loc:Loc AllCombats}" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding GeneralAnalysisCommand}"/>
-                    <uc:MenuButton Title="{loc:Loc Combat}" Icon="Details" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,2'}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" OnClick="{Binding CombatCommand}"/>
-                    <uc:MenuButton Title="{loc:Loc Damage}" Icon="Sword" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=3}" OnClick="{Binding DamageDoneDetailsCommand}"/>
-                    <uc:MenuButton Title="{loc:Loc Healing}" Icon="Plus" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=4}" OnClick="{Binding HealDoneDetailsCommand}"/>
-                    <uc:MenuButton Title="{loc:Loc DamageTaken}" Icon="Shield" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=5}" OnClick="{Binding DamageTakenDetailsCommand}"/>
-                    <uc:MenuButton Title="{loc:Loc Resources}" Icon="Resistor" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=6}" OnClick="{Binding ResourceDetailsCommand}"/>
-                </StackPanel>
-
-                <StackPanel Margin="10 10 0 0">
-                    <StackPanel Orientation="Horizontal" Margin="10 -20" HorizontalAlignment="Right"  Opacity="0.5"
-                                Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:true'}">
-                        <Button Style="{StaticResource textBoxButton}" Cursor="Help" ToolTip="{loc:Loc ChatLoginRequired}">
-                            <Icon:PackIconMaterial Kind="CloudQuestion" Foreground="White"/>
-                        </Button>
+                <StackPanel>
+                    <StackPanel Margin="5 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Icon:PackIconMaterial Kind="Account" Foreground="White" Width="15" Height="15" Margin="10 5"/>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Text="Account" Foreground="White" />
+                        </StackPanel>
+                        <StackPanel Margin="25 0" Orientation="Horizontal" VerticalAlignment="Top">
+                            <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Login}"
+                            mvx:Bi.nd="Command LoginCommand"/>
+                            <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Registration}"
+                            IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
+                        </StackPanel>
                     </StackPanel>
-                    <uc:MenuButton Title="{loc:Loc Chat}" Icon="Chat" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}"
+
+                    <StackPanel Margin="5 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                            <Icon:PackIconMaterial Kind="AccountCircle" Foreground="White" Width="15" Height="15" Margin="10 5"/>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="16" Text="{Binding Username}" Foreground="White" />
+                        </StackPanel>
+                        <Button Style="{StaticResource showButton}" Content="{loc:Loc Logout}" Width="85" Height="35" mvx:Bi.nd="Command LogoutCommand"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
+                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="3">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#462ADB" Offset="0"/>
+                        <GradientStop Color="#DA34AE" Offset="0.75"/>
+                        <GradientStop Color="#8A16C1" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+
+                <StackPanel Margin="0 20">
+                    <StackPanel Margin="10 5 0 0">
+                        <uc:MenuButton Title="{loc:Loc Home}" Icon="HomeOutline" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
+                                   OnClick="{Binding ToHomeCommand}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10 10 0 0">
+                        <uc:MenuButton Title="{loc:Loc Logs}" Icon="MathLog" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}"
+                                   OnClick="{Binding LogPanelStatusCommand}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="30 0 0 0" Visibility="{Binding LogPanelStatusIsVisibly, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
+                        <uc:MenuButton x:Name="combatLogUpload" Title="{loc:Loc Upload}" Icon="Upload" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>=,-1'}" 
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter= 0}" OnClick="{Binding UploadCombatsCommand}"/>
+                        <uc:MenuButton Title="{loc:Loc Combats}" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding GeneralAnalysisCommand}"/>
+                        <uc:MenuButton Title="{loc:Loc Players}" Icon="Details" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,2'}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" OnClick="{Binding CombatCommand}"/>
+                        <uc:MenuButton Title="{loc:Loc Damage}" Icon="Sword" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=3}" OnClick="{Binding DamageDoneDetailsCommand}"/>
+                        <uc:MenuButton Title="{loc:Loc Healing}" Icon="Plus" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=4}" OnClick="{Binding HealDoneDetailsCommand}"/>
+                        <uc:MenuButton Title="{loc:Loc DamageTaken}" Icon="Shield" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=5}" OnClick="{Binding DamageTakenDetailsCommand}"/>
+                        <uc:MenuButton Title="{loc:Loc Resources}" Icon="Resistor" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=6}" OnClick="{Binding ResourceDetailsCommand}"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="10 10 0 0">
+                        <StackPanel Orientation="Horizontal" Margin="10 -20" HorizontalAlignment="Right"  Opacity="0.5"
+                                Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:true'}">
+                            <Button Style="{StaticResource textBoxButton}" Cursor="Help" ToolTip="{loc:Loc ChatLoginRequired}">
+                                <Icon:PackIconMaterial Kind="CloudQuestion" Foreground="White"/>
+                            </Button>
+                        </StackPanel>
+                        <uc:MenuButton Title="{loc:Loc Chat}" Icon="Chat" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}"
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-2}"
                                    OnClick="{Binding ChatCommand}"/>
+                    </StackPanel>
                 </StackPanel>
-                
-                <StackPanel Margin="10 5 0 0" VerticalAlignment="Bottom">
-                    <uc:MenuButton Title="{loc:Loc Settings}" OnClick="{Binding SettingsCommand}" Icon="CogOutline"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-3}"/>
-                    <uc:MenuButton Title="{loc:Loc Exit}" OnClick="{Binding CloseCommand}" Icon="Logout"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
+            </Border>
 
-        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 5" Height="65"
-                VerticalAlignment="Center" MouseDown="Border_MouseDown" Panel.ZIndex="2">
-            <StackPanel HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource textBoxButton}" Click="Minimaze" ToolTip="{loc:Loc MinimazeWindow}">
-                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="White" Width="15" Height="15"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" Click="Maximaze" ToolTip="{loc:Loc FullScreenWindow}">
-                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="White" Width="15" Height="15"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand" ToolTip="{loc:Loc CloseWindow}">
-                        <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15"/>
-                    </Button>
-                </StackPanel>
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
-                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="White" Text="{loc:Loc Loading}"
+            <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 5" Height="65"
+                VerticalAlignment="Center" MouseDown="BorderMouseDown" Panel.ZIndex="2">
+                <StackPanel HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource textBoxButton}" Margin="30 0" Width="30" Height="30" ToolTip="{loc:Loc Settings}" mvx:Bi.nd="Command SettingsCommand">
+                            <Icon:PackIconMaterial Kind="Wrench" Foreground="White" Width="10" Height="10" />
+                        </Button>
+                        <Button Style="{StaticResource textBoxButton}" Click="Minimaze" Width="30" Height="30" ToolTip="{loc:Loc MinimazeWindow}">
+                            <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="White" Width="10" Height="10" />
+                        </Button>
+                        <Button Style="{StaticResource textBoxButton}" Click="Maximaze" Width="30" Height="30" ToolTip="{loc:Loc FullScreenWindow}">
+                            <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="White" Width="10" Height="10" />
+                        </Button>
+                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand" Width="30" Height="30" ToolTip="{loc:Loc CloseWindow}">
+                            <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="10" Height="10" />
+                        </Button>
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                        <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="White" Text="{loc:Loc Loading}"
                                Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"
                                ToolTip="{loc:Loc LoadingDescribe}"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="{loc:Loc Fail}"
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="{loc:Loc Fail}"
                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"
                                    ToolTip="{loc:Loc LoadingFail}"/>
-                        <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="{loc:Loc Success}"
+                            <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="{loc:Loc Success}"
                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}"
                                    ToolTip="{loc:Loc LoadingSuccess}"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
+            </Border>
+
+            <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="10" Orientation="Horizontal">
+                <TextBlock Text="{Binding AppVersionType}" FontSize="13" Foreground="White"/>
+                <TextBlock Text="  " FontSize="13" Foreground="White"/>
+                <TextBlock Text="{Binding AppVersion}" FontSize="13" FontWeight="DemiBold" Foreground="White"/>
             </StackPanel>
-        </Border>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="10" Orientation="Horizontal">
-            <TextBlock Text="{Binding AppVersionType}" FontSize="13" Foreground="White"/>
-            <TextBlock Text="  " FontSize="13" Foreground="White"/>
-            <TextBlock Text="{Binding AppVersion}" FontSize="13" FontWeight="DemiBold" Foreground="White"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" mvx:Bi.nd="Command GeneralAnalysisCommand"
+            <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" mvx:Bi.nd="Command GeneralAnalysisCommand"
                     Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <Icon:PackIconMaterial Kind="ChartTimelineVariantShimmer" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command GeneralAnalysisCommand" Foreground="White">
-                <Icon:PackIconMaterial.InputBindings>
-                    <MouseBinding Command="{Binding GeneralAnalysisCommand}" Gesture="LeftClick"/>
-                </Icon:PackIconMaterial.InputBindings>
-            </Icon:PackIconMaterial>
-            <ProgressBar Style="{DynamicResource ProgressBarStyle2}" Minimum="0" Maximum="{Binding UploadingCombatsCount}" Value="{Binding UploadedCombatsCount}" 
+                <Icon:PackIconMaterial Kind="ChartTimelineVariantShimmer" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command GeneralAnalysisCommand" Foreground="White">
+                    <Icon:PackIconMaterial.InputBindings>
+                        <MouseBinding Command="{Binding GeneralAnalysisCommand}" Gesture="LeftClick"/>
+                    </Icon:PackIconMaterial.InputBindings>
+                </Icon:PackIconMaterial>
+                <ProgressBar Style="{DynamicResource ProgressBarStyle2}" Minimum="0" Maximum="{Binding UploadingCombatsCount}" Value="{Binding UploadedCombatsCount}" 
                          Height="15" Width="150">
-                <ProgressBar.ToolTip>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Already uploaded: "/>
-                        <TextBlock Text="{Binding UploadedCombatsCount}"/>
-                        <TextBlock Text=" / "/>
-                        <TextBlock Text="{Binding UploadingCombatsCount}"/>
-                    </StackPanel>
-                </ProgressBar.ToolTip>
-            </ProgressBar>
-        </StackPanel>
+                    <ProgressBar.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Already uploaded: "/>
+                            <TextBlock Text="{Binding UploadedCombatsCount}"/>
+                            <TextBlock Text=" / "/>
+                            <TextBlock Text="{Binding UploadingCombatsCount}"/>
+                        </StackPanel>
+                    </ProgressBar.ToolTip>
+                </ProgressBar>
+            </StackPanel>
+        </Grid>
     </Grid>
 </views:MvxWpfView>

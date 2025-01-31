@@ -1,12 +1,13 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Entities;
+using CombatAnalysis.DAL.Interfaces.Generic;
 using Firebase.Database.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.Firebase;
 
-public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+internal class FirebaseRepository<TModel> : IGenericRepository<TModel>
+    where TModel : class, IEntity
 {
     private readonly FirebaseContext _context;
 
@@ -17,21 +18,13 @@ public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TI
 
     public async Task<TModel> CreateAsync(TModel item)
     {
-        var itemPropertyId = item.GetType().GetProperty("Id");
-        if (itemPropertyId?.PropertyType == typeof(int))
-        {
-            var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
-            var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
-            itemPropertyId.SetValue(item, newId);
-        }
-
         var result = await _context.FirebaseClient
                      .Child(item.GetType().Name)
                      .PostAsync(item);
         return result.Object;
     }
 
-    public async Task<int> DeleteAsync(TIdType id)
+    public async Task<int> DeleteAsync(TModel item)
     {
         var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)
@@ -39,7 +32,7 @@ public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TI
 
         var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
             .AsEnumerable()
-            .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
+            .FirstOrDefault(x => x.Value.Id == item.Id);
 
         await _context.FirebaseClient
                      .Child(typeof(TModel).Name)
@@ -64,7 +57,7 @@ public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TI
         return result;
     }
 
-    public async Task<TModel> GetByIdAsync(TIdType id)
+    public async Task<TModel> GetByIdAsync(int id)
     {
         var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)
@@ -72,22 +65,20 @@ public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TI
 
         var result = data.Select(x => x.Object)
             .AsEnumerable()
-            .FirstOrDefault(x => x.GetType().GetProperty("Id").GetValue(x).Equals(id));
+            .FirstOrDefault(x => x.Id == id);
 
         return result;
     }
 
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    public async Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value)
     {
-        var data =  _context.FirebaseClient
+        var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)
-              .OnceAsync<TModel>()
-              .GetAwaiter()
-              .GetResult();
+              .OnceAsync<TModel>();
 
-        var result = data.Select(x => x.Object)
-            .AsEnumerable()
-            .Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
+        var result = await Task.Run(() => data.Select(x => x.Object)
+                    .Where(x => EF.Property<object>(x, paramName).Equals(value))
+                    .ToList());
 
         return result;
     }
@@ -98,10 +89,9 @@ public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TI
               .Child(typeof(TModel).Name)
               .OnceAsync<TModel>();
 
-        var id = item.GetType().GetProperty("Id")?.GetValue(item);
         var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
             .AsEnumerable()
-            .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
+            .FirstOrDefault(x => x.Value.Id == item.Id);
 
         await _context.FirebaseClient
                      .Child(item.GetType().Name)

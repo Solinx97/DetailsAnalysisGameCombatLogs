@@ -1,12 +1,12 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Entities;
+using CombatAnalysis.DAL.Interfaces.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL;
 
-public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+internal class SQLRepository<TModel> : IGenericRepository<TModel>
+    where TModel : class, IEntity
 {
     private readonly CombatParserSQLContext _context;
 
@@ -23,12 +23,9 @@ public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType
         return entityEntry.Entity;
     }
 
-    public async Task<int> DeleteAsync(TIdType id)
+    public async Task<int> DeleteAsync(TModel item)
     {
-        var model = Activator.CreateInstance<TModel>();
-        model.GetType().GetProperty("Id").SetValue(model, id);
-
-        _context.Set<TModel>().Remove(model);
+        _context.Set<TModel>().Remove(item);
         var rowsAffected = await _context.SaveChangesAsync();
 
         return rowsAffected;
@@ -36,7 +33,7 @@ public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType
 
     public async Task<IEnumerable<TModel>> GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
 
-    public async Task<TModel> GetByIdAsync(TIdType id)
+    public async Task<TModel> GetByIdAsync(int id)
     {
         var entity = await _context.Set<TModel>().FindAsync(id);
         if (entity != null)
@@ -47,10 +44,11 @@ public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType
         return entity;
     }
 
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    public async Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value)
     {
-        var collection = _context.Set<TModel>().AsNoTracking().AsEnumerable();
-        var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
+        var data = await _context.Set<TModel>()
+                    .Where(x => EF.Property<object>(x, paramName).Equals(value))
+                    .ToListAsync();
 
         return data;
     }

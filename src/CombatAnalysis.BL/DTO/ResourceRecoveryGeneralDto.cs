@@ -1,14 +1,16 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.Interfaces.Entity;
 
-public class ResourceRecoveryGeneralDto
+namespace CombatAnalysis.BL.DTO;
+
+public class ResourceRecoveryGeneralDto : ICombatPlayerEntity
 {
     public int Id { get; set; }
+
+    public string Spell { get; set; }
 
     public int Value { get; set; }
 
     public double ResourcePerSecond { get; set; }
-
-    public string SpellOrItem { get; set; }
 
     public int CastNumber { get; set; }
 

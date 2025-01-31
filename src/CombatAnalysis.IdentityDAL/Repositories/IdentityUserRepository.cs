@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
-public class IdentityUserRepository : IIdentityUserRepository
+internal class IdentityUserRepository : IIdentityUserRepository
 {
     private readonly CombatAnalysisIdentityContext _context;
 
@@ -48,5 +48,11 @@ public class IdentityUserRepository : IIdentityUserRepository
         }
 
         return entity;
+    }
+
+    public async Task UpdateAsync(IdentityUser identityUser)
+    {
+        _context.IdentityUser.Update(identityUser);
+        await _context.SaveChangesAsync();
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
-public class PkeRepository : IPkeRepository
+internal class PkeRepository : IPkeRepository
 {
     private readonly CombatAnalysisIdentityContext _context;
 
@@ -55,5 +55,13 @@ public class PkeRepository : IPkeRepository
         var rowsAffected = await _context.SaveChangesAsync();
 
         return rowsAffected;
+    }
+
+    public async Task RemoveExpiredCodesAsync()
+    {
+        var expiredCodes = _context.AuthorizationCodeChallenge.Where(t => t.ExpiryTime < DateTime.UtcNow);
+        _context.AuthorizationCodeChallenge.RemoveRange(expiredCodes);
+
+        await _context.SaveChangesAsync();
     }
 }

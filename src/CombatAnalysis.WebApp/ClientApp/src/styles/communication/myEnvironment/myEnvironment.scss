@@ -2,6 +2,10 @@
     display: flex;
     flex-direction: column;
 
+    .communities__list {
+        margin-bottom: 95px;
+    }
+
     &__menu {
         li {
             display: flex;

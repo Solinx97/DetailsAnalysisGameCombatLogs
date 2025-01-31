@@ -4,10 +4,11 @@ using CombatAnalysis.ChatBL.DTO;
 
 namespace CombatAnalysis.ChatApi.Mapping;
 
-public class ChatMapper : Profile
+internal class ChatMapper : Profile
 {
     public ChatMapper()
     {
+        CreateMap<VoiceChatDto, VoiceChatModel>().ReverseMap();
         CreateMap<PersonalChatDto, PersonalChatModel>().ReverseMap();
         CreateMap<PersonalChatMessageDto, PersonalChatMessageModel>().ReverseMap();
         CreateMap<PersonalChatMessageCountDto, PersonalChatMessageCountModel>().ReverseMap();

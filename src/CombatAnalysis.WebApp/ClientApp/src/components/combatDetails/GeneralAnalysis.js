@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetGeneralAnalysisByIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetCombatsByCombatLogIdQuery } from '../../store/api/core/CombatParser.api';
 import Loading from '../Loading';
 import GeneralAnalysisItem from './GeneralAnalysisItem';
 
@@ -14,9 +14,9 @@ const GeneralAnalysis = () => {
     const navigate = useNavigate();
 
     const [combatLogId, setCombatLogId] = useState(0);
-    const [uniqueCombats, setUniqueCombats] = useState([]);
+    const [allUniqueCombats, setUniqueCombats] = useState([]);
 
-    const [generalAnalysisAsync] = useLazyGetGeneralAnalysisByIdQuery();
+    const [getCombatsByCombatLogId] = useLazyGetCombatsByCombatLogIdQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -34,7 +34,7 @@ const GeneralAnalysis = () => {
 
     const getCombatsAsync = async (id) => {
         try {
-            const combats = await generalAnalysisAsync(id);
+            const combats = await getCombatsByCombatLogId(id);
             if (combats.data !== undefined) {
                 createListOfSimilarCombats(combats.data);
             }
@@ -74,13 +74,13 @@ const GeneralAnalysis = () => {
                     />
                     <div>{t("Logs")}</div>
                 </div>
-                <h3 className="title">{t("Combats")}</h3>
+                <h5>{t("Combats")}</h5>
             </div>
             <ul className="combats__container">
-                {uniqueCombats?.map((combats, index) => (
+                {allUniqueCombats?.map((uniqueCombats, index) => (
                         <li key={index}>
                             <GeneralAnalysisItem
-                                uniqueCombats={combats}
+                                uniqueCombats={uniqueCombats}
                                 combatLogId={combatLogId}
                             />
                         </li>

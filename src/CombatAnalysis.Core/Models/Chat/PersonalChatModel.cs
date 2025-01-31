@@ -6,8 +6,6 @@ public class PersonalChatModel
 
     public string Username { get; set; }
 
-    public string LastMessage { get; set; }
-
     public string InitiatorId { get; set; }
 
     public string CompanionId { get; set; }

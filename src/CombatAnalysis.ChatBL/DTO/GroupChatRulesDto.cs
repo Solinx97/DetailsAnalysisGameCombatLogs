@@ -12,5 +12,5 @@ public class GroupChatRulesDto
 
     public int Announcements { get; set; }
 
-    public int GroupChatId { get; set; }
+    public int ChatId { get; set; }
 }

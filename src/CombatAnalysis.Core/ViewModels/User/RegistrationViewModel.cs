@@ -2,33 +2,29 @@
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
-using MvvmCross.Navigation;
 
 namespace CombatAnalysis.Core.ViewModels.User;
 
 public class RegistrationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
-    private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IIdentityService _identityService;
 
     private bool _isVerification;
 
-    public RegistrationViewModel(IMemoryCache memoryCache, IMvxNavigationService mvvmNavigation, IIdentityService identityService)
+    public RegistrationViewModel(IMemoryCache memoryCache, IIdentityService identityService)
     {
         _memoryCache = memoryCache;
-        _mvvmNavigation = mvvmNavigation;
         _identityService = identityService;
 
-        if (BasicTemplate.Parent is AuthorizationViewModel)
-        {
-            _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
-        }
-
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
-        BasicTemplate.Parent = this;
+        Basic.Parent = this;
     }
+
+    public event CloseRegistrationWindowEventHandler? CloseRegistrationWindow;
+
+    #region View model properties
 
     public bool IsVerification
     {
@@ -39,14 +35,9 @@ public class RegistrationViewModel : ParentTemplate
         }
     }
 
-    public override void ViewDisappeared()
-    {
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
+    #endregion
 
-        base.ViewDisappeared();
-    }
-
-    public override void ViewAppeared()
+    public void SendRequest()
     {
         Task.Run(SendAuthorizationRequestAsync);
     }
@@ -59,13 +50,18 @@ public class RegistrationViewModel : ParentTemplate
 
         await _identityService.SendTokenRequestAsync();
 
-        var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
-        if (customer != null)
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        if (user != null)
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsAuth), true);
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Username), customer.Username);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
         }
 
-        await _mvvmNavigation.Close(this);
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            CloseRegistrationWindow?.Invoke();
+        });
     }
+
+    public delegate void CloseRegistrationWindowEventHandler();
 }

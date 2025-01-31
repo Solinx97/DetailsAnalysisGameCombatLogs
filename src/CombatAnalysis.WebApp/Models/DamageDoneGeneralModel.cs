@@ -1,27 +1,28 @@
-﻿namespace CombatAnalysis.WebApp.Models
+﻿namespace CombatAnalysis.WebApp.Models;
+
+public class DamageDoneGeneralModel
 {
-    public class DamageDoneGeneralModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public int Value { get; set; }
+    public int Value { get; set; }
 
-        public double DamagePerSecond { get; set; }
+    public double DamagePerSecond { get; set; }
 
-        public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
-        public int CritNumber { get; set; }
+    public int CritNumber { get; set; }
 
-        public int MissNumber { get; set; }
+    public int MissNumber { get; set; }
 
-        public int CastNumber { get; set; }
+    public int CastNumber { get; set; }
 
-        public int MinValue { get; set; }
+    public int MinValue { get; set; }
 
-        public int MaxValue { get; set; }
+    public int MaxValue { get; set; }
 
-        public double AverageValue { get; set; }
+    public double AverageValue { get; set; }
 
-        public int CombatPlayerId { get; set; }
-    }
+    public bool IsPet { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

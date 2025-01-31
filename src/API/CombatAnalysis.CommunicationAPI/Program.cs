@@ -1,17 +1,31 @@
 using AutoMapper;
+using CombatAnalysis.CommunicationAPI.Consts;
+using CombatAnalysis.CommunicationAPI.Enums;
+using CombatAnalysis.CommunicationAPI.Helpers;
 using CombatAnalysis.CommunicationAPI.Mapping;
 using CombatAnalysis.CommunicationBL.Extensions;
 using CombatAnalysis.CommunicationBL.Mapping;
-using CombatAnalysis.CustomerBL.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.CommunicationBLDependencies(builder.Configuration, "DefaultConnection");
-builder.Services.CustomerBLDependencies(builder.Configuration, "UserConnection");
+var envName = builder.Environment.EnvironmentName;
+
+if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
+{
+    CreateEnvironmentHelper.UseAppsettings(builder.Configuration);
+}
+else
+{
+    CreateEnvironmentHelper.UseEnvVariables();
+}
+
+var connection = DatabaseProps.Name == nameof(DatabaseType.MSSQL)
+    ? DatabaseProps.MSSQLConnectionString
+    : DatabaseProps.FirebaseConnectionString;
+builder.Services.CommunicationBLDependencies(DatabaseProps.Name, DatabaseProps.DataProcessingType, connection);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
@@ -22,26 +36,22 @@ var mappingConfig = new MapperConfiguration(mc =>
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAuthentication("Bearer")
-        .AddJwtBearer("Bearer", options =>
+    .AddJwtBearer(options =>
+    {
+        options.Authority = Authentication.Authority;
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            options.Authority = builder.Configuration["Authentication:Authority"];
-            options.Audience = builder.Configuration["Authentication:Audience"];
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"])),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            };
-            // Skip checking HTTPS (should be HTTPS in production)
-            options.RequireHttpsMetadata = false;
-            // Allow all Certificates (added for Local deployment)
-            options.BackchannelHttpHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-        });
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Authentication.IssuerSigningKey),
+            ValidateIssuer = true,
+            ValidIssuer = Authentication.Issuer,
+            ValidateAudience = true,
+            ValidAudiences = [AuthenticationClient.WebClientId, AuthenticationClient.DesktopClientId],
+            ClockSkew = TimeSpan.Zero
+        };
+        // Skip checking HTTPS (should be HTTPS in production)
+        options.RequireHttpsMetadata = false;
+    });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -69,10 +79,10 @@ builder.Services.AddSwaggerGen(options =>
         {
             ClientCredentials = new OpenApiOAuthFlow
             {
-                TokenUrl = new Uri($"{builder.Configuration["Identity:Server"]}connect/token"),
+                TokenUrl = new Uri($"{API.Identity}connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
-                    { builder.Configuration["Client:Scope"] ?? string.Empty, "Request API #1" }
+                    { AuthenticationClient.Scope, "Request API #1" }
                 }
             }
         }
@@ -89,7 +99,7 @@ builder.Services.AddSwaggerGen(options =>
                         Id = "oauth2"
                     },
                 },
-                new[] { builder.Configuration["Client:Scope"] }
+                new[] { AuthenticationClient.Scope }
             }
         });
 });
@@ -103,6 +113,8 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+app.UseRouting();
+
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();
 
@@ -111,8 +123,8 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Communication API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
-    options.OAuthClientId(builder.Configuration["Client:ClientId"]);
-    options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
+    options.OAuthClientId(AuthenticationClient.WebClientId);
+    options.OAuthScopes(AuthenticationClient.Scope);
 });
 
 app.UseStaticFiles();

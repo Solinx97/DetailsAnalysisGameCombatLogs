@@ -1,34 +1,42 @@
+$mobile-max-width: 425px;
+
 .discussion {
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    &__title .actions {
+    &__title {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        width: 150px;
 
-        svg {
-            cursor: pointer;
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 150px;
 
-            &:hover {
-                transform: scale(1.25);
+            svg {
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.25);
+                }
             }
         }
     }
 
     &__content {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin: 10px 0;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        padding: 5px 10px !important;
 
         li {
             cursor: pointer;
-            font-weight: bold;
-            max-width: 130px;
             padding: 5px 10px;
+            margin: 5px 0;
+            white-space: nowrap;
+            text-overflow: ellipsis;
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 1px 1px 1px 1px brown;
@@ -45,21 +53,16 @@
         display: flex;
         flex-direction: column;
         gap: 15px;
-        right: 25%;
-        top: 5%;
+        right: 25vw;
+        top: 10vh;
         padding: 15px;
         border-radius: 20px;
-        width: 800px;
-        max-height: 90%;
+        width: 50vw;
         z-index: 10;
-        overflow-y: auto;
 
         .title {
             display: flex;
             justify-content: center;
-            border: 1px solid gray;
-            border-radius: 15px;
-            padding: 5px 10px;
         }
 
         .actions {
@@ -270,3 +273,24 @@
         font-size: 12px;
     }
 }
+
+
+@media (max-width: $mobile-max-width) {
+    .discussion {
+        &__selected-discussion, &__create {
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            right: 1vw;
+            top: 10vh;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: none !important;
+            border: 2px solid gray;
+            width: 98%;
+            z-index: 10;
+        }
+    }
+}
+

@@ -38,7 +38,7 @@
         return duration;
     }
 
-    return [getTimeWithoutMs, getSeconds, getDuration];
+    return { getTimeWithoutMs, getSeconds, getDuration };
 }
 
 export default useTime;

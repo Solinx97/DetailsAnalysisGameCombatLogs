@@ -17,5 +17,6 @@
   "Rules": "Rules",
   "SaveChanges": "Save",
   "Remove": "Remove",
-  "CanNotSendEmpty": "You can not send empty message"
+  "CanNotSendEmpty": "You can not send empty message",
+  "YouShouldTransferRights": "Before leaving, you must transfer the rights to the group to another user of the group"
 }

@@ -1,56 +1,53 @@
-import { useEffect, useState } from 'react';
-import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../../store/api/communication/Post.api';
-import { useLazyGetCommunityPostByPostIdQuery, useRemoveCommunityPostMutation } from '../../../store/api/communication/community/CommunityPost.api';
-import Post from '../Post';
+import { memo, useEffect, useState } from 'react';
+import useFetchCommunityPosts from '../../../hooks/useFetchCommunityPosts';
 import Loading from '../../Loading';
+import CommunityPost from '../post/CommunityPost';
 
-const SelectedCommunityItem = ({ user, communityId }) => {
-    const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId);
+const SelectedCommunityItem = ({ userId, communityId, t }) => {
+    const [currentPosts, setCurrentPosts] = useState([]);
+    const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const [getPostById] = useLazyGetPostByIdQuery();
-    const [getCommunityPostByPostId] = useLazyGetCommunityPostByPostIdQuery();
-    const [removeCommunityPost] = useRemoveCommunityPostMutation();
-    const [removePost] = useRemovePostMutation();
-
-    const [posts, setPosts] = useState([]);
+    const { posts, newPosts, count, isLoading, getMoreCommunityPostsAsync, currentDateRef, skipCheckNewPostsRef } = useFetchCommunityPosts(communityId);
 
     useEffect(() => {
-        if (communityPosts === undefined) {
+        if (!posts) {
             return;
         }
 
-        const getPosts = async () => {
-            await getPostsAsync();
+        setCurrentPosts(posts);
+
+        skipCheckNewPostsRef.current = false;
+    }, [posts]);
+
+    useEffect(() => {
+        if (!newPosts || newPosts.length === 0) {
+            return;
         }
 
-        getPosts();
-    }, [communityPosts])
+        const uniqNewPosts = getUniqueElements(currentPosts, newPosts);
+        setHaveNewPosts(uniqNewPosts.length > 0);
+    }, [newPosts]);
 
-    const getPostsAsync = async () => {
-        const allPosts = [];
+    const loadingMoreCommunityPostsAsync = async () => {
+        const newPosts = await getMoreCommunityPostsAsync(currentPosts.length);
 
-        for (let i = 0; i < communityPosts.length; i++) {
-            const post = await getPostById(communityPosts[i].postId);
-
-            if (post.data !== undefined) {
-                allPosts.push(post.data);
-            }
-        }
-
-        setPosts(allPosts);
+        setCurrentPosts(prevPosts => [...prevPosts, ...newPosts]);
     }
 
-    const removeCommunityPostAsync = async (postId) => {
-        const communityPost = await getCommunityPostByPostId(postId);
-        if (communityPost.data === undefined || communityPost.data.length === 0) {
-            return;
-        }
+    const loadingNewCommunityPostsAsync = async () => {
+        currentDateRef.current = (new Date()).toISOString();
 
-        const result = await removeCommunityPost(communityPost.data[0].id);
-        if (result.error === undefined) {
-            await removePost(postId);
-        }
+        const uniqNewPosts = getUniqueElements(currentPosts, newPosts);
+        setCurrentPosts(prevPosts => [...uniqNewPosts, ...prevPosts]);
+
+        setHaveNewPosts(false);
+    }
+
+    const getUniqueElements = (oldArray, newArray) => {
+        const oldSet = new Set(oldArray.map(item => item.id));
+        const uniqueNewElements = newArray.filter(item => !oldSet.has(item.id));
+
+        return uniqueNewElements;
     }
 
     if (isLoading) {
@@ -58,19 +55,31 @@ const SelectedCommunityItem = ({ user, communityId }) => {
     }
 
     return (
-        <ul className="posts">
-            {posts?.map((post) => (
+        <>
+            {haveNewPosts &&
+                <div className="new-posts" onClick={loadingNewCommunityPostsAsync}>
+                    <div className="new-posts__content">{t("NewPosts")}</div>
+                </div>
+            }
+            <ul className="posts">
+                {currentPosts.map((post) => (
                     <li key={post?.id}>
-                        <Post
-                            user={user}
-                            data={post}
-                            deletePostAsync={async () => await removeCommunityPostAsync(post.id)}
+                        <CommunityPost
+                            userId={userId}
+                            postId={post.id}
+                            communityId={communityId}
                         />
                     </li>
-                ))
-            }
-        </ul>
+                    ))
+                }
+                {currentPosts.length < count &&
+                    <li className="load-more" onClick={loadingMoreCommunityPostsAsync}>
+                        <div className="load-more__content">Load more</div>
+                    </li>
+                }
+            </ul>
+        </>
     );
 }
 
-export default SelectedCommunityItem;
+export default memo(SelectedCommunityItem);

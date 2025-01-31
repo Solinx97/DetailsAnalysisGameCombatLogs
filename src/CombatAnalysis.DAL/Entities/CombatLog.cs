@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Entities;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class CombatLog
+namespace CombatAnalysis.DAL.Entities;
+
+public class CombatLog : IEntity
 {
     public int Id { get; set; }
 
@@ -8,9 +10,13 @@ public class CombatLog
 
     public DateTimeOffset Date { get; set; }
 
+    public int LogType { get; set; }
+
     public int NumberReadyCombats { get; set; }
 
     public int CombatsInQueue { get; set; }
 
     public bool IsReady { get; set; }
+
+    public string AppUserId { get; set; }
 }

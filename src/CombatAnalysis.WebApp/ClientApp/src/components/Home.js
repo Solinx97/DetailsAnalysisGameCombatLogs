@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useLazyIdentityQuery } from '../store/api/UserApi';
+import { useLazyAuthorizationQuery } from '../store/api/core/User.api';
 
 import '../styles/home.scss';
 
@@ -16,9 +16,9 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
-    const [identityAsyncQuery] = useLazyIdentityQuery();
+    const [authorization] = useLazyAuthorizationQuery();
 
     const [shouldBeAuthorize, setShouldBeAuthorize] = useState(false);
 
@@ -46,7 +46,7 @@ const Home = () => {
     const loginAsync = async () => {
         const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
 
-        const response = await identityAsyncQuery(identityServerAuthPath);
+        const response = await authorization(identityServerAuthPath);
 
         if (response.data !== undefined) {
             const uri = response.data.uri;
@@ -62,7 +62,7 @@ const Home = () => {
             <div className="home__item">
                 <div className="title">
                     <div>{t("Communication")}</div>
-                    {customer === null &&
+                    {user === null &&
                         <div className="btn-shadow authorize-alert" onClick={async () => await loginAsync()} title={t("GoToLogin")}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
@@ -92,7 +92,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-                {customer !== null &&
+                {user !== null &&
                     <div className="go-to-communication" onClick={navigateToFeed}>{t("Open")}</div>
                 }
             </div>

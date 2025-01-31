@@ -2,13 +2,13 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import User from '../User';
 
 const MyRequestItem = ({ me, request, cancelMyRequestAsync }) => {
     const { t } = useTranslation("communication/myEnvironment/myRequestItem");
 
-    const { data: user, isLoading } = useGetCustomerByIdQuery(request.toUserId);
+    const { data: user, isLoading } = useGetUserByIdQuery(request.toAppUserId);
 
     const [userInformation, setUserInformation] = useState(null);
 
@@ -21,7 +21,7 @@ const MyRequestItem = ({ me, request, cancelMyRequestAsync }) => {
             <div className="request-to-connect__username">
                 <User
                     me={me}
-                    targetCustomerId={user.id}
+                    targetUserId={user?.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                     actionAfterRequests={null}

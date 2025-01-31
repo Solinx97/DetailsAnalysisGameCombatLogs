@@ -1,30 +1,39 @@
-import { useGetGroupChatByIdQuery } from '../../../store/api/communication/chats/GroupChat.api';
-import { useFindGroupChatMessageCountQuery } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
+import { useEffect, useState } from 'react';
+import { useGetGroupChatByIdQuery } from '../../../store/api/chat/GroupChat.api';
+import { useFindGroupChatMessageCountQuery } from '../../../store/api/chat/GroupChatMessagCount.api';
 
-const groupChatCountPollingInterval = 2000;
-const groupChatPollingInterval = 2000;
+const GroupChatListItem = ({ chatId, meInChatId, setSelectedGroupChat, subscribeToUnreadGroupMessagesUpdated }) => {
+    const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
 
-const GroupChatListItem = ({ chatId, groupChatUserId, setSelectedGroupChat }) => {
-    const { data: chat, isLoading } = useGetGroupChatByIdQuery(chatId, {
-        pollingInterval: groupChatPollingInterval,
-    });
-    const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: groupChatUserId }, {
-        pollingInterval: groupChatCountPollingInterval,
-    });
+    const { data: chat, isLoading } = useGetGroupChatByIdQuery(chatId);
+    const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: meInChatId });
 
-    if (isLoading || messagesCountLoading || chat === null) {
-        return (<div>Loading...</div>);
+    useEffect(() => {
+        subscribeToUnreadGroupMessagesUpdated(meInChatId, (targetChatId, targetMeInChatId, count) => {
+            if (targetChatId === chatId && targetMeInChatId === meInChatId) {
+                setUnreadMessageCount(count);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!messagesCount) {
+            return;
+        }
+
+        setUnreadMessageCount(messagesCount.count);
+    }, [messagesCount]);
+
+    if (isLoading || messagesCountLoading || !chat) {
+        return (<div className="chat-loading-yet">Loading...</div>);
     }
 
     return (
         <span className="chat-card" onClick={() => setSelectedGroupChat({ type: "group", chat: chat })}>
             <div className="username">{chat?.name}</div>
-            {chat?.lastMessage.length > 0 &&
+            {unreadMessageCount > 0 &&
                 <div className="chat-tooltip">
-                    {messagesCount?.count > 0 &&
-                        <div className="unread-message-count">{messagesCount?.count > 99 ? "99+" : messagesCount?.count}</div>
-                    }
-                    <div className="last-message">{chat?.lastMessage}</div>
+                    <div className="unread-message-count">{unreadMessageCount > 99 ? "99+" : unreadMessageCount}</div>
                 </div>
             }
         </span>

@@ -1,113 +1,164 @@
 ﻿import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import io from 'socket.io-client';
-import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
+import { useChatHub } from '../../../context/ChatHubProvider';
 import useGroupChatData from '../../../hooks/useGroupChatData';
-import {
-    useLazyFindGroupChatMessageCountQuery,
-    useUpdateGroupChatMessageCountAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 import {
     useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatMessage.api';
+} from '../../../store/api/chat/GroupChatMessage.api';
 import Loading from '../../Loading';
-import ChatMessage from './ChatMessage';
 import GroupChatAddUser from './GroupChatAddUser';
 import GroupChatMenu from './GroupChatMenu';
-import GroupChatMessageInput from './GroupChatMessageInput';
+import GroupChatMessage from './GroupChatMessage';
 import GroupChatTitle from './GroupChatTitle';
+import MessageInput from './MessageInput';
 
 import '../../../styles/communication/chats/groupChat.scss';
 
-const messageType = {
-    default: 0,
-    system: 1
-};
-
-const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
+const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
+
+    const { groupChatMessagesHubConnection, connectToGroupChatMessagesAsync, subscribeToGroupChatMessages, subscribeGroupChatUser, subscribeToGroupMessageHasBeenRead } = useChatHub();
 
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
-    const [usersOnCall, setUsersOnCall] = useState(0);
 
-    const socketRef = useRef(null);
+    const [haveMoreMessages, setHaveMoreMessage] = useState(false);
+    const [currentMessages, setCurrentMessages] = useState(null);
+    const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
+    const [areLoadingOldMessages, setAreLoadingOldMessages] = useState(true);
 
-    const { messages, meInChat, groupChatUsers, isLoading } = useGroupChatData(chat.id, me.id);
+    const chatContainerRef = useRef(null);
+    const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
 
-    const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
-    const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
+    const { groupChatData, getMoreMessagesAsync } = useGroupChatData(chat.id, me.id, pageSizeRef);
+
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
-        let socket;
+        const connectToGroupChatMessages = async () => {
+            await connectToGroupChatMessagesAsync(chat.id);
+        }
 
-        const connectSocket = async () => {
-            try {
-                socket = io.connect("192.168.0.161:2000");
-
-                socket.on("connect_error", (error) => {
-                    console.error("Socket connection error:", error);
-                });
-
-                socket.emit("checkUsersOnCall", chat.id);
-
-                socket.on("checkedUsersOnCall", (count) => {
-                    setUsersOnCall(count);
-                });
-
-                socketRef.current = socket;
-            } catch (error) {
-                console.error("Socket connection error:", error);
-            }
-        };
-
-        //connectSocket();
-
-        return () => {
-            if (socket) {
-                socket.emit("removeUserFromChat", chat.id);
-                socket.off("checkedUsersOnCall");
-                socket.disconnect();
-            }
-        };
+        connectToGroupChatMessages();
     }, []);
 
     useEffect(() => {
-        if (groupChatUsers === undefined) {
+        if (!groupChatMessagesHubConnection) {
+            return;
+        }
+
+        subscribeGroupChatUser();
+
+        subscribeToGroupChatMessages((message) => {
+            setCurrentMessages(prevMessages => [...prevMessages, message]);
+        });
+    }, [groupChatMessagesHubConnection]);
+
+    useEffect(() => {
+        if (!groupChatData.messages) {
+            return;
+        }
+
+        setCurrentMessages(groupChatData.messages);
+    }, [groupChatData.messages]);
+
+    useEffect(() => {
+        if (!groupChatData.messages) {
+            return;
+        }
+
+        const handleScroll = () => {
+            const chatContainer = chatContainerRef.current;
+            if (chatContainer.scrollTop === 0) {
+                const moreMessagesCount = groupChatData.count - currentMessages.length + groupChatData.messages.length - pageSizeRef.current;
+
+                setHaveMoreMessage(moreMessagesCount > 0);
+            }
+            else if (chatContainer.scrollHeight - chatContainer.scrollTop === chatContainer.clientHeight) {
+                setHaveMoreMessage(false);
+            }
+        }
+
+        const scrollContainer = chatContainerRef.current;
+        scrollContainer?.addEventListener("scroll", handleScroll);
+
+        return () => {
+            scrollContainer?.removeEventListener("scroll", handleScroll);
+        }
+    }, [currentMessages, groupChatData.messages]);
+
+    useEffect(() => {
+        if (!currentMessages || messagesIsLoaded) {
+            return;
+        }
+
+        scrollToBottom();
+
+        setMessagesIsLoaded(true);
+    }, [currentMessages]);
+
+    useEffect(() => {
+        if (!currentMessages || areLoadingOldMessages) {
+            return;
+        }
+
+        scrollToBottom();
+    }, [currentMessages]);
+
+    useEffect(() => {
+        if (!groupChatData.groupChatUsers) {
             return;
         }
 
         const customersId = [];
-        for (let i = 0; i < groupChatUsers.length; i++) {
-            customersId.push(groupChatUsers[i].appUserId);
+        for (let i = 0; i < groupChatData.groupChatUsers.length; i++) {
+            customersId.push(groupChatData.groupChatUsers[i].appUserId);
         }
 
         setGroupChatUsersId(customersId);
-    }, [groupChatUsers]);
-
-    const decreaseGroupChatMessagesCountAsync = async () => {
-        const myGroupChatUser = groupChatUsers.filter(x => x.appUserId === me?.id)[0];
-
-        const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: myGroupChatUser.id });
-        if (messagesCount.data !== undefined) {
-            const unblockedObject = Object.assign({}, messagesCount.data);
-            unblockedObject.count = --unblockedObject.count;
-
-            await updateGroupChatMessageCountMut(unblockedObject);
-        }
-    }
+    }, [groupChatData.groupChatUsers]);
 
     const deleteMessageAsync = async (messageId) => {
         await removeGroupChatMessageAsync(messageId);
     }
 
-    if (isLoading) {
-        return (<Loading />);
+    const saveScrollState = () => {
+        const chatContainer = chatContainerRef.current;
+        const previousScrollHeight = chatContainer.scrollHeight;
+        const previousScrollTop = chatContainer.scrollTop;
+
+        setTimeout(() => {
+            chatContainer.scrollTop = chatContainer.scrollHeight - previousScrollHeight + previousScrollTop;
+        }, 0);
+    }
+
+    const scrollToBottom = () => {
+        const chatContainer = chatContainerRef.current;
+        if (chatContainer !== null) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    }
+
+    const handleLoadMoreMessagesAsync = async () => {
+        setAreLoadingOldMessages(true);
+
+        const moreMessages = await getMoreMessagesAsync(currentMessages.length);
+
+        setCurrentMessages(prevMessages => [...moreMessages, ...prevMessages]);
+
+        saveScrollState();
+    }
+
+    if (groupChatData.isLoading) {
+        return (
+            <div className="chats__selected-chat_loading">
+                <Loading />
+            </div>
+        );
     }
 
     return (
@@ -116,31 +167,34 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                 <GroupChatTitle
                     chat={chat}
                     me={me}
-                    usersOnCall={usersOnCall}
-                    callMinimazedData={callMinimazedData}
                     settingsIsShow={settingsIsShow}
                     setSettingsIsShow={setSettingsIsShow}
+                    haveMoreMessages={haveMoreMessages}
+                    setHaveMoreMessage={setHaveMoreMessage}
+                    loadMoreMessagesAsync={handleLoadMoreMessagesAsync}
                     t={t}
                 />
-                <ul className="chat-messages">
-                    {messages?.map((message) => (
-                        <li key={message.id}>
-                            <ChatMessage
+                <ul className="chat-messages" ref={chatContainerRef}>
+                    {currentMessages?.map((message) => (
+                        <li className="message" key={message.id}>
+                            <GroupChatMessage
                                 me={me}
+                                reviewerId={groupChatData.meInChat.id}
+                                messageOwnerId={message.groupChatUserId}
                                 message={message}
-                                messageStatus={message.status}
                                 updateChatMessageAsync={updateGroupChatMessageAsync}
                                 deleteMessageAsync={deleteMessageAsync}
-                                decreaseChatMessagesCountAsync={decreaseGroupChatMessagesCountAsync}
+                                chatMessagesHubConnection={groupChatMessagesHubConnection}
+                                subscribeToMessageHasBeenRead={subscribeToGroupMessageHasBeenRead}
                             />
                         </li>
                     ))}
                 </ul>
-                <GroupChatMessageInput
+                <MessageInput
                     chat={chat}
-                    me={me}
-                    groupChatUsers={groupChatUsers}
-                    messageType={messageType}
+                    meInChat={groupChatData.meInChat}
+                    setAreLoadingOldMessages={setAreLoadingOldMessages}
+                    targetChatType={1}
                     t={t}
                 />
                 {showAddPeople &&
@@ -149,8 +203,6 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                         me={me}
                         groupChatUsersId={groupChatUsersId}
                         setShowAddPeople={setShowAddPeople}
-                        groupChatUsers={groupChatUsers}
-                        messageType={messageType}
                         t={t}
                     />
                 }
@@ -161,9 +213,10 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                     setUserInformation={setUserInformation}
                     setSelectedChat={setSelectedChat}
                     setShowAddPeople={setShowAddPeople}
-                    groupChatUsers={groupChatUsers}
-                    meInChat={meInChat}
+                    groupChatUsers={groupChatData.groupChatUsers}
+                    meInChat={groupChatData.meInChat}
                     chat={chat}
+                    t={t}
                 />
             }
             {userInformation}
@@ -171,4 +224,4 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     );
 }
 
-export default memo(WithVoiceContext(GroupChat));
+export default memo(GroupChat);

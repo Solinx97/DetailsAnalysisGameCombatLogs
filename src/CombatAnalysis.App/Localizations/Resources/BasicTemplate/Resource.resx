@@ -117,20 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AllCombats" xml:space="preserve">
-    <value>All combats</value>
-  </data>
   <data name="Chat" xml:space="preserve">
     <value>Chat</value>
   </data>
   <data name="ChatLoginRequired" xml:space="preserve">
-    <value>To open the 'Chat" you need to login</value>
+    <value>To open the 'Chat" you should be Login</value>
   </data>
   <data name="CloseWindow" xml:space="preserve">
     <value>Close a window</value>
   </data>
-  <data name="Combat" xml:space="preserve">
-    <value>Combat</value>
+  <data name="Combats" xml:space="preserve">
+    <value>Combats</value>
   </data>
   <data name="Damage" xml:space="preserve">
     <value>Damage</value>
@@ -185,6 +182,9 @@
   </data>
   <data name="Notifications" xml:space="preserve">
     <value>Notifications</value>
+  </data>
+  <data name="Players" xml:space="preserve">
+    <value>Players</value>
   </data>
   <data name="Profile" xml:space="preserve">
     <value>Profile</value>

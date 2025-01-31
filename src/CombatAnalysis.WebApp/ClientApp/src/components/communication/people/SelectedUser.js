@@ -1,29 +1,28 @@
-import { faArrowsLeftRightToLine, faArrowsToCircle, faCheck, faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
+import { useLazyGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useLazyGetUserPostsByUserIdQuery } from '../../../store/api/core/Post.api';
+import { useLazyGetUserPostByIdQuery } from '../../../store/api/post/UserPost.api';
 import CommunicationMenu from "../CommunicationMenu";
+import UserPost from '../post/UserPost';
 import Friends from '../myEnvironment/Friends';
 import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
 
 import '../../../styles/communication/people/selectedUser.scss';
-import Post from '../Post';
 
 const SelectedUser = () => {
     const { t } = useTranslation("communication/people/user");
 
-    const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
-    const [getPostById] = useLazyGetPostByIdQuery();
+    const [getUserPosts] = useLazyGetUserPostsByUserIdQuery();
+    const [getPostById] = useLazyGetUserPostByIdQuery();
     const [getUserById] = useLazyGetUserByIdQuery();
 
     const [personId, setPersonId] = useState(0);
     const [person, setPerson] = useState(null);
     const [currentMenuItem, setMenuItem] = useState(0);
-    const [shortMenu, setShortMenu] = useState(false);
     const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
@@ -36,14 +35,14 @@ const SelectedUser = () => {
             return;
         }
 
-        const getCustomer = async () => {
-            await getCustomerByIdAsync();
+        const getUser = async () => {
+            await getUserByIdAsync();
         }
 
-        getCustomer();
+        getUser();
     }, [personId])
 
-    const getCustomerByIdAsync = async () => {
+    const getUserByIdAsync = async () => {
         const user = await getUserById(personId);
 
         if (user.data !== undefined) {
@@ -81,97 +80,43 @@ const SelectedUser = () => {
             <CommunicationMenu
                 currentMenuItem={7}
             />
-            <div className="communication__content user">
+            <div className="communication-content user">
                 <div className="user-information__username">
                     {person?.username}
                 </div>
                 <div className="user__container">
-                    <ul className="user__menu">
-                        <li className="sub-menu" onClick={() => setMenuItem(0)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 0 ? "_active" : ""}`}
-                                title={t("Profile")}
-                                icon={faUser}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Profile")}</div>
-                                    {currentMenuItem === 0 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        <li className="sub-menu" onClick={() => setMenuItem(1)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 1 ? "_active" : ""}`}
-                                title={t("Posts")}
-                                icon={faEnvelopesBulk}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Posts")}</div>
-                                    {currentMenuItem === 1 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        <li className="sub-menu" onClick={() => setMenuItem(2)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 2 ? "_active" : ""}`}
-                                title={t("Friends")}
-                                icon={faUserGroup}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Friends")}</div>
-                                    {currentMenuItem === 2 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        <li className="sub-menu" onClick={() => setMenuItem(3)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 3 ? "_active" : ""}`}
-                                title={t("Communities")}
-                                icon={faComments}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Communities")}</div>
-                                    {currentMenuItem === 3 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        {shortMenu
-                            ? <li className="sub-menu control">
+                    <div className="menu-container">
+                        <ul className="user__menu">
+                            <li className="sub-menu" onClick={() => setMenuItem(0)}>
                                 <FontAwesomeIcon
-                                    icon={faArrowsLeftRightToLine}
-                                    title={t("FullMenu")}
-                                    onClick={() => setShortMenu((item) => !item)}
+                                    className={`current${currentMenuItem === 0 ? "_active" : ""}`}
+                                    title={t("Profile")}
+                                    icon={faUser}
                                 />
                             </li>
-                            : <li className="sub-menu control">
+                            <li className="sub-menu" onClick={() => setMenuItem(1)}>
                                 <FontAwesomeIcon
-                                    icon={faArrowsToCircle}
-                                    title={t("ShortMenu")}
-                                    onClick={() => setShortMenu((item) => !item)}
+                                    className={`current${currentMenuItem === 1 ? "_active" : ""}`}
+                                    title={t("Posts")}
+                                    icon={faEnvelopesBulk}
                                 />
                             </li>
-                        }
-                    </ul>
+                            <li className="sub-menu" onClick={() => setMenuItem(2)}>
+                                <FontAwesomeIcon
+                                    className={`current${currentMenuItem === 2 ? "_active" : ""}`}
+                                    title={t("Friends")}
+                                    icon={faUserGroup}
+                                />
+                            </li>
+                            <li className="sub-menu" onClick={() => setMenuItem(3)}>
+                                <FontAwesomeIcon
+                                    className={`current${currentMenuItem === 3 ? "_active" : ""}`}
+                                    title={t("Communities")}
+                                    icon={faComments}
+                                />
+                            </li>
+                        </ul>
+                    </div>
                     <div className="user__content">
                         {currentMenuItem === 0 &&
                             <SelectedUserProfile
@@ -180,15 +125,17 @@ const SelectedUser = () => {
                         }
                         {currentMenuItem === 1 &&
                             <ul className="posts">
-                                {allPosts?.map(post => (
-                                    <li key={post.id}>
-                                        <Post
-                                            customer={person}
-                                            data={post}
-                                            deletePostAsync={null}
-                                        />
-                                    </li>
-                                ))}
+                                {allPosts.length === 0
+                                    ? <div>{t("Empty")}</div>
+                                    : allPosts?.map(post => (
+                                        <li key={post.id}>
+                                            <UserPost
+                                                user={person}
+                                                post={post}
+                                            />
+                                        </li>
+                                    ))
+                                }
                             </ul>
                         }
                         {currentMenuItem === 2 &&
@@ -198,12 +145,13 @@ const SelectedUser = () => {
                                 allowRemoveFriend={false}
                             />
                         }
+                        {currentMenuItem === 3 &&
+                            <SelectedUserCommunities
+                                user={person}
+                                t={t}
+                            />
+                        }
                     </div>
-                    {currentMenuItem === 3 &&
-                        <SelectedUserCommunities
-                            customer={person}
-                        />
-                    }
                 </div>
             </div>
         </div>

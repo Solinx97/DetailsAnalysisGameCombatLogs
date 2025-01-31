@@ -9,4 +9,6 @@ public class IdentityUserDto
     public string PasswordHash { get; set; }
 
     public string Salt { get; set; }
+
+    public bool EmailVerified { get; set; }
 }

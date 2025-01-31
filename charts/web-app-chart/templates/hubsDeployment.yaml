@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.hubs.name }}-deployment
+  labels:
+    app: {{ .Release.Name }}
+    env: {{ .Values.env }}
+    owner: OlegFedosov
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.hubs.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.hubs.name }}
+    spec:
+      containers:
+        - name: {{ .Values.hubs.container.name }}
+          image: {{ .Values.hubs.container.image }}:{{ .Values.imageTags.webApp.hubs }}
+          ports:
+            - containerPort: {{ .Values.hubs.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: Cors_WebApp
+             value: "https://encounters.analysis.com"
+           - name: Cluster_Chat
+             value: "http://api-chat-service.api.svc.cluster.local/"
+           - name: Authentication_Issuer
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuer
+           - name: Authentication_IssuerSigningKey
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuerSigningKey
+           - name: Authentication_Authority
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: authority
+           - name: Authentication_Client_WebClientId
+             valueFrom:
+               secretKeyRef:
+                name: web-client
+                key: webClientId
+           - name: Authentication_Client_DesktopClientId
+             valueFrom:
+               secretKeyRef:
+                name: web-client
+                key: desktopClientId
+           - name: Authentication_Client_Scope
+             valueFrom:
+               secretKeyRef:
+                name: web-client
+                key: scope

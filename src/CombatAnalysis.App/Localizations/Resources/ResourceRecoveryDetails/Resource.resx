@@ -117,35 +117,47 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageValue" xml:space="preserve">
-    <value>Average value</value>
+  <data name="Average" xml:space="preserve">
+    <value>Average</value>
   </data>
   <data name="Common" xml:space="preserve">
     <value>Common</value>
   </data>
-  <data name="CountOfSkills" xml:space="preserve">
-    <value>Count of skills</value>
+  <data name="Count" xml:space="preserve">
+    <value>Count</value>
   </data>
-  <data name="MaxValue" xml:space="preserve">
-    <value>Max. value</value>
+  <data name="First" xml:space="preserve">
+    <value>First</value>
   </data>
-  <data name="MinValue" xml:space="preserve">
-    <value>Min. value</value>
+  <data name="Last" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
   </data>
   <data name="MoreDetails" xml:space="preserve">
     <value>More details</value>
   </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Player" xml:space="preserve">
+    <value>Player</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Prev</value>
+  </data>
   <data name="Resources" xml:space="preserve">
     <value>Resources</value>
   </data>
-  <data name="ResourcesPerSec" xml:space="preserve">
-    <value>Resources per sec.</value>
+  <data name="RPS" xml:space="preserve">
+    <value>RPS</value>
   </data>
-  <data name="ShowFilters" xml:space="preserve">
-    <value>Show filters</value>
-  </data>
-  <data name="Source" xml:space="preserve">
-    <value>Source</value>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
   </data>
   <data name="Time" xml:space="preserve">
     <value>Time</value>
@@ -154,9 +166,18 @@
     <value>Analyzing of resource recovery</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Total:</value>
+    <value>Total</value>
   </data>
   <data name="TypeOf" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="Spell" xml:space="preserve">
+    <value>Spell</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="Creator" xml:space="preserve">
+    <value>Creator</value>
   </data>
 </root>

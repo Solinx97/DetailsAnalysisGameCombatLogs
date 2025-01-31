@@ -3,7 +3,7 @@ using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
 using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
+using System.Transactions;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
 
@@ -13,17 +13,14 @@ internal class GroupChatUserService : IServiceTransaction<GroupChatUserDto, stri
     private readonly IService<UnreadGroupChatMessageDto, int> _unreadGroupChatMessageService;
     private readonly IService<GroupChatMessageCountDto, int> _groupChatMessageCountService;
     private readonly IMapper _mapper;
-    private readonly ISqlContextService _sqlContextService;
 
     public GroupChatUserService(IGenericRepository<GroupChatUser, string> repository, IService<UnreadGroupChatMessageDto, int> unreadGroupChatMessageService,
-        IService<GroupChatMessageCountDto, int> groupChatMessageCountService, IMapper mapper,
-        ISqlContextService sqlContextService)
+        IService<GroupChatMessageCountDto, int> groupChatMessageCountService, IMapper mapper)
     {
         _repository = repository;
         _unreadGroupChatMessageService = unreadGroupChatMessageService;
         _groupChatMessageCountService = groupChatMessageCountService;
         _mapper = mapper;
-        _sqlContextService = sqlContextService;
     }
 
     public Task<GroupChatUserDto> CreateAsync(GroupChatUserDto item)
@@ -38,57 +35,46 @@ internal class GroupChatUserService : IServiceTransaction<GroupChatUserDto, stri
 
     public async Task<int> DeleteAsync(string id)
     {
-        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             await DeleteUnreadGroupChatMessageAsync(id);
             await DeleteGroupChatMessageCountAsync(id);
 
-            transaction.CreateSavepoint("BeforeDeleteGroupChatUser");
-
             var rowsAffected = await _repository.DeleteAsync(id);
 
-            await transaction.CommitAsync();
+            scope.Complete();
 
             return rowsAffected;
         }
         catch (ArgumentException ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChatUser");
-
             return 0;
         }
         catch (Exception ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChatUser");
-
             return 0;
         }
     }
 
-    public async Task<int> DeleteUseExistTransactionAsync(IDbContextTransaction transaction, string id)
+    public async Task<int> DeleteUseExistTransactionAsync(string id)
     {
         try
         {
             await DeleteUnreadGroupChatMessageAsync(id);
             await DeleteGroupChatMessageCountAsync(id);
 
-            transaction.CreateSavepoint("BeforeDeleteGroupChatUser");
-
             var rowsAffected = await _repository.DeleteAsync(id);
 
             return rowsAffected;
         }
         catch (ArgumentException ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChatUser");
-
             return 0;
         }
         catch (Exception ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChatUser");
-
             return 0;
         }
     }
@@ -134,6 +120,8 @@ internal class GroupChatUserService : IServiceTransaction<GroupChatUserDto, stri
             throw new ArgumentNullException(nameof(GroupChatUserDto),
                 $"The property {nameof(GroupChatUserDto.Username)} of the {nameof(GroupChatUserDto)} object can't be null or empty");
         }
+
+        item.Id = Guid.NewGuid().ToString();
 
         var map = _mapper.Map<GroupChatUser>(item);
         var createdItem = await _repository.CreateAsync(map);

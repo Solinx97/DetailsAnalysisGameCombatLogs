@@ -1,0 +1,18 @@
+env: Production
+app: sqlserver
+replicas: 2
+resources:
+    cpu: 80
+    memory: 80
+autoscaling: 
+    enabled: false
+    min: 2
+    max: 6
+container:
+    name: sqlserver
+    image: mcr.microsoft.com/mssql/server
+    port: 1433
+service:
+    port: 1433
+    targetPort: 1433
+    nodePort: 30022

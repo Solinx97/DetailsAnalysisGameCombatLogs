@@ -120,6 +120,9 @@
   <data name="Analysing" xml:space="preserve">
     <value>Анализ</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
   <data name="Combat" xml:space="preserve">
     <value>Бой</value>
   </data>
@@ -141,17 +144,20 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Ошибка загрузки</value>
   </data>
+  <data name="ShowLogs" xml:space="preserve">
+    <value>Показать логи</value>
+  </data>
   <data name="PreparePets" xml:space="preserve">
     <value>Подготовка питомцев</value>
   </data>
   <data name="Private" xml:space="preserve">
     <value>Приватные</value>
   </data>
-  <data name="PrivateLogs" xml:space="preserve">
+  <data name="PersonalLogs" xml:space="preserve">
     <value>Личные логи</value>
   </data>
-  <data name="PrivateLogsLoginRequired" xml:space="preserve">
-    <value>Для просмотра 'Личные логи' необходимо авторизоваться</value>
+  <data name="PersonalLogsLoginRequired" xml:space="preserve">
+    <value>Для просмотра 'Личные логи' вы должны быть авторизованым</value>
   </data>
   <data name="Processing" xml:space="preserve">
     <value>Работа с данными...</value>
@@ -181,7 +187,7 @@
     <value>Результат</value>
   </data>
   <data name="SaveData" xml:space="preserve">
-    <value>Сохранить данные</value>
+    <value>Сохранить</value>
   </data>
   <data name="SaveDataDescribe" xml:space="preserve">
     <value>Сохранение данных позволяет просматривать данные в будущем и делиться с другими пользователями.</value>
@@ -198,8 +204,8 @@
   <data name="TypeOfLogs" xml:space="preserve">
     <value>Тип логов</value>
   </data>
-  <data name="TypeOfLogsLoginRequired" xml:space="preserve">
-    <value>Для выбора типа логов необходимо авторизоваться</value>
+  <data name="ToSaveYouShouldBeLogin" xml:space="preserve">
+    <value>Для Сохранения логов вы должны быть авторизованы</value>
   </data>
   <data name="Upload" xml:space="preserve">
     <value>Загрузить</value>
@@ -207,7 +213,7 @@
   <data name="UploadFile" xml:space="preserve">
     <value>Загрузить файл с данными о бое</value>
   </data>
-  <data name="WithoutUser" xml:space="preserve">
-    <value>Без привязки к игроку</value>
+  <data name="Anonymous" xml:space="preserve">
+    <value>Анонимно</value>
   </data>
 </root>

@@ -1,18 +1,23 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class SpecializationScoreService : ISpecScoreService<SpecializationScoreDto, int>
+internal class SpecializationScoreService : QueryService<SpecializationScoreDto, SpecializationScore>, IMutationService<SpecializationScoreDto>, ISpecScoreService
 {
-    private readonly ISQLSpecScoreRepository<SpecializationScore, int> _repository;
+    private readonly IGenericRepository<SpecializationScore> _repository;
+    private readonly ISpecScore _specRepository;
     private readonly IMapper _mapper;
 
-    public SpecializationScoreService(ISQLSpecScoreRepository<SpecializationScore, int> repository, IMapper mapper)
+    public SpecializationScoreService(ISpecScore specRepository, IGenericRepository<SpecializationScore> repository, IMapper mapper) : base(repository, mapper)
     {
+        _specRepository = specRepository;
         _repository = repository;
         _mapper = mapper;
     }
@@ -27,45 +32,6 @@ internal class SpecializationScoreService : ISpecScoreService<SpecializationScor
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<SpecializationScoreDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<SpecializationScoreDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<SpecializationScoreDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<SpecializationScoreDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<SpecializationScoreDto>> GetBySpecIdAsync(int specId, int bossId, int difficult)
-    {
-        var result = await _repository.GetBySpecIdAsync(specId, bossId, difficult);
-        var resultMap = _mapper.Map<IEnumerable<SpecializationScoreDto>>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<SpecializationScoreDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-        var resultMap = _mapper.Map<IEnumerable<SpecializationScoreDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(SpecializationScoreDto item)
     {
         if (item == null)
@@ -74,6 +40,24 @@ internal class SpecializationScoreService : ISpecScoreService<SpecializationScor
         }
 
         return UpdateInternalAsync(item);
+    }
+
+    public Task<int> DeleteAsync(SpecializationScoreDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(SpecializationScoreDto), $"The {nameof(SpecializationScoreDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
+    }
+
+    public async Task<IEnumerable<SpecializationScoreDto>> GetBySpecIdAsync(int specId, int bossId, int difficult)
+    {
+        var result = await _specRepository.GetBySpecIdAsync(specId, bossId, difficult);
+        var resultMap = _mapper.Map<IEnumerable<SpecializationScoreDto>>(result);
+
+        return resultMap;
     }
 
     private async Task<SpecializationScoreDto> CreateInternalAsync(SpecializationScoreDto item)
@@ -91,5 +75,24 @@ internal class SpecializationScoreService : ISpecScoreService<SpecializationScor
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(SpecializationScoreDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<SpecializationScore>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(SpecializationScoreDto item)
+    {
+        if (item.Difficult < 0)
+        {
+            throw new ArgumentNullException(nameof(SpecializationScoreDto.Difficult),
+                $"The property {nameof(SpecializationScoreDto.Difficult)} of the {nameof(SpecializationScoreDto)} should be positive");
+        }
     }
 }

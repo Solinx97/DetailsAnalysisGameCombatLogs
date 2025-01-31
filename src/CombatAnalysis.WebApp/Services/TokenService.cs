@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Identity;
@@ -9,16 +8,16 @@ namespace CombatAnalysis.WebApp.Services;
 internal class TokenService : ITokenService
 {
     private readonly IHttpClientHelper _httpClient;
-    private AccessTokenModel _accessToken;
 
     public TokenService(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.APIUrl = Cluster.Identity;
     }
 
     public async Task<AccessTokenModel> RefreshAccessTokenAsync(string refreshToken)
     {
-        var response = await _httpClient.GetAsync($"Token/refresh?grantType={AuthenticationGrantType.RefreshToken}&refreshToken={refreshToken}&clientId={Authentication.ClientId}", Port.Identity);
+        var response = await _httpClient.GetAsync($"Token/refresh?grantType={AuthenticationGrantType.RefreshToken}&refreshToken={refreshToken}&clientId={AuthenticationClient.ClientId}");
         if (response.IsSuccessStatusCode)
         {
             var token = await response.Content.ReadFromJsonAsync<AccessTokenModel>();

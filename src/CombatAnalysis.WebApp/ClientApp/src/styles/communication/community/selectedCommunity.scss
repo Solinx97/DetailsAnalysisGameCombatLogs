@@ -1,6 +1,9 @@
+$mobile-max-width: 425px;
+
 .selected-community {
     display: flex;
-    justify-content: flex-start;
+    flex-direction: row !important;
+    align-items: flex-start !important;
     gap: 20px;
 
     &__content {
@@ -13,9 +16,9 @@
 
             .title {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
                 width: 100%;
+                gap: 20px;
 
                 &__content {
                     display: flex;
@@ -62,6 +65,7 @@
         .description {
             display: flex;
             flex-direction: column;
+            width: 45%;
 
             .title {
                 display: flex;
@@ -88,10 +92,9 @@
             }
 
             &__content {
-                padding: 15px;
+                padding: 5px 10px;
                 border: 2px solid gray;
                 border-radius: 20px;
-                width: 70%;
                 margin: 0 25px;
             }
         }
@@ -103,10 +106,33 @@
         }
     }
 
+    &__actions-container {
+        position: fixed;
+        right: 1vw;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 250px;
+
+        svg {
+            cursor: pointer;
+
+            :hover {
+                transform: scale(1.2);
+            }
+        }
+    }
+
     &__actions {
         display: flex;
         flex-direction: column;
         gap: 15px;
+        padding: 5px 10px !important;
+        margin: 10px;
+        background: #0c192c;
+        box-shadow: 1px 1px 1px 1px yellow;
+        border-radius: 10px;
+        z-index: 1000;
 
         .members {
             display: flex;
@@ -116,13 +142,13 @@
             &__title {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: space-between;
+                align-items: center;
 
                 .tool {
                     display: flex;
                     justify-content: space-around;
                     align-items: center;
-                    margin: 0 10px;
 
                     .remove_active {
                         color: saddlebrown;
@@ -131,7 +157,8 @@
 
                 .actions {
                     display: flex;
-                    flex-direction: row;
+                    justify-content: space-around;
+                    width: 100%;
                 }
 
                 .notification {
@@ -154,6 +181,10 @@
                 flex-direction: column;
                 gap: 10px;
                 margin: 10px 0;
+                padding: 5px 10px !important;
+                max-height: 200px;
+                width: 100%;
+                overflow-y: auto;
             }
 
             .all-people {
@@ -167,11 +198,10 @@
                 justify-content: center;
                 align-items: center;
                 border-radius: 25px;
-                top: 5%;
-                right: 35%;
+                top: 10vh;
+                right: 30vw;
                 padding: 10px;
-                width: 500px;
-                max-height: 600px;
+                width: 35vw;
 
                 &__menu {
                     display: flex;
@@ -180,11 +210,6 @@
 
                     svg {
                         padding: 0 5px;
-
-                        &:hover {
-                            cursor: pointer;
-                            transform: scale(1.25);
-                        }
                     }
                 }
 
@@ -221,8 +246,6 @@
                     }
 
                     svg:hover {
-                        cursor: pointer;
-                        transform: scale(1.1);
                         background: green;
                         color: white;
                     }
@@ -231,26 +254,44 @@
                 svg {
                     margin: 10px 20px;
                 }
-
-                svg:hover {
-                    cursor: pointer;
-                }
             }
 
             .special-user__another {
                 display: flex;
                 align-items: center;
                 gap: 10px;
-
-                svg {
-                    cursor: pointer;
-                }
             }
         }
     }
 
     .community-user-information {
-        position: fixed;
-        right: 40%;
+        position: absolute;
+        right: 10vw;
+        margin-top: 10px;
+        z-index: 100;
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .selected-community {
+        &__content {
+            .description {
+                &__content {
+                    width: 75%;
+                }
+            }
+        }
+
+        &__actions {
+            .members {
+                .add-people-to-community {
+                    width: 95%;
+                    right: 3vw;
+                    box-shadow: none !important;
+                    border-radius: 20px;
+                    border: 2px solid gray;
+                }
+            }
+        }
     }
 }

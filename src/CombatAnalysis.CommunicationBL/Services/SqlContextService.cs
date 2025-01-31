@@ -7,10 +7,10 @@ namespace CombatAnalysis.CommunicationBL.Services;
 
 internal class SqlContextService : ISqlContextService
 {
-    private readonly SQLContext _context;
+    private readonly CommunicationSQLContext _context;
     private IDbContextTransaction _transaction;
 
-    public SqlContextService(SQLContext context)
+    public SqlContextService(CommunicationSQLContext context)
     {
         _context = context;
     }

@@ -7,7 +7,6 @@ public class CombatAnalysisIdentityContext : DbContext
 {
     public CombatAnalysisIdentityContext(DbContextOptions<CombatAnalysisIdentityContext> options) : base(options)
     {
-        Database.EnsureCreated();
     }
 
     public DbSet<AuthorizationCodeChallenge> AuthorizationCodeChallenge { get; set; }
@@ -15,6 +14,10 @@ public class CombatAnalysisIdentityContext : DbContext
     public DbSet<RefreshToken> RefreshToken { get; set; }
 
     public DbSet<IdentityUser> IdentityUser { get; set; }
+
+    public DbSet<ResetToken> ResetToken { get; set; }
+
+    public DbSet<VerifyEmailToken> VerifyEmailToken { get; set; }
 
     public DbSet<Client> Client { get; set; }
 

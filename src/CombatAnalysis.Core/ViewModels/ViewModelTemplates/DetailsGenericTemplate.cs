@@ -1,48 +1,117 @@
 ﻿using AutoMapper;
+using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Entities;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using MvvmCross.Commands;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Resources;
 
 namespace CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 
-abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlayerModel>
-    where T : class
-    where T1 : class
+public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> : ParentTemplate<CombatPlayerModel>
+    where DetailsModel : class, IDetailsEntity
+    where GeneralDetailsModel : class, IDetailsEntity
 {
+    protected readonly IHttpClientHelper _httpClient;
     protected readonly ILogger _logger;
     protected readonly IMapper _mapper;
-    protected readonly CombatParserAPIService _combatParserAPIService;
+    protected readonly ICacheService? _cacheService;
+    protected readonly ICombatParserAPIService _combatParserAPIService;
+
+    protected List<GeneralDetailsModel>? _allGeneralInformations;
+    protected List<DetailsModel>? _allDetailsInformations;
+
+    protected readonly int _pageSize = 20;
+
+    private int _page = 1;
+    private int _count;
+    private int _maxPages;
+    private string? _apiName;
+    private string? _generalApiName;
 
     private bool _isShowFilters;
-    private string _selectedDamageDoneSource;
-    private string _selectedPlayer;
+    private string? _selectedDamageDoneSource;
+    private string? _selectedPlayer;
+    private int _selectedPlayerId;
     private long _totalValue;
-    private ObservableCollection<T> _detailsInformations;
-    private ObservableCollection<T1> _generalInformations;
-    private ObservableCollection<string> _sources;
+    private ObservableCollection<DetailsModel>? _detailsInformations;
+    private ObservableCollection<GeneralDetailsModel>? _generalInformations;
+    private ObservableCollection<string>? spells;
     private int _detailsTypeSelectedIndex;
 
-    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper)
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMapper mapper, 
+        ICombatParserAPIService combatParserAPIService)
     {
+        _httpClient = httpClient;
         _logger = logger;
         _mapper = mapper;
+        _combatParserAPIService = combatParserAPIService;
 
-        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
+        FirstPageCommand = new MvxAsyncCommand(LoadFirstPageAsync);
+        PrevPageCommand = new MvxAsyncCommand(LoadPrevPageAsync);
+        NextPageCommand = new MvxAsyncCommand(LoadNextPageAsync);
+        LastPageCommand = new MvxAsyncCommand(LoadLastPageAsync);
+
+        _httpClient.BaseAddress = API.CombatParserApi;
     }
+
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMapper mapper,
+        ICacheService cacheService, ICombatParserAPIService combatParserAPIService) : this(httpClient, logger, mapper, combatParserAPIService)
+    {
+        _cacheService = cacheService;
+    }
+
+    #region Commands
+
+    public IMvxAsyncCommand FirstPageCommand { get; set; }
+
+    public IMvxAsyncCommand PrevPageCommand { get; set; }
+
+    public IMvxAsyncCommand NextPageCommand { get; set; }
+
+    public IMvxAsyncCommand LastPageCommand { get; set; }
+
+    #endregion
 
     #region Properties
 
-    public static CombatModel SelectedCombat { get; set; }
+    public static CombatModel? SelectedCombat { get; set; }
 
     public static bool IsNeedSave { get; set; }
 
-    public string SelectedSource
+    public int Page
+    {
+        get { return _page; }
+        set
+        {
+            SetProperty(ref _page, value);
+        }
+    }
+
+    public int MaxPages
+    {
+        get { return _maxPages; }
+        set
+        {
+            SetProperty(ref _maxPages, value);
+        }
+    }
+
+    public int Count
+    {
+        get { return _count; }
+        set
+        {
+            SetProperty(ref _count, value);
+        }
+    }
+
+    public string? SelectedSource
     {
         get { return _selectedDamageDoneSource; }
         set
@@ -53,12 +122,21 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
     }
 
-    public string SelectedPlayer
+    public string? SelectedPlayer
     {
         get { return _selectedPlayer; }
         set
         {
             SetProperty(ref _selectedPlayer, value);
+        }
+    }
+
+    public int SelectedPlayerId
+    {
+        get { return _selectedPlayerId; }
+        set
+        {
+            SetProperty(ref _selectedPlayerId, value);
         }
     }
 
@@ -77,11 +155,6 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         set
         {
             SetProperty(ref _isShowFilters, value);
-
-            if (!value)
-            {
-                TurnOnAllFilters();
-            }
         }
     }
 
@@ -99,7 +172,7 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
     }
 
-    public ObservableCollection<T> DetailsInformations
+    public ObservableCollection<DetailsModel>? DetailsInformations
     {
         get { return _detailsInformations; }
         set
@@ -108,7 +181,7 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
     }
 
-    public ObservableCollection<T1> GeneralInformations
+    public ObservableCollection<GeneralDetailsModel>? GeneralInformations
     {
         get { return _generalInformations; }
         set
@@ -117,12 +190,12 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
     }
 
-    public ObservableCollection<string> Sources
+    public ObservableCollection<string>? Sources
     {
-        get { return _sources; }
+        get { return spells; }
         set
         {
-            SetProperty(ref _sources, value);
+            SetProperty(ref spells, value);
         }
     }
 
@@ -136,46 +209,146 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
 
         SelectedPlayer = parameter.Username;
+        SelectedPlayerId = parameter.Id;
+
         SetTotalValue(parameter);
 
-        if (SelectedCombat.Id > 0)
+        if (SelectedCombat?.Id > 0)
         {
             Task.Run(async () =>
             {
-                await LoadDetailsAsync(parameter.Id);
-                await LoadGenericDetailsAsync(parameter.Id);
+                GetAPINameFromDetailsModelName();
+                GetAPINameFromGeneralDetailsModelName();
+
+                await LoadCountAsync();
+
+                await LoadDetailsAsync(Page, _pageSize);
+                await LoadGenericDetailsAsync();
 
                 GetSources();
             });
         }
         else
         {
-            ChildPrepare(parameter);
+            ExtendedPrepare(parameter);
+
             GetSources();
         }
     }
 
     public void GetSources()
     {
-        SetUpFilteredCollection();
+        var sources = DetailsInformations?.Select(x => x.Spell).Distinct().ToList();
+        if (sources == null)
+        {
+            return;
+        }
 
-        var sources = DetailsInformations.Select(x => x.GetType().GetProperty("SpellOrItem").GetValue(x).ToString()).Distinct().ToList();
         var resourceMangaer = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneralTemplate.Resource", Assembly.Load("CombatAnalysis.App"));
         var allSourcesName = resourceMangaer.GetString("All");
-        sources.Insert(0, allSourcesName);
+        if (!string.IsNullOrEmpty(allSourcesName))
+        {
+            sources.Insert(0, allSourcesName);
+        }
 
         Sources = new ObservableCollection<string>(sources);
     }
 
-    protected abstract void Filter();
+    protected abstract void ExtendedPrepare(CombatPlayerModel parameter);
 
-    protected abstract Task LoadDetailsAsync(int combatPlayerId);
+    private async Task LoadFirstPageAsync()
+    {
+        Page = 1;
+        await LoadDetailsAsync(Page, _pageSize);
+    }
 
-    protected abstract Task LoadGenericDetailsAsync(int combatPlayerId);
+    private async Task LoadNextPageAsync()
+    {
+        if (Page != MaxPages)
+        {
+            Page++;
+            await LoadDetailsAsync(Page, _pageSize);
+        }
+    }
 
-    protected abstract void TurnOnAllFilters();
+    private async Task LoadPrevPageAsync()
+    {
+        if (Page > 1)
+        {
+            Page--;
+            await LoadDetailsAsync(Page, _pageSize);
+        }
+    }
 
-    protected abstract void SetUpFilteredCollection();
+    private async Task LoadLastPageAsync()
+    {
+        Page = MaxPages;
+        await LoadDetailsAsync(Page, _pageSize);
+    }
 
-    protected abstract void SetTotalValue(CombatPlayerModel parameter);
+    private async Task LoadCountAsync()
+    {
+        if (_combatParserAPIService == null)
+        {
+            return;
+        }
+
+        var count = await _combatParserAPIService.LoadCountAsync($"{_apiName}/count/{SelectedPlayerId}");
+        Count = count;
+
+        var pages = (double)count / (double)_pageSize;
+        var maxPages = (int)Math.Ceiling(pages);
+        MaxPages = maxPages;
+    }
+
+    private async Task LoadDetailsAsync(int page, int pageSize)
+    {
+        if (_combatParserAPIService == null)
+        {
+            return;
+        }
+
+        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DetailsModel>(_httpClient, _logger, $"{_apiName}/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
+        _allDetailsInformations = new List<DetailsModel>(details.ToList());
+        DetailsInformations = new ObservableCollection<DetailsModel>(_allDetailsInformations);
+    }
+
+    private async Task LoadGenericDetailsAsync()
+    {
+        if (_combatParserAPIService == null)
+        {
+            return;
+        }
+
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<GeneralDetailsModel>(_httpClient, _logger, $"{_generalApiName}/getByCombatPlayerId/{SelectedPlayerId}");
+        _allGeneralInformations = new List<GeneralDetailsModel>(generalDetails.ToList());
+        GeneralInformations = new ObservableCollection<GeneralDetailsModel>(_allGeneralInformations);
+    }
+
+    private void SetTotalValue(CombatPlayerModel parameter)
+    {
+        TotalValue = parameter.DamageDone;
+    }
+
+    private void Filter()
+    {
+        if (_allDetailsInformations == null)
+        {
+            return;
+        }
+
+        DetailsInformations = _allDetailsInformations.Any(x => x.Spell == SelectedSource)
+            ? new ObservableCollection<DetailsModel>(_allDetailsInformations.Where(x => x.Spell == SelectedSource))
+            : new ObservableCollection<DetailsModel>(_allDetailsInformations);
+    }
+
+    private void GetAPINameFromDetailsModelName()
+    {
+        _apiName = typeof(DetailsModel).Name.Replace("Model", "");
+    }
+
+    private void GetAPINameFromGeneralDetailsModelName()
+    {
+        _generalApiName = typeof(GeneralDetailsModel).Name.Replace("Model", "");
+    }
 }

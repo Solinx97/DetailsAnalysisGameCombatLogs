@@ -1,5 +1,5 @@
 {
-  "CreateNewGroupChat": "Create new group chat",
+  "CreateGroupChat": "Create group chat",
   "Name": "Name",
   "MembersNumber": "Members number",
   "ChatPolicy": "Chat policy",
@@ -8,6 +8,7 @@
   "TypeOfCommunity": "Type of community",
   "PrivateWithLink": "Private (with link)",
   "Create": "Create",
+  "Creating": "Creating...",
   "Close": "Close",
   "Back": "Back",
   "Next": "Next",
@@ -15,7 +16,7 @@
   "Rules": "Rules",
   "InvitePeople": "Invite people",
   "Cancel": "Cancel",
-  "InviteAnotherPeople": "Who can invite another people?",
+  "InviteOtherPeople": "Who can invite other people?",
   "RemoveAnotherPeople": "Who can remove people?",
   "PinMessage": "Who can pin message?",
   "Announcements": "Who can make announcements?",
@@ -27,5 +28,8 @@
   "Update": "Update",
   "Apply": "Apply",
   "NextStep": "Next step",
-  "PrevioslyStep": "Previosly step"
+  "PrevioslyStep": "Previosly step",
+  "CreateCommunity": "Create community",
+  "NameRequired": "Name required",
+  "DescriptionRequired": "Description required"
 }

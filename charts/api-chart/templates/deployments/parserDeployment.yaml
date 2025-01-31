@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.parser.name }}-deployment
+  labels:
+    app: {{ .Release.Name }}
+    env: {{ .Values.env }}
+    owner: OlegFedosov
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.parser.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Values.parser.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Values.parser.name }}
+    spec:
+      containers:
+        - name: {{ .Values.parser.container.name }}
+          image: {{ .Values.parser.container.image }}:{{ .Values.imageTags.api.parser }}
+          ports:
+            - containerPort: {{ .Values.parser.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: Database_Name
+             value: "MSSQL"
+           - name: Database_DataProcessingType
+             value: "StoredProcedure"
+           - name: ConnectionStrings_DefaultConnection
+             valueFrom:
+               secretKeyRef:
+                name: parser-db-connection-strings
+                key: defaultConnection
+           - name: ConnectionStrings_Firebase
+             valueFrom:
+               secretKeyRef:
+                name: parser-db-connection-strings
+                key: firebase
+           - name: DBConfiguration_CommandTimeout
+             value: "180"
+           - name: DBConfiguration_MaxRequestBodySize
+             value: "150000000"
+           - name: Players_Specs
+             value: '{"0":"Удар Плети","1":"Воющий ветер","2":"Полоснуть","3":"Омоложение","4":"Огненная глыба","5":"Божественная буря","6":"Молот праведника","7":"Выстрел химеры","8":"Разрывной выстрел","9":"Расправа","10":"Быстрина","11":"Удар героя","12":"Звездный огонь","13":"Атака языка пламени","14":"Нестабильное колдовство","15":"Ожог души"}'
+           - name: Players_Classes
+             value: '{"0":"0,1,21,23","1":"2,3,12","2":"4","3":"5,6,19","4":"7,8","5":"9,22"}'
+           - name: Players_Bosses
+             value: '{"0":"Халион","1":"Лорд Ребрад","2":"Леди Смертный Шепот","3":"Битва на кораблях в Ледяной Короне","4":"Саурфанг","5":"Тухлопуз","6":"Гниломорд","7":"Профессор","8":"Кровавый Совет","9":"Королева Ланатель","10":"Валитрия Сноходица","11":"Синдрагоса","12":"Король-лич"}'

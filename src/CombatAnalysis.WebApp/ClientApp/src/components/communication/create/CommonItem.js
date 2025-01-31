@@ -6,8 +6,8 @@ const CommonItem = ({ connector, name, setName, description = "", setDescription
     return (
         <div className="create-community__item">
             <div className="title">{t("Description")}</div>
-            <div>
-                <div>
+            <>
+                <>
                     <div className="form-group">
                         <label htmlFor="name">{t("Name")}</label>
                         <input type="text" className="form-control" name="name" id="name"
@@ -20,9 +20,9 @@ const CommonItem = ({ connector, name, setName, description = "", setDescription
                                 onChange={(e) => setDescription(e.target.value)} value={description} required />
                         </div>
                     }
-                </div>
+                </>
                 {connector}
-            </div>
+            </>
         </div>
     );
 }

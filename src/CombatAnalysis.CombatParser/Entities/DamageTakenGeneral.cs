@@ -1,14 +1,16 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class DamageTakenGeneral : DetailsBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class DamageTakenGeneral : ICombatPlayerEntity
 {
+    public string Spell { get; set; }
+
     public int Value { get; set; }
 
     public int ActualValue { get; set; }
 
     public double DamageTakenPerSecond { get; set; }
-
-    public string SpellOrItem { get; set; }
 
     public int CritNumber { get; set; }
 
@@ -21,4 +23,6 @@ public class DamageTakenGeneral : DetailsBase
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

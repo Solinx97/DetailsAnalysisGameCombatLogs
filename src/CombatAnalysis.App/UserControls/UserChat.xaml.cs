@@ -11,14 +11,14 @@ public partial class UserChat : UserControl
         InitializeComponent();
     }
 
-    public string UserName
+    public string Username
     {
-        get { return (string)GetValue(UserNameProperty); }
-        set { SetValue(UserNameProperty, value); }
+        get { return (string)GetValue(UsernameProperty); }
+        set { SetValue(UsernameProperty, value); }
     }
 
-    public static readonly DependencyProperty UserNameProperty =
-        DependencyProperty.Register("UserName", typeof(string), typeof(UserChat));
+    public static readonly DependencyProperty UsernameProperty =
+        DependencyProperty.Register("Username", typeof(string), typeof(UserChat));
 
     public ImageSource Image
     {

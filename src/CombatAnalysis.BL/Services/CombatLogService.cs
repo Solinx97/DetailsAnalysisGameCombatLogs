@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class CombatLogService : IService<CombatLogDto, int>
+internal class CombatLogService : QueryService<CombatLogDto, CombatLog>, IMutationService<CombatLogDto>
 {
-    private readonly IGenericRepository<CombatLog, int> _repository;
+    private readonly IGenericRepository<CombatLog> _repository;
     private readonly IMapper _mapper;
 
-    public CombatLogService(IGenericRepository<CombatLog, int> userRepository, IMapper mapper)
+    public CombatLogService(IGenericRepository<CombatLog> userRepository, IMapper mapper) : base(userRepository, mapper)
     {
         _repository = userRepository;
         _mapper = mapper;
@@ -27,37 +28,6 @@ internal class CombatLogService : IService<CombatLogDto, int>
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<CombatLogDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<CombatLogDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<CombatLogDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<CombatLogDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<CombatLogDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-        var resultMap = _mapper.Map<IEnumerable<CombatLogDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(CombatLogDto item)
     {
         if (item == null)
@@ -68,13 +38,19 @@ internal class CombatLogService : IService<CombatLogDto, int>
         return UpdateInternalAsync(item);
     }
 
+    public Task<int> DeleteAsync(CombatLogDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(CombatLogDto), $"The {nameof(CombatLogDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
+    }
+
     private async Task<CombatLogDto> CreateInternalAsync(CombatLogDto item)
     {
-        if (string.IsNullOrEmpty(item.Name))
-        {
-            throw new ArgumentNullException(nameof(CombatLogDto),
-                $"The property {nameof(CombatLogDto.Name)} of the {nameof(CombatLogDto)} object can't be null or empty");
-        }
+        CheckParams(item);
 
         var map = _mapper.Map<CombatLog>(item);
         var createdItem = await _repository.CreateAsync(map);
@@ -85,15 +61,30 @@ internal class CombatLogService : IService<CombatLogDto, int>
 
     private async Task<int> UpdateInternalAsync(CombatLogDto item)
     {
-        if (string.IsNullOrEmpty(item.Name))
-        {
-            throw new ArgumentNullException(nameof(CombatLogDto),
-                $"The property {nameof(CombatLogDto.Name)} of the {nameof(CombatLogDto)} object can't be null or empty");
-        }
+        CheckParams(item);
 
         var map = _mapper.Map<CombatLog>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(CombatLogDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<CombatLog>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(CombatLogDto item)
+    {
+        if (string.IsNullOrEmpty(item.Name))
+        {
+            throw new ArgumentNullException(nameof(CombatLogDto.Name),
+                $"The property {nameof(CombatLogDto.Name)} of the {nameof(CombatLogDto)} object can't be null or empty");
+        }
     }
 }

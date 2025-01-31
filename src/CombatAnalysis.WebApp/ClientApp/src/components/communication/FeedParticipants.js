@@ -1,45 +1,83 @@
-import { memo } from 'react';
-import useFetchFriendsPosts from '../../hooks/useFetchFriendsPosts';
-import { useLazyUserPostSearchByPostIdQuery, useRemoveUserPostAsyncMutation } from '../../store/api/communication/UserPost.api';
-import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
+import { memo, useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import useFetchUsersPosts from '../../hooks/useFetchUsersPosts';
 import Loading from '../Loading';
-import Post from './Post';
+import CommunityPost from './post/CommunityPost';
+import UserPost from './post/UserPost';
 
-const postType = {
-    user: 0,
-    community: 1
-}
+const FeedParticipants = ({ userId, t }) => {
+    const userPostsSizeRef = useRef(0);
+    const communityPostsSizeRef = useRef(0);
 
-const FeedParticipants = ({ user, t }) => {
-    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(user?.id);
+    const [currentPosts, setCurrentPosts] = useState([]);
+    const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
-    const [removeUserPost] = useRemoveUserPostAsyncMutation();
+    const { posts, communityPosts, newPosts, newCommunityPosts, count, communityCount, isLoading, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchUsersPosts(userId, false);
 
-    const { allPosts, newPosts, insertNewPostsAsync } = useFetchFriendsPosts(user?.id, myFriends);
-
-    const removeUserPostAsync = async (postId) => {
-        const userPost = await getUserPostByPostId(postId);
-        if (userPost.data === undefined || userPost.data.length === 0) {
+    useEffect(() => {
+        if (!posts || posts.length === 0) {
             return;
         }
 
-        const userPostData = userPost.data[0];
-        const result = await removeUserPost(userPostData.id);
-        if (result.error !== undefined) {
+        userPostsSizeRef.current = posts.length;
+
+        const totalPosts = [...currentPosts, ...posts];
+        totalPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        setCurrentPosts(totalPosts);
+    }, [posts]);
+
+    useEffect(() => {
+        if (!communityPosts || communityPosts.length === 0) {
             return;
         }
 
-        const getRemovedPost = allPosts.filter(post => post.id === userPostData.postId);
-        if (getRemovedPost.length > 0) {
-            const indexOf = allPosts.indexOf(getRemovedPost[0]);
-            allPosts.splice(indexOf, 1);
+        communityPostsSizeRef.current = communityPosts.length;
+
+        const totalPosts = [...currentPosts, ...communityPosts];
+        totalPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        setCurrentPosts(totalPosts);
+    }, [communityPosts]);
+
+    useEffect(() => {
+        if (!newPosts || newPosts.length === 0) {
+            return;
         }
+
+        setHaveNewPosts(newPosts.length > 0);
+    }, [newPosts]);
+
+    useEffect(() => {
+        if (!newCommunityPosts || newCommunityPosts.length === 0) {
+            return;
+        }
+
+        setHaveNewPosts(newCommunityPosts.length > 0);
+    }, [newCommunityPosts]);
+
+    const loadingMoreUserPostsAsync = async () => {
+        const newUserPosts = await getMoreUserPostsAsync(userPostsSizeRef.current);
+        const newCommunityPosts = await getMoreCommunityPostsAsync(communityPostsSizeRef.current);
+
+        const newPosts = newUserPosts.concat(newCommunityPosts);
+
+        const totalPosts = [...currentPosts, ...newPosts];
+        totalPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        setCurrentPosts(totalPosts);
     }
 
-    const insertNewPostsHandleAsync = async () => {
-        window.scroll(0, 0);
-        await insertNewPostsAsync();
+    const loadingNewUserPostsAsync = async () => {
+        currentDateRef.current = (new Date()).toISOString();
+
+        newPosts?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
+
+        newCommunityPosts?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setCurrentPosts(prevPosts => [...newCommunityPosts, ...prevPosts]);
+
+        setHaveNewPosts(false);
     }
 
     if (isLoading) {
@@ -47,25 +85,35 @@ const FeedParticipants = ({ user, t }) => {
     }
 
     return (
-        <div>
-            {newPosts.length > 0 &&
-                <div onClick={async () => await insertNewPostsHandleAsync()} className="new-posts">
+        <>
+            {haveNewPosts &&
+                <div onClick={loadingNewUserPostsAsync} className="new-posts">
                     <div className="new-posts__content">{t("NewPosts")}</div>
                 </div>
             }
             <ul className="posts">
-                {allPosts?.map(post => (
-                    <li key={post.id}>
-                        <Post
-                            user={user}
-                            data={post}
-                            deletePostAsync={async () => await removeUserPostAsync(post.id)}
-                            canBeRemoveFromUserFeed={post.postType === postType["user"]}
-                        />
+                {currentPosts?.map(post => (
+                    <li key={uuidv4()}>
+                        {post.communityId
+                            ? <CommunityPost
+                                userId={userId}
+                                postId={post.id}
+                                communityId={post.communityId}
+                            />
+                            : <UserPost
+                                userId={userId}
+                                postId={post.id}
+                            />
+                        }
                     </li>
                 ))}
+                {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
+                    <li className="load-more" onClick={loadingMoreUserPostsAsync}>
+                        <div className="load-more__content">{t("LoadMore")}</div>
+                    </li>
+                }
             </ul>
-        </div>
+        </>
     );
 }
 

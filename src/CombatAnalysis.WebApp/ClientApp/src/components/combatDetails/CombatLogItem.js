@@ -5,10 +5,10 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useLazyFindGroupChatUserByUserIdQuery } from '../../store/api/communication/chats/GroupChatUser.api';
-import { useLazyGetByUserIdAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
+import { useLazyFindGroupChatUserByUserIdQuery } from '../../store/api/chat/GroupChatUser.api';
+import { useLazyGetByUserIdAsyncQuery } from '../../store/api/chat/PersonalChat.api';
 import CombatLogItemDiscussion from './CombatLogItemDiscussion';
-import GroupChatList from './GroupChatList';
+import CombatLogGroupChatList from './CombatLogGroupChatList';
 import PersonalChatList from './PersonalChatList';
 
 const CombatLogItem = ({ log, isAuth }) => {
@@ -48,16 +48,18 @@ const CombatLogItem = ({ log, isAuth }) => {
         <div className="card">
             <ul className="list-group list-group-flush">
                 <li className="list-group-item title">
-                    {log.combatsInQueue > 0 &&
-                        <>
-                            <FontAwesomeIcon
-                                icon={faSpinner}
-                                title={t("Uploading")}
-                            />
-                            <div>{log.numberReadyCombats} / {log.combatsInQueue}</div>
-                        </>
-                    }
-                    <div>{log.name}</div>
+                    <div className="title__main">
+                        {log.combatsInQueue > 0 &&
+                            <>
+                                <FontAwesomeIcon
+                                    icon={faSpinner}
+                                    title={t("Uploading")}
+                                />
+                                <div>{log.numberReadyCombats} / {log.combatsInQueue}</div>
+                            </>
+                        }
+                        <div>{log.name}</div>
+                    </div>
                     <div className="actions">
                         {!isAuth &&
                             <FontAwesomeIcon
@@ -114,9 +116,9 @@ const CombatLogItem = ({ log, isAuth }) => {
                             <ul>
                                 {groupChatsUser?.map((item) => (
                                         <li key={item.id} className="chat-list__group-chats">
-                                            <GroupChatList
+                                            <CombatLogGroupChatList
                                                 log={log}
-                                                groupChatId={item.groupChatId}
+                                                chatId={item.chatId}
                                             />
                                         </li>
                                     ))

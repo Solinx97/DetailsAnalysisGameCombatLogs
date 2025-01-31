@@ -1,16 +1,16 @@
-﻿namespace CombatAnalysis.Core.Models;
+﻿using CombatAnalysis.Core.Interfaces.Entities;
 
-public class HealDoneGeneralModel
+namespace CombatAnalysis.Core.Models;
+
+public class HealDoneGeneralModel : IDetailsEntity
 {
     public int Id { get; set; }
+
+    public string Spell { get; set; }
 
     public int Value { get; set; }
 
     public double HealPerSecond { get; set; }
-
-    public string SpellOrItem { get; set; }
-
-    public string DamageAbsorbed { get; set; }
 
     public int CritNumber { get; set; }
 

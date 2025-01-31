@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParserAPI.Models;
 
 namespace CombatAnalysis.CombatParserAPI.Interfaces;
 
 public interface IPlayerParseInfoHelper
 {
-    Task UploadPlayerParseInfoAsync(CombatDto combat, CombatPlayerDto combatPlayer, List<DamageDoneGeneral> damageDoneGeneralList, List<HealDoneGeneral> healDoneGeneralList);
+    Task UploadPlayerParseInfoAsync(Combat combat, CombatPlayerModel combatPlayer, List<DamageDoneGeneral> damageDoneGeneralList, List<HealDoneGeneral> healDoneGeneralList);
 }

@@ -70,6 +70,24 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Anonymous.
+        /// </summary>
+        public static string Anonymous {
+            get {
+                return ResourceManager.GetString("Anonymous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Combat.
         /// </summary>
         public static string Combat {
@@ -133,6 +151,24 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Personal logs.
+        /// </summary>
+        public static string PersonalLogs {
+            get {
+                return ResourceManager.GetString("PersonalLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For watching a &apos;Personal logs&apos; you should be Login.
+        /// </summary>
+        public static string PersonalLogsLoginRequired {
+            get {
+                return ResourceManager.GetString("PersonalLogsLoginRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prepare pets.
         /// </summary>
         public static string PreparePets {
@@ -147,24 +183,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string Private {
             get {
                 return ResourceManager.GetString("Private", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Private logs.
-        /// </summary>
-        public static string PrivateLogs {
-            get {
-                return ResourceManager.GetString("PrivateLogs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to For watching a &apos;Private logs&apos; you need to login.
-        /// </summary>
-        public static string PrivateLogsLoginRequired {
-            get {
-                return ResourceManager.GetString("PrivateLogsLoginRequired", resourceCulture);
             }
         }
         
@@ -250,7 +268,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save data.
+        ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string SaveData {
             get {
@@ -277,6 +295,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show logs.
+        /// </summary>
+        public static string ShowLogs {
+            get {
+                return ResourceManager.GetString("ShowLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time.
         /// </summary>
         public static string Time {
@@ -295,20 +322,20 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To Save logs you should be Login.
+        /// </summary>
+        public static string ToSaveYouShouldBeLogin {
+            get {
+                return ResourceManager.GetString("ToSaveYouShouldBeLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type of logs.
         /// </summary>
         public static string TypeOfLogs {
             get {
                 return ResourceManager.GetString("TypeOfLogs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to To select a type of logs you need to login.
-        /// </summary>
-        public static string TypeOfLogsLoginRequired {
-            get {
-                return ResourceManager.GetString("TypeOfLogsLoginRequired", resourceCulture);
             }
         }
         
@@ -327,15 +354,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string UploadFile {
             get {
                 return ResourceManager.GetString("UploadFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Without user data.
-        /// </summary>
-        public static string WithoutUser {
-            get {
-                return ResourceManager.GetString("WithoutUser", resourceCulture);
             }
         }
     }

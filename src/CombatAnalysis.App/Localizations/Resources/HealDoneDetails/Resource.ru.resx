@@ -117,35 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageValue" xml:space="preserve">
-    <value>Сред. значение</value>
+  <data name="Average" xml:space="preserve">
+    <value>Среднее</value>
   </data>
   <data name="Common" xml:space="preserve">
     <value>Общий</value>
   </data>
-  <data name="CountOfSkills" xml:space="preserve">
-    <value>Примен. закл.</value>
+  <data name="Count" xml:space="preserve">
+    <value>Кол-во</value>
   </data>
-  <data name="CritHealing" xml:space="preserve">
-    <value>Крит. исцеление</value>
+  <data name="Crit" xml:space="preserve">
+    <value>Крит</value>
   </data>
   <data name="DamageAbsorbed" xml:space="preserve">
     <value>Погл. урон</value>
   </data>
-  <data name="Healing" xml:space="preserve">
-    <value>Исцеление</value>
+  <data name="First" xml:space="preserve">
+    <value>Первая</value>
   </data>
-  <data name="HealingPerSec" xml:space="preserve">
-    <value>Исцеление в сек.</value>
+  <data name="HPS" xml:space="preserve">
+    <value>ИВС</value>
   </data>
-  <data name="MaxValue" xml:space="preserve">
-    <value>Макс. значение</value>
+  <data name="Last" xml:space="preserve">
+    <value>Последняя</value>
   </data>
-  <data name="MinValue" xml:space="preserve">
-    <value>Мин. значение</value>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
   </data>
-  <data name="MoreDetails" xml:space="preserve">
-    <value>Подробнее</value>
+  <data name="Min" xml:space="preserve">
+    <value>Мин</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Сл.</value>
   </data>
   <data name="OverHealing" xml:space="preserve">
     <value>Оверхил</value>
@@ -153,17 +156,17 @@
   <data name="Player" xml:space="preserve">
     <value>Игрок</value>
   </data>
-  <data name="ShowCrit" xml:space="preserve">
-    <value>Показать крит. исцеление</value>
+  <data name="Prev" xml:space="preserve">
+    <value>Пред.</value>
   </data>
-  <data name="ShowFilters" xml:space="preserve">
-    <value>Показать фильтры</value>
+  <data name="Filters" xml:space="preserve">
+    <value>Фильтры</value>
   </data>
   <data name="ShowOverHealing" xml:space="preserve">
     <value>Показать оверхил</value>
   </data>
-  <data name="Source" xml:space="preserve">
-    <value>Источник</value>
+  <data name="Spell" xml:space="preserve">
+    <value>Заклинание</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Статус</value>
@@ -178,9 +181,15 @@
     <value>Анализ исцеления</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Всего: </value>
+    <value>Всего</value>
   </data>
   <data name="TypeOf" xml:space="preserve">
     <value>Тип</value>
+  </data>
+  <data name="MoreDetails" xml:space="preserve">
+    <value>Подробнее</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
   </data>
 </root>

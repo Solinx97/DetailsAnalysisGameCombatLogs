@@ -1,11 +1,8 @@
 import { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyGetUsersQuery } from '../store/api/UserApi';
+import { useLazyGetUsersQuery } from '../store/api/core/User.api';
 import PeopleItem from './communication/people/PeopleItem';
 
-const Search = ({ me }) => {
-    const { t } = useTranslation("translate");
-
+const Search = ({ me, t }) => {
     const [loadingPeople] = useLazyGetUsersQuery();
     const [people, setPeople] = useState([]);
     const [filteredPeople, setFilteredPeople] = useState([]);
@@ -41,18 +38,19 @@ const Search = ({ me }) => {
 
     return (
         <div className="search">
-            <input type="text" className="form-control" placeholder={t("Search")} id="inputUsername" autoComplete="off" ref={searchText}
-                onChange={searchTextHandle}
-                onClick={async () => await loadingPeopleAsync()}
-            />
+            <div className="search__container">
+                <input type="text" className="form-control" placeholder={t("UsersSearch")} id="inputUsername" autoComplete="off" ref={searchText}
+                    onChange={searchTextHandle}
+                    onClick={async () => await loadingPeopleAsync()}
+                />
+            </div>
             <div className={`search__content${showSearch ? "_active" : ""}`}>
-                <div>{t("People")}</div>
+                <div>{t("Users")}</div>
                 <div className="container">
                     {filteredPeople.length === 0
                         ? <div className="empty">{t("Empty")}</div>
                         : <ul className="people__cards">
-                            {
-                                filteredPeople?.map((user) => (
+                            {filteredPeople?.map((user) => (
                                     <li key={user.id}>
                                         <PeopleItem
                                             me={me}

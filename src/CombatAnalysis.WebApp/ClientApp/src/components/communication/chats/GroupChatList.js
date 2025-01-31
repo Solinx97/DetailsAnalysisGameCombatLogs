@@ -1,34 +1,65 @@
 ﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
+import { useChatHub } from '../../../context/ChatHubProvider';
+import { useFindGroupChatUserByUserIdQuery } from '../../../store/api/chat/GroupChatUser.api';
 import GroupChatListItem from './GroupChatListItem';
 
-const GroupChatList = ({ t, groupChatUsers, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
+const GroupChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat }) => {
+    const { data, isLoading } = useFindGroupChatUserByUserIdQuery(meId);
+
+    const { connectToGroupChatUnreadMessagesAsync, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupChat } = useChatHub();
+
+    const [meInGroupChats, setMeInGroupChats] = useState([]);
+
+    useEffect(() => {
+        if (!data) {
+            return;
+        }
+
+        setMeInGroupChats(data);
+
+        const connectToPersonalChatUnreadMessages = async () => {
+            await connectToGroupChatUnreadMessagesAsync(data);
+
+            subscribeToGroupChat((groupChatUser) => {
+                setMeInGroupChats(prev => [...prev, groupChatUser]);
+            });
+        }
+
+        connectToPersonalChatUnreadMessages();
+    }, [data]);
+
+    if (isLoading) {
+        return (<></>);
+    }
+
     return (
         <div className="chat-list">
             <div className="chats__my-chats_title">
                 <div>{t("GroupChats")}</div>
-                {chatsHidden
-                    ? <FontAwesomeIcon
-                        icon={faArrowDown}
-                        title={t("ShowChats")}
-                        onClick={toggleChatsHidden}
-                    />
-                    : <FontAwesomeIcon
-                        icon={faArrowUp}
-                        title={t("HideChats")}
-                        onClick={toggleChatsHidden}
-                    />
-                }
+                <div className="not-found">
+                    <span onClick={() => setShowCreateGroupChat(true)}>{t("Create")}</span>
+                </div>
+                <FontAwesomeIcon
+                    icon={chatsHidden ? faArrowDown : faArrowUp}
+                    title={chatsHidden ? t("ShowChats") : t("HideChats")}
+                    onClick={toggleChatsHidden}
+                />
             </div>
             <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
-                {groupChatUsers?.length === 0
-                    ? <div className="group-chats__not-found">{t("GroupChatsEmptyYet")}</div>
-                    : groupChatUsers?.map((groupChatUser) => (
-                        <li key={groupChatUser.id} className={selectedChat.type === "group" && selectedChat.chat?.id === groupChatUser?.groupChatId ? `selected` : ``}>
+                {meInGroupChats.length === 0
+                    ? <div className="group-chats not-found">
+                        <div>{t("GroupChatsEmptyYet")}</div>
+                        <span onClick={() => setShowCreateGroupChat(true)}>{t("Create")}</span>
+                    </div>
+                    : meInGroupChats.map((meInChat) => (
+                        <li key={meInChat.id} className={selectedChat.type === "group" && selectedChat.chat?.id === meInGroupChats?.chatId ? `selected` : ``}>
                             <GroupChatListItem
-                                chatId={groupChatUser.groupChatId}
+                                chatId={meInChat.chatId}
                                 setSelectedGroupChat={setSelectedChat}
-                                groupChatUserId={groupChatUser.id}
+                                meInChatId={meInChat.id}
+                                subscribeToUnreadGroupMessagesUpdated={subscribeToUnreadGroupMessagesUpdated}
                             />
                         </li>
                     ))

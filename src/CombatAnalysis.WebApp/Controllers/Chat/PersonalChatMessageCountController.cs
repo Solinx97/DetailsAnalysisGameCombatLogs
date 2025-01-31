@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class PersonalChatMessageCountController : ControllerBase
@@ -18,17 +16,13 @@ public class PersonalChatMessageCountController : ControllerBase
     public PersonalChatMessageCountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.APIUrl = Cluster.Chat;
     }
 
     [HttpGet("find")]
     public async Task<IActionResult> Find(int chatId, string userId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessageCount", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("PersonalChatMessageCount");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -39,7 +33,7 @@ public class PersonalChatMessageCountController : ControllerBase
         }
 
         var personalChatMessagesCount = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageCountModel>>();
-        var myPersonalChatMessagesCount = personalChatMessagesCount.Where(x => x.PersonalChatId == chatId && x.AppUserId == userId).FirstOrDefault();
+        var myPersonalChatMessagesCount = personalChatMessagesCount?.Where(x => x.ChatId == chatId && x.AppUserId == userId).FirstOrDefault();
 
         return Ok(myPersonalChatMessagesCount);
     }
@@ -47,12 +41,7 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(PersonalChatMessageCountModel message)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.PostAsync("PersonalChatMessageCount", JsonContent.Create(message), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("PersonalChatMessageCount", JsonContent.Create(message));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -69,12 +58,7 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatMessageCountModel message)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(message), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(message));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -90,12 +74,7 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessageCount/{id}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessageCount/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

@@ -1,12 +1,14 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class DamageDoneGeneral : DetailsBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class DamageDoneGeneral : ICombatPlayerEntity
 {
     public int Value { get; set; }
 
     public double DamagePerSecond { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
     public int CritNumber { get; set; }
 
@@ -21,4 +23,6 @@ public class DamageDoneGeneral : DetailsBase
     public double AverageValue { get; set; }
 
     public bool IsPet { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

@@ -1,66 +1,49 @@
 ﻿using CombatAnalysis.WebApp.Interfaces;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 
 namespace CombatAnalysis.WebApp.Helpers;
 
 internal class HttpClientHelper : IHttpClientHelper
 {
+    private const string _baseAddressApi = "api/v1/";
+
+    private readonly HttpClient _client;
+
     public HttpClientHelper()
     {
-        var handler = new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
-            {
-                if (policyErrors == SslPolicyErrors.None)
-                {
-                    return true; // If there's no error, proceed.
-                }
-
-                var caCert = new X509Certificate2("/etc/ssl/certs/ca-cert/ca.crt");
-                var chain = new X509Chain();
-                chain.ChainPolicy.ExtraStore.Add(caCert);
-                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-
-                return chain.Build(cert); // Validate the certificate against the CA.
-            }
-        };
-
-        Client = new HttpClient(handler);
-        BaseAddressApi = "api/v1/";
+        _client = new HttpClient();
     }
 
-    public string BaseAddressApi { get; }
+    public string APIUrl { get; set; } = string.Empty;
 
-    public HttpClient Client { get; set; }
-
-    public string BaseAddress { get; set; }
+    public void AddAuthorizationHeader(string scheme, string parameter)
+    {
+        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(scheme, parameter);
+    }
 
     public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content)
     {
-        var result = await Client.PostAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content);
+        var result = await _client.PostAsync($"{APIUrl}{_baseAddressApi}{requestUri}", content);
 
         return result;
     }
 
     public async Task<HttpResponseMessage> GetAsync(string requestUri)
     {
-        var result = await Client.GetAsync($"{BaseAddress}{BaseAddressApi}{requestUri}");
+        var result = await _client.GetAsync($"{APIUrl}{_baseAddressApi}{requestUri}");
 
         return result;
     }
 
     public async Task<HttpResponseMessage> PutAsync(string requestUri, JsonContent content)
     {
-        var result = await Client.PutAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content);
+        var result = await _client.PutAsync($"{APIUrl}{_baseAddressApi}{requestUri}", content);
 
         return result;
     }
 
     public async Task<HttpResponseMessage> DeletAsync(string requestUri)
     {
-        var result = await Client.DeleteAsync($"{BaseAddress}{BaseAddressApi}{requestUri}");
+        var result = await _client.DeleteAsync($"{APIUrl}{_baseAddressApi}{requestUri}");
 
         return result;
     }

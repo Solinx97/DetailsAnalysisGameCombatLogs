@@ -7,10 +7,11 @@ public class ChatSQLContext : DbContext
 {
     public ChatSQLContext(DbContextOptions<ChatSQLContext> options) : base(options)
     {
-        Database.EnsureCreated();
     }
 
     #region Chat
+
+    public DbSet<VoiceChat>? VoiceChat { get; }
 
     public DbSet<PersonalChat>? PersonalChat { get; }
 

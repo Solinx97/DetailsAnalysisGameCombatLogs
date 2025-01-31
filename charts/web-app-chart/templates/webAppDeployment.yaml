@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.webApp.name }}-deployment
+  labels:
+    app: {{ .Release.Name }}
+    env: {{ .Values.env }}
+    owner: OlegFedosov
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.webApp.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.webApp.name }}
+    spec:
+      containers:
+        - name: {{ .Values.webApp.container.name }}
+          image: {{ .Values.webApp.container.image }}:{{ .Values.imageTags.webApp.webApp }}
+          ports:
+            - containerPort: {{ .Values.webApp.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: Cluster_CombatParser
+             value: "http://api-combat-parser-service.api.svc.cluster.local/"
+           - name: Cluster_User
+             value: "http://api-user-service.api.svc.cluster.local/"
+           - name: Cluster_Chat
+             value: "http://api-chat-service.api.svc.cluster.local/"
+           - name: Cluster_Communication
+             value: "http://api-communication-service.api.svc.cluster.local/"
+           - name: Cluster_Identity
+             value: "http://identity-service.identity.svc.cluster.local/"
+           - name: Servers_Identity
+             value: "https://identity.analysis.com/"
+           - name: Authentication_CookieDomain
+             value: ".analysis.com"
+           - name: Authentication_RedirectUri
+             value: "encounters.analysis.com/callback"
+           - name: Authentication_IdentityAuthPath
+             value: "authorization"
+           - name: Authentication_IdentityRegistryPath
+             value: "registration"
+           - name: Authentication_CodeChallengeMethod
+             value: "SHA-256"
+           - name: Authentication_RefreshTokenExpiresDays
+             value: "7"
+           - name: Authentication_GrantType_Code
+             value: "code"
+           - name: Authentication_GrantType_Authorization
+             value: "authorizationCode"
+           - name: Authentication_GrantType_RefreshToken
+             value: "refreshToken"
+           - name: Authentication_Client_ClientId
+             valueFrom:
+               secretKeyRef:
+                name: web-client
+                key: webClientId
+           - name: Authentication_Client_Scope
+             valueFrom:
+               secretKeyRef:
+                name: web-client
+                key: scope

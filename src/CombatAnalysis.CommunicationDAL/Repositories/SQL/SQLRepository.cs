@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CommunicationDAL.Repositories.SQL;
 
-public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+internal class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {
-    private readonly SQLContext _context;
+    private readonly CommunicationSQLContext _context;
 
-    public SQLRepository(SQLContext context)
+    public SQLRepository(CommunicationSQLContext context)
     {
         _context = context;
     }

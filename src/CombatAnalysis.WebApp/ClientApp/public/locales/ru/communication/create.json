@@ -1,5 +1,5 @@
 {
-  "CreateNewGroupChat": "Создать новый групповой чат",
+  "CreateGroupChat": "Создать групповой чат",
   "Name": "Название",
   "MembersNumber": "Количство участником",
   "ChatPolicy": "Политика чата",
@@ -8,6 +8,7 @@
   "TypeOfCommunity": "Тип сообщества",
   "PrivateWithLink": "Закрытый (с ссылкой)",
   "Create": "Создать",
+  "Creating": "Создание...",
   "Close": "Закрыть",
   "Back": "Назад",
   "Next": "Дальше",
@@ -15,11 +16,11 @@
   "Rules": "Правила",
   "InvitePeople": "Добавить пользователей",
   "Cancel": "Отмена",
-  "InviteAnotherPeople": "Кто может приглашать других пользователей?",
+  "InviteOtherPeople": "Кто может приглашать других пользователей?",
   "RemoveAnotherPeople": "Кто может исключать пользователей?",
   "PinMessage": "Кто может закреплять сообщения?",
   "Announcements": "Кто может делать анонсы?",
-  "Anyone": "Любой",
+  "Anyone": "Любой участник",
   "Owner": "Владелец чата",
   "Main": "Общее",
   "Members": "Участники",
@@ -27,5 +28,8 @@
   "Update": "Обновить",
   "Apply": "Применить",
   "NextStep": "Следующий шаг",
-  "PrevioslyStep": "Предыдущий шаг"
+  "PrevioslyStep": "Предыдущий шаг",
+  "CreateCommunity": "Создать сообщество",
+  "NameRequired": "Название обязательно",
+  "DescriptionRequired": "Описание обязательно"
 }

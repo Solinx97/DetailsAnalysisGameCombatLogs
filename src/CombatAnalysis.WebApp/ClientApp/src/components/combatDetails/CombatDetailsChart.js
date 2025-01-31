@@ -18,8 +18,8 @@ const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender
     const [getTimeWithoutMs, , getDuration] = useTime();
 
     useEffect(() => {
-        createChartData(detailsData, detailsData[0].time);
-    }, [])
+        createChartData(detailsData, detailsData[0]?.time);
+    }, []);
 
     const compare = (a, b) => {
         if (a.time < b.time) {

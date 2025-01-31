@@ -8,5 +8,6 @@
   "TypeCommunityName": "Название сообщества",
   "ShowSearchCommunity": "Показать поиск сообществ",
   "HideSearchCommunity": "Скрыть поиск сообществ",
-  "CreateNew": "Создать новое"
+  "CreateNew": "Создать новое",
+  "VerificationCreateCommunity": "Для создания Сообщества, необходимо подвердить email в Профиле"
 }

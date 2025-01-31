@@ -5,12 +5,13 @@ using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
-internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
+
+internal class GroupChatMessageService : IChatMessageService<GroupChatMessageDto, int>
 {
-    private readonly IGenericRepository<GroupChatMessage, int> _repository;
+    private readonly IChatMessageRepository<GroupChatMessage, int> _repository;
     private readonly IMapper _mapper;
 
-    public GroupChatMessageService(IGenericRepository<GroupChatMessage, int> repository, IMapper mapper)
+    public GroupChatMessageService(IChatMessageRepository<GroupChatMessage, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -57,6 +58,29 @@ internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
         return resultMap;
     }
 
+    public async Task<IEnumerable<GroupChatMessageDto>> GetByChatIdAsync(int chatId, int pageSize = 100)
+    {
+        var result = await _repository.GetByChatIdAsyn(chatId, pageSize);
+        var map = _mapper.Map<IEnumerable<GroupChatMessageDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<GroupChatMessageDto>> GetMoreByChatIdAsync(int chatId, int offset = 0, int pageSize = 100)
+    {
+        var result = await _repository.GetMoreByChatIdAsyn(chatId, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<GroupChatMessageDto>>(result);
+
+        return map;
+    }
+
+    public async Task<int> CountByChatIdAsync(int chatId)
+    {
+        var count = await _repository.CountByChatIdAsync(chatId);
+
+        return count;
+    }
+
     public Task<int> UpdateAsync(GroupChatMessageDto item)
     {
         if (item == null)
@@ -71,8 +95,13 @@ internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(GroupChatMessageDto), 
+            throw new ArgumentNullException(nameof(GroupChatMessageDto),
                 $"The property {nameof(GroupChatMessageDto.Message)} of the {nameof(GroupChatMessageDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(GroupChatMessageDto),
+                $"The property {nameof(GroupChatMessageDto.Username)} of the {nameof(GroupChatMessageDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<GroupChatMessage>(item);
@@ -86,8 +115,13 @@ internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(GroupChatMessageDto), 
+            throw new ArgumentNullException(nameof(GroupChatMessageDto),
                 $"The property {nameof(GroupChatMessageDto.Message)} of the {nameof(GroupChatMessageDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(GroupChatMessageDto),
+                $"The property {nameof(GroupChatMessageDto.Username)} of the {nameof(GroupChatMessageDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<GroupChatMessage>(item);

@@ -1,28 +1,33 @@
 ﻿using CombatAnalysis.WebApp.Enums;
+using CombatAnalysis.WebApp.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CombatAnalysis.WebApp.Attributes;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class RequireAccessTokenAttribute : Attribute, IAsyncActionFilter
+internal class RequireAccessTokenAttribute(IHttpClientHelper httpClientHelper) : ActionFilterAttribute
 {
-    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    private readonly IHttpClientHelper _httpClientHelper = httpClientHelper;
+
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var _) 
-            && !context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var _))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.RefreshToken), out var _))
         {
             context.Result = new UnauthorizedResult();
 
             return;
         }
 
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var _)
-            && context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var _))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
         {
+            context.Result = new UnauthorizedResult();
+
             return;
         }
 
-        await next();
+        _httpClientHelper.AddAuthorizationHeader("Bearer", accessToken);
+
+        base.OnActionExecuting(context);
     }
 }

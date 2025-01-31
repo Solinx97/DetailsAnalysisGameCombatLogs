@@ -20,8 +20,6 @@ public class Combat
 
     public int DamageTaken { get; set; }
 
-    public int DeathNumber { get; set; }
-
     public bool IsWin { get; set; }
 
     public DateTimeOffset StartDate { get; set; }
@@ -31,8 +29,6 @@ public class Combat
     public List<CombatPlayer> Players { get; set; }
 
     public Dictionary<string, List<string>> PetsId { get; set; }
-
-    public List<PlayerDeath> DeathInfo { get; set; }
 
     public string Duration
     {

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.UserBL.DTO;
 using CombatAnalysis.UserApi.Models;
 
 namespace CombatAnalysis.UserApi.Mapping;
 
-public class UserApiMapper : Profile
+internal class UserApiMapper : Profile
 {
     public UserApiMapper()
     {

@@ -1,11 +1,12 @@
-import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import { useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
 import Loading from '../../Loading';
+import VerificationRestriction from '../../common/VerificationRestriction';
+import CreateCommunity from '../create/CreateCommunity';
 import InvitesToCommunity from './InvitesToCommunity';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
@@ -15,19 +16,17 @@ const MyCommunities = () => {
     const { t } = useTranslation("communication/myEnvironment/myCommunities");
 
     const me = useSelector((state) => state.user.value);
+    const userPrivacy = useSelector((state) => state.userPrivacy.value);
 
-    const navigate = useNavigate();
-
+    const [showCreateCommunity, setShowCreateCommunity] = useState(false);
     const [showMyCommunities, setShowMyCommunities] = useState(true);
     const [filterContent, setFilterContent] = useState("");
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
     const [skipFetching, setSkipFetching] = useState(true);
 
-    const { data: myCommunities, isLoading } = useSearchByUserIdAsyncQuery(me?.id, {
+    const { data: myCommunities, isLoading } = useCommunityUserSearchByUserIdQuery(me?.id, {
         skip: skipFetching
     });
-
-    const navigateToCreateCommunity = () => navigate("/communities/create");
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
@@ -37,7 +36,7 @@ const MyCommunities = () => {
         me !== null ? setSkipFetching(false) : setSkipFetching(true);
     }, [me]);
 
-    if (isLoading) {
+    if (isLoading || !userPrivacy) {
         return (<Loading />);
     }
 
@@ -46,6 +45,11 @@ const MyCommunities = () => {
             <InvitesToCommunity
                 user={me}
             />
+            {showCreateCommunity &&
+                <CreateCommunity
+                    setShowCreateCommunity={setShowCreateCommunity}
+                />
+            }
             <div className="communities__list">
                 <div className="title">
                     <div className="content">
@@ -62,19 +66,23 @@ const MyCommunities = () => {
                             />
                         }
                         <div>{t("MyCommunitites")}</div>
-                        <div className="create-new-community" onClick={navigateToCreateCommunity}>{t("CreateNew")}</div>
-                        {showMyCommunities
-                            ? <FontAwesomeIcon
-                                icon={faEye}
-                                title={t("Hide")}
-                                onClick={() => setShowMyCommunities(false)}
-                            />
-                            : <FontAwesomeIcon
-                                icon={faEyeSlash}
-                                title={t("Show")}
-                                onClick={() => setShowMyCommunities(true)}
+                        {userPrivacy.emailVerified 
+                            ? <div className="btn-shadow create-new-community" onClick={() => setShowCreateCommunity(true)}>
+                                <FontAwesomeIcon
+                                    icon={faPlus}
+                                />
+                                <div>{t("CreateNew")}</div>
+                            </div>
+                            : <VerificationRestriction
+                                contentText={t("CreateNew")}
+                                infoText={t("VerificationCreateCommunity")}
                             />
                         }
+                        <FontAwesomeIcon
+                            icon={showMyCommunities ? faEye : faEyeSlash}
+                            title={showMyCommunities ? t("Hide") : t("Show")}
+                            onClick={() => setShowMyCommunities(prev => !prev)}
+                        />
                     </div>
                 </div>
                 {showMyCommunities &&

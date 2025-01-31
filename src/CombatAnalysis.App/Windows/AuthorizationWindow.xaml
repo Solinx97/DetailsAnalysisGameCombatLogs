@@ -1,0 +1,63 @@
+﻿<views:MvxWindow x:Class="CombatAnalysis.App.Windows.AuthorizationWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
+                 xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+                 xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.AuthUser"
+                 xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
+                 xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+                 loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
+                 mc:Ignorable="d"
+                 Title="Authorization" Height="Auto" Width="450"
+                 ResizeMode="CanResizeWithGrip" Background="#283a4b" 
+                 AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.Resources>
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
+        </Grid.Resources>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border CornerRadius="25 25 25 25" BorderThickness="3" Grid.RowSpan="2" Background="#283a4b">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
+
+        <StackPanel Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Visibility="{Binding CheckAuthIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
+                       Text="{loc:Loc Authorization}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+            <StackPanel Visibility="{Binding CheckAuthIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                <StackPanel Visibility="{Binding AuthorizationIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                    <TextBlock Visibility="{Binding Basic.IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"
+                        Text="{loc:Loc AuthorizationFailed}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                    <Button Grid.Row="1" Style="{StaticResource showButton}" Foreground="Green" Content="{loc:Loc Login}" Width="100" FontSize="12"
+                         mvx:Bi.nd="Command LoginCommand" />
+                </StackPanel>
+                <StackPanel Visibility="{Binding IsVerification, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                    <TextBlock Visibility="{Binding AuthorizationIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
+                       Text="{loc:Loc ContinueAuthInBrowser}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                </StackPanel>
+                <TextBlock Visibility="{Binding IsVerification, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
+                       Text="{loc:Loc Verification}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+            </StackPanel>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+            <Button Grid.Row="1" Style="{StaticResource showButton}" Content="{loc:Loc Cancel}" Width="100" FontSize="12"
+                Margin="10,10" Click="CloseWindowHandler" />
+        </StackPanel>
+    </Grid>
+</views:MvxWindow>

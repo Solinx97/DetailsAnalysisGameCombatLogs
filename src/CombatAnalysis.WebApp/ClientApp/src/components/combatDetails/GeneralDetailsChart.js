@@ -46,8 +46,8 @@ const GeneralDetailsChart = ({ combatPlayers }) => {
         const damageDone = new Array(combatPlayers.length);
 
         for (let i = 0; i < combatPlayers.length; i++) {
-            const realmNameIndex = combatPlayers[i].userName.indexOf('-');
-            const username = combatPlayers[i].userName.substr(0, realmNameIndex);
+            const realmNameIndex = combatPlayers[i].username.indexOf('-');
+            const username = combatPlayers[i].username.substr(0, realmNameIndex);
 
             damageDone[i] = {};
             damageDone[i].name = username

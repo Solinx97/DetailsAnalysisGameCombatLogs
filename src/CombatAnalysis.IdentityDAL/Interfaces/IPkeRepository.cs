@@ -9,4 +9,6 @@ public interface IPkeRepository
     Task<AuthorizationCodeChallenge> GetByIdAsync(string id);
 
     Task<int> MarkCodeAsUsedAsync(AuthorizationCodeChallenge code);
+
+    Task RemoveExpiredCodesAsync();
 }

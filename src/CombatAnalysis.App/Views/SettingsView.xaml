@@ -7,7 +7,8 @@
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Settings"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:basicViewModel="clr-namespace:CombatAnalysis.Core.ViewModels.ViewModelTemplates;assembly=CombatAnalysis.Core"
+    xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
@@ -23,42 +24,54 @@
             <ColumnDefinition Width="55"/>
             <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <ContentControl Grid.ColumnSpan="3" Grid.RowSpan="4" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.ColumnSpan="4" Grid.RowSpan="4" Content="{Binding Basic}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
+                <DataTemplate DataType="{x:Type basicViewModel:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
 
-        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
-                       Width="350" TextAlignment="Center" Style="{StaticResource titleText}" Margin="25 0" Foreground="White" />
+        <Border CornerRadius="25 25 25 0" BorderThickness="3 3 3 3" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"
+                Margin="-3 5 5 0" Background="#283a4b">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
         
-        <Grid Grid.Row="2" Grid.Column="2" Margin="10">
+        <Grid Grid.Row="2" Grid.Column="2" Margin="15 0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="0" Grid.Column="0" Margin="50 0">
-                <TextBlock Text="{loc:Loc Language}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
+            <TextBlock Grid.Row="0" Text="{loc:Loc Title}" TextAlignment="Center" Style="{StaticResource titleText}" Foreground="White" />
+
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="{loc:Loc Language}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 10" Foreground="White" />
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Languages}" HorizontalAlignment="Left" VerticalAlignment="Center"
-                          Margin="10 0" SelectedItem="{Binding SelectedLanguage}"/>
+                          Margin="20 0" SelectedItem="{Binding SelectedLanguage}"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Grid.Column="0" Margin="50 0">
-                <TextBlock Text="{loc:Loc LogsLocation}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
-                <TextBlock Text="{Binding LogsLocation}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
-                <Button Content="{loc:Loc ChangeLocationPath}" Click="SelectLocation" Width="125" FontSize="16" HorizontalAlignment="Left"
-                    Margin="15 0" Style="{StaticResource showButton}" />
+            <StackPanel Grid.Row="2">
+                <TextBlock Text="{loc:Loc LogsLocation}" FontSize="16" HorizontalAlignment="Left" Foreground="White" />
+                <TextBlock Text="{Binding LogsLocation}" FontSize="16" HorizontalAlignment="Left" Margin="20 10" Foreground="Gray" />
+                <Button Style="{StaticResource showButton}" Content="{loc:Loc ChangeLocationPath}" Click="SelectLocation" Width="110" FontSize="12" HorizontalAlignment="Left" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="4" VerticalAlignment="Center">
+                <Button Content="{loc:Loc Close}" Width="110" FontSize="14" HorizontalAlignment="Center" mvx:Bi.nd="Command CloseCommand"
+                        Style="{StaticResource showButton}" />
             </StackPanel>
         </Grid>
     </Grid>

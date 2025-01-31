@@ -6,7 +6,7 @@ using CombatAnalysis.CommunicationBL.DTO.Post;
 
 namespace CombatAnalysis.CommunicationAPI.Mapping;
 
-public class CommunicationMapper : Profile
+internal class CommunicationMapper : Profile
 {
     public CommunicationMapper()
     {
@@ -15,11 +15,13 @@ public class CommunicationMapper : Profile
         CreateMap<CommunityDiscussionCommentDto, CommunityDiscussionCommentModel>().ReverseMap();
         CreateMap<CommunityUserDto, CommunityUserModel>().ReverseMap();
         CreateMap<InviteToCommunityDto, InviteToCommunityModel>().ReverseMap();
-        CreateMap<PostDto, PostModel>().ReverseMap();
-        CreateMap<PostLikeDto, PostLikeModel>().ReverseMap();
-        CreateMap<PostDislikeDto, PostDislikeModel>().ReverseMap();
-        CreateMap<PostCommentDto, PostCommentModel>().ReverseMap();
-        CreateMap<CommunityPostDto, CommunityPostModel>().ReverseMap();
         CreateMap<UserPostDto, UserPostModel>().ReverseMap();
+        CreateMap<UserPostCommentDto, UserPostCommentModel>().ReverseMap();
+        CreateMap<UserPostLikeDto, UserPostLikeModel>().ReverseMap();
+        CreateMap<UserPostDislikeDto, UserPostDislikeModel>().ReverseMap();
+        CreateMap<CommunityPostDto, CommunityPostModel>().ReverseMap();
+        CreateMap<CommunityPostCommentDto, CommunityPostCommentModel>().ReverseMap();
+        CreateMap<CommunityPostLikeDto, CommunityPostLikeModel>().ReverseMap();
+        CreateMap<CommunityPostDislikeDto, CommunityPostDislikeModel>().ReverseMap();
     }
 }

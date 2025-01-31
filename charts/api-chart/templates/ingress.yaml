@@ -2,48 +2,52 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  tls:
+  - hosts:
+      - {{ .Values.user.ingress.host }}
+      - {{ .Values.communication.ingress.host }}
+      - {{ .Values.chat.ingress.host }}
+      - {{ .Values.health.ingress.host }}
+    secretName: tls-secret
   rules:
-    - host: {{ .Values.app1.hostName }}
+    - host: {{ .Values.user.ingress.host }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-{{ .Values.app1.name }}-service
+                name: {{ .Release.Name }}-{{ .Values.user.name }}-service
                 port:
-                  number: {{ .Values.app2.ingress.port }}
-    - host: {{ .Values.app2.hostName }}
+                  number: {{ .Values.user.service.targetPort }}
+    - host: {{ .Values.communication.ingress.host }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-{{ .Values.app2.name }}-service
+                name: {{ .Release.Name }}-{{ .Values.communication.name }}-service
                 port:
-                  number: {{ .Values.app2.ingress.port }}
-    - host: {{ .Values.app3.hostName }}
+                  number: {{ .Values.communication.service.targetPort }}
+    - host: {{ .Values.chat.ingress.host }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-{{ .Values.app3.name }}-service
+                name: {{ .Release.Name }}-{{ .Values.chat.name }}-service
                 port:
-                  number: {{ .Values.app3.ingress.port }}
-    - host: {{ .Values.app4.hostName }}
+                  number: {{ .Values.chat.service.targetPort }}
+    - host: {{ .Values.health.ingress.host }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-{{ .Values.app4.name }}-service
+                name: {{ .Release.Name }}-{{ .Values.health.name }}-service
                 port:
-                  number: {{ .Values.app4.ingress.port }}
+                  number: {{ .Values.health.service.targetPort }}

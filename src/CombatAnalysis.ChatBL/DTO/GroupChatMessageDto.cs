@@ -4,6 +4,8 @@ public class GroupChatMessageDto
 {
     public int Id { get; set; }
 
+    public string Username { get; set; }
+
     public string Message { get; set; }
 
     public DateTimeOffset Time { get; set; }
@@ -12,7 +14,7 @@ public class GroupChatMessageDto
 
     public int Type { get; set; }
 
-    public int GroupChatId { get; set; }
+    public int ChatId { get; set; }
 
-    public string AppUserId { get; set; }
+    public string GroupChatUserId { get; set; }
 }

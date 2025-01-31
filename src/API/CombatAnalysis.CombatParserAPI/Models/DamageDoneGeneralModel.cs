@@ -8,7 +8,7 @@ public class DamageDoneGeneralModel
 
     public double DamagePerSecond { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
     public int CritNumber { get; set; }
 
@@ -21,6 +21,8 @@ public class DamageDoneGeneralModel
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public bool IsPet { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

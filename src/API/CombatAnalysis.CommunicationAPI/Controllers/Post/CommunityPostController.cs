@@ -12,15 +12,32 @@ namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
 [Authorize]
 public class CommunityPostController : ControllerBase
 {
-    private readonly IService<CommunityPostDto, int> _service;
+    private readonly ICommunityPostService _service;
     private readonly IMapper _mapper;
     private readonly ILogger<CommunityPostController> _logger;
 
-    public CommunityPostController(IService<CommunityPostDto, int> service, IMapper mapper, ILogger<CommunityPostController> logger)
+    public CommunityPostController(ICommunityPostService service, IMapper mapper, ILogger<CommunityPostController> logger)
     {
         _service = service;
         _mapper = mapper;
         _logger = logger;
+    }
+
+    [HttpGet("count/{communityId}")]
+    public async Task<IActionResult> Count(int communityId)
+    {
+        var count = await _service.CountByCommunityIdAsync(communityId);
+
+        return Ok(count);
+    }
+
+    [HttpGet("countByListOfCommunities/{communityIds}")]
+    public async Task<IActionResult> CountByListOfAppUsers(string communityIds)
+    {
+        var communityIdList = communityIds.Split(',').Select(int.Parse).ToArray();
+        var count = await _service.CountByListOfCommunityIdAsync(communityIdList);
+
+        return Ok(count);
     }
 
     [HttpGet]
@@ -39,20 +56,54 @@ public class CommunityPostController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("searchByCommunityId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByCommunityId(int id)
+    [HttpGet("getByCommunityId")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int pageSize)
     {
-        var result = await _service.GetByParamAsync(nameof(CommunityPostModel.CommunityId), id);
+        var posts = await _service.GetByCommunityIdAsync(communityId, pageSize);
 
-        return Ok(result);
+        return Ok(posts);
     }
 
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByPostId(int id)
+    [HttpGet("getMoreByCommunityId")]
+    public async Task<IActionResult> GetMoreByCommunityId(int communityId, int offset, int pageSize)
     {
-        var result = await _service.GetByParamAsync(nameof(CommunityPostModel.PostId), id);
+        var posts = await _service.GetMoreByCommunityIdAsync(communityId, offset, pageSize);
 
-        return Ok(result);
+        return Ok(posts);
+    }
+
+    [HttpGet("getNewPosts")]
+    public async Task<IActionResult> GetNewPosts(int communityId, string checkFrom)
+    {
+        var checkFromData = DateTimeOffset.Parse(checkFrom);
+        var posts = await _service.GetNewByCommunityIdAsync(communityId, checkFromData);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getByListOfCommunityIds")]
+    public async Task<IActionResult> GetByListOfCommunityIds(string communityIds, int pageSize)
+    {
+        var posts = await _service.GetByListOfCommunityIdAsync(communityIds, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getMoreByListOfCommunityIds")]
+    public async Task<IActionResult> GetMoreByListOfCommunityIds(string communityIds, int offset, int pageSize)
+    {
+        var posts = await _service.GetMoreByListOfCommunityIdAsync(communityIds, offset, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getNewByListOfCommunityIds")]
+    public async Task<IActionResult> GetNewByListOfCommunityIds(string communityIds, string checkFrom)
+    {
+        var checkFromData = DateTimeOffset.Parse(checkFrom);
+        var posts = await _service.GetNewByListOfCommunityIdAsync(communityIds, checkFromData);
+
+        return Ok(posts);
     }
 
     [HttpPost]
@@ -67,13 +118,13 @@ public class CommunityPostController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -91,13 +142,13 @@ public class CommunityPostController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Update Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Update Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CustomerBL.DTO;
-using CombatAnalysis.CustomerBL.Interfaces;
+using CombatAnalysis.UserBL.DTO;
+using CombatAnalysis.UserBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +42,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByOwnerId/{id}")]
     public async Task<IActionResult> SearchByOwnerId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.CustomerId), id);
+        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.AppUserId), id);
 
         return Ok(result);
     }
@@ -50,7 +50,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByToUserId/{id}")]
     public async Task<IActionResult> SearchByToUserId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.ToUserId), id);
+        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.ToAppUserId), id);
 
         return Ok(result);
     }

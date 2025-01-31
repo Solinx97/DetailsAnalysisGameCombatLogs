@@ -1,20 +1,21 @@
 .chat-messages {
     display: flex;
     flex-direction: column;
-    height: 500px;
+    height: 64vh;
     width: 100%;
     margin: 12px 0px;
     border-radius: 5px;
     box-shadow: 3px 3px 3px 3px white;
     gap: 5px;
-    padding: 15px;
-    overflow-y: scroll;
+    padding: 10px !important;
+    overflow: auto;
 
     &__list {
         width: 100%;
     }
 
     &__content, &__other-content {
+        position: relative;
         display: flex;
         flex-direction: column;
 
@@ -54,6 +55,11 @@
                     box-shadow: 2px 2px green;
                     background: #088395;
                 }
+
+                &__unread {
+                    box-shadow: 2px 2px white;
+                    opacity: 0.75;
+                }
             }
 
             .text-of-message:hover {
@@ -69,6 +75,13 @@
                 cursor: default;
                 font-size: 10px;
             }
+        }
+
+        .chat-user-information {
+            position: absolute;
+            right: 3vw;
+            top: 5vh;
+            z-index: 100;
         }
 
         .message-title {
@@ -201,10 +214,6 @@
                 background: #26355D;
             }
         }
-    }
-
-    ul li {
-        width: 90%;
     }
 }
 

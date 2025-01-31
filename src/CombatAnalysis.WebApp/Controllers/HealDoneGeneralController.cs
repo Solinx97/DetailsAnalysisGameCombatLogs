@@ -10,19 +10,38 @@ namespace CombatAnalysis.WebApp.Controllers;
 public class HealDoneGeneralController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger<HealDoneGeneralController> _logger;
 
-    public HealDoneGeneralController(IHttpClientHelper httpClient)
+    public HealDoneGeneralController(IHttpClientHelper httpClient, ILogger<HealDoneGeneralController> logger)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.CombatParserApi;
+        _logger = logger;
+        _httpClient.APIUrl = Cluster.CombatParser;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"HealDoneGeneral/FindByCombatPlayerId/{id}");
-        var healDoneGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDoneGeneral/getByCombatPlayerId/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
 
-        return Ok(healDoneGenerals);
+            var healDoneGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();
+
+            return Ok(healDoneGenerals);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 }

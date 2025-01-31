@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 
-namespace CombatAnalysis.WinCore;
+namespace CombatAnalysis.App;
 
-public static class WindowManager
+internal static class WindowManager
 {
     public static Window? MainWindow { get; set; }
 
-    public static Window? CreateGroupChat { get; set; }
+    public static Window? ExtraWindow { get; set; }
 }

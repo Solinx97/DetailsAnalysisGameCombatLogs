@@ -4,37 +4,103 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    margin-left: 75px;
+    height: 500px;
     gap: 20px;
 
     &__title {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 80%;
+        width: 100%;
 
         .tools {
             display: flex;
-            gap: 10px;
+            gap: 20px;
+
+            .experimental-functions {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                box-shadow: 1px 1px yellow;
+                border-radius: 20px;
+                padding: 10px;
+                gap: 10px;
+                opacity: 0.7;
+
+                &__indicator {
+                    position: absolute;
+                    margin: -20px 0;
+                    font-size: 0.6em;
+                }
+
+                &__content {
+                    display: flex;
+                    justify-content: center;
+                    gap: 25px;
+                }
+            }
 
             .device {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 5px;
+                gap: 10px;
 
                 .device-toolbar {
                     position: absolute;
-                    top: 7%;
-                    padding: 10px;
-                    border: 1px solid gray;
-                    background: black;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    top: 8%;
+                    width: 20vw;
+                    padding: 15px;
+                    box-shadow: 1px 1px 1px 1px yellow;
+                    font-size: 0.9em;
+                    border-radius: 20px;
+                    background: #0c192c;
+                    z-index: 1000;
+
+                    ul {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        margin-left: 10px !important;
+                        margin: 0;
+                    }
                 }
 
-                &__screen, &__camera, &__microphone {
-                    width: 25px;
-                    height: 25px;
-                    margin: 10px;
+                .warning {
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    margin-bottom: 40px;
+                    border-left: 8px solid transparent;
+                    border-right: 8px solid transparent;
+                    border-top: 8px solid yellow;
+                }
+
+                &__screen-sharing, &__camera, &__microphone {
+                    width: 20px;
+                    height: 20px;
+                    padding: 5px 10px;
+                    border-radius: 10px;
+                    box-shadow: 1px 1px 1px 1px red;
+
+                    :hover {
+                        cursor: pointer;
+                    }
+                }
+
+                .device-use {
+                    box-shadow: 1px 1px 1px 1px green;
+                }
+
+                .busy {
+                    box-shadow: 1px 1px 1px 1px yellow;
+
+                    :hover {
+                        cursor: not-allowed;
+                    }
                 }
 
                 &__settings {
@@ -42,15 +108,14 @@
                     height: 15px;
                 }
 
-                &__camera:hover, &__microphone:hover {
-                    cursor: pointer;
-                    transform: scale(1.1);
-                }
-
                 &__settings:hover {
                     cursor: pointer;
-                    transform: scale(1.25);
+                    transform: scale(1.15);
                 }
+            }
+
+            .disabled {
+                opacity: 0.4;
             }
         }
     }
@@ -59,25 +124,25 @@
         display: flex;
         justify-content: center;
         gap: 10px;
-        width: 80%;
+        width: 100%;
+        height: 100%;
 
         ul {
-            padding: 0;
             margin: 0;
         }
 
         .sharing {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-grow: 1.5;
-            width: 65%;
+            flex-basis: 70%;
+            flex-grow: 3;
             box-shadow: 5px 5px 5px 5px gray;
             border-radius: 25px;
+            height: 100%;
 
             video {
-                flex-grow: 2;
+                height: 100%;
                 width: 100%;
             }
 
@@ -87,44 +152,32 @@
             }
         }
 
-        .another-user-container {
-            flex-grow: 1;
-        }
-
-        .members, .another-user-container {
+        .users {
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
             border: 2px solid gray;
             border-radius: 20px;
-            width: 100%;
             gap: 20px;
-            height: 540px;
+            flex-basis: 30%;
+            flex-grow: 1;
+            height: 100%;
+            flex-wrap: wrap;
+            overflow-y: auto;
 
             .user {
                 display: flex;
                 justify-content: center;
                 box-shadow: 2px 2px 2px 2px gray;
                 border-radius: 20px;
-                width: 150px;
-                height: 150px;
+                height: 40vh;
+                width: 40vh;
 
-                &_video {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    width: 150px;
-                    height: 150px;
-
+                .media-content {
                     video {
+                        width: 100%;
+                        height: 100%;
                         border-radius: 20px;
-                    }
-
-                    .information {
-                        display: flex;
-                        justify-content: space-around;
-                        align-items: center;
                     }
                 }
 
@@ -134,14 +187,22 @@
                     align-items: center;
                 }
             }
+
+            .me {
+                box-shadow: 2px 2px 2px 2px green;
+            }
         }
 
-        .another-user-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: auto;
+        .sharing-content {
+            li {
+                width: 70%;
+                height: 40%;
+            }
+
+            .user {
+                height: 100%;
+                width: 100%;
+            }
         }
     }
 }

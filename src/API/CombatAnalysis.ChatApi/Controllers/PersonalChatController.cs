@@ -12,21 +12,26 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class PersonalChatController : ControllerBase
 {
-    private readonly IService<PersonalChatDto, int> _service;
+    private readonly IService<PersonalChatDto, int> _chatService;
+    private readonly IService<PersonalChatMessageCountDto, int> _chatMessageCountService;
     private readonly IMapper _mapper;
     private readonly ILogger<PersonalChatController> _logger;
+    private readonly IChatTransactionService _chatTransactionService;
 
-    public PersonalChatController(IService<PersonalChatDto, int> service, IMapper mapper, ILogger<PersonalChatController> logger)
+    public PersonalChatController(IService<PersonalChatDto, int> chatService, IService<PersonalChatMessageCountDto, int> chatMessageCountService, IMapper mapper,
+        IChatTransactionService chatTransactionService, ILogger<PersonalChatController> logger)
     {
-        _service = service;
+        _chatService = chatService;
+        _chatMessageCountService = chatMessageCountService;
         _mapper = mapper;
+        _chatTransactionService = chatTransactionService;
         _logger = logger;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _service.GetAllAsync();
+        var result = await _chatService.GetAllAsync();
 
         return Ok(result);
     }
@@ -34,30 +39,45 @@ public class PersonalChatController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _service.GetByIdAsync(id);
+        var result = await _chatService.GetByIdAsync(id);
 
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(PersonalChatModel model)
+    public async Task<IActionResult> Create(PersonalChatModel personalChatModel)
     {
         try
         {
-            var map = _mapper.Map<PersonalChatDto>(model);
-            var result = await _service.CreateAsync(map);
+            if (personalChatModel == null)
+            {
+                throw new ArgumentNullException(nameof(personalChatModel));
+            }
 
-            return Ok(result);
+            await _chatTransactionService.BeginTransactionAsync();
+
+            var map = _mapper.Map<PersonalChatDto>(personalChatModel);
+            var createdPersonalChat = await _chatService.CreateAsync(map);
+
+            await CreateMessageCountAsync(createdPersonalChat);
+
+            await _chatTransactionService.CommitTransactionAsync();
+
+            return Ok(createdPersonalChat);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", personalChatModel);
+
+            await _chatTransactionService.RollbackTransactionAsync();
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", personalChatModel);
+
+            await _chatTransactionService.RollbackTransactionAsync();
 
             return BadRequest();
         }
@@ -66,11 +86,11 @@ public class PersonalChatController : ControllerBase
     [HttpPost("personalChatIsAlreadyExists")]
     public async Task<IActionResult> PersonalChatCheck(PersonalChatModel model)
     {
-        var allData = await _service.GetAllAsync();
+        var allData = await _chatService.GetAllAsync();
         foreach (var item in allData)
         {
-            if ((item.InitiatorId == model.InitiatorId || item.InitiatorId == model.CompanionId)
-                || (item.CompanionId == model.InitiatorId || item.CompanionId == model.CompanionId))
+            if ((item.InitiatorId == model.InitiatorId && item.CompanionId == model.CompanionId)
+                || (item.InitiatorId == model.CompanionId && item.CompanionId == model.InitiatorId))
             {
                 return Ok(item.Id);
             }
@@ -85,7 +105,7 @@ public class PersonalChatController : ControllerBase
         try
         {
             var map = _mapper.Map<PersonalChatDto>(model);
-            var result = await _service.UpdateAsync(map);
+            var result = await _chatService.UpdateAsync(map);
 
             return Ok(result);
         }
@@ -106,8 +126,29 @@ public class PersonalChatController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var rowsAffected = await _service.DeleteAsync(id);
+        var rowsAffected = await _chatService.DeleteAsync(id);
 
         return Ok(rowsAffected);
+    }
+
+    private async Task CreateMessageCountAsync(PersonalChatDto chat)
+    {
+        var initiatorMessageCount = new PersonalChatMessageCountDto
+        {
+            ChatId = chat.Id,
+            AppUserId = chat.InitiatorId,
+            Count = 0
+        };
+
+        await _chatMessageCountService.CreateAsync(initiatorMessageCount);
+
+        var companionMessageCount = new PersonalChatMessageCountDto
+        {
+            ChatId = chat.Id,
+            AppUserId = chat.CompanionId,
+            Count = 0
+        };
+
+        await _chatMessageCountService.CreateAsync(companionMessageCount);
     }
 }

@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
+internal class HealDoneService : QueryService<HealDoneDto, HealDone>, IMutationService<HealDoneDto>
 {
-    private readonly ISQLPlayerInfoRepository<HealDone, int> _repository;
+    private readonly IGenericRepository<HealDone> _repository;
     private readonly IMapper _mapper;
 
-    public HealDoneService(ISQLPlayerInfoRepository<HealDone, int> repository, IMapper mapper)
+    public HealDoneService(IGenericRepository<HealDone> repository, IMapper mapper) : base(repository, mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,45 +28,6 @@ internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<HealDoneDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<HealDoneDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<HealDoneDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<HealDoneDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<HealDoneDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<HealDoneDto>>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<HealDoneDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-        var resultMap = _mapper.Map<IEnumerable<HealDoneDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(HealDoneDto item)
     {
         if (item == null)
@@ -76,13 +38,19 @@ internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
         return UpdateInternalAsync(item);
     }
 
+    public Task<int> DeleteAsync(HealDoneDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(HealDoneDto), $"The {nameof(HealDoneDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
+    }
+
     private async Task<HealDoneDto> CreateInternalAsync(HealDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(HealDoneDto), 
-                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
-        }
+        CheckParams(item);
 
         var map = _mapper.Map<HealDone>(item);
         var createdItem = await _repository.CreateAsync(map);
@@ -93,15 +61,40 @@ internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
 
     private async Task<int> UpdateInternalAsync(HealDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(HealDoneDto), 
-                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
-        }
+        CheckParams(item);
 
         var map = _mapper.Map<HealDone>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(HealDoneDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<HealDone>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(HealDoneDto item)
+    {
+        if (string.IsNullOrEmpty(item.Creator))
+        {
+            throw new ArgumentNullException(nameof(DamageDoneDto.Creator),
+                $"The property {nameof(DamageDoneDto.Creator)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Target))
+        {
+            throw new ArgumentNullException(nameof(DamageDoneDto.Target),
+                $"The property {nameof(DamageDoneDto.Target)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Spell))
+        {
+            throw new ArgumentNullException(nameof(DamageDoneDto.Spell),
+                $"The property {nameof(DamageDoneDto.Spell)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+        }
     }
 }

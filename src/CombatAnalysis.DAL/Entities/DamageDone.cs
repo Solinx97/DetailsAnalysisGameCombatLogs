@@ -1,35 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
 namespace CombatAnalysis.DAL.Entities;
 
-[Index(nameof(CombatPlayerId))]
-public class DamageDone
+public class DamageDone : ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
 
+    public string Spell { get; set; }
+
     public int Value { get; set; }
 
-    public string Time { get; set; }
+    public TimeSpan Time { get; set; }
 
-    public string FromPlayer { get; set; }
+    public string Creator { get; set; }
 
-    public string ToEnemy { get; set; }
+    public string Target { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public int DamageType { get; set; }
 
     public bool IsPeriodicDamage { get; set; }
-
-    public bool IsDodge { get; set; }
-
-    public bool IsParry { get; set; }
-
-    public bool IsMiss { get; set; }
-
-    public bool IsResist { get; set; }
-
-    public bool IsImmune { get; set; }
-
-    public bool IsCrit { get; set; }
 
     public bool IsPet { get; set; }
 

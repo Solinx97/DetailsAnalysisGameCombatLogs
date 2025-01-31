@@ -1,6 +1,6 @@
 apiVersion: v2
-name: CombatAnalaysisHelmChart
-description: Helm Chart for Combat analysis application
+name: WebHelmChart
+description: Helm Chart for Combat analysis Web application
 type: application
 version: 0.1.0
 appVersion: "0.1.0"

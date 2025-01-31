@@ -1,6 +1,4 @@
-﻿using CombatAnalysis.DAL.Consts;
-using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
+﻿using CombatAnalysis.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Data;
@@ -9,24 +7,19 @@ public class CombatParserSQLContext : DbContext
 {
     public CombatParserSQLContext(DbContextOptions<CombatParserSQLContext> options) : base(options)
     {
-        var isExists = Database.EnsureCreated();
-        Database.SetCommandTimeout(DBConfigurations.CommandTimeout);
-
-        if (isExists)
-        {
-            DbProcedureHelper.CreateProcedures(this);
-        }
     }
 
     #region Combat
 
     public DbSet<CombatLog>? CombatLog { get; }
 
-    public DbSet<CombatLogByUser>? CombatLogByUser { get; }
-
     public DbSet<Combat>? Combat { get; }
 
+    public DbSet<CombatAura>? CombatAura { get; }
+
     public DbSet<CombatPlayer>? CombatPlayer { get; }
+
+    public DbSet<CombatPlayerPosition>? CombatPlayerPosition { get; }
 
     public DbSet<PlayerParseInfo>? PlayerParseInfo { get; }
 

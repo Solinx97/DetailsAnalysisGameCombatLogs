@@ -2,76 +2,40 @@
 import DamageTakenHelper from '../components/helpers/DamageTakenHelper';
 import HealDoneHelper from '../components/helpers/HealDoneHelper';
 import ResourceRecoveryHelper from '../components/helpers/ResourceRecoveryHelper';
-import {
-    useLazyGetDamageDoneByPlayerIdQuery, useLazyGetHealDoneByPlayerIdQuery, useLazyGetDamageTakenByPlayerIdQuery, useLazyGetResourceRecoveryByPlayerIdQuery
-} from '../store/api/CombatParserApi';
 
-const useHealDoneHelper = (combatPlayerId, detailsType) => {
-    const [getDamageDoneByPlayerIdAsync] = useLazyGetDamageDoneByPlayerIdQuery();
-    const [getHealDoneByPlayerIdAsync] = useLazyGetHealDoneByPlayerIdQuery();
-    const [getDamageTakenByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
-    const [getResourceRecoveryByPlayerIdAsync] = useLazyGetResourceRecoveryByPlayerIdQuery();
+const useCombatDetailsData = (combatPlayerId, pageSize, detailsType, t) => {
+    const helpersComponent = {
+        "DamageDone": DamageDoneHelper,
+        "HealDone": HealDoneHelper,
+        "DamageTaken": DamageTakenHelper,
+        "ResourceRecovery": ResourceRecoveryHelper
+    };
 
-    const getListAsync = async () => {
-        const data = await getPlayerDetailsAsync();
+    const getComponentByDetailsTypeAsync = async () => {
+        const HelperComponent = helpersComponent[detailsType] || DamageDoneHelper;
 
-        switch (detailsType) {
-            case "DamageDone":
-                return <DamageDoneHelper detailsData={data} />
-            case "HealDone":
-                return <HealDoneHelper detailsData={data} />
-            case "DamageTaken":
-                return <DamageTakenHelper detailsData={data} />
-            case "ResourceRecovery":
-                return <ResourceRecoveryHelper detailsData={data} />
-            default:
-                return <DamageDoneHelper detailsData={data} />
-        }
+        return (
+            <HelperComponent
+                combatPlayerId={combatPlayerId}
+                pageSize={pageSize}
+                t={t}
+                getUserNameWithoutRealm={getUserNameWithoutRealm}
+            />
+        );
     }
 
-    const getPlayerDetailsAsync = async () => {
-        let detailsResult = null;
-        switch (detailsType) {
-            case "DamageDone":
-                detailsResult = await getDamageDoneByPlayerIdAsync(combatPlayerId);
-                break;
-            case "HealDone":
-                detailsResult = await getHealDoneByPlayerIdAsync(combatPlayerId);
-                break;
-            case "DamageTaken":
-                detailsResult = await getDamageTakenByPlayerIdAsync(combatPlayerId);
-                break;
-            case "ResourceRecovery":
-                detailsResult = await getResourceRecoveryByPlayerIdAsync(combatPlayerId);
-                break;
-            default:
-                detailsResult = await getDamageDoneByPlayerIdAsync(combatPlayerId);
-                break;
+    const getUserNameWithoutRealm = (username) => {
+        if (!username.includes('-')) {
+            return username;
         }
 
-        if (detailsResult.data !== undefined) {
-            return detailsResult.data;
-        }
+        const realmNameIndex = username.indexOf('-');
+        const userNameWithoutRealm = username.substr(0, realmNameIndex);
 
-        return null;
+        return userNameWithoutRealm;
     }
 
-    const getFilteredList = (data) => {
-        switch (detailsType) {
-            case "DamageDone":
-                return <DamageDoneHelper detailsData={data} />
-            case "HealDone":
-                return <HealDoneHelper detailsData={data} />
-            case "DamageTaken":
-                return <DamageTakenHelper detailsData={data} />
-            case "ResourceRecovery":
-                return <ResourceRecoveryHelper detailsData={data} />
-            default:
-                return <DamageDoneHelper detailsData={data} />
-        }
-    }
-
-    return [getListAsync, getFilteredList, getPlayerDetailsAsync];
+    return { getComponentByDetailsTypeAsync };
 }
 
-export default useHealDoneHelper;
+export default useCombatDetailsData;

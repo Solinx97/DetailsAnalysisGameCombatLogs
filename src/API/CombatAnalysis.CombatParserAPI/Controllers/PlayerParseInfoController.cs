@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,31 +10,52 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class PlayerParseInfoController : ControllerBase
 {
-    private readonly IService<PlayerParseInfoDto, int> _service;
+    private readonly IQueryService<PlayerParseInfoDto> _queryService;
+    private readonly IMutationService<PlayerParseInfoDto> _mutationService;
     private readonly IMapper _mapper;
     private readonly ILogger<PlayerParseInfoController> _logger;
 
-    public PlayerParseInfoController(IService<PlayerParseInfoDto, int> service, IMapper mapper, ILogger<PlayerParseInfoController> logger)
+    public PlayerParseInfoController(IQueryService<PlayerParseInfoDto> queryService, IMutationService<PlayerParseInfoDto> mutationService,
+        IMapper mapper, ILogger<PlayerParseInfoController> logger)
     {
-        _service = service;
+        _queryService = queryService;
+        _mutationService = mutationService;
         _mapper = mapper;
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var playerParseInfo = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        try
+        {
+            var playerParseInfo = await _queryService.GetByParamAsync(nameof(PlayerParseInfoModel.CombatPlayerId), combatPlayerId);
 
-        return Ok(playerParseInfo);
+            return Ok(playerParseInfo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get player parse info by combat player id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatLog = await _service.GetByIdAsync(id);
+        try
+        {
+            var playerParseInfo = await _queryService.GetByIdAsync(id);
 
-        return Ok(combatLog);
+            return Ok(playerParseInfo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get player parse info by id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -43,7 +64,7 @@ public class PlayerParseInfoController : ControllerBase
         try
         {
             var map = _mapper.Map<PlayerParseInfoDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationService.CreateAsync(map);
 
             return Ok(createdItem);
         }
@@ -54,23 +75,6 @@ public class PlayerParseInfoController : ControllerBase
             return BadRequest();
         }
         catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var deletedId = await _service.DeleteAsync(id);
-
-            return Ok(deletedId);
-        }
-        catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
 

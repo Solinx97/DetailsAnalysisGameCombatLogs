@@ -1,35 +1,19 @@
-import React, { StrictMode, useRef, useState } from 'react';
+import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 import AppRoutes from './AppRoutes';
 import Layout from './components/Layout';
-import VoiceChatMinimazed from './components/communication/voiceChat/VoiceChatMinimazed';
 import { AuthProvider } from './context/AuthProvider';
-import { VoiceServiceProvider } from './context/VoiceServiceContext';
+import { ChatHubProvider } from './context/ChatHubProvider';
 
 import './i18n';
 
-import 'react-toastify/dist/ReactToastify.css';
 import './custom.css';
 
 const App = () => {
-    const callMinimazedData = useRef({
-        stream: null,
-        peers: [],
-        turnOnCamera: false,
-        turnOnMicrophone: false,
-        screenSharing: false,
-        roomId: 0,
-        socketId: "",
-        roomName: "",
-    });
-
-    const [useMinimaze, setUseMinimaze] = useState(false);
-
     const render = () => {
         return (
-            <AuthProvider children={
-                <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
+            <AuthProvider>
+                <ChatHubProvider>
                     <Layout>
                         <Routes>
                             {AppRoutes.map((route, index) => {
@@ -37,13 +21,9 @@ const App = () => {
                                 return <Route key={index} {...rest} element={element} />;
                             })}
                         </Routes>
-                        {useMinimaze &&
-                            <VoiceChatMinimazed />
-                        }
-                        <ToastContainer />
                     </Layout>
-                </VoiceServiceProvider>
-            } />
+                </ChatHubProvider>
+            </AuthProvider>
         );
     }
 

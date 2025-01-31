@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CustomerBL.DTO;
-using CombatAnalysis.CustomerBL.Interfaces;
+using CombatAnalysis.UserBL.DTO;
+using CombatAnalysis.UserBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,33 +39,6 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
 
-    [AllowAnonymous]
-    [HttpPost]
-    public async Task<IActionResult> Create(AppUserModel model)
-    {
-        try
-        {
-            model.Id = Guid.NewGuid().ToString();
-
-            var map = _mapper.Map<AppUserDto>(model);
-            var result = await _service.CreateAsync(map);
-
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
-    }
-
     [HttpPut]
     public async Task<IActionResult> Update(AppUserModel model)
     {
@@ -98,8 +71,8 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("check/{username}")]
     [AllowAnonymous]
+    [HttpGet("check/{username}")]
     public async Task<IActionResult> CheckByUsername(string username)
     {
         var usernameAlreadyUsed = await _service.CheckByUsernameAsync(username);

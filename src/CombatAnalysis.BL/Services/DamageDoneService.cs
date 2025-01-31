@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
+internal class DamageDoneService : QueryService<DamageDoneDto, DamageDone>, IMutationService<DamageDoneDto>
 {
-    private readonly ISQLPlayerInfoRepository<DamageDone, int> _repository;
+    private readonly IGenericRepository<DamageDone> _repository;
     private readonly IMapper _mapper;
 
-    public DamageDoneService(ISQLPlayerInfoRepository<DamageDone, int> repository, IMapper mapper)
+    public DamageDoneService(IGenericRepository<DamageDone> repository, IMapper mapper) : base(repository, mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,45 +28,6 @@ internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<DamageDoneDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<DamageDoneDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<DamageDoneDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<DamageDoneDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<DamageDoneDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<DamageDoneDto>>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<DamageDoneDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-        var resultMap = _mapper.Map<IEnumerable<DamageDoneDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(DamageDoneDto item)
     {
         if (item == null)
@@ -76,23 +38,19 @@ internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
         return UpdateInternalAsync(item);
     }
 
+    public Task<int> DeleteAsync(DamageDoneDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(DamageDoneDto), $"The {nameof(DamageDoneDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
+    }
+
     private async Task<DamageDoneDto> CreateInternalAsync(DamageDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.FromPlayer))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.ToEnemy))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
-                $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
-                $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
+        CheckParams(item);
 
         var map = _mapper.Map<DamageDone>(item);
         var createdItem = await _repository.CreateAsync(map);
@@ -103,25 +61,40 @@ internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
 
     private async Task<int> UpdateInternalAsync(DamageDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.FromPlayer))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
-                $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.ToEnemy))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
-                $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
-                $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
+        CheckParams(item);
 
         var map = _mapper.Map<DamageDone>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(DamageDoneDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<DamageDone>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(DamageDoneDto item)
+    {
+        if (string.IsNullOrEmpty(item.Creator))
+        {
+            throw new ArgumentNullException(nameof(DamageDoneDto.Creator),
+                $"The property {nameof(DamageDoneDto.Creator)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Target))
+        {
+            throw new ArgumentNullException(nameof(DamageDoneDto.Target),
+                $"The property {nameof(DamageDoneDto.Target)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Spell))
+        {
+            throw new ArgumentNullException(nameof(DamageDoneDto.Spell),
+                $"The property {nameof(DamageDoneDto.Spell)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+        }
     }
 }

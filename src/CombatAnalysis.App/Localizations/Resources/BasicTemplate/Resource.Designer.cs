@@ -61,15 +61,6 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All combats.
-        /// </summary>
-        public static string AllCombats {
-            get {
-                return ResourceManager.GetString("AllCombats", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Chat.
         /// </summary>
         public static string Chat {
@@ -79,7 +70,7 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To open the &apos;Chat&quot; you need to login.
+        ///   Looks up a localized string similar to To open the &apos;Chat&quot; you should be Login.
         /// </summary>
         public static string ChatLoginRequired {
             get {
@@ -97,11 +88,11 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Combat.
+        ///   Looks up a localized string similar to Combats.
         /// </summary>
-        public static string Combat {
+        public static string Combats {
             get {
-                return ResourceManager.GetString("Combat", resourceCulture);
+                return ResourceManager.GetString("Combats", resourceCulture);
             }
         }
         
@@ -264,6 +255,15 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         public static string Notifications {
             get {
                 return ResourceManager.GetString("Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players.
+        /// </summary>
+        public static string Players {
+            get {
+                return ResourceManager.GetString("Players", resourceCulture);
             }
         }
         

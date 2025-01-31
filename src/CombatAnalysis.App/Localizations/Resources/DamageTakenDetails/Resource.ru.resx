@@ -123,8 +123,8 @@
   <data name="AbsorptionDetails" xml:space="preserve">
     <value>Поглащено: </value>
   </data>
-  <data name="AverageValue" xml:space="preserve">
-    <value>Среднее значение</value>
+  <data name="Average" xml:space="preserve">
+    <value>Среднее</value>
   </data>
   <data name="BlockDetails" xml:space="preserve">
     <value>Заблокировано: </value>
@@ -132,11 +132,11 @@
   <data name="Common" xml:space="preserve">
     <value>Общий</value>
   </data>
-  <data name="CountOfSkills" xml:space="preserve">
-    <value>Примен. закл.</value>
+  <data name="Count" xml:space="preserve">
+    <value>Кол-во</value>
   </data>
-  <data name="CrushingDamage" xml:space="preserve">
-    <value>Сокрушительный урон</value>
+  <data name="Crushing" xml:space="preserve">
+    <value>Сокрушительный</value>
   </data>
   <data name="DamageTaken" xml:space="preserve">
     <value>Пол. урон</value>
@@ -144,20 +144,26 @@
   <data name="DamageTakenA" xml:space="preserve">
     <value>Пол. урон + П.</value>
   </data>
-  <data name="DamageTakenPerSec" xml:space="preserve">
-    <value>Получ. урона в сек.</value>
+  <data name="DTPS" xml:space="preserve">
+    <value>УПВС</value>
   </data>
   <data name="Dodge" xml:space="preserve">
     <value>Уклонение</value>
   </data>
-  <data name="EnemyOrPerDamage" xml:space="preserve">
-    <value>Противник/Период. урон</value>
+  <data name="Enemy" xml:space="preserve">
+    <value>Противник</value>
   </data>
-  <data name="MaxValue" xml:space="preserve">
-    <value>Макс. значение</value>
+  <data name="First" xml:space="preserve">
+    <value>Первая</value>
   </data>
-  <data name="MinValue" xml:space="preserve">
-    <value>Мин. значение</value>
+  <data name="Last" xml:space="preserve">
+    <value>Последняя</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Мин</value>
   </data>
   <data name="Miss" xml:space="preserve">
     <value>Промах</value>
@@ -168,6 +174,9 @@
   <data name="MoreDetails" xml:space="preserve">
     <value>Подробнее</value>
   </data>
+  <data name="Next" xml:space="preserve">
+    <value>Сл.</value>
+  </data>
   <data name="Parry" xml:space="preserve">
     <value>Парирование</value>
   </data>
@@ -177,44 +186,20 @@
   <data name="Player" xml:space="preserve">
     <value>Игрок</value>
   </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Пред.</value>
+  </data>
   <data name="RealDamageDetails" xml:space="preserve">
-    <value>Реальный урон: </value>
+    <value>Реальный урон:</value>
   </data>
   <data name="Resist" xml:space="preserve">
     <value>Сопротивление</value>
   </data>
-  <data name="ResistDetails" xml:space="preserve">
-    <value>Сопротивление: </value>
+  <data name="Filters" xml:space="preserve">
+    <value>Фильтры</value>
   </data>
-  <data name="ShowAbsorption" xml:space="preserve">
-    <value>Показать поглащение</value>
-  </data>
-  <data name="ShowCrushingDamage" xml:space="preserve">
-    <value>Показать сокр. урон</value>
-  </data>
-  <data name="ShowDodge" xml:space="preserve">
-    <value>Показать уклонение</value>
-  </data>
-  <data name="ShowFilters" xml:space="preserve">
-    <value>Показать фильтры</value>
-  </data>
-  <data name="ShowImmune" xml:space="preserve">
-    <value>Показать иммун</value>
-  </data>
-  <data name="ShowMiss" xml:space="preserve">
-    <value>Показать промахи</value>
-  </data>
-  <data name="ShowMoreInform" xml:space="preserve">
-    <value>Показать больше информации</value>
-  </data>
-  <data name="ShowParry" xml:space="preserve">
-    <value>Показать парирование</value>
-  </data>
-  <data name="ShowResist" xml:space="preserve">
-    <value>Показать сопр.</value>
-  </data>
-  <data name="Source" xml:space="preserve">
-    <value>Источник</value>
+  <data name="Spell" xml:space="preserve">
+    <value>Заклинание</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Статус</value>
@@ -226,9 +211,15 @@
     <value>Анализ полученного урона</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Всего:</value>
+    <value>Всего</value>
   </data>
   <data name="TypeOf" xml:space="preserve">
     <value>Тип</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="Creator" xml:space="preserve">
+    <value>Инитиатор</value>
   </data>
 </root>

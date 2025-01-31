@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.Core.Core;
 
-public class PowerUpInCombat<T>
+internal class PowerUpInCombat<T>
     where T : class
 {
     private string _propertyName = string.Empty;
@@ -23,7 +23,7 @@ public class PowerUpInCombat<T>
         _propertyName = propertyName;
     }
 
-    public ObservableCollection<T> ShowSpecificalValue(string sortPropertyName, ObservableCollection<T> targetCollection, bool isShowValue)
+    public ObservableCollection<T>? ShowSpecificalValue(string sortPropertyName, ObservableCollection<T> targetCollection, bool isShowValue)
     {
         var type = typeof(T);
         var property = type.GetProperty(_propertyName);
@@ -32,7 +32,8 @@ public class PowerUpInCombat<T>
         {
             foreach (var item in _dependencyCollection)
             {
-                if ((bool)property.GetValue(item))
+                var value = property?.GetValue(item);
+                if (value is bool boolValue && boolValue)
                 {
                     targetCollection.Remove(item);
                 }
@@ -42,7 +43,8 @@ public class PowerUpInCombat<T>
         {
             foreach (var item in _dependencyCollection)
             {
-                if ((bool)property.GetValue(item))
+                var value = property?.GetValue(item);
+                if (value is bool boolValue && boolValue)
                 {
                     targetCollection.Add(item);
                 }

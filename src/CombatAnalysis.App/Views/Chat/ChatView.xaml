@@ -12,7 +12,7 @@
     xmlns:chat="clr-namespace:CombatAnalysis.App.Views.Chat"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:chatViewModels="clr-namespace:CombatAnalysis.Core.ViewModels.Chat;assembly=CombatAnalysis.Core"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:basicViewModel="clr-namespace:CombatAnalysis.Core.ViewModels.ViewModelTemplates;assembly=CombatAnalysis.Core"
     xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
@@ -43,9 +43,9 @@
             <RowDefinition Height="0.05*"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding Basic}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
+                <DataTemplate DataType="{x:Type basicViewModel:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
                 </DataTemplate>
             </ContentControl.Resources>
@@ -59,12 +59,12 @@
 
                 <StackPanel Margin="30 0 15 0">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{loc:Loc GroupChats}" FontSize="15" VerticalAlignment="Center" Margin="25 0 0 5" Style="{StaticResource titleText}" Foreground="White"/>
-                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshGroupChatsCommand" ToolTip="{loc:Loc RefreshGroupChats}">
-                            <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
+                        <TextBlock Text="{loc:Loc GroupChats}" FontSize="15" VerticalAlignment="Center" Margin="15 0 10 0" Style="{StaticResource titleText}" Foreground="White"/>
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Width="30" Height="30" mvx:Bi.nd="Command RefreshGroupChatsCommand" ToolTip="{loc:Loc RefreshGroupChats}">
+                            <Icon:PackIconMaterial Kind="Recycle" Foreground="#a6a6a6" Width="15" Height="15"/>
                         </Button>
-                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Click="CreateGroupChat" ToolTip="{loc:Loc CreateNewGroupChat}">
-                            <Icon:PackIconMaterial Kind="Plus" Foreground="Green" Width="20" Height="20"/>
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Click="CreateGroupChat" Width="30" Height="30" ToolTip="{loc:Loc CreateNewGroupChat}">
+                            <Icon:PackIconMaterial Kind="Plus" Foreground="Green" Width="15" Height="15"/>
                         </Button>
                     </StackPanel>
 
@@ -76,12 +76,12 @@
                         <TextBlock Text="{loc:Loc NoGroupChats}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Foreground="White" Margin="5"
                                Visibility="{Binding IsShowEmptyMyGroupChat, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
-                             ItemsSource="{Binding MyGroupChats}" SelectedIndex="{Binding SelectedMyGroupChatIndex}" 
+                             ItemsSource="{Binding MyGroupChats}" 
                              SelectedItem="{Binding SelectedMyGroupChat}" Background="Transparent"
                              Visibility="{Binding IsLoadMyGroupChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <uc:Item Title="{Binding Path=Name}" Message="{Binding Path=LastMessage}" Color="#73afff" TagName="{Binding Path=ShortName}" MessageCount="0" />
+                                    <uc:Item Title="{Binding Path=GroupChat.Name}" Color="White" TagName="{Binding Path=GroupChat.Name}" MessageCount="{Binding Path=GroupChatMessageCount.Count}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -90,9 +90,9 @@
                     <Button Content="{loc:Loc ShowAll}" Style="{StaticResource showButton}" IsEnabled="False" Foreground="White" Width="100"/>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{loc:Loc PersonalMessages}" FontSize="15" Margin="25 0 0 5" Style="{StaticResource titleText}" VerticalAlignment="Center" Foreground="White"/>
-                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshPersonalChatsCommand" ToolTip="{loc:Loc RefreshPersonalMessages}">
-                            <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
+                        <TextBlock Text="{loc:Loc PersonalMessages}" FontSize="15" Margin="15 0 10 0" Style="{StaticResource titleText}" VerticalAlignment="Center" Foreground="White"/>
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Width="30" Height="30" mvx:Bi.nd="Command RefreshPersonalChatsCommand" ToolTip="{loc:Loc RefreshPersonalMessages}">
+                            <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="15" Height="15" />
                         </Button>
                     </StackPanel>
 
@@ -107,28 +107,13 @@
                         <TextBlock Name="myAccountId" Text="{Binding MyAccount.Id}" Visibility="Collapsed"/>
                         
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
-                             ItemsSource="{Binding PersonalChats}" Background="Transparent"
-                             SelectedItem="{Binding SelectedPersonalChat}" SelectedIndex="{Binding SelectedPersonalChatIndex}"
+                             ItemsSource="{Binding MyPersonalChats}" Background="Transparent"
+                             SelectedItem="{Binding SelectedPersonalChat}"
                              Visibility="{Binding IsLoadPersonalChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <uc:Item Title="{Binding Path=Username}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
-                                            <uc:Item.Visibility>
-                                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                                    <Binding Path="InitiatorId" />
-                                                    <Binding ElementName="myAccountId" Path="Text" />
-                                                </MultiBinding>
-                                            </uc:Item.Visibility>
-                                        </uc:Item>
-                                        <uc:Item Title="{Binding Path=Username}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
-                                            <uc:Item.Visibility>
-                                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                                    <Binding Path="CompanionId" />
-                                                    <Binding ElementName="myAccountId" Path="Text" />
-                                                </MultiBinding>
-                                            </uc:Item.Visibility>
-                                        </uc:Item>
+                                        <uc:Item Title="{Binding Path=PersonalChat.Username}" Color="White" MessageCount="{Binding Path=PersonalChatMessageCount.Count}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -145,13 +130,13 @@
                 <TextBlock VerticalAlignment="Center" Text="{loc:Loc StartChatting}" FontSize="16" Foreground="White"/>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox Style="{DynamicResource ComboBoxStyle1}" Width="170" VerticalAlignment="Center"
-                              ItemsSource="{Binding Customers}" SelectedIndex="{Binding SelectedUsersIndex}"
+                              ItemsSource="{Binding Users}" SelectedIndex="{Binding SelectedUsersIndex}"
                                StaysOpenOnEdit="True" Text="{Binding InputedUsername}" DisplayMemberPath="Username"/>
                     <StackPanel x:Name="usersEmail" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 IsEnabled="{Binding SelectedUsersIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
                                 Margin="25 0">
-                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CreatePersonalChatCommand" ToolTip="{loc:Loc StartDialog}">
-                            <Icon:PackIconMaterial Style="{StaticResource startDialogStyle}" Kind="Message" Foreground="White"/>
+                        <Button Style="{StaticResource textBoxButton}" Width="35" Height="35" mvx:Bi.nd="Command CreatePersonalChatCommand" ToolTip="{loc:Loc StartDialog}">
+                            <Icon:PackIconMaterial Style="{StaticResource startDialogStyle}" Width="15" Height="15" Kind="Message" Foreground="White"/>
                         </Button>
                     </StackPanel>
                 </StackPanel>
@@ -173,7 +158,7 @@
                            FontSize="18" FontStyle="Italic" Foreground="White" 
                            Visibility="{Binding IsChatSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
 
-                <ContentControl Visibility="{Binding SelectedMyGroupChatIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>='}"
+                <ContentControl Visibility="{Binding IsChatSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
                                 Content="{Binding GroupChatMessagesTemplate}">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type chatViewModels:GroupChatMessagesViewModel}">
@@ -181,8 +166,8 @@
                         </DataTemplate>
                     </ContentControl.Resources>
                 </ContentControl>
-                
-                <ContentControl Visibility="{Binding SelectedPersonalChatIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>='}"
+
+                <ContentControl Visibility="{Binding IsChatSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
                                 Content="{Binding PersonalChatMessagesTemplate}">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type chatViewModels:PersonalChatMessagesVewModel}">

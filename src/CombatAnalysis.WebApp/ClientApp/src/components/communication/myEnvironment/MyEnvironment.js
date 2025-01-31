@@ -12,7 +12,7 @@ import '../../../styles/communication/myEnvironment/myEnvironment.scss';
 const MyEnvironment = ({ openCommunity }) => {
     const [menuItem, setMenuItem] = useState(8);
 
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const render = () => {
         return (
@@ -21,14 +21,14 @@ const MyEnvironment = ({ openCommunity }) => {
                     currentMenuItem={menuItem}
                     setMenuItem={setMenuItem}
                 />
-                <div className="communication__content my-environment">
-                    <div>
+                <div className="communication-content my-environment">
+                    <>
                         {menuItem === 8 &&
                             <MyFeed />
                         }
                         {menuItem === 9 &&
                             <Friends
-                                customer={customer}
+                                user={user}
                                 requestsToConnect={<RequestsToConnect />}
                                 allowRemoveFriend={true}
                             />
@@ -41,7 +41,7 @@ const MyEnvironment = ({ openCommunity }) => {
                         {menuItem === 12 &&
                             <Profile />
                         }
-                    </div>
+                    </>
                 </div>
             </div>
         );

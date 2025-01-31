@@ -2,13 +2,13 @@ import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetUsersQuery } from '../store/api/UserApi';
-import { useFriendSearchMyFriendsQuery } from '../store/api/communication/myEnvironment/Friend.api';
+import { useGetUsersQuery } from '../store/api/core/User.api';
+import { useFriendSearchMyFriendsQuery } from '../store/api/user/Friend.api';
 import AddFriendItem from './AddFriendItem';
 
 import '../styles/addPeople.scss';
 
-const defaultMaxItems = 5;
+const defaultMaxItems = 3;
 
 const AddPeople = ({ user, communityUsersId, peopleToJoin, setPeopleToJoin }) => {
     const { t } = useTranslation("addPeople");
@@ -19,13 +19,11 @@ const AddPeople = ({ user, communityUsersId, peopleToJoin, setPeopleToJoin }) =>
     const { friends, isLoading: friendsIsLoading } = useFriendSearchMyFriendsQuery(user?.id, {
         selectFromResult: ({ data }) => ({
             friends: data?.filter((item) => !communityUsersId.includes(user?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
-                .slice(0, maxFriendsItems)
         }),
     });
     const { people, isLoading: peopleIsLoading } = useGetUsersQuery(undefined, {
         selectFromResult: ({ data }) => ({
             people: data?.filter((item) => !communityUsersId.includes(item.id))
-                .slice(0, maxPeopleItems)
         }),
     });
 
@@ -63,24 +61,15 @@ const AddPeople = ({ user, communityUsersId, peopleToJoin, setPeopleToJoin }) =>
         setFilteredPeople([]);
     }
 
-    const arePeopleMoreThanLimit = (limit) => {
-        if (people === undefined || filterContent.current === null) {
-            return false;
-        }
-
-        const count = people.filter((item) => item.username.toLowerCase().startsWith(filterContent.current.value.toLowerCase())).length;
-        return count === limit;
-    }
-
     if (friendsIsLoading || peopleIsLoading) {
         return <></>;
     }
 
-    const renderList = (items, isFriendList) => {
+    const renderList = (items, maxItems, isFriendList) => {
         return (
             <ul className={`add-new-people__list${isFriendList ? "_active" : showPeopleList ? "_active" : ""}`}>
             {items?.length > 0
-                ? items.map((item) => (
+                ? items.slice(0, maxItems).map((item) => (
                     <li key={item.id} className="person">
                         {isFriendList
                             ? <AddFriendItem
@@ -106,14 +95,16 @@ const AddPeople = ({ user, communityUsersId, peopleToJoin, setPeopleToJoin }) =>
         );
     }
 
-    const renderMoreButton = (maxItems, setMaxItems, defaultMaxItems) => (
-        <div className={`add-new-people__more${arePeopleMoreThanLimit(defaultMaxItems) ? "_active" : ""}`}>
-            {maxItems > defaultMaxItems
-                ? <button className="btn btn-outline-secondary" title={t("ShowLessPeople")} onClick={() => setMaxItems(defaultMaxItems)}>{t("Less")}</button>
-                : <button className="btn btn-outline-secondary" title={t("ShowMorePeople")} onClick={() => setMaxItems(-1)}>{t("More")}</button>
+    const renderMoreButton = (targetCollectionSize, maxItems, setMaxItems, defaultMaxItems) => {
+        return (
+            <div className="add-new-people__more">
+            {targetCollectionSize > maxItems
+                ? <button className="btn btn-outline-secondary" title={t("ShowMorePeople")} onClick={() => setMaxItems(targetCollectionSize)}>{t("More")}</button>
+                : <button className="btn btn-outline-secondary" title={t("ShowLessPeople")} onClick={() => setMaxItems(defaultMaxItems)}>{t("Less")}</button>
             }
-        </div>
-    )
+            </div>
+        )
+    };
 
     return (
         <div className="add-new-people">
@@ -148,8 +139,14 @@ const AddPeople = ({ user, communityUsersId, peopleToJoin, setPeopleToJoin }) =>
                             onClick={() => setShowFriendList(!showFriendList)}
                         />
                     </div>
-                    {renderList(friends, true)}
-                    {showFriendList && renderMoreButton(maxFriendsItems, setMaxFriendsItems, defaultMaxItems)}
+                    {showFriendList &&
+                        <>
+                            {renderList(friends, maxFriendsItems, true)}
+                            {friends?.length > defaultMaxItems &&
+                                renderMoreButton(friends.length, maxFriendsItems, setMaxFriendsItems, defaultMaxItems)
+                            }
+                        </>
+                    }
                 </div>
                 <div className={`add-new-people__content${filterContent.current?.value !== "" ? "_active" : ""}`}>
                     <div className="add-new-people__content-title">
@@ -160,8 +157,14 @@ const AddPeople = ({ user, communityUsersId, peopleToJoin, setPeopleToJoin }) =>
                             onClick={() => setShowPeopleList(!showPeopleList)}
                         />
                     </div>
-                    {renderList(filteredPeople, false)}
-                    {showPeopleList && renderMoreButton(maxPeopleItems, setMaxPeopleItems, defaultMaxItems)}
+                    {showPeopleList &&
+                        <>
+                            {renderList(filteredPeople, maxPeopleItems, false)}
+                            {filteredPeople?.length > defaultMaxItems &&
+                                renderMoreButton(filteredPeople.length, maxPeopleItems, setMaxPeopleItems, defaultMaxItems)
+                            }
+                        </>
+                    }
                 </div>
             </div>
         </div>

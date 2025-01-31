@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.Core.Models;
+﻿using CombatAnalysis.Core.Interfaces.Entities;
 
-public class DamageTakenGeneralModel
+namespace CombatAnalysis.Core.Models;
+
+public class DamageTakenGeneralModel : IDetailsEntity
 {
     public int Id { get; set; }
 
@@ -10,7 +12,7 @@ public class DamageTakenGeneralModel
 
     public double DamageTakenPerSecond { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
     public int CritNumber { get; set; }
 

@@ -1,56 +1,101 @@
-﻿import { faClock, faHandFist, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTranslation } from 'react-i18next';
+﻿import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
+import {
+    useGetResourceRecoveryCountByFilterQuery, useGetResourceRecoveryByFilterQuery,
+    useGetResourceRecoveryUniqueFilterValuesQuery
+} from '../../store/api/combatParser/ResourcesRecovery.api';
+import DetailsFilter from './DetailsFilter';
+import PaginationHelper from './PaginationHelper';
 
-const ResourceRecoveryHelper = ({ detailsData }) => {
-    const { t } = useTranslation("helpers/combatDetailsHelper");
+const ResourceRecoveryHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
+    const { getTimeWithoutMs } = useTime();
 
-    const [getTimeWithoutMs, , getDuration] = useTime();
+    const [page, setPage] = useState(1);
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
 
-    return detailsData.map((item) => (
-        <li key={item.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{item.spellOrItem}</h5>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faClock}
-                            className="list-group-item__value"
-                            title={t("Time")}
-                        />
-                        <div>{getDuration(getTimeWithoutMs(item.time), getTimeWithoutMs(detailsData[0].time))}</div>
+    const { data: count, isLoading: countIsLoading } = useGetResourceRecoveryCountByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    );
+    const { data, isLoading } = useGetResourceRecoveryByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    );
+
+    const totalPages = Math.ceil(count / pageSize);
+
+    useEffect(() => {
+        setPage(1);
+    }, [selectedFilter]);
+
+    const tableTitle = () => {
+        return (
+            <li className="player-data-details__title" key="0">
+                <ul>
+                    <li>
+                        {t("Spell")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faHandFist}
-                            className="list-group-item__value"
-                            title={t("Value")}
-                        />
-                        <div>{item.value}</div>
+                    <li>
+                        {t("Time")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faUserTie}
-                            className="list-group-item__value"
-                            title={t("FromWho")}
-                        />
-                        <div>{item.spellOrItem}</div>
+                    <li>
+                        {t("Value")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faRightToBracket}
-                            className="list-group-item__value"
-                            title={t("ToTarget")}
-                        />
-                        <div>{item.toEnemy}</div>
+                    <li>
+                        {t("Creator")}
                     </li>
                 </ul>
+            </li>
+        );
+    }
+
+    if (isLoading || countIsLoading) {
+        return (<div>Loading...</div>);
+    }
+
+    return (
+        <>
+            <div className="player-filter-details">
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Creator"
+                    filterName={t("Creator")}
+                    useGetUniqueFilterValuesQuery={useGetResourceRecoveryUniqueFilterValuesQuery}
+                    t={t}
+                />
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Spell"
+                    filterName={t("Spell")}
+                    useGetUniqueFilterValuesQuery={useGetResourceRecoveryUniqueFilterValuesQuery}
+                    t={t}
+                />
             </div>
-        </li>
-    ));
+            <ul className="player-data-details">
+                {tableTitle()}
+                {data.map((item) => (
+                    <li className="player-data-details__item" key={item.id}>
+                        <ul>
+                            <li>{item.spell}</li>
+                            <li>
+                                <div>{getTimeWithoutMs(item.time)}</div>
+                            </li>
+                            <li>{item.value}</li>
+                            <li>{getUserNameWithoutRealm(item.creator)}</li>
+                        </ul>
+                    </li>
+                ))}
+            </ul>
+            <PaginationHelper
+                setPage={setPage}
+                page={page}
+                totalPages={totalPages}
+                t={t}
+            />
+        </>
+    );
 }
 
 export default ResourceRecoveryHelper;

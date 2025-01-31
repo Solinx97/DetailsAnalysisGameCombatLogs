@@ -2,12 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    useLazyGetDamageDoneGeneralyByPlayerIdQuery,
-    useLazyGetDamageTakenGeneralyByPlayerIdQuery,
-    useLazyGetHealDoneGeneralyByPlayerIdQuery,
-    useLazyGetResourceRecoveryGeneralyByPlayerIdQuery
-} from '../../store/api/CombatParserApi';
+import { useLazyGetDamageDoneGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/DamageDone.api';
+import { useLazyGetDamageTakenGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/DamageTaken.api';
+import { useLazyGetHealDoneGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/HealDone.api';
+import { useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/ResourcesRecovery.api';
 
 const itemsMinCount = 5;
 
@@ -15,10 +13,10 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
     const { t } = useTranslation("combatDetails/dashboard");
 
     const detailsTypeFunctions = [
-        useLazyGetDamageDoneGeneralyByPlayerIdQuery(),
-        useLazyGetHealDoneGeneralyByPlayerIdQuery(),
-        useLazyGetDamageTakenGeneralyByPlayerIdQuery(),
-        useLazyGetResourceRecoveryGeneralyByPlayerIdQuery()
+        useLazyGetDamageDoneGeneralByCombatPlayerIdQuery(),
+        useLazyGetHealDoneGeneralByCombatPlayerIdQuery(),
+        useLazyGetDamageTakenGeneralByCombatPlayerIdQuery(),
+        useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery()
     ];
 
     const detailsTypeNames = [
@@ -64,7 +62,7 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
                 {data?.slice(0, itemsCount).filter(damage => damage.value > 0).map((damage, index) => (
                     <li key={index}>
                         <div className="min-details__spells-items">
-                            <div>{damage.spellOrItem}</div>
+                            <div>{damage.spell}</div>
                             <div className="value">
                                 <div>{damage.value}</div>
                             </div>

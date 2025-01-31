@@ -1,27 +1,39 @@
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useFindPersonalChatMessageCountQuery } from '../../../store/api/communication/chats/PersonalChatMessagCount.api';
+import { useEffect, useState } from 'react';
+import { useFindPersonalChatMessageCountQuery } from '../../../store/api/chat/PersonalChatMessagCount.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 
-const personalChatCountPollingInterval = 2000;
+const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId, subscribeToUnreadPersonalMessagesUpdated }) => {
+    const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
 
-const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId }) => {
-    const { data: user, isLoading } = useGetUserByIdQuery(companionId);
-    const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: meId }, {
-        pollingInterval: personalChatCountPollingInterval,
-    });
+    const { data: companion, isLoading } = useGetUserByIdQuery(companionId);
+    const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: meId });
+
+    useEffect(() => {
+        subscribeToUnreadPersonalMessagesUpdated(meId, (targetChatId, targetMeInChatId, count) => {
+            if (targetChatId === chat?.id && targetMeInChatId === meId) {
+                setUnreadMessageCount(count);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!messagesCount) {
+            return;
+        }
+
+        setUnreadMessageCount(messagesCount.count);
+    }, [messagesCount]);
 
     if (isLoading || messagesCountLoading) {
-        return (<div>Loading...</div>)
+        return (<div className="chat-loading-yet">Loading...</div>)
     }
 
     return (
         <span className="chat-card" onClick={() => setSelectedPersonalChat({ type: "personal", chat: chat })}>
-            <div className="username">{user?.username}</div>
-            {chat.lastMessage.length > 0 &&
+            <div className="username">{companion?.username}</div>
+            {unreadMessageCount > 0 &&
                 <div className="chat-tooltip">
-                    {messagesCount?.count > 0 &&
-                        <div className="unread-message-count">{messagesCount?.count > 99 ? "99+" : messagesCount?.count}</div>
-                    }
-                    <div className="last-message">{chat?.lastMessage}</div>
+                    <div className="unread-message-count">{unreadMessageCount > 99 ? "99+" : unreadMessageCount}</div>
                 </div>
             }
         </span>

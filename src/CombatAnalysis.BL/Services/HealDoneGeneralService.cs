@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, int>
+internal class HealDoneGeneralService : QueryService<HealDoneGeneralDto, HealDoneGeneral>, IMutationService<HealDoneGeneralDto>
 {
-    private readonly ISQLPlayerInfoRepository<HealDoneGeneral, int> _repository;
+    private readonly IGenericRepository<HealDoneGeneral> _repository;
     private readonly IMapper _mapper;
 
-    public HealDoneGeneralService(ISQLPlayerInfoRepository<HealDoneGeneral, int> repository, IMapper mapper)
+    public HealDoneGeneralService(IGenericRepository<HealDoneGeneral> repository, IMapper mapper) : base(repository, mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,45 +28,6 @@ internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, i
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<HealDoneGeneralDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<HealDoneGeneralDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<HealDoneGeneralDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<HealDoneGeneralDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<HealDoneGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<HealDoneGeneralDto>>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<HealDoneGeneralDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-        var resultMap = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(HealDoneGeneralDto item)
     {
         if (item == null)
@@ -76,8 +38,20 @@ internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, i
         return UpdateInternalAsync(item);
     }
 
+    public Task<int> DeleteAsync(HealDoneGeneralDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(HealDoneGeneralDto), $"The {nameof(HealDoneGeneralDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
+    }
+
     private async Task<HealDoneGeneralDto> CreateInternalAsync(HealDoneGeneralDto item)
     {
+        CheckParams(item);
+
         var map = _mapper.Map<HealDoneGeneral>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<HealDoneGeneralDto>(createdItem);
@@ -87,9 +61,30 @@ internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, i
 
     private async Task<int> UpdateInternalAsync(HealDoneGeneralDto item)
     {
+        CheckParams(item);
+
         var map = _mapper.Map<HealDoneGeneral>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(HealDoneGeneralDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<HealDoneGeneral>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(HealDoneGeneralDto item)
+    {
+        if (string.IsNullOrEmpty(item.Spell))
+        {
+            throw new ArgumentNullException(nameof(HealDoneGeneralDto.Spell),
+                $"The property {nameof(HealDoneGeneralDto.Spell)} of the {nameof(HealDoneGeneralDto)} object can't be null or empty");
+        }
     }
 }

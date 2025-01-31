@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
-import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/communication/chats/PersonalChatMessagCount.api';
-import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
-import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/communication/myEnvironment/RequestToConnect.api';
+import { useChatHub } from '../../context/ChatHubProvider';
+import { useLazyIsExistAsyncQuery } from '../../store/api/chat/PersonalChat.api';
+import { useFriendSearchMyFriendsQuery } from '../../store/api/user/Friend.api';
+import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/user/RequestToConnect.api';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
 import SelectedUserProfile from './people/SelectedUserProfile';
 
@@ -18,11 +18,11 @@ const failedNotificationTimeout = 2000;
 const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests = null }) => {
     const { t } = useTranslation("communication/userInformation");
 
+    const { subscribeToPersonalChat, personalChatHubConnection } = useChatHub();
+
     const navigate = useNavigate();
 
     const [isExistAsync] = useLazyIsExistAsyncQuery();
-    const [createPersonalChatAsync] = useCreatePersonalChatAsyncMutation();
-    const [createPersonalChatCountAsyncMut] = useCreatePersonalChatMessageCountAsyncMutation();
     const [createRequestAsync] = useCreateRequestAsyncMutation();
     const [isRequestExistAsync] = useLazyRequestIsExistQuery();
 
@@ -53,37 +53,11 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
             return;
         }
 
-        const newChat = {
-            initiatorUsername: me?.username,
-            companionUsername: targetUser.username,
-            lastMessage: " ",
-            initiatorId: me?.id,
-            companionId: targetUser.id
-        };
+        subscribeToPersonalChat((chat) => {
+            navigate("/chats");
+        });
 
-        const createdChat = await createPersonalChatAsync(newChat);
-        if (createdChat.data !== undefined) {
-            let countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, me?.id);
-            if (!countIsCreated) {
-                return;
-            }
-
-            countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, targetUser.id);
-            if (countIsCreated) {
-                navigate("/chats");
-            }
-        }
-    }
-
-    const createPersonalChatCountAsync = async (chatId, userId) => {
-        const newMessagesCount = {
-            count: 0,
-            appUSerId: userId,
-            personalChatId: +chatId,
-        };
-
-        const createdMessagesCount = await createPersonalChatCountAsyncMut(newMessagesCount);
-        return createdMessagesCount.data !== undefined;
+        await personalChatHubConnection?.invoke("CreateChat", me?.id, targetUser.id);
     }
 
     const checkIfRequestExistAsync = async (id) => {
@@ -101,7 +75,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
     }
 
     const createRequestToConnectAsync = async (people) => {
-        if (actionAfterRequests !== null) {
+        if (actionAfterRequests) {
             actionAfterRequests();
         }
 
@@ -117,8 +91,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
         }
 
         const newRequest = {
-            username: me?.username,
-            toUserId: people.id,
+            toAppUserId: people.id,
             when: new Date(),
             appUserId: me?.id,
         };

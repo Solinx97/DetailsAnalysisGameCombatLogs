@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.chat.name }}-service
+  labels:
+    env: {{ .Values.env }}
+    owner: OlegFedosov
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}-{{ .Values.chat.name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.chat.service.port }}
+      targetPort:  {{ .Values.chat.service.targetPort }}

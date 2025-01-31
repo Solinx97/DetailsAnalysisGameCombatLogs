@@ -1,8 +1,12 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class DamageTakenDto
+namespace CombatAnalysis.BL.DTO;
+
+public class DamageTakenDto : Interfaces.Entity.ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
+
+    public string Spell { get; set; }
 
     public int Value { get; set; }
 
@@ -10,11 +14,9 @@ public class DamageTakenDto
 
     public TimeSpan Time { get; set; }
 
-    public string FromEnemy { get; set; }
+    public string Creator { get; set; }
 
-    public string ToPlayer { get; set; }
-
-    public string SpellOrItem { get; set; }
+    public string Target { get; set; }
 
     public bool IsPeriodicDamage { get; set; }
 
@@ -28,19 +30,7 @@ public class DamageTakenDto
 
     public int Mitigated { get; set; }
 
-    public bool IsDodge { get; set; }
-
-    public bool IsParry { get; set; }
-
-    public bool IsMiss { get; set; }
-
-    public bool IsResist { get; set; }
-
-    public bool IsImmune { get; set; }
-
-    public bool IsAbsorb { get; set; }
-
-    public bool IsCrushing { get; set; }
+    public int DamageTakenType { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

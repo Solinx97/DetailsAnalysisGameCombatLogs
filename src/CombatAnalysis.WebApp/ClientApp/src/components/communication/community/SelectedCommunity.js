@@ -1,11 +1,12 @@
-import { faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronLeft, faChevronRight, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
-import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
+import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/core/Community.api';
+import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
+import CreateCommunityPost from '../post/CreateCommunityPost';
 import CommunityDiscussions from './CommunityDiscussions';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';
@@ -13,7 +14,6 @@ import Discussion from './Discussion';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
-import CreatePost from '../CreatePost';
 
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
@@ -29,18 +29,18 @@ const SelectedCommunity = () => {
     const [editDescriptionOn, setEditDescriptionOn] = useState(false);
     const [showDiscussion, setShowDiscussion] = useState(false);
     const [discussion, setDiscussion] = useState(null);
+    const [showActions, setShowActions] = useState(true);
 
     const communityNameInput = useRef(null);
     const communityDescriptionInput = useRef(null);
 
     const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
     const [updateCommunityAsync] = useUpdateCommunityAsyncMutation();
-    const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         setCommunityId(+queryParams.get("id"));
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (communityId === 0) {
@@ -53,17 +53,7 @@ const SelectedCommunity = () => {
         }
 
         searchByCommunityId();
-    }, [communityId])
-
-    const createCommunityPostAsync = async (postId) => {
-        const newComunityPost = {
-            communityId: community.id,
-            postId: postId
-        }
-
-        const createdUserPost = await createNewCommunityPostAsync(newComunityPost);
-        return createdUserPost.data === undefined ? false : true;
-    }
+    }, [communityId]);
 
     const updateCommunityNameAsync = async () => {
         setEditNameOn(false);
@@ -72,7 +62,7 @@ const SelectedCommunity = () => {
         communityForUpdate.name = communityNameInput.current.value;
 
         const updated = await updateCommunityAsync(communityForUpdate);
-        if (updated.data !== undefined) {
+        if (updated.data) {
             setCommunity(communityForUpdate);
         }
     }
@@ -84,17 +74,20 @@ const SelectedCommunity = () => {
         communityForUpdate.description = communityDescriptionInput.current.value;
 
         const updated = await updateCommunityAsync(communityForUpdate);
-        if (updated.data !== undefined) {
+        if (updated.data) {
             setCommunity(communityForUpdate);
         }
     }
 
-    if (community === null) {
+    if (!community) {
         return (
-            <CommunicationMenu
-                currentMenuItem={3}
-                selectedCommunityName={community?.name}
-            />
+            <>
+                <CommunicationMenu
+                    currentMenuItem={3}
+                    selectedCommunityName={community?.name}
+                />
+                <Loading />
+            </>
         );
     }
 
@@ -104,7 +97,7 @@ const SelectedCommunity = () => {
                 currentMenuItem={3}
                 selectedCommunityName={community?.name}
             />
-            <div className="communication__content selected-community">
+            <div className="communication-content selected-community">
                 <div className="selected-community__content">
                     <div className="header">
                         <div className="title">
@@ -123,25 +116,19 @@ const SelectedCommunity = () => {
                                         <FontAwesomeIcon
                                             icon={faCloudArrowUp}
                                             title={t("Save")}
-                                            onClick={async () => await updateCommunityNameAsync()}
+                                            onClick={updateCommunityNameAsync}
                                         />
                                     </>
                                     : <div className="name" title={community?.name}>
-                                        {community?.policyType === 0
-                                            ? <FontAwesomeIcon
-                                                icon={faEarthEurope}
-                                                title={t("Open")}
-                                            />
-                                            : <FontAwesomeIcon
-                                                icon={faShieldHalved}
-                                                title={t("Private")}
-                                            />
-                                        }
+                                        <FontAwesomeIcon
+                                            icon={community?.policyType ? faEarthEurope : faShieldHalved}
+                                            title={community?.policyType ? t("Open") : t("Private")}
+                                        />
                                         <div>{community?.name}</div>
                                     </div>
                                 }
                             </div>
-                            {isCommunityMember &&
+                            {(isCommunityMember && community.appUserId === user?.id) &&
                                 <FontAwesomeIcon
                                     icon={faBars}
                                     title={t("Menu")}
@@ -166,26 +153,19 @@ const SelectedCommunity = () => {
                                     <FontAwesomeIcon
                                         icon={faCloudArrowUp}
                                         title={t("Save")}
-                                        onClick={async () => await updateCommunityDescriptionAsync()}
+                                        onClick={updateCommunityDescriptionAsync}
                                     />
                                 }
                             </div>
-                            {showDescription
-                                ? <FontAwesomeIcon
-                                    icon={faEye}
-                                    title={t("Hide")}
-                                    onClick={() => setShowDescription((item) => !item)}
-                                />
-                                : <FontAwesomeIcon
-                                    icon={faEyeSlash}
-                                    title={t("Show")}
-                                    onClick={() => setShowDescription((item) => !item)}
-                                />
-                            }
+                            <FontAwesomeIcon
+                                icon={showDescription ? faEye : faEyeSlash}
+                                title={showDescription ? t("Hide") : t("Show")}
+                                onClick={() => setShowDescription((item) => !item)}
+                            />
                         </div>
                         {showDescription
                             ? editDescriptionOn
-                                ? <textarea className="form-control" rows="4" cols="50" ref={communityDescriptionInput} defaultValue={community?.description} />
+                                ? <textarea className="form-control" rows="2" cols="50" ref={communityDescriptionInput} defaultValue={community?.description} />
                                 : <div className="description__content">{community?.description}</div>
                             : null
                         }
@@ -197,40 +177,49 @@ const SelectedCommunity = () => {
                             user={user}
                         />
                     }
-                    <div>
+                    <div className="posts">
                         {isCommunityMember &&
-                            <CreatePost
+                            <CreateCommunityPost
                                 user={user}
-                                owner={community.name}
-                                postTypeName="community"
-                                createTypeOfPostFunc={createCommunityPostAsync}
+                                communityName={community.name}
+                                communityId={community.id}
                                 t={t}
                             />
                         }
                         <SelectedCommunityItem
-                            user={user}
+                            userId={user?.id}
                             communityId={communityId}
+                            t={t}
                         />
                     </div>
                 </div>
-                <ul className="selected-community__actions">
-                    <li>
-                        <CommunityMembers
-                            community={community}
-                            user={user}
-                            setIsCommunityMember={setIsCommunityMember}
-                        />
-                    </li>
-                    <li>
-                        <CommunityDiscussions
-                            community={community}
-                            customer={user}
-                            setShowDiscussion={setShowDiscussion}
-                            setDiscussion={setDiscussion}
-                            isCommunityMember={isCommunityMember}
-                        />
-                    </li>
-                </ul>
+                <div className="selected-community__actions-container">
+                    <FontAwesomeIcon
+                        icon={showActions ? faChevronRight : faChevronLeft}
+                        title={showActions ? t("HideActions") : t("ShowActions")}
+                        onClick={() => setShowActions((item) => !item)}
+                    />
+                    {showActions &&
+                        <div className="selected-community__actions">
+                            <div>
+                                <CommunityMembers
+                                    community={community}
+                                    user={user}
+                                    setIsCommunityMember={setIsCommunityMember}
+                                />
+                            </div>
+                            <div>
+                                <CommunityDiscussions
+                                    community={community}
+                                    customer={user}
+                                    setShowDiscussion={setShowDiscussion}
+                                    setDiscussion={setDiscussion}
+                                    isCommunityMember={isCommunityMember}
+                                />
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
             {showMenu &&
                 <CommunityMenu

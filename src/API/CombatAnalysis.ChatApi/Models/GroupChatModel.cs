@@ -6,7 +6,5 @@ public class GroupChatModel
 
     public string Name { get; set; }
 
-    public string LastMessage { get; set; }
-
     public string AppUserId { get; set; }
 }

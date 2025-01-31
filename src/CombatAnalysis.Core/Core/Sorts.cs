@@ -35,6 +35,17 @@ internal static class Sorts<T>
         var type = typeof(T);
         var property = type.GetProperty(_propertyName);
 
-        return (TProperty)property.GetValue(item);
+        if (property == null)
+        {
+            throw new InvalidOperationException($"Property '{_propertyName}' not found on type '{type.FullName}'.");
+        }
+
+        var value = property.GetValue(item);
+        if (value == null)
+        {
+            throw new InvalidOperationException($"Property '{_propertyName}' on type '{type.FullName}' returned null.");
+        }
+
+        return (TProperty)value;
     }
 }

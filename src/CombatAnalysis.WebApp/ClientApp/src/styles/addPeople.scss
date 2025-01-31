@@ -86,16 +86,12 @@
     }
 
     &__more {
-        display: none;
+        display: flex;
+        justify-content: center;
+        margin: 15px 0;
 
-        &_active {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-
-            button {
-                font-size: 11px;
-            }
+        button {
+            font-size: 11px;
         }
     }
 

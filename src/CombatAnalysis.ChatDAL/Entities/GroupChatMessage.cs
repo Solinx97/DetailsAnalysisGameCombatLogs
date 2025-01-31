@@ -1,8 +1,15 @@
-﻿namespace CombatAnalysis.ChatDAL.Entities;
+﻿using CombatAnalysis.ChatDAL.Interfaces.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class GroupChatMessage
+namespace CombatAnalysis.ChatDAL.Entities;
+
+public class GroupChatMessage : IChatEntity
 {
+    [Key]
     public int Id { get; set; }
+
+    public string Username { get; set; }
 
     public string Message { get; set; }
 
@@ -12,7 +19,9 @@ public class GroupChatMessage
 
     public int Type { get; set; }
 
-    public int GroupChatId { get; set; }
+    [ForeignKey(nameof(GroupChat))]
+    public int ChatId { get; set; }
 
-    public string AppUserId { get; set; }
+    [ForeignKey(nameof(GroupChatUser))]
+    public string GroupChatUserId { get; set; }
 }

@@ -117,35 +117,47 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageValue" xml:space="preserve">
-    <value>Среднее знач.</value>
+  <data name="Average" xml:space="preserve">
+    <value>Среднее</value>
   </data>
   <data name="Common" xml:space="preserve">
     <value>Общий</value>
   </data>
-  <data name="CountOfSkills" xml:space="preserve">
-    <value>Примен. закл.</value>
+  <data name="Count" xml:space="preserve">
+    <value>Кол-во</value>
   </data>
-  <data name="MaxValue" xml:space="preserve">
-    <value>Макс. значение</value>
+  <data name="First" xml:space="preserve">
+    <value>Первая</value>
   </data>
-  <data name="MinValue" xml:space="preserve">
-    <value>Мин. значение</value>
+  <data name="Last" xml:space="preserve">
+    <value>Последняя</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Мин</value>
   </data>
   <data name="MoreDetails" xml:space="preserve">
     <value>Подробнее</value>
   </data>
+  <data name="Next" xml:space="preserve">
+    <value>Сл.</value>
+  </data>
+  <data name="Player" xml:space="preserve">
+    <value>Игрок</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Пред.</value>
+  </data>
   <data name="Resources" xml:space="preserve">
     <value>Ресурсы</value>
   </data>
-  <data name="ResourcesPerSec" xml:space="preserve">
-    <value>Ресурсов в сек.</value>
+  <data name="RPS" xml:space="preserve">
+    <value>РВС</value>
   </data>
-  <data name="ShowFilters" xml:space="preserve">
-    <value>Показать фильтры</value>
-  </data>
-  <data name="Source" xml:space="preserve">
-    <value>Источник</value>
+  <data name="Filters" xml:space="preserve">
+    <value>Фильтры</value>
   </data>
   <data name="Time" xml:space="preserve">
     <value>Время</value>
@@ -154,9 +166,18 @@
     <value>Анализ восполненных ресурсов</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Всего: </value>
+    <value>Всего</value>
   </data>
   <data name="TypeOf" xml:space="preserve">
     <value>Тип</value>
+  </data>
+  <data name="Spell" xml:space="preserve">
+    <value>Заклинание</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="Creator" xml:space="preserve">
+    <value>Инициатор</value>
   </data>
 </root>

@@ -120,6 +120,9 @@
   <data name="Analysing" xml:space="preserve">
     <value>Analysing</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Combat" xml:space="preserve">
     <value>Combat</value>
   </data>
@@ -141,17 +144,20 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Loading failed</value>
   </data>
+  <data name="ShowLogs" xml:space="preserve">
+    <value>Show logs</value>
+  </data>
   <data name="PreparePets" xml:space="preserve">
     <value>Prepare pets</value>
   </data>
   <data name="Private" xml:space="preserve">
     <value>Private</value>
   </data>
-  <data name="PrivateLogs" xml:space="preserve">
-    <value>Private logs</value>
+  <data name="PersonalLogs" xml:space="preserve">
+    <value>Personal logs</value>
   </data>
-  <data name="PrivateLogsLoginRequired" xml:space="preserve">
-    <value>For watching a 'Private logs' you need to login</value>
+  <data name="PersonalLogsLoginRequired" xml:space="preserve">
+    <value>For watching a 'Personal logs' you should be Login</value>
   </data>
   <data name="Processing" xml:space="preserve">
     <value>Processing...</value>
@@ -181,7 +187,7 @@
     <value>Result</value>
   </data>
   <data name="SaveData" xml:space="preserve">
-    <value>Save data</value>
+    <value>Save</value>
   </data>
   <data name="SaveDataDescribe" xml:space="preserve">
     <value>Saved data is allow to see details in the future and share with other users.</value>
@@ -198,8 +204,8 @@
   <data name="TypeOfLogs" xml:space="preserve">
     <value>Type of logs</value>
   </data>
-  <data name="TypeOfLogsLoginRequired" xml:space="preserve">
-    <value>To select a type of logs you need to login</value>
+  <data name="ToSaveYouShouldBeLogin" xml:space="preserve">
+    <value>To Save logs you should be Login</value>
   </data>
   <data name="Upload" xml:space="preserve">
     <value>Upload</value>
@@ -207,7 +213,7 @@
   <data name="UploadFile" xml:space="preserve">
     <value>Upload file with combat data</value>
   </data>
-  <data name="WithoutUser" xml:space="preserve">
-    <value>Without user data</value>
+  <data name="Anonymous" xml:space="preserve">
+    <value>Anonymous</value>
   </data>
 </root>

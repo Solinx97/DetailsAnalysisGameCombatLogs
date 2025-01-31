@@ -1,12 +1,12 @@
-import ChatMessageMenu from './ChatMessageMenu';
 import { useState } from 'react';
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import User from '../User';
+import ChatMessageMenu from './ChatMessageMenu';
 
-const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message }) => {
+const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message, meInChatId }) => {
     const [userInformation, setUserInformation] = useState(null);
 
-    const { data: user, isLoading } = useGetUserByIdQuery(message?.appUserId);
+    const { data: user, isLoading } = useGetUserByIdQuery(meInChatId);
 
     const getMessageTime = () => {
         const getDate = new Date(message?.time);
@@ -16,7 +16,7 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
     }
 
     if (isLoading) {
-        return <></>;
+        return (<></>);
     }
 
     return (
@@ -36,12 +36,14 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
                 <User
                     me={me}
                     itIsMe={itIsMe}
-                    targetUserId={user.id}
+                    targetUserId={user?.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                 />
             </div>
-            {userInformation}
+            <div className="chat-user-information">
+                {userInformation}
+            </div>
         </>
     );
 }

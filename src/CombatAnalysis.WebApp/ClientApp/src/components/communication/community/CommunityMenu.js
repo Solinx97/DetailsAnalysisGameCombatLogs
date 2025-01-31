@@ -3,18 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useRemoveCommunityAsyncMutation, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
-import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
+import { useCommunityUserSearchByCommunityIdQuery, useLazyCommunityUserSearchByUserIdQuery, useRemoveCommunityUserMutation } from '../../../store/api/community/CommunityUser.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/community/InviteToCommunity.api';
+import { useRemoveCommunityAsyncMutation, useUpdateCommunityAsyncMutation } from '../../../store/api/core/Community.api';
 import AddPeople from '../../AddPeople';
+import Loading from '../../Loading';
 import Members from '../Members';
 import CommonItem from "../create/CommonItem";
 import CommunityRulesItem from "../create/CommunityRulesItem";
 import ItemConnector from '../create/ItemConnector';
 
 import '../../../styles/communication/community/communityMenu.scss';
-import Loading from '../../Loading';
 
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
@@ -33,12 +32,12 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     const [showInvitesFailed, setShowInvitesFailed] = useState(false);
 
     const [removeCommunityAsync] = useRemoveCommunityAsyncMutation();
-    const [searchByUserIdAsync] = useLazySearchByUserIdAsyncQuery();
-    const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
+    const [searchByUserIdAsync] = useLazyCommunityUserSearchByUserIdQuery();
+    const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [updateCommunityAsyncMut] = useUpdateCommunityAsyncMutation();
-    const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
+    const { data: communityUsers, isLoading } = useCommunityUserSearchByCommunityIdQuery(community?.id);
 
     const leaveFromCommunityAsync = async () => {
         const myCommunityUserId = await searchByUserIdAsync(customer?.id);
@@ -134,7 +133,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     }
 
     return (
-        <div className="communication__content community-menu box-shadow">
+        <div className="communication-content community-menu box-shadow">
             {showLeaveFromCommunity &&
                 <div className="leave-from-community">
                     <div className="leave-from-community__title">{t("LeaveAlert")}</div>
@@ -243,7 +242,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                     }
                     {itemIndex === 2 &&
                         <>
-                            <div className="create-group-chat__item">
+                            <>
                                 <AddPeople
                                     customer={customer}
                                     communityUsersId={[customer?.id]}
@@ -253,13 +252,17 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                                 <ItemConnector
                                     connectorType={0}
                                 />
-                            </div>
-                            <div className={`alert alert-success ${showInvitesSuccess ? "active" : ""}`} role="alert">
-                                {t("InviteSuccess")}
-                            </div>
-                            <div className={`alert alert-warning ${showInvitesFailed ? "active" : ""}`} role="alert">
-                                {t("InviteFailed")}
-                            </div>
+                            </>
+                            {showInvitesSuccess &&
+                                <div className="alert alert-success" role="alert">
+                                    {t("InviteSuccess")}
+                                </div>
+                            }
+                            {showInvitesFailed &&
+                                <div className="alert alert-warning " role="alert">
+                                    {t("InviteFailed")}
+                                </div>
+                            }
                             <div className="actions">
                                 <div className="btn-shadow" onClick={async () => await createInviteAsync()}>{t("Apply")}</div>
                             </div>

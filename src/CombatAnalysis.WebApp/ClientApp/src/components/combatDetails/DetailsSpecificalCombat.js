@@ -1,9 +1,9 @@
 ﻿import { faDeleteLeft, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetPlayersDeathByPlayerIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetPlayersDeathByPlayerIdQuery } from '../../store/api/core/CombatParser.api';
 import PlayerInformation from '../childs/PlayerInformation';
 import PersonalTabs from '../common/PersonalTabs';
 import Dashboard from './Dashboard';
@@ -22,6 +22,12 @@ const DetailsSpecificalCombat = () => {
     const [searchCombatPlayers, setSearchCombatPlayers] = useState([]);
     const [showCommonDetails, setShowCommonDetails] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
+
+    const maxWidth = 425;
+    const screenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
 
     const [getCombatPlayersByCombatIdAsync] = useLazyGetCombatPlayersByCombatIdQuery();
     const [getPlayersDeathByCombatIdAsync] = useLazyGetPlayersDeathByPlayerIdQuery();
@@ -52,7 +58,7 @@ const DetailsSpecificalCombat = () => {
     }, [combatDetails.combatId])
 
     const handlerSearch = (e) => {
-        const filteredPeople = combatPlayers.filter((item) => item.userName.toLowerCase().startsWith(e.target.value.toLowerCase()));
+        const filteredPeople = combatPlayers.filter((item) => item.username.toLowerCase().startsWith(e.target.value.toLowerCase()));
         setSearchCombatPlayers(filteredPeople);
     }
 
@@ -90,16 +96,11 @@ const DetailsSpecificalCombat = () => {
                     />
                     <div>{t("SelectCombat")}</div>
                 </div>
-                <h3>{t("Players")}</h3>
+                <h5>{t("Players")}</h5>
                 <div className="btn-shadow search-icon" onClick={() => setShowSearch((item) => !item)}>
-                    {showSearch
-                        ? <FontAwesomeIcon
-                            icon={faMagnifyingGlassMinus}
-                        />
-                        : <FontAwesomeIcon
-                            icon={faMagnifyingGlassPlus}
-                        />
-                    }
+                    <FontAwesomeIcon
+                        icon={showSearch ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
+                    />
                     <div>{t("Search")}</div>
                 </div>
                 <div>{combatDetails.combatName}</div>
@@ -118,7 +119,7 @@ const DetailsSpecificalCombat = () => {
                     </div>
                 </div>
             }
-            {combatPlayers.length > 0 &&
+            {(combatPlayers.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowCommonDetails((item) => !item)} />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowCommonStatistics")}</label>
@@ -134,12 +135,12 @@ const DetailsSpecificalCombat = () => {
                 tabs={[
                     {
                         id: 0,
-                        header: "Dashboard",
+                        header: t("Dashboard"),
                         content: <Dashboard combatId={combatDetails.combatId} combatLogId={combatDetails.combatLogId} players={searchCombatPlayers} combatName={combatDetails.combatName} playersDeath={playersDeath} />
                     },
                     {
                         id: 1,
-                        header: "Common",
+                        header: t("Details"),
                         content: <PlayerInformation combatPlayers={searchCombatPlayers} combatId={combatDetails.combatId} combatLogId={combatDetails.combatLogId} combatName={combatDetails.combatName} />
                     }
                 ]}

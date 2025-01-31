@@ -1,77 +1,131 @@
-﻿import { faClock, faFire, faFlask, faHandFist, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
+﻿import { faFire, faFlask } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
+import {
+    useGetHealDoneCountByFilterQuery, useGetHealDoneByFilterQuery,
+    useGetHealDoneUniqueFilterValuesQuery
+} from '../../store/api/combatParser/HealDone.api';
+import DetailsFilter from './DetailsFilter';
+import PaginationHelper from './PaginationHelper';
 
-const HealDoneHelper = ({ detailsData }) => {
-    const { t } = useTranslation("helpers/combatDetailsHelper");
+const HealDoneHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
+    const { getTimeWithoutMs } = useTime();
 
-    const [getTimeWithoutMs, , getDuration] = useTime();
+    const [page, setPage] = useState(1);
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
 
-    const getUserNameWithoutRealm = (username) => {
-        let realmNameIndex = username.indexOf('-');
-        let userNameWithOutRealm = username.substr(0, realmNameIndex);
+    const { data: count, isLoading: countIsLoading } = useGetHealDoneCountByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    );
+    const { data, isLoading } = useGetHealDoneByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    );
 
-        return userNameWithOutRealm;
-    }
+    const totalPages = Math.ceil(count / pageSize);
 
-    return detailsData.map((item) => (
-        <li key={item.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{item.spellOrItem}</h5>
-                    <div className="card-body__extra-damage">
-                        {item.isCrit &&
-                            <FontAwesomeIcon
-                                icon={faFire}
-                                title={t("CritHealing")}
-                            />
-                        }
-                        {item.isFullOverheal &&
-                            <FontAwesomeIcon
-                                icon={faFlask}
-                                title={t("AllToOverHeal")}
-                            />
-                        }
-                    </div>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faClock}
-                            className="list-group-item__value"
-                            title={t("Time")}
-                        />
-                        <div>{getDuration(getTimeWithoutMs(item.time), getTimeWithoutMs(detailsData[0].time))}</div>
+    useEffect(() => {
+        setPage(1);
+    }, [selectedFilter]);
+
+    const tableTitle = () => {
+        return (
+            <li className="player-data-details__title" key="0">
+                <ul>
+                    <li>
+                        {t("Spell")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faHandFist}
-                            className="list-group-item__value"
-                            title={t("Value")}
-                        />
-                        <div>{item.value}</div>
+                    <li>
+                        {t("Time")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faUserTie}
-                            className="list-group-item__value"
-                            title={t("FromWho")}
-                        />
-                        <div>{getUserNameWithoutRealm(item.fromPlayer)}</div>
+                    <li>
+                        {t("Value")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faRightToBracket}
-                            className="list-group-item__value"
-                            title={t("ToTarget")}
-                        />
-                        <div>{item.toPlayer}</div>
+                    <li>
+                        {t("Target")}
                     </li>
                 </ul>
+            </li>
+        );
+    }
+
+    if (isLoading || countIsLoading) {
+        return (<div>Loading...</div>);
+    }
+
+    return (
+        <>
+            <div className="player-filter-details">
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Target"
+                    filterName={t("Target")}
+                    useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Spell"
+                    filterName={t("Spell")}
+                    useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
             </div>
-        </li>
-    ));
+            <ul className="player-data-details">
+                {tableTitle()}
+                {data.map((item) => (
+                    <li className="player-data-details__item" key={item.id}>
+                        <ul>
+                            <li>
+                                <div>{item.spell}</div>
+                                <div className="extra-details">
+                                    {item.isCrit &&
+                                        <FontAwesomeIcon
+                                            icon={faFire}
+                                            title={t("CritHealing")}
+                                            className="crit"
+                                        />
+                                    }
+                                    {(item.value === item.overheal) &&
+                                        <FontAwesomeIcon
+                                            icon={faFlask}
+                                            title={t("AllToOverHeal")}
+                                            className="overvalue"
+                                        />
+                                    }
+                                </div>
+                            </li>
+                            <li>
+                                {getTimeWithoutMs(item.time)}
+                            </li>
+                            <li className="extra-details">
+                                {(item.value === item.overheal)
+                                    ? <div className="value-equal-zero">
+                                        <div>0</div>
+                                        <div className="overvalue">({item.value})</div>
+                                    </div>
+                                    : <div className={item.isCrit ? 'crit' : ''}>{item.value}</div>
+                                }
+                            </li>
+                            <li>
+                                {getUserNameWithoutRealm(item.target)}
+                            </li>
+                        </ul>
+                    </li>
+                ))}
+            </ul>
+            <PaginationHelper
+                setPage={setPage}
+                page={page}
+                totalPages={totalPages}
+                t={t}
+            />
+        </>
+    );
 }
 
 export default HealDoneHelper;

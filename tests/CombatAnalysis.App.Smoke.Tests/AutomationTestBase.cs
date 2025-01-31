@@ -11,7 +11,7 @@ namespace CombatAnalysis.App.Smoke.Tests
         public T WaitForElement<T>(Func<T> getter)
         {
             var retry = Retry.WhileNull(
-                getter, 
+                getter,
                 TimeSpan.FromMilliseconds(BigWaitTimeout));
 
             if (!retry.Success)

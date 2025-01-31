@@ -19,7 +19,7 @@ const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGenera
         0: "damageDone",
         1: "healDone",
         2: "damageTaken",
-        3: "energyRecovery"
+        3: "resourcesRecovery"
     };
 
     useEffect(() => {
@@ -47,7 +47,7 @@ const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGenera
     }
 
     const getDetailsValue = (player) => {
-        const detailsMapping = ["damageDone", "healDone", "damageTaken", "energyRecovery"];
+        const detailsMapping = ["damageDone", "healDone", "damageTaken", "resourcesRecovery"];
 
         return player[detailsMapping[detailsType]] || 0;
     }
@@ -90,7 +90,7 @@ const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGenera
                             />
                         }
                         <div className="title">
-                            <div className="username">{player.userName}</div>
+                            <div className="username">{player.username}</div>
                             <div className="value">{getDetailsValue(player)}</div>
                         </div>
                         <div className="player-statistics">
@@ -99,7 +99,7 @@ const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGenera
                                 <div className="progress-bar" role="progressbar" style={{ width: calculation(player, dashboardDetailsType[detailsType], resourcesSum) + '%' }}
                                     aria-valuenow={calculation(player, detailsType, resourcesSum)} aria-valuemin="0" aria-valuemax="0"></div>
                             </div>
-                            <div className="player-contribution">{calculation(player, dashboardDetailsType[detailsType], resourcesSum)} %</div>
+                            <div className="player-contribution">{calculation(player, dashboardDetailsType[detailsType], resourcesSum)}%</div>
                         </div>
                     </li>
                 ))}

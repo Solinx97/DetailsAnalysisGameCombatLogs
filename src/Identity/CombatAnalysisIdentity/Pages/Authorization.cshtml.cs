@@ -7,40 +7,43 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CombatAnalysisIdentity.Pages;
 
-public class AuthorizationModel : PageModel
+public class AuthorizationModel(IUserAuthorizationService authorizationService) : PageModel
 {
-    private readonly IUserAuthorizationService _authorizationService;
-
-    private AuthorizationRequestModel _authorizationRequest = new AuthorizationRequestModel();
-
-    public AuthorizationModel(IUserAuthorizationService authorizationService)
-    {
-        _authorizationService = authorizationService;
-    }
+    private readonly IUserAuthorizationService _authorizationService = authorizationService;
 
     public bool QueryIsValid { get; set; }
 
-    public string RegistrationUrl { get; } = Port.Identity;
+    public string AppUrl { get; } = API.Identity;
 
     public string Protocol { get; } = Authentication.Protocol;
+
+    [BindProperty]
+    public AuthorizationDataModel? Authorization { get; set; }
 
     public async Task OnGetAsync()
     {
         await RequestValidationAsync();
     }
 
-    public async Task<IActionResult> OnPostAsync(string email, string password)
+    public async Task<IActionResult> OnPostAsync()
     {
         await RequestValidationAsync();
 
         if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(string.Empty, "Login data invalidate");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt");
 
             return Page();
         }
 
-        var redirectUri = await _authorizationService.AuthorizationAsync(Request, email, password);
+        if (Authorization == null)
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt");
+
+            return Page();
+        }
+
+        var redirectUri = await _authorizationService.AuthorizationAsync(Request, Authorization.Email, Authorization.Password);
         if (!string.IsNullOrEmpty(redirectUri))
         {
             return Redirect(redirectUri);

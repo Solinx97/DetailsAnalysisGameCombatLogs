@@ -12,21 +12,26 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class GroupChatUserController : ControllerBase
 {
-    private readonly IServiceTransaction<GroupChatUserDto, string> _service;
+    private readonly IServiceTransaction<GroupChatUserDto, string> _chatUserService;
+    private readonly IService<GroupChatMessageCountDto, int> _chatMessageCountService;
     private readonly IMapper _mapper;
     private readonly ILogger<GroupChatUserController> _logger;
+    private readonly IChatTransactionService _chatTransactionService;
 
-    public GroupChatUserController(IServiceTransaction<GroupChatUserDto, string> service, IMapper mapper, ILogger<GroupChatUserController> logger)
+    public GroupChatUserController(IServiceTransaction<GroupChatUserDto, string> chatUserService, IService<GroupChatMessageCountDto, int> chatMessageCountService, IMapper mapper, 
+        ILogger<GroupChatUserController> logger, IChatTransactionService chatTransactionService)
     {
-        _service = service;
+        _chatUserService = chatUserService;
+        _chatMessageCountService = chatMessageCountService;
         _mapper = mapper;
         _logger = logger;
+        _chatTransactionService = chatTransactionService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _service.GetAllAsync();
+        var result = await _chatUserService.GetAllAsync();
 
         return Ok(result);
     }
@@ -34,15 +39,24 @@ public class GroupChatUserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await _service.GetByIdAsync(id);
+        var result = await _chatUserService.GetByIdAsync(id);
 
         return Ok(result);
+    }
+
+    [HttpGet("findUserInChat")]
+    public async Task<IActionResult> FindUserInChat(int chatId, string appUserId)
+    {
+        var result = await _chatUserService.GetByParamAsync(nameof(GroupChatUserModel.ChatId), chatId);
+        var userInChat = result.FirstOrDefault(x => x.AppUserId == appUserId);
+
+        return Ok(userInChat);
     }
 
     [HttpGet("findByUserId/{id}")]
     public async Task<IActionResult> FindByUserId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(GroupChatUserModel.AppUserId), id);
+        var result = await _chatUserService.GetByParamAsync(nameof(GroupChatUserModel.AppUserId), id);
 
         return Ok(result);
     }
@@ -50,32 +64,56 @@ public class GroupChatUserController : ControllerBase
     [HttpGet("findByChatId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByChatId(int id)
     {
-        var result = await _service.GetByParamAsync(nameof(GroupChatUserModel.GroupChatId), id);
+        var result = await _chatUserService.GetByParamAsync(nameof(GroupChatUserModel.ChatId), id);
 
         return Ok(result);
     }
 
+    [HttpGet("findMeInChat")]
+    public async Task<IActionResult> FindMeInChat(int chatId, string appUserId)
+    {
+        var chatUsers = await _chatUserService.GetByParamAsync(nameof(GroupChatUserModel.ChatId), chatId);
+        var meInChat = chatUsers.FirstOrDefault(x => x.AppUserId == appUserId);
+
+        return Ok(meInChat);
+    }
+
     [HttpPost]
-    public async Task<IActionResult> Create(GroupChatUserModel model)
+    public async Task<IActionResult> Create(GroupChatUserModel chatUser)
     {
         try
         {
-            model.Id = Guid.NewGuid().ToString();
+            if (chatUser == null)
+            {
+                throw new ArgumentNullException(nameof(chatUser));
+            }
 
-            var map = _mapper.Map<GroupChatUserDto>(model);
-            var result = await _service.CreateAsync(map);
+            await _chatTransactionService.BeginTransactionAsync();
+
+            chatUser.Id = Guid.NewGuid().ToString();
+
+            var map = _mapper.Map<GroupChatUserDto>(chatUser);
+            var result = await _chatUserService.CreateAsync(map);
+
+            await CreateChatMessageCountAsync(result.ChatId, result.Id);
+
+            await _chatTransactionService.CommitTransactionAsync();
 
             return Ok(result);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Group Chat User failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Group Chat User failed: ${ex.Message}", chatUser);
+
+            await _chatTransactionService.RollbackTransactionAsync();
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Group Chat User failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Group Chat User failed: ${ex.Message}", chatUser);
+
+            await _chatTransactionService.RollbackTransactionAsync();
 
             return BadRequest();
         }
@@ -87,7 +125,7 @@ public class GroupChatUserController : ControllerBase
         try
         {
             var map = _mapper.Map<GroupChatUserDto>(model);
-            var result = await _service.UpdateAsync(map);
+            var result = await _chatUserService.UpdateAsync(map);
 
             return Ok(result);
         }
@@ -108,8 +146,19 @@ public class GroupChatUserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        var rowsAffected = await _service.DeleteAsync(id);
+        var rowsAffected = await _chatUserService.DeleteAsync(id);
 
         return Ok(rowsAffected);
+    }
+
+    private async Task CreateChatMessageCountAsync(int chatId, string groupChatUserId)
+    {
+        var groupChatMessageCount = new GroupChatMessageCountDto
+        {
+            ChatId = chatId,
+            GroupChatUserId = groupChatUserId
+        };
+
+        await _chatMessageCountService.CreateAsync(groupChatMessageCount);
     }
 }

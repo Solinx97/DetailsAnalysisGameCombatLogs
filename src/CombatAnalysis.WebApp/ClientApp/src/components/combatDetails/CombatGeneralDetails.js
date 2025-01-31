@@ -1,123 +1,96 @@
-﻿import { faCalendarDay, faDeleteLeft, faSitemap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayerIdQuery } from '../../store/api/CombatParserApi';
-import CombatDetails from './CombatDetails';
-import CombatGeneralDetailsItem from './CombatGeneralDetailsItem';
+import { Brush, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import useCombatGeneralData from '../../hooks/useCombatGeneralData';
 
-import "../../styles/combatGeneralDetails.scss";
-
-const CombatGeneralDetails = () => {
+const CombatGeneralDetails = ({ combatPlayerId, detailsType }) => {
     const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
-    const navigate = useNavigate();
+    const [spells, setSpells] = useState([]);
+    const [showGeneralChart, setShowGeneralChart] = useState(false);
+    const [playerDataDetailsRender, setPlayerDataDetailsRender] = useState(<></>);
 
-    const [combatPlayerId, setCombatPlayerId] = useState(0);
-    const [combatPlayer, setCombatPlayer] = useState(null);
-    const [detailsType, setDetailsType] = useState("");
-    const [combatName, setCombatName] = useState("");
-    const [tab, setTab] = useState(0);
-    const [combatId, setCombatId] = useState(0);
-    const [combatLogId, setCombatLogId] = useState(0);
-    const [tabIndex, setTabIndex] = useState(0);
+    const maxWidth = 425;
+    const screenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
 
-    const [getCombatPlayerIdAsyncMut] = useLazyGetCombatPlayerIdQuery();
-
-    useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        setCombatPlayerId(+queryParams.get("id"));
-        setDetailsType(queryParams.get("detailsType"));
-        setCombatId(+queryParams.get("combatId"));
-        setCombatLogId(+queryParams.get("combatLogId"));
-        setCombatName(queryParams.get("name"));
-        setTab(+queryParams.get("tab"));
-    }, [])
+    const [getGeneralListAsync, getPlayerGeneralDetailsAsync] = useCombatGeneralData(combatPlayerId, detailsType);
 
     useEffect(() => {
-        if (combatPlayerId <= 0) {
-            return;
-        }
-
         const getGeneralDetails = async () => {
-            await getCombatPlayerByIdAsync(combatPlayerId);
+            await getDetailsAsync(combatPlayerId);
         }
 
         getGeneralDetails();
-    }, [combatPlayerId])
+    }, [])
 
-    const getCombatPlayerByIdAsync = async (combatPlayerId) => {
-        const combatPlayer = await getCombatPlayerIdAsyncMut(combatPlayerId);
-        if (combatPlayer.data !== undefined) {
-            setCombatPlayer(combatPlayer.data);
+    const getDetailsAsync = async (combatPlayerId) => {
+        const dataRender = await getGeneralListAsync(combatPlayerId, detailsType);
+        if (dataRender !== undefined) {
+            setPlayerDataDetailsRender(dataRender);
+        }
+
+        const data = await getPlayerGeneralDetailsAsync(combatPlayerId, detailsType);
+        if (data !== undefined) {
+            createBarChartData(data);
         }
     }
 
-    const getDetailsTypeName = () => {
-        switch (detailsType) {
-            case "DamageDone":
-                return t("Damage");
-            case "HealDone":
-                return t("Healing");
-            case "DamageTaken":
-                return t("DamageTaken");
-            case "ResourceRecovery":
-                return t("ResourcesRecovery");
-            default:
-                return "";
-        }
-    }
+    const createBarChartData = (combatGeneralDetailsData) => {
+        const spellsRadialChartData = new Array(combatGeneralDetailsData.length);
 
-    if (combatPlayerId <= 0) {
-        return <></>;
+        for (let i = 0; i < combatGeneralDetailsData.length; i++) {
+            const color = '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase();
+            const spellsData = {
+                name: combatGeneralDetailsData[i].spell,
+                uv: combatGeneralDetailsData[i].value,
+                fill: color === "#fff" ? '#' + (Math.random().toString(16) + '00000  0').substring(2, 8).toUpperCase() : color
+            };
+
+            spellsRadialChartData[i] = spellsData;
+        }
+
+        setSpells(spellsRadialChartData);
     }
 
     return (
-        <div className="general-details__container">
-            <div className="general-details__navigate">
-                <div className="player">
-                    <div className="btn-shadow select-another-player"
-                        onClick={() => navigate(`/details-specifical-combat?id=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${tab}`)}>
-                        <FontAwesomeIcon
-                            icon={faDeleteLeft}
-                        />
-                        <div>{t("SelectPlayer")}</div>
-                    </div>
-                    <div className="btn-shadow username">
-                        <div>{combatPlayer?.userName}</div>
-                    </div>
+        <div className="details__container">
+            {(spells.length > 0 && screenSize.width > maxWidth) &&
+                <div className="form-switch">
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
                 </div>
-                <div className="details-type">{getDetailsTypeName()}</div>
-                <ul className="nav nav-tabs">
-                    <li className="nav-item">
-                        <div className={`btn-shadow ${tabIndex === 0 ? "active" : ""}`} onClick={() => setTabIndex(0)}>
-                            <FontAwesomeIcon
-                                icon={faSitemap}
-                            />
-                            <div>{t("CommonInform")}</div>
-                        </div>
-                    </li>
-                    <li className="nav-item">
-                        <div className={`btn-shadow ${tabIndex === 1 ? "active" : ""}`} onClick={() => setTabIndex(1)}>
-                            <FontAwesomeIcon
-                                icon={faCalendarDay}
-                            />
-                            <div>{t("DetailsInform")}</div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            {tabIndex === 0
-                ? <CombatGeneralDetailsItem
-                    combatPlayerId={combatPlayerId}
-                    detailsType={detailsType}
-                />
-                : <CombatDetails
-                    combatPlayerId={combatPlayerId}
-                    detailsType={detailsType}
-                />
             }
+            {showGeneralChart &&
+                <div className="general-details__radial-chart">
+                    <ResponsiveContainer width="100%" height={200}>
+                        <LineChart
+                            width={500}
+                            height={200}
+                            data={spells}
+                            syncId="anyId"
+                            margin={{
+                                top: 10,
+                                right: 30,
+                                left: 0,
+                                bottom: 0,
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="uv" stroke="#58A399" fill="#6196A6" />
+                            <Brush />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            }
+            <ul className="player-general-data-details">
+                {playerDataDetailsRender}
+            </ul>
         </div>
     );
 }

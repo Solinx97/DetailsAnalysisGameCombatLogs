@@ -6,12 +6,12 @@ using CombatAnalysis.ChatDAL.Interfaces;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
 
-internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int>
+internal class PersonalChatMessageService : IChatMessageService<PersonalChatMessageDto, int>
 {
-    private readonly IGenericRepository<PersonalChatMessage, int> _repository;
+    private readonly IChatMessageRepository<PersonalChatMessage, int> _repository;
     private readonly IMapper _mapper;
 
-    public PersonalChatMessageService(IGenericRepository<PersonalChatMessage, int> repository, IMapper mapper)
+    public PersonalChatMessageService(IChatMessageRepository<PersonalChatMessage, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -58,6 +58,29 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
         return resultMap;
     }
 
+    public async Task<IEnumerable<PersonalChatMessageDto>> GetByChatIdAsync(int chatId, int pageSize = 100)
+    {
+        var result = await _repository.GetByChatIdAsyn(chatId, pageSize);
+        var map = _mapper.Map<IEnumerable<PersonalChatMessageDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<PersonalChatMessageDto>> GetMoreByChatIdAsync(int chatId, int offset = 0, int pageSize = 100)
+    {
+        var result = await _repository.GetMoreByChatIdAsyn(chatId, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<PersonalChatMessageDto>>(result);
+
+        return map;
+    }
+
+    public async Task<int> CountByChatIdAsync(int chatId)
+    {
+        var count = await _repository.CountByChatIdAsync(chatId);
+
+        return count;
+    }
+
     public Task<int> UpdateAsync(PersonalChatMessageDto item)
     {
         if (item == null)
@@ -72,8 +95,13 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(PersonalChatMessageDto), 
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
                 $"The property {nameof(PersonalChatMessageDto.Message)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
+                $"The property {nameof(PersonalChatMessageDto.Username)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<PersonalChatMessage>(item);
@@ -87,8 +115,13 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(PersonalChatMessageDto), 
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
                 $"The property {nameof(PersonalChatMessageDto.Message)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
+                $"The property {nameof(PersonalChatMessageDto.Username)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<PersonalChatMessage>(item);

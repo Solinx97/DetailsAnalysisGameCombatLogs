@@ -2,7 +2,6 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using MvvmCross.Core;
-using MvvmCross.Platforms.Wpf.Core;
 using MvvmCross.Platforms.Wpf.Views;
 using System.Windows;
 
@@ -20,6 +19,6 @@ public partial class App : MvxApplication
     protected override void RegisterSetup()
     {
         base.RegisterSetup();
-        this.RegisterSetupType<MvxWpfSetup<Core.App>>();
+        this.RegisterSetupType<Setup>();
     }
 }

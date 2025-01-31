@@ -20,6 +20,77 @@ spec:
     spec:
       containers:
         - name: {{ .Values.container.name }}
-          image: {{ .Values.container.image }}:{{ .Values.container.tag }}
+          image: {{ .Values.container.image }}:{{ .Values.imageTags.identity.identity }}
           ports:
             - containerPort: {{ .Values.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: ConnectionStrings_DefaultConnection
+             valueFrom:
+               secretKeyRef:
+                name: db-connection-strings
+                key: defaultConnection
+           - name: ConnectionStrings_UserConnection
+             valueFrom:
+               secretKeyRef:
+                name: db-connection-strings
+                key: userConnection
+           - name: API_User
+             value: "https://api.user.analysis.com/"
+           - name: API_Identity
+             value: "https://identity.analysis.com/"
+           - name: Authentication_GrantType_Code
+             value: "code"
+           - name: Authentication_GrantType_Authorization
+             value: "authorizationCode"
+           - name: Authentication_GrantType_RefreshToken
+             value: "refreshToken"
+           - name: Authentication_Issuer
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuer
+           - name: Authentication_IssuerSigningKey
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuerSigningKey
+           - name: Authentication_Protocol
+             value: "https"
+           - name: Authentication_AccessTokenExpiresMins
+             value: "60"
+           - name: Authentication_RefreshTokenExpiresDays
+             value: "7"
+           - name: Smtp_Host
+             value: "smtp.mail.ru"
+           - name: Smtp_DisplayName
+             value: "Combat Analysis"
+           - name: Smtp_Email
+             value: "yaneznau90@mail.ru"
+           - name: Smtp_Password
+             valueFrom:
+               secretKeyRef:
+                name: smtp-connection
+                key: appPassword
+           - name: Smtp_Port
+             value: "587"
+           - name: Smtp_EnableSsl
+             value: "true"
+           - name: Smtp_UseDefaultCredentials
+             value: "false"
+           - name: Certificate_PfxPath
+             value: "/etc/certs/certificate.pfx"
+           - name: Certificate_PWD
+             valueFrom:
+               secretKeyRef:
+                 name: certificate-secret
+                 key: password
+          volumeMounts:
+            - name: cert-volume
+              mountPath: /etc/certs
+              readOnly: true
+      volumes:
+        - name: cert-volume
+          secret:
+            secretName: certificate-secret

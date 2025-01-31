@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.Interfaces.Entity;
 
-public class DamageDoneGeneralDto
+namespace CombatAnalysis.BL.DTO;
+
+public class DamageDoneGeneralDto : ICombatPlayerEntity
 {
     public int Id { get; set; }
 
@@ -8,7 +10,7 @@ public class DamageDoneGeneralDto
 
     public double DamagePerSecond { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
     public int CritNumber { get; set; }
 

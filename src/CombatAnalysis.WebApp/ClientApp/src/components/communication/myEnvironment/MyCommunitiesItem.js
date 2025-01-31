@@ -2,7 +2,7 @@ import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
+import { useGetCommunityByIdQuery } from '../../../store/api/core/Community.api';
 
 const MyCommunitiesItem = ({ userCommunity, filterContent }) => {
     const { t } = useTranslation("communication/myEnvironment/myCommunitiesItem");

@@ -4,8 +4,9 @@ using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Identity;
-using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.Security;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Net.Http.Json;
 
@@ -14,16 +15,21 @@ namespace CombatAnalysis.Core.Services;
 internal class IdentityService : IIdentityService
 {
     private readonly IMemoryCache _memoryCache;
-    private readonly IHttpClientHelper _httpClientHelper;
+    private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger _logger;
+    private readonly SecurityStorage _securityStorage;
 
-    private string _codeVerifier;
-    private string _code;
-    private HttpListenerService _httpListenerService;
+    private string? _codeVerifier;
+    private string? _code;
+    private HttpListenerService? _httpListenerService;
 
-    public IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpClient)
+    public IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpClient, ILogger logger)
     {
         _memoryCache = memoryCache;
-        _httpClientHelper = httpClient;
+        _httpClient = httpClient;
+        _logger = logger;
+
+        _securityStorage = new SecurityStorage(memoryCache, httpClient, logger);
     }
 
     public async Task SendAuthorizationRequestAsync(string authorizationRequestType)
@@ -32,9 +38,9 @@ internal class IdentityService : IIdentityService
         var state = PKCEHelper.GenerateCodeVerifier();
         var codeChallenge = PKCEHelper.GenerateCodeChallenge(_codeVerifier);
 
-        var authorizationUrl = $"{Port.Identity}{authorizationRequestType}?" +
+        var authorizationUrl = $"{API.Identity}{authorizationRequestType}?" +
             $"grantType={AuthenticationGrantType.Code}&" +
-            $"clientTd={Authentication.ClientId}&" +
+            $"clientId={Authentication.ClientId}&" +
             $"redirectUri={Authentication.RedirectUri}&" +
             $"scope={Authentication.Scope}&" +
             $"state={state}&" +
@@ -48,7 +54,7 @@ internal class IdentityService : IIdentityService
         };
         Process.Start(psi);
 
-        _httpListenerService = new HttpListenerService($"{Authentication.Protocol}://{Authentication.Listener}");
+        _httpListenerService = new HttpListenerService($"{Authentication.Protocol}://{Authentication.Listener}", _logger);
         await _httpListenerService.StartListeningAsync(OnCallbackReceived);
     }
 
@@ -59,16 +65,18 @@ internal class IdentityService : IIdentityService
             var token = await GetTokenAsync();
             if (token == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(token));
             }
 
-            var user = await GetUserAsync(token.AccessToken);
-
-            SetMemoryCache(token.AccessToken, token.RefreshToken, user);
+            await SetMemoryCacheAsync(token.RefreshToken, token.AccessToken);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            _logger.LogError(ex, ex.Message);
         }
     }
 
@@ -81,48 +89,52 @@ internal class IdentityService : IIdentityService
     {
         try
         {
+            if (_code == null)
+            {
+                throw new ArgumentNullException(nameof(_code));
+            }
+
             var encodedAuthorizationCode = Uri.EscapeDataString(_code);
             var url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={Authentication.ClientId}&codeVerifier={_codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
-            var responseMessage = await _httpClientHelper.GetAsync(url, Port.Identity);
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return null;
-            }
+            var response = await _httpClient.GetAsync(url, API.Identity);
+            response.EnsureSuccessStatusCode();
 
-            var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
+            var token = await response.Content.ReadFromJsonAsync<AccessTokenModel>();
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
 
             return token;
         }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new AccessTokenModel();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return new AccessTokenModel();
+        }
         catch (Exception ex)
         {
-            return null;
+            _logger.LogError(ex, ex.Message);
+
+            return new AccessTokenModel();
         }
     }
 
-    private async Task<AppUserModel> GetUserAsync(string accessToken)
+    private async Task SetMemoryCacheAsync(string refreshToken, string aceessToken)
     {
-        var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
-        if (identityUserId == null)
-        {
-            return null;
-        }
+        _securityStorage.SaveTokens(refreshToken, aceessToken);
+        var user = await _securityStorage.GetUserAsync();
 
-        var response = await _httpClientHelper.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        var user = await response.Content.ReadFromJsonAsync<AppUserModel>();
-
-        return user;
-    }
-
-    private void SetMemoryCache(object aceessToken, object refreshToken, object user)
-    {
-        _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), refreshToken, new MemoryCacheEntryOptions { Size = 10 });
         _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), refreshToken, new MemoryCacheEntryOptions { Size = 10 });
+        _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), aceessToken, new MemoryCacheEntryOptions { Size = 10 });
         _memoryCache.Set(nameof(MemoryCacheValue.User), user, new MemoryCacheEntryOptions { Size = 50 });
     }
 }

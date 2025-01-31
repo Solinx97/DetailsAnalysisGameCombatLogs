@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.Core.Models;
+﻿using CombatAnalysis.Core.Interfaces.Entities;
 
-public class ResourceRecoveryGeneralModel
+namespace CombatAnalysis.Core.Models;
+
+public class ResourceRecoveryGeneralModel : IDetailsEntity
 {
     public int Id { get; set; }
 
@@ -8,7 +10,7 @@ public class ResourceRecoveryGeneralModel
 
     public double ResourcePerSecond { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
     public int CastNumber { get; set; }
 

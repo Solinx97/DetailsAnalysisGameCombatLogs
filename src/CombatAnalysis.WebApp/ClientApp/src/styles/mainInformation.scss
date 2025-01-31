@@ -1,4 +1,36 @@
-﻿.main-information {
+﻿$mobile-max-width: 425px;
+
+.main-information {
+    width: 45vw;
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .log-types {
+            display: flex;
+            gap: 20px;
+
+            &__item, &__item_selected {
+                border: 2px solid yellow;
+                border-radius: 10px;
+                padding: 5px 10px;
+                font-size: 0.8em;
+                cursor: pointer;
+
+                &_selected {
+                    box-shadow: 2px 2px 2px 2px green;
+                    border: 2px solid green;
+                }
+            }
+
+            .not-allowed {
+                opacity: 0.4;
+            }
+        }
+    }
+
     &__container {
         display: flex;
         margin: 25px 0;
@@ -9,15 +41,29 @@
                 display: flex;
                 flex-direction: column;
                 gap: 20px;
+                padding: 0;
+                width: 100%;
 
                 .card {
+                    width: 100%;
                     box-shadow: 10px 10px #3AA6B9;
-                    margin: 25px;
                     background: #135D66;
+                    width: 100%;
 
                     .title, .list-group-item {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: flex-start;
                         background: #135D66;
                         color: white;
+
+                        &__main {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            gap: 15px;
+                        }
                     }
 
                     .card-body {
@@ -30,107 +76,113 @@
                 border-radius: 20px;
             }
         }
-    }
 
-    .title {
-        display: flex;
-        align-items: center;
-        gap: 25px;
-
-        .actions {
+        .title {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 25px;
 
-            .communication {
+            .actions {
                 display: flex;
+                align-items: center;
                 gap: 15px;
+
+                .communication {
+                    display: flex;
+                    gap: 15px;
+                }
+
+                .authorization {
+                    color: orange;
+                    transform: scale(1.25);
+                }
             }
 
-            .authorization {
-                color: orange;
-                transform: scale(1.25);
-            }
-        }
+            .disabled {
+                opacity: 0.5;
+                border: 1px solid gray;
+                border-radius: 25px;
+                padding: 10px 15px;
 
-        .disabled {
-            opacity: 0.5;
-            border: 1px solid gray;
-            border-radius: 25px;
-            padding: 10px 15px;
-
-            .btn-shadow {
-                cursor: default;
-            }
-        }
-    }
-
-    .chat-list {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        top: -35%;
-        left: 70%;
-        min-width: 350px;
-        padding: 20px;
-        border: 2px solid green;
-        border-radius: 20px;
-        z-index: 10;
-
-        svg {
-            cursor: pointer;
-        }
-
-        &__close {
-            display: flex;
-            justify-content: flex-end;
-            width: 100%;
-            margin: -10px;
-        }
-
-        &__chats {
-            ul {
-                padding: 0;
-                overflow: auto;
-                max-height: 230px;
-
-                li {
-                    margin: 0 20px;
+                .btn-shadow {
+                    cursor: default;
                 }
             }
         }
 
-        .title {
+        .chat-list {
+            position: absolute;
             display: flex;
-            justify-content: space-around;
-            gap: 25px;
-        }
-
-        .chat {
-            display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            gap: 50px;
-            box-shadow: 3px 3px 3px 3px white;
-            border: 2px solid black;
+            gap: 10px;
+            top: -35%;
+            left: 70%;
+            min-width: 350px;
+            padding: 20px;
+            border: 2px solid green;
             border-radius: 20px;
-            padding: 5px;
-            margin: 10px 0;
-            font-size: 12px;
+            z-index: 10;
 
-            .sent {
-                border: 2px solid white;
-                border-radius: 15px;
-                padding: 5px 15px;
-                opacity: 0.5;
-                cursor: default;
+            svg {
+                cursor: pointer;
             }
 
-            .btn-shadow {
-                box-shadow: 0 0 0 0;
+            &__close {
+                display: flex;
+                justify-content: flex-end;
+                width: 100%;
+                margin: -10px;
+            }
+
+            &__chats {
+                ul {
+                    padding: 0;
+                    overflow: auto;
+                    max-height: 230px;
+
+                    li {
+                        margin: 0 20px;
+                    }
+                }
+            }
+
+            .title {
+                display: flex;
+                justify-content: space-around;
+                gap: 25px;
+            }
+
+            .chat {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 50px;
+                box-shadow: 3px 3px 3px 3px white;
+                border: 2px solid black;
+                border-radius: 20px;
+                padding: 5px;
+                margin: 10px 0;
+                font-size: 12px;
+
+                .sent {
+                    border: 2px solid white;
+                    border-radius: 15px;
+                    padding: 5px 15px;
+                    opacity: 0.5;
+                    cursor: default;
+                }
+
+                .btn-shadow {
+                    box-shadow: 0 0 0 0;
+                }
             }
         }
+    }
+}
+
+@media (max-width: $mobile-max-width)  {
+    .main-information {
+        width: 95vw;
     }
 }

@@ -8,5 +8,7 @@
   "SearchPlayer": "Поиск игрока",
   "Clean": "Очистить",
   "TypeUsername": "Имя игрока",
-  "Search": "Поиск"
+  "Search": "Поиск",
+  "Dashboard": "Доска",
+  "Details": "Детали"
 }

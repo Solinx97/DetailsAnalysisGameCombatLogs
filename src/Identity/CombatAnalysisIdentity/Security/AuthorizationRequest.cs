@@ -1,10 +1,10 @@
 ﻿namespace CombatAnalysisIdentity.Security;
 
-public enum AuthorizationRequest
+internal enum AuthorizationRequest
 {
     RedirectUri,
     GrantType,
-    ClientTd,
+    ClientId,
     Scope,
     State,
     CodeChallengeMethod,

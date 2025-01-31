@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useGetUsersQuery } from '../../../store/api/UserApi';
+import { useGetUsersQuery } from '../../../store/api/core/User.api';
 import Loading from "../../Loading";
 import CommunicationMenu from '../CommunicationMenu';
 import PeopleItem from './PeopleItem';
@@ -53,14 +53,13 @@ const People = () => {
                 currentMenuItem={menuItem}
                 setMenuItem={setMenuItem}
             />
-            <div className="communication__content people">
+            <div className="communication-content people">
                 <div>
                     <div className="people__title">{t("People")}</div>
                 </div>
                 <ul className="people__cards">
-                    {
-                        people?.filter(peopleListFilter).map((item) => (
-                            <li key={item.id}>
+                    {people?.filter(peopleListFilter).map((item) => (
+                            <li className="person" key={item.id}>
                                 <PeopleItem
                                     me={me}
                                     people={item}

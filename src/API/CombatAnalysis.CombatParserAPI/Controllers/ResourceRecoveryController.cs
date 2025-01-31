@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.Filters;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,23 +12,160 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class ResourceRecoveryController : ControllerBase
 {
-    private readonly IPlayerInfoService<ResourceRecoveryDto, int> _service;
+    private readonly IMutationService<ResourceRecoveryDto> _mutationService;
+    private readonly IPlayerInfoService<ResourceRecoveryDto> _playerInfoService;
+    private readonly ICountService<ResourceRecoveryDto> _countService;
+    private readonly IGeneralFilterService<ResourceRecoveryDto> _filterService;
     private readonly IMapper _mapper;
     private readonly ILogger<ResourceRecoveryController> _logger;
 
-    public ResourceRecoveryController(IPlayerInfoService<ResourceRecoveryDto, int> service, IMapper mapper, ILogger<ResourceRecoveryController> logger)
+    public ResourceRecoveryController(IMutationService<ResourceRecoveryDto> mutationService, IPlayerInfoService<ResourceRecoveryDto> playerInfoService,
+        ICountService<ResourceRecoveryDto> countService, IGeneralFilterService<ResourceRecoveryDto> filterService,
+        IMapper mapper, ILogger<ResourceRecoveryController> logger)
     {
-        _service = service;
+        _mutationService = mutationService;
+        _playerInfoService = playerInfoService;
+        _countService = countService;
+        _filterService = filterService;
         _mapper = mapper;
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
     {
-        var resourceRecoveryes = await _service.GetByCombatPlayerIdAsync(combatPlayerId);
+        try
+        {
+            var resourcesRecoveries = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
 
-        return Ok(resourceRecoveryes);
+            return Ok(resourcesRecoveries);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get resource recovery by combat player id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+    
+    [HttpGet("count/{combatPlayerId}")]
+    public async Task<IActionResult> Count(int combatPlayerId)
+    {
+        try
+        {
+            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get resource recovery count: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getUniqueCreators/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueCreators(int combatPlayerId)
+    {
+        try
+        {
+            var uniqueTargets = await _filterService.GetCreatorNamesByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(uniqueTargets);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get unique resource recovery creators: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getByCreator")]
+    public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize)
+    {
+        try
+        {
+            var resourceRecoveries = await _filterService.GetCreatorByCombatPlayerIdAsync(combatPlayerId, creator, page, pageSize);
+
+            return Ok(resourceRecoveries);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error find resource recovery by creator: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countByCreator")]
+    public async Task<IActionResult> CountByCreator(int combatPlayerId, string creator)
+    {
+        try
+        {
+            var count = await _filterService.CountCreatorByCombatPlayerIdAsync(combatPlayerId, creator);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get resource recovery count by creator: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getUniqueSpells/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId)
+    {
+        try
+        {
+            var uniqueSpells = await _filterService.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(uniqueSpells);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get unique resource recovery spells: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getBySpell")]
+    public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var healDones = await _filterService.GetSpellByCombatPlayerIdAsync(combatPlayerId, spell, page, pageSize);
+
+            return Ok(healDones);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error find resource recovery by spell: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countBySpell")]
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell)
+    {
+        try
+        {
+            var count = await _filterService.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get resource recovery count by spell: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -35,7 +174,7 @@ public class ResourceRecoveryController : ControllerBase
         try
         {
             var map = _mapper.Map<ResourceRecoveryDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationService.CreateAsync(map);
 
             return Ok(_mapper);
         }
@@ -45,18 +184,7 @@ public class ResourceRecoveryController : ControllerBase
 
             return BadRequest();
         }
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var deletedId = await _service.DeleteAsync(id);
-
-            return Ok(deletedId);
-        }
-        catch (ArgumentNullException ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
 

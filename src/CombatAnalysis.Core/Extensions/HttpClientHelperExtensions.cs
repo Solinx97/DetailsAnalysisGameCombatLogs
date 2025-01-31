@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.Extensions;
 
-public static class HttpClientHelperExtensions
+internal static class HttpClientHelperExtensions
 {
     public static async Task<HttpResponseMessage> PostAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, string baseAddress)
     {

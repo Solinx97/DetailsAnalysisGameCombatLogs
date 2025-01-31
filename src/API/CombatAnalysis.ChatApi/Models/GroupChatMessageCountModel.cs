@@ -6,7 +6,7 @@ public class GroupChatMessageCountModel
 
     public int Count { get; set; }
 
-    public string GroupChatUserId { get; set; }
+    public int ChatId { get; set; }
 
-    public int GroupChatId { get; set; }
+    public string GroupChatUserId { get; set; }
 }

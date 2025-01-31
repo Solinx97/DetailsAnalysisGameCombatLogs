@@ -8,16 +8,10 @@ namespace CombatAnalysisIdentity.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class TokenController : ControllerBase
+public class TokenController(IOAuthCodeFlowService oAuthCodeFlowService, ILogger<TokenController> logger) : ControllerBase
 {
-    private readonly IOAuthCodeFlowService _oAuthCodeFlowService;
-    private readonly ILogger<TokenController> _logger;
-
-    public TokenController(IOAuthCodeFlowService oAuthCodeFlowService, ILogger<TokenController> logger)
-    {
-        _oAuthCodeFlowService = oAuthCodeFlowService;
-        _logger = logger;
-    }
+    private readonly IOAuthCodeFlowService _oAuthCodeFlowService = oAuthCodeFlowService;
+    private readonly ILogger<TokenController> _logger = logger;
 
     [HttpGet]
     public async Task<IActionResult> GetAccessToken(string grantType, string clientId, string codeVerifier, string code, string redirectUri)
@@ -25,7 +19,7 @@ public class TokenController : ControllerBase
         try
         {
             if (string.IsNullOrEmpty(grantType)
-                || string.IsNullOrEmpty(clientId) 
+                || string.IsNullOrEmpty(clientId)
                 || string.IsNullOrEmpty(codeVerifier)
                 || string.IsNullOrEmpty(code)
                 || string.IsNullOrEmpty(redirectUri))
@@ -38,21 +32,34 @@ public class TokenController : ControllerBase
                 return BadRequest();
             }
 
-            var codeChallengeValidated = await _oAuthCodeFlowService.ValidateCodeChallengeAsync(clientId, codeVerifier, code, redirectUri);
+            var decodedAuthorizationCode = Uri.UnescapeDataString(code).Replace(' ', '+');
+            var codeChallengeValidated = await _oAuthCodeFlowService.ValidateCodeChallengeAsync(clientId, codeVerifier, decodedAuthorizationCode, redirectUri);
             if (!codeChallengeValidated)
             {
                 return BadRequest();
             }
 
-            var (authorizationCode, userId) = _oAuthCodeFlowService.DecryptAuthorizationCode(code, Authentication.IssuerSigningKey);
+            var (authorizationCode, userId) = _oAuthCodeFlowService.DecryptAuthorizationCode(decodedAuthorizationCode, Authentication.IssuerSigningKey);
 
-            var token = GenerateToken(clientId, userId);
+            var token = await GenerateTokenAsync(clientId, userId);
 
             return Ok(token);
         }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest(ex.Message);
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while getting access token");
+            _logger.LogError(ex, ex.Message);
 
             return BadRequest(ex.Message);
         }
@@ -93,11 +100,12 @@ public class TokenController : ControllerBase
         }
     }
 
-    private AccessTokenDto GenerateToken(string clientId, string userId)
+    private async Task<AccessTokenDto> GenerateTokenAsync(string clientId, string userId)
     {
         var accessToken = _oAuthCodeFlowService.GenerateToken(clientId, userId);
         var refreshToken = _oAuthCodeFlowService.GenerateToken(clientId);
-        _oAuthCodeFlowService.CreateRefreshTokenAsync(refreshToken, Authentication.RefreshTokenExpiresDays, clientId, userId);
+
+        await _oAuthCodeFlowService.SaveRefreshTokenAsync(refreshToken, Authentication.RefreshTokenExpiresDays, clientId, userId);
 
         var token = new AccessTokenDto
         {

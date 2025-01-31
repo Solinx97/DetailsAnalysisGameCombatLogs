@@ -10,7 +10,7 @@ a {
 .main {
     position: fixed;
     top: 0;
-    height: 1000px;
+    height: 100%;
     width: 100%;
     background: #0c192c;
     z-index: -1;
@@ -90,8 +90,8 @@ code {
     gap: 20px;
     box-shadow: 2px 2px 2px 2px #3AA6B9;
     border-radius: 20px;
-    padding: 30px;
-    font-size: 17px;
+    padding: 2em;
+    font-size: 1em;
 }
 
 .preview__responsibilities {
@@ -102,4 +102,16 @@ code {
 
 .preview__responsibilities .form-check-label {
     opacity: 1!important;
+}
+
+.load-more {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.load-more__content {
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 1px gray;
+    padding: 5px 10px;
+    border-radius: 10px;
 }

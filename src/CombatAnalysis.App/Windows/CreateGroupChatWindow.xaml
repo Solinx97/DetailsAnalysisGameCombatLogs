@@ -4,14 +4,81 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:CombatAnalysis.App.Views.Chat"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels.Chat;assembly=CombatAnalysis.Core"
+    xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.CreateGroupChat"
+    xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
-    mc:Ignorable="d" Title="Create group chat" Height="550" Width="600" WindowStartupLocation="CenterScreen">
+    loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
+    mc:Ignorable="d"
+    Title="Create group chat" Height="Auto" Width="450"
+    ResizeMode="CanResizeWithGrip" Background="#283a4b" 
+    AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen">
 
-    <Window.Resources>
-        <DataTemplate DataType="{x:Type viewModels:CreateGroupChatViewModel}">
-            <local:CreateGroupChatView />
-        </DataTemplate>
-    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="450"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="0.2*"/>
+        </Grid.RowDefinitions>
+
+        <Border CornerRadius="25 25 25 25" BorderThickness="3" Grid.ColumnSpan="3" Grid.RowSpan="3" Background="#283a4b">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
+
+        <TextBlock Grid.Column="1" Text="{loc:Loc Title}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="DemiBold"/>
+
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="{loc:Loc ChatName}" Foreground="White" FontWeight="Bold" />
+                <TextBox Style="{StaticResource messageTextBox}" Text="{Binding Name}" Foreground="White" Height="35" Padding="8" Width="200"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="{loc:Loc ChatRules}" Foreground="White" TextAlignment="Center" FontWeight="Bold" />
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc WhoCanInvite}" VerticalAlignment="Center" Margin="5" Foreground="White" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="Invite" Margin="50 5" Content="{loc:Loc ChatOwner}" Foreground="White" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanInvitePeopleCommand, CommandParameter=0" />
+                        <RadioButton GroupName="Invite" Margin="50 5" Content="{loc:Loc Anyone}" Foreground="White" FontSize="12" mvx:Bi.nd="Command GetWhoCanInvitePeopleCommand, CommandParameter=1" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="25 0"> 
+                    <TextBlock Text="{loc:Loc WhoCanRemove}" VerticalAlignment="Center" Margin="5" Foreground="White" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="Remove" Margin="50 5" Content="{loc:Loc ChatOwner}" Foreground="White" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanRemovePeopleCommand, CommandParameter=0" />
+                        <RadioButton GroupName="Remove" Margin="50 5" Content="{loc:Loc Anyone}" Foreground="White" FontSize="12" mvx:Bi.nd="Command GetWhoCanRemovePeopleCommand, CommandParameter=1"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc WhoCanPinMessage}" VerticalAlignment="Center" Margin="5" Foreground="White" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="PinMessage" Margin="50 5" Content="{loc:Loc ChatOwner}" Foreground="White" FontSize="12" mvx:Bi.nd="Command GetWhoCanPinMessageCommand, CommandParameter=0" />
+                        <RadioButton GroupName="PinMessage" Margin="50 5" Content="{loc:Loc Anyone}" Foreground="White" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanPinMessageCommand, CommandParameter=1"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc WhoCanMakeAnnounces}" VerticalAlignment="Center" Margin="5" Foreground="White" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="Announce" Margin="50 5" Content="{loc:Loc ChatOwner}" Foreground="White" FontSize="12" mvx:Bi.nd="Command GetWhoCanMakeAnouncesCommand, CommandParameter=0" />
+                        <RadioButton GroupName="Announce" Margin="50 5" Content="{loc:Loc Anyone}" Foreground="White" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanMakeAnouncesCommand, CommandParameter=1" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button mvx:Bi.nd="Command CreateCommand" Content="{loc:Loc Create}" Width="100" Height="40" FontSize="16"
+                    Margin="10 0" Style="{StaticResource showButton}" />
+            <Button Content="{loc:Loc Cancel}" Width="100" Height="40" FontSize="16" Click="CloseWindow"
+                    Margin="10 0" Style="{StaticResource showButton}" />
+        </StackPanel>
+    </Grid>
 </views:MvxWindow>

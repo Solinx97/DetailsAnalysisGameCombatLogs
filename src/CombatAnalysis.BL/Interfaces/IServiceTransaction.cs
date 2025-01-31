@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using CombatAnalysis.BL.Interfaces.General;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CombatAnalysis.BL.Interfaces;
 
-public interface IServiceTransaction<TModel, TIdType> : IService<TModel, TIdType>
+public interface IServiceTransaction<TModel> : IQueryService<TModel>
     where TModel : class
-    where TIdType : notnull
 {
-    Task<int> DeleteUseExistTransactionAsync(IDbContextTransaction transaction, TIdType id);
+    Task<int> DeleteUseExistTransactionAsync(IDbContextTransaction transaction, int id);
 }

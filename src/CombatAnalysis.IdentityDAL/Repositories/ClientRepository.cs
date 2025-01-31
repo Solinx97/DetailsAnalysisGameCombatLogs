@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
-public class ClientRepository : IClientRepository
+internal class ClientRepository : IClientRepository
 {
     private readonly CombatAnalysisIdentityContext _context;
 

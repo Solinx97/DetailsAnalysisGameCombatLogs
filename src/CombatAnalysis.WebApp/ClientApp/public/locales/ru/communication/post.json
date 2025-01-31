@@ -4,5 +4,7 @@
   "Dislike": "Дислайк",
   "Comment": "Комментарий",
   "AddComment": "Добавить комментарий",
-  "Hide": "Скрыть"
+  "Hide": "Скрыть",
+  "ReactionsForbidden": "Реакции запрещены",
+  "VerificationReactions": "Для использования Реакций, необходимо подвердить email в Профиле"
 }

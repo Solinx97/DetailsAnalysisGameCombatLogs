@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class PersonalChatController : ControllerBase
@@ -18,17 +16,13 @@ public class PersonalChatController : ControllerBase
     public PersonalChatController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.APIUrl = Cluster.Chat;
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByUserId(string id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"PersonalChat", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("PersonalChat");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -36,7 +30,7 @@ public class PersonalChatController : ControllerBase
         else if (responseMessage.IsSuccessStatusCode)
         {
             var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
-            var myPersonalChats = personalChats.Where(x => x.InitiatorId == id || x.CompanionId == id).ToList();
+            var myPersonalChats = personalChats?.Where(x => x.InitiatorId == id || x.CompanionId == id).ToList();
 
             return Ok(myPersonalChats);
         }
@@ -47,12 +41,7 @@ public class PersonalChatController : ControllerBase
     [HttpGet("isExist")]
     public async Task<IActionResult> IsExist(string initiatorId, string companionId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"PersonalChat", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("PersonalChat");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -63,11 +52,11 @@ public class PersonalChatController : ControllerBase
         }
 
         var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
-        var chats = personalChats.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
-        if (!chats.Any())
+        var chats = personalChats?.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
+        if (chats != null && !chats.Any())
         {
-            chats = personalChats.Where(x => x.CompanionId == companionId && x.InitiatorId == initiatorId).ToList();
-            if (!chats.Any())
+            chats = personalChats?.Where(x => x.CompanionId == companionId && x.InitiatorId == initiatorId).ToList();
+            if (chats != null && !chats.Any())
             {
                 return Ok(false);
             }
@@ -79,12 +68,7 @@ public class PersonalChatController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(PersonalChatModel chat)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.PostAsync("PersonalChat", JsonContent.Create(chat), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("PersonalChat", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -101,12 +85,7 @@ public class PersonalChatController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatModel chat)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.PutAsync("PersonalChat", JsonContent.Create(chat), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("PersonalChat", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -122,12 +101,7 @@ public class PersonalChatController : ControllerBase
     [HttpDelete("{chatId:int:min(1)}")]
     public async Task<IActionResult> Delete(int chatId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.DeletAsync($"PersonalChat/{chatId}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"PersonalChat/{chatId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

@@ -6,7 +6,8 @@
   "Login": "Login",
   "Logout": "Logout",
   "Loading": "Loading...",
-  "People": "People",
+  "Users": "Users",
   "Empty": "Empty",
-  "Close": "Close"
+  "Close": "Close",
+  "UsersSearch": "Search users"
 }

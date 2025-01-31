@@ -1,4 +1,4 @@
-﻿import { faBolt, faBookOpenReader, faCircleNodes, faKhanda, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+﻿import { faBolt, faBookOpenReader, faKhanda, faPlusCircle, faShieldHalved, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
     const detailsTypes = ["DamageDone", "HealDone", "DamageTaken", "ResourceRecovery"];
 
     const navigateToDetails = (detailsType) => {
-        navigate(`/combat-general-details?id=${player.id}&detailsType=${detailsType}&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${1}`);
+        navigate(`/combat-details?id=${player.id}&detailsType=${detailsType}&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${1}`);
     }
 
     return (
@@ -20,7 +20,7 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
             <li className="list-group-item">
                 <FontAwesomeIcon
                     icon={faKhanda}
-                    className="list-group-item__damage-done"
+                    className="list-group-item__player-statistic-item"
                     title={t("Damage")}
                 />
                 <div>{player.damageDone}</div>
@@ -38,7 +38,7 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
             <li className="list-group-item">
                 <FontAwesomeIcon
                     icon={faPlusCircle}
-                    className="list-group-item__heal-done"
+                    className="list-group-item__player-statistic-item"
                     title={t("Healing")}
                 />
                 <div>{player.healDone}</div>
@@ -56,7 +56,7 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
             <li className="list-group-item">
                 <FontAwesomeIcon
                     icon={faShieldHalved}
-                    className="list-group-item__damage-taken"
+                    className="list-group-item__player-statistic-item"
                     title={t("DamageTaken")}
                 />
                 <div>{player.damageTaken}</div>
@@ -74,11 +74,11 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
             <li className="list-group-item">
                 <FontAwesomeIcon
                     icon={faBolt}
-                    className="list-group-item__energy-recovery"
+                    className="list-group-item__player-statistic-item"
                     title={t("ResourcesRecovery")}
                 />
-                <div>{player.energyRecovery}</div>
-                {player.energyRecovery > 0 &&
+                <div>{player.resourcesRecovery}</div>
+                {player.resourcesRecovery > 0 &&
                     <div className="btn-shadow"
                         onClick={() => navigateToDetails(detailsTypes[3])}
                         title={t("OpenResourcesRecoveryAnalyzing")}>
@@ -91,17 +91,12 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
             </li>
             <li className="list-group-item">
                 <FontAwesomeIcon
-                    icon={faCircleNodes}
-                    className="list-group-item__used-buffs"
-                    title={t("Buffs")}
+                    icon={faUser}
+                    className="list-group-item__player-statistic-item"
+                    title={t("AverageItemLevel")}
                 />
-                <div>{player.usedBuffs}</div>
-                {player.usedBuffs > 0 &&
-                    <div>
-                        <div>{t("Buffs")}</div>
-                    </div>
-                }
-            </li>}
+                <div>{player.averageItemLevel}</div>
+            </li>
         </ul>
     );
 }

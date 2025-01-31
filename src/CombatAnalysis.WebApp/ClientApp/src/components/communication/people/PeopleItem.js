@@ -15,7 +15,9 @@ const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
                     actionAfterRequests={actionAfterRequests}
                 />
             </div>
-            {userInformation}
+            <div className="people-user-information">
+                {userInformation}
+            </div>
         </>
     );
 }

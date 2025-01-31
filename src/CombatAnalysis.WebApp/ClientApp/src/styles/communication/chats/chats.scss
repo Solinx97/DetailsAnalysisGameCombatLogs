@@ -1,14 +1,38 @@
-﻿.chats {
+﻿$primary-color: #3AA6B9;
+$secondary-color: #57A6A1;
+$white: white;
+$blue: blue;
+$padding-small: 10px;
+$padding-medium: 20px;
+$padding-large: 25px;
+$border-radius: 10px;
+$box-shadow: 2px 2px 2px 2px;
+$mobile-max-width: 425px;
+
+.chats {
     display: flex;
-    flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 10px;
+    gap: $padding-small;
+    width: 100%;
+    height: 100%;
+
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 10px;
+    }
 
     &__selected-chat {
         display: flex;
-        gap: 20px;
+        gap: $padding-medium;
         width: 100%;
+        height: 100%;
+
+        &_loading {
+            width: 100%;
+        }
 
         .messages-container {
             flex-grow: 2;
@@ -18,15 +42,15 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
-                box-shadow: 2px 2px 2px 2px white;
-                border-radius: 10px;
-                padding: 10px 25px;
+                box-shadow: $box-shadow $white;
+                border-radius: $border-radius;
+                padding: 5px 20px;
                 cursor: default;
 
                 &__content {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
+                    gap: $padding-small;
                 }
 
                 &__call-started {
@@ -39,30 +63,38 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    width: 75px;
+                    gap: 25px;
 
                     .call_active {
-                        border: 1px solid blue;
-                        padding: 10px;
+                        border: 1px solid $blue;
+                        padding: $padding-small;
                         border-radius: 20px;
-                        box-shadow: 2px 2px 2px 2px blue;
+                        box-shadow: $box-shadow $blue;
                     }
 
                     .call-minimazed {
-                        padding: 10px;
+                        padding: $padding-small;
                         opacity: 0.2;
                         cursor: default;
                     }
                 }
 
                 .name {
-                    margin: 0 20px;
+                    margin: 0 $padding-medium;
                     font-weight: bold;
-                    background: linear-gradient(blue, 1%, #57A6A1);
-                    color: white;
-                    padding: 5px 10px;
-                    border-radius: 10px;
+                    background: linear-gradient($blue, 1%, $secondary-color);
+                    color: $white;
+                    padding: 5px $padding-small;
+                    border-radius: $border-radius;
                 }
+            }
+
+            .load-more {
+                position: fixed;
+                margin-top: 15px;
+                left: 55vw;
+                z-index: 100;
+                cursor: pointer;
             }
 
             .empty-message {
@@ -79,21 +111,23 @@
     }
 
     .select-chat {
-        margin: 25px;
+        margin: $padding-large;
         font-size: 20px;
         text-align: center;
+
+        span {
+            color: aqua;
+            cursor: pointer;
+        }
     }
 
     &__my-chats {
         width: 30%;
 
-
         &_title {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            min-width: 200px;
-            margin: 10px 0;
 
             .main-content {
                 display: flex;
@@ -125,14 +159,11 @@
             &__chats {
                 display: none;
 
-                &__not-found {
-                    opacity: 0.4;
-                    text-align: center;
-                }
+
 
                 &_active {
                     .selected {
-                        box-shadow: 2px 2px 2px 2px white;
+                        box-shadow: $box-shadow $white;
                     }
 
                     .last-message {
@@ -143,19 +174,30 @@
                         font-size: 12px;
                     }
 
+                    .chat-loading-yet, .chat-card {
+                        margin: 10px;
+                    }
+
+                    .chat-loading-yet {
+                        position: relative;
+                        cursor: default;
+                        opacity: 0.4;
+                    }
+
                     .chat-card {
                         display: flex;
-                        flex-direction: column;
+                        justify-content: space-around;
                         gap: 5px;
+                        cursor: pointer;
 
                         .chat-tooltip {
                             display: flex;
                             align-items: center;
-                            gap: 10px;
+                            gap: $padding-small;
 
                             .unread-message-count {
                                 padding: 5px;
-                                box-shadow: 2px 2px 2px 2px #3AA6B9;
+                                box-shadow: $box-shadow $primary-color;
                                 border-radius: 25px;
                                 font-size: 10px;
                                 width: 25px;
@@ -165,20 +207,27 @@
                     }
                 }
             }
-        }
 
-        .group-chats, .personal-chats {
+            .not-found {
+                opacity: 0.6;
+                text-align: center;
+                margin: 5px 0;
+
+                span {
+                    color: aqua;
+                    cursor: pointer;
+                }
+            }
         }
 
         li {
             cursor: pointer;
-            margin: 10px;
-            padding: 10px;
-            box-shadow: 4px 4px #3AA6B9;
-            border: 1px solid #3AA6B9;
+            margin: $padding-small;
+            box-shadow: 4px 4px $primary-color;
+            border: 1px solid $primary-color;
             overflow-x: hidden;
-            margin-left: 10px;
-            border-radius: 10px;
+            margin-left: $padding-small;
+            border-radius: $border-radius;
 
             .username {
                 font-weight: bold;
@@ -190,4 +239,19 @@
 .chats-empty {
     width: 300px;
     opacity: 0.5;
+}
+
+@media (max-width: $mobile-max-width) {
+    .chats {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: $padding-small;
+
+        &__my-chats {
+            order: 2;
+            width: 100%
+        }
+    }
 }

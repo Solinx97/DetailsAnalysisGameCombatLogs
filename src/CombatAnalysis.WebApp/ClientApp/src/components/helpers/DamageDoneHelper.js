@@ -1,102 +1,171 @@
-﻿import { fa0, faClock, faCopy, faFire, faFlask, faHandFist, faHands, faPooStorm, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
+﻿import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
+import {
+    useGetDamageDoneCountByFilterQuery, useGetDamageDoneByFilterQuery,
+    useGetDamageDoneUniqueFilterValuesQuery
+} from '../../store/api/combatParser/DamageDone.api';
+import DetailsFilter from './DetailsFilter';
+import PaginationHelper from './PaginationHelper';
 
-const DamageDoneHelper = ({ detailsData }) => {
-    const { t } = useTranslation("helpers/combatDetailsHelper");
+const damageType = {
+    Normal: 0,
+    Crit: 1,
+    Dodge: 2,
+    Parry: 3,
+    Miss: 4,
+    Resist: 5,
+    Immune: 6,
+};
 
-    const [getTimeWithoutMs, , getDuration] = useTime();
+const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
+    const { getTimeWithoutMs } = useTime();
 
-    const getUserNameWithoutRealm = (userName) => {
-        let realmNameIndex = userName.indexOf('-');
-        let userNameWithOutRealm = userName.substr(0, realmNameIndex);
+    const [page, setPage] = useState(1);
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1});
 
-        return userNameWithOutRealm;
+    const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    );
+    const { data, isLoading: dataIsLoading } = useGetDamageDoneByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    );
+
+    const totalPages = Math.ceil(count / pageSize);
+
+    useEffect(() => {
+        setPage(1);
+    }, [selectedFilter]);
+
+    const getIcon = (type) => {
+        switch (type) {
+            case damageType.Crit:
+                return <FontAwesomeIcon
+                    icon={faFire}
+                    title={t("CritDamage")}
+                    className="crit"
+                />;
+            case damageType.Dodge:
+                return <FontAwesomeIcon
+                    icon={faCopy}
+                    title={t("Dodge")}
+                    className="overvalue"
+                />;
+            case damageType.Parry:
+                return <FontAwesomeIcon
+                    icon={faXmark}
+                    title={t("Parry")}
+                    className="overvalue"
+                />;
+            case damageType.Miss:
+                return <FontAwesomeIcon
+                    icon={faHands}
+                    title={t("Miss")}
+                    className="overvalue"
+                />;
+            case damageType.Resist:
+                return <FontAwesomeIcon
+                    icon={faFlask}
+                    title={t("Resist")}
+                    className="overvalue"
+                />;
+            case damageType.Immune:
+                return <FontAwesomeIcon
+                    icon={faPooStorm}
+                    title={t("Immune")}
+                    className="overvalue"
+                />;
+            default:
+                return <></>;
+        }
     }
 
-    return detailsData?.map((item) => (
-        <li key={item.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{item.spellOrItem}</h5>
-                    <div className="card-body__extra-damage">
-                        {item.isCrit &&
-                            <FontAwesomeIcon
-                                icon={faFire}
-                                title={t("CritDamage")}
-                            />
-                        }
-                        {item.isDodge &&
-                            <FontAwesomeIcon
-                                icon={faCopy}
-                                title={t("Dodge")}
-                            />
-                        }
-                        {item.isMiss &&
-                            <FontAwesomeIcon
-                                icon={faHands}
-                                title={t("Miss")}
-                            />
-                        }
-                        {item.isParry &&
-                            <FontAwesomeIcon
-                                icon={fa0}
-                                title={t("Parry")}
-                            />
-                        }
-                        {item.isImmune &&
-                            <FontAwesomeIcon
-                                icon={faPooStorm}
-                                title={t("Immune")}
-                            />
-                        }
-                        {item.isResist &&
-                            <FontAwesomeIcon
-                                icon={faFlask}
-                                title={t("Resist")}
-                            />
-                        }
-                    </div>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faClock}
-                            className="list-group-item__value"
-                            title={t("Time")}
-                        />
-                        <div>{getDuration(getTimeWithoutMs(item.time), getTimeWithoutMs(detailsData[0].time))}</div>
+    const getClassNameByDamageType = (item) => {
+        if (item.damageType === 1) {
+            return "crit";
+        }
+        else if (item.damageType > 1) {
+            return "overvalue";
+        }
+        else {
+            return "";
+        }
+    }
+
+    const tableTitle = () => {
+        return (
+            <li className="player-data-details__title" key="0">
+                <ul>
+                    <li>
+                        {t("Spell")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faHandFist}
-                            className="list-group-item__value"
-                            title={t("Value")}
-                        />
-                        <div>{item.value}</div>
+                    <li>
+                        {t("Time")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faUserTie}
-                            className="list-group-item__value"
-                            title={t("FromWho")}
-                        />
-                        <div>{getUserNameWithoutRealm(item.fromPlayer)}</div>
+                    <li>
+                        {t("Value")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faRightToBracket}
-                            className="list-group-item__value"
-                            title={t("ToTarget")}
-                        />
-                        <div>{item.toEnemy}</div>
+                    <li>
+                        {t("Target")}
                     </li>
                 </ul>
+            </li>
+        );
+    }
+
+    if (countIsLoading || dataIsLoading) {
+        return (<div>Loading...</div>);
+    }
+
+    return (
+        <>
+            <div className="player-filter-details">
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Target"
+                    filterName={t("Target")}
+                    useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Spell"
+                    filterName={t("Spell")}
+                    useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
             </div>
-        </li>
-    ));
+            <ul className="player-data-details">
+                {tableTitle()}
+                {data?.map((item) => (
+                    <li className="player-data-details__item" key={item.id}>
+                        <ul>
+                            <li>
+                                <div>{item.spell}</div>
+                                <div className="extra-details">{getIcon(item.damageType)}</div>
+                            </li>
+                            <li>{getTimeWithoutMs(item.time)}</li>
+                            <li className="extra-details">
+                                <div className={getClassNameByDamageType(item)}>{item.value}</div>
+                            </li>
+                            <li>{item.target}</li>
+                        </ul>
+                    </li>
+                ))}
+            </ul>
+            <PaginationHelper
+                setPage={setPage}
+                page={page}
+                totalPages={totalPages}
+                t={t}
+            />
+        </>
+    );
 }
 
 export default DamageDoneHelper;

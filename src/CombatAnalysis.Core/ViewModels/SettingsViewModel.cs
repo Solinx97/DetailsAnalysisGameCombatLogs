@@ -1,6 +1,8 @@
 ﻿using CombatAnalysis.Core.Localizations;
+using CombatAnalysis.Core.Settings;
 using CombatAnalysis.Core.ViewModels.Base;
-using CombatAnalysis.Core.ViewModels.Settings;
+using MvvmCross.Commands;
+using MvvmCross.Navigation;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text.Json;
@@ -9,23 +11,35 @@ namespace CombatAnalysis.Core.ViewModels;
 
 public class SettingsViewModel : ParentTemplate
 {
-    private ObservableCollection<Language> _languages;
+    private readonly IMvxNavigationService _mvvmNavigation;
+
+    private ObservableCollection<Language>? _languages;
     private Language _selectedLanguage;
     private string _logsLocation;
 
-    public SettingsViewModel()
-	{
-        BasicTemplate.Parent = this;
+    public SettingsViewModel(IMvxNavigationService mvvmNavigation)
+    {
+        Basic.Parent = this;
 
-        var userSettings = ReadUserSettings("user.json");
-        _logsLocation = userSettings.Location;
+        _mvvmNavigation = mvvmNavigation;
+
+        var userSettings = ReadUserSettings("User.json");
+        _logsLocation = userSettings?.Location ?? string.Empty;
+
+        CloseCommand = new MvxAsyncCommand(Close);
 
         LanguageInit();
     }
 
-    #region Properties
+    #region Command
 
-    public ObservableCollection<Language> Languages
+    public IMvxAsyncCommand CloseCommand { get; set; }
+
+    #endregion
+
+    #region View model properties
+
+    public ObservableCollection<Language>? Languages
     {
         get { return _languages; }
         set
@@ -55,6 +69,11 @@ public class SettingsViewModel : ParentTemplate
 
     #endregion
 
+    private async Task Close()
+    {
+        await _mvvmNavigation.Close(this);
+    }
+
     private void LanguageInit()
     {
         var currentCultureTag = CultureInfo.CurrentCulture.IetfLanguageTag;
@@ -68,7 +87,7 @@ public class SettingsViewModel : ParentTemplate
         Languages = new ObservableCollection<Language> { Language.EN, Language.RU, };
     }
 
-    private static UserSettings ReadUserSettings(string settingsName)
+    private static UserSettings? ReadUserSettings(string settingsName)
     {
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         using var fs = new FileStream($"{baseDirectory}{settingsName}", FileMode.OpenOrCreate);

@@ -1,14 +1,14 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Entities;
+using CombatAnalysis.DAL.Interfaces.Generic;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+internal class SQLSPRepository<TModel> : IGenericRepository<TModel>
+    where TModel : class, IEntity
 {
     private readonly CombatParserSQLContext _context;
 
@@ -23,7 +23,7 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         var procedureParams = new List<SqlParameter>();
         var procedureParamNames = new StringBuilder();
 
-        for (int i = 1; i < properties.Length; i++)
+        for (var i = 1; i < properties.Length; i++)
         {
             if (properties[i].CanWrite)
             {
@@ -31,6 +31,7 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
                 procedureParamNames.Append($"@{properties[i].Name},");
             }
         }
+
         procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
         var data = await Task.Run(() => _context.Set<TModel>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
@@ -40,24 +41,24 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         return data;
     }
 
-    public async Task<int> DeleteAsync(TIdType id)
+    public async Task<int> DeleteAsync(TModel item)
     {
         var rowsAffected = await _context.Database
-                            .ExecuteSqlRawAsync($"Delete{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id));
+                            .ExecuteSqlRawAsync($"Delete{typeof(TModel).Name}ById @Id", new SqlParameter("Id", item.Id));
 
         return rowsAffected;
     }
 
     public async Task<IEnumerable<TModel>> GetAllAsync()
     {
-        var data = await _context.Set<TModel>()
+        var data = await Task.Run(() => _context.Set<TModel>()
                             .FromSqlRaw($"GetAll{typeof(TModel).Name}")
-                            .ToListAsync();
+                            .AsEnumerable());
 
         return data;
     }
 
-    public async Task<TModel> GetByIdAsync(TIdType id)
+    public async Task<TModel> GetByIdAsync(int id)
     {
         var data = await Task.Run(() => _context.Set<TModel>()
                             .FromSqlRaw($"Get{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id))
@@ -67,21 +68,13 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         return data;
     }
 
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    public async Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value)
     {
-        var result = new List<TModel>();
-        var data = _context.Set<TModel>()
-                            .FromSqlRaw($"GetAll{typeof(TModel).Name}")
-                            .AsEnumerable();
-        foreach (var item in data)
-        {
-            if (item.GetType().GetProperty(paramName).GetValue(item).Equals(value))
-            {
-                result.Add(item);
-            }
-        }
+        var data = await _context.Set<TModel>()
+                    .Where(x => EF.Property<object>(x, paramName).Equals(value))
+                    .ToListAsync();
 
-        return result;
+        return data;
     }
 
     public async Task<int> UpdateAsync(TModel item)
@@ -89,7 +82,7 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         var properties = item.GetType().GetProperties();
         var procedureParams = new List<SqlParameter>();
         var procedureParamNames = new StringBuilder();
-        for (int i = 0; i < properties.Length; i++)
+        for (var i = 0; i < properties.Length; i++)
         {
             if (properties[i].CanWrite)
             {
@@ -97,6 +90,7 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
                 procedureParamNames.Append($"@{properties[i].Name},");
             }
         }
+
         procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
         var rowsAffected = await _context.Database

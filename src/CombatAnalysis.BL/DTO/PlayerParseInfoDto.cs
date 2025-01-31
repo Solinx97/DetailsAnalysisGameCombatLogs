@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.Interfaces.Entity;
 
-public class PlayerParseInfoDto
+namespace CombatAnalysis.BL.DTO;
+
+public class PlayerParseInfoDto : ICombatPlayerEntity
 {
     public int Id { get; set; }
 

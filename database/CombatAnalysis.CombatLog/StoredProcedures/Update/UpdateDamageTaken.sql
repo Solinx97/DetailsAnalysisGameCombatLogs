@@ -1,4 +1,0 @@
-﻿CREATE PROCEDURE UpdateDamageTaken (@Id INT,@Value INT,@ActualValue INT,@Time TIME (7),@FromEnemy NVARCHAR (MAX),@ToPlayer NVARCHAR (MAX),@SpellOrItem NVARCHAR (MAX),@IsPeriodicDamage BIT,@Resisted INT,@Absorbed INT,@Blocked INT,@RealDamage INT,@Mitigated INT,@IsDodge BIT,@IsParry BIT,@IsMiss BIT,@IsResist BIT,@IsImmune BIT,@IsAbsorb BIT,@IsCrushing BIT,@CombatPlayerId INT)
-	AS UPDATE DamageTaken
-	SET Value = @Value,ActualValue = @ActualValue,Time = @Time,FromEnemy = @FromEnemy,ToPlayer = @ToPlayer,SpellOrItem = @SpellOrItem,IsPeriodicDamage = @IsPeriodicDamage,Resisted = @Resisted,Absorbed = @Absorbed,Blocked = @Blocked,RealDamage = @RealDamage,Mitigated = @Mitigated,IsDodge = @IsDodge,IsParry = @IsParry,IsMiss = @IsMiss,IsResist = @IsResist,IsImmune = @IsImmune,IsAbsorb = @IsAbsorb,IsCrushing = @IsCrushing,CombatPlayerId = @CombatPlayerId
-	WHERE Id = @Id

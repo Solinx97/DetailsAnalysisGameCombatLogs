@@ -3,14 +3,14 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
-using CombatAnalysis.Core.Modelsl;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
+using System.Text;
 
 namespace CombatAnalysis.Core.Services;
 
-public class CombatParserAPIService
+internal class CombatParserAPIService : ICombatParserAPIService
 {
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger _logger;
@@ -25,31 +25,28 @@ public class CombatParserAPIService
 
     public void SetUpPort()
     {
-        _httpClient.BaseAddress = Port.CombatParserApi;
+        _httpClient.BaseAddress = API.CombatParserApi;
     }
 
-    public async Task<bool> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType, Action<int, string, string> combatUploaded)
+    public async Task<bool> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<int, string, string> combatUploaded, CancellationToken cancellationToken)
     {
         try
         {
             var currentCombatNumber = 0;
             var combatsAreUploaded = false;
-            if (logType == LogType.Public || logType == LogType.Private)
-            {
-                await SaveCombatLogByUserAsync(combatLog.Id, logType);
-            }
+
+            await SetReadyForCombatLogAsync(combatLog, combats.Count, cancellationToken);
 
             foreach (var item in combats)
             {
                 item.CombatLogId = combatLog.Id;
 
-                _ = _httpClient.PostAsync("Combat", JsonContent.Create(item));
+                var response = await _httpClient.PostAsync("Combat", JsonContent.Create(item), cancellationToken);
+                response.EnsureSuccessStatusCode();
 
                 currentCombatNumber++;
                 combatUploaded(currentCombatNumber, item.DungeonName, item.Name);
             }
-
-            await SetReadyForCombatLogAsync(combatLog, combats.Count);
 
             combatsAreUploaded = true;
 
@@ -57,7 +54,19 @@ public class CombatParserAPIService
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return false;
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Task was canceled: {Message}", ex.Message);
+
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
             return false;
         }
@@ -67,11 +76,16 @@ public class CombatParserAPIService
     {
         try
         {
-            await _httpClient.DeletAsync($"CombatLogByUser/{id}");
+            var response = await _httpClient.DeletAsync($"CombatLogByUser/{id}", CancellationToken.None);
+            response.EnsureSuccessStatusCode();
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
         }
     }
 
@@ -79,21 +93,34 @@ public class CombatParserAPIService
     {
         try
         {
-            var responseMessage = await _httpClient.GetAsync("CombatLog");
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return null;
-            }
+            var response = await _httpClient.GetAsync("CombatLog", CancellationToken.None);
+            response.EnsureSuccessStatusCode();
 
-            var combatLogs = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
+            var combatLogs = await response.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
+            if (combatLogs == null)
+            {
+                throw new ArgumentNullException(nameof(combatLogs));
+            }
 
             return combatLogs;
         }
-        catch (HttpRequestException ex)
+        catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            return null;
+            return new List<CombatLogModel>();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return new List<CombatLogModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return new List<CombatLogModel>();
         }
     }
 
@@ -104,52 +131,37 @@ public class CombatParserAPIService
             var combatLogs = new List<CombatLogModel>();
             foreach (var item in combatLogsId)
             {
-                var responseMessage = await _httpClient.GetAsync($"CombatLog/{item}");
-                if (!responseMessage.IsSuccessStatusCode)
-                {
-                    return null;
-                }
+                var response = await _httpClient.GetAsync($"CombatLog/{item}", CancellationToken.None);
+                response.EnsureSuccessStatusCode();
 
-                var combatLog = await responseMessage.Content.ReadFromJsonAsync<CombatLogModel>();
+                var combatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>();
+                if (combatLog == null)
+                {
+                    throw new ArgumentNullException(nameof(combatLog));
+                }
 
                 combatLogs.Add(combatLog);
             }
 
             return combatLogs;
         }
-        catch (HttpRequestException ex)
+        catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            return null;
-        }
-    }
-
-    public async Task<IEnumerable<CombatLogByUserModel>> LoadCombatLogsByUserAsync()
-    {
-        try
-        {
-            var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-            if (user == null)
-            {
-                return null;
-            }
-
-            var responseMessage = await _httpClient.GetAsync($"CombatLogByUser/byUserId/{user.Id}");
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return null;
-            }
-
-            var combatLogsByUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
-
-            return combatLogsByUser;
+            return new List<CombatLogModel>();
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatLogModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return new List<CombatLogModel>();
         }
     }
 
@@ -157,18 +169,34 @@ public class CombatParserAPIService
     {
         try
         {
-            _httpClient.BaseAddress = Port.CombatParserApi;
+            var response = await _httpClient.GetAsync($"Combat/getByCombatLogId/{combatLogId}", CancellationToken.None);
+            response.EnsureSuccessStatusCode();
 
-            var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{combatLogId}");
-            var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+            var combats = await response.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+            if (combats == null)
+            {
+                throw new ArgumentNullException(nameof(combats));
+            }
 
             return combats;
         }
-        catch (HttpRequestException ex)
+        catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            return null;
+            return new List<CombatModel>();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return new List<CombatModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return new List<CombatModel>();
         }
     }
 
@@ -176,8 +204,15 @@ public class CombatParserAPIService
     {
         try
         {
-            var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}");
-            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
+            var response = await _httpClient.GetAsync($"CombatPlayer/getByCombatId/{combatId}", CancellationToken.None);
+            response.EnsureSuccessStatusCode();
+
+            var combatPlayers = await response.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
+            if (combatPlayers == null)
+            {
+                throw new ArgumentNullException(nameof(combatPlayers));
+            }
+
             foreach (var item in combatPlayers)
             {
                 var playerParseInfo = await GetPlayerParseInfoAsync(item.Id);
@@ -186,86 +221,115 @@ public class CombatParserAPIService
 
             return combatPlayers;
         }
-        catch (HttpRequestException ex)
+        catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            return null;
+            return new List<CombatPlayerModel>();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return new List<CombatPlayerModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return new List<CombatPlayerModel>();
         }
     }
 
-    public async Task<IEnumerable<T>> LoadCombatDetailsByCombatPlayerId<T>(string address, int combatPlayerId)
-        where T : class
+    public async Task<int> LoadCountAsync(string address)
     {
         try
         {
-            var responseMessage = await _httpClient.GetAsync($"{address}/{combatPlayerId}");
-            var details = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<T>>();
+            var response = await _httpClient.GetAsync(address, CancellationToken.None);
+            response.EnsureSuccessStatusCode();
+
+            var details = await response.Content.ReadFromJsonAsync<int>();
 
             return details;
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return 0;
         }
     }
 
-    public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats)
-    {
-        try
-        {
-            var dungeonNames = combats
-                 .GroupBy(group => group.DungeonName)
-                 .Select(select => select.Key)
-                 .Where(name => !string.IsNullOrEmpty(name))
-                 .ToList();
-
-            var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
-            if (!combatLogResponse.IsSuccessStatusCode)
-            {
-                return null;
-            }
-
-            var createdCombatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
-
-            return createdCombatLog;
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return null;
-        }
-    }
-
-    private async Task SaveCombatLogByUserAsync(int combatLogId, LogType logType)
+    public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken)
     {
         try
         {
             var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
             if (user == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(user));
             }
 
-            var combatLogByUser = new CombatLogByUserModel
+            var dungeonNames = combats
+                 .GroupBy(group => group.DungeonName)
+                 .Select(select => select.Key)
+                 .Where(name => !string.IsNullOrEmpty(name))
+                 .ToList();
+
+            var name = CreateCombatLogName(dungeonNames);
+
+            var combatLog = new CombatLogModel
             {
+                Name = name,
+                Date = DateTimeOffset.UtcNow,
+                LogType = (int)logType,
                 AppUserId = user.Id,
-                CombatLogId = combatLogId,
-                PersonalLogType = (int)logType
             };
 
-            await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser));
+            var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var createdCombatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>(cancellationToken: cancellationToken);
+            if (createdCombatLog == null)
+            {
+                throw new ArgumentNullException(nameof(createdCombatLog));
+            }
+
+            return createdCombatLog;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new CombatLogModel();
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return new CombatLogModel();
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Task was canceled: {Message}", ex.Message);
+
+            return new CombatLogModel();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return new CombatLogModel();
         }
     }
 
-    private async Task SetReadyForCombatLogAsync(CombatLogModel combatLog, int numberCombats)
+    private async Task SetReadyForCombatLogAsync(CombatLogModel combatLog, int numberCombats, CancellationToken cancellationToken)
     {
         try
         {
@@ -273,19 +337,70 @@ public class CombatParserAPIService
             combatLog.NumberReadyCombats = 0;
             combatLog.CombatsInQueue = numberCombats;
 
-            await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog));
+            var response = await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken);
+            response.EnsureSuccessStatusCode();
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Task was canceled: {Message}", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
         }
     }
 
     private async Task<PlayerParseInfoModel> GetPlayerParseInfoAsync(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PlayerParseInfo/FindByCombatPlayerId/{combatPlayerId}");
-        var playerParseInfo = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PlayerParseInfoModel>>();
+        try
+        {
+            var response = await _httpClient.GetAsync($"PlayerParseInfo/getByCombatPlayerId/{combatPlayerId}", CancellationToken.None);
+            response.EnsureSuccessStatusCode();
 
-        return playerParseInfo.FirstOrDefault();
+            var playerParseInfoCollection = await response.Content.ReadFromJsonAsync<IEnumerable<PlayerParseInfoModel>>();
+            var playerInfo = playerParseInfoCollection?.FirstOrDefault();
+            if (playerInfo == null)
+            {
+                throw new ArgumentNullException(nameof(playerInfo));
+            }
+
+            return playerInfo;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new PlayerParseInfoModel();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return new PlayerParseInfoModel();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return new PlayerParseInfoModel();
+        }
+    }
+
+    private static string CreateCombatLogName(List<string> dungeonNames)
+    {
+        var combatLogDungeonName = new StringBuilder();
+        foreach (var item in dungeonNames)
+        {
+            var dungeonName = item.Trim('"');
+            combatLogDungeonName.Append($"{dungeonName}/");
+        }
+
+        combatLogDungeonName.Remove(combatLogDungeonName.Length - 1, 1);
+
+        return combatLogDungeonName.ToString();
     }
 }

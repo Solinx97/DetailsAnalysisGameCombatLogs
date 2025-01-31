@@ -1,35 +1,54 @@
 ﻿import { useEffect, useState } from 'react';
-import { useFindGroupChatMessageByChatIdQuery } from '../store/api/ChatApi';
-import { useFindGroupChatUserByChatIdQuery, useFindGroupChatUserQuery } from '../store/api/communication/chats/GroupChatUser.api';
+import { useGetGroupChatMessageCountByChatIdQuery } from '../store/api/chat/GroupChatMessage.api';
+import { useFindGroupChatUserByChatIdQuery, useFindMeInChatQuery } from '../store/api/chat/GroupChatUser.api';
+import { useGetMessagesByGroupChatIdQuery, useLazyGetMoreMessagesByGroupChatIdQuery } from '../store/api/core/Chat.api';
 
-const getGroupChatMessagesInterval = 1000;
-
-const useGroupChatData = (chatId, userId) => {
+const useGroupChatData = (chatId, appUserId, pageSizeRef) => {
     const [groupChatData, setGroupChatData] = useState({
-        messages: [],
+        messages: null,
+        count: 0,
         meInChat: null,
         groupChatUsers: [],
         isLoading: true,
     });
 
-    const { data: messages, isLoading: messagesLoading } = useFindGroupChatMessageByChatIdQuery(chatId, {
-        pollingInterval: getGroupChatMessagesInterval,
+    const { data: messages, isLoading: messagesIsLoading } = useGetMessagesByGroupChatIdQuery({
+        chatId,
+        pageSize: pageSizeRef.current
     });
-    const { data: meInChat, isLoading: myUsersIsLoading } = useFindGroupChatUserQuery({ chatId, userId });
+    const [getMoreMessagesByGroupChatIdAsync] = useLazyGetMoreMessagesByGroupChatIdQuery();
+    const { data: count, isLoading: countIsLoading } = useGetGroupChatMessageCountByChatIdQuery(chatId);
+    const { data: meInChat, isLoading: myUsersIsLoading } = useFindMeInChatQuery({ chatId, appUserId });
     const { data: groupChatUsers, isLoading: usersIsLoading } = useFindGroupChatUserByChatIdQuery(chatId);
 
     useEffect(() => {
-        if (!messagesLoading && !myUsersIsLoading && !usersIsLoading) {
-            setGroupChatData({
+        if (!messagesIsLoading && !countIsLoading && !myUsersIsLoading && !usersIsLoading) {
+            setGroupChatData(prevState => ({
                 messages,
+                count,
                 meInChat,
                 groupChatUsers,
                 isLoading: false,
-            });
+            }));
         }
-    }, [messages, meInChat, groupChatUsers, messagesLoading, myUsersIsLoading, usersIsLoading]);
+    }, [messages, count, meInChat, groupChatUsers, messagesIsLoading, countIsLoading, myUsersIsLoading, usersIsLoading]);
 
-    return groupChatData;
+    const getMoreMessagesAsync = async (offset) => {
+        const arg = {
+            chatId,
+            offset,
+            pageSize: pageSizeRef.current
+        };
+
+        const response = await getMoreMessagesByGroupChatIdAsync(arg);
+        if (response.data) {
+            return response.data;
+        }
+
+        return [];
+    }
+
+    return { groupChatData, getMoreMessagesAsync };
 }
 
 export default useGroupChatData;

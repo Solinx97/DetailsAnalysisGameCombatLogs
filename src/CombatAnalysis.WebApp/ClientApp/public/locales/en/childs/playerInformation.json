@@ -11,5 +11,6 @@
   "OpenDamageTakenAnalyzing": "Open damage takne analyzing",
   "OpenHealingAnalyzing": "Open healing analyzing",
   "OpenResourcesRecoveryAnalyzing": "Open resources recovery analyzing",
-  "OpenBuffsAnalyzing": "Open buffs analyzing"
+  "OpenBuffsAnalyzing": "Open buffs analyzing",
+  "AverageItemLevel": "Average player item level"
 }

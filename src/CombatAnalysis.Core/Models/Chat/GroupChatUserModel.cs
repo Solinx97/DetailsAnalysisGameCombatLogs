@@ -2,11 +2,11 @@
 
 public class GroupChatUserModel
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public string Username { get; set; }
 
-    public string AppUserId { get; set; }
+    public int ChatId { get; set; }
 
-    public int GroupChatId { get; set; }
+    public string AppUserId { get; set; }
 }

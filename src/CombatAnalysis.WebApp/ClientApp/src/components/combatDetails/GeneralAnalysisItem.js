@@ -1,4 +1,4 @@
-import { faBolt, faBookSkull, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
@@ -13,13 +13,12 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
 
     const navigate = useNavigate();
 
-    const [selectedCombatIndex, setSelectedCombatIndex] = useState(uniqueCombats.length - 1);
+    const [selectedCombatIndex, setSelectedCombatIndex] = useState(0);
+    const [selectedCombat, setSelectedCombat] = useState(uniqueCombats[selectedCombatIndex]);
 
     useEffect(() => {
-        setSelectedCombatIndex(uniqueCombats.length - 1);
-    }, [uniqueCombats]);
-
-    const selectedCombat = uniqueCombats[selectedCombatIndex];
+        setSelectedCombat(uniqueCombats[selectedCombatIndex]);
+    }, [selectedCombatIndex]);
 
     if (selectedCombat === null) {
         return (<div>Loading...</div>);
@@ -65,7 +64,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                             <h5 className="card-title">{selectedCombat.name}</h5>
                             <p className="card-text">{selectedCombat.dungeonName}</p>
                         </div>
-                        {selectedCombat.isWin
+                        {selectedCombat?.isWin
                             ? <FontAwesomeIcon
                                 icon={faGraduationCap}
                                 className="win"
@@ -81,15 +80,20 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                     {selectedCombat.isReady
                         ? <FontAwesomeIcon
                             icon={faCheck}
-                            className="list-group-item__ready"
+                            className="list-group-item__player-statistic-item"
                             title={t("Ready")}
                         />
                         : <FontAwesomeIcon
                             icon={faClock}
-                            className="list-group-item__not-ready"
+                            className="list-group-item__player-statistic-item"
                             title={t("NotReady")}
                         />
                     }
+                    {/*<FontAwesomeIcon*/}
+                    {/*    icon={faGlobe}*/}
+                    {/*    title={t("PlayerMovements")}*/}
+                    {/*    onClick={() => navigate(`/player-movements?combatId=${selectedCombat.id}`)}*/}
+                    {/*/>*/}
                 </div>
                 <div className="combat-time">
                     <div className="combat-time__range">
@@ -109,7 +113,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                         <div>{getCombatDuration(selectedCombat.duration)}</div>
                         <FontAwesomeIcon
                             icon={faHourglassStart}
-                            className="list-group-item__duration"
+                            className="list-group-item__player-statistic-item"
                             title={t("Duration")}
                         />
                     </div>
@@ -119,7 +123,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faKhanda}
-                        className="list-group-item__damage-done"
+                        className="list-group-item__player-statistic-item"
                         title={t("Damage")}
                     />
                     <div>{uniqueCombats[selectedCombatIndex].damageDone}</div>
@@ -127,7 +131,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faPlusCircle}
-                        className="list-group-item__heal-done"
+                        className="list-group-item__player-statistic-item"
                         title={t("Healing")}
                     />
                     <div>{uniqueCombats[selectedCombatIndex].healDone}</div>
@@ -135,7 +139,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faShieldHalved}
-                        className="list-group-item__damage-taken"
+                        className="list-group-item__player-statistic-item"
                         title={t("DamageTaken")}
                     />
                     <div>{uniqueCombats[selectedCombatIndex].damageTaken}</div>
@@ -143,26 +147,18 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faBolt}
-                        className="list-group-item__energy-recovery"
-                        title={t("ResourcesRecovery")}
+                        className="list-group-item__player-statistic-item"
+                        title={t("EnergyRecovery")}
                     />
                     <div>{uniqueCombats[selectedCombatIndex].energyRecovery}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon
-                        icon={faBookSkull}
-                        className={`list-group-item__death-number${uniqueCombats[selectedCombatIndex].deathNumber === 0 ? '-zero' : ''}`}
-                        title={t("Deaths")}
-                    />
-                    <div>{uniqueCombats[selectedCombatIndex].deathNumber}</div>
-                </li>
-                <li className="list-group-item">
-                    <FontAwesomeIcon
                         icon={faCircleNodes}
-                        className="list-group-item__buffs"
+                        className="list-group-item__player-statistic-item"
                         title={t("Buffs")}
                     />
-                    <div>{uniqueCombats[selectedCombatIndex].usedBuffs}</div>
+                    <div className="auras-details" onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>More...</div>
                 </li>
             </ul>
             <div className="card-body details">

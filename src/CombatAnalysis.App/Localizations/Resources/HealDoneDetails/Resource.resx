@@ -117,35 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageValue" xml:space="preserve">
-    <value>Average value</value>
+  <data name="Average" xml:space="preserve">
+    <value>Average</value>
   </data>
   <data name="Common" xml:space="preserve">
     <value>Common</value>
   </data>
-  <data name="CountOfSkills" xml:space="preserve">
-    <value>Count of skills</value>
+  <data name="Count" xml:space="preserve">
+    <value>Count</value>
   </data>
-  <data name="CritHealing" xml:space="preserve">
-    <value>Crit healing</value>
+  <data name="Crit" xml:space="preserve">
+    <value>Crit</value>
   </data>
   <data name="DamageAbsorbed" xml:space="preserve">
     <value>Damage absorb.</value>
   </data>
-  <data name="Healing" xml:space="preserve">
-    <value>Healing</value>
+  <data name="First" xml:space="preserve">
+    <value>First</value>
   </data>
-  <data name="HealingPerSec" xml:space="preserve">
-    <value>Healing per sec.</value>
+  <data name="HPS" xml:space="preserve">
+    <value>HPS</value>
   </data>
-  <data name="MaxValue" xml:space="preserve">
-    <value>Max value</value>
+  <data name="Last" xml:space="preserve">
+    <value>Last</value>
   </data>
-  <data name="MinValue" xml:space="preserve">
-    <value>Min value</value>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
   </data>
-  <data name="MoreDetails" xml:space="preserve">
-    <value>More details</value>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
   </data>
   <data name="OverHealing" xml:space="preserve">
     <value>Over healing</value>
@@ -153,17 +156,17 @@
   <data name="Player" xml:space="preserve">
     <value>Player</value>
   </data>
-  <data name="ShowCrit" xml:space="preserve">
-    <value>Show crit</value>
+  <data name="Prev" xml:space="preserve">
+    <value>Prev</value>
   </data>
-  <data name="ShowFilters" xml:space="preserve">
-    <value>Show filters</value>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
   </data>
   <data name="ShowOverHealing" xml:space="preserve">
     <value>Show over heal</value>
   </data>
-  <data name="Source" xml:space="preserve">
-    <value>Source</value>
+  <data name="Spell" xml:space="preserve">
+    <value>Spell</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
@@ -178,9 +181,15 @@
     <value>Analyzing of heal done</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Total: </value>
+    <value>Total</value>
   </data>
   <data name="TypeOf" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="MoreDetails" xml:space="preserve">
+    <value>More details</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
   </data>
 </root>

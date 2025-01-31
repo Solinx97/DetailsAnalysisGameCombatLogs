@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useGetUserByIdQuery } from '../../store/api/Account.api';
-import { useRemoveFriendAsyncMutation } from '../../store/api/communication/myEnvironment/Friend.api';
+import { useGetUserByIdQuery } from '../../store/api/user/Account.api';
+import { useRemoveFriendAsyncMutation } from '../../store/api/user/Friend.api';
 import UserInformation from './UserInformation';
 
 import "../../styles/communication/user.scss";
@@ -49,6 +49,8 @@ const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionA
 
     const goToUser = () => {
         navigate(`/user?id=${targetUserId}`);
+
+        window.location.reload();
     }
 
     if (isLoading) {
@@ -72,7 +74,7 @@ const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionA
                     icon={faCircleXmark}
                     title={t("Remove")}
                     className="remove"
-                    onClick={async () => await removeFriendAsync()}
+                    onClick={removeFriendAsync}
                 />
             }
         </div>

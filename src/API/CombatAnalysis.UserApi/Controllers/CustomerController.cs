@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CustomerBL.DTO;
-using CombatAnalysis.CustomerBL.Interfaces;
+using CombatAnalysis.UserBL.DTO;
+using CombatAnalysis.UserBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,33 +45,6 @@ public class CustomerController : ControllerBase
         var result = await _service.GetByParamAsync(nameof(CustomerModel.AppUserId), id);
 
         return Ok(result);
-    }
-
-    [AllowAnonymous]
-    [HttpPost]
-    public async Task<IActionResult> Create(CustomerModel model)
-    {
-        try
-        {
-            model.Id = Guid.NewGuid().ToString();
-
-            var map = _mapper.Map<CustomerDto>(model);
-            var result = await _service.CreateAsync(map);
-
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, $"Create Customer failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Create Customer failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
     }
 
     [HttpPut]

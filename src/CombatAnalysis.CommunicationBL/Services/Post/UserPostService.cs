@@ -6,20 +6,25 @@ using CombatAnalysis.CommunicationDAL.Interfaces;
 
 namespace CombatAnalysis.CommunicationBL.Services.Post;
 
-internal class UserPostService : IService<UserPostDto, int>
+internal class UserPostService : IUserPostService
 {
-    private readonly IGenericRepository<UserPost, int> _repository;
-    private readonly IMapper _mapper;
+    private readonly IUserPostRepository _repository;
+    private readonly IService<UserPostLikeDto, int> _postLikeService;
+    private readonly IService<UserPostDislikeDto, int> _postDislikeService;
+    private readonly IService<UserPostCommentDto, int> _postCommentService;
     private readonly ISqlContextService _sqlContextService;
-    private readonly IService<PostDto, int> _postService;
+    private readonly IMapper _mapper;
 
-    public UserPostService(IGenericRepository<UserPost, int> repository, IMapper mapper,
-        ISqlContextService sqlContextService, IService<PostDto, int> postService)
+    public UserPostService(IUserPostRepository repository, IMapper mapper,
+        IService<UserPostLikeDto, int> postLikeService, IService<UserPostDislikeDto, int> postDislikeService,
+        IService<UserPostCommentDto, int> postCommentService, ISqlContextService sqlContextService)
     {
         _repository = repository;
         _mapper = mapper;
+        _postLikeService = postLikeService;
+        _postDislikeService = postDislikeService;
+        _postCommentService = postCommentService;
         _sqlContextService = sqlContextService;
-        _postService = postService;
     }
 
     public Task<UserPostDto> CreateAsync(UserPostDto item)
@@ -34,11 +39,13 @@ internal class UserPostService : IService<UserPostDto, int>
 
     public async Task<int> DeleteAsync(int id)
     {
-        using var transaction = await _sqlContextService.BeginTransactionAsync(true);
+        var transaction = await _sqlContextService.UseTransactionAsync();
         try
         {
-            await DeletePostsAsync(id);
-            transaction.CreateSavepoint("BeforeDeleteUserPost");
+            await DeletePostLikesAsync(id);
+            await DeletePostDislikesAsync(id);
+            await DeletePostComentsAsync(id);
+            transaction.CreateSavepoint("BeforeDeletePost");
 
             var rowsAffected = await _repository.DeleteAsync(id);
 
@@ -48,13 +55,13 @@ internal class UserPostService : IService<UserPostDto, int>
         }
         catch (ArgumentException ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteUserPost");
+            await transaction.RollbackToSavepointAsync("BeforeDeletePost");
 
             return 0;
         }
         catch (Exception ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteUserPost");
+            await transaction.RollbackToSavepointAsync("BeforeDeletePost");
 
             return 0;
         }
@@ -84,6 +91,68 @@ internal class UserPostService : IService<UserPostDto, int>
         return resultMap;
     }
 
+    public async Task<IEnumerable<UserPostDto>> GetByAppUserIdAsync(string appUserId, int pageSize = 100)
+    {
+        var result = await _repository.GetByAppUserIdAsync(appUserId, pageSize);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetMoreByAppUserIdAsync(string appUserId, int offset = 0, int pageSize = 100)
+    {
+        var result = await _repository.GetMoreByAppUserIdAsync(appUserId, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetNewByAppUserIdAsync(string appUserId, DateTimeOffset checkFrom)
+    {
+        var result = await _repository.GetNewByAppUserIdAsync(appUserId, checkFrom);
+        var map = _mapper.Map<List<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetByListOfAppUserIdAsync(string appUserIds, int pageSize = 100)
+    {
+        var result = await _repository.GetByListOfAppUserIdAsync(appUserIds, pageSize);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetMoreByListOfAppUserIdAsync(string appUserIds, int offset = 0, int pageSize = 100)
+    {
+        var result = await _repository.GetMoreByListOfAppUserIdAsync(appUserIds, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetNewByListOfAppUserIdAsync(string appUserIds, DateTimeOffset checkFrom)
+    {
+        var result = await _repository.GetNewByListOfAppUserIdAsync(appUserIds, checkFrom);
+        var map = _mapper.Map<List<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<int> CountByAppUserIdAsync(string appUserId)
+    {
+        var count = await _repository.CountByAppUserIdAsync(appUserId);
+
+        return count;
+    }
+
+    public async Task<int> CountByListOfAppUserIdAsync(string[] appUserIds)
+    {
+        var count = await _repository.CountByListOfAppUserIdAsync(appUserIds);
+
+        return count;
+    }
+
     public Task<int> UpdateAsync(UserPostDto item)
     {
         if (item == null)
@@ -96,6 +165,18 @@ internal class UserPostService : IService<UserPostDto, int>
 
     private async Task<UserPostDto> CreateInternalAsync(UserPostDto item)
     {
+        if (string.IsNullOrEmpty(item.Content))
+        {
+            throw new ArgumentNullException(nameof(UserPostDto),
+                $"The property {nameof(UserPostDto.Content)} of the {nameof(UserPostDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.Owner))
+        {
+            throw new ArgumentNullException(nameof(UserPostDto),
+                $"The property {nameof(UserPostDto.Owner)} of the {nameof(UserPostDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<UserPost>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<UserPostDto>(createdItem);
@@ -105,15 +186,54 @@ internal class UserPostService : IService<UserPostDto, int>
 
     private async Task<int> UpdateInternalAsync(UserPostDto item)
     {
+        if (string.IsNullOrEmpty(item.Content))
+        {
+            throw new ArgumentNullException(nameof(UserPostDto),
+                $"The property {nameof(UserPostDto.Content)} of the {nameof(UserPostDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<UserPost>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
     }
 
-    private async Task DeletePostsAsync(int userPostId)
+    private async Task DeletePostLikesAsync(int postId)
     {
-        var userPost = await _repository.GetByIdAsync(userPostId);
-        await _postService.DeleteAsync(userPost.PostId);
+        var postLikes = await _postLikeService.GetByParamAsync(nameof(UserPostLikeDto.UserPostId), postId);
+        foreach (var item in postLikes)
+        {
+            var rowsAffected = await _postLikeService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException($"{nameof(UserPostLike)} didn't removed");
+            }
+        }
+    }
+
+    private async Task DeletePostDislikesAsync(int postId)
+    {
+        var postDislikes = await _postDislikeService.GetByParamAsync(nameof(UserPostDislikeDto.UserPostId), postId);
+        foreach (var item in postDislikes)
+        {
+            var rowsAffected = await _postDislikeService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException($"{nameof(UserPostDislike)} didn't removed");
+            }
+        }
+    }
+
+    private async Task DeletePostComentsAsync(int postId)
+    {
+        var postComments = await _postCommentService.GetByParamAsync(nameof(UserPostCommentDto.UserPostId), postId);
+        foreach (var item in postComments)
+        {
+            var rowsAffected = await _postCommentService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException($"{nameof(UserPostComment)} didn't removed");
+            }
+        }
     }
 }
