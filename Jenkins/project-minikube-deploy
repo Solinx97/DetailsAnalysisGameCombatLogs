@@ -1,0 +1,11 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("Deploy to Minikube") {
+            steps{
+                bat "helm upgrade web-app ./charts/web-app-chart -f ./charts/web-app-chart/tags-values.yaml -f ./charts/web-app-chart/values.yaml -n web-app"
+            }
+        }
+    }
+}
