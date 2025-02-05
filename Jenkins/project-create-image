@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     parameters {
+        string defaultValue: "./src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj", name: "PROJECT_PATH"
+        string defaultValue: "./tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj", name: "TEST_PROJECT_PATH"
         string defaultValue: "./src/CombatAnalysis.WebApp/Dockerfile", name: "PROJECT_DOCKER_PATH"
         string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
         string defaultValue: "", name: "DOCKER_IMAGE_NAME"
@@ -9,6 +11,16 @@ pipeline {
     }
 
     stages {
+        stage("Build") {
+            steps {
+                script {
+                    build job: "Build", parameters: [
+                        string(name: "PROJECT_PATH", value: PROJECT_PATH),
+                        string(name: "TEST_PROJECT_PATH", value: TEST_PROJECT_PATH),
+                    ]
+                }
+            }
+        }
         stage("Docker image build") {
             steps {
                 bat "docker build -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} -f ${PROJECT_DOCKER_PATH} ."
