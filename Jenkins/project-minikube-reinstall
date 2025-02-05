@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    parameters {
+        string defaultValue: "", name: "HELM_NAME"
+        string defaultValue: "./charts/web-app-chart", name: "HELM_CHART_PATH"
+        string defaultValue: "./charts/dockerImageTags.yaml", name: "HELM_IMAGE_TAGS_PATH"
+        string defaultValue: "", name: "NAMESPACE"
+    }
+
+    stages {
+        stage("Minikube remove namespace") {
+            steps {
+                bat "kubectl delete ns ${NAMESPACE}"
+            }
+        }
+        stage("Helm install") {
+            steps {
+                bat "helm install ${HELM_NAME} ${HELM_CHART_PATH} -f ${HELM_CHART_PATH}/values.yaml -f ${HELM_IMAGE_TAGS_PATH} -n ${NAMESPACE}"
+            }
+        }
+    }
+}
