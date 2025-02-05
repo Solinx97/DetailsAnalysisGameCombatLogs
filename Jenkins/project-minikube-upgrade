@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     parameters {
-        string defaultValue: "", name: "HELM_NAME"
+        string defaultValue: "web-app", name: "HELM_NAME"
         string defaultValue: "./charts/web-app-chart", name: "HELM_CHART_PATH"
         string defaultValue: "./charts/dockerImageTags.yaml", name: "HELM_IMAGE_TAGS_PATH"
-        string defaultValue: "", name: "NAMESPACE"
+        string defaultValue: "web-app", name: "NAMESPACE"
     }
 
     stages {
