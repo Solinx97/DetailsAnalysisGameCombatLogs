@@ -2,22 +2,20 @@ pipeline {
     agent any
 
     parameters {
-        string defaultValue: "", name: "PROJECT_NAME"
-        string defaultValue: "", name: "PROJECT_PATH"
-        string defaultValue: "", name: "TEST_PROJECT_NAME"
-        string defaultValue: "", name: "TEST_PROJECT_PATH"
+        string defaultValue: "..\src\CombatAnalysis.WebApp\CombatAnalysis.WebApp.csproj", name: "PROJECT_PATH"
+        string defaultValue: "..\tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj", name: "TEST_PROJECT_PATH"
     }
 
     stages {
         stage("Build") {
             steps {
-                bat "dotnet restore ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
-                bat "dotnet build ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
+                bat "dotnet restore ${PROJECT_PATH}"
+                bat "dotnet build ${PROJECT_PATH}"
             }
         }
         stage("Run Tests") {
             steps {
-                bat "dotnet test ${TEST_PROJECT_PATH}/${TEST_PROJECT_NAME}/${TEST_PROJECT_NAME}.csproj"
+                bat "dotnet test ${TEST_PROJECT_PATH}"
             }
         }
     }
