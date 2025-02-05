@@ -2,9 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string defaultValue: "", name: "PROJECT_NAME"
-        string defaultValue: "", name: "PROJECT_PATH"
-        string defaultValue: "", name: "DOCKER_FILE_NAME"
+        string defaultValue: "./src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj", name: "PROJECT_PATH"
         string defaultValue: "", name: "DOCKER_IMAGE_NAME"
         string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
         string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
@@ -13,7 +11,7 @@ pipeline {
     stages {
         stage("Docker image build") {
             steps {
-                bat "docker build -f ${PROJECT_PATH}/${PROJECT_NAME}/${DOCKER_FILE_NAME} --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+                bat "docker build -f ${PROJECT_PATH} --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ."
             }
         }
         stage("Docker image push") {
