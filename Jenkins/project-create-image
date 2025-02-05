@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     parameters {
+        string defaultValue: "/Build/development", name: "BUILD_PIPELINE_NAME"
         string defaultValue: "./src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj", name: "PROJECT_PATH"
         string defaultValue: "./tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj", name: "TEST_PROJECT_PATH"
         string defaultValue: "./src/CombatAnalysis.WebApp/Dockerfile", name: "PROJECT_DOCKER_PATH"
@@ -14,10 +15,15 @@ pipeline {
         stage("Build") {
             steps {
                 script {
-                    build job: "Build", parameters: [
+                    def buildResult = build job: BUILD_PIPELINE_NAME, parameters: [
                         string(name: "PROJECT_PATH", value: PROJECT_PATH),
                         string(name: "TEST_PROJECT_PATH", value: TEST_PROJECT_PATH),
-                    ]
+                    ], propagate: false
+                    if (buildResult.result == 'SUCCESS') {
+                        echo "Build successful, proceeding to Docker image build"
+                    } else {
+                        error "Build failed, aborting pipeline"
+                    }
                 }
             }
         }
