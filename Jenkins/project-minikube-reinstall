@@ -12,7 +12,7 @@ pipeline {
         stage("Minikube reinstall namespace") {
             steps {
                 bat "kubectl delete ns ${NAMESPACE}"
-                bat "kubectl install ns ${NAMESPACE}"
+                bat "kubectl create ns ${NAMESPACE}"
             }
         }
         stage("Helm install") {
