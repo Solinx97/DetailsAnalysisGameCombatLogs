@@ -6,10 +6,12 @@ export const PostApi = createApi({
     reducerPath: 'postApi',
     tagTyes: [
         'UserPost',
+        'NewUserPost',
         'UserPostLike',
         'UserPostDislike',
         'UserPostComment',
         'CommunityPost',
+        'NewCommunityPost',
         'CommunityPostLike',
         'CommunityPostDislike',
         'CommunityPostComment',
@@ -76,8 +78,8 @@ export const PostApi = createApi({
             }),
             providesTags: (result, error, arg) =>
                 result
-                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
-                    : [{ type: 'UserPost' }]
+                    ? [...result.map(({ id }) => ({ type: 'NewUserPost', id })), { type: 'NewUserPost' }]
+                    : [{ type: 'NewUserPost' }]
         }),
         getCommunityPostsByCommunityId: builder.query({
             query: ({ communityId, pageSize }) => ({
@@ -112,8 +114,8 @@ export const PostApi = createApi({
             }),
             providesTags: (result, error, arg) =>
                 result
-                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
-                    : [{ type: 'UserPost' }]
+                    ? [...result.map(({ id }) => ({ type: 'CommunityPost', id })), { type: 'CommunityPost' }]
+                    : [{ type: 'CommunityPost' }]
         }),
         getMoreCommunityPostByListOfCommunityIds: builder.query({
             query: ({ communityIds, offset, pageSize }) => ({
@@ -121,8 +123,8 @@ export const PostApi = createApi({
             }),
             providesTags: (result, error, arg) =>
                 result
-                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
-                    : [{ type: 'UserPost' }]
+                    ? [...result.map(({ id }) => ({ type: 'CommunityPost', id })), { type: 'CommunityPost' }]
+                    : [{ type: 'CommunityPost' }]
         }),
         getNewCommunityPostByListOfCommunityIds: builder.query({
             query: ({ communityIds, checkFrom }) => ({
@@ -130,8 +132,8 @@ export const PostApi = createApi({
             }),
             providesTags: (result, error, arg) =>
                 result
-                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
-                    : [{ type: 'UserPost' }]
+                    ? [...result.map(({ id }) => ({ type: 'NewCommunityPost', id })), { type: 'NewCommunityPost' }]
+                    : [{ type: 'NewCommunityPost' }]
         }),
     })
 })

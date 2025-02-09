@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useGetUserPostByIdQuery, useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/post/UserPost.api';
+import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/post/UserPost.api';
 import { useCreateUserPostCommentMutation } from '../../../store/api/post/UserPostComment.api';
 import UserPostComments from './UserPostComments';
 import UserPostReactions from './UserPostReactions';
@@ -8,7 +8,7 @@ import UserPostTitle from './UserPostTitle';
 
 import '../../../styles/communication/post.scss';
 
-const UserPost = ({ userId, postId }) => {
+const UserPost = ({ meId, post }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePost] = useUpdateUserPostMutation();
@@ -16,16 +16,14 @@ const UserPost = ({ userId, postId }) => {
     const [createPostComment] = useCreateUserPostCommentMutation();
     const [getPostByIdAsync] = useLazyGetUserPostByIdQuery();
 
-    const { data: post, isLoading } = useGetUserPostByIdQuery(postId);
-
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
     const [showAddComment, setShowAddComment] = useState(false);
     const [isMyPost, setIsMyPost] = useState(false);
 
     useEffect(() => {
-        setIsMyPost(post?.appUserId === userId);
-    }, []);
+        setIsMyPost(post?.appUserId === meId);
+    }, [post]);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         try {
@@ -61,15 +59,15 @@ const UserPost = ({ userId, postId }) => {
         const newPostComment = {
             content: postCommentContent,
             createdAt: new Date(),
-            userPostId: postId,
-            appUserId: userId
+            userPostId: post.id,
+            appUserId: meId
         }
 
         const response = await createPostComment(newPostComment);
         if (response.data) {
             setPostCommentContent("");
 
-            await updatePostAsync(postId, 0, 0, 1);
+            await updatePostAsync(post.id, 0, 0, 1);
         }
     }
 
@@ -96,10 +94,6 @@ const UserPost = ({ userId, postId }) => {
         return formatted;
     }
 
-    if (isLoading) {
-        return (<></>);
-    }
-
     return (
         <>
             <div className="posts__card">
@@ -110,7 +104,7 @@ const UserPost = ({ userId, postId }) => {
                 />
                 <div className="posts__content">{post?.content}</div>
                 <UserPostReactions
-                    userId={userId}
+                    userId={meId}
                     post={post}
                     updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
@@ -122,8 +116,8 @@ const UserPost = ({ userId, postId }) => {
                 <>
                     <UserPostComments
                         dateFormatting={dateFormatting}
-                        userId={userId}
-                        postId={postId}
+                        userId={meId}
+                        postId={post.id}
                         updatePostAsync={updatePostAsync}
                     />
                     <div className="add-new-comment">

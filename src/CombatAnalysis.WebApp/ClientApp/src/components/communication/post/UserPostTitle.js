@@ -9,16 +9,13 @@ import User from '../User';
 const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
     const { t } = useTranslation("communication/postTitle");
 
-    const { data: targetUser, isLoading } = useGetUserByIdQuery(post?.appUserId);
+    const { data: targetUser } = useGetUserByIdQuery(post?.appUserId);
     const [removeUserPost] = useRemoveUserPostMutation();
 
     const [userInformation, setUserInformation] = useState(null);
 
     const removeUserPostAsync = async () => {
-        const response = await removeUserPost(post.id);
-        if (!response.error) {
-            window.location.reload();
-        }
+        await removeUserPost(post.id);
     }
 
     return (

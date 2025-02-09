@@ -5,23 +5,28 @@ import Loading from '../Loading';
 import CommunityPost from './post/CommunityPost';
 import UserPost from './post/UserPost';
 
-const FeedParticipants = ({ userId, t }) => {
+const FeedParticipants = ({ meId, t }) => {
     const userPostsSizeRef = useRef(0);
     const communityPostsSizeRef = useRef(0);
 
     const [currentPosts, setCurrentPosts] = useState([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const { posts, communityPosts, newPosts, newCommunityPosts, count, communityCount, isLoading, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchUsersPosts(userId, false);
+    const { posts, communityPosts, newPosts, newCommunityPosts, count, communityCount, isLoading, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchUsersPosts(meId);
 
     useEffect(() => {
-        if (!posts || posts.length === 0) {
+        if (!posts) {
             return;
         }
 
         userPostsSizeRef.current = posts.length;
+        if (posts.length === 0) {
+            setCurrentPosts([]);
 
-        const totalPosts = [...currentPosts, ...posts];
+            return;
+        }
+
+        const totalPosts = Array.from(posts);
         totalPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         setCurrentPosts(totalPosts);
@@ -96,13 +101,13 @@ const FeedParticipants = ({ userId, t }) => {
                     <li key={uuidv4()}>
                         {post.communityId
                             ? <CommunityPost
-                                userId={userId}
-                                postId={post.id}
+                                userId={meId}
+                                post={post}
                                 communityId={post.communityId}
                             />
                             : <UserPost
-                                userId={userId}
-                                postId={post.id}
+                                meId={meId}
+                                post={post}
                             />
                         }
                     </li>
