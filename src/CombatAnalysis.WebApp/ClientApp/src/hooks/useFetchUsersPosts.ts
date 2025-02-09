@@ -11,33 +11,42 @@ import {
 import { useLazyGetCommunityPostCountByListOfCommunityIdQuery } from '../store/api/post/CommunityPost.api';
 import { useLazyGetUserPostCountByUserIdQuery } from '../store/api/post/UserPost.api';
 import { useFriendSearchMyFriendsQuery } from '../store/api/user/Friend.api';
+import { CommunityPost } from '../types/CommunityPost';
+import { CommunityUser } from '../types/CommunityUser';
+import { Friend } from '../types/Friend';
+import { UserPost } from '../types/UserPost';
+import { UseFetchUsersPostsResult } from '../types/hooks/UseFetchUsersPostsResult';
 
 const getUserPostsInterval = 5000;
 
-const useFetchUsersPosts = (meId) => {
-    const pageSizeRef = useRef(process.env.REACT_APP_COMMUNITY_POST_PAGE_SIZE);
-    const currentDateRef = useRef((new Date()).toISOString());
-    const appUserIdsRef = useRef(meId);
-    const communityIdsRef = useRef("0");
+const useFetchUsersPosts = (meId: string): UseFetchUsersPostsResult => {
+    const pageSizeRef = useRef<number>(parseInt(process.env.REACT_APP_COMMUNITY_POST_PAGE_SIZE || '5'));
+    const currentDateRef = useRef<string>((new Date()).toISOString());
+    const appUserIdsRef = useRef<string>(meId);
+    const communityIdsRef = useRef<string>("0");
 
     const [count, setCount] = useState(0);
     const [communityCount, setCommunityCount] = useState(0);
 
-    const { data: myFriends, isLoading: friendsAreLoading } = useFriendSearchMyFriendsQuery(meId);
-    const { data: myCommunitiesUsers, isLoading: communitiesAreLoading } = useCommunityUserSearchByUserIdQuery(meId);
+    const { data: myFriends, isLoading: friendsAreLoading } = useFriendSearchMyFriendsQuery(meId, {
+        selectFromResult: ({ data }: { data: Friend[] }) => ({ data }),
+    });
+    const { data: myCommunitiesUsers, isLoading: communitiesAreLoading } = useCommunityUserSearchByUserIdQuery(meId, {
+        selectFromResult: ({ data }: { data: CommunityUser[] }) => ({ data }),
+    });
     const { data: posts } = useGetUserPostByListOfUserIdsQuery({ appUserIds: appUserIdsRef.current, pageSize: pageSizeRef.current }, {
-        selectFromResult: ({ data }) => ({ data }),
+        selectFromResult: ({ data }: { data: UserPost[] }) => ({ data }),
     });
     const { data: newPosts } = useGetNewUserPostByListOfUserIdsQuery({ appUserIds: appUserIdsRef.current, checkFrom: currentDateRef.current }, {
         pollingInterval: getUserPostsInterval,
-        selectFromResult: ({ data }) => ({ data }),
+        selectFromResult: ({ data }: { data: UserPost[] }) => ({ data }),
     });
     const { data: communityPosts } = useGetCommunityPostByListOfCommunityIdsQuery({ communityIds: communityIdsRef.current, pageSize: pageSizeRef.current }, {
-        selectFromResult: ({ data }) => ({ data }),
+        selectFromResult: ({ data }: { data: CommunityPost[] }) => ({ data }),
     });
     const { data: newCommunityPosts } = useGetNewCommunityPostByListOfCommunityIdsQuery({ communityIds: communityIdsRef.current, checkFrom: currentDateRef.current }, {
         pollingInterval: getUserPostsInterval,
-        selectFromResult: ({ data }) => ({ data }),
+        selectFromResult: ({ data }: { data: CommunityPost[] }) => ({ data }),
     });
 
     const [getUserPostCountByUserId] = useLazyGetUserPostCountByUserIdQuery();
@@ -64,8 +73,8 @@ const useFetchUsersPosts = (meId) => {
         }
 
         const getUserPostCount = async () => {
-            const appUserIds = myFriends
-                ? myFriends.map(friend => friend.whoFriendId === meId
+            const appUserIds: string[] = myFriends
+                ? myFriends.map((friend: Friend) => friend.whoFriendId === meId
                     ? friend.forWhomId
                     : friend.whoFriendId)
                 : [];
@@ -88,8 +97,8 @@ const useFetchUsersPosts = (meId) => {
         }
 
         const getCommunityPostByListOfCommunityIds = async () => {
-            const communityIds = myCommunitiesUsers
-                ? myCommunitiesUsers.map(user => user.communityId)
+            const communityIds: string[] = myCommunitiesUsers
+                ? myCommunitiesUsers.map((user: CommunityUser) => user.communityId)
                 : [];
 
             if (communityIds.length === 0) {
@@ -107,7 +116,7 @@ const useFetchUsersPosts = (meId) => {
         getCommunityPostByListOfCommunityIds();
     }, [myCommunitiesUsers]);
 
-    const getMoreUserPostsAsync = async (currentPostsSize) => {
+    const getMoreUserPostsAsync = async (currentPostsSize: number): Promise<UserPost[]> => {
         const arg = {
             appUserIds: appUserIdsRef.current,
             offset: currentPostsSize,
@@ -122,7 +131,7 @@ const useFetchUsersPosts = (meId) => {
         return [];
     }
 
-    const getMoreCommunityPostsAsync = async (currentPostsSize) => {
+    const getMoreCommunityPostsAsync = async (currentPostsSize: number): Promise<CommunityPost[]> => {
         const arg = {
             communityIds: communityIdsRef.current,
             offset: currentPostsSize,

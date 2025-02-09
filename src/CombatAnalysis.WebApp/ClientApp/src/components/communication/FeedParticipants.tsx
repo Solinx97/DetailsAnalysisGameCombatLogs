@@ -1,15 +1,16 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import useFetchUsersPosts from '../../hooks/useFetchUsersPosts';
+import { FeedParticipantsProps } from '../../types/components/communication/FeedParticipantsProps';
 import Loading from '../Loading';
 import CommunityPost from './post/CommunityPost';
 import UserPost from './post/UserPost';
 
-const FeedParticipants = ({ meId, t }) => {
+const FeedParticipants: React.FC<FeedParticipantsProps> = ({ meId, t }) => {
     const userPostsSizeRef = useRef(0);
     const communityPostsSizeRef = useRef(0);
 
-    const [currentPosts, setCurrentPosts] = useState([]);
+    const [currentPosts, setCurrentPosts] = useState<any[]>([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
     const { posts, communityPosts, newPosts, newCommunityPosts, count, communityCount, isLoading, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchUsersPosts(meId);
@@ -21,26 +22,27 @@ const FeedParticipants = ({ meId, t }) => {
 
         userPostsSizeRef.current = posts.length;
         if (posts.length === 0) {
-            setCurrentPosts([]);
-
             return;
         }
 
         const totalPosts = Array.from(posts);
-        totalPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         setCurrentPosts(totalPosts);
     }, [posts]);
 
     useEffect(() => {
-        if (!communityPosts || communityPosts.length === 0) {
+        if (!communityPosts) {
             return;
         }
 
         communityPostsSizeRef.current = communityPosts.length;
+        if (communityPosts.length === 0) {
+            return;
+        }
 
-        const totalPosts = [...currentPosts, ...communityPosts];
-        totalPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const totalPosts = Array.from(communityPosts);
+        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         setCurrentPosts(totalPosts);
     }, [communityPosts]);
@@ -68,7 +70,7 @@ const FeedParticipants = ({ meId, t }) => {
         const newPosts = newUserPosts.concat(newCommunityPosts);
 
         const totalPosts = [...currentPosts, ...newPosts];
-        totalPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
         setCurrentPosts(totalPosts);
     }
@@ -76,11 +78,11 @@ const FeedParticipants = ({ meId, t }) => {
     const loadingNewUserPostsAsync = async () => {
         currentDateRef.current = (new Date()).toISOString();
 
-        newPosts?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
+        newPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setCurrentPosts(prevPosts => [...(newPosts || []), ...prevPosts]);
 
-        newCommunityPosts?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setCurrentPosts(prevPosts => [...newCommunityPosts, ...prevPosts]);
+        newCommunityPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setCurrentPosts(prevPosts => [...(newCommunityPosts || []), ...prevPosts]);
 
         setHaveNewPosts(false);
     }

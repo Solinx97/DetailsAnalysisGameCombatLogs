@@ -2,13 +2,14 @@
 import { useTranslation } from 'react-i18next';
 import { useLazyGetCommunityPostByIdQuery, useUpdateCommunityPostMutation } from '../../../store/api/post/CommunityPost.api';
 import { useCreateCommunityPostCommentMutation } from '../../../store/api/post/CommunityPostComment.api';
+import { CommunityPostProps } from '../../../types/components/communication/post/CommunityPostProps';
 import CommunityPostComments from './CommunityPostComments';
 import CommunityPostReactions from './CommunityPostReactions';
 import CommunityPostTitle from './CommunityPostTitle';
 
 import '../../../styles/communication/post.scss';
 
-const CommunityPost = ({ userId, communityId, post }) => {
+const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePost] = useUpdateCommunityPostMutation();
@@ -25,7 +26,7 @@ const CommunityPost = ({ userId, communityId, post }) => {
         setIsMyPost(post?.appUserId === userId);
     }, [post]);
 
-    const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
+    const updatePostAsync = async (postId: number, likesCount: number, dislikesCount: number, commentsCount: number) => {
         try {
             let response = await getPostByIdAsync(postId);
             if (response.error) {
@@ -71,10 +72,10 @@ const CommunityPost = ({ userId, communityId, post }) => {
         }
     }
 
-    const dateFormatting = (stringOfDate) => {
+    const dateFormatting = (stringOfDate: string) => {
         const date = new Date(stringOfDate);
         const month = date.getMonth();
-        const monthes = {
+        const monthes: { [key: number]: string } = {
             0: "January",
             1: "February",
             2: "March",
@@ -130,7 +131,7 @@ const CommunityPost = ({ userId, communityId, post }) => {
                         </div>
                         {showAddComment &&
                             <div className="add-new-comment__content">
-                                <textarea className="form-control" rows="3" cols="60" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                            <textarea className="form-control" rows={3} cols={60} onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
                                 <div className="actions">
                                     <div className="add-comment" onClick={createPostCommentAsync}>{t("Add")}</div>
                                     <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</div>
