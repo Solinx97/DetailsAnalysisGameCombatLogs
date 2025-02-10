@@ -14,7 +14,6 @@ const People = () => {
     const { t } = useTranslation("communication/people/people");
 
     const me = useSelector((state) => state.user.value);
-    const [menuItem, setMenuItem] = useState(7);
     const [skipFetching, setSkipFetching] = useState(true);
 
     const { people, isLoading } = useGetUsersQuery(undefined, {
@@ -39,8 +38,8 @@ const People = () => {
         return (
             <>
                 <CommunicationMenu
-                    currentMenuItem={menuItem}
-                    setMenuItem={setMenuItem}
+                    currentMenuItem={4}
+                    hasSubMenu={false}
                 />
                 <Loading />
             </>
@@ -48,11 +47,7 @@ const People = () => {
     }
 
     return (
-        <div className="communication">
-            <CommunicationMenu
-                currentMenuItem={menuItem}
-                setMenuItem={setMenuItem}
-            />
+        <>
             <div className="communication-content people">
                 <div>
                     <div className="people__title">{t("People")}</div>
@@ -69,7 +64,11 @@ const People = () => {
                     }
                 </ul>
             </div>
-        </div>
+            <CommunicationMenu
+                currentMenuItem={4}
+                hasSubMenu={false}
+            />
+        </>
     );
 }
 

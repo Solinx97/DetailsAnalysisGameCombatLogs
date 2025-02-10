@@ -2,16 +2,19 @@ import { faCircleXmark, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetUserByIdQuery } from '../../store/api/user/Account.api';
 import { useRemoveFriendAsyncMutation } from '../../store/api/user/Friend.api';
+import { UserProps } from '../../types/components/communication/UserProps';
 import UserInformation from './UserInformation';
 
 import "../../styles/communication/user.scss";
 
-const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionAfterRequests = null, friendId = 0 }) => {
+const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, allowRemoveFriend, actionAfterRequests = null, friendId = 0 }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
+    const me = useSelector((state: any) => state.user.value);
     const navigate = useNavigate();
 
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation();
@@ -35,11 +38,11 @@ const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionA
         );
     }
 
-    const userActiveHandler = (e) => {
+    const userActiveHandler = (e: any) => {
         setUserActive("_active");
     }
 
-    const userInactiveHandler = (e) => {
+    const userInactiveHandler = (e: any) => {
         setUserActive("");
     }
 
@@ -63,7 +66,7 @@ const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionA
             onMouseLeave={userInactiveHandler}>
             <FontAwesomeIcon
                 icon={faUser}
-                title={t("ShowDetails")}
+                title={t("ShowDetails") || ""}
                 className={`details${userActive}`}
                 onClick={openUserInformation}
             />
@@ -72,7 +75,7 @@ const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionA
             {allowRemoveFriend &&
                 <FontAwesomeIcon
                     icon={faCircleXmark}
-                    title={t("Remove")}
+                    title={t("Remove") || ""}
                     className="remove"
                     onClick={removeFriendAsync}
                 />

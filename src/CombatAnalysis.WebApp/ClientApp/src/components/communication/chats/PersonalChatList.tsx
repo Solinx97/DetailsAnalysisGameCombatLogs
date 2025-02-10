@@ -1,16 +1,18 @@
 ﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useChatHub } from '../../../context/ChatHubProvider';
 import { useGetByUserIdAsyncQuery } from '../../../store/api/chat/PersonalChat.api';
+import { PersonalChat } from '../../../types/PersonalChat';
+import { PersonalChatListProps } from '../../../types/components/communication/chats/PersonalChatListProps';
 import PersonalChatListItem from './PersonalChatListItem';
 
-const PersonalChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat }) => {
+const PersonalChatList: React.FC<PersonalChatListProps> = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
     const { data: personalChats, isLoading } = useGetByUserIdAsyncQuery(meId);
 
     const { connectToPersonalChatUnreadMessagesAsync, subscribeToUnreadPersonalMessagesUpdated, subscribeToPersonalChat } = useChatHub();
 
-    const [chats, setChats] = useState([]);
+    const [chats, setChats] = useState<PersonalChat[]>([]);
 
     useEffect(() => {
         if (!personalChats) {
@@ -22,7 +24,7 @@ const PersonalChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden,
         const connectToPersonalChatUnreadMessages = async () => {
             await connectToPersonalChatUnreadMessagesAsync(personalChats);
 
-            subscribeToPersonalChat((chat) => {
+            subscribeToPersonalChat((chat: PersonalChat) => {
                 setChats(prevChats => [...prevChats, chat]);
             });
         }

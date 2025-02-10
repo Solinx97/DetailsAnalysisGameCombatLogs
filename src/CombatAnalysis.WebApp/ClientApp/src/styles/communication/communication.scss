@@ -62,29 +62,22 @@ $mobile-max-width: 425px;
     &__title, &__hide {
         display: flex;
         justify-content: center;
-        padding: 5px;
+        align-items: center;
+        border-radius: 20px;
+        background: #0c192c;
 
-        div {
-            padding: 5px 10px;
-            border-radius: 20px;
-            background: #0c192c;
-
-            svg {
-                cursor: pointer;
-            }
+        svg {
+            padding: 10px;
+            cursor: pointer;
         }
     }
 
     &__title {
-        div {
-            box-shadow: 2px 2px 2px 2px yellow;
-        }
+        box-shadow: 2px 2px 2px 2px yellow;
     }
 
     &__hide {
-        div {
-            box-shadow: 2px 2px 2px 2px gray;
-        }
+        box-shadow: 2px 2px 2px 2px gray;
     }
 
     &__container {

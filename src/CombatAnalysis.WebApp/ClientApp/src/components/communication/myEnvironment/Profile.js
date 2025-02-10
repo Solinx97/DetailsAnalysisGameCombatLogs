@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import CommunicationMenu from '../CommunicationMenu';
 import ProfileEdit from './ProfileEdit';
 import ProfileInfo from './ProfileInfo';
 
@@ -22,20 +23,26 @@ const Profile = () => {
     }
 
     return (
-        <div className="profile">
-            {isEditMode
-                ? <ProfileEdit
-                    setIsEditMode={setIsEditMode}
-                    t={t}
-                    getDate={getDate}
-                />
-                : <ProfileInfo
-                    setIsEditMode={setIsEditMode}
-                    getDate={getDate}
-                    t={t}
-                />
-            }
-        </div>
+        <>
+            <div className="profile">
+                {isEditMode
+                    ? <ProfileEdit
+                        setIsEditMode={setIsEditMode}
+                        t={t}
+                        getDate={getDate}
+                    />
+                    : <ProfileInfo
+                        setIsEditMode={setIsEditMode}
+                        getDate={getDate}
+                        t={t}
+                    />
+                }
+            </div>
+            <CommunicationMenu
+                currentMenuItem={8}
+                hasSubMenu={true}
+            />
+        </>
     );
 }
 

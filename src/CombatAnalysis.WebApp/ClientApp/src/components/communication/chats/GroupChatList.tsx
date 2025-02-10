@@ -3,14 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useChatHub } from '../../../context/ChatHubProvider';
 import { useFindGroupChatUserByUserIdQuery } from '../../../store/api/chat/GroupChatUser.api';
+import { GroupChatUser } from '../../../types/GroupChatUser';
+import { GroupChatListProps } from '../../../types/components/communication/chats/GroupChatListProps';
 import GroupChatListItem from './GroupChatListItem';
 
-const GroupChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat }) => {
+const GroupChatList: React.FC<GroupChatListProps> = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat }) => {
     const { data, isLoading } = useFindGroupChatUserByUserIdQuery(meId);
 
     const { connectToGroupChatUnreadMessagesAsync, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupChat } = useChatHub();
 
-    const [meInGroupChats, setMeInGroupChats] = useState([]);
+    const [meInGroupChats, setMeInGroupChats] = useState<GroupChatUser[]>([]);
 
     useEffect(() => {
         if (!data) {
@@ -22,7 +24,7 @@ const GroupChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, to
         const connectToPersonalChatUnreadMessages = async () => {
             await connectToGroupChatUnreadMessagesAsync(data);
 
-            subscribeToGroupChat((groupChatUser) => {
+            subscribeToGroupChat((groupChatUser: GroupChatUser) => {
                 setMeInGroupChats(prev => [...prev, groupChatUser]);
             });
         }
@@ -54,7 +56,7 @@ const GroupChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, to
                         <span onClick={() => setShowCreateGroupChat(true)}>{t("Create")}</span>
                     </div>
                     : meInGroupChats.map((meInChat) => (
-                        <li key={meInChat.id} className={selectedChat.type === "group" && selectedChat.chat?.id === meInGroupChats?.chatId ? `selected` : ``}>
+                        <li key={meInChat.id} className={selectedChat.type === "group" && selectedChat.chat.id === meInChat.chatId ? `selected` : ``}>
                             <GroupChatListItem
                                 chatId={meInChat.chatId}
                                 setSelectedGroupChat={setSelectedChat}

@@ -1,8 +1,9 @@
-﻿import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
+﻿import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { SelectedChat } from '../../../types/components/communication/Chat';
 import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
 import CreateGroupChat from '../create/CreateGroupChat';
@@ -13,15 +14,15 @@ import PersonalChatList from './PersonalChatList';
 
 import "../../../styles/communication/chats/chats.scss";
 
-const Chats = () => {
+const Chats: React.FC = () => {
     const { t } = useTranslation("communication/chats/chats");
 
-    const me = useSelector((state) => state.user.value);
+    const me = useSelector((state: any) => state.user.value);
 
-    const [selectedChat, setSelectedChat] = useState({ type: null, chat: null });
-    const [chatsHidden, setChatsHidden] = useState({ group: false, personal: false });
+    const [selectedChat, setSelectedChat] = useState<SelectedChat>({ type: null, chat: null });
+    const [personalChatsHidden, setPersonalChatsHidden] = useState(false);
+    const [groupChatsHidden, setGroupChatsHidden] = useState(false);
     const [showCreateGroupChat, setShowCreateGroupChat] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
 
     const maxWidth = 425;
     const screenSize = useMemo(() => ({
@@ -29,14 +30,13 @@ const Chats = () => {
         height: window.innerHeight
     }), []);
 
-    const toggleChatsHidden = useCallback((type) => {
-        setChatsHidden(prevState => ({ ...prevState, [type]: !prevState[type] }));
-    }, []);
-
-    if (me === null) {
+    if (!me) {
         return (
             <>
-                <CommunicationMenu currentMenuItem={1} />
+                <CommunicationMenu
+                    currentMenuItem={1}
+                    hasSubMenu={false}
+                />
                 <Loading />
             </>
         );
@@ -46,11 +46,8 @@ const Chats = () => {
         return (
             <>
                 {showCreateGroupChat &&
-                    <CreateGroupChat />
-                }
-                {showMenu &&
-                    <CommunicationMenu
-                        currentMenuItem={1}
+                    <CreateGroupChat
+                        setShowCreateGroupChat={setShowCreateGroupChat}
                     />
                 }
                 <div className="communication-content">
@@ -59,10 +56,6 @@ const Chats = () => {
                             <FontAwesomeIcon
                                 icon={faArrowLeft}
                                 onClick={() => setSelectedChat({ type: null, chat: null })}
-                            />
-                            <FontAwesomeIcon
-                                icon={faBars}
-                                onClick={() => setShowMenu(!showMenu)}
                             />
                         </div>
                         {selectedChat.type === "group"
@@ -84,6 +77,10 @@ const Chats = () => {
                         }
                     </div>
                 </div>
+                <CommunicationMenu
+                    currentMenuItem={1}
+                    hasSubMenu={false}
+                />
             </>
         );
     }
@@ -95,9 +92,6 @@ const Chats = () => {
                     setShowCreateGroupChat={setShowCreateGroupChat}
                 />
             }
-            <CommunicationMenu
-                currentMenuItem={1}
-            />
             <div className="communication-content">
                 <div className="chats">
                     <div className="chats__my-chats">
@@ -106,8 +100,8 @@ const Chats = () => {
                             t={t}
                             selectedChat={selectedChat}
                             setSelectedChat={setSelectedChat}
-                            chatsHidden={chatsHidden.group}
-                            toggleChatsHidden={() => toggleChatsHidden("group")}
+                            chatsHidden={groupChatsHidden}
+                            toggleChatsHidden={() => setGroupChatsHidden(prev => !prev)}
                             setShowCreateGroupChat={setShowCreateGroupChat}
                         />
                         <PersonalChatList
@@ -115,8 +109,8 @@ const Chats = () => {
                             t={t}
                             selectedChat={selectedChat}
                             setSelectedChat={setSelectedChat}
-                            chatsHidden={chatsHidden.personal}
-                            toggleChatsHidden={() => toggleChatsHidden("personal")}
+                            chatsHidden={personalChatsHidden}
+                            toggleChatsHidden={() => setPersonalChatsHidden(prev => !prev)}
                         />
                     </div>
                     {selectedChat.type === "group"
@@ -138,6 +132,10 @@ const Chats = () => {
                     }
                 </div>
             </div>
+            <CommunicationMenu
+                currentMenuItem={1}
+                hasSubMenu={false}
+            />
         </>
     );
 }

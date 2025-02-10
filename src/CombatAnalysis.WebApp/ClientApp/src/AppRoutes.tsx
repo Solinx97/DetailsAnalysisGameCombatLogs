@@ -8,14 +8,23 @@ import Chats from './components/communication/chats/Chats';
 import VoiceChat from './components/communication/chats/voiceChat/VoiceChat';
 import AllCommunities from './components/communication/community/AllCommunities';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
-import MyEnvironment from './components/communication/myEnvironment/MyEnvironment';
+import Friends from './components/communication/myEnvironment/Friends';
+import MyCommunities from './components/communication/myEnvironment/MyCommunities';
+import MyFeed from './components/communication/myEnvironment/MyFeed';
+import Profile from './components/communication/myEnvironment/Profile';
 import People from './components/communication/people/People';
 import SelectedUser from './components/communication/people/SelectedUser';
 import AuthorizationCallback from './components/identity/AuthorizationCallback';
 //import PlayerMovements from './components/combatDetails/actions/PlayerMovements';
 import CombatAuras from './components/combatDetails/actions/CombatAuras';
 
-const AppRoutes = [
+interface Route {
+    index?: boolean;
+    path?: string;
+    element: React.ReactNode;
+}
+
+const AppRoutes: Route[] = [
     {
         index: true,
         element: <Home />
@@ -53,8 +62,20 @@ const AppRoutes = [
         element: <SelectedUser />
     },
     {
-        path: '/environment',
-        element: <MyEnvironment />
+        path: '/environment/feed',
+        element: <MyFeed />
+    },
+    {
+        path: '/environment/friends',
+        element: <Friends />
+    },
+    {
+        path: '/environment/communities',
+        element: <MyCommunities />
+    },
+    {
+        path: '/environment/profile',
+        element: <Profile />
     },
     {
         path: '/community',
@@ -76,10 +97,10 @@ const AppRoutes = [
         path: '/combat-details',
         element: <CombatDetails />
     },
-    //{
-    //    path: '/player-movements',
-    //    element: <PlayerMovements />
-    //},
+    // {
+    //     path: '/player-movements',
+    //     element: <PlayerMovements />
+    // },
 ];
 
 export default AppRoutes;

@@ -5,16 +5,17 @@ import CommunicationMenu from './CommunicationMenu';
 import CreateUserPost from './post/CreateUserPost';
 import FeedParticipants from './FeedParticipants';
 
-const Feed = () => {
+const Feed: React.FC = () => {
     const { t } = useTranslation("communication/feed");
 
-    const me = useSelector((state) => state.user.value);
+    const me = useSelector((state: any) => state.user.value);
 
     if (!me) {
         return (
             <>
                 <CommunicationMenu
                     currentMenuItem={0}
+                    hasSubMenu={false}
                 />
                 <Loading />
             </>
@@ -36,6 +37,7 @@ const Feed = () => {
             </div>
             <CommunicationMenu
                 currentMenuItem={0}
+                hasSubMenu={false}
             />
         </>
     );

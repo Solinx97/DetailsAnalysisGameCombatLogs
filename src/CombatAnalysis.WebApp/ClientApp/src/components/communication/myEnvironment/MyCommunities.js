@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
 import Loading from '../../Loading';
 import VerificationRestriction from '../../common/VerificationRestriction';
+import CommunicationMenu from '../CommunicationMenu';
 import CreateCommunity from '../create/CreateCommunity';
 import InvitesToCommunity from './InvitesToCommunity';
 import MyCommunitiesItem from './MyCommunitiesItem';
@@ -37,7 +38,15 @@ const MyCommunities = () => {
     }, [me]);
 
     if (isLoading || !userPrivacy) {
-        return (<Loading />);
+        return (
+            <>
+                <CommunicationMenu
+                    currentMenuItem={7}
+                    hasSubMenu={true}
+                />
+                <Loading />
+            </>
+        );
     }
 
     return (
@@ -107,6 +116,10 @@ const MyCommunities = () => {
                     </>
                 }
             </div>
+            <CommunicationMenu
+                currentMenuItem={7}
+                hasSubMenu={true}
+            />
         </>
     );
 }
