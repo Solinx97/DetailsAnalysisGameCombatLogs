@@ -2,7 +2,6 @@ import { faCircleXmark, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetUserByIdQuery } from '../../store/api/user/Account.api';
 import { useRemoveFriendAsyncMutation } from '../../store/api/user/Friend.api';
@@ -11,20 +10,19 @@ import UserInformation from './UserInformation';
 
 import "../../styles/communication/user.scss";
 
-const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, allowRemoveFriend, actionAfterRequests = null, friendId = 0 }) => {
+const User: React.FC<UserProps> = ({ me, targetUserId, setUserInformation, friendId = 0 }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
-    const me = useSelector((state: any) => state.user.value);
     const navigate = useNavigate();
 
-    const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation();
-
     const { data: targetUser, isLoading } = useGetUserByIdQuery(targetUserId);
+
+    const [removeFriend] = useRemoveFriendAsyncMutation();
 
     const [userActive, setUserActive] = useState("");
 
     const removeFriendAsync = async () => {
-        await removeFriendAsyncMut(friendId);
+        await removeFriend(friendId);
     }
 
     const openUserInformation = () => {
@@ -33,7 +31,6 @@ const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, allowRemo
                 me={me}
                 person={targetUser}
                 closeUserInformation={closeUserInformation}
-                actionAfterRequests={actionAfterRequests}
             />
         );
     }
@@ -72,7 +69,7 @@ const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, allowRemo
             />
             <div className="username" title={targetUser?.username}
                 onClick={goToUser}>{targetUser?.username}</div>
-            {allowRemoveFriend &&
+            {friendId > 0 &&
                 <FontAwesomeIcon
                     icon={faCircleXmark}
                     title={t("Remove") || ""}

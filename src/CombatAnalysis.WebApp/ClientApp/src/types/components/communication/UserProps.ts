@@ -1,7 +1,9 @@
+import { SetStateAction } from "react";
+import { AppUser } from "../../AppUser";
+
 export interface UserProps {
+    me: AppUser;
     targetUserId: string;
-    setUserInformation: (information: any | null) => void;
-    allowRemoveFriend: boolean;
-    actionAfterRequests: any | null;
-    friendId: number | null;
+    setUserInformation: (value: SetStateAction<any>) => void;
+    friendId?: number | 0;
 }

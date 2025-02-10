@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useLazyGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import { useRemoveGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
 import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/chat/GroupChatMessage.api';
 import { useGetGroupChatRulesByIdQuery, useUpdateGroupChatRulesAsyncMutation } from '../../../store/api/chat/GroupChatRules.api';
 import {
     useRemoveGroupChatUserAsyncMutation
 } from '../../../store/api/chat/GroupChatUser.api';
+import { useLazyGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { GroupChatUser } from '../../../types/GroupChatUser';
+import { GroupChatMenuProps } from '../../../types/components/communication/chats/GroupChatMenuProps';
 import VerificationRestriction from '../../common/VerificationRestriction';
-import Members from '../Members';
 import ChatRulesItem from '../create/ChatRulesItem';
+import GroupChatMembers from './GroupChatMembers';
 
 const rulesEnum = {
     "owner": 0,
@@ -22,7 +24,7 @@ const defaultPayload = {
     announcements: 1,
 };
 
-const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeople, groupChatUsers, meInChat, chat, t }) => {
+const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ me, setSelectedChat, setShowAddPeople, groupChatUsers, meInChat, chat, t }) => {
     const [peopleInspectionModeOn, setPeopleInspectionModeOn] = useState(false);
     const [rulesInspectionModeOn, setRulesInspectionModeOn] = useState(false);
     const [showRemoveChatAlert, setShowRemoveChatAlert] = useState(false);
@@ -41,7 +43,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
     const { data: rules, isLoading } = useGetGroupChatRulesByIdQuery(chat?.id);
 
     useEffect(() => {
-        if (rules === undefined) {
+        if (!rules) {
             return;
         }
 
@@ -53,11 +55,11 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         });
     }, [rules])
 
-    const removeGroupChatUserAsync = async (peopleToRemove) => {
+    const removeGroupChatUserAsync = async (peopleToRemove: GroupChatUser[]) => {
         for (let i = 0; i < peopleToRemove.length; i++) {
-            const removed = await removeGroupChatUserAsyncMut(peopleToRemove[i].id);
+            const removed: any = await removeGroupChatUserAsyncMut(peopleToRemove[i].id);
 
-            if (removed.data === undefined) {
+            if (!removed.data) {
                 continue;
             }
 
@@ -71,7 +73,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         setPeopleInspectionModeOn(false);
     }
 
-    const createMessageAsync = async (chatId, message) => {
+    const createMessageAsync = async (chatId: number, message: string) => {
         const today = new Date();
         const newMessage = {
             message: message,
@@ -79,21 +81,21 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             status: 0,
             type: 1,
             chatId: chatId,
-            appUserId: me?.id
+            appUserId: me.id
         };
 
         await createGroupChatMessageAsync(newMessage);
     }
 
-    const leaveFromChatAsync = async (id) => {
-        const deletedItem = await removeGroupChatUserAsyncMut(id);
+    const leaveFromChatAsync = async (groupChatUserId: string) => {
+        const deletedItem: any = await removeGroupChatUserAsyncMut(groupChatUserId);
         if (deletedItem.data !== undefined) {
             setSelectedChat({ type: null, chat: null });
         }
     }
 
     const removeChatAsync = async () => {
-        const deletedItem = await removeGroupChatAsyncMut(chat?.id);
+        const deletedItem: any = await removeGroupChatAsyncMut(chat?.id);
         if (deletedItem.data !== undefined) {
             setSelectedChat({ type: null, chat: null });
         }
@@ -102,20 +104,20 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
     const updateGroupChatRulesAsync = async () => {
         const groupChatRules = {
             id: rules.id,
-            invitePeople: +invitePeople,
-            removePeople: +removePeople,
-            pinMessage: +pinMessage,
-            announcements: +announcements,
+            invitePeople: invitePeople,
+            removePeople: removePeople,
+            pinMessage: pinMessage,
+            announcements: announcements,
             chatId: rules.chatId
         };
 
-        const updated = await updateGroupChatRulesMutAsync(groupChatRules);
+        const updated: any = await updateGroupChatRulesMutAsync(groupChatRules);
         if (updated.data !== undefined) {
             setRulesInspectionModeOn((item) => !item);
         }
     }
 
-    const canInvitePeople = () => {
+    const canInvitePeople = (): boolean => {
         const canAnyone = rules?.invitePeople === rulesEnum["anyone"];
         if (canAnyone) {
             return true;
@@ -124,7 +126,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         return chat?.appUserId === me?.id;
     }
 
-    const canRemovePeople = () => {
+    const canRemovePeople = (): boolean => {
         const canAnyone = rules?.removePeople === rulesEnum["anyone"];
         if (canAnyone) {
             return true;
@@ -145,16 +147,16 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     {canInvitePeople()&&
                         <div className="btn-border-shadow" onClick={() => setShowAddPeople((item) => !item)}>{t("Invite")}</div>
                     }
-                    {chat?.appUserId === me?.id &&
+                    {chat.appUserId === me.id &&
                         <div className="btn-border-shadow" onClick={() => setRulesInspectionModeOn((item) => !item)}>{t("Rules")}</div>
                     }
                     <div className="btn-border-shadow">{t("Documents")}</div>
                 </div>
                 <div className="danger-settings">
-                    {me?.id === chat.appUserId &&
+                    {me.id === chat.appUserId &&
                         <div className="btn-border-shadow" onClick={() => setShowRemoveChatAlert((item) => !item)}>{t("RemoveChat")}</div>
                     }
-                    {me?.id === chat.appUserId
+                    {me.id === chat.appUserId
                         ? <VerificationRestriction
                             contentText={t("Leave")}
                             infoText={t("YouShouldTransferRights")}
@@ -164,15 +166,13 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                 </div>
             </div>
             {peopleInspectionModeOn &&
-                <Members
+                <GroupChatMembers
                     me={me}
-                    users={groupChatUsers}
-                    communityItem={chat}
-                    setUserInformation={setUserInformation}
+                    groupChatUsers={groupChatUsers}
                     removeUsersAsync={removeGroupChatUserAsync}
                     setShowMembers={setPeopleInspectionModeOn}
                     isPopup={true}
-                    canRemovePeople={canRemovePeople()}
+                    canRemovePeople={canRemovePeople}
                 />
             }
             {rulesInspectionModeOn &&
@@ -183,9 +183,10 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                         setPinMessage={setPinMessage}
                         setAnnouncements={setAnnouncements}
                         payload={payload}
+                        t={t}
                     />
                     <div className="item-result">
-                        <div className="btn-border-shadow save" onClick={async () => await updateGroupChatRulesAsync()}>{t("SaveChanges")}</div>
+                        <div className="btn-border-shadow save" onClick={updateGroupChatRulesAsync}>{t("SaveChanges")}</div>
                         <div className="btn-border-shadow" onClick={() => setRulesInspectionModeOn((item) => !item)}>{t("Cancel")}</div>
                     </div>
                 </div>
@@ -195,7 +196,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     <p>{t("AreYouSureRemoveChat")}</p>
                     <p>{t("ThatWillBeRemoveChat")}</p>
                     <div className="remove-chat-alert__actions">
-                        <div className="btn-border-shadow remove" onClick={async () => await removeChatAsync()}>{t("Remove")}</div>
+                        <div className="btn-border-shadow remove" onClick={removeChatAsync}>{t("Remove")}</div>
                         <div className="btn-border-shadow cancel" onClick={() => setShowRemoveChatAlert((item) => !item)}>{t("Cancel")}</div>
                     </div>
                 </div>

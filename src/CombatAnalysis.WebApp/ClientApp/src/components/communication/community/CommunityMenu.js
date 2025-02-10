@@ -8,7 +8,7 @@ import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../.
 import { useRemoveCommunityAsyncMutation, useUpdateCommunityAsyncMutation } from '../../../store/api/core/Community.api';
 import AddPeople from '../../AddPeople';
 import Loading from '../../Loading';
-import Members from '../Members';
+import GroupChatMembers from '../chats/GroupChatMembers';
 import CommonItem from "../create/CommonItem";
 import CommunityRulesItem from "../create/CommunityRulesItem";
 import ItemConnector from '../create/ItemConnector';
@@ -232,9 +232,9 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                     }
                     {itemIndex === 1 &&
                         <div className="members">
-                            <Members
+                            <GroupChatMembers
                                 me={customer}
-                                users={communityUsers}
+                                groupChatUsers={communityUsers}
                                 communityItem={community}
                                 removeUsersAsync={removeUsersAsync}
                             />

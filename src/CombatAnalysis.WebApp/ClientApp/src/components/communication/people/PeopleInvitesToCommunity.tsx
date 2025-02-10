@@ -2,22 +2,23 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/community/InviteToCommunity.api';
+import { PeopleInvitesToCommunityProps } from '../../../types/components/communication/people/PeopleInvitesToCommunityProps';
 import Loading from '../../Loading';
 import TargetCommunity from './TargetCommunity';
 
 import '../../../styles/communication/people/peopleInvitesToCommunity.scss';
 
-const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
+const PeopleInvitesToCommunity: React.FC<PeopleInvitesToCommunityProps> = ({ me, targetUser, setOpenInviteToCommunity }) => {
     const { t } = useTranslation("communication/people/people");
 
-    const { data: communityUsers, isLoading } = useCommunityUserSearchByUserIdQuery(customer?.id);
+    const { data: communityUsers, isLoading } = useCommunityUserSearchByUserIdQuery(me?.id);
 
     const [communityIdToInvite, setCommunityIdToInvite] = useState([]);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
 
-    const checkIfRequestExistAsync = async (peopleId, communityId) => {
+    const checkIfRequestExistAsync = async (peopleId: string, communityId: number) => {
         const arg = {
             peopleId: peopleId,
             communityId: communityId
@@ -33,16 +34,16 @@ const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }
 
     const createInviteAsync = async () => {
         for (let i = 0; i < communityIdToInvite.length; i++) {
-            const isExist = await checkIfRequestExistAsync(people.id, communityIdToInvite[i]);
+            const isExist = await checkIfRequestExistAsync(targetUser.id, communityIdToInvite[i]);
             if (isExist) {
                 continue;
             }
 
             const newInviteToCommunity = {
                 communityId: communityIdToInvite[i],
-                toCustomerId: people?.id,
+                toCustomerId: targetUser?.id,
                 when: new Date(),
-                customerId: customer?.id
+                appUserId: me?.id
             }
 
             await createInviteAsyncMut(newInviteToCommunity);
@@ -60,7 +61,7 @@ const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }
             <div className="title">{t("InviteToCommunity")}</div>
             <ul>
                 {
-                    communityUsers?.map((item) => (
+                    communityUsers?.map((item :any) => (
                         <li key={item.id}>
                             <TargetCommunity
                                 communityId={item.communityId}
@@ -72,7 +73,7 @@ const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }
                 }
             </ul>
             <div className="actions">
-                <div className="btn-shadow send" onClick={async () => await createInviteAsync()}>{t("Send")}</div>
+                <div className="btn-shadow send" onClick={createInviteAsync}>{t("Send")}</div>
                 <div className="btn-shadow" onClick={() => setOpenInviteToCommunity((item) => !item)}>{t("Cancel")}</div>
             </div>
         </div>

@@ -1,12 +1,12 @@
 import { faPlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { useGetCustomerByIdQuery } from '../store/api/user/Customer.api';
+import { useGetUserByIdQuery } from '../store/api/user/Account.api';
 
 const AddFriendItem = ({ friendUserId, addUserIdToList, removeUserIdToList, filterContent, peopleIdToJoin }) => {
     const { t } = useTranslation("addFriendItem");
 
-    const { data: user, isLoading } = useGetCustomerByIdQuery(friendUserId);
+    const { data: user, isLoading } = useGetUserByIdQuery(friendUserId);
 
     if (isLoading) {
         return <div>Loading...</div>;

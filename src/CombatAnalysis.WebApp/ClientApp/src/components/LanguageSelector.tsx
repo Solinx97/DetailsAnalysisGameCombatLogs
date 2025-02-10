@@ -1,4 +1,4 @@
-﻿import React, { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const supportedLanguages = [
@@ -6,15 +6,15 @@ const supportedLanguages = [
     "ru"
 ];
 
-const LanguageSelector = () => {
+const LanguageSelector: React.FC = () => {
     const { i18n } = useTranslation("translate");
 
     const selectedLang = i18n.language;
 
-    const changeLanguage = useCallback((lang) => {
+    const changeLanguage = useCallback((lang: string) => {
         i18n.changeLanguage(lang);
 
-        window.location.reload(true);
+        window.location.reload();
     }, [i18n]);
 
     return (

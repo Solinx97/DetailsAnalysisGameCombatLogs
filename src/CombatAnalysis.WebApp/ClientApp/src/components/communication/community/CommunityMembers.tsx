@@ -4,36 +4,36 @@ import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommunityUserSearchByCommunityIdQuery, useLazyCommunityUserSearchByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../../store/api/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/community/InviteToCommunity.api';
+import { AppUser } from '../../../types/AppUser';
+import { CommunityUser } from '../../../types/CommunityUser';
+import { CommunityMembersProps } from '../../../types/components/communication/community/CommunityMembersProps';
 import AddPeople from '../../AddPeople';
-import Members from '../Members';
 import CommunityMemberItem from './CommunityMemberItem';
+import CommunityUsers from './CommunityUsers';
 
 const defaultMaxPeople = 5;
 
-const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
+const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, user, setIsCommunityMember }) => {
     const { t } = useTranslation("communication/community/communityMembers");
 
-    let communityUsersId = [];
+    const communityUsersId: string[] = [];
 
     const [showAllPeople, setShowAllPeople] = useState(false);
-    const [peopleToJoin, setPeopleToJoin] = useState([]);
+    const [peopleToJoin, setPeopleToJoin] = useState<AppUser[]>([]);
     const [allCommunityUsers, setAllCommunityUsers] = useState([]);
     const [showAddPeople, setShowAddPeople] = useState(false);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const { communityUsers, isLoading } = useCommunityUserSearchByCommunityIdQuery(community?.id, {
-        selectFromResult: ({ data }) => {
-            const idList = [];
+    const { communityUsers, isLoading } = useCommunityUserSearchByCommunityIdQuery(community.id, {
+        selectFromResult: ({ data }: { data: CommunityUser[] }) => {
             for (let i = 0; i < data?.length; i++) {
-                idList.push(data[i].appUserId);
+                communityUsersId.push(data[i].appUserId);
             }
-
-            communityUsersId = idList;
 
             return {
                 communityUsers: data?.slice(0, defaultMaxPeople)
-            };
+            }
         }
     });
     const [getAllCommunityUsersAsync] = useLazyCommunityUserSearchByCommunityIdQuery();
@@ -45,10 +45,10 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
             return;
         }
 
-        setIsCommunityMember(communityUsersId.includes(user?.id));
-    }, [communityUsersId])
+        setIsCommunityMember(communityUsersId.includes(user.id));
+    }, [communityUsersId]);
 
-    const checkIfRequestExistAsync = async (peopleId, communityId) => {
+    const checkIfRequestExistAsync = async (peopleId: string, communityId: number): Promise<boolean> => {
         const arg = {
             peopleId: peopleId,
             communityId: communityId
@@ -73,7 +73,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                 communityId: community.id,
                 toAppUserId: peopleToJoin[i].id,
                 when: new Date(),
-                appUserId: user?.id
+                appUserId: user.id
             }
 
             await createInviteAsyncMut(newInviteToCommunity);
@@ -82,9 +82,9 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
         handleShowAddPeople();
     }
 
-    const removeUsersAsync = async (peopleToRemove) => {
-        for (let i = 0; i < peopleToRemove.length; i++) {
-            await removeCommunityUserAsync(peopleToRemove[i].id);
+    const removeUsersAsync = async (communityUsersToRemove: CommunityUser[]) => {
+        for (let i = 0; i < communityUsersToRemove.length; i++) {
+            await removeCommunityUserAsync(communityUsersToRemove[i].id);
         }
 
         setShowAllPeople(false);
@@ -103,7 +103,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
         const users = await getAllCommunityUsersAsync(community?.id);
         if (users.data !== undefined) {
             setAllCommunityUsers(users.data);
-            setShowAllPeople((item) => !item);
+            setShowAllPeople(prev => !prev);
         }
     }
 
@@ -120,14 +120,14 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                         {community.appUserId === user?.id &&
                             <FontAwesomeIcon
                                 icon={faRectangleXmark}
-                                title={t("RemovePeople")}
+                                title={t("RemovePeople") || ""}
                                 onClick={handleShowAllPeopleAsync}
                             />
                         }
                         {communityUsersId.includes(user?.id) &&
                             <FontAwesomeIcon
                                 icon={faPlus}
-                                title={t("AddNewPeople")}
+                                title={t("AddNewPeople") || ""}
                                 onClick={clearListOfInvites}
                             />
                         }
@@ -135,7 +135,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                 </div>
             </div>
             <ul className="members__content">
-                {communityUsers?.map((user) => (
+                {communityUsers?.map((user: CommunityUser) => (
                         <li key={user.id}>
                             <CommunityMemberItem
                                 comunityUser={user}
@@ -145,14 +145,14 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                 }
             </ul>
             {communityUsers?.length >= defaultMaxPeople &&
-                <input type="button" value={t("AllMembers")} className="btn btn-outline-success all-people" onClick={handleShowAllPeopleAsync} />
+                <input type="button" value={t("AllMembers") || ""} className="btn btn-outline-success all-people" onClick={handleShowAllPeopleAsync} />
             }
             {showAddPeople &&
                 <div className="add-people-to-community box-shadow">
                     <div className="add-people-to-community__menu"> 
                         <FontAwesomeIcon
                             icon={faCircleXmark}
-                            title={t("Close")}
+                            title={t("Close") || ""}
                             onClick={clearListOfInvites}
                         />
                     </div>
@@ -163,20 +163,19 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                         setPeopleToJoin={setPeopleToJoin}
                     />
                     <div className="item-result">
-                        <div className="btn-shadow invite" onClick={async () => await createInviteAsync()}>{t("Invite")}</div>
+                        <div className="btn-shadow invite" onClick={createInviteAsync}>{t("Invite")}</div>
                         <div className="btn-shadow" onClick={clearListOfInvites}>{t("Cancel")}</div>
                     </div>
                 </div>
             }
             {showAllPeople &&
-                <Members
+                <CommunityUsers
                     me={user}
-                    users={allCommunityUsers}
-                    communityItem={community}
+                    communityUsers={allCommunityUsers}
                     removeUsersAsync={removeUsersAsync}
                     setShowMembers={setShowAllPeople}
                     isPopup={true}
-                    canRemovePeople={user?.id === community?.appUserId}
+                    canRemovePeople={() => user?.id === community?.appUserId}
                 />
             }
         </span>

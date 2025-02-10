@@ -39,6 +39,9 @@
     <Folder Include="ClientApp\src\components\communication\events\" />
     <Folder Include="ClientApp\src\styles\common\" />
     <Folder Include="ClientApp\src\styles\identity\" />
+    <Folder Include="ClientApp\src\types\components\communication\create\" />
+    <Folder Include="ClientApp\src\types\components\communication\community\" />
+    <Folder Include="ClientApp\src\types\components\communication\people\" />
   </ItemGroup>
 
   <ItemGroup>

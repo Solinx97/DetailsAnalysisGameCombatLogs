@@ -1,5 +1,6 @@
-﻿
-const Recomendations = ({ t }) => {
+﻿import { RecomendationsProps } from "../../types/components/communication/RecomendationsProps";
+
+const Recomendations: React.FC<RecomendationsProps> = ({ t }) => {
     return (
         <div className="communication-recomendations">
             <div className="title">{t("Recomendations")}</div>
@@ -11,7 +12,7 @@ const Recomendations = ({ t }) => {
             </div>
             <div className="form-check form-switch">
                 <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" disabled />
-                <label className="form-check-label" htlmfor="flexSwitchCheckChecked">{t("UseRecomendations")}</label>
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("UseRecomendations")}</label>
             </div>
         </div>
     );

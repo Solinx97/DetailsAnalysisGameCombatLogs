@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { SelectedChat } from '../../../types/components/communication/Chat';
+import { SelectedChat } from '../../../types/components/communication/SelectedChat';
 import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
 import CreateGroupChat from '../create/CreateGroupChat';

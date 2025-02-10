@@ -3,20 +3,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLazyAuthorizationQuery } from '../store/api/core/User.api';
 
 import '../styles/home.scss';
 
 const shouldBeAuthorizeTimeout = 5000;
 
-const Home = () => {
+const Home: React.FC = () => {
     const { t } = useTranslation("home");
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    const user = useSelector((state) => state.user.value);
+    const user = useSelector((state: any) => state.user.value);
 
     const [authorization] = useLazyAuthorizationQuery();
 
@@ -32,7 +32,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        let timeoutId;
+        let timeoutId: any;
 
         if (shouldBeAuthorize) {
             timeoutId = setTimeout(() => {
@@ -63,7 +63,7 @@ const Home = () => {
                 <div className="title">
                     <div>{t("Communication")}</div>
                     {user === null &&
-                        <div className="btn-shadow authorize-alert" onClick={async () => await loginAsync()} title={t("GoToLogin")}>
+                        <div className="btn-shadow authorize-alert" onClick={loginAsync} title={t("GoToLogin") || ""}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
                             />
@@ -120,7 +120,7 @@ const Home = () => {
             {shouldBeAuthorize &&
                 <div className="should-be-authorize">
                     <div className="alert alert-success" role="alert">
-                        {t("YouNeed")} <NavLink onClick={async () => await loginAsync()}>{t("Login")}</NavLink> {t("InApp")}
+                        {t("YouNeed")} <span onClick={loginAsync}>{t("Login")}</span> {t("InApp")}
                     </div>
                 </div>
             }

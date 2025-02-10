@@ -7,6 +7,8 @@ import { useChatHub } from '../../context/ChatHubProvider';
 import { useLazyIsExistAsyncQuery } from '../../store/api/chat/PersonalChat.api';
 import { useFriendSearchMyFriendsQuery } from '../../store/api/user/Friend.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/user/RequestToConnect.api';
+import { Friend } from '../../types/Friend';
+import { UserInformationProps } from '../../types/components/communication/UserInformationProps';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
 import SelectedUserProfile from './people/SelectedUserProfile';
 
@@ -15,7 +17,7 @@ import './../../styles/communication/userInformation.scss';
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
 
-const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests = null }) => {
+const UserInformation: React.FC<UserInformationProps> = ({ me, person, closeUserInformation }) => {
     const { t } = useTranslation("communication/userInformation");
 
     const { subscribeToPersonalChat, personalChatHubConnection } = useChatHub();
@@ -32,38 +34,34 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
 
     const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(me?.id);
 
-    const checkExistOfChatsAsync = async (targetUserId) => {
+    const checkExistOfChatsAsync = async (targetUser: any) => {
         const queryParams = {
             userId: me?.id,
-            targetUserId: targetUserId?.id
+            targetUserId: targetUser?.id
         };
 
         const isExist = await isExistAsync(queryParams);
         return isExist.data !== undefined ? isExist.data : true;
     }
 
-    const createChatAsync = async (targetUser) => {
-        if (actionAfterRequests !== null) {
-            actionAfterRequests();
-        }
-
+    const createChatAsync = async (targetUser: any) => {
         const isExist = await checkExistOfChatsAsync(targetUser);
         if (isExist) {
             navigate("/chats");
             return;
         }
 
-        subscribeToPersonalChat((chat) => {
+        subscribeToPersonalChat(() => {
             navigate("/chats");
         });
 
         await personalChatHubConnection?.invoke("CreateChat", me?.id, targetUser.id);
     }
 
-    const checkIfRequestExistAsync = async (id) => {
+    const checkIfRequestExistAsync = async (targetUserId: string) => {
         const arg = {
             userId: me?.id,
-            targetUserId: id
+            targetUserId: targetUserId
         };
 
         const isExist = await isRequestExistAsync(arg);
@@ -74,11 +72,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
         return isExist.data;
     }
 
-    const createRequestToConnectAsync = async (people) => {
-        if (actionAfterRequests) {
-            actionAfterRequests();
-        }
-
+    const createRequestToConnectAsync = async (people: any) => {
         const isExist = await checkIfRequestExistAsync(people.id);
         if (isExist) {
             setShowFailedNotification(true);
@@ -107,10 +101,6 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
     }
 
     const moreDetails = () => {
-        if (actionAfterRequests !== null) {
-            actionAfterRequests();
-        }
-
         navigate(`/user?id=${person.id}`)
     }
 
@@ -132,7 +122,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
                 <div className="user-information__menu">
                     <FontAwesomeIcon
                         icon={faCircleXmark}
-                        title={t("Close")}
+                        title={t("Close") || ""}
                         onClick={closeUserInformation}
                     />
                 </div>
@@ -146,20 +136,20 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
                     <li>
                         <FontAwesomeIcon
                             icon={faCommentDots}
-                            title={t("StartChat")}
+                            title={t("StartChat") || ""}
                             onClick={async () => await createChatAsync(person)}
                         />
                     </li>
                     <li>
-                        {myFriends.filter(friend => friend.whoFriendId === person.id || friend.forWhomId === person.id).length > 0
+                        {myFriends.filter((friend: Friend) => friend.whoFriendId === person.id || friend.forWhomId === person.id).length > 0
                             ? <FontAwesomeIcon
                                 icon={faUserPlus}
-                                title={t("AlreadyFriend")}
+                                title={t("AlreadyFriend") || ""}
                                 className="user-friend"
                             />
                             : <FontAwesomeIcon
                                 icon={faUserPlus}
-                                title={t("RequestToConnect")}
+                                title={t("RequestToConnect") || ""}
                                 onClick={async () => await createRequestToConnectAsync(person)}
                             />
                         }
@@ -167,7 +157,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
                     <li>
                         <FontAwesomeIcon
                             icon={faSquarePlus}
-                            title={t("InviteToCommunity")}
+                            title={t("InviteToCommunity") || ""}
                             onClick={() => setOpenInviteToCommunity((item) => !item)}
                         />
                     </li>
@@ -184,9 +174,9 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
             {openInviteToCommunity &&
                 <div className="invite">
                     <PeopleInvitesToCommunity
-                        customer={me}
+                        me={me}
+                        targetUser={person}
                         setOpenInviteToCommunity={setOpenInviteToCommunity}
-                        people={person}
                     />
                 </div>
             }

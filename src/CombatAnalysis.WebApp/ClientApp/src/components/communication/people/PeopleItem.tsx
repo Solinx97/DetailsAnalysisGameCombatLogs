@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { PeopleItemProps } from '../../../types/components/communication/people/PeopleItemProps';
 import User from '../User';
 
-const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
+const PeopleItem: React.FC<PeopleItemProps> = ({ me, targetUser }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     return (
@@ -9,10 +10,8 @@ const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
             <div className="card box-shadow">
                 <User
                     me={me}
-                    targetUserId={people.id}
+                    targetUserId={targetUser.id}
                     setUserInformation={setUserInformation}
-                    allowRemoveFriend={false}
-                    actionAfterRequests={actionAfterRequests}
                 />
             </div>
             <div className="people-user-information">

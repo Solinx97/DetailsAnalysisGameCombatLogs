@@ -1,11 +1,12 @@
-import { SelectedChat } from "../Chat";
+import { SetStateAction } from "react";
+import { SelectedChat } from "../SelectedChat";
 
 export interface GroupChatListProps {
     meId: string;
     selectedChat: any;
-    setSelectedChat: (key: SelectedChat) => void;
+    setSelectedChat: (value: SetStateAction<SelectedChat>) => void;
     chatsHidden: boolean;
     toggleChatsHidden: () => void;
     t: (key: string) => string;
-    setShowCreateGroupChat: (key: boolean) => void;
+    setShowCreateGroupChat: (value: SetStateAction<boolean>) => void;
 }

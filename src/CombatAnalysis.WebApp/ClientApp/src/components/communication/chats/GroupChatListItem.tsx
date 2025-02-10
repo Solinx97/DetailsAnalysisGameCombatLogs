@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useGetGroupChatByIdQuery } from '../../../store/api/chat/GroupChat.api';
 import { useFindGroupChatMessageCountQuery } from '../../../store/api/chat/GroupChatMessagCount.api';
+import { GroupChatListItemProps } from '../../../types/components/communication/chats/GroupChatListItemProps';
 
-const GroupChatListItem = ({ chatId, meInChatId, setSelectedGroupChat, subscribeToUnreadGroupMessagesUpdated }) => {
+const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ chatId, meInChatId, setSelectedGroupChat, subscribeToUnreadGroupMessagesUpdated }) => {
     const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
 
     const { data: chat, isLoading } = useGetGroupChatByIdQuery(chatId);
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: meInChatId });
 
     useEffect(() => {
-        subscribeToUnreadGroupMessagesUpdated(meInChatId, (targetChatId, targetMeInChatId, count) => {
+        subscribeToUnreadGroupMessagesUpdated(meInChatId, (targetChatId: number, targetMeInChatId: string, count: number) => {
             if (targetChatId === chatId && targetMeInChatId === meInChatId) {
                 setUnreadMessageCount(count);
             }

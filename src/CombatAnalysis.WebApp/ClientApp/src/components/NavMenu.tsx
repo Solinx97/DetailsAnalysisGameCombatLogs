@@ -12,10 +12,10 @@ import Search from './Search';
 
 import '../styles/navMenu.scss';
 
-const NavMenu = () => {
+const NavMenu: React.FC = () => {
     const { t } = useTranslation("translate");
 
-    const me = useSelector((state) => state.user.value);
+    const me = useSelector((state: any) => state.user.value);
 
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
 
@@ -40,16 +40,16 @@ const NavMenu = () => {
     const loginAsync = async () => {
         const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
 
-        await redirectToIdentityAsync(identityServerAuthPath);
+        await redirectToIdentityAsync(identityServerAuthPath || "");
     }
 
     const registrationAsync = async () => {
         const identityServerRegistrationPath = process.env.REACT_APP_IDENTITY_SERVER_REGISTRY_PATH;
 
-        await redirectToIdentityAsync(identityServerRegistrationPath);
+        await redirectToIdentityAsync(identityServerRegistrationPath || "");
     }
 
-    const redirectToIdentityAsync = async (identityPath) => {
+    const redirectToIdentityAsync = async (identityPath: string) => {
         const response = await authorization(identityPath);
 
         if (response.data !== undefined) {
@@ -78,7 +78,7 @@ const NavMenu = () => {
                             {me !== null &&
                                 <FontAwesomeIcon
                                     icon={showSearchBar ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
-                                    title={showSearchBar ? t("HideSearchCommunity") : t("ShowSearchCommunity")}
+                                    title={(showSearchBar ? t("HideSearchCommunity") : t("ShowSearchCommunity")) || ""}
                                     onClick={() => setShowSearchBar(!showSearchBar)}
                                 />
                             }

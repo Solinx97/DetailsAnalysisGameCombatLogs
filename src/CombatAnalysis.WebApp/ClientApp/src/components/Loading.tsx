@@ -2,7 +2,7 @@
 
 import "../styles/loading.scss";
 
-const Loading = () => {
+const Loading: React.FC = () => {
     const { t } = useTranslation("translate");
 
     return (

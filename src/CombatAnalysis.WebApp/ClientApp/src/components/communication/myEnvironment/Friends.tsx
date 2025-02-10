@@ -40,13 +40,12 @@ const Friends: React.FC = () => {
                 </div>
                 <ul>
                     {myFriends.length > 0
-                        ? myFriends?.map((friend: Friend) => (
+                        ? myFriends.map((friend: Friend) => (
                             <li key={friend.id} className="friend">
                                 <User
+                                    me={me}
                                     targetUserId={friend.forWhomId === me?.id ? friend.whoFriendId : friend.forWhomId}
                                     setUserInformation={setUserInformation}
-                                    allowRemoveFriend={true}
-                                    actionAfterRequests={null}
                                     friendId={friend.id}
                                 />
                             </li>

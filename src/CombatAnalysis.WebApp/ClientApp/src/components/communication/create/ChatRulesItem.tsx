@@ -1,18 +1,19 @@
+import { ChatRulesItemProps } from "../../../types/components/communication/create/ChatRulesItemProps";
 
-const ChatRulesItem = ({ setInvitePeople, setRemovePeople, setPinMessage, setAnnouncements, payload, t }) => {
-    const handleInviteChange = (event) => {
+const ChatRulesItem: React.FC<ChatRulesItemProps> = ({ setInvitePeople, setRemovePeople, setPinMessage, setAnnouncements, payload, t }) => {
+    const handleInviteChange = (event: any) => {
         setInvitePeople(event.target.value);
     }
 
-    const handleRemoveChange = (event) => {
+    const handleRemoveChange = (event: any) => {
         setRemovePeople(event.target.value);
     }
 
-    const handlePinMessageChange = (event) => {
+    const handlePinMessageChange = (event: any) => {
         setPinMessage(event.target.value);
     }
 
-    const handleAnnounceChange = (event) => {
+    const handleAnnounceChange = (event: any) => {
         setAnnouncements(event.target.value);
     }
 

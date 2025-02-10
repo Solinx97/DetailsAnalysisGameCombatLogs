@@ -9,7 +9,7 @@ import './i18n';
 
 import './custom.css';
 
-const App = () => {
+const App: React.FC = () => {
     const render = () => {
         return (
             <AuthProvider>
