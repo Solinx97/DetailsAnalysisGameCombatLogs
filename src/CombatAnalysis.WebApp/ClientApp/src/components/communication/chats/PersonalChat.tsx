@@ -8,23 +8,26 @@ import {
 } from '../../../store/api/chat/PersonalChatMessage.api';
 import { useGetMessagesByPersonalChatIdQuery, useLazyGetMoreMessagesByPersonalChatIdQuery } from '../../../store/api/core/Chat.api';
 import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { GroupChatMessage } from '../../../types/GroupChatMessage';
+import { PersonalChatMessage } from '../../../types/PersonalChatMessage';
+import { PersonalChatProps } from '../../../types/components/communication/chats/PersonalChatProps';
 import Loading from '../../Loading';
 import ChatMessage from './ChatMessage';
 import MessageInput from './MessageInput';
 import PersonalChatTitle from './PersonalChatTitle';
 
-import "../../../styles/communication/chats/personalChat.scss";
+import '../../../styles/communication/chats/personalChat.scss';
 
-const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
+const PersonalChat: React.FC<PersonalChatProps> = ({ me, chat, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
     const { personalChatMessagesHubConnection, connectToPersonalChatMessagesAsync, subscribeToPersonalChatMessages, subscribeToPersonalMessageHasBeenRead } = useChatHub();
 
-    const chatContainerRef = useRef(null);
-    const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
+    const chatContainerRef = useRef<HTMLUListElement | null>(null);
+    const pageSizeRef = useRef<any>(process.env.REACT_APP_CHAT_PAGE_SIZE);
 
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
-    const [currentMessages, setCurrentMessages] = useState(null);
+    const [currentMessages, setCurrentMessages] = useState<PersonalChatMessage[]>([]);
     const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
     const [areLoadingOldMessages, setAreLoadingOldMessages] = useState(true);
 
@@ -37,7 +40,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
 
     const { data: companion, isLoading: companionIsLoading } = useGetUserByIdQuery(companionId);
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
-    const [updateChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
+    const [updateChatMessage] = useUpdatePersonalChatMessageAsyncMutation();
 
     useEffect(() => {
         const connectToPersonalChatMessages = async () => {
@@ -52,7 +55,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
             return;
         }
 
-        subscribeToPersonalChatMessages((message) => {
+        subscribeToPersonalChatMessages((message: PersonalChatMessage) => {
             setCurrentMessages(prevMessages => [...prevMessages, message]);
         });
     }, [personalChatMessagesHubConnection]);
@@ -71,7 +74,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         }
 
         const handleScroll = () => {
-            const chatContainer = chatContainerRef.current;
+            const chatContainer: any = chatContainerRef.current;
             if (chatContainer.scrollTop === 0) {
                 const moreMessagesCount = count - currentMessages.length + messages.length - pageSizeRef.current;
                 setHaveMoreMessage(moreMessagesCount > 0);
@@ -81,7 +84,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
             }
         }
 
-        const scrollContainer = chatContainerRef.current;
+        const scrollContainer: any = chatContainerRef.current;
         scrollContainer?.addEventListener("scroll", handleScroll);
 
         return () => {
@@ -107,14 +110,18 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         scrollToBottom();
     }, [currentMessages]);
 
-    const deleteMessageAsync = async (messageId) => {
+    const updateMessageAsync = async (message: PersonalChatMessage | GroupChatMessage) => {
+        await updateChatMessage(message);
+    }
+
+    const deleteMessageAsync = async (messageId: number) => {
         await removePersonalChatMessageAsync(messageId);
     }
 
     const saveScrollState = () => {
-        const chatContainer = chatContainerRef.current;
-        const previousScrollHeight = chatContainer.scrollHeight;
-        const previousScrollTop = chatContainer.scrollTop;
+        const chatContainer: any = chatContainerRef.current;
+        const previousScrollHeight = chatContainer?.scrollHeight;
+        const previousScrollTop = chatContainer?.scrollTop;
 
         setTimeout(() => {
             chatContainer.scrollTop = chatContainer.scrollHeight - previousScrollHeight + previousScrollTop;
@@ -128,7 +135,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         }
     }
 
-    const getMoreMessagesAsync = async (offset) => {
+    const getMoreMessagesAsync = async (offset: number) => {
         const arg = {
             chatId: chat.id,
             offset,
@@ -182,7 +189,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                                     reviewerId={me.id}
                                     messageOwnerId={message.appUserId}
                                     message={message}
-                                    updateChatMessageAsync={updateChatMessageAsync}
+                                    updateMessageAsync={updateMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
                                     chatMessagesHubConnection={personalChatMessagesHubConnection}
                                     subscribeToMessageHasBeenRead={subscribeToPersonalMessageHasBeenRead}

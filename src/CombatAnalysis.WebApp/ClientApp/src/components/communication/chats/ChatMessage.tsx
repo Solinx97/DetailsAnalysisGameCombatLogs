@@ -1,7 +1,9 @@
-import "../../../styles/communication/chats/chatMessage.scss";
+import { ChatMessageProps } from '../../../types/components/communication/chats/ChatMessageProps';
 import DefaultChatMessage from './DefaultChatMessage';
 import LogChatMessage from './LogChatMessage';
 import SystemChatMessage from './SystemChatMessage';
+
+import '../../../styles/communication/chats/chatMessage.scss';
 
 const messageType = {
     default: 0,
@@ -9,7 +11,7 @@ const messageType = {
     log: 2
 };
 
-const ChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync, chatMessagesHubConnection, subscribeToMessageHasBeenRead }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ me, meInChatId, reviewerId, messageOwnerId, message, updateMessageAsync, deleteMessageAsync, chatMessagesHubConnection, subscribeToMessageHasBeenRead }) => {
     return (
         <>
             {message.type === messageType["default"]
@@ -19,17 +21,17 @@ const ChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, message, upda
                     reviewerId={reviewerId}
                     messageOwnerId={messageOwnerId}
                     message={message}
-                    updateChatMessageAsync={updateChatMessageAsync}
+                    updateMessageAsync={updateMessageAsync}
                     deleteMessageAsync={deleteMessageAsync}
                     chatMessagesHubConnection={chatMessagesHubConnection}
                     subscribeToMessageHasBeenRead={subscribeToMessageHasBeenRead}
                 />
                 : message.type === messageType["log"]
                     ? <LogChatMessage
-                        message={message}
+                        message={message.message}
                     />
                     : <SystemChatMessage
-                        message={message}
+                        message={message.message}
                     />
             }
         </>

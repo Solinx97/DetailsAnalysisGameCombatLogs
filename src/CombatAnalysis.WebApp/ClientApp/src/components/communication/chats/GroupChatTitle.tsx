@@ -3,14 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
+import { GroupChatTitleProps } from '../../../types/components/communication/chats/GroupChatTitleProps';
 
-const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreMessages, setHaveMoreMessage, loadMoreMessagesAsync, t }) => {
+const GroupChatTitle: React.FC<GroupChatTitleProps> = ({ me, chat, settingsIsShow, setSettingsIsShow, haveMoreMessages, setHaveMoreMessage, loadMoreMessagesAsync, t }) => {
     const navigate = useNavigate();
 
     const [editNameOn, setEditNameOn] = useState(false);
     const [chatName, setChatName] = useState("");
 
-    const chatNameInput = useRef(null);
+    const chatNameInput = useRef<any>(null);
 
     const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
 
@@ -25,7 +26,7 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreM
         const unblockedObject = Object.assign({}, chat);
         unblockedObject.name = chatNameInput.current.value;
 
-        const response = await updateGroupChatAsyncMut(unblockedObject);
+        const response: any = await updateGroupChatAsyncMut(unblockedObject);
         if (!response.error) {
             setChatName(chatNameInput.current.value);
 

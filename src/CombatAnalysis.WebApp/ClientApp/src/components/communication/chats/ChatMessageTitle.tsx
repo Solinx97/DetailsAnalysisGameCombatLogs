@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { ChatMessageTitleProps } from '../../../types/components/communication/chats/ChatMessageTitleProps';
 import User from '../User';
 import ChatMessageMenu from './ChatMessageMenu';
 
-const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message, meInChatId }) => {
+const ChatMessageTitle: React.FC<ChatMessageTitleProps> = ({ me, itIsMe, message, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, meInChatId }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     const { data: user, isLoading } = useGetUserByIdQuery(meInChatId);
@@ -35,10 +36,8 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
                 </div>
                 <User
                     me={me}
-                    itIsMe={itIsMe}
                     targetUserId={user?.id}
                     setUserInformation={setUserInformation}
-                    allowRemoveFriend={false}
                 />
             </div>
             <div className="chat-user-information">

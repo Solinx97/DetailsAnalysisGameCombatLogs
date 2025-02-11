@@ -2,18 +2,21 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useChatHub } from '../../../context/ChatHubProvider';
+import { MessageInputProps } from '../../../types/components/communication/chats/MessageInputProps';
 
 const chatType = {
     personal: 0,
     group: 1
-};
+}
 
-const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, targetChatType, t }) => {
+const emptyMessageNotificationTimeout = 4000;
+
+const MessageInput: React.FC<MessageInputProps> = ({ chat, meInChat, setAreLoadingOldMessages, targetChatType, t }) => {
     const { personalChatMessagesHubConnection, groupChatMessagesHubConnection, subscribeToPersonalMessageDelivered, subscribeToGroupMessageDelivered } = useChatHub();
 
-    const messageInput = useRef(null);
+    const messageInput = useRef<any>(null);
 
-    const [isEmptyMessage, setIsEmptyMessage] = useState(null);
+    const [isEmptyMessage, setIsEmptyMessage] = useState(false);
 
     useEffect(() => {
         if (targetChatType === chatType["personal"]) {
@@ -24,8 +27,8 @@ const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, targetChatType
         }
     }, []);
 
-    const handleSendMessageByKeyAsync = async (event) => {
-        if (event.code !== "Enter") {
+    const handleSendMessageByKeyAsync = async (e: any) => {
+        if (e.code !== "Enter") {
             return;
         }
         else if (messageInput.current.value === "") {
@@ -70,7 +73,7 @@ const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, targetChatType
 
         setTimeout(() => {
             setIsEmptyMessage(false);
-        }, 4000);
+        }, emptyMessageNotificationTimeout);
     }
 
     return (

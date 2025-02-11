@@ -6,6 +6,9 @@ import {
     useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/chat/GroupChatMessage.api';
+import { GroupChatMessage as GroupChatMessageModel } from '../../../types/GroupChatMessage';
+import { PersonalChatMessage } from '../../../types/PersonalChatMessage';
+import { GroupChatProps } from '../../../types/components/communication/chats/GroupChatProps';
 import Loading from '../../Loading';
 import GroupChatAddUser from './GroupChatAddUser';
 import GroupChatMenu from './GroupChatMenu';
@@ -15,28 +18,27 @@ import MessageInput from './MessageInput';
 
 import '../../../styles/communication/chats/groupChat.scss';
 
-const GroupChat = ({ chat, me, setSelectedChat }) => {
+const GroupChat: React.FC<GroupChatProps> = ({ me, chat, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
     const { groupChatMessagesHubConnection, connectToGroupChatMessagesAsync, subscribeToGroupChatMessages, subscribeGroupChatUser, subscribeToGroupMessageHasBeenRead } = useChatHub();
 
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
-    const [groupChatUsersId, setGroupChatUsersId] = useState([]);
-    const [userInformation, setUserInformation] = useState(null);
+    const [groupChatUsersId, setGroupChatUsersId] = useState<string[]>([]);
 
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
-    const [currentMessages, setCurrentMessages] = useState(null);
+    const [currentMessages, setCurrentMessages] = useState<GroupChatMessageModel[]>([]);
     const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
     const [areLoadingOldMessages, setAreLoadingOldMessages] = useState(true);
 
-    const chatContainerRef = useRef(null);
-    const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
+    const chatContainerRef = useRef<HTMLUListElement | null>(null);
+    const pageSizeRef = useRef<any>(process.env.REACT_APP_CHAT_PAGE_SIZE);
 
     const { groupChatData, getMoreMessagesAsync } = useGroupChatData(chat.id, me.id, pageSizeRef);
 
-    const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
-    const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
+    const [updateGroupChatMessage] = useUpdateGroupChatMessageAsyncMutation();
+    const [removeGroupChatMessage] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
         const connectToGroupChatMessages = async () => {
@@ -53,7 +55,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
         subscribeGroupChatUser();
 
-        subscribeToGroupChatMessages((message) => {
+        subscribeToGroupChatMessages((message: GroupChatMessageModel) => {
             setCurrentMessages(prevMessages => [...prevMessages, message]);
         });
     }, [groupChatMessagesHubConnection]);
@@ -72,9 +74,9 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
 
         const handleScroll = () => {
-            const chatContainer = chatContainerRef.current;
+            const chatContainer: any = chatContainerRef.current;
             if (chatContainer.scrollTop === 0) {
-                const moreMessagesCount = groupChatData.count - currentMessages.length + groupChatData.messages.length - pageSizeRef.current;
+                const moreMessagesCount = groupChatData.count - currentMessages.length + (groupChatData.messages === null ? 0 : groupChatData.messages.length) - pageSizeRef.current;
 
                 setHaveMoreMessage(moreMessagesCount > 0);
             }
@@ -114,7 +116,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             return;
         }
 
-        const customersId = [];
+        const customersId: string[] = [];
         for (let i = 0; i < groupChatData.groupChatUsers.length; i++) {
             customersId.push(groupChatData.groupChatUsers[i].appUserId);
         }
@@ -122,12 +124,16 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         setGroupChatUsersId(customersId);
     }, [groupChatData.groupChatUsers]);
 
-    const deleteMessageAsync = async (messageId) => {
-        await removeGroupChatMessageAsync(messageId);
+    const updateMessageAsync = async (message: PersonalChatMessage | GroupChatMessageModel) => {
+        await updateGroupChatMessage(message);
+    }
+
+    const removeGroupChatMessageAsync = async (messageId: number) => {
+        await removeGroupChatMessage(messageId);
     }
 
     const saveScrollState = () => {
-        const chatContainer = chatContainerRef.current;
+        const chatContainer: any = chatContainerRef.current;
         const previousScrollHeight = chatContainer.scrollHeight;
         const previousScrollTop = chatContainer.scrollTop;
 
@@ -146,7 +152,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const handleLoadMoreMessagesAsync = async () => {
         setAreLoadingOldMessages(true);
 
-        const moreMessages = await getMoreMessagesAsync(currentMessages.length);
+        const moreMessages: any = await getMoreMessagesAsync(currentMessages.length);
 
         setCurrentMessages(prevMessages => [...moreMessages, ...prevMessages]);
 
@@ -179,11 +185,11 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         <li className="message" key={message.id}>
                             <GroupChatMessage
                                 me={me}
-                                reviewerId={groupChatData.meInChat.id}
+                                reviewerId={!groupChatData.meInChat ? "" : groupChatData.meInChat.id}
                                 messageOwnerId={message.groupChatUserId}
                                 message={message}
-                                updateChatMessageAsync={updateGroupChatMessageAsync}
-                                deleteMessageAsync={deleteMessageAsync}
+                                updateMessageAsync={updateMessageAsync}
+                                deleteMessageAsync={removeGroupChatMessageAsync}
                                 chatMessagesHubConnection={groupChatMessagesHubConnection}
                                 subscribeToMessageHasBeenRead={subscribeToGroupMessageHasBeenRead}
                             />
@@ -210,7 +216,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             {settingsIsShow &&
                 <GroupChatMenu
                     me={me}
-                    setUserInformation={setUserInformation}
                     setSelectedChat={setSelectedChat}
                     setShowAddPeople={setShowAddPeople}
                     groupChatUsers={groupChatData.groupChatUsers}
@@ -219,7 +224,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     t={t}
                 />
             }
-            {userInformation}
         </div>
     );
 }

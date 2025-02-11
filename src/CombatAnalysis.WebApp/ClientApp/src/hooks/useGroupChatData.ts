@@ -2,12 +2,14 @@
 import { useGetGroupChatMessageCountByChatIdQuery } from '../store/api/chat/GroupChatMessage.api';
 import { useFindGroupChatUserByChatIdQuery, useFindMeInChatQuery } from '../store/api/chat/GroupChatUser.api';
 import { useGetMessagesByGroupChatIdQuery, useLazyGetMoreMessagesByGroupChatIdQuery } from '../store/api/core/Chat.api';
+import { GroupChatData } from '../types/hooks/GroupChatData';
+import { UseGroupChatDataResult } from '../types/hooks/UseGroupChatDataResult';
 
-const useGroupChatData = (chatId, appUserId, pageSizeRef) => {
-    const [groupChatData, setGroupChatData] = useState({
-        messages: null,
+const useGroupChatData = (chatId: number, appUserId: string, pageSizeRef: any): UseGroupChatDataResult => {
+    const [groupChatData, setGroupChatData] = useState<GroupChatData>({
+        messages: [],
         count: 0,
-        meInChat: null,
+        meInChat: { id: "", appUserId: "", chatId: 0, username: "" },
         groupChatUsers: [],
         isLoading: true,
     });
@@ -33,7 +35,7 @@ const useGroupChatData = (chatId, appUserId, pageSizeRef) => {
         }
     }, [messages, count, meInChat, groupChatUsers, messagesIsLoading, countIsLoading, myUsersIsLoading, usersIsLoading]);
 
-    const getMoreMessagesAsync = async (offset) => {
+    const getMoreMessagesAsync = async (offset: number) => {
         const arg = {
             chatId,
             offset,

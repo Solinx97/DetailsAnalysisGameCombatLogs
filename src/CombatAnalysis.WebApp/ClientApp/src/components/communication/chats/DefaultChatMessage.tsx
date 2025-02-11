@@ -2,9 +2,10 @@ import { faCircle, faCircleUp, faClock, faCloudArrowUp, faEye } from '@fortaweso
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DefaultChatMessageProps } from '../../../types/components/communication/chats/DefaultChatMessageProps';
 import ChatMessageTitle from './ChatMessageTitle';
 
-import "../../../styles/communication/chats/chatMessage.scss";
+import '../../../styles/communication/chats/chatMessage.scss';
 
 const chatStatus = {
     delivery: 0,
@@ -12,14 +13,14 @@ const chatStatus = {
     read: 2
 };
 
-const DefaultChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync, chatMessagesHubConnection, subscribeToMessageHasBeenRead }) => {
+const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ me, meInChatId, reviewerId, messageOwnerId, message, updateMessageAsync, deleteMessageAsync, chatMessagesHubConnection, subscribeToMessageHasBeenRead }) => {
     const { t } = useTranslation("communication/chats/chatMessage");
 
     const [targetMessage, setTargetMessage] = useState(message);
     const [openMessageMenu, setOpenMessageMenu] = useState(false);
     const [editModeIsOn, setEditModeIsOn] = useState(false);
 
-    const editMessageInput = useRef(null);
+    const editMessageInput = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         subscribeToMessageHasBeenRead(message.chatId, reviewerId);
@@ -27,9 +28,9 @@ const DefaultChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, messag
 
     const handleUpdateMessageAsync = async () => {
         const updateForMessage = Object.assign({}, message);
-        updateForMessage.message = editMessageInput.current.value;
+        updateForMessage.message = editMessageInput.current?.value || "";
 
-        await updateChatMessageAsync(updateForMessage);
+        await updateMessageAsync(updateForMessage);
 
         setEditModeIsOn(false);
         setOpenMessageMenu(false);
@@ -61,25 +62,25 @@ const DefaultChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, messag
                 return <FontAwesomeIcon
                     icon={faClock}
                     className="status"
-                    title={t("Delivery")}
+                    title={t("Delivery") || ""}
                 />;
             case chatStatus["delivered"]:
                 return <FontAwesomeIcon
                     icon={faCircleUp}
                     className="status"
-                    title={t("Delivered")}
+                    title={t("Delivered") || ""}
                 />;
             case chatStatus["read"]:
                 return <FontAwesomeIcon
                     icon={faEye}
                     className="status"
-                    title={t("Read")}
+                    title={t("Read") || ""}
                 />;
             default:
                 return <FontAwesomeIcon
                     icon={faClock}
                     className="status"
-                    title={t("Delivery")}
+                    title={t("Delivery") || ""}
                 />;
         }
     }
@@ -101,7 +102,7 @@ const DefaultChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, messag
                     <input className="form-control" type="text" defaultValue={message.message} ref={editMessageInput} />
                     <FontAwesomeIcon
                         icon={faCloudArrowUp}
-                        title={t("Save")}
+                        title={t("Save") || ""}
                         onClick={handleUpdateMessageAsync}
                     />
                 </div>
@@ -113,7 +114,7 @@ const DefaultChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, messag
                         <FontAwesomeIcon
                             icon={faCircle}
                             className="status"
-                            title={t("Delivered")}
+                            title={t("Delivered") || ""}
                         />
                     }
                     {message?.message.startsWith("http")
