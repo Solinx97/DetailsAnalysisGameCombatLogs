@@ -55,7 +55,7 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ meId, t, selectedCh
                         <li key={chat.id} className={selectedChat.type === "personal" && selectedChat.chat?.id === chat?.id ? `selected` : ``}>
                             <PersonalChatListItem
                                 chat={chat}
-                                setSelectedPersonalChat={setSelectedChat}
+                                setSelectedChat={setSelectedChat}
                                 companionId={chat.initiatorId === meId ? chat.companionId : chat.initiatorId}
                                 meId={meId}
                                 subscribeToUnreadPersonalMessagesUpdated={subscribeToUnreadPersonalMessagesUpdated}

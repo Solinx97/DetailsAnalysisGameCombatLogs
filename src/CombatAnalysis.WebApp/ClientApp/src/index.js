@@ -1,9 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import Loading from './components/Loading';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import Store from './store/Store';
@@ -20,7 +21,7 @@ const root = createRoot(rootElement);
 root.render(
     <Provider store={Store}>
         <BrowserRouter basename={baseUrl}>
-            <Suspense fallback="loading">
+            <Suspense fallback={<Loading />}>
                 <App />
             </Suspense>
         </BrowserRouter>

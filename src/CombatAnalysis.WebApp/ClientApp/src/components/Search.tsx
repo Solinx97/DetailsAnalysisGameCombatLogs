@@ -1,14 +1,16 @@
 import { useRef, useState } from 'react';
 import { useLazyGetUsersQuery } from '../store/api/core/User.api';
+import { AppUser } from '../types/AppUser';
+import { SearchProps } from '../types/components/SearchProps';
 import PeopleItem from './communication/people/PeopleItem';
 
-const Search = ({ me, t }) => {
+const Search: React.FC<SearchProps> = ({ me, t }) => {
     const [loadingPeople] = useLazyGetUsersQuery();
-    const [people, setPeople] = useState([]);
-    const [filteredPeople, setFilteredPeople] = useState([]);
+    const [people, setPeople] = useState<AppUser[]>([]);
+    const [filteredPeople, setFilteredPeople] = useState<AppUser[]>([]);
     const [showSearch, setShowSearch] = useState(false);
 
-    const searchText = useRef(null);
+    const searchText = useRef<any>(null);
 
     const loadingPeopleAsync = async () => {
         const peopleData = await loadingPeople();
@@ -19,7 +21,7 @@ const Search = ({ me, t }) => {
         }
     }
 
-    const searchTextHandle = (e) => {
+    const searchTextHandle = (e: any) => {
         if (searchText.current.value.length === 0) {
             setFilteredPeople([]);
             return;
@@ -29,19 +31,12 @@ const Search = ({ me, t }) => {
         setFilteredPeople(filteredPeople);
     }
 
-    const cleanSearch = () => {
-        searchText.current.value = "";
-
-        setFilteredPeople([]);
-        setShowSearch(false);
-    }
-
     return (
         <div className="search">
             <div className="search__container">
                 <input type="text" className="form-control" placeholder={t("UsersSearch")} id="inputUsername" autoComplete="off" ref={searchText}
                     onChange={searchTextHandle}
-                    onClick={async () => await loadingPeopleAsync()}
+                    onClick={loadingPeopleAsync}
                 />
             </div>
             <div className={`search__content${showSearch ? "_active" : ""}`}>
@@ -54,8 +49,7 @@ const Search = ({ me, t }) => {
                                     <li key={user.id}>
                                         <PeopleItem
                                             me={me}
-                                            people={user}
-                                            actionAfterRequests={cleanSearch}
+                                            targetUser={user}
                                         />
                                     </li>
                                 ))

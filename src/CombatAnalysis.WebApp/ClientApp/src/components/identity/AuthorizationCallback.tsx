@@ -1,63 +1,55 @@
-﻿import { memo, useEffect, useState } from 'react';
+﻿import { TimeoutId } from '@reduxjs/toolkit/dist/query/core/buildMiddleware/types';
+import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
-import { useLazyAuthorizationCodeExchangeQuery } from '../../store/api/user/Identity.api';
 import { useLazyStateValidateQuery } from '../../store/api/core/User.api';
+import { useLazyAuthorizationCodeExchangeQuery } from '../../store/api/user/Identity.api';
 
 import '../../styles/identity/authorizationCallback.scss';
 
-const unauthorizedTimeoutLimit = 4000;
-const verificationTimeoutLimit = 3000;
+const unauthorizedTimeoutLimit = 40000;
 
-const AuthorizationCallback = () => {
+const AuthorizationCallback: React.FC = () => {
     const { t } = useTranslation("identity/authorizationCallback");
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
 
-    const { checkAuthAsync } = useAuth();
+    const { checkAuth } = useAuth();
 
     const [stateIsValid, setStateIsValid] = useState(true);
     const [accessRestored, setAcessRestored] = useState(false);
     const [verified, setVerified] = useState(false);
 
-    const [stateValidateQuery] = useLazyStateValidateQuery();
-    const [authorizationCodeExchangeQuery] = useLazyAuthorizationCodeExchangeQuery();
+    const [stateValidate] = useLazyStateValidateQuery();
+    const [authorizationCodeExchange] = useLazyAuthorizationCodeExchangeQuery();
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        const code = queryParams.get("code");
-        const state = queryParams.get("state");
-
-        const accessRestored = queryParams.get("accessRestored");
+        const accessRestored: any = queryParams.get("accessRestored");
         setAcessRestored(accessRestored);
 
-        const verified = queryParams.get("verified");
+        const verified: any = queryParams.get("verified");
         setVerified(verified);
+    }, []);
 
-        let verificationTimeout;
-        if (accessRestored || verified) {
-            verificationTimeout = setTimeout(() => {
-                navigate("/");
-            }, verificationTimeoutLimit);
-
-            return;
-        }
+    useEffect(() => {
+        const code: any = queryParams.get("code");
+        const state: any = queryParams.get("state");
 
         const validateState = async () => {
             await validateStateAsync(state, code);
         }
 
-        validateState();
-
-        return () => {
-            clearTimeout(verificationTimeout);
+        if (code && state) {
+            validateState();
         }
     }, []);
 
     useEffect(() => {
-        let timeout;
-        if (!stateIsValid) {
+        let timeout: TimeoutId;
+        if (!stateIsValid || accessRestored || verified) {
             timeout = setTimeout(() => {
                 navigate("/");
             }, unauthorizedTimeoutLimit);
@@ -66,12 +58,12 @@ const AuthorizationCallback = () => {
         return () => {
             clearTimeout(timeout);
         }
-    }, [stateIsValid]);
+    }, [stateIsValid, accessRestored, verified]);
 
-    const navigateToTokenAsync = async (authorizationCode) => {
-        const response = await authorizationCodeExchangeQuery(authorizationCode);
-        if (response.data !== undefined) {
-            await checkAuthAsync();
+    const navigateToTokenAsync = async (authorizationCode: string) => {
+        const response: any = await authorizationCodeExchange(authorizationCode);
+        if (response?.data !== undefined) {
+            await checkAuth();
 
             navigate("/");
         }
@@ -79,10 +71,9 @@ const AuthorizationCallback = () => {
         setStateIsValid(false);
     }
 
-    const validateStateAsync = async (state, code) => {
-        const response = await stateValidateQuery(state);
-
-        if (response.data !== undefined) {
+    const validateStateAsync = async (state: string, code: string) => {
+        const response: any = await stateValidate(state);
+        if (response?.data !== undefined) {
             await navigateToTokenAsync(code);
 
             return;
@@ -110,7 +101,7 @@ const AuthorizationCallback = () => {
     return (
         <div className="authorization-callback">
             {stateIsValid
-                ? <div className="successful">{t("Authorization")}</div>
+                ? <div className="successful21">{t("Authorization")}</div>
                 : <div className="failed">{t("Unauthorized")}</div>
             }
         </div>

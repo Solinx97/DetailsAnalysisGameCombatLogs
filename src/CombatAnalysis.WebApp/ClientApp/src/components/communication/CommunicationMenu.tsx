@@ -34,7 +34,7 @@ const CommunicationMenu: React.FC<CommunicationMenuProps> = ({ currentMenuItem, 
             [
                 { id: 5, label: "MyPosts", disabled: false, navigateTo: "/environment/feed", icon: faRss, subMenu: null },
                 { id: 6, label: "Friends", disabled: false, navigateTo: "/environment/friends", icon: faAddressBook, subMenu: null },
-                { id: 7, label: "Communities", disabled: false, navigateTo: "/environment/communities", icon: faComments, subMenu: null },
+                { id: 7, label: "My communities", disabled: false, navigateTo: "/environment/communities", icon: faComments, subMenu: null },
                 { id: 8, label: "Profile", disabled: false, navigateTo: "/environment/profile", icon: faUser, subMenu: null }
             ]
         }

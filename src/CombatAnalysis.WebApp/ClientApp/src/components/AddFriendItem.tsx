@@ -2,8 +2,9 @@ import { faPlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useGetUserByIdQuery } from '../store/api/user/Account.api';
+import { AddFriendItemProps } from '../types/components/AddFriendItemProps';
 
-const AddFriendItem = ({ friendUserId, addUserIdToList, removeUserIdToList, filterContent, peopleIdToJoin }) => {
+const AddFriendItem: React.FC<AddFriendItemProps> = ({ friendUserId, addUserIdToList, removeUserIdToList, filterContent, peopleIdToJoin }) => {
     const { t } = useTranslation("addFriendItem");
 
     const { data: user, isLoading } = useGetUserByIdQuery(friendUserId);
@@ -19,12 +20,12 @@ const AddFriendItem = ({ friendUserId, addUserIdToList, removeUserIdToList, filt
             {peopleIdToJoin.includes(user.id)
                 ? <FontAwesomeIcon
                     icon={faUserPlus}
-                    title={t("CancelRequest")}
+                    title={t("CancelRequest") || ""}
                     onClick={() => removeUserIdToList(user?.id)}
                 />
                 : <FontAwesomeIcon
                     icon={faPlus}
-                    title={t("SendInvite")}
+                    title={t("SendInvite") || ""}
                     onClick={() => addUserIdToList(user?.id)}
                 />
             }

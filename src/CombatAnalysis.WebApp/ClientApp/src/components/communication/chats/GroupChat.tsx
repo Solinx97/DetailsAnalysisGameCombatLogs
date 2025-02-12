@@ -205,8 +205,8 @@ const GroupChat: React.FC<GroupChatProps> = ({ me, chat, setSelectedChat }) => {
                 />
                 {showAddPeople &&
                     <GroupChatAddUser
-                        chat={chat}
                         me={me}
+                        chatId={chat?.id}
                         groupChatUsersId={groupChatUsersId}
                         setShowAddPeople={setShowAddPeople}
                         t={t}

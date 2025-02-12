@@ -1,14 +1,15 @@
 ﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useRef, useState } from 'react';
+import { GroupChatMessageInputProps } from '../../../types/components/communication/chats/GroupChatMessageInputProps';
 
-const GroupChatMessageInput = ({ hubConnection, chat, meId, setAreLoadingOldMessages, t }) => {
-    const messageInput = useRef(null);
+const GroupChatMessageInput: React.FC<GroupChatMessageInputProps> = ({ hubConnection, chat, meId, setAreLoadingOldMessages, t }) => {
+    const messageInput = useRef<any>(null);
 
-    const [isEmptyMessage, setIsEmptyMessage] = useState(null);
+    const [isEmptyMessage, setIsEmptyMessage] = useState<boolean | null>(null);
 
-    const handleSendMessageByKeyAsync = async (event) => {
-        if (event.code !== "Enter") {
+    const handleSendMessageByKeyAsync = async (e: any) => {
+        if (e.code !== "Enter") {
             return;
         }
         else if (messageInput.current.value === "") {

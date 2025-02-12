@@ -1,11 +1,13 @@
 ﻿import { useState } from 'react';
 import { useChatHub } from '../../../context/ChatHubProvider';
+import { AppUser } from '../../../types/AppUser';
+import { GroupChatAddUserProps } from '../../../types/components/communication/chats/GroupChatAddUserProps';
 import AddPeople from '../../AddPeople';
 
-const GroupChatAddUser = ({ chat, me, groupChatUsersId, setShowAddPeople, t }) => {
+const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ me, chatId, groupChatUsersId, setShowAddPeople, t }) => {
     const { groupChatHubConnection } = useChatHub();
 
-    const [peopleToJoin, setPeopleToJoin] = useState([]);
+    const [peopleToJoin, setPeopleToJoin] = useState<AppUser[]>([]);
 
     const createGroupChatUserAsync = async () => {
         for (let i = 0; i < peopleToJoin.length; i++) {
@@ -13,7 +15,7 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, setShowAddPeople, t }) =
                 id: " ",
                 username: peopleToJoin[i].username,
                 appUserId: peopleToJoin[i].id,
-                chatId: chat.id,
+                chatId: chatId,
             };
 
             await groupChatHubConnection.invoke("AddUserToChat", newGroupChatUser);
@@ -26,13 +28,13 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, setShowAddPeople, t }) =
     return (
         <div className="add-people-to-chat box-shadow">
             <AddPeople
-                customer={me}
+                user={me}
                 communityUsersId={groupChatUsersId}
                 peopleToJoin={peopleToJoin}
                 setPeopleToJoin={setPeopleToJoin}
             />
             <div className="item-result">
-                <div className="btn-border-shadow invite" onClick={async () => await createGroupChatUserAsync()}>{t("Invite")}</div>
+                <div className="btn-border-shadow invite" onClick={createGroupChatUserAsync}>{t("Invite")}</div>
                 <div className="btn-border-shadow" onClick={() => setShowAddPeople(false)}>{t("Close")}</div>
             </div>
         </div>

@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useFindPersonalChatMessageCountQuery } from '../../../store/api/chat/PersonalChatMessagCount.api';
 import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { PersonalChatListItemProps } from '../../../types/components/communication/chats/PersonalChatListItemProps';
 
-const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId, subscribeToUnreadPersonalMessagesUpdated }) => {
+const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ chat, setSelectedChat, companionId, meId, subscribeToUnreadPersonalMessagesUpdated }) => {
     const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
 
     const { data: companion, isLoading } = useGetUserByIdQuery(companionId);
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: meId });
 
     useEffect(() => {
-        subscribeToUnreadPersonalMessagesUpdated(meId, (targetChatId, targetMeInChatId, count) => {
+        subscribeToUnreadPersonalMessagesUpdated(meId, (targetChatId: number, targetMeInChatId: string, count: number) => {
             if (targetChatId === chat?.id && targetMeInChatId === meId) {
                 setUnreadMessageCount(count);
             }
@@ -29,7 +30,7 @@ const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId
     }
 
     return (
-        <span className="chat-card" onClick={() => setSelectedPersonalChat({ type: "personal", chat: chat })}>
+        <span className="chat-card" onClick={() => setSelectedChat({ type: "personal", chat: chat })}>
             <div className="username">{companion?.username}</div>
             {unreadMessageCount > 0 &&
                 <div className="chat-tooltip">

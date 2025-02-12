@@ -1,5 +1,6 @@
 ﻿import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { TimeoutId } from '@reduxjs/toolkit/dist/query/core/buildMiddleware/types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -8,7 +9,7 @@ import { useLazyAuthorizationQuery } from '../store/api/core/User.api';
 
 import '../styles/home.scss';
 
-const shouldBeAuthorizeTimeout = 5000;
+const shouldBeAuthorizeTimeout = 10000;
 
 const Home: React.FC = () => {
     const { t } = useTranslation("home");
@@ -32,7 +33,7 @@ const Home: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        let timeoutId: any;
+        let timeoutId: TimeoutId;
 
         if (shouldBeAuthorize) {
             timeoutId = setTimeout(() => {
@@ -46,9 +47,9 @@ const Home: React.FC = () => {
     const loginAsync = async () => {
         const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
 
-        const response = await authorization(identityServerAuthPath);
+        const response: any = await authorization(identityServerAuthPath);
 
-        if (response.data !== undefined) {
+        if (response?.data !== undefined) {
             const uri = response.data.uri;
             window.location.href = uri;
         }
@@ -93,7 +94,7 @@ const Home: React.FC = () => {
                     </div>
                 </div>
                 {user !== null &&
-                    <div className="go-to-communication" onClick={navigateToFeed}>{t("Open")}</div>
+                    <div className="go-to-communication" data-testid="go-to-communication" onClick={navigateToFeed}>{t("Open")}</div>
                 }
             </div>
             <div className="home__item">
@@ -115,10 +116,10 @@ const Home: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <div className="go-to-combat-logs" onClick={navigateToMainInformation}>{t("Open")}</div>
+                <div className="go-to-combat-logs" data-testid="go-to-combat-logs" onClick={navigateToMainInformation}>{t("Open")}</div>
             </div>
             {shouldBeAuthorize &&
-                <div className="should-be-authorize">
+                <div className="should-be-authorize" data-testid="should-be-authorize">
                     <div className="alert alert-success" role="alert">
                         {t("YouNeed")} <span onClick={loginAsync}>{t("Login")}</span> {t("InApp")}
                     </div>
