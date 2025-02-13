@@ -13,7 +13,7 @@ const PeopleInvitesToCommunity: React.FC<PeopleInvitesToCommunityProps> = ({ me,
 
     const { data: communityUsers, isLoading } = useCommunityUserSearchByUserIdQuery(me?.id);
 
-    const [communityIdToInvite, setCommunityIdToInvite] = useState([]);
+    const [communityIdToInvite, setCommunityIdToInvite] = useState<number[]>([]);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();

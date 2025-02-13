@@ -2,32 +2,40 @@ import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/f
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { useLazyGetUserPostsByUserIdQuery } from '../../../store/api/core/Post.api';
-import { useLazyGetUserPostByIdQuery } from '../../../store/api/post/UserPost.api';
+import { useLazyGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { AppUser } from '../../../types/AppUser';
+import { UserPost as UserPostModel } from '../../../types/UserPost';
 import CommunicationMenu from "../CommunicationMenu";
-import UserPost from '../post/UserPost';
 import Friends from '../myEnvironment/Friends';
+import UserPost from '../post/UserPost';
 import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
 
 import '../../../styles/communication/people/selectedUser.scss';
 
-const SelectedUser = () => {
+const SelectedUser: React.FC = () => {
     const { t } = useTranslation("communication/people/user");
 
+    const me = useSelector((state: any) => state.user.value);
+
+    const location = useLocation();
+
     const [getUserPosts] = useLazyGetUserPostsByUserIdQuery();
-    const [getPostById] = useLazyGetUserPostByIdQuery();
     const [getUserById] = useLazyGetUserByIdQuery();
 
-    const [personId, setPersonId] = useState(0);
-    const [person, setPerson] = useState(null);
+    const [personId, setPersonId] = useState<number>(0);
+    const [person, setPerson] = useState<AppUser | null>(null);
     const [currentMenuItem, setMenuItem] = useState(0);
-    const [allPosts, setAllPosts] = useState([]);
+    const [allPosts, setAllPosts] = useState<UserPostModel[]>([]);
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        setPersonId(queryParams.get("id"));
+        const queryParams = new URLSearchParams(location.search);
+        const id: number = parseInt(queryParams.get("id") || "0");
+
+        setPersonId(id);
     }, [])
 
     useEffect(() => {
@@ -52,33 +60,19 @@ const SelectedUser = () => {
         }
     }
 
-    const getAllPostsAsync = async (userId) => {
+    const getAllPostsAsync = async (userId: string) => {
         const userPosts = await getUserPosts(userId);
 
         if (userPosts.data !== undefined) {
-            const userPersonalPosts = await getUserPostsAsync(userPosts.data);
-            setAllPosts(userPersonalPosts);
+            setAllPosts(userPosts.data);
         }
-    }
-
-    const getUserPostsAsync = async (userPosts) => {
-        const userPersonalPosts = [];
-
-        for (let i = 0; i < userPosts.length; i++) {
-            const post = await getPostById(userPosts[i].postId);
-
-            if (post.data !== undefined) {
-                userPersonalPosts.push(post.data);
-            }
-        }
-
-        return userPersonalPosts;
     }
 
     return (
         <div className="communication">
             <CommunicationMenu
                 currentMenuItem={7}
+                hasSubMenu={false}
             />
             <div className="communication-content user">
                 <div className="user-information__username">
@@ -90,28 +84,28 @@ const SelectedUser = () => {
                             <li className="sub-menu" onClick={() => setMenuItem(0)}>
                                 <FontAwesomeIcon
                                     className={`current${currentMenuItem === 0 ? "_active" : ""}`}
-                                    title={t("Profile")}
+                                    title={t("Profile") || ""}
                                     icon={faUser}
                                 />
                             </li>
                             <li className="sub-menu" onClick={() => setMenuItem(1)}>
                                 <FontAwesomeIcon
                                     className={`current${currentMenuItem === 1 ? "_active" : ""}`}
-                                    title={t("Posts")}
+                                    title={t("Posts") || ""}
                                     icon={faEnvelopesBulk}
                                 />
                             </li>
                             <li className="sub-menu" onClick={() => setMenuItem(2)}>
                                 <FontAwesomeIcon
                                     className={`current${currentMenuItem === 2 ? "_active" : ""}`}
-                                    title={t("Friends")}
+                                    title={t("Friends") || ""}
                                     icon={faUserGroup}
                                 />
                             </li>
                             <li className="sub-menu" onClick={() => setMenuItem(3)}>
                                 <FontAwesomeIcon
                                     className={`current${currentMenuItem === 3 ? "_active" : ""}`}
-                                    title={t("Communities")}
+                                    title={t("Communities") || ""}
                                     icon={faComments}
                                 />
                             </li>
@@ -130,7 +124,7 @@ const SelectedUser = () => {
                                     : allPosts?.map(post => (
                                         <li key={post.id}>
                                             <UserPost
-                                                user={person}
+                                                meId={me.id}
                                                 post={post}
                                             />
                                         </li>
@@ -139,11 +133,7 @@ const SelectedUser = () => {
                             </ul>
                         }
                         {currentMenuItem === 2 &&
-                            <Friends
-                                customer={person}
-                                requestsToConnect={null}
-                                allowRemoveFriend={false}
-                            />
+                            <Friends />
                         }
                         {currentMenuItem === 3 &&
                             <SelectedUserCommunities

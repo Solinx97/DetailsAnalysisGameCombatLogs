@@ -2,13 +2,14 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/post/UserPost.api';
 import { useCreateUserPostCommentMutation } from '../../../store/api/post/UserPostComment.api';
+import { UserPostProps } from "../../../types/components/communication/post/UserPostProps";
 import UserPostComments from './UserPostComments';
 import UserPostReactions from './UserPostReactions';
 import UserPostTitle from './UserPostTitle';
 
 import '../../../styles/communication/post.scss';
 
-const UserPost = ({ meId, post }) => {
+const UserPost: React.FC<UserPostProps> = ({ meId, post }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePost] = useUpdateUserPostMutation();
@@ -25,7 +26,7 @@ const UserPost = ({ meId, post }) => {
         setIsMyPost(post?.appUserId === meId);
     }, [post]);
 
-    const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
+    const updatePostAsync = async (postId: number, likesCount: number, dislikesCount: number, commentsCount: number) => {
         try {
             let response = await getPostByIdAsync(postId);
             if (response.error) {
@@ -71,10 +72,10 @@ const UserPost = ({ meId, post }) => {
         }
     }
 
-    const dateFormatting = (stringOfDate) => {
+    const dateFormatting = (stringOfDate: string) => {
         const date = new Date(stringOfDate);
         const month = date.getMonth();
-        const monthes = {
+        const monthes: any = {
             0: "January",
             1: "February",
             2: "March",
@@ -129,7 +130,7 @@ const UserPost = ({ meId, post }) => {
                         </div>
                         {showAddComment &&
                             <div className="add-new-comment__content">
-                            <textarea className="form-control" rows="3" cols="60" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                            <textarea className="form-control" rows={3} cols={60} onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
                             <div className="actions">
                                 <div className="add-comment" onClick={createPostCommentAsync}>{t("Add")}</div>
                                     <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</div>

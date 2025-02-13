@@ -2,18 +2,19 @@ import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { CommunitiesProps } from '../../../types/components/communication/community/CommunitiesProps';
 import CommunityList from './CommunityList';
 
 import '../../../styles/communication/community/communities.scss';
 
-const Communities = ({ showCommunitiesAtStart = false }) => {
+const Communities: React.FC<CommunitiesProps> = ({ showCommunitiesAtStart = false }) => {
     const { t } = useTranslation("communication/community/communities");
 
     const [showCommunities, setShowCommunities] = useState(showCommunitiesAtStart);
     const [filterContent, setFilterContent] = useState("");
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
 
-    const searchHandler = (e) => {
+    const searchHandler = (e: any) => {
         setFilterContent(e.target.value);
     }
 
@@ -23,13 +24,13 @@ const Communities = ({ showCommunitiesAtStart = false }) => {
                 <div className="content">
                     <FontAwesomeIcon
                         icon={showSearchCommunity ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
-                        title={showSearchCommunity ? t("HideSearchCommunity") : t("ShowSearchCommunity")}
+                        title={(showSearchCommunity ? t("HideSearchCommunity") : t("ShowSearchCommunity")) || ""}
                         onClick={() => setShowSearchCommunity((item) => !item)}
                     />
                     <div>{t("Communities")}</div>
                     <FontAwesomeIcon
                         icon={showCommunities ? faEye : faEyeSlash}
-                        title={showCommunities ? t("Hide") : t("Show")}
+                        title={(showCommunities ? t("Hide") : t("Show")) || ""}
                         onClick={() => setShowCommunities((item) => !item)}
                     />
                 </div>
@@ -39,7 +40,7 @@ const Communities = ({ showCommunitiesAtStart = false }) => {
                     {showSearchCommunity &&
                         <div className="communities__search mb-3">
                             <label htmlFor="inputSearchCommunity" className="form-label">{t("Search")}</label>
-                            <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName")} onChange={searchHandler} />
+                            <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName") || ""} onChange={searchHandler} />
                         </div>
                     }
                     <CommunityList

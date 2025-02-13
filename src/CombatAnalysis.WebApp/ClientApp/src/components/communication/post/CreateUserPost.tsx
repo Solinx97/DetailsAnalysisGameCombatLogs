@@ -2,17 +2,22 @@ import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useCreateUserPostMutation } from '../../../store/api/post/UserPost.api';
+import { CreateUserPostProps } from '../../../types/components/communication/post/CreateUserPostProps';
 import Loading from '../../Loading';
 import AddTagsToPost from './AddTagsToPost';
 
-const CreateUserPost = ({ user, owner, t }) => {
+const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState([]);
 
     const [createNewUserPostAsync] = useCreateUserPostMutation();
 
-    const createUserPostAsync = async () => {
+    const createUserPostAsync = async (e: any) => {
+        if (postContent === "") {
+            return;
+        }
+
         const newPost = {
             owner: owner,
             content: postContent,
@@ -25,18 +30,14 @@ const CreateUserPost = ({ user, owner, t }) => {
             appUserId: user?.id
         }
 
-        const response = await createNewUserPostAsync(newPost);
-        if (response.data) {
+        const response: any = await createNewUserPostAsync(newPost);
+        if (response?.data) {
             setShowCreatePost(false);
             setPostContent("");
-
-            return true;
         }
-
-        return false;
     }
 
-    const postContentHandle = (e) => {
+    const postContentHandle = (e: any) => {
         setPostContent(e.target.value);
     }
 
@@ -59,7 +60,7 @@ const CreateUserPost = ({ user, owner, t }) => {
                 }
                 {showCreatePost &&
                     <div className="finish-create-post">
-                        <div className={`btn-shadow${postContent === "" ? "_disabled" : ""}`} title={t("Save")} onClick={postContent === "" ? null : async () => await createUserPostAsync()}>
+                        <div className={`btn-shadow${postContent === "" ? "_disabled" : ""}`} title={t("Save")} onClick={createUserPostAsync}>
                             <FontAwesomeIcon
                                 icon={faCheck}
                             />
@@ -81,7 +82,7 @@ const CreateUserPost = ({ user, owner, t }) => {
                         setPostTags={setPostTags}
                         t={t}
                     />
-                    <textarea className="form-control" rows="5" title={t("PostContent")} onChange={postContentHandle} />
+                    <textarea className="form-control" rows={5} title={t("PostContent") || ""} onChange={postContentHandle} />
                 </div>
             }
         </div>

@@ -3,8 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetCommunityByIdQuery } from '../../../store/api/core/Community.api';
+import { TargetCommunityProps } from '../../../types/components/communication/people/TargetCommunityProps';
 
-const TargetCommunity = ({ communityId, communityIdToInvite, setCommunityIdToInvite }) => {
+const TargetCommunity: React.FC<TargetCommunityProps> = ({ communityId, communityIdToInvite, setCommunityIdToInvite }) => {
     const { t } = useTranslation("communication/people/people");
 
     const { data: community, isLoading } = useGetCommunityByIdQuery(communityId);
@@ -33,18 +34,11 @@ const TargetCommunity = ({ communityId, communityIdToInvite, setCommunityIdToInv
     return (
         <div className="community">
             <div>{community?.name}</div>
-            {isAddedToList
-                ? <FontAwesomeIcon
-                    icon={faEnvelope}
-                    title={t("CancelInvite")}
-                    onClick={removeCommunityFromList}
-                />
-                : <FontAwesomeIcon
-                    icon={faPlus}
-                    title={t("SendInvite")}
-                    onClick={addCommunityToList}
-                />
-            }
+            <FontAwesomeIcon
+                icon={isAddedToList ? faEnvelope : faPlus}
+                title={(isAddedToList ? t("CancelInvite") : t("SendInvite")) || ""}
+                onClick={isAddedToList ? removeCommunityFromList : addCommunityToList}
+            />
         </div>
     );
 }
