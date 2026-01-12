@@ -169,15 +169,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Private logs.
-        /// </summary>
-        public static string PrivateLogs {
-            get {
-                return ResourceManager.GetString("PrivateLogs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Processing.
         /// </summary>
         public static string Processing {

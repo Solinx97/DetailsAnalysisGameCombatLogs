@@ -210,7 +210,4 @@
   <data name="CreateLog" xml:space="preserve">
     <value>Создать лог</value>
   </data>
-  <data name="PrivateLogs" xml:space="preserve">
-    <value>Личные логи</value>
-  </data>
 </root>
