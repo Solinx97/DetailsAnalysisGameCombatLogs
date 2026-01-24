@@ -5,6 +5,8 @@ using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
+using CombatParser.Infrastructure.Extensions;
+using CombatParser.Application.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
@@ -22,6 +24,8 @@ var databaseConfigsOptions = new DBConfiguration();
 builder.Configuration.Bind("DBConfiguration", databaseConfigsOptions);
 
 builder.Services.CombatParserBLDependencies(databasePropsOptions.DefaultConnection, databaseConfigsOptions.CommandTimeout);
+builder.Services.AddInfrastructure(databasePropsOptions.DefaultConnection);
+builder.Services.AddMediatorSource();
 
 var mappingConfig = new MapperConfiguration(mc =>
 {

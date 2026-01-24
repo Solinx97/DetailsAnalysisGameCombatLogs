@@ -1,0 +1,26 @@
+﻿namespace CombatParser.Application.DTOs;
+
+public class CombatPlayerDto
+{
+    public int Id { get; set; }
+
+    public double AverageItemLevel { get; set; }
+
+    public int ResourcesRecovery { get; set; }
+
+    public int DamageDone { get; set; }
+
+    public int HealDone { get; set; }
+
+    public int DamageTaken { get; set; }
+
+    public CombatPlayerStatsDto Stats { get; set; }
+
+    public SpecializationScoreDto Score { get; set; }
+
+    public PlayerDto Player { get; set; }
+
+    public string PlayerId { get; set; }
+
+    public int CombatId { get; set; }
+}

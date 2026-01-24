@@ -2,6 +2,8 @@
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
+using CombatParser.Application.Commands.CreateCombatLog;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,12 +12,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [Route("api/v1/[controller]")]
 [ApiController]
 public class CombatLogController(IQueryService<CombatLogDto> queryCombatLogService, IMutationService<CombatLogDto> mutationCombatLogService,
-    IMapper mapper, ILogger<CombatLogController> logger) : ControllerBase
+    IMapper mapper, ILogger<CombatLogController> logger, IMediator mediator) : ControllerBase
 {
     private readonly IQueryService<CombatLogDto> _queryCombatLogService = queryCombatLogService;
     private readonly IMutationService<CombatLogDto> _mutationCombatLogService = mutationCombatLogService;
     private readonly IMapper _mapper = mapper;
     private readonly ILogger<CombatLogController> _logger = logger;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -34,21 +37,13 @@ public class CombatLogController(IQueryService<CombatLogDto> queryCombatLogServi
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CombatLogModel combatLog, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(CreateCombatLogCommand command, CancellationToken cancellationToken)
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid CombatLog create received: {@CombatLog}", combatLog);
+            var combatLog = await _mediator.Send(command, cancellationToken);
 
-                return ValidationProblem(ModelState);
-            }
-
-            var map = _mapper.Map<CombatLogDto>(combatLog);
-            var createdItem = await _mutationCombatLogService.CreateAsync(map, cancellationToken);
-
-            return Ok(createdItem);
+            return Ok(combatLog);
         }
         catch (DbUpdateException ex)
         {
