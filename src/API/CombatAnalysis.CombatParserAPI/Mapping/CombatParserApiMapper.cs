@@ -2,6 +2,7 @@
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParserAPI.Models;
+using CombatParser.Domain.EntityData;
 
 namespace CombatAnalysis.CombatParserAPI.Mapping;
 
@@ -72,5 +73,18 @@ internal class CombatParserApiMapper : Profile
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
 
         CreateMap<SpecializationScoreDto, SpecializationScore>().ReverseMap();
+
+        CreateMap<DamageDoneData, DamageDone>().ReverseMap();
+        CreateMap<DamageDoneGeneralData, DamageDoneGeneral>().ReverseMap();
+        CreateMap<HealDoneData, HealDone>().ReverseMap();
+        CreateMap<HealDoneGeneralData, HealDoneGeneral>().ReverseMap();
+        CreateMap<DamageTakenData, DamageTaken>().ReverseMap();
+        CreateMap<DamageTakenGeneralData, DamageTakenGeneral>().ReverseMap();
+        CreateMap<ResourceRecoveryData, ResourceRecovery>().ReverseMap();
+        CreateMap<ResourceRecoveryGeneralData, ResourceRecoveryGeneral>().ReverseMap();
+        CreateMap<CombatPlayerDeathData, PlayerDeath>().ReverseMap();
+        CreateMap<CombatPlayerStatsData, CombatPlayerStatsModel>().ReverseMap();
+        CreateMap<CombatPlayerPositionData, CombatPlayerPosition>().ReverseMap();
+        CreateMap<SpecializationScoreData, SpecializationScoreModel>().ReverseMap();
     }
 }

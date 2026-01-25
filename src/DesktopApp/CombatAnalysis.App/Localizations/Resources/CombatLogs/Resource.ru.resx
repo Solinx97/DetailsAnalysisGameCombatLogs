@@ -210,4 +210,7 @@
   <data name="CreateLog" xml:space="preserve">
     <value>Создать лог</value>
   </data>
+  <data name="Empty" xml:space="preserve">
+    <value>Пусто</value>
+  </data>
 </root>

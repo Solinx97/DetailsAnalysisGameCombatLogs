@@ -5,6 +5,11 @@ using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
+using CombatAnalysis.DAL.Entities;
+using CombatParser.Application.Commands.CreateCombat;
+using CombatParser.Application.Commands.CreateCombatLog;
+using CombatParser.Domain.EntityData;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +19,8 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class CombatController(IBossService bossService, IQueryService<CombatDto> queryCombatService, IMutationService<CombatDto> mutationCombatService,
     ICombatPlayerService combatPlayerService, IMapper mapper, ILogger<CombatController> logger, 
-    ISpecializationScoreHelper scoreHelper, ICombatDataHelper combatDataHelper, ICombatTransactionService combatTransactionService) : ControllerBase
+    ISpecializationScoreHelper scoreHelper, ICombatDataHelper combatDataHelper, ICombatTransactionService combatTransactionService,
+    IMediator mediator) : ControllerBase
 {
     private readonly IBossService _bossService = bossService;
     private readonly IQueryService<CombatDto> _queryCombatService = queryCombatService;
@@ -25,6 +31,7 @@ public class CombatController(IBossService bossService, IQueryService<CombatDto>
     private readonly ILogger<CombatController> _logger = logger;
     private readonly ICombatDataHelper _combatDataHelper = combatDataHelper;
     private readonly ICombatTransactionService _combatTransactionService = combatTransactionService;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -63,48 +70,84 @@ public class CombatController(IBossService bossService, IQueryService<CombatDto>
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Combat create received: {@Combat}", combat);
-
-                return ValidationProblem(ModelState);
-            }
-
             // A huge transaction for all action as ONE TRANSACTION was divided into a few small transactions.
             // Transactions split by logic: combat/combatPlayer/combatPlayerData and combatPlayerSpecScore/bestSpecScore
 
             // Transaction to create Combat and Combat Players
-            await _combatTransactionService.BeginTransactionAsync();
-            cancellationToken.ThrowIfCancellationRequested();
+            //await _combatTransactionService.BeginTransactionAsync();
+            //cancellationToken.ThrowIfCancellationRequested();
 
-            var createdCombat = await CreateCombatAsync(combat, cancellationToken);
-            combat.Id = createdCombat.Id;
+            var combatDetails = _combatDataHelper.CreateCombatDetails(combat);
+            //var combatDetails = await CreateCombatPlayersAsync(combat, cancellationToken);
 
-            var combatDetails = await CreateCombatPlayersAsync(combat, cancellationToken);
+            //await _combatTransactionService.CommitTransactionAsync();
 
-            await _combatTransactionService.CommitTransactionAsync();
+            //// Transaction to create Combat player data and specialization score:
+            //// 1) damage, heal, damage taken, resources, etc
+            //// 2) how combat player do mechanics, class rotation, assist other combat players, etc
+            //await _combatTransactionService.BeginTransactionAsync();
+            //cancellationToken.ThrowIfCancellationRequested();
 
-            // Transaction to create Combat player data and specialization score:
-            // 1) damage, heal, damage taken, resources, etc
-            // 2) how combat player do mechanics, class rotation, assist other combat players, etc
-            await _combatTransactionService.BeginTransactionAsync();
-            cancellationToken.ThrowIfCancellationRequested();
+            //var createdCombatPlayers = await _combatPlayerService.GetByCombatIdAsync(createdCombat.Id, cancellationToken);
+            //await _combatDataHelper.CreateCombatPlayersDataAsync(combatDetails, [.. createdCombatPlayers], createdCombat.Id, cancellationToken);
+            //await _combatDataHelper.UpdateSpecializationScoreAsync([.. createdCombatPlayers], combatDetails, combat.Boss.Id, cancellationToken);
 
-            var createdCombatPlayers = await _combatPlayerService.GetByCombatIdAsync(combat.Id, cancellationToken);
-            await _combatDataHelper.CreateCombatPlayersDataAsync(combatDetails, [.. createdCombatPlayers], combat.Id, cancellationToken);
-            await _combatDataHelper.UpdateSpecializationScoreAsync([.. createdCombatPlayers], combatDetails, combat.Boss.Id, cancellationToken);
+            var combatPlayers = new List<CombatPlayerData>();
 
-            createdCombat.IsReady = true;
+            foreach (var item in combat.CombatPlayers)
+            {
+                var statsMap = _mapper.Map<CombatPlayerStatsData>(item.Stats);
+                var scoreMap = _mapper.Map<SpecializationScoreData>(item.Score);
+                var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatDetails.DamageDone[item.Player.GameId].Select(x => x.Value));
+                var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatDetails.DamageDoneGeneral[item.Player.GameId]);
+                var healDonesMap = _mapper.Map<List<HealDoneData>>(combatDetails.HealDone[item.Player.GameId].Select(x => x.Value));
+                var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(combatDetails.HealDoneGeneral[item.Player.GameId]);
+                var damageTakenMap = _mapper.Map<List<DamageTakenData>>(combatDetails.DamageTaken[item.Player.GameId].Select(x => x.Value));
+                var damageTakenGeneralsMap = _mapper.Map<List<DamageTakenGeneralData>>(combatDetails.DamageTakenGeneral[item.Player.GameId]);
+                var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatDetails.ResourcesRecovery[item.Player.GameId].Select(x => x.Value));
+                var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatDetails.ResourcesRecoveryGeneral[item.Player.GameId]);
+                var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatDetails.PlayersDeath[item.Player.GameId].Select(x => x.Value));
+                var positionsMap = _mapper.Map<List<CombatPlayerPositionData>>(combatDetails.Positions[item.Player.GameId].Select(x => x.Value));
 
-            await _mutationCombatService.UpdateAsync(createdCombat, cancellationToken);
+                combatPlayers.Add(new CombatPlayerData(
+                    item.AverageItemLevel,
+                    item.ResourcesRecovery,
+                    item.DamageDone,
+                    item.HealDone,
+                    item.DamageTaken,
+                    item.PlayerId,
+                    item.CombatId,
+                    statsMap,
+                    scoreMap,
+                    damageDonesMap,
+                    damageDoneGeneralsMap,
+                    healDonesMap,
+                    healDoneGeneralsMap,
+                    damageTakenMap,
+                    damageTakenGeneralsMap,
+                    resourceRecoveryMap,
+                    resourceRecoveryGeneralMap,
+                    deathsMap,
+                    positionsMap
+                ));
+            }
 
-            await _combatTransactionService.CommitTransactionAsync();
+            var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayers);
+
+            var createdCombat = await _mediator.Send(command, cancellationToken);
+
+            ////createdCombat.IsReady = true;
+
+            //await _mutationCombatService.UpdateAsync(createdCombat, cancellationToken);
+
+            //await _combatTransactionService.CommitTransactionAsync();
 
             return Ok(createdCombat);
         }
         catch (OperationCanceledException ex)
         {
-            await _combatTransactionService.RollbackTransactionAsync();
+            //await _combatTransactionService.RollbackTransactionAsync();
 
             _logger.LogInformation(ex, "Operation was canceled by Client.");
 
@@ -112,7 +155,7 @@ public class CombatController(IBossService bossService, IQueryService<CombatDto>
         }
         catch (DbUpdateException ex)
         {
-            await _combatTransactionService.RollbackTransactionAsync();
+            //await _combatTransactionService.RollbackTransactionAsync();
 
             _logger.LogError(ex, "Failed to create combat.");
 

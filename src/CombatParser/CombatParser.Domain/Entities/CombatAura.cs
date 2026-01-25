@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatParser.Domain.Aggregates;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatParser.Domain.Entities;
 

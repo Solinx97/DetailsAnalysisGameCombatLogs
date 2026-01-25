@@ -11,7 +11,7 @@ internal class CreateCombatLogHandler(IGenericRepository<CombatLog, int> reposit
 
     public async Task<CombatLog> Handle(CreateCombatLogCommand request, CancellationToken cancelationToken)
     {
-        var combatLog = CombatLog.Create(request.Name, request.LogType, request.NumberReadyCombats, request.CombatsInQueue, request.IsReady, request.AppUserId);
+        var combatLog = CombatLog.Create(request.Name, request.LogType, request.NumberReadyCombats, request.CombatsInQueue, request.AppUserId);
         await _repository.AddAsync(combatLog, cancelationToken);
 
         await _unitOfWork.SaveChangesAsync(cancelationToken);

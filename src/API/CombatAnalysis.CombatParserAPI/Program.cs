@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
+using CombatParser.Application.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new CombatParserApiMapper());
     mc.AddProfile(new BLMapper());
+    mc.AddProfile(new ApplicationMapper());
 });
 
 var mapper = mappingConfig.CreateMapper();

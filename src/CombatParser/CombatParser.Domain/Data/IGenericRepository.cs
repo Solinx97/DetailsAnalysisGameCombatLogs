@@ -8,5 +8,5 @@ public interface IGenericRepository<TModel, TId>
 
     Task<IEnumerable<TModel>> GetAllAsync(CancellationToken ct = default);
 
-    Task<TModel?> GetByIdAsync(TId id, CancellationToken ct = default);
+    Task<TModel> GetByIdAsync(TId id, CancellationToken ct = default);
 }

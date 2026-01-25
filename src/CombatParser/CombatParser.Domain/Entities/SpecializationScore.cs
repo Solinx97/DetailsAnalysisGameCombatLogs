@@ -1,24 +1,40 @@
 ﻿namespace CombatParser.Domain.Entities;
 
-public class SpecializationScore
+public record SpecializationScore
 {
-    public int Id { get; set; }
+    private SpecializationScore() { }
 
-    public double DamageScore { get; set; }
+    public SpecializationScore(double damageScore, int damageDone, double healScore, int healDone, DateTimeOffset? updated, 
+        int specializationId, int combatPlayerId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(damageScore, nameof(damageScore));
+        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
+        ArgumentOutOfRangeException.ThrowIfNegative(healScore, nameof(healScore));
+        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(specializationId, nameof(specializationId));
 
-    public int DamageDone { get; set; }
+        DamageScore = damageScore;
+        DamageDone = damageDone;
+        HealScore = healScore;
+        HealDone = healDone;
+        Updated = updated;
+        SpecializationId = specializationId;
+        CombatPlayerId = combatPlayerId;
+    }
 
-    public double HealScore { get; set; }
+    public int Id { get; }
 
-    public int HealDone { get; set; }
+    public double DamageScore { get; }
 
-    public DateTimeOffset? Updated { get; set; }
+    public int DamageDone { get; }
 
-    public Specialization Specialization { get; set; }
+    public double HealScore { get; }
 
-    public int SpecializationId { get; set; }
+    public int HealDone { get; }
 
-    public CombatPlayer CombatPlayer { get; set; }
+    public DateTimeOffset? Updated { get; }
 
-    public int CombatPlayerId { get; set; }
+    public int SpecializationId { get; }
+
+    public int CombatPlayerId { get; }
 }

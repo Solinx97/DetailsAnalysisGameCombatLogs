@@ -1,31 +1,55 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-namespace CombatParser.Domain.Entities.CombatPlayerData;
-
-public class HealDoneGeneral
+public record HealDoneGeneral
 {
-    public int Id { get; set; }
+    public const int SPELL_MAX_LENGTH = 128;
 
-    public int GameSpellId { get; set; }
+    private HealDoneGeneral() { }
 
-    [MaxLength(126)]
-    public string Spell { get; set; } = string.Empty;
+    public HealDoneGeneral(int gameSpellId, string spell, int value, double healPerSecond, int critNumber,
+        int castNumber, int minValue, int maxValue, double averageValue, int combatPlayerId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
+        ArgumentOutOfRangeException.ThrowIfNegative(healPerSecond, nameof(healPerSecond));
+        ArgumentOutOfRangeException.ThrowIfNegative(critNumber, nameof(critNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(minValue, nameof(minValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
 
-    public int Value { get; set; }
+        GameSpellId = gameSpellId;
+        Spell = spell;
+        Value = value;
+        HealPerSecond = healPerSecond;
+        CritNumber = critNumber;
+        CastNumber = castNumber;
+        MinValue = minValue;
+        MaxValue = maxValue;
+        AverageValue = averageValue;
+        CombatPlayerId = combatPlayerId;
+    }
 
-    public double HealPerSecond { get; set; }
+    public int Id { get; }
 
-    public int CritNumber { get; set; }
+    public int GameSpellId { get; }
 
-    public int CastNumber { get; set; }
+    public string Spell { get; } = string.Empty;
 
-    public int MinValue { get; set; }
+    public int Value { get; }
 
-    public int MaxValue { get; set; }
+    public double HealPerSecond { get; }
 
-    public double AverageValue { get; set; }
+    public int CritNumber { get; }
 
-    public CombatPlayer CombatPlayer { get; set; }
+    public int CastNumber { get; }
 
-    public int CombatPlayerId { get; set; }
+    public int MinValue { get; }
+
+    public int MaxValue { get; }
+
+    public double AverageValue { get; }
+
+    public int CombatPlayerId { get; }
 }

@@ -1,14 +1,15 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Infrastructure.Exceptions;
 using CombatParser.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data;
 
-internal class GenericRepository<TModel, TId>(CombatParserContext context) : IGenericRepository<TModel, TId>
+internal class GenericRepository<TModel, TId>(CombatParserContextOne context) : IGenericRepository<TModel, TId>
     where TModel : class
     where TId : notnull
 {
-    private readonly CombatParserContext _context = context;
+    private readonly CombatParserContextOne _context = context;
 
     public async Task AddAsync(TModel item, CancellationToken cancelationToken)
     {
@@ -23,13 +24,10 @@ internal class GenericRepository<TModel, TId>(CombatParserContext context) : IGe
         return result.Count != 0 ? result : [];
     }
 
-    public async Task<TModel?> GetByIdAsync(TId id, CancellationToken cancelationToken)
+    public async Task<TModel> GetByIdAsync(TId id, CancellationToken cancelationToken)
     {
-        var entity = await _context.Set<TModel>().FindAsync(id, cancelationToken);
-        if (entity != null)
-        {
-            _context.Entry(entity).State = EntityState.Detached;
-        }
+        var entity = await _context.Set<TModel>().FindAsync(id, cancelationToken) 
+            ?? throw new EntityNotFoundException(typeof(TModel), id);
 
         return entity;
     }

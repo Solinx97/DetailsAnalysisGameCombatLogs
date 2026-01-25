@@ -1,37 +1,63 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-namespace CombatParser.Domain.Entities.CombatPlayerData;
-
-public class DamageDone
+public record DamageDone
 {
-    public int Id { get; set; }
+    public const int SPELL_MAX_LENGTH = 128;
+    public const int CREATOR_MAX_LENGTH = 128;
+    public const int TARGET_MAX_LENGTH = 128;
 
-    public int GameSpellId { get; set; }
+    private DamageDone() { }
 
-    [MaxLength(126)]
-    public string Spell { get; set; } = string.Empty;
+    public DamageDone(int gameSpellId, string spell, int value, TimeSpan time, string creator,
+        string target, bool isTargetBoss, int damageType, bool isPeriodicDamage, bool isSingleTarget,
+        bool isPet, int combatPlayerId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell)); 
+        ArgumentException.ThrowIfNullOrEmpty(creator, nameof(creator));
+        ArgumentException.ThrowIfNullOrEmpty(target, nameof(target)); 
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value)); 
+        ArgumentOutOfRangeException.ThrowIfNegative(damageType, nameof(damageType)); 
 
-    public int Value { get; set; }
+        GameSpellId = gameSpellId;
+        Spell = spell;
+        Value = value;
+        Time = time;
+        Creator = creator;
+        Target = target;
+        IsTargetBoss = isTargetBoss;
+        DamageType = damageType;
+        IsPeriodicDamage = isPeriodicDamage;
+        IsSingleTarget = isSingleTarget;
+        IsPet = isPet;
+        CombatPlayerId = combatPlayerId;
+    }
 
-    public TimeSpan Time { get; set; }
+    public int Id { get; }
 
-    [MaxLength(126)]
-    public string Creator { get; set; } = string.Empty;
+    public int GameSpellId { get; }
 
-    [MaxLength(126)]
-    public string Target { get; set; } = string.Empty;
+    public string Spell { get; } = string.Empty;
 
-    public bool IsTargetBoss { get; set; }
+    public int Value { get; }
 
-    public int DamageType { get; set; }
+    public TimeSpan Time { get; }
 
-    public bool IsPeriodicDamage { get; set; }
+    public string Creator { get; } = string.Empty;
 
-    public bool IsSingleTarget { get; set; }
+    public string Target { get; } = string.Empty;
 
-    public bool IsPet { get; set; }
+    public bool IsTargetBoss { get; }
 
-    public CombatPlayer CombatPlayer { get; set; }
+    public int DamageType { get; }
 
-    public int CombatPlayerId { get; set; }
+    public bool IsPeriodicDamage { get; }
+
+    public bool IsSingleTarget { get; }
+
+    public bool IsPet { get; }
+
+    public CombatPlayer CombatPlayer { get; }
+
+    public int CombatPlayerId { get; }
 }

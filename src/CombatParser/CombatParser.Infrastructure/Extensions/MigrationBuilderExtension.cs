@@ -1,4 +1,5 @@
-﻿using CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System.Text;

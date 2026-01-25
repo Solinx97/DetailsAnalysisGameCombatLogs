@@ -1,5 +1,4 @@
-﻿using CombatParser.Domain.Entities;
-using CombatParser.Domain.Exceptions;
+﻿using CombatParser.Domain.Exceptions;
 
 namespace CombatParser.Domain.Aggregates;
 
@@ -9,14 +8,14 @@ public class CombatLog
 
     private CombatLog() { }
 
-    private CombatLog(string name, int logType, int numberReadyCombats, int combatsInQueue, bool isReady, string appUserId)
+    private CombatLog(string name, int logType, int numberReadyCombats, int combatsInQueue, string appUserId)
     {
         Name = name;
         Date = DateTimeOffset.UtcNow;
         LogType = logType;
         NumberReadyCombats = numberReadyCombats;
         CombatsInQueue = combatsInQueue;
-        IsReady = isReady;
+        IsReady = false;
         AppUserId = appUserId;
     }
 
@@ -38,7 +37,7 @@ public class CombatLog
 
     public ICollection<Combat> Combats { get; set; } = [];
 
-    public static CombatLog Create(string name, int logType, int numberReadyCombats, int combatsInQueue, bool isReady, string appUserId)
+    public static CombatLog Create(string name, int logType, int numberReadyCombats, int combatsInQueue, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
@@ -48,7 +47,7 @@ public class CombatLog
 
         CombatLogException.ThrowIfLong(name);
 
-        return new CombatLog(name, logType, numberReadyCombats, combatsInQueue, isReady, appUserId);
+        return new CombatLog(name, logType, numberReadyCombats, combatsInQueue, appUserId);
     }
 
     public void Edit(string name)
@@ -60,5 +59,10 @@ public class CombatLog
         {
             Name = name;
         }
+    }
+
+    public void CombatLogIsReady()
+    {
+        IsReady = true;
     }
 }

@@ -13,5 +13,5 @@ public class Player
 
     public int Faction { get; set; }
 
-    public ICollection<CombatPlayer> CombatPlayers { get; set; } = [];
+    //public ICollection<CombatPlayer> CombatPlayers { get; set; } = [];
 }

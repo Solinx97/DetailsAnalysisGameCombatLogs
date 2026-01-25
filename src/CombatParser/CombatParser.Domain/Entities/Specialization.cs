@@ -8,7 +8,7 @@ public class Specialization
 
     public string SpecializationSpellsId { get; set;  } = string.Empty;
 
-    public ICollection<SpecializationScore> SpecializationScores { get; set; } = [];
+    //public ICollection<SpecializationScore> SpecializationScores { get; set; } = [];
 
-    public ICollection<BestSpecializationScore> BestSpecializationScores { get; set; } = [];
+    //public ICollection<BestSpecializationScore> BestSpecializationScores { get; set; } = [];
 }

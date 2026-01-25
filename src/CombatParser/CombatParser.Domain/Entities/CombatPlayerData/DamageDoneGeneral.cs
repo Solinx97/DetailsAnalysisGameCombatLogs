@@ -1,35 +1,63 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-namespace CombatParser.Domain.Entities.CombatPlayerData;
-
-public class DamageDoneGeneral
+public record DamageDoneGeneral
 {
-    public int Id { get; set; }
+    public const int SPELL_MAX_LENGTH = 128;
 
-    public int GameSpellId { get; set; }
+    private DamageDoneGeneral() { }
 
-    [MaxLength(126)]
-    public string Spell { get; set; } = string.Empty;
+    public DamageDoneGeneral(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber, 
+        int missNumber, int castNumber, int minValue, int maxValue, double averageValue,
+        bool isPet, int combatPlayerId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
+        ArgumentOutOfRangeException.ThrowIfNegative(damagePerSecond, nameof(damagePerSecond));
+        ArgumentOutOfRangeException.ThrowIfNegative(critNumber, nameof(critNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(missNumber, nameof(missNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(minValue, nameof(minValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
 
-    public int Value { get; set; }
+        GameSpellId = gameSpellId;
+        Spell = spell;
+        Value = value;
+        DamagePerSecond = damagePerSecond;
+        CritNumber = critNumber;
+        MissNumber = missNumber;
+        CastNumber = castNumber;
+        MinValue = minValue;
+        MaxValue = maxValue;
+        AverageValue = averageValue;
+        IsPet = isPet;
+        CombatPlayerId = combatPlayerId;
+    }
 
-    public double DamagePerSecond { get; set; }
+    public int Id { get; }
 
-    public int CritNumber { get; set; }
+    public int GameSpellId { get; }
 
-    public int MissNumber { get; set; }
+    public string Spell { get; } = string.Empty;
 
-    public int CastNumber { get; set; }
+    public int Value { get; }
 
-    public int MinValue { get; set; }
+    public double DamagePerSecond { get; }
 
-    public int MaxValue { get; set; }
+    public int CritNumber { get; }
 
-    public double AverageValue { get; set; }
+    public int MissNumber { get; }
 
-    public bool IsPet { get; set; }
+    public int CastNumber { get; }
 
-    public CombatPlayer CombatPlayer { get; set; }
+    public int MinValue { get; }
 
-    public int CombatPlayerId { get; set; }
+    public int MaxValue { get; }
+
+    public double AverageValue { get; }
+
+    public bool IsPet { get; }
+
+    public int CombatPlayerId { get; }
 }

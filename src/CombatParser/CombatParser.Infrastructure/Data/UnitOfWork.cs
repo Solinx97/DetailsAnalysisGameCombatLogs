@@ -3,9 +3,9 @@ using CombatParser.Infrastructure.Persistence;
 
 namespace CombatParser.Infrastructure.Data;
 
-internal class UnitOfWork(CombatParserContext dbContext) : IUnitOfWork
+internal class UnitOfWork(CombatParserContextOne dbContext) : IUnitOfWork
 {
-    private readonly CombatParserContext _dbContext = dbContext;
+    private readonly CombatParserContextOne _dbContext = dbContext;
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

@@ -1,39 +1,72 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace CombatParser.Domain.Entities;
 
-namespace CombatParser.Domain.Entities;
-
-public class CombatPlayerStats
+public record CombatPlayerStats
 {
-    public int Id { get; set; }
+    public const int TALENTS_MAX_LENGTH = 128;
 
-    public int Strength { get; set; }
+    private CombatPlayerStats() { }
 
-    public int Agility { get; set; }
+    public CombatPlayerStats(int strength, int agility, int intelligence, int stamina, int spirit,
+        int dodge, int parry, int crit, int haste, int hit, 
+        int expertise, int armor, string talents, int combatPlayerId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(talents, nameof(talents));
+        ArgumentOutOfRangeException.ThrowIfNegative(strength, nameof(strength));
+        ArgumentOutOfRangeException.ThrowIfNegative(agility, nameof(agility));
+        ArgumentOutOfRangeException.ThrowIfNegative(intelligence, nameof(intelligence));
+        ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina));
+        ArgumentOutOfRangeException.ThrowIfNegative(spirit, nameof(spirit));
+        ArgumentOutOfRangeException.ThrowIfNegative(dodge, nameof(dodge));
+        ArgumentOutOfRangeException.ThrowIfNegative(parry, nameof(parry));
+        ArgumentOutOfRangeException.ThrowIfNegative(crit, nameof(crit));
+        ArgumentOutOfRangeException.ThrowIfNegative(haste, nameof(haste));
+        ArgumentOutOfRangeException.ThrowIfNegative(hit, nameof(hit));
+        ArgumentOutOfRangeException.ThrowIfNegative(expertise, nameof(expertise));
+        ArgumentOutOfRangeException.ThrowIfNegative(armor, nameof(armor));
 
-    public int Intelligence { get; set; }
+        Strength = strength;
+        Agility = agility;
+        Intelligence = intelligence;
+        Stamina = stamina;
+        Spirit = spirit;
+        Dodge = dodge;
+        Parry = parry;
+        Crit = crit;
+        Haste = haste;
+        Hit = hit;
+        Expertise = expertise;
+        Armor = armor;
+        Talents = talents;
+        CombatPlayerId = combatPlayerId;
+    }
 
-    public int Stamina { get; set; }
+    public int Id { get; }
 
-    public int Spirit { get; set; }
+    public int Strength { get; }
 
-    public int Dodge { get; set; }
+    public int Agility { get; }
 
-    public int Parry { get; set; }
+    public int Intelligence { get; }
 
-    public int Crit { get; set; }
+    public int Stamina { get; }
 
-    public int Haste { get; set; }
+    public int Spirit { get; }
 
-    public int Hit { get; set; }
+    public int Dodge { get; }
 
-    public int Expertise { get; set; }
+    public int Parry { get; }
 
-    public int Armor { get; set; }
+    public int Crit { get; }
 
-    [MaxLength(126)]
-    public string Talents { get; set; } = string.Empty;
+    public int Haste { get; }
 
-    public CombatPlayer CombatPlayer { get; set; }
+    public int Hit { get; }
 
-    public int CombatPlayerId { get; set; }
+    public int Expertise { get; }
+
+    public int Armor { get; }
+
+    public string Talents { get; } = string.Empty;
+
+    public int CombatPlayerId { get; }
 }
