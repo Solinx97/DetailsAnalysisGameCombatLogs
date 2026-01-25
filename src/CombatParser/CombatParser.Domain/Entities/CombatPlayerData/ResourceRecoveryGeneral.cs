@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public record ResourceRecoveryGeneral
+public class ResourceRecoveryGeneral
 {
     public const int SPELL_MAX_LENGTH = 128;
 
@@ -11,11 +11,9 @@ public record ResourceRecoveryGeneral
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
         ArgumentOutOfRangeException.ThrowIfNegative(resourcePerSecond, nameof(resourcePerSecond));
         ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
         ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
-        ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
 
         GameSpellId = gameSpellId;
         Spell = spell;
@@ -28,23 +26,30 @@ public record ResourceRecoveryGeneral
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
-    public int GameSpellId { get; set; }
+    public int GameSpellId { get; private set; }
 
-    public string Spell { get; set; } = string.Empty;
+    public string Spell { get; private set; } = string.Empty;
 
-    public int Value { get; set; }
+    public int Value { get; private set; }
 
-    public double ResourcePerSecond { get; set; }
+    public double ResourcePerSecond { get; private set; }
 
-    public int CastNumber { get; set; }
+    public int CastNumber { get; private set; }
 
-    public int MinValue { get; set; }
+    public int MinValue { get; private set; }
 
-    public int MaxValue { get; set; }
+    public int MaxValue { get; private set; }
 
-    public double AverageValue { get; set; }
+    public double AverageValue { get; private set; }
 
-    public int CombatPlayerId { get; set; }
+    public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

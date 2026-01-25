@@ -85,10 +85,10 @@ namespace CombatParser.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DungeonName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BossHealthPercentage = table.Column<double>(type: "float", nullable: false),
-                    DamageDone = table.Column<int>(type: "int", nullable: false),
-                    HealDone = table.Column<int>(type: "int", nullable: false),
-                    DamageTaken = table.Column<int>(type: "int", nullable: false),
-                    ResourcesRecovery = table.Column<int>(type: "int", nullable: false),
+                    DamageDone = table.Column<long>(type: "bigint", nullable: false),
+                    HealDone = table.Column<long>(type: "bigint", nullable: false),
+                    DamageTaken = table.Column<long>(type: "bigint", nullable: false),
+                    ResourcesRecovery = table.Column<long>(type: "bigint", nullable: false),
                     IsWin = table.Column<bool>(type: "bit", nullable: false),
                     StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     FinishDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -127,13 +127,13 @@ namespace CombatParser.Infrastructure.Migrations
                         column: x => x.BossId,
                         principalTable: "Boss",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_BestSpecializationScore_Specialization_SpecializationId",
                         column: x => x.SpecializationId,
                         principalTable: "Specialization",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,6 +191,28 @@ namespace CombatParser.Infrastructure.Migrations
                         column: x => x.PlayerId,
                         principalTable: "Player",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CombatTarget",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(126)", maxLength: 126, nullable: false),
+                    Target = table.Column<string>(type: "nvarchar(126)", maxLength: 126, nullable: false),
+                    Sum = table.Column<int>(type: "int", nullable: false),
+                    CombatId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CombatTarget", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CombatTarget_Combat_CombatId",
+                        column: x => x.CombatId,
+                        principalTable: "Combat",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -200,8 +222,8 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    LastHitSpell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastHitSpell = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastHitValue = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
@@ -226,8 +248,7 @@ namespace CombatParser.Infrastructure.Migrations
                     PositionX = table.Column<double>(type: "float", nullable: false),
                     PositionY = table.Column<double>(type: "float", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false),
-                    CombatId = table.Column<int>(type: "int", nullable: false)
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -246,6 +267,19 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Strength = table.Column<int>(type: "int", nullable: false),
+                    Agility = table.Column<int>(type: "int", nullable: false),
+                    Intelligence = table.Column<int>(type: "int", nullable: false),
+                    Stamina = table.Column<int>(type: "int", nullable: false),
+                    Spirit = table.Column<int>(type: "int", nullable: false),
+                    Dodge = table.Column<int>(type: "int", nullable: false),
+                    Parry = table.Column<int>(type: "int", nullable: false),
+                    Crit = table.Column<int>(type: "int", nullable: false),
+                    Haste = table.Column<int>(type: "int", nullable: false),
+                    Hit = table.Column<int>(type: "int", nullable: false),
+                    Expertise = table.Column<int>(type: "int", nullable: false),
+                    Armor = table.Column<int>(type: "int", nullable: false),
+                    Talents = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -265,9 +299,17 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Creator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Target = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsTargetBoss = table.Column<bool>(type: "bit", nullable: false),
+                    DamageType = table.Column<int>(type: "int", nullable: false),
+                    IsPeriodicDamage = table.Column<bool>(type: "bit", nullable: false),
+                    IsSingleTarget = table.Column<bool>(type: "bit", nullable: false),
+                    IsPet = table.Column<bool>(type: "bit", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -287,7 +329,17 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    DamagePerSecond = table.Column<double>(type: "float", nullable: false),
+                    CritNumber = table.Column<int>(type: "int", nullable: false),
+                    MissNumber = table.Column<int>(type: "int", nullable: false),
+                    CastNumber = table.Column<int>(type: "int", nullable: false),
+                    MinValue = table.Column<int>(type: "int", nullable: false),
+                    MaxValue = table.Column<int>(type: "int", nullable: false),
+                    AverageValue = table.Column<double>(type: "float", nullable: false),
+                    IsPet = table.Column<bool>(type: "bit", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -308,11 +360,11 @@ namespace CombatParser.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Creator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Target = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DamageTakenType = table.Column<int>(type: "int", nullable: false),
                     ActualValue = table.Column<int>(type: "int", nullable: false),
                     IsPeriodicDamage = table.Column<bool>(type: "bit", nullable: false),
@@ -341,7 +393,7 @@ namespace CombatParser.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     ActualValue = table.Column<int>(type: "int", nullable: false),
                     DamageTakenPerSecond = table.Column<double>(type: "float", nullable: false),
@@ -370,9 +422,15 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Creator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Target = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Overheal = table.Column<int>(type: "int", nullable: false),
+                    IsCrit = table.Column<bool>(type: "bit", nullable: false),
+                    IsAbsorbed = table.Column<bool>(type: "bit", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -392,7 +450,15 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    HealPerSecond = table.Column<double>(type: "float", nullable: false),
+                    CritNumber = table.Column<int>(type: "int", nullable: false),
+                    CastNumber = table.Column<int>(type: "int", nullable: false),
+                    MinValue = table.Column<int>(type: "int", nullable: false),
+                    MaxValue = table.Column<int>(type: "int", nullable: false),
+                    AverageValue = table.Column<double>(type: "float", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -413,11 +479,11 @@ namespace CombatParser.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Creator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Target = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -438,7 +504,7 @@ namespace CombatParser.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     ResourcePerSecond = table.Column<double>(type: "float", nullable: false),
                     CastNumber = table.Column<int>(type: "int", nullable: false),
@@ -464,6 +530,12 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    DamageScore = table.Column<double>(type: "float", nullable: false),
+                    DamageDone = table.Column<int>(type: "int", nullable: false),
+                    HealScore = table.Column<double>(type: "float", nullable: false),
+                    HealDone = table.Column<int>(type: "int", nullable: false),
+                    Updated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    SpecializationId = table.Column<int>(type: "int", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -475,6 +547,12 @@ namespace CombatParser.Infrastructure.Migrations
                         principalTable: "CombatPlayer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SpecializationScore_Specialization_SpecializationId",
+                        column: x => x.SpecializationId,
+                        principalTable: "Specialization",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -1342,6 +1420,11 @@ namespace CombatParser.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CombatTarget_CombatId",
+                table: "CombatTarget",
+                column: "CombatId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DamageDone_CombatPlayerId",
                 table: "DamageDone",
                 column: "CombatPlayerId");
@@ -1386,6 +1469,11 @@ namespace CombatParser.Infrastructure.Migrations
                 table: "SpecializationScore",
                 column: "CombatPlayerId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpecializationScore_SpecializationId",
+                table: "SpecializationScore",
+                column: "SpecializationId");
         }
 
         /// <inheritdoc />
@@ -1405,6 +1493,9 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CombatPlayerStats");
+
+            migrationBuilder.DropTable(
+                name: "CombatTarget");
 
             migrationBuilder.DropTable(
                 name: "DamageDone");
@@ -1437,10 +1528,10 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "Boss");
 
             migrationBuilder.DropTable(
-                name: "Specialization");
+                name: "CombatPlayer");
 
             migrationBuilder.DropTable(
-                name: "CombatPlayer");
+                name: "Specialization");
 
             migrationBuilder.DropTable(
                 name: "Combat");

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260125091614_Init")]
+    [Migration("20260125152109_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -42,11 +42,11 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("CombatLogId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DamageDone")
-                        .HasColumnType("int");
+                    b.Property<long>("DamageDone")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("DamageTaken")
-                        .HasColumnType("int");
+                    b.Property<long>("DamageTaken")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("DungeonName")
                         .IsRequired()
@@ -55,8 +55,8 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("FinishDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("HealDone")
-                        .HasColumnType("int");
+                    b.Property<long>("HealDone")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsReady")
                         .HasColumnType("bit");
@@ -64,8 +64,8 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<bool>("IsWin")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ResourcesRecovery")
-                        .HasColumnType("int");
+                    b.Property<long>("ResourcesRecovery")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("StartDate")
                         .HasColumnType("datetimeoffset");
@@ -6555,6 +6555,591 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatAura");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("AverageItemLevel")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CombatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DamageDone")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DamageTaken")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HealDone")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PlayerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ResourcesRecovery")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatId");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DamageType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPeriodicDamage")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPet")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSingleTarget")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTargetBoss")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("DamageDone");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDoneGeneral", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("AverageValue")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CastNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CritNumber")
+                        .HasColumnType("int");
+
+                    b.Property<double>("DamagePerSecond")
+                        .HasColumnType("float");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPet")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MissNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("DamageDoneGeneral");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTaken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Absorbed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Blocked")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DamageTakenType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPeriodicDamage")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Mitigated")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RealDamage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Resisted")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("DamageTaken");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTakenGeneral", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActualValue")
+                        .HasColumnType("int");
+
+                    b.Property<double>("AverageValue")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CastNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CritNumber")
+                        .HasColumnType("int");
+
+                    b.Property<double>("DamageTakenPerSecond")
+                        .HasColumnType("float");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MissNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("DamageTakenGeneral");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAbsorbed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCrit")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Overheal")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("HealDone");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDoneGeneral", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("AverageValue")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CastNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CritNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("HealPerSecond")
+                        .HasColumnType("float");
+
+                    b.Property<int>("MaxValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("HealDoneGeneral");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecovery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("ResourceRecovery");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("AverageValue")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CastNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinValue")
+                        .HasColumnType("int");
+
+                    b.Property<double>("ResourcePerSecond")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Spell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("ResourceRecoveryGeneral");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerDeath", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LastHitSpell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LastHitValue")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("CombatPlayerDeath");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerPosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("PositionX")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PositionY")
+                        .HasColumnType("float");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("CombatPlayerPosition");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Crit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dodge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Expertise")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Haste")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Hit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Intelligence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Parry")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Spirit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Talents")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId")
+                        .IsUnique();
+
+                    b.ToTable("CombatPlayerStats");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatTarget", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sum")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasMaxLength(126)
+                        .HasColumnType("nvarchar(126)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(126)
+                        .HasColumnType("nvarchar(126)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatId");
+
+                    b.ToTable("CombatTarget");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>
                 {
                     b.Property<string>("Id")
@@ -6678,6 +7263,45 @@ namespace CombatParser.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.SpecializationScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DamageDone")
+                        .HasColumnType("int");
+
+                    b.Property<double>("DamageScore")
+                        .HasColumnType("float");
+
+                    b.Property<int>("HealDone")
+                        .HasColumnType("int");
+
+                    b.Property<double>("HealScore")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SpecializationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("Updated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId")
+                        .IsUnique();
+
+                    b.HasIndex("SpecializationId");
+
+                    b.ToTable("SpecializationScore");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Combat", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.CombatLog", "CombatLog")
@@ -6686,539 +7310,7 @@ namespace CombatParser.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayers", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<double>("AverageItemLevel")
-                                .HasColumnType("float");
-
-                            b1.Property<int>("CombatId")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("DamageDone")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("DamageTaken")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("HealDone")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("PlayerId")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(450)");
-
-                            b1.Property<int>("ResourcesRecovery")
-                                .HasColumnType("int");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("CombatId");
-
-                            b1.HasIndex("PlayerId");
-
-                            b1.ToTable("CombatPlayer");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CombatId");
-
-                            b1.HasOne("CombatParser.Domain.Entities.Player", "Player")
-                                .WithMany()
-                                .HasForeignKey("PlayerId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", "DamageDones", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Creator")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<string>("Target")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("DamageDone");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.DamageDoneGeneral", "DamageDoneGenerals", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("DamageDoneGeneral");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.DamageTaken", "DamageTakens", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("Absorbed")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("ActualValue")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("Blocked")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Creator")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<int>("DamageTakenType")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("GameSpellId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<bool>("IsPeriodicDamage")
-                                        .HasColumnType("bit");
-
-                                    b2.Property<int>("Mitigated")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("RealDamage")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("Resisted")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<string>("Target")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<TimeSpan>("Time")
-                                        .HasColumnType("time");
-
-                                    b2.Property<int>("Value")
-                                        .HasColumnType("int");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("DamageTaken");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.DamageTakenGeneral", "DamageTakenGenerals", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("ActualValue")
-                                        .HasColumnType("int");
-
-                                    b2.Property<double>("AverageValue")
-                                        .HasColumnType("float");
-
-                                    b2.Property<int>("CastNumber")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("CritNumber")
-                                        .HasColumnType("int");
-
-                                    b2.Property<double>("DamageTakenPerSecond")
-                                        .HasColumnType("float");
-
-                                    b2.Property<int>("GameSpellId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("MaxValue")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("MinValue")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("MissNumber")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<int>("Value")
-                                        .HasColumnType("int");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("DamageTakenGeneral");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.HealDone", "HealDones", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Creator")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<string>("Target")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("HealDone");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.HealDoneGeneral", "HealDoneGenerals", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("HealDoneGeneral");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecovery", "ResourceRecoveries", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Creator")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<int>("GameSpellId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<string>("Target")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<TimeSpan>("Time")
-                                        .HasColumnType("time");
-
-                                    b2.Property<int>("Value")
-                                        .HasColumnType("int");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("ResourceRecovery");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral", "ResourceRecoveryGenerals", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<double>("AverageValue")
-                                        .HasColumnType("float");
-
-                                    b2.Property<int>("CastNumber")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("GameSpellId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("MaxValue")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("MinValue")
-                                        .HasColumnType("int");
-
-                                    b2.Property<double>("ResourcePerSecond")
-                                        .HasColumnType("float");
-
-                                    b2.Property<string>("Spell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<int>("Value")
-                                        .HasColumnType("int");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("ResourceRecoveryGeneral");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerDeath", "CombatPlayerDeathes", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<string>("LastHitSpell")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.Property<int>("LastHitValue")
-                                        .HasColumnType("int");
-
-                                    b2.Property<TimeSpan>("Time")
-                                        .HasColumnType("time");
-
-                                    b2.Property<string>("Username")
-                                        .IsRequired()
-                                        .HasMaxLength(128)
-                                        .HasColumnType("nvarchar(128)");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("CombatPlayerDeath");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsMany("CombatParser.Domain.Entities.CombatPlayerPosition", "CombatPlayerPositions", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<double>("PositionX")
-                                        .HasColumnType("float");
-
-                                    b2.Property<double>("PositionY")
-                                        .HasColumnType("float");
-
-                                    b2.Property<TimeSpan>("Time")
-                                        .HasColumnType("time");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId");
-
-                                    b2.ToTable("CombatPlayerPosition");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsOne("CombatParser.Domain.Entities.CombatPlayerStats", "Stats", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId")
-                                        .IsUnique();
-
-                                    b2.ToTable("CombatPlayerStats");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.OwnsOne("CombatParser.Domain.Entities.SpecializationScore", "Score", b2 =>
-                                {
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int>("CombatPlayerId")
-                                        .HasColumnType("int");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("CombatPlayerId")
-                                        .IsUnique();
-
-                                    b2.ToTable("SpecializationScore");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CombatPlayerId");
-                                });
-
-                            b1.Navigation("CombatPlayerDeathes");
-
-                            b1.Navigation("CombatPlayerPositions");
-
-                            b1.Navigation("DamageDoneGenerals");
-
-                            b1.Navigation("DamageDones");
-
-                            b1.Navigation("DamageTakenGenerals");
-
-                            b1.Navigation("DamageTakens");
-
-                            b1.Navigation("HealDoneGenerals");
-
-                            b1.Navigation("HealDones");
-
-                            b1.Navigation("Player");
-
-                            b1.Navigation("ResourceRecoveries");
-
-                            b1.Navigation("ResourceRecoveryGenerals");
-
-                            b1.Navigation("Score");
-
-                            b1.Navigation("Stats")
-                                .IsRequired();
-                        });
-
                     b.Navigation("CombatLog");
-
-                    b.Navigation("CombatPlayers");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.BestSpecializationScore", b =>
@@ -7226,13 +7318,13 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasOne("CombatParser.Domain.Entities.Boss", "Boss")
                         .WithMany("BestSpecializationScores")
                         .HasForeignKey("BossId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.Specialization", "Specialization")
-                        .WithMany()
+                        .WithMany("BestSpecializationScores")
                         .HasForeignKey("SpecializationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Boss");
@@ -7243,12 +7335,191 @@ namespace CombatParser.Infrastructure.Migrations
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatAura", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
-                        .WithMany()
+                        .WithMany("CombatAuras")
                         .HasForeignKey("CombatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Combat");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
+                        .WithMany("CombatPlayers")
+                        .HasForeignKey("CombatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CombatParser.Domain.Entities.Player", "Player")
+                        .WithMany("CombatPlayers")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Combat");
+
+                    b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("DamageDones")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDoneGeneral", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("DamageDoneGenerals")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTaken", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("DamageTakens")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTakenGeneral", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("DamageTakenGenerals")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDone", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("HealDones")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDoneGeneral", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("HealDoneGenerals")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecovery", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("ResourceRecoveries")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("ResourceRecoveryGenerals")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerDeath", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("CombatPlayerDeathes")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerPosition", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("CombatPlayerPositions")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerStats", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithOne("Stats")
+                        .HasForeignKey("CombatParser.Domain.Entities.CombatPlayerStats", "CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatTarget", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
+                        .WithMany("CombatTargets")
+                        .HasForeignKey("CombatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Combat");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.SpecializationScore", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithOne("Score")
+                        .HasForeignKey("CombatParser.Domain.Entities.SpecializationScore", "CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CombatParser.Domain.Entities.Specialization", "Specialization")
+                        .WithMany("SpecializationScores")
+                        .HasForeignKey("SpecializationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+
+                    b.Navigation("Specialization");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Aggregates.Combat", b =>
+                {
+                    b.Navigation("CombatAuras");
+
+                    b.Navigation("CombatPlayers");
+
+                    b.Navigation("CombatTargets");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.CombatLog", b =>
@@ -7259,6 +7530,46 @@ namespace CombatParser.Infrastructure.Migrations
             modelBuilder.Entity("CombatParser.Domain.Entities.Boss", b =>
                 {
                     b.Navigation("BestSpecializationScores");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
+                {
+                    b.Navigation("CombatPlayerDeathes");
+
+                    b.Navigation("CombatPlayerPositions");
+
+                    b.Navigation("DamageDoneGenerals");
+
+                    b.Navigation("DamageDones");
+
+                    b.Navigation("DamageTakenGenerals");
+
+                    b.Navigation("DamageTakens");
+
+                    b.Navigation("HealDoneGenerals");
+
+                    b.Navigation("HealDones");
+
+                    b.Navigation("ResourceRecoveries");
+
+                    b.Navigation("ResourceRecoveryGenerals");
+
+                    b.Navigation("Score");
+
+                    b.Navigation("Stats")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>
+                {
+                    b.Navigation("CombatPlayers");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.Specialization", b =>
+                {
+                    b.Navigation("BestSpecializationScores");
+
+                    b.Navigation("SpecializationScores");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
-﻿using CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.EntityData;
 
 namespace CombatParser.Domain.Entities;
@@ -50,6 +51,8 @@ public class CombatPlayer
 
     public string PlayerId { get; private set; } = string.Empty;
 
+    public Combat Combat { get; private set; }
+
     public int CombatId { get; private set; }
 
     public IReadOnlyCollection<DamageDone> DamageDones => _damageDones.AsReadOnly();
@@ -87,8 +90,24 @@ public class CombatPlayer
         var combatPlayer = new CombatPlayer(averageItemLevel, resourcesRecovery, damageDone, healDone, damageTaken, 
             playerId, combatId);
 
+        AddCombatPlayerData(combatPlayer, stats, score, damageDones, damageDoneGenerals, 
+            healDones, healDoneGenerals, damageTakens, damageTakenGenerals, resourceRecoveries, 
+            resourceRecoveryGenerals, combatPlayerDeathes, combatPlayerPositions);
+
+        return combatPlayer;
+    }
+
+    public void SetCombatId(int combatId)
+    {
+        CombatId = combatId;
+    }
+
+    private static void AddCombatPlayerData(CombatPlayer combatPlayer, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals,
+        IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals, IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries,
+        IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals, IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes, IReadOnlyCollection<CombatPlayerPositionData> combatPlayerPositions)
+    {
         combatPlayer.AddStats(stats);
-        //combatPlayer.AddSpecializationScore(score);
+        combatPlayer.AddSpecializationScore(score);
 
         foreach (var damage in damageDones)
         {
@@ -139,8 +158,6 @@ public class CombatPlayer
         {
             combatPlayer.AddCombatPlayerPosition(combatPlayerPosition);
         }
-
-        return combatPlayer;
     }
 
     private void AddDamageDone(DamageDoneData damageDone)
@@ -184,7 +201,7 @@ public class CombatPlayer
     private void AddDamageTakenGeneral(DamageTakenGeneralData damageTakenGeneral)
     {
         var createdDamageTakenGeneral = new DamageTakenGeneral(damageTakenGeneral.GameSpellId, damageTakenGeneral.Spell, damageTakenGeneral.Value, damageTakenGeneral.ActualValue, damageTakenGeneral.DamageTakenPerSecond,
-            damageTakenGeneral.MissNumber, damageTakenGeneral.CritNumber, damageTakenGeneral.CastNumber, damageTakenGeneral.MinValue, damageTakenGeneral.MaxValue, 
+            damageTakenGeneral.MissNumber, damageTakenGeneral.CritNumber, damageTakenGeneral.CastNumber, damageTakenGeneral.MinValue, damageTakenGeneral.MaxValue,
             damageTakenGeneral.AverageValue, damageTakenGeneral.CombatPlayerId);
         _damageTakenGenerals.Add(createdDamageTakenGeneral);
     }
@@ -211,13 +228,13 @@ public class CombatPlayer
 
     private void AddCombatPlayerPosition(CombatPlayerPositionData position)
     {
-        var createdPosition = new CombatPlayerPosition(position.PositionX, position.PositionY, position.Time, position.CombatPlayerId, position.CombatId);
+        var createdPosition = new CombatPlayerPosition(position.PositionX, position.PositionY, position.Time, position.CombatPlayerId);
         _combatPlayerPositions.Add(createdPosition);
     }
 
     private void AddStats(CombatPlayerStatsData stats)
     {
-        var createdStats = new CombatPlayerStats(stats.Strength, stats.Agility, stats.Intelligence, stats.Stamina, stats.Spirit, 
+        var createdStats = new CombatPlayerStats(stats.Strength, stats.Agility, stats.Intelligence, stats.Stamina, stats.Spirit,
             stats.Dodge, stats.Parry, stats.Crit, stats.Haste, stats.Hit,
             stats.Expertise, stats.Armor, stats.Talents, stats.CombatPlayerId);
         Stats = createdStats;
@@ -225,7 +242,12 @@ public class CombatPlayer
 
     private void AddSpecializationScore(SpecializationScoreData score)
     {
-        var createdScore = new SpecializationScore(score.DamageScore, score.DamageDone, score.HealScore, score.HealDone, score.Updated, 
+        if (score == null)
+        {
+            return;
+        }
+
+        var createdScore = new SpecializationScore(score.DamageScore, score.DamageDone, score.HealScore, score.HealDone, score.Updated,
             score.SpecializationId, score.CombatPlayerId);
         Score = createdScore;
     }

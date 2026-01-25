@@ -1,17 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CombatParser.Domain.Entities;
+﻿namespace CombatParser.Domain.Entities;
 
 public class Player
 {
-    public string Id { get; set; } = string.Empty;
+    public const int USERNAME_MAX_LENGTH = 128;
 
-    public string GameId { get; set; } = string.Empty;
+    private Player() { }
 
-    [MaxLength(126)]
-    public string Username { get; set; } = string.Empty;
+    public Player(string gameId, string username, int faction)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
+        ArgumentException.ThrowIfNullOrEmpty(username, nameof(username));
+        ArgumentOutOfRangeException.ThrowIfNegative(faction, nameof(faction));
 
-    public int Faction { get; set; }
+        GameId = gameId;
+        Username = username;
+        Faction = faction;
+    }
 
-    //public ICollection<CombatPlayer> CombatPlayers { get; set; } = [];
+    public string Id { get; private set; } = string.Empty;
+
+    public string GameId { get; private set; } = string.Empty;
+
+    public string Username { get; private set; } = string.Empty;
+
+    public int Faction { get; private set; }
+
+    public ICollection<CombatPlayer> CombatPlayers { get; private set; } = [];
 }

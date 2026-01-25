@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public record DamageTakenGeneral
+public class DamageTakenGeneral
 {
     public const int SPELL_MAX_LENGTH = 128;
 
@@ -36,29 +36,36 @@ public record DamageTakenGeneral
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
-    public int GameSpellId { get; set; }
+    public int GameSpellId { get; private set; }
 
-    public string Spell { get; set; } = string.Empty;
+    public string Spell { get; private set; } = string.Empty;
 
-    public int Value { get; set; }
+    public int Value { get; private set; }
 
-    public int ActualValue { get; set; }
+    public int ActualValue { get; private set; }
 
-    public double DamageTakenPerSecond { get; set; }
+    public double DamageTakenPerSecond { get; private set; }
 
-    public int CritNumber { get; set; }
+    public int CritNumber { get; private set; }
 
-    public int MissNumber { get; set; }
+    public int MissNumber { get; private set; }
 
-    public int CastNumber { get; set; }
+    public int CastNumber { get; private set; }
 
-    public int MinValue { get; set; }
+    public int MinValue { get; private set; }
 
-    public int MaxValue { get; set; }
+    public int MaxValue { get; private set; }
 
-    public double AverageValue { get; set; }
+    public double AverageValue { get; private set; }
 
-    public int CombatPlayerId { get; set; }
+    public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

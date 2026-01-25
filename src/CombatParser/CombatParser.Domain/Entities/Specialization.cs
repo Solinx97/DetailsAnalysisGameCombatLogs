@@ -2,13 +2,29 @@
 
 public class Specialization
 {
-    public int Id { get; set; }
+    public const int NAME_MAX_LENGTH = 128;
+    public const int SPEC_SPELLS_MAX_LENGTH = 128;
 
-    public string Name { get; set; } = string.Empty;
+    private Specialization() { }
 
-    public string SpecializationSpellsId { get; set;  } = string.Empty;
+    public Specialization(int id, string name, string specializationSpellsId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        ArgumentException.ThrowIfNullOrEmpty(specializationSpellsId, nameof(specializationSpellsId));
 
-    //public ICollection<SpecializationScore> SpecializationScores { get; set; } = [];
+        Id = id;
+        Name = name;
+        SpecializationSpellsId = specializationSpellsId;
+    }
 
-    //public ICollection<BestSpecializationScore> BestSpecializationScores { get; set; } = [];
+    public int Id { get; private set; }
+
+    public string Name { get; private set; } = string.Empty;
+
+    public string SpecializationSpellsId { get; private set;  } = string.Empty;
+
+    public ICollection<SpecializationScore> SpecializationScores { get; private set; } = [];
+
+    public ICollection<BestSpecializationScore> BestSpecializationScores { get; private set; } = [];
 }

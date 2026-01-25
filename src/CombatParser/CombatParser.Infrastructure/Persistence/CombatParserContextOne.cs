@@ -68,154 +68,152 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
         modelBuilder.Entity<BestSpecializationScore>().HasData(MigrationBuilderExtension.GenerateBestSpecializationScoreCollection());
 
-        modelBuilder.Entity<Combat>(b =>
-        {
-            b.HasKey(c => c.Id);
+        modelBuilder.Entity<CombatPlayer>()
+            .HasOne(ddg => ddg.Combat)
+            .WithMany(cp => cp.CombatPlayers)
+            .HasForeignKey(ddg => ddg.CombatId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            b.OwnsMany(c => c.CombatPlayers, cp =>
-            {
-                cp.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayer.CombatId));
-                cp.Property<int>(nameof(Domain.Entities.CombatPlayer.Id));
-                cp.HasKey(nameof(Domain.Entities.CombatPlayer.Id));
+        AddTableRefs(modelBuilder);
+    }
 
-                cp.OwnsOne(p => p.Stats, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerStats.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerStats.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerStats.Id));
-                });
+    private static void AddTableRefs(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Combat>()
+            .HasOne(c => c.CombatLog)
+            .WithMany(cl => cl.Combats)
+            .HasForeignKey(c => c.CombatLogId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                cp.OwnsOne(p => p.Score, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.SpecializationScore.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.SpecializationScore.Id));
-                    dd.HasKey(nameof(Domain.Entities.SpecializationScore.Id));
-                });
+        modelBuilder.Entity<CombatAura>()
+            .HasOne(bs => bs.Combat)
+            .WithMany(s => s.CombatAuras)
+            .HasForeignKey(bs => bs.CombatId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                cp.OwnsMany(p => p.DamageDones, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.DamageDone.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.DamageDone.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.DamageDone.Id));
+        modelBuilder.Entity<CombatTarget>()
+            .HasOne(bs => bs.Combat)
+            .WithMany(s => s.CombatTargets)
+            .HasForeignKey(bs => bs.CombatId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageDone.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageDone.SPELL_MAX_LENGTH);
+        modelBuilder.Entity<CombatPlayer>()
+            .HasOne(cp => cp.Combat)
+            .WithMany(c => c.CombatPlayers)
+            .HasForeignKey(cp => cp.CombatId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageDone.Creator))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageDone.CREATOR_MAX_LENGTH);
+        modelBuilder.Entity<CombatPlayer>()
+            .HasOne(cp => cp.Stats)
+            .WithOne(s => s.CombatPlayer)
+            .HasForeignKey<CombatPlayerStats>(s => s.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageDone.Target))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageDone.TARGET_MAX_LENGTH);
-                });
+        modelBuilder.Entity<CombatPlayer>()
+            .HasOne(cp => cp.Score)
+            .WithOne(s => s.CombatPlayer)
+            .HasForeignKey<SpecializationScore>(s => s.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                cp.OwnsMany(p => p.DamageDoneGenerals, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.DamageDoneGeneral.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.DamageDoneGeneral.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.DamageDoneGeneral.Id));
+        modelBuilder.Entity<CombatPlayer>()
+            .HasOne(cp => cp.Player)
+            .WithMany(p => p.CombatPlayers)
+            .HasForeignKey(cp => cp.PlayerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageDoneGeneral.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageDoneGeneral.SPELL_MAX_LENGTH);
-                });
+        modelBuilder.Entity<CombatPlayerDeath>()
+            .HasOne(cpd => cpd.CombatPlayer)
+            .WithMany(cp => cp.CombatPlayerDeathes)
+            .HasForeignKey(cpd => cpd.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                cp.OwnsMany(p => p.HealDones, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.HealDone.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.HealDone.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.HealDone.Id));
+        modelBuilder.Entity<CombatPlayerPosition>()
+            .HasOne(cpp => cpp.CombatPlayer)
+            .WithMany(cp => cp.CombatPlayerPositions)
+            .HasForeignKey(cpp => cpp.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.HealDone.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.HealDone.SPELL_MAX_LENGTH);
+        modelBuilder.Entity<SpecializationScore>()
+            .HasOne(sc => sc.Specialization)
+            .WithMany(s => s.SpecializationScores)
+            .HasForeignKey(sc => sc.SpecializationId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.HealDone.Creator))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.HealDone.CREATOR_MAX_LENGTH);
+        modelBuilder.Entity<BestSpecializationScore>()
+            .HasOne(bss => bss.Specialization)
+            .WithMany(s => s.BestSpecializationScores)
+            .HasForeignKey(bss => bss.SpecializationId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.HealDone.Target))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.HealDone.TARGET_MAX_LENGTH);
-                });
+        modelBuilder.Entity<BestSpecializationScore>()
+            .HasOne(bss => bss.Boss)
+            .WithMany(b => b.BestSpecializationScores)
+            .HasForeignKey(bss => bss.BossId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-                cp.OwnsMany(p => p.HealDoneGenerals, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.HealDoneGeneral.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.HealDoneGeneral.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.HealDoneGeneral.Id));
+        AddCombatPlayerDataTableRefs(modelBuilder);
+    }
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.HealDoneGeneral.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.HealDoneGeneral.SPELL_MAX_LENGTH);
-                });
+    private static void AddCombatPlayerDataTableRefs(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<DamageDone>()
+            .HasOne(ddg => ddg.CombatPlayer)
+            .WithMany(cp => cp.DamageDones)
+            .HasForeignKey(ddg => ddg.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                cp.OwnsMany(p => p.DamageTakens, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.DamageTaken.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.DamageTaken.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.DamageTaken.Id));
+        modelBuilder.Entity<DamageDoneGeneral>()
+            .HasOne(ddg => ddg.CombatPlayer)
+            .WithMany(cp => cp.DamageDoneGenerals)
+            .HasForeignKey(ddg => ddg.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageTaken.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageTaken.SPELL_MAX_LENGTH);
+        modelBuilder.Entity<HealDone>()
+            .HasOne(hd => hd.CombatPlayer)
+            .WithMany(cp => cp.HealDones)
+            .HasForeignKey(dn => dn.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageTaken.Creator))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageTaken.CREATOR_MAX_LENGTH);
+        modelBuilder.Entity<HealDoneGeneral>()
+            .HasOne(hdg => hdg.CombatPlayer)
+            .WithMany(cp => cp.HealDoneGenerals)
+            .HasForeignKey(hdg => hdg.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageTaken.Target))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageTaken.TARGET_MAX_LENGTH);
-                });
+        modelBuilder.Entity<DamageTaken>()
+            .HasOne(dt => dt.CombatPlayer)
+            .WithMany(cp => cp.DamageTakens)
+            .HasForeignKey(dt => dt.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                cp.OwnsMany(p => p.DamageTakenGenerals, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.DamageTakenGeneral.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.DamageTakenGeneral.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.DamageTakenGeneral.Id));
+        modelBuilder.Entity<DamageTakenGeneral>()
+            .HasOne(dtg => dtg.CombatPlayer)
+            .WithMany(cp => cp.DamageTakenGenerals)
+            .HasForeignKey(dtg => dtg.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.DamageTakenGeneral.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.DamageTakenGeneral.SPELL_MAX_LENGTH);
-                });
+        modelBuilder.Entity<ResourceRecovery>()
+            .HasOne(rr => rr.CombatPlayer)
+            .WithMany(cp => cp.ResourceRecoveries)
+            .HasForeignKey(rr => rr.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                cp.OwnsMany(p => p.ResourceRecoveries, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.ResourceRecovery.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.ResourceRecovery.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.ResourceRecovery.Id));
+        modelBuilder.Entity<ResourceRecoveryGeneral>()
+            .HasOne(rrg => rrg.CombatPlayer)
+            .WithMany(cp => cp.ResourceRecoveryGenerals)
+            .HasForeignKey(rrg => rrg.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.ResourceRecovery.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.ResourceRecovery.SPELL_MAX_LENGTH);
+        modelBuilder.Entity<CombatPlayerDeath>()
+            .HasOne(ddg => ddg.CombatPlayer)
+            .WithMany(cp => cp.CombatPlayerDeathes)
+            .HasForeignKey(ddg => ddg.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.ResourceRecovery.Creator))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.ResourceRecovery.CREATOR_MAX_LENGTH);
-
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.ResourceRecovery.Target))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.ResourceRecovery.TARGET_MAX_LENGTH);
-                });
-
-                cp.OwnsMany(p => p.ResourceRecoveryGenerals, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral.Id));
-
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral.Spell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral.SPELL_MAX_LENGTH);
-                });
-
-                cp.OwnsMany(p => p.CombatPlayerDeathes, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerDeath.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerDeath.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerDeath.Id));
-
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerDeath.Username))
-                        .HasMaxLength(Domain.Entities.CombatPlayerDeath.USERNAME_MAX_LENGTH);
-
-                    dd.Property<string>(nameof(Domain.Entities.CombatPlayerDeath.LastHitSpell))
-                        .HasMaxLength(Domain.Entities.CombatPlayerDeath.SPELL_MAX_LENGTH);
-                });
-
-                cp.OwnsMany(p => p.CombatPlayerPositions, dd =>
-                {
-                    dd.WithOwner().HasForeignKey(nameof(Domain.Entities.CombatPlayerPosition.CombatPlayerId));
-                    dd.Property<int>(nameof(Domain.Entities.CombatPlayerPosition.Id));
-                    dd.HasKey(nameof(Domain.Entities.CombatPlayerPosition.Id));
-                });
-            });
-        });
+        modelBuilder.Entity<CombatPlayerPosition>()
+            .HasOne(ddg => ddg.CombatPlayer)
+            .WithMany(cp => cp.CombatPlayerPositions)
+            .HasForeignKey(ddg => ddg.CombatPlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

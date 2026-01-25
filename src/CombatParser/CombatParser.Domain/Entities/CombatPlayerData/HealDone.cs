@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public record HealDone
+public class HealDone
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;
@@ -30,25 +30,32 @@ public record HealDone
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; }
+    public int Id { get; private set; }
 
-    public int GameSpellId { get; }
+    public int GameSpellId { get; private set; }
 
-    public string Spell { get; } = string.Empty;
+    public string Spell { get; private set; } = string.Empty;
 
-    public int Value { get; }
+    public int Value { get; private set; }
 
-    public TimeSpan Time { get; }
+    public TimeSpan Time { get; private set; }
 
-    public string Creator { get; }
+    public string Creator { get; private set; }
 
-    public string Target { get; }
+    public string Target { get; private set; }
 
-    public int Overheal { get; }
+    public int Overheal { get; private set;  }
 
-    public bool IsCrit { get; }
+    public bool IsCrit { get; private set; }
 
-    public bool IsAbsorbed { get; }
+    public bool IsAbsorbed { get; private set; }
 
-    public int CombatPlayerId { get; }
+    public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

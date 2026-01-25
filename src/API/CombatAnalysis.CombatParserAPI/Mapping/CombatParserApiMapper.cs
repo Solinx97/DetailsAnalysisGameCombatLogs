@@ -43,7 +43,7 @@ internal class CombatParserApiMapper : Profile
         CreateMap<SpecializationScoreDto, SpecializationScoreModel>().ReverseMap();
         CreateMap<BestSpecializationScoreDto, BestSpecializationScoreModel>().ReverseMap();
 
-        CreateMap<PlayerDeath, CombatPlayerDeathModel>().ReverseMap();
+        CreateMap<CombatPlayerDeath, CombatPlayerDeathModel>().ReverseMap();
         CreateMap<PlayerStats, CombatPlayerStatsModel>().ReverseMap();
         CreateMap<Combat, CombatModel>().ReverseMap();
         CreateMap<CombatPlayer, CombatPlayerModel>().ReverseMap();
@@ -56,7 +56,7 @@ internal class CombatParserApiMapper : Profile
         CreateMap<ResourceRecovery, ResourceRecoveryModel>().ReverseMap();
         CreateMap<ResourceRecoveryGeneral, ResourceRecoveryGeneralModel>().ReverseMap();
 
-        CreateMap<CombatPlayerDeathDto, PlayerDeath>().ReverseMap();
+        CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
         CreateMap<CombatPlayerStatsDto, PlayerStats>().ReverseMap();
         CreateMap<PlayerModel, Player>().ReverseMap();
         CreateMap<CombatDto, Combat>().ReverseMap();
@@ -74,17 +74,18 @@ internal class CombatParserApiMapper : Profile
 
         CreateMap<SpecializationScoreDto, SpecializationScore>().ReverseMap();
 
-        CreateMap<DamageDoneData, DamageDone>().ReverseMap();
-        CreateMap<DamageDoneGeneralData, DamageDoneGeneral>().ReverseMap();
-        CreateMap<HealDoneData, HealDone>().ReverseMap();
-        CreateMap<HealDoneGeneralData, HealDoneGeneral>().ReverseMap();
-        CreateMap<DamageTakenData, DamageTaken>().ReverseMap();
-        CreateMap<DamageTakenGeneralData, DamageTakenGeneral>().ReverseMap();
-        CreateMap<ResourceRecoveryData, ResourceRecovery>().ReverseMap();
-        CreateMap<ResourceRecoveryGeneralData, ResourceRecoveryGeneral>().ReverseMap();
-        CreateMap<CombatPlayerDeathData, PlayerDeath>().ReverseMap();
+        CreateMap<DamageDoneData, DamageDoneModel>().ReverseMap();
+        CreateMap<DamageDoneGeneralData, DamageDoneGeneralModel>().ReverseMap();
+        CreateMap<HealDoneData, HealDoneModel>().ReverseMap();
+        CreateMap<HealDoneGeneralData, HealDoneGeneralModel>().ReverseMap();
+        CreateMap<DamageTakenData, DamageTakenModel>().ReverseMap();
+        CreateMap<DamageTakenGeneralData, DamageTakenGeneralModel>().ReverseMap();
+        CreateMap<ResourceRecoveryData, ResourceRecoveryModel>().ReverseMap();
+        CreateMap<ResourceRecoveryGeneralData, ResourceRecoveryGeneralModel>().ReverseMap();
         CreateMap<CombatPlayerStatsData, CombatPlayerStatsModel>().ReverseMap();
-        CreateMap<CombatPlayerPositionData, CombatPlayerPosition>().ReverseMap();
+        CreateMap<CombatPlayerDeathData, CombatPlayerDeathModel>().ReverseMap();
+        CreateMap<CombatPlayerPositionData, CombatPlayerPositionModel>().ReverseMap();
         CreateMap<SpecializationScoreData, SpecializationScoreModel>().ReverseMap();
+        CreateMap<CombatAuraData, CombatAuraModel>().ReverseMap();
     }
 }

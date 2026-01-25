@@ -5,9 +5,9 @@ namespace CombatAnalysis.CombatParser.Interfaces;
 
 public interface ICombatParserService
 {
-    List<Combat> Combats { get; set; }
+    List<Combat> Combats { get; }
 
-    List<CombatDetails> CombatDetails { get; set; }
+    List<CombatDetails> CombatDetails { get; }
 
     Task<bool> FileCheckAsync(string combatLog);
 

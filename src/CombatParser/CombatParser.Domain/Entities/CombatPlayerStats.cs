@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities;
 
-public record CombatPlayerStats
+public class CombatPlayerStats
 {
     public const int TALENTS_MAX_LENGTH = 128;
 
@@ -40,33 +40,40 @@ public record CombatPlayerStats
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; }
+    public int Id { get; private set; }
 
-    public int Strength { get; }
+    public int Strength { get; private set; }
 
-    public int Agility { get; }
+    public int Agility { get; private set; }
 
-    public int Intelligence { get; }
+    public int Intelligence { get; private set; }
 
-    public int Stamina { get; }
+    public int Stamina { get; private set; }
 
-    public int Spirit { get; }
+    public int Spirit { get; private set; }
 
-    public int Dodge { get; }
+    public int Dodge { get; private set; }
 
-    public int Parry { get; }
+    public int Parry { get; private set; }
 
-    public int Crit { get; }
+    public int Crit { get; private set; }
 
-    public int Haste { get; }
+    public int Haste { get; private set; }
 
-    public int Hit { get; }
+    public int Hit { get; private set; }
 
-    public int Expertise { get; }
+    public int Expertise { get; private set; }
 
-    public int Armor { get; }
+    public int Armor { get; private set; }
 
-    public string Talents { get; } = string.Empty;
+    public string Talents { get; private set; } = string.Empty;
 
-    public int CombatPlayerId { get; }
+    public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

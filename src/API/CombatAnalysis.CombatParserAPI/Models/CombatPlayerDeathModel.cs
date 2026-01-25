@@ -8,10 +8,9 @@ public class CombatPlayerDeathModel
     public int Id { get; set; }
 
     [Required]
-    public string Username { get; set; }
+    public string Username { get; set; } = string.Empty;
 
-    [Required]
-    public string LastHitSpell { get; set; }
+    public string LastHitSpell { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int LastHitValue { get; set; }

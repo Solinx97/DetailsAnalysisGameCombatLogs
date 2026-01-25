@@ -13,9 +13,6 @@ public class CombatModel
     [Range(0, int.MaxValue)]
     public double BossHealthPercentage { get; set; }
 
-    [Required]
-    public List<string> Data { get; set; } = [];
-
     [Range(0, int.MaxValue)]
     public long DamageDone { get; set; }
 
@@ -57,4 +54,6 @@ public class CombatModel
 
     [Range(1, int.MaxValue)]
     public int CombatLogId { get; set; }
+
+    public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; set; } = [];
 }

@@ -2,12 +2,9 @@
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Interfaces.General;
-using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
-using CombatAnalysis.DAL.Entities;
 using CombatParser.Application.Commands.CreateCombat;
-using CombatParser.Application.Commands.CreateCombatLog;
 using CombatParser.Domain.EntityData;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,20 +14,14 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatController(IBossService bossService, IQueryService<CombatDto> queryCombatService, IMutationService<CombatDto> mutationCombatService,
-    ICombatPlayerService combatPlayerService, IMapper mapper, ILogger<CombatController> logger, 
-    ISpecializationScoreHelper scoreHelper, ICombatDataHelper combatDataHelper, ICombatTransactionService combatTransactionService,
-    IMediator mediator) : ControllerBase
+public class CombatController(IBossService bossService, IQueryService<CombatDto> queryCombatService, IMapper mapper, ILogger<CombatController> logger, 
+    ISpecializationScoreHelper scoreHelper, IMediator mediator) : ControllerBase
 {
     private readonly IBossService _bossService = bossService;
     private readonly IQueryService<CombatDto> _queryCombatService = queryCombatService;
-    private readonly IMutationService<CombatDto> _mutationCombatService = mutationCombatService;
-    private readonly ICombatPlayerService _combatPlayerService = combatPlayerService;
     private readonly ISpecializationScoreHelper _scoreHelper = scoreHelper;
     private readonly IMapper _mapper = mapper;
     private readonly ILogger<CombatController> _logger = logger;
-    private readonly ICombatDataHelper _combatDataHelper = combatDataHelper;
-    private readonly ICombatTransactionService _combatTransactionService = combatTransactionService;
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
@@ -70,127 +61,86 @@ public class CombatController(IBossService bossService, IQueryService<CombatDto>
     {
         try
         {
-            // A huge transaction for all action as ONE TRANSACTION was divided into a few small transactions.
-            // Transactions split by logic: combat/combatPlayer/combatPlayerData and combatPlayerSpecScore/bestSpecScore
-
-            // Transaction to create Combat and Combat Players
-            //await _combatTransactionService.BeginTransactionAsync();
-            //cancellationToken.ThrowIfCancellationRequested();
-
-            var combatDetails = _combatDataHelper.CreateCombatDetails(combat);
-            //var combatDetails = await CreateCombatPlayersAsync(combat, cancellationToken);
-
-            //await _combatTransactionService.CommitTransactionAsync();
-
-            //// Transaction to create Combat player data and specialization score:
-            //// 1) damage, heal, damage taken, resources, etc
-            //// 2) how combat player do mechanics, class rotation, assist other combat players, etc
-            //await _combatTransactionService.BeginTransactionAsync();
-            //cancellationToken.ThrowIfCancellationRequested();
-
-            //var createdCombatPlayers = await _combatPlayerService.GetByCombatIdAsync(createdCombat.Id, cancellationToken);
-            //await _combatDataHelper.CreateCombatPlayersDataAsync(combatDetails, [.. createdCombatPlayers], createdCombat.Id, cancellationToken);
-            //await _combatDataHelper.UpdateSpecializationScoreAsync([.. createdCombatPlayers], combatDetails, combat.Boss.Id, cancellationToken);
-
-            var combatPlayers = new List<CombatPlayerData>();
-
-            foreach (var item in combat.CombatPlayers)
+            if (!ModelState.IsValid)
             {
-                var statsMap = _mapper.Map<CombatPlayerStatsData>(item.Stats);
-                var scoreMap = _mapper.Map<SpecializationScoreData>(item.Score);
-                var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatDetails.DamageDone[item.Player.GameId].Select(x => x.Value));
-                var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatDetails.DamageDoneGeneral[item.Player.GameId]);
-                var healDonesMap = _mapper.Map<List<HealDoneData>>(combatDetails.HealDone[item.Player.GameId].Select(x => x.Value));
-                var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(combatDetails.HealDoneGeneral[item.Player.GameId]);
-                var damageTakenMap = _mapper.Map<List<DamageTakenData>>(combatDetails.DamageTaken[item.Player.GameId].Select(x => x.Value));
-                var damageTakenGeneralsMap = _mapper.Map<List<DamageTakenGeneralData>>(combatDetails.DamageTakenGeneral[item.Player.GameId]);
-                var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatDetails.ResourcesRecovery[item.Player.GameId].Select(x => x.Value));
-                var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatDetails.ResourcesRecoveryGeneral[item.Player.GameId]);
-                var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatDetails.PlayersDeath[item.Player.GameId].Select(x => x.Value));
-                var positionsMap = _mapper.Map<List<CombatPlayerPositionData>>(combatDetails.Positions[item.Player.GameId].Select(x => x.Value));
+                _logger.LogWarning("Invalid Combat create received: {@Combat}", combat);
 
-                combatPlayers.Add(new CombatPlayerData(
-                    item.AverageItemLevel,
-                    item.ResourcesRecovery,
-                    item.DamageDone,
-                    item.HealDone,
-                    item.DamageTaken,
-                    item.PlayerId,
-                    item.CombatId,
-                    statsMap,
-                    scoreMap,
-                    damageDonesMap,
-                    damageDoneGeneralsMap,
-                    healDonesMap,
-                    healDoneGeneralsMap,
-                    damageTakenMap,
-                    damageTakenGeneralsMap,
-                    resourceRecoveryMap,
-                    resourceRecoveryGeneralMap,
-                    deathsMap,
-                    positionsMap
-                ));
+                return ValidationProblem(ModelState);
             }
 
+            var combatPlayers = new List<CombatPlayerData>();
+            var auras = new List<CombatAuraData>();
+
+            await ExtractCombatPlayerDataAsync(combat, combatPlayers, auras, cancellationToken);
+
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayers);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayers, auras);
 
             var createdCombat = await _mediator.Send(command, cancellationToken);
 
-            ////createdCombat.IsReady = true;
-
-            //await _mutationCombatService.UpdateAsync(createdCombat, cancellationToken);
-
-            //await _combatTransactionService.CommitTransactionAsync();
-
-            return Ok(createdCombat);
+            return Ok();
         }
         catch (OperationCanceledException ex)
         {
-            //await _combatTransactionService.RollbackTransactionAsync();
-
             _logger.LogInformation(ex, "Operation was canceled by Client.");
 
             return StatusCode(499);
         }
         catch (DbUpdateException ex)
         {
-            //await _combatTransactionService.RollbackTransactionAsync();
-
             _logger.LogError(ex, "Failed to create combat.");
 
             return StatusCode(500, "Internal server error.");
         }
     }
 
-    private async Task<CombatDto> CreateCombatAsync(CombatModel model, CancellationToken cancellationToken)
+    private async Task ExtractCombatPlayerDataAsync(CombatModel combat, List<CombatPlayerData> combatPlayers, List<CombatAuraData> auras, CancellationToken cancellationToken)
     {
-        var map = _mapper.Map<CombatDto>(model);
-        var createdCombat = await _mutationCombatService.CreateAsync(map, cancellationToken);
-        ArgumentNullException.ThrowIfNull(createdCombat, nameof(createdCombat));
+        var aurasMap = _mapper.Map<List<CombatAuraData>>(combat.CombatAuras);
 
-        return createdCombat;
-    }
-
-    private async Task<CombatDetails> CreateCombatPlayersAsync(CombatModel combat, CancellationToken cancellationToken)
-    {
-        var combatDetails = _combatDataHelper.CreateCombatDetails(combat);
-
-        combat.CombatPlayers = [.. combat.CombatPlayers.Select(cp =>
+        foreach (var combatPlayer in combat.CombatPlayers)
         {
-            cp.CombatId = combat.Id;
+            var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
 
-            return cp;
-        })];
+            var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
+            var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
+            var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
+            var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(combatPlayer.HealDoneGenerals);
+            var damageTakenMap = _mapper.Map<List<DamageTakenData>>(combatPlayer.DamageTakens);
+            var damageTakenGeneralsMap = _mapper.Map<List<DamageTakenGeneralData>>(combatPlayer.DamageTakenGenerals);
+            var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatPlayer.ResourceRecoveries);
+            var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatPlayer.ResourceRecoveryGenerals);
+            var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatPlayer.CombatPlayerDeathes);
+            var positionsMap = _mapper.Map<List<CombatPlayerPositionData>>(combatPlayer.CombatPlayerPositions);
 
-        var map = _mapper.Map<IEnumerable<CombatPlayerDto>>(combat.CombatPlayers);
-        foreach (var combatPlayer in map)
-        {
-            await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, combatDetails, cancellationToken);
+            var spellIds = combatPlayer.DamageDone > combatPlayer.HealDone
+                ? combatPlayer.DamageDones.Select(d => d.GameSpellId).ToArray()
+                : [.. combatPlayer.HealDones.Select(d => d.GameSpellId)];
+
+            await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, spellIds, cancellationToken);
+            var scoreMap = _mapper.Map<SpecializationScoreData>(combatPlayer.Score);
+
+            combatPlayers.Add(new CombatPlayerData(
+                combatPlayer.AverageItemLevel,
+                combatPlayer.ResourcesRecovery,
+                combatPlayer.DamageDone,
+                combatPlayer.HealDone,
+                combatPlayer.DamageTaken,
+                combatPlayer.PlayerId,
+                combatPlayer.CombatId,
+                statsMap,
+                scoreMap,
+                damageDonesMap,
+                damageDoneGeneralsMap,
+                healDonesMap,
+                healDoneGeneralsMap,
+                damageTakenMap,
+                damageTakenGeneralsMap,
+                resourceRecoveryMap,
+                resourceRecoveryGeneralMap,
+                deathsMap,
+                positionsMap
+            ));
         }
-        
-        await _combatPlayerService.CreateBatchAsync(map, cancellationToken);
-
-        return combatDetails;
     }
 }

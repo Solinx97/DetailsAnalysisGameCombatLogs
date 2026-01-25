@@ -1,21 +1,40 @@
 ﻿using CombatParser.Domain.Aggregates;
-using System.ComponentModel.DataAnnotations;
 
 namespace CombatParser.Domain.Entities;
 
 public class CombatTarget
 {
-    public int Id { get; set; }
+    public const int USERNAME_MAX_LENGTH = 128;
+    public const int TARGET_MAX_LENGTH = 128;
 
-    [MaxLength(126)]
-    public string Username { get; set; } = string.Empty;
+    private CombatTarget() { }
 
-    [MaxLength(126)]
-    public string Target { get; set; } = string.Empty;
+    public CombatTarget(string username, string target, int sum, int combatId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(username, nameof(username));
+        ArgumentException.ThrowIfNullOrEmpty(target, nameof(target));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sum, nameof(sum));
 
-    public int Sum { get; set; }
+        Username = username;
+        Target = target;
+        Sum = sum;
+        CombatId = combatId;
+    }
 
-    public Combat Combat { get; set; }
+    public int Id { get; private set; }
 
-    public int CombatId { get; set; }
+    public string Username { get; private set; } = string.Empty;
+
+    public string Target { get; private set; } = string.Empty;
+
+    public int Sum { get; private set; }
+
+    public Combat Combat { get; private set; }
+
+    public int CombatId { get; private set; }
+
+    public void SetCombatId(int combatId)
+    {
+        CombatId = combatId;
+    }
 }

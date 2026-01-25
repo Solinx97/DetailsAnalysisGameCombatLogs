@@ -56,9 +56,9 @@ public class CombatDetails(ILogger logger)
 
     public ILogger Logger { get; private set; } = logger;
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerPosition>> Positions { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerPosition>> CombatPlayerPositions { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, PlayerDeath>> PlayersDeath { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> CombatPlayersDeath { get; private set; } = [];
 
     public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageDone>> DamageDone { get; private set; } = [];
 
@@ -116,8 +116,8 @@ public class CombatDetails(ILogger logger)
     {
         foreach(var playerId in playersId)
         {
-            Positions.TryAdd(playerId, []);
-            PlayersDeath.TryAdd(playerId, []);
+            CombatPlayerPositions.TryAdd(playerId, []);
+            CombatPlayersDeath.TryAdd(playerId, []);
             Auras.TryAdd(playerId, []);
 
             DamageDone.TryAdd(playerId, []);
@@ -151,7 +151,7 @@ public class CombatDetails(ILogger logger)
             var (playerId, positions) = combatDetailsManager.GetPositions(clearCombatData);
             if (!string.IsNullOrEmpty(playerId) || positions != null)
             {
-                if (Positions.TryGetValue(playerId, out var collection))
+                if (CombatPlayerPositions.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), positions);
                 }
@@ -175,7 +175,7 @@ public class CombatDetails(ILogger logger)
             var (playerId, playerDeath) = combatDetailsManager.GetPlayerDeath(clearCombatData);
             if (!string.IsNullOrEmpty(playerId) || playerDeath != null)
             {
-                if (PlayersDeath.TryGetValue(playerId, out var collection))
+                if (CombatPlayersDeath.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), playerDeath);
                 }

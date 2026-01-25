@@ -308,14 +308,14 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (combatDataLine[6], energyRecovery);
     }
 
-    public (string, PlayerDeath?) GetPlayerDeath(List<string> combatDataLine)
+    public (string, CombatPlayerDeath?) GetPlayerDeath(List<string> combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
         {
             return (string.Empty, null);
         }
 
-        var userDeath = new PlayerDeath
+        var userDeath = new CombatPlayerDeath
         {
             Username = combatDataLine[7].Trim('"'),
             Time = GetTimeFromStart(combatDataLine[0]),

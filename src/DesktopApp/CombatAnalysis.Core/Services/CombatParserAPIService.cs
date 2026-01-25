@@ -32,14 +32,14 @@ internal class CombatParserAPIService : ICombatParserAPIService
         try
         {
             var cancellationToken = requestCancelationToken();
-            var combatTasks = combats.Select(async item =>
+            var combatTasks = combats.Select(async combat =>
             {
-                item.CombatLogId = combatLog.Id;
+                combat.CombatLogId = combatLog.Id;
 
-                var response = await _httpClient.PostAsync("Combat", JsonContent.Create(item), cancellationToken);
+                var response = await _httpClient.PostAsync("Combat", JsonContent.Create(combat), cancellationToken);
                 response.EnsureSuccessStatusCode();
 
-                uplodedCallback(item.DungeonName, item.Boss.Name);
+                uplodedCallback(combat.DungeonName, combat.Boss.Name);
 
                 readyCombatsNumber++;
             });
@@ -358,7 +358,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
             var leftHealth = item.Boss.Health - damageToBoss;
             var precentage = (double)leftHealth / (double)item.Boss.Health;
 
-            item.BossHealthPercentage = Math.Round(precentage * 100, 2);
+            item.BossHealthPercentage = precentage < 0 ? 0 : Math.Round(precentage * 100, 2);
         }
     }
 }

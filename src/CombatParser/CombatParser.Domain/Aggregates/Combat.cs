@@ -10,6 +10,8 @@ public class Combat
     public const int DUNGEON_NAME_MAX_LENGTH = 128;
 
     private readonly List<CombatPlayer> _players = [];
+    private readonly List<CombatAura> _auras = [];
+    private readonly List<CombatTarget> _targets = [];
 
     private Combat() { }
 
@@ -67,15 +69,13 @@ public class Combat
 
     public IReadOnlyCollection<CombatPlayer> CombatPlayers => _players.AsReadOnly();
 
-    //public ICollection<CombatPlayerPosition> CombatPlayerPositions { get; set; } = [];
+    public IReadOnlyCollection<CombatAura> CombatAuras => _auras.AsReadOnly();
 
-    //public ICollection<CombatAura> CombatAuras { get; set; } = [];
-
-    //public ICollection<CombatTarget> CombatTargets { get; set; } = [];
+    public IReadOnlyCollection<CombatTarget> CombatTargets => _targets.AsReadOnly();
 
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers)
+        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatAuraData> auras)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
@@ -88,11 +88,18 @@ public class Combat
         CombatException.ThrowIfLong(dungeonName);
         CombatException.ThrowIfDateIncorrect(startDate, finishDate);
 
-        var combat = new Combat(dungeonName, bossHealthPercentage, damageDone, healDone, damageTaken, resourcesRecovery, isWin, startDate, finishDate, bossId, combatLogId);
+        var combat = new Combat(dungeonName, bossHealthPercentage, damageDone, healDone, damageTaken,
+            resourcesRecovery, isWin, startDate, finishDate, bossId, 
+            combatLogId);
 
         foreach (var player in combatPlayers)
         {
             combat.AddCombatPlayer(player);
+        }
+
+        foreach (var aura in auras)
+        {
+            combat.AddCombatAura(aura);
         }
 
         return combat;
@@ -110,5 +117,12 @@ public class Combat
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals, player.DamageTakens, player.DamageTakenGenerals,
             player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths, player.CombatPlayerPositions);
         _players.Add(createdPlayer);
+    }
+
+    private void AddCombatAura(CombatAuraData aura)
+    {
+        var createdAura = new CombatAura(aura.Name, aura.Creator, aura.Target, aura.AuraCreatorType, aura.AuraType,
+            aura.StartTime, aura.FinishTime, aura.Stacks, aura.CombatId);
+        _auras.Add(createdAura);
     }
 }

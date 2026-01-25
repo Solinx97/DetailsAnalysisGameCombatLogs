@@ -34,4 +34,24 @@ public class CombatPlayerModel
 
     [Range(0, int.MaxValue)]
     public int CombatId { get; set; }
+
+    public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
+
+    public IReadOnlyList<DamageDoneGeneralModel> DamageDoneGenerals { get; set; } = [];
+
+    public IReadOnlyList<HealDoneModel> HealDones { get; set; } = [];
+
+    public IReadOnlyList<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
+
+    public IReadOnlyList<DamageTakenModel> DamageTakens { get; set; } = [];
+
+    public IReadOnlyList<DamageTakenGeneralModel> DamageTakenGenerals { get; set; } = [];
+
+    public IReadOnlyList<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
+
+    public IReadOnlyList<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
+
+    public IReadOnlyList<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
+
+    public IReadOnlyList<CombatPlayerPositionModel> CombatPlayerPositions { get; set; } = [];
 }

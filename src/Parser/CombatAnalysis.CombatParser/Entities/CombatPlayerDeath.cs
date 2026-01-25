@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.CombatParser.Entities;
 
-public class PlayerDeath : ICombatPlayerEntity
+public class CombatPlayerDeath : ICombatPlayerEntity
 {
     public string Username { get; set; } = string.Empty;
 

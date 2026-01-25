@@ -32,4 +32,6 @@ public class Combat
     }
 
     public bool IsReady { get; set; }
+
+    public List<CombatAura> CombatAuras { get; set; } = [];
 }

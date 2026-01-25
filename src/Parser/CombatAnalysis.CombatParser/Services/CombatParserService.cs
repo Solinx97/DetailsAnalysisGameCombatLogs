@@ -4,6 +4,7 @@ using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
@@ -18,9 +19,9 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
     private readonly TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
 
-    public List<Combat> Combats { get; set; } = [];
+    public List<Combat> Combats { get; private set; } = [];
 
-    public List<CombatDetails> CombatDetails { get; set; } = [];
+    public List<CombatDetails> CombatDetails { get; private set; } = [];
 
     public async Task<bool> FileCheckAsync(string combatLog)
     {
@@ -322,7 +323,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
             var statsInformation = combatInfoList.Skip(3).Take(30).ToArray();
             var stats = GetStats(statsInformation);
 
-            var combatPlayerData = new CombatPlayer
+            var combatPlayer = new CombatPlayer
             {
                 AverageItemLevel = double.Round(averageItemLevel, 2),
                 Stats = stats,
@@ -332,29 +333,29 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
                 },
             };
 
-            var player = await combatPlayerData.Player.LoadAsync(_httpHelper, _logger);
+            var player = await combatPlayer.Player.LoadAsync(_httpHelper, _logger);
 
             if (player == null)
             {
                 var username = GetUsernameByPlayerGameId(combat.Data, combatInfoList[1]);
                 var faction = int.Parse(combatInfoList[2]);
 
-                combatPlayerData.Player.Id = Guid.NewGuid().ToString();
-                combatPlayerData.Player.Username = username;
-                combatPlayerData.Player.Faction = faction;
+                combatPlayer.Player.Id = Guid.NewGuid().ToString();
+                combatPlayer.Player.Username = username;
+                combatPlayer.Player.Faction = faction;
 
-                var newPlayer = await combatPlayerData.Player.CreateAsync(_httpHelper, _logger);
+                var newPlayer = await combatPlayer.Player.CreateAsync(_httpHelper, _logger);
                 if (newPlayer != null)
                 {
-                    combatPlayerData.Player = newPlayer;
+                    combatPlayer.Player = newPlayer;
                 }
             }
             else
             {
-                combatPlayerData.Player = player;
+                combatPlayer.Player = player;
             }
 
-            combatPlayers.Add(combatPlayerData);
+            combatPlayers.Add(combatPlayer);
         }
 
         var playersId = combatPlayers.Select(x => x.Player.GameId).ToList();
@@ -365,14 +366,31 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
         CombatDetails.Add(combatDetails);
 
-        foreach (var item in combatPlayers)
+        var combatAuras = new List<CombatAura>();
+        foreach (var combatPlayer in combatPlayers)
         {
-            item.DamageDoneToBoss = combatDetails.DamageDone[item.Player.GameId].Where(x => x.Value.IsTargetBoss).Sum(x => x.Value.Value);
-            item.DamageDone = combatDetails.DamageDone[item.Player.GameId].Sum(x => x.Value.Value);
-            item.HealDone = combatDetails.HealDone[item.Player.GameId].Sum(x => x.Value.Value);
-            item.DamageTaken = combatDetails.DamageTaken[item.Player.GameId].Sum(x => x.Value.Value);
-            item.ResourcesRecovery = combatDetails.ResourcesRecovery[item.Player.GameId].Sum(x => x.Value.Value);
+            combatPlayer.DamageDoneToBoss = combatDetails.DamageDone[combatPlayer.Player.GameId].Where(x => x.Value.IsTargetBoss).Sum(x => x.Value.Value);
+            combatPlayer.DamageDone = combatDetails.DamageDone[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+            combatPlayer.HealDone = combatDetails.HealDone[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+            combatPlayer.DamageTaken = combatDetails.DamageTaken[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+            combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecovery[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+
+            combatPlayer.DamageDones.AddRange(combatDetails.DamageDone[combatPlayer.Player.GameId].Select(x => x.Value));
+            combatPlayer.DamageDoneGenerals.AddRange(combatDetails.DamageDoneGeneral[combatPlayer.Player.GameId]);
+            combatPlayer.HealDones.AddRange(combatDetails.HealDone[combatPlayer.Player.GameId].Select(x => x.Value));
+            combatPlayer.HealDoneGenerals.AddRange(combatDetails.HealDoneGeneral[combatPlayer.Player.GameId]);
+            combatPlayer.DamageTakens.AddRange(combatDetails.DamageTaken[combatPlayer.Player.GameId].Select(x => x.Value));
+            combatPlayer.DamageTakenGenerals.AddRange(combatDetails.DamageTakenGeneral[combatPlayer.Player.GameId]);
+            combatPlayer.ResourceRecoveries.AddRange(combatDetails.ResourcesRecovery[combatPlayer.Player.GameId].Select(x => x.Value));
+            combatPlayer.ResourceRecoveryGenerals.AddRange(combatDetails.ResourcesRecoveryGeneral[combatPlayer.Player.GameId]);
+
+            combatPlayer.CombatPlayerDeathes.AddRange(combatDetails.CombatPlayersDeath[combatPlayer.Player.GameId].Select(x => x.Value));
+            combatPlayer.CombatPlayerPositions.AddRange(combatDetails.CombatPlayerPositions[combatPlayer.Player.GameId].Select(x => x.Value));
+
+            combatAuras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId].Select(x => x.Value));
         }
+
+        combat.CombatAuras = combatAuras;
 
         return combatPlayers;
     }

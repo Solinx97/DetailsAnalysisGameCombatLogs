@@ -19,6 +19,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IGenericRepository<CombatLog, int>, GenericRepository<CombatLog, int>>();
         services.AddScoped<IGenericRepository<Combat, int>, GenericRepository<Combat, int>>();
         services.AddScoped<ICombatLogRepository, CombatLogRepository>();
+        services.AddScoped<ICombatRepository, CombatRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

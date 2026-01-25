@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities;
 
-public record CombatPlayerDeath
+public class CombatPlayerDeath
 {
     public const int USERNAME_MAX_LENGTH = 128;
     public const int SPELL_MAX_LENGTH = 128;
@@ -19,15 +19,22 @@ public record CombatPlayerDeath
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
-    public string Username { get; set; } = string.Empty;
+    public string Username { get; private set; } = string.Empty;
 
-    public string LastHitSpell { get; set; } = string.Empty;
+    public string LastHitSpell { get; private set; } = string.Empty;
 
-    public int LastHitValue { get; set; }
+    public int LastHitValue { get; private set; }
 
-    public TimeSpan Time { get; set; }
+    public TimeSpan Time { get; private set; }
 
-    public int CombatPlayerId { get; set; }
+    public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

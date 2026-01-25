@@ -13,7 +13,7 @@ public class ResourceRecoveryModel
     [Required]
     public string Spell { get; set; }
 
-    [Range(0, int.MaxValue)]
+    [Required]
     public int Value { get; set; }
 
     [Required]

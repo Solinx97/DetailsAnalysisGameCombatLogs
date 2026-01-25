@@ -1,11 +1,11 @@
 ﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.CombatParser.Details;
+using CombatAnalysis.CombatParserAPI.Models;
 
 namespace CombatAnalysis.CombatParserAPI.Interfaces;
 
 public interface ISpecializationScoreHelper
 {
-    Task CreateSpecializationScoreAsync(CombatPlayerDto combatPlayer, CombatDetails combatDetails, CancellationToken cancellationToken);
+    Task CreateSpecializationScoreAsync(CombatPlayerModel combatPlayer, int[] spellIds, CancellationToken cancellationToken);
 
     Task<SpecializationScoreDto?> GetSpecializationScoreAsync(int combatPlayerId, CancellationToken cancellationToken);
 

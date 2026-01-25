@@ -40,7 +40,6 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 
-builder.Services.AddScoped<ICombatDataHelper, CombatDataHelper>();
 builder.Services.AddScoped<ISpecializationScoreHelper, SpecializationScoreHelper>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>

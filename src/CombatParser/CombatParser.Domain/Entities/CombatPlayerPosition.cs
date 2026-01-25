@@ -1,27 +1,31 @@
 ﻿namespace CombatParser.Domain.Entities;
 
-public record CombatPlayerPosition
+public class CombatPlayerPosition
 {
     private CombatPlayerPosition() { }
 
-    public CombatPlayerPosition(int positionX, int positionY, TimeSpan time, int combatPlayerId, int combatId)
+    public CombatPlayerPosition(int positionX, int positionY, TimeSpan time, int combatPlayerId)
     {
         PositionX = positionX;
         PositionY = positionY;
         Time = time;
         CombatPlayerId = combatPlayerId;
-        CombatId = combatPlayerId;
     }
 
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
-    public double PositionX { get; set; }
+    public double PositionX { get; private set; }
 
-    public double PositionY { get; set; }
+    public double PositionY { get; private set; }
 
-    public TimeSpan Time { get; set; }
+    public TimeSpan Time { get; private set; }
 
-    public int CombatPlayerId { get; set; }
+    public CombatPlayer CombatPlayer { get; private set; }
 
-    public int CombatId { get; set; }
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities;
 
-public record SpecializationScore
+public class SpecializationScore
 {
     private SpecializationScore() { }
 
@@ -22,19 +22,28 @@ public record SpecializationScore
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; }
+    public int Id { get; private set; }
 
-    public double DamageScore { get; }
+    public double DamageScore { get; private set; }
 
-    public int DamageDone { get; }
+    public int DamageDone { get; private set; }
 
-    public double HealScore { get; }
+    public double HealScore { get; private set; }
 
-    public int HealDone { get; }
+    public int HealDone { get; private set; }
 
-    public DateTimeOffset? Updated { get; }
+    public DateTimeOffset? Updated { get; private set; }
 
-    public int SpecializationId { get; }
+    public Specialization Specialization { get; private set; }
 
-    public int CombatPlayerId { get; }
+    public int SpecializationId { get; private set; }
+
+    public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

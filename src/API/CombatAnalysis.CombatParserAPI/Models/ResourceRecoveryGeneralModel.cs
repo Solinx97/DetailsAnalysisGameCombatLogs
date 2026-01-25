@@ -13,7 +13,7 @@ public class ResourceRecoveryGeneralModel
     [Required]
     public string Spell { get; set; }
 
-    [Range(0, int.MaxValue)]
+    [Required]
     public int Value { get; set; }
 
     [Range(0, int.MaxValue)]
@@ -22,13 +22,13 @@ public class ResourceRecoveryGeneralModel
     [Range(0, int.MaxValue)]
     public int CastNumber { get; set; }
 
-    [Range(0, int.MaxValue)]
+    [Required]
     public int MinValue { get; set; }
 
     [Range(0, int.MaxValue)]
     public int MaxValue { get; set; }
 
-    [Range(0, int.MaxValue)]
+    [Required]
     public double AverageValue { get; set; }
 
     [Range(0, int.MaxValue)]

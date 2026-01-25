@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public record ResourceRecovery
+public class ResourceRecovery
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;
@@ -26,19 +26,26 @@ public record ResourceRecovery
     }
 
 
-    public int Id { get; set; }
+    public int Id { get; private set; }
 
-    public int GameSpellId { get; set; }
+    public int GameSpellId { get; private set; }
 
-    public string Spell { get; set; } = string.Empty;
+    public string Spell { get; private set; } = string.Empty;
 
-    public int Value { get; set; }
+    public int Value { get; private set; }
 
-    public TimeSpan Time { get; set; }
+    public TimeSpan Time { get; private set; }
 
-    public string Creator { get; set; } = string.Empty;
+    public string Creator { get; private set; } = string.Empty;
 
-    public string Target { get; set; } = string.Empty;
+    public string Target { get; private set; } = string.Empty;
 
-    public int CombatPlayerId { get; set; }
+    public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; private set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

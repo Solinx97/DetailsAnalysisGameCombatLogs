@@ -40,7 +40,7 @@ public class DamageTakenModel
     [Range(0, int.MaxValue)]
     public int Blocked { get; set; }
 
-    [Range(0, int.MaxValue)]
+    [Required]
     public int RealDamage { get; set; }
 
     [Range(0, int.MaxValue)]
