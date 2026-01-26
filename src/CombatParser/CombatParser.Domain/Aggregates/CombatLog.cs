@@ -61,8 +61,10 @@ public class CombatLog
         }
     }
 
-    public void CombatLogIsReady()
+    public void CombatLogIsReady(int numberReadyCombats, int combatsInQueue)
     {
+        NumberReadyCombats = numberReadyCombats;
+        CombatsInQueue = combatsInQueue;
         IsReady = true;
     }
 }

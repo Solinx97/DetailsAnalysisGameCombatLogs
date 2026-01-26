@@ -1,10 +1,12 @@
 ﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class CombatAura
+public class CombatAura : CombatDataBase, ICombatData
 {
-    public const int USERNAME_MAX_LENGTH = 128;
+    public const int NAME_MAX_LENGTH = 128;
+    public const int CREATOR_MAX_LENGTH = 128;
     public const int TARGET_MAX_LENGTH = 128;
 
     private CombatAura() { }
@@ -42,11 +44,4 @@ public class CombatAura
     public int Stacks { get; private set; }
 
     public Combat Combat { get; private set; }
-
-    public int CombatId { get; private set; }
-
-    public void SetCombatId(int combatId)
-    {
-        CombatId = combatId;
-    }
 }

@@ -47,7 +47,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("DungeonName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<DateTimeOffset>("FinishDate")
                         .HasColumnType("datetimeoffset");
@@ -100,7 +101,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("NumberReadyCombats")
                         .HasColumnType("int");
@@ -5987,8 +5989,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(126)
-                        .HasColumnType("nvarchar(126)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("Size")
                         .HasColumnType("int");
@@ -6523,16 +6525,16 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Creator")
                         .IsRequired()
-                        .HasMaxLength(126)
-                        .HasColumnType("nvarchar(126)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<TimeSpan>("FinishTime")
                         .HasColumnType("time");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(126)
-                        .HasColumnType("nvarchar(126)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("Stacks")
                         .HasColumnType("int");
@@ -6542,8 +6544,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Target")
                         .IsRequired()
-                        .HasMaxLength(126)
-                        .HasColumnType("nvarchar(126)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -6591,6 +6593,66 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatPlayer");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Crit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dodge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Expertise")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Haste")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Hit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Intelligence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Parry")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Spirit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Talents")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId")
+                        .IsUnique();
+
+                    b.ToTable("CombatPlayerStats");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", b =>
                 {
                     b.Property<int>("Id")
@@ -6604,7 +6666,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Creator")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("DamageType")
                         .HasColumnType("int");
@@ -6626,11 +6689,13 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Target")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
@@ -6685,7 +6750,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
@@ -6719,7 +6785,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Creator")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("DamageTakenType")
                         .HasColumnType("int");
@@ -6741,11 +6808,13 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Target")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
@@ -6800,7 +6869,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
@@ -6825,7 +6895,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Creator")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
@@ -6841,11 +6912,13 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Target")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
@@ -6894,7 +6967,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
@@ -6919,18 +6993,21 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Creator")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Target")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
@@ -6976,7 +7053,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Spell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
@@ -7001,7 +7079,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("LastHitSpell")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("LastHitValue")
                         .HasColumnType("int");
@@ -7011,7 +7090,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -7047,65 +7127,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatPlayerPosition");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerStats", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Agility")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Armor")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Crit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Dodge")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Expertise")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Haste")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Hit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Intelligence")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Parry")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Spirit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Stamina")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Strength")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Talents")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId")
-                        .IsUnique();
-
-                    b.ToTable("CombatPlayerStats");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatTarget", b =>
                 {
                     b.Property<int>("Id")
@@ -7122,13 +7143,13 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Target")
                         .IsRequired()
-                        .HasMaxLength(126)
-                        .HasColumnType("nvarchar(126)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(126)
-                        .HasColumnType("nvarchar(126)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -7147,12 +7168,13 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("GameId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(126)
-                        .HasColumnType("nvarchar(126)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -7169,11 +7191,13 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("SpecializationSpellsId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
 
@@ -7359,6 +7383,17 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Player");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithOne("Stats")
+                        .HasForeignKey("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", "CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", b =>
                 {
                     b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
@@ -7463,17 +7498,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
                         .WithMany("CombatPlayerPositions")
                         .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerStats", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithOne("Stats")
-                        .HasForeignKey("CombatParser.Domain.Entities.CombatPlayerStats", "CombatPlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

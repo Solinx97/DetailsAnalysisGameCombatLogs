@@ -314,7 +314,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
             combatLog.NumberReadyCombats = numberReadyCombats;
             combatLog.CombatsInQueue = combatsInQueue;
 
-            var response = await _httpClient.PutAsync($"CombatLog/{combatLog.Id}", JsonContent.Create(combatLog), cancellationToken);
+            var response = await _httpClient.PatchAsync($"CombatLog/combatLogIsReady/{combatLog.Id}", JsonContent.Create(combatLog), cancellationToken);
             response.EnsureSuccessStatusCode();
         }
         catch (HttpRequestException ex)

@@ -2,6 +2,7 @@
 
 public class Player
 {
+    public const int GAMEID_MAX_LENGTH = 128;
     public const int USERNAME_MAX_LENGTH = 128;
 
     private Player() { }

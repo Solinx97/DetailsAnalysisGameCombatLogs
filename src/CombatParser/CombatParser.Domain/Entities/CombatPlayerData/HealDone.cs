@@ -1,6 +1,8 @@
-﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Interfaces;
 
-public class HealDone
+namespace CombatParser.Domain.Entities.CombatPlayerData;
+
+public class HealDone : CombatPlayerDataBase, ICombatPlayerData
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;
@@ -51,11 +53,4 @@ public class HealDone
     public bool IsAbsorbed { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
-
-    public int CombatPlayerId { get; private set; }
-
-    public void SetCombatPlayerId(int combatPlayerId)
-    {
-        CombatPlayerId = combatPlayerId;
-    }
 }

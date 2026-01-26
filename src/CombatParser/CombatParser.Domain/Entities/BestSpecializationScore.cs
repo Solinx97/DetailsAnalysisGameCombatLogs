@@ -2,19 +2,36 @@
 
 public class BestSpecializationScore
 {
-    public int Id { get; set; }
+    private BestSpecializationScore() { }
 
-    public int DamageDone { get; set; }
+    public BestSpecializationScore(int id, int damageDone, int healDone, DateTimeOffset? updated, int specializationId, int bossId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
+        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
+        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(specializationId, nameof(specializationId));
 
-    public int HealDone { get; set; }
+        Id = id;
+        DamageDone = damageDone;
+        HealDone = healDone;
+        Updated = updated;
+        SpecializationId = specializationId;
+        BossId = bossId;
+    }
 
-    public DateTimeOffset? Updated { get; set; }
+    public int Id { get; private set; }
 
-    public Specialization Specialization { get; set; }
+    public int DamageDone { get; private set; }
 
-    public int SpecializationId { get; set; }
+    public int HealDone { get; private set; }
 
-    public Boss Boss { get; set; }
+    public DateTimeOffset? Updated { get; private set; }
 
-    public int BossId { get; set; }
+    public Specialization Specialization { get; private set; }
+
+    public int SpecializationId { get; private set; }
+
+    public Boss Boss { get; private set; }
+
+    public int BossId { get; private set; }
 }

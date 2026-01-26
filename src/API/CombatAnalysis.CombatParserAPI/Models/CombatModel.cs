@@ -5,55 +5,55 @@ namespace CombatAnalysis.CombatParserAPI.Models;
 public class CombatModel
 {
     [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     [Required]
-    public string DungeonName { get; set; } = string.Empty;
+    public string DungeonName { get; init; } = string.Empty;
 
     [Range(0, int.MaxValue)]
-    public double BossHealthPercentage { get; set; }
+    public double BossHealthPercentage { get; init; }
 
     [Range(0, int.MaxValue)]
-    public long DamageDone { get; set; }
+    public long DamageDone { get; init; }
 
     [Range(0, int.MaxValue)]
-    public long HealDone { get; set; }
+    public long HealDone { get; init; }
 
     [Range(0, int.MaxValue)]
-    public long DamageTaken { get; set; }
+    public long DamageTaken { get; init; }
 
     [Range(0, int.MaxValue)]
-    public int ResourcesRecovery { get; set; }
+    public int ResourcesRecovery { get; init; }
+
+    public bool IsWin { get; init; }
 
     [Required]
-    public bool IsWin { get; set; }
+    public DateTimeOffset StartDate { get; init; }
 
     [Required]
-    public DateTimeOffset StartDate { get; set; }
+    public DateTimeOffset FinishDate { get; init; }
 
     [Required]
-    public DateTimeOffset FinishDate { get; set; }
+    public List<CombatPlayerModel> CombatPlayers { get; init; } = [];
 
     [Required]
-    public List<CombatPlayerModel> CombatPlayers { get; set; } = [];
+    public Dictionary<string, List<string>> PetsId { get; init; } = [];
 
     [Required]
-    public Dictionary<string, List<string>> PetsId { get; set; } = [];
+    public BossModel Boss { get; private set; } = new();
 
     [Required]
-    public BossModel Boss { get; set; } = new();
+    public string Duration { get; init; } = string.Empty;
 
-    [Required]
-    public string Duration
-    {
-        get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
-    }
-
-    [Required]
-    public bool IsReady { get; set; }
+    public bool IsReady { get; init; }
 
     [Range(1, int.MaxValue)]
-    public int CombatLogId { get; set; }
+    public int CombatLogId { get; init; }
 
-    public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; set; } = [];
+    public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; init; } = [];
+
+    public void UpdateBoss(BossModel boss)
+    {
+        Boss = boss;
+    }
 }

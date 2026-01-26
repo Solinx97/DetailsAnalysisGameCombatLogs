@@ -47,6 +47,13 @@ internal class HttpClientHelper : IHttpClientHelper
         return result;
     }
 
+    public async Task<HttpResponseMessage> PatchAsync(string requestUri, JsonContent content, CancellationToken cancellationToken)
+    {
+        var result = await Client.PatchAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content, cancellationToken);
+
+        return result;
+    }
+
     public async Task<HttpResponseMessage> DeletAsync(string requestUri, CancellationToken cancellationToken)
     {
         var result = await Client.DeleteAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", cancellationToken);

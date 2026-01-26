@@ -1,6 +1,8 @@
-﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Interfaces;
 
-public class HealDoneGeneral
+namespace CombatParser.Domain.Entities.CombatPlayerData;
+
+public class HealDoneGeneral : CombatPlayerDataBase, ICombatPlayerData
 {
     public const int SPELL_MAX_LENGTH = 128;
 
@@ -52,11 +54,4 @@ public class HealDoneGeneral
     public double AverageValue { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
-
-    public int CombatPlayerId { get; private set; }
-
-    public void SetCombatPlayerId(int combatPlayerId)
-    {
-        CombatPlayerId = combatPlayerId;
-    }
 }

@@ -50,7 +50,7 @@ public class CombatController(IBossService bossService, IQueryService<CombatDto>
             var boss = await _bossService.GetById(item.Boss.Id, cancellationToken);
             var bossMap = _mapper.Map<BossModel>(boss);
 
-            item.Boss = bossMap;
+            item.UpdateBoss(bossMap);
         }
 
         return Ok(map);
@@ -69,7 +69,7 @@ public class CombatController(IBossService bossService, IQueryService<CombatDto>
             }
 
             var combatPlayers = new List<CombatPlayerData>();
-            var auras = new List<CombatAuraData>();
+            var auras = _mapper.Map<List<CombatAuraData>>(combat.CombatAuras);
 
             await ExtractCombatPlayerDataAsync(combat, combatPlayers, auras, cancellationToken);
 
@@ -96,8 +96,6 @@ public class CombatController(IBossService bossService, IQueryService<CombatDto>
 
     private async Task ExtractCombatPlayerDataAsync(CombatModel combat, List<CombatPlayerData> combatPlayers, List<CombatAuraData> auras, CancellationToken cancellationToken)
     {
-        var aurasMap = _mapper.Map<List<CombatAuraData>>(combat.CombatAuras);
-
         foreach (var combatPlayer in combat.CombatPlayers)
         {
             var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);

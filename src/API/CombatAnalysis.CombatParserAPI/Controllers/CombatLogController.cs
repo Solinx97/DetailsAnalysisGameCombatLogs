@@ -1,4 +1,6 @@
-﻿using CombatParser.Application.Commands.CreateCombatLog;
+﻿using CombatAnalysis.CombatParserAPI.PartialModels;
+using CombatParser.Application.Commands.CombatLogIsReady;
+using CombatParser.Application.Commands.CreateCombatLog;
 using CombatParser.Application.Commands.DeleteCombatLog;
 using CombatParser.Application.Commands.UpdateCombatLog;
 using CombatParser.Application.Queries.GetAllCombatLogs;
@@ -38,14 +40,29 @@ public class CombatLogController(IMediator mediator) : ControllerBase
         return Ok(combatLog);
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateCombatLogCommand command, CancellationToken cancellationToken)
+    [HttpPatch("{id:int:min(1)}")]
+    public async Task<IActionResult> PartialUpdate(int id, [FromBody] CombatLogPatch combatLog, CancellationToken cancellationToken)
     {
-        if (id != command.Id)
+        if (id != combatLog.Id)
         {
             return BadRequest("Route ID and body ID do not match.");
         }
 
+        var command = new UpdateCombatLogCommand(combatLog.Id, combatLog.Name);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPatch("combatLogIsReady/{id:int:min(1)}")]
+    public async Task<IActionResult> CombatLogIsReady(int id, [FromBody] CombatLogIsReadyPatch combatLog, CancellationToken cancellationToken)
+    {
+        if (id != combatLog.Id)
+        {
+            return BadRequest("Route ID and body ID do not match.");
+        }
+
+        var command = new CombatLogIsReadyCommand(combatLog.Id, combatLog.NumberReadyCombats, combatLog.CombatsInQueue);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

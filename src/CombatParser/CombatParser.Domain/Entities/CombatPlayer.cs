@@ -1,10 +1,11 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.EntityData;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class CombatPlayer
+public class CombatPlayer : CombatDataBase, ICombatData
 {
     private readonly List<DamageDone> _damageDones = [];
     private readonly List<DamageDoneGeneral> _damageDoneGenerals = [];
@@ -53,8 +54,6 @@ public class CombatPlayer
 
     public Combat Combat { get; private set; }
 
-    public int CombatId { get; private set; }
-
     public IReadOnlyCollection<DamageDone> DamageDones => _damageDones.AsReadOnly();
 
     public IReadOnlyCollection<DamageDoneGeneral> DamageDoneGenerals => _damageDoneGenerals.AsReadOnly();
@@ -95,11 +94,6 @@ public class CombatPlayer
             resourceRecoveryGenerals, combatPlayerDeathes, combatPlayerPositions);
 
         return combatPlayer;
-    }
-
-    public void SetCombatId(int combatId)
-    {
-        CombatId = combatId;
     }
 
     private static void AddCombatPlayerData(CombatPlayer combatPlayer, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals,

@@ -1,6 +1,9 @@
-﻿namespace CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Interfaces;
 
-public class CombatPlayerPosition
+namespace CombatParser.Domain.Entities;
+
+public class CombatPlayerPosition : CombatPlayerDataBase, ICombatPlayerData
 {
     private CombatPlayerPosition() { }
 
@@ -21,11 +24,4 @@ public class CombatPlayerPosition
     public TimeSpan Time { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
-
-    public int CombatPlayerId { get; private set; }
-
-    public void SetCombatPlayerId(int combatPlayerId)
-    {
-        CombatPlayerId = combatPlayerId;
-    }
 }
