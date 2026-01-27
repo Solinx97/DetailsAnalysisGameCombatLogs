@@ -40,7 +40,7 @@ public class CombatModel
     public Dictionary<string, List<string>> PetsId { get; init; } = [];
 
     [Required]
-    public BossModel Boss { get; private set; } = new();
+    public BossModel Boss { get; init; } = new();
 
     [Required]
     public string Duration { get; init; } = string.Empty;
@@ -50,10 +50,6 @@ public class CombatModel
     [Range(1, int.MaxValue)]
     public int CombatLogId { get; init; }
 
+    [Required]
     public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; init; } = [];
-
-    public void UpdateBoss(BossModel boss)
-    {
-        Boss = boss;
-    }
 }

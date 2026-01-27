@@ -61,6 +61,8 @@ public class Combat
 
     public bool IsReady { get; private set; }
 
+    public Boss Boss { get; private set; }
+
     public int BossId { get; private set; }
 
     public CombatLog CombatLog { get; private set; }

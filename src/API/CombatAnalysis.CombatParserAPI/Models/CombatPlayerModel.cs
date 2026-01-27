@@ -22,36 +22,47 @@ public class CombatPlayerModel
     [Range(0, int.MaxValue)]
     public int DamageTaken { get; set; }
 
-    public CombatPlayerStatsModel Stats { get; set; }
+    [Required]
+    public CombatPlayerStatsModel Stats { get; set; } = new();
 
     public SpecializationScoreModel? Score { get; set; }
 
     [Required]
-    public PlayerModel Player { get; set; }
+    public PlayerModel Player { get; set; } = new();
 
     [Required]
-    public string PlayerId { get; set; }
+    public string PlayerId { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int CombatId { get; set; }
 
+    [Required]
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<DamageDoneGeneralModel> DamageDoneGenerals { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<HealDoneModel> HealDones { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<DamageTakenModel> DamageTakens { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<DamageTakenGeneralModel> DamageTakenGenerals { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 
+    [Required]
     public IReadOnlyList<CombatPlayerPositionModel> CombatPlayerPositions { get; set; } = [];
 }

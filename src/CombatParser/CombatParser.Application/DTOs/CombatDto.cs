@@ -26,7 +26,7 @@ public class CombatDto
 
     public bool IsReady { get; set; }
 
-    public int BossId { get; set; }
+    public BossDto Boss { get; set; }
 
     public int CombatLogId { get; set; }
 }

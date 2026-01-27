@@ -3,6 +3,7 @@ using CombatParser.Domain.Data;
 using CombatParser.Infrastructure.Extensions;
 using CombatParser.Infrastructure.Persistence;
 using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data;
 
@@ -36,5 +37,15 @@ internal class CombatRepository(CombatParserContextOne context) : GenericReposit
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.CombatPlayerPositions, cancelationToken);
 
         await transaction.CommitAsync(cancelationToken);
+    }
+
+    public async Task<IEnumerable<Combat>> GetByCombatLogId(int combatLogId, CancellationToken cancelationToken)
+    {
+        var combats = await _context.Set<Combat>()
+            .Where(c => c.CombatLogId == combatLogId)
+            .Include(c => c.Boss)
+            .ToListAsync(cancelationToken);
+
+        return combats;
     }
 }

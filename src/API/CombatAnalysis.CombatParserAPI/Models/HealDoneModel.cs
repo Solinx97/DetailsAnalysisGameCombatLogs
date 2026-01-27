@@ -7,11 +7,11 @@ public class HealDoneModel
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
 
-    [Required]
+    [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
 
     [Required]
-    public string Spell { get; set; }
+    public string Spell { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int Value { get; set; }
@@ -23,15 +23,13 @@ public class HealDoneModel
     public TimeSpan Time { get; set; }
 
     [Required]
-    public string Creator { get; set; }
+    public string Creator { get; set; } = string.Empty;
 
     [Required]
-    public string Target { get; set; }
+    public string Target { get; set; } = string.Empty;
 
-    [Required]
     public bool IsCrit { get; set; }
 
-    [Required]
     public bool IsAbsorbed { get; set; }
 
     [Range(0, int.MaxValue)]

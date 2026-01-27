@@ -5,14 +5,15 @@ using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
-using CombatParser.Infrastructure.Extensions;
 using CombatParser.Application.Extensions;
+using CombatParser.Application.Mapping;
+using CombatParser.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
-using CombatParser.Application.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,28 @@ builder.Services.Configure<KestrelServerOptions>(options =>
 {
     options.Limits.MaxRequestBodySize = databaseConfigsOptions.MaxRequestBodySize;
 });
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(e => e.Value!.Errors.Count > 0)
+            .Select(e => new
+            {
+                Field = e.Key,
+                Errors = e.Value!.Errors.Select(x => x.ErrorMessage)
+            });
+
+        return new BadRequestObjectResult(new
+        {
+            Message = "Validation failed",
+            ErrorCount = errors.Count(),
+            Errors = errors
+        });
+    };
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -59,7 +82,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Debug)
+    .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Warning)
     .WriteTo.File("logs/parserapi.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, restrictedToMinimumLevel: LogEventLevel.Error)
     .CreateLogger();
 

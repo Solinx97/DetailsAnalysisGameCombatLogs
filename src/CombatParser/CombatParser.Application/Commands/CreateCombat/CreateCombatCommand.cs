@@ -1,5 +1,4 @@
-﻿using CombatParser.Domain.Aggregates;
-using CombatParser.Domain.EntityData;
+﻿using CombatParser.Domain.EntityData;
 using MediatR;
 
 namespace CombatParser.Application.Commands.CreateCombat;
@@ -18,4 +17,4 @@ public record CreateCombatCommand(
     int CombatLogId,
     IReadOnlyList<CombatPlayerData> CombatPlayers,
     IReadOnlyList<CombatAuraData> CombatAuras
-    ) : IRequest<Combat>;
+    ) : IRequest;

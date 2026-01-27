@@ -13,7 +13,6 @@ public class ResourceRecoveryGeneral : CombatPlayerDataBase, ICombatPlayerData
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(resourcePerSecond, nameof(resourcePerSecond));
         ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
         ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
 
