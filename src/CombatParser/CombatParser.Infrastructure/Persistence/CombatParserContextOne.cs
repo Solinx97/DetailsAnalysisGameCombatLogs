@@ -325,10 +325,10 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
         modelBuilder.Entity<CombatPlayerDeath>(cpd =>
         {
             cpd.Property(p => p.Username)
-                .HasMaxLength(Domain.Entities.CombatPlayerDeath.USERNAME_MAX_LENGTH);
+                .HasMaxLength(Domain.Entities.CombatPlayerData.CombatPlayerDeath.USERNAME_MAX_LENGTH);
 
             cpd.Property(p => p.LastHitSpell)
-                .HasMaxLength(Domain.Entities.CombatPlayerDeath.SPELL_MAX_LENGTH);
+                .HasMaxLength(Domain.Entities.CombatPlayerData.CombatPlayerDeath.SPELL_MAX_LENGTH);
 
             cpd.HasOne(cpd => cpd.CombatPlayer)
                 .WithMany(cp => cp.CombatPlayerDeathes)

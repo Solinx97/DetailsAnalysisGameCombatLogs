@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Interfaces;
 
-public interface ICombatData
+public interface ICombatRefs
 {
     int CombatId { get; }
 

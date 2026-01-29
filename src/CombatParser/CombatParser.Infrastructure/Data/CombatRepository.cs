@@ -7,44 +7,44 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data;
 
-internal class CombatRepository(CombatParserContextOne context) : GenericRepository<Combat, int>(context), ICombatRepository
+internal class CombatRepository(CombatParserContextOne context) : ICombatRepository
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task AddBulkAsync(Combat combat, CancellationToken cancelationToken)
+    public async Task AddBulkAsync(Combat combat, CancellationToken cancellationToken)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync(cancelationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
         await _context.BulkInsertAsync([combat], new BulkConfig
         {
             SetOutputIdentity = true
-        }, cancellationToken: cancelationToken);
+        }, cancellationToken: cancellationToken);
 
-        var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancelationToken);
-        await _context.BulkInsertCombatAurasAsync(combat.Id, combat.CombatAuras, cancelationToken);
+        var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);
+        await _context.BulkInsertCombatAurasAsync(combat.Id, combat.CombatAuras, cancellationToken);
 
-        await _context.BulkInsertCombatPlayerStatsAsync(players, cancelationToken);
-        await _context.BulkInsertCombatPlayerScoresAsync(players, cancelationToken);
+        await _context.BulkInsertCombatPlayerStatsAsync(players, cancellationToken);
+        await _context.BulkInsertCombatPlayerScoresAsync(players, cancellationToken);
 
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDones, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDoneGenerals, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDones, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDoneGenerals, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageTakens, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageTakenGenerals, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveries, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveryGenerals, cancelationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.CombatPlayerPositions, cancelationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDones, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDoneGenerals, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDones, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDoneGenerals, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageTakens, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageTakenGenerals, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveries, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveryGenerals, cancellationToken);
+        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.CombatPlayerPositions, cancellationToken);
 
-        await transaction.CommitAsync(cancelationToken);
+        await transaction.CommitAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Combat>> GetByCombatLogId(int combatLogId, CancellationToken cancelationToken)
+    public async Task<IEnumerable<Combat>> GetByCombatLogIdAsync(int combatLogId, CancellationToken cancellationToken)
     {
         var combats = await _context.Set<Combat>()
             .Where(c => c.CombatLogId == combatLogId)
             .Include(c => c.Boss)
-            .ToListAsync(cancelationToken);
+            .ToListAsync(cancellationToken);
 
         return combats;
     }

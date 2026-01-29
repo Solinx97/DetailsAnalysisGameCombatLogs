@@ -5,7 +5,7 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class CombatPlayer : CombatDataBase, ICombatData
+public class CombatPlayer : CombatDataBase, ICombatRefs
 {
     private readonly List<DamageDone> _damageDones = [];
     private readonly List<DamageDoneGeneral> _damageDoneGenerals = [];

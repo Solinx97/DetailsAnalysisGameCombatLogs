@@ -1,6 +1,8 @@
-﻿namespace CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Interfaces;
 
-public class CombatPlayerDeath
+namespace CombatParser.Domain.Entities.CombatPlayerData;
+
+public class CombatPlayerDeath : CombatPlayerDataBase, ICombatPlayerRefs
 {
     public const int USERNAME_MAX_LENGTH = 128;
     public const int SPELL_MAX_LENGTH = 128;
@@ -19,8 +21,6 @@ public class CombatPlayerDeath
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; private set; }
-
     public string Username { get; private set; } = string.Empty;
 
     public string LastHitSpell { get; private set; } = string.Empty;
@@ -30,11 +30,4 @@ public class CombatPlayerDeath
     public TimeSpan Time { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
-
-    public int CombatPlayerId { get; private set; }
-
-    public void SetCombatPlayerId(int combatPlayerId)
-    {
-        CombatPlayerId = combatPlayerId;
-    }
 }

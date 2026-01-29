@@ -1,6 +1,10 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
+using CombatParser.Domain.Data.Filters;
+using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Interfaces.Filters;
 using CombatParser.Infrastructure.Data;
+using CombatParser.Infrastructure.Data.Filters;
 using CombatParser.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +24,16 @@ public static class ServiceCollectionExtension
         services.AddScoped<IGenericRepository<Combat, int>, GenericRepository<Combat, int>>();
         services.AddScoped<ICombatLogRepository, CombatLogRepository>();
         services.AddScoped<ICombatRepository, CombatRepository>();
+        services.AddScoped<ICombatPlayerRepository, CombatPlayerRepository>();
+
+        services.AddScoped<ICombatPlayerDataRepository<DamageDone>, CombatPlayerDataRepository<DamageDone>>();
+
+        services.AddScoped<IGeneralFilterRepository<DamageDone>, GeneralFilterRepositroy<DamageDone>>();
+        services.AddScoped<IGeneralFilterRepository<HealDone>, GeneralFilterRepositroy<HealDone>>();
+        services.AddScoped<IGeneralFilterRepository<DamageTaken>, GeneralFilterRepositroy<DamageTaken>>();
+        services.AddScoped<IGeneralFilterRepository<ResourceRecovery>, GeneralFilterRepositroy<ResourceRecovery>>();
+
+        services.AddScoped<IDamageFilterRepository, DamageFilterRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

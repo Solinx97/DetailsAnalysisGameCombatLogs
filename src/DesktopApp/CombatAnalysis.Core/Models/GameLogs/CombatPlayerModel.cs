@@ -18,7 +18,7 @@ public class CombatPlayerModel
 
     public int ResourcesRecovery { get; set; }
 
-    public CombatPlayerStatsModel? Stats { get; set; }
+    public CombatPlayerStatsModel Stats { get; set; }
 
     public SpecializationScoreModel? Score { get; set; }
 

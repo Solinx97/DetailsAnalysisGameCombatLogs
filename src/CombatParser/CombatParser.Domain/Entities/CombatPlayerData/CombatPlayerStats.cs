@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class CombatPlayerStats : CombatPlayerDataBase, ICombatPlayerData
+public class CombatPlayerStats : CombatPlayerDataBase, ICombatPlayerRefs
 {
     public const int TALENTS_MAX_LENGTH = 128;
 
@@ -41,8 +41,6 @@ public class CombatPlayerStats : CombatPlayerDataBase, ICombatPlayerData
         Talents = talents;
         CombatPlayerId = combatPlayerId;
     }
-
-    public int Id { get; private set; }
 
     public int Strength { get; private set; }
 

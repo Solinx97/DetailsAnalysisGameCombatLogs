@@ -12,7 +12,7 @@ internal class GetCombatsByCombatLogIdHandler(ICombatRepository repository, IMap
 
     public async Task<IEnumerable<CombatDto>> Handle(GetCombatsByCombatLogIdQuery request, CancellationToken cancellationToken)
     {
-        var combats = await _repository.GetByCombatLogId(request.CombatLogId, cancellationToken);
+        var combats = await _repository.GetByCombatLogIdAsync(request.CombatLogId, cancellationToken);
         var map = _mapper.Map<IEnumerable<CombatDto>>(combats);
 
         return map;

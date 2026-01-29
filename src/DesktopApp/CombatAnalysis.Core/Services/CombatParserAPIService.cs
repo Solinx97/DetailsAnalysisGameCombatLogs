@@ -28,12 +28,12 @@ internal class CombatParserAPIService : ICombatParserAPIService
     public async Task SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancelationToken)
     {
         var readyCombatsNumber = 0;
+        var cancellationToken = requestCancelationToken();
 
         var combatTasks = combats.Select(async combat =>
         {
             try
             {
-                var cancellationToken = requestCancelationToken();
                 combat.CombatLogId = combatLog.Id;
 
                 using var response = await _httpClient.PostAsync("Combat", JsonContent.Create(combat), cancellationToken);
@@ -45,35 +45,25 @@ internal class CombatParserAPIService : ICombatParserAPIService
             }
             catch (HttpRequestException ex)
             {
-                var cancellationToken = requestCancelationToken();
                 _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-                await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combats.Count - readyCombatsNumber, cancellationToken);
 
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                var cancellationToken = requestCancelationToken();
                 _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
-
-                await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combats.Count - readyCombatsNumber, cancellationToken);
 
                 throw;
             }
             catch (Exception ex)
             {
-                var cancellationToken = requestCancelationToken();
                 _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-                await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combats.Count - readyCombatsNumber, cancellationToken);
             }
-
         });
 
         await Task.WhenAll(combatTasks);
 
-        await UpdateCombatLogAsync(combatLog, readyCombatsNumber, 0, requestCancelationToken());
+        await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combatTasks.Count() - readyCombatsNumber, cancellationToken);
     }
 
     public async Task DeleteCombatLogByUserAsync(int id, CancellationToken cancellationToken)

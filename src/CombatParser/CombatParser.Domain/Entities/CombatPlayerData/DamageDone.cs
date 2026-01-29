@@ -1,8 +1,9 @@
-﻿using CombatParser.Domain.Interfaces;
+﻿using CombatParser.Domain.Data.Filters;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class DamageDone : CombatPlayerDataBase, ICombatPlayerData
+public class DamageDone : CombatPlayerDataBase, ICombatPlayerRefs, IGeneralFilterEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;
@@ -34,8 +35,6 @@ public class DamageDone : CombatPlayerDataBase, ICombatPlayerData
         IsPet = isPet;
         CombatPlayerId = combatPlayerId;
     }
-
-    public int Id { get; private set; }
 
     public int GameSpellId { get; private set; }
 

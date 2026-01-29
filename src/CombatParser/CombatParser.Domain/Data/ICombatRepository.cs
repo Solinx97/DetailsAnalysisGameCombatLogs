@@ -2,9 +2,9 @@
 
 namespace CombatParser.Domain.Data;
 
-public interface ICombatRepository : IGenericRepository<Combat, int>
+public interface ICombatRepository
 {
-    Task AddBulkAsync(Combat item, CancellationToken cancelationToken);
+    Task AddBulkAsync(Combat item, CancellationToken cancellationToken);
 
-    Task<IEnumerable<Combat>> GetByCombatLogId(int combatLogId, CancellationToken cancelationToken);
+    Task<IEnumerable<Combat>> GetByCombatLogIdAsync(int combatLogId, CancellationToken cancellationToken);
 }

@@ -1,8 +1,9 @@
-﻿using CombatParser.Domain.Interfaces;
+﻿using CombatParser.Domain.Data.Filters;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecovery : CombatPlayerDataBase, ICombatPlayerData
+public class ResourceRecovery : CombatPlayerDataBase, ICombatPlayerRefs, IGeneralFilterEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;
@@ -26,9 +27,6 @@ public class ResourceRecovery : CombatPlayerDataBase, ICombatPlayerData
         Target = target;
         CombatPlayerId = combatPlayerId;
     }
-
-
-    public int Id { get; private set; }
 
     public int GameSpellId { get; private set; }
 

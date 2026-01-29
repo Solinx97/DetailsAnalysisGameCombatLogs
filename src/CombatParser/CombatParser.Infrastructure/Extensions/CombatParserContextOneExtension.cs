@@ -8,7 +8,7 @@ namespace CombatParser.Infrastructure.Extensions;
 internal static class CombatParserContextOneExtension
 {
     public static async Task BulkInsertCombatPlayerDataAsync<TModel>(this CombatParserContextOne context, List<CombatPlayer> players, Func<CombatPlayer, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatPlayerData
+        where TModel : class, ICombatPlayerRefs
     {
         var combatPlayerData = players.SelectMany(p =>
             selector(p).Select(dd =>

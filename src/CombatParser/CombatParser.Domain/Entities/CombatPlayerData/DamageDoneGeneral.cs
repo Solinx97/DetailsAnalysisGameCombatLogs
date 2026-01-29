@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class DamageDoneGeneral : CombatPlayerDataBase, ICombatPlayerData
+public class DamageDoneGeneral : CombatPlayerDataBase, ICombatPlayerRefs
 {
     public const int SPELL_MAX_LENGTH = 128;
 
@@ -36,8 +36,6 @@ public class DamageDoneGeneral : CombatPlayerDataBase, ICombatPlayerData
         IsPet = isPet;
         CombatPlayerId = combatPlayerId;
     }
-
-    public int Id { get; private set; }
 
     public int GameSpellId { get; private set; }
 

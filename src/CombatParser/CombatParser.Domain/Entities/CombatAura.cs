@@ -3,7 +3,7 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class CombatAura : CombatDataBase, ICombatData
+public class CombatAura : CombatDataBase, ICombatRefs
 {
     public const int NAME_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;
