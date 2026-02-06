@@ -1,31 +1,34 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.BL.Interfaces.Filters;
-using CombatAnalysis.BL.Interfaces.General;
+﻿using CombatParser.Application.Queries.HealDone.CountHealBySpell;
+using CombatParser.Application.Queries.HealDone.CountHealByTarget;
+using CombatParser.Application.Queries.HealDone.GetHealCountByCombatPlayerId;
+using CombatParser.Application.Queries.HealDone.GetHeals;
+using CombatParser.Application.Queries.HealDone.GetHealsBySpell;
+using CombatParser.Application.Queries.HealDone.GetHealsByTarget;
+using CombatParser.Application.Queries.HealDone.GetUniqueHealSpells;
+using CombatParser.Application.Queries.HealDone.GetUniqueHealTargets;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class HealDoneController(IPlayerInfoPaginationService<HealDoneDto> playerInfoService, ICountService<HealDoneDto> countService, IGeneralFilterService<HealDoneDto> filterService) : ControllerBase
+public class HealDoneController(IMediator mediator) : ControllerBase
 {
-    private readonly IPlayerInfoPaginationService<HealDoneDto> _playerInfoService = playerInfoService;
-    private readonly ICountService<HealDoneDto> _countService = countService;
-    private readonly IGeneralFilterService<HealDoneDto> _filterService = filterService;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCombatPlayerId")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var healDones = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize, cancellationToken);
+        var heals = await _mediator.Send(new GetHealsQuery(combatPlayerId, page, pageSize), cancellationToken);
 
-        return Ok(healDones);
+        return Ok(heals);
     }
 
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var count = await _mediator.Send(new GetHealCountQuery(combatPlayerId), cancellationToken);
 
         return Ok(count);
     }
@@ -33,7 +36,7 @@ public class HealDoneController(IPlayerInfoPaginationService<HealDoneDto> player
     [HttpGet("getUniqueTargets/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueTargets(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueTargets = await _filterService.GetTargetNamesByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var uniqueTargets = await _mediator.Send(new GetUniqueHealTargetsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueTargets);
     }
@@ -41,15 +44,15 @@ public class HealDoneController(IPlayerInfoPaginationService<HealDoneDto> player
     [HttpGet("getByTarget")]
     public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var healDones = await _filterService.GetByTargetAsync(combatPlayerId, target, page, pageSize, cancellationToken);
+        var heals = await _mediator.Send(new GetHealsByTargetQuery(combatPlayerId, target, page, pageSize), cancellationToken); ;
 
-        return Ok(healDones);
+        return Ok(heals);
     }
 
     [HttpGet("countByTarget")]
     public async Task<IActionResult> CountByTarget(int combatPlayerId, string target, CancellationToken cancellationToken)
     {
-        var count = await _filterService.CountTargetsByCombatPlayerIdAsync(combatPlayerId, target, cancellationToken);
+        var count = await _mediator.Send(new CountHealByTargetQuery(combatPlayerId, target), cancellationToken);
 
         return Ok(count);
     }
@@ -57,7 +60,7 @@ public class HealDoneController(IPlayerInfoPaginationService<HealDoneDto> player
     [HttpGet("getUniqueSpells/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _filterService.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var uniqueSpells = await _mediator.Send(new GetUniqueHealSpellsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueSpells);
     }
@@ -65,15 +68,15 @@ public class HealDoneController(IPlayerInfoPaginationService<HealDoneDto> player
     [HttpGet("getBySpell")]
     public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var healDones = await _filterService.GetBySpellAsync(combatPlayerId, spell, page, pageSize, cancellationToken);
+        var heals = await _mediator.Send(new GetHealsBySpellQuery(combatPlayerId, spell, page, pageSize), cancellationToken);
 
-        return Ok(healDones);
+        return Ok(heals);
     }
 
     [HttpGet("countBySpell")]
     public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
     {
-        var count = await _filterService.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell, cancellationToken);
+        var count = await _mediator.Send(new CountHealBySpellQuery(combatPlayerId, spell), cancellationToken);
 
         return Ok(count);
     }

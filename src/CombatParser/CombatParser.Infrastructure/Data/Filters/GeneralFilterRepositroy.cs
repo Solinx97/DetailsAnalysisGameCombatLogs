@@ -10,19 +10,19 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<string>> GetUniqueTargetsByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<string>> GetUniqueTargetsAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueValues = await _context.Set<TModel>()
+        var uniqueTargets = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId)
                      .Select(x => x.Target)
                      .Distinct()
                      .OrderBy(x => x)
                      .ToListAsync(cancellationToken);
 
-        return uniqueValues;
+        return uniqueTargets;
     }
 
-    public async Task<int> CountDamageDoneByTargetAsync(int combatPlayerId, string target, CancellationToken cancellationToken)
+    public async Task<int> CountByTargetAsync(int combatPlayerId, string target, CancellationToken cancellationToken)
     {
         var count = await _context.Set<TModel>()
                      .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target), cancellationToken);
@@ -32,17 +32,17 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
 
     public async Task<IEnumerable<TModel>> GetByTargetAsync(int combatPlayerId, string target, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var values = await _context.Set<TModel>()
+        var result = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target))
                      .OrderBy(x => x.Id)
                      .Skip((page - 1) * pageSize)
                      .Take(pageSize)
                      .ToListAsync(cancellationToken);
 
-        return values;
+        return result;
     }
 
-    public async Task<int> GetValueToTargetByCombatPlayerIdAsync(int combatPlayerId, string target, CancellationToken cancellationToken)
+    public async Task<int> GetValueToTargetAsync(int combatPlayerId, string target, CancellationToken cancellationToken)
     {
         var values = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target))
@@ -52,19 +52,19 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
         return values;
     }
 
-    public async Task<IEnumerable<string>> GetCreatorNamesByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueValues = await _context.Set<TModel>()
+        var uniqueCreatorNames = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId)
                      .Select(x => x.Creator)
                      .Distinct()
                      .OrderBy(x => x)
                      .ToListAsync(cancellationToken);
 
-        return uniqueValues;
+        return uniqueCreatorNames;
     }
 
-    public async Task<int> CountCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator, CancellationToken cancellationToken)
+    public async Task<int> CountByCreatorAsync(int combatPlayerId, string creator, CancellationToken cancellationToken)
     {
         var count = await _context.Set<TModel>()
                      .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator), cancellationToken);
@@ -74,29 +74,29 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
 
     public async Task<IEnumerable<TModel>> GetByCreatorAsync(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var values = await _context.Set<TModel>()
+        var result = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator))
                      .OrderBy(x => x.Id)
                      .Skip((page - 1) * pageSize)
                      .Take(pageSize)
                      .ToListAsync(cancellationToken);
 
-        return values;
+        return result;
     }
 
-    public async Task<IEnumerable<string>> GetUniqueSpellsByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueValues = await _context.Set<TModel>()
+        var uniqueSpells = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId)
                      .Select(x => x.Spell)
                      .Distinct()
                      .OrderBy(x => x)
                      .ToListAsync(cancellationToken);
 
-        return uniqueValues;
+        return uniqueSpells;
     }
 
-    public async Task<int> CountDamageDoneBySpellAsync(int combatPlayerId, string spell, CancellationToken cancellationToken)
+    public async Task<int> CountBySpellAsync(int combatPlayerId, string spell, CancellationToken cancellationToken)
     {
         var count = await _context.Set<TModel>()
                      .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell), cancellationToken);

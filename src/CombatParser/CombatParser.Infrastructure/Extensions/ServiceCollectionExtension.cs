@@ -27,6 +27,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICombatPlayerRepository, CombatPlayerRepository>();
 
         services.AddScoped<ICombatPlayerDataRepository<DamageDone>, CombatPlayerDataRepository<DamageDone>>();
+        services.AddScoped<ICombatPlayerDataRepository<HealDone>, CombatPlayerDataRepository<HealDone>>();
 
         services.AddScoped<IGeneralFilterRepository<DamageDone>, GeneralFilterRepositroy<DamageDone>>();
         services.AddScoped<IGeneralFilterRepository<HealDone>, GeneralFilterRepositroy<HealDone>>();

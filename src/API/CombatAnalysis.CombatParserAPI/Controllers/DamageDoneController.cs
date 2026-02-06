@@ -1,13 +1,13 @@
-﻿using CombatParser.Application.Queries.DamageDone.CountDamageDoneBySpell;
-using CombatParser.Application.Queries.DamageDone.CountDamageDoneByTarget;
+﻿using CombatParser.Application.Queries.DamageDone.CountDamageBySpell;
+using CombatParser.Application.Queries.DamageDone.CountDamageByTarget;
 using CombatParser.Application.Queries.DamageDone.GetDamageByEachTarget;
-using CombatParser.Application.Queries.DamageDone.GetDamageDoneCountByCombatPlayerId;
-using CombatParser.Application.Queries.DamageDone.GetDamageDonesByCombatPlayerId;
-using CombatParser.Application.Queries.DamageDone.GetDamageDonesBySpell;
-using CombatParser.Application.Queries.DamageDone.GetDamageDonesByTarget;
-using CombatParser.Application.Queries.DamageDone.GetDamageValueByTarget;
-using CombatParser.Application.Queries.DamageDone.GetUniqueSpellsDamageDone;
-using CombatParser.Application.Queries.DamageDone.GetUniqueTargetsDamageDone;
+using CombatParser.Application.Queries.DamageDone.GetDamageCount;
+using CombatParser.Application.Queries.DamageDone.GetDamages;
+using CombatParser.Application.Queries.DamageDone.GetDamagesBySpell;
+using CombatParser.Application.Queries.DamageDone.GetDamagesByTarget;
+using CombatParser.Application.Queries.DamageDone.GetDamageValueToTarget;
+using CombatParser.Application.Queries.DamageDone.GetUniqueDamageSpells;
+using CombatParser.Application.Queries.DamageDone.GetUniqueDamageTargets;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,15 +22,15 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     [HttpGet("getByCombatPlayerId")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damageDones = await _mediator.Send(new GetDamageDonesByCombatPlayerIdQuery(combatPlayerId, page, pageSize), cancellationToken);
+        var damages = await _mediator.Send(new GetDamagesQuery(combatPlayerId, page, pageSize), cancellationToken);
 
-        return Ok(damageDones);
+        return Ok(damages);
     }
 
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var count = await _mediator.Send(new GetDamageDoneCountByCombatPlayerIdQuery(combatPlayerId), cancellationToken);
+        var count = await _mediator.Send(new GetDamageCountQuery(combatPlayerId), cancellationToken);
 
         return Ok(count);
     }
@@ -38,7 +38,7 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     [HttpGet("getUniqueTargets/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueTargets(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueTargets = await _mediator.Send(new GetUniqueTargetsDamageDoneQuery(combatPlayerId), cancellationToken);
+        var uniqueTargets = await _mediator.Send(new GetUniqueDamageTargetsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueTargets);
     }
@@ -46,23 +46,23 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     [HttpGet("getDamageByEachTarget/{combatId}")]
     public async Task<IActionResult> GetDamageByEachTarget(int combatId, CancellationToken cancellationToken)
     {
-        var damageByEachTarget = await _mediator.Send(new GetDamageByEachTargetQuery(combatId), cancellationToken);
+        var damages = await _mediator.Send(new GetDamageByEachTargetQuery(combatId), cancellationToken);
 
-        return Ok(damageByEachTarget);
+        return Ok(damages);
     }
 
     [HttpGet("getByTarget")]
     public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damageDones = await _mediator.Send(new GetDamageDonesByTargetQuery(combatPlayerId, target, page, pageSize), cancellationToken);
+        var damages = await _mediator.Send(new GetDamagesByTargetQuery(combatPlayerId, target, page, pageSize), cancellationToken);
 
-        return Ok(damageDones);
+        return Ok(damages);
     }
 
-    [HttpGet("getValueByTarget")]
-    public async Task<IActionResult> GetValueByTarget(int combatPlayerId, string target, CancellationToken cancellationToken)
+    [HttpGet("getValueToTarget")]
+    public async Task<IActionResult> GetValueToTarget(int combatPlayerId, string target, CancellationToken cancellationToken)
     {
-        var value = await _mediator.Send(new GetDamageValueByTargetQuery(combatPlayerId, target), cancellationToken);
+        var value = await _mediator.Send(new GetDamageValueToTargetQuery(combatPlayerId, target), cancellationToken);
 
         return Ok(value);
     }
@@ -70,7 +70,7 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     [HttpGet("countByTarget")]
     public async Task<IActionResult> CountByTarget(int combatPlayerId, string target, CancellationToken cancellationToken)
     {
-        var count = await _mediator.Send(new CountDamageDoneByTargetQuery(combatPlayerId, target), cancellationToken);
+        var count = await _mediator.Send(new CountDamageByTargetQuery(combatPlayerId, target), cancellationToken);
 
         return Ok(count);
     }
@@ -78,7 +78,7 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     [HttpGet("getUniqueSpells/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _mediator.Send(new GetUniqueSpellsDamageDoneQuery(combatPlayerId), cancellationToken);
+        var uniqueSpells = await _mediator.Send(new GetUniqueDamageSpellsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueSpells);
     }
@@ -86,15 +86,15 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     [HttpGet("getBySpell")]
     public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damageDones = await _mediator.Send(new GetDamageDonesBySpellQuery(combatPlayerId, spell, page, pageSize), cancellationToken);
+        var damages = await _mediator.Send(new GetDamagesBySpellQuery(combatPlayerId, spell, page, pageSize), cancellationToken);
 
-        return Ok(damageDones);
+        return Ok(damages);
     }
 
     [HttpGet("countBySpell")]
     public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
     {
-        var count = await _mediator.Send(new CountDamageDoneBySpellQuery(combatPlayerId, spell), cancellationToken);
+        var count = await _mediator.Send(new CountDamageBySpellQuery(combatPlayerId, spell), cancellationToken);
 
         return Ok(count);
     }

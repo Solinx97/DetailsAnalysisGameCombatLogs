@@ -4,7 +4,7 @@ public class Combat
 {
     public string DungeonName { get; set; } = string.Empty;
 
-    public List<string> Data { get; set; } = [];
+    public string[] Data { get; set; } = [];
 
     public int DamageDone { get; set; }
 
