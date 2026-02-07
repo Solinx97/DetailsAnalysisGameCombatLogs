@@ -1,7 +1,7 @@
 ﻿using CombatParser.Domain.Data;
 using MediatR;
 
-namespace CombatParser.Application.Queries.HealDone.GetHealCountByCombatPlayerId;
+namespace CombatParser.Application.Queries.HealDone.GetHealCount;
 
 internal class GetHealCountHandler(ICombatPlayerDataRepository<Domain.Entities.CombatPlayerData.HealDone> repository) : IRequestHandler<GetHealCountQuery, int>
 {

@@ -1,31 +1,34 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.BL.Interfaces.Filters;
-using CombatAnalysis.BL.Interfaces.General;
+﻿using CombatParser.Application.Queries.Resources.CountResourcesByCreator;
+using CombatParser.Application.Queries.Resources.CountResourcesBySpell;
+using CombatParser.Application.Queries.Resources.GetResources;
+using CombatParser.Application.Queries.Resources.GetResourcesByCreator;
+using CombatParser.Application.Queries.Resources.GetResourcesBySpell;
+using CombatParser.Application.Queries.Resources.GetResourcesCount;
+using CombatParser.Application.Queries.Resources.GetUniqueResourcesCreators;
+using CombatParser.Application.Queries.Resources.GetUniqueResourcesSpells;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class ResourceRecoveryController(IPlayerInfoPaginationService<ResourceRecoveryDto> playerInfoService, ICountService<ResourceRecoveryDto> countService, IGeneralFilterService<ResourceRecoveryDto> filterService) : ControllerBase
+public class ResourceRecoveryController(IMediator mediator) : ControllerBase
 {
-    private readonly IPlayerInfoPaginationService<ResourceRecoveryDto> _playerInfoService = playerInfoService;
-    private readonly ICountService<ResourceRecoveryDto> _countService = countService;
-    private readonly IGeneralFilterService<ResourceRecoveryDto> _filterService = filterService;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCombatPlayerId")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var resourcesRecoveries = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize, cancellationToken);
+        var resources = await _mediator.Send(new GetResourcesQuery(combatPlayerId, page, pageSize), cancellationToken);
 
-        return Ok(resourcesRecoveries);
+        return Ok(resources);
     }
     
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var count = await _mediator.Send(new GetResourcesCountQuery(combatPlayerId), cancellationToken);
 
         return Ok(count);
     }
@@ -33,7 +36,7 @@ public class ResourceRecoveryController(IPlayerInfoPaginationService<ResourceRec
     [HttpGet("getUniqueCreators/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueCreators(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueTargets = await _filterService.GetCreatorNamesByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var uniqueTargets = await _mediator.Send(new GetUniqueResourcesCreatorsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueTargets);
     }
@@ -41,15 +44,15 @@ public class ResourceRecoveryController(IPlayerInfoPaginationService<ResourceRec
     [HttpGet("getByCreator")]
     public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var resourceRecoveries = await _filterService.GetByCreatorAsync(combatPlayerId, creator, page, pageSize, cancellationToken);
+        var resources = await _mediator.Send(new GetResourcesByCreatorQuery(combatPlayerId, creator, page, pageSize), cancellationToken); ;
 
-        return Ok(resourceRecoveries);
+        return Ok(resources);
     }
 
     [HttpGet("countByCreator")]
     public async Task<IActionResult> CountByCreator(int combatPlayerId, string creator, CancellationToken cancellationToken)
     {
-        var count = await _filterService.CountCreatorByCombatPlayerIdAsync(combatPlayerId, creator, cancellationToken);
+        var count = await _mediator.Send(new CountResourcesByCreatorQuery(combatPlayerId, creator), cancellationToken);
 
         return Ok(count);
     }
@@ -57,7 +60,7 @@ public class ResourceRecoveryController(IPlayerInfoPaginationService<ResourceRec
     [HttpGet("getUniqueSpells/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _filterService.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var uniqueSpells = await _mediator.Send(new GetUniqueResourcesSpellsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueSpells);
     }
@@ -65,15 +68,15 @@ public class ResourceRecoveryController(IPlayerInfoPaginationService<ResourceRec
     [HttpGet("getBySpell")]
     public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var healDones = await _filterService.GetBySpellAsync(combatPlayerId, spell, page, pageSize, cancellationToken);
+        var resources = await _mediator.Send(new GetResourcesBySpellQuery(combatPlayerId, spell, page, pageSize), cancellationToken);
 
-        return Ok(healDones);
+        return Ok(resources);
     }
 
     [HttpGet("countBySpell")]
     public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
     {
-        var count = await _filterService.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell, cancellationToken);
+        var count = await _mediator.Send(new CountResourcesBySpellQuery(combatPlayerId, spell), cancellationToken);
 
         return Ok(count);
     }

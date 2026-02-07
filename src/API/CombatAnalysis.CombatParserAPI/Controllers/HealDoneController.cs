@@ -1,6 +1,6 @@
 ﻿using CombatParser.Application.Queries.HealDone.CountHealBySpell;
 using CombatParser.Application.Queries.HealDone.CountHealByTarget;
-using CombatParser.Application.Queries.HealDone.GetHealCountByCombatPlayerId;
+using CombatParser.Application.Queries.HealDone.GetHealCount;
 using CombatParser.Application.Queries.HealDone.GetHeals;
 using CombatParser.Application.Queries.HealDone.GetHealsBySpell;
 using CombatParser.Application.Queries.HealDone.GetHealsByTarget;
