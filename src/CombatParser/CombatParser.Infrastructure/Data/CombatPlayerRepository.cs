@@ -13,6 +13,7 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : GenericR
     public async Task<IEnumerable<CombatPlayer>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken)
     {
         var combatPlayers = await _context.Set<CombatPlayer>()
+            .AsNoTracking()
             .Where(c => c.CombatId == combatId)
             .Include(c => c.Player)
             .Include(c => c.Stats)

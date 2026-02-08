@@ -38,6 +38,11 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IDamageFilterRepository, DamageFilterRepository>();
 
+        services.AddScoped<ICombatPlayerGenericDataRepository<DamageDoneGeneral>, CombatPlayerGenericDataRepository<DamageDoneGeneral>>();
+        services.AddScoped<ICombatPlayerGenericDataRepository<HealDoneGeneral>, CombatPlayerGenericDataRepository<HealDoneGeneral>>();
+        services.AddScoped<ICombatPlayerGenericDataRepository<DamageTakenGeneral>, CombatPlayerGenericDataRepository<DamageTakenGeneral>>();
+        services.AddScoped<ICombatPlayerGenericDataRepository<ResourceRecoveryGeneral>, CombatPlayerGenericDataRepository<ResourceRecoveryGeneral>>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

@@ -12,8 +12,8 @@ internal class GetDamageTakensBySpellHandler(IGeneralFilterRepository<Domain.Ent
 
     public async Task<IEnumerable<DamageTakenDto>> Handle(GetDamageTakensBySpellQuery request, CancellationToken cancellationToken)
     {
-        var heals = await _repository.GetBySpellAsync(request.CombatPlayerId, request.Spell, request.Page, request.PageSize, cancellationToken);
-        var map = _mapper.Map<IEnumerable<DamageTakenDto>>(heals);
+        var damageTakens = await _repository.GetBySpellAsync(request.CombatPlayerId, request.Spell, request.Page, request.PageSize, cancellationToken);
+        var map = _mapper.Map<IEnumerable<DamageTakenDto>>(damageTakens);
 
         return map;
     }

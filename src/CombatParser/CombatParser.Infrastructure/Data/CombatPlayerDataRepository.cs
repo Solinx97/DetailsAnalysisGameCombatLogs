@@ -13,6 +13,7 @@ internal class CombatPlayerDataRepository<TModel>(CombatParserContextOne context
     public async Task<IEnumerable<TModel>> GetByCombatPlayerIdAsync(int combatPlayerId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var data = await _context.Set<TModel>()
+            .AsNoTracking()
             .Where(x => x.CombatPlayerId == combatPlayerId)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
