@@ -12,8 +12,8 @@ internal class GetResourcesBySpellHandler(IGeneralFilterRepository<Domain.Entiti
 
     public async Task<IEnumerable<ResourceRecoveryDto>> Handle(GetResourcesBySpellQuery request, CancellationToken cancellationToken)
     {
-        var heals = await _repository.GetBySpellAsync(request.CombatPlayerId, request.Spell, request.Page, request.PageSize, cancellationToken);
-        var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(heals);
+        var resources = await _repository.GetBySpellAsync(request.CombatPlayerId, request.Spell, request.Page, request.PageSize, cancellationToken);
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(resources);
 
         return map;
     }

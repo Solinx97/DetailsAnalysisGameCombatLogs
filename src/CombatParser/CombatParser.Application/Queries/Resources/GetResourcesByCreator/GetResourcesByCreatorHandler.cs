@@ -12,8 +12,8 @@ internal class GetResourcesByCreatorHandler(IGeneralFilterRepository<Domain.Enti
 
     public async Task<IEnumerable<ResourceRecoveryDto>> Handle(GetResourcesByCreatorQuery request, CancellationToken cancellationToken)
     {
-        var heals = await _repository.GetByTargetAsync(request.CombatPlayerId, request.Target, request.Page, request.PageSize, cancellationToken);
-        var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(heals);
+        var resources = await _repository.GetByTargetAsync(request.CombatPlayerId, request.Target, request.Page, request.PageSize, cancellationToken);
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(resources);
 
         return map;
     }

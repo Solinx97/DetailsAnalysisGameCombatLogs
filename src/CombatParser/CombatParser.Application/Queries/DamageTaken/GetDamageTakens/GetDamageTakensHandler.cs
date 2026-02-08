@@ -12,8 +12,8 @@ internal class GetDamageTakensHandler(ICombatPlayerDataRepository<Domain.Entitie
 
     public async Task<IEnumerable<DamageTakenDto>> Handle(GetDamageTakensQuery request, CancellationToken cancellationToken)
     {
-        var heals = await _repository.GetByCombatPlayerIdAsync(request.CombatPlayerId, request.Page, request.PageSzie, cancellationToken);
-        var map = _mapper.Map<IEnumerable<DamageTakenDto>>(heals);
+        var damageTakens = await _repository.GetByCombatPlayerIdAsync(request.CombatPlayerId, request.Page, request.PageSzie, cancellationToken);
+        var map = _mapper.Map<IEnumerable<DamageTakenDto>>(damageTakens);
 
         return map;
     }

@@ -3,9 +3,9 @@ using MediatR;
 
 namespace CombatParser.Application.Queries.Resources.GetResourcesCount;
 
-internal class GetResourcesCountHandler(ICombatPlayerDataRepository<Domain.Entities.CombatPlayerData.HealDone> repository) : IRequestHandler<GetResourcesCountQuery, int>
+internal class GetResourcesCountHandler(ICombatPlayerDataRepository<Domain.Entities.CombatPlayerData.ResourceRecovery> repository) : IRequestHandler<GetResourcesCountQuery, int>
 {
-    private readonly ICombatPlayerDataRepository<Domain.Entities.CombatPlayerData.HealDone> _repository = repository;
+    private readonly ICombatPlayerDataRepository<Domain.Entities.CombatPlayerData.ResourceRecovery> _repository = repository;
 
     public async Task<int> Handle(GetResourcesCountQuery request, CancellationToken cancellationToken)
     {

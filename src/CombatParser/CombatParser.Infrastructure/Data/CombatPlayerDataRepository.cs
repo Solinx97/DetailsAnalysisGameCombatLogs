@@ -14,7 +14,8 @@ internal class CombatPlayerDataRepository<TModel>(CombatParserContextOne context
     {
         var data = await _context.Set<TModel>()
             .Where(x => x.CombatPlayerId == combatPlayerId)
-            .Skip(page * pageSize).Take(pageSize)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
         return data;

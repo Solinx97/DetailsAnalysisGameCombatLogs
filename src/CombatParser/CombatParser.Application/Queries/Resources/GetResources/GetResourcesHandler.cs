@@ -12,8 +12,8 @@ internal class GetResourcesHandler(ICombatPlayerDataRepository<Domain.Entities.C
 
     public async Task<IEnumerable<ResourceRecoveryDto>> Handle(GetResourcesQuery request, CancellationToken cancellationToken)
     {
-        var heals = await _repository.GetByCombatPlayerIdAsync(request.CombatPlayerId, request.Page, request.PageSzie, cancellationToken);
-        var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(heals);
+        var resources = await _repository.GetByCombatPlayerIdAsync(request.CombatPlayerId, request.Page, request.PageSzie, cancellationToken);
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(resources);
 
         return map;
     }
