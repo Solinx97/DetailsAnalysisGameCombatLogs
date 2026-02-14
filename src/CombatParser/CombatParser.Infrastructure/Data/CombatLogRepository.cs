@@ -1,7 +1,7 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
-using CombatParser.Infrastructure.Exceptions;
 using CombatParser.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data;
 
@@ -11,9 +11,8 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
 
     public async Task DeleteAsync(int id, CancellationToken cancelationToken)
     {
-        var entity = await _context.Set<CombatLog>().FindAsync(id, cancelationToken)
-            ?? throw new EntityNotFoundException(typeof(CombatLog), id);
-
-        _context.Set<CombatLog>().Remove(entity);
+        await _context.Set<CombatLog>()
+            .Where(cl => cl.Id == id)
+            .ExecuteDeleteAsync(cancelationToken);
     }
 }
