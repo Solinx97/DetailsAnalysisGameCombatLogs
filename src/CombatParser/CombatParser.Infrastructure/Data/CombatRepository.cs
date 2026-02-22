@@ -1,7 +1,7 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
 using CombatParser.Infrastructure.Extensions;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 

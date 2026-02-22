@@ -1,6 +1,6 @@
 ﻿using CombatParser.Domain.Entities;
 using CombatParser.Domain.Interfaces;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
 
 namespace CombatParser.Infrastructure.Extensions;

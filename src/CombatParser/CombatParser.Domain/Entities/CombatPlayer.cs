@@ -54,7 +54,7 @@ public class CombatPlayer : CombatDataBase, ICombatRefs
 
     public Combat Combat { get; private set; }
 
-    public IReadOnlyCollection<DamageDone> DamageDones => _damageDones.AsReadOnly();
+    public IEnumerable<DamageDone> DamageDones => _damageDones;
 
     public IReadOnlyCollection<DamageDoneGeneral> DamageDoneGenerals => _damageDoneGenerals.AsReadOnly();
 

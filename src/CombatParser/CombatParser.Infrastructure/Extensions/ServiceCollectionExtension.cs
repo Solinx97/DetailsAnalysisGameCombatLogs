@@ -5,7 +5,7 @@ using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Interfaces.Filters;
 using CombatParser.Infrastructure.Data;
 using CombatParser.Infrastructure.Data.Filters;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

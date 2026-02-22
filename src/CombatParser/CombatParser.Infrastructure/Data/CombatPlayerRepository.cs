@@ -1,12 +1,11 @@
-﻿using CombatParser.Domain.Aggregates;
-using CombatParser.Domain.Data;
+﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data;
 
-internal class CombatPlayerRepository(CombatParserContextOne context) : GenericRepository<Combat, int>(context), ICombatPlayerRepository
+internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatPlayerRepository
 {
     private readonly CombatParserContextOne _context = context;
 
@@ -21,5 +20,15 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : GenericR
             .ToListAsync(cancellationToken);
 
         return combatPlayers;
+    }
+
+    public async Task<CombatPlayer?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var combatPlayer = await _context.Set<CombatPlayer>()
+            .AsNoTracking()
+            .Include(c => c.Player)
+            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+
+        return combatPlayer;
     }
 }

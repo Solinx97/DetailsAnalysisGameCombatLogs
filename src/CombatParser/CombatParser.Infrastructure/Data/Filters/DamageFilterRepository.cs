@@ -2,7 +2,7 @@
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Interfaces.Filters;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data.Filters;
@@ -16,32 +16,35 @@ internal class DamageFilterRepository(CombatParserContextOne context) : IDamageF
         var damageByEachTarget = new List<List<CombatTarget>>();
         var targets = await GetTargetsAsync(combatId, cancellationToken);
 
-        foreach (var item in targets)
+        foreach (var target in targets)
         {
             var sum = await _context.Set<Combat>()
-                       .Where(x => x.Id == combatId)
-                       .Join(_context.Set<CombatPlayer>(),
-                           x => x.Id,
-                           u => u.CombatId,
-                           (x, u) => new
-                           {
-                               u.Id,
-                               u.Player.Username
-                           })
-                       .Join(_context.Set<DamageDone>(),
-                           x => x.Id,
-                           u => u.CombatPlayerId,
-                           (x, u) => new
-                           {
-                               x.Username,
-                               u.Target,
-                               u.Value
-                           })
-                       .Where(x => x.Target == item)
-                       .GroupBy(x => x.Username)
-                       .Select(x => new CombatTarget(x.Key, item, x.Sum(y => y.Value), 0))
-                       .OrderByDescending(x => x.Sum)
-                       .ToListAsync(cancellationToken);
+                            .AsNoTracking()
+                            .Where(c => c.Id == combatId)
+                            .SelectMany(c => c.CombatPlayers)
+                            .SelectMany(cp => cp.DamageDones,
+                                (cp, dd) => new
+                                {
+                                    cp.Player.Username,
+                                    dd.Target,
+                                    dd.Value,
+                                    cp.CombatId
+                                })
+                            .GroupBy(x => new { x.Username, x.Target, x.CombatId })
+                            .Select(g => new
+                            {
+                                g.Key.Username,
+                                g.Key.Target,
+                                g.Key.CombatId,
+                                Sum = g.Sum(x => x.Value)
+                            })
+                            .OrderByDescending(x => x.Sum)
+                            .Select(x => new CombatTarget(
+                                x.Username,
+                                x.Target,
+                                x.Sum,
+                                x.CombatId))
+                            .ToListAsync(cancellationToken);
 
             damageByEachTarget.Add(sum);
         }

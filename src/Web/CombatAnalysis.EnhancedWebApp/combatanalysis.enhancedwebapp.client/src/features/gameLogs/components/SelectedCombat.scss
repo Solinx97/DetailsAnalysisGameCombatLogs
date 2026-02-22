@@ -17,7 +17,6 @@
                 flex-direction: column;
                 gap: 10px;
                 margin: 5px;
-                width: 25%;
                 background: #135D66;
                 color: white;
 
@@ -108,7 +107,9 @@
 
             &__item {
                 display: flex;
+                justify-content: center;
                 margin: 10px 0;
+                gap: 75px;
                 flex-wrap: wrap;
 
                 .player-score {

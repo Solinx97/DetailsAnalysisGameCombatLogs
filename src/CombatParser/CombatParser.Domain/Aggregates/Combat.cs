@@ -69,7 +69,7 @@ public class Combat
 
     public int CombatLogId { get; private set; }
 
-    public IReadOnlyCollection<CombatPlayer> CombatPlayers => _players.AsReadOnly();
+    public IEnumerable<CombatPlayer> CombatPlayers => _players;
 
     public IReadOnlyCollection<CombatAura> CombatAuras => _auras.AsReadOnly();
 

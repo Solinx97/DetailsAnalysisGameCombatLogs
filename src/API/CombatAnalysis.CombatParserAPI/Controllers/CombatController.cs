@@ -2,6 +2,7 @@
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Application.Commands.CreateCombat;
+using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
 using CombatParser.Domain.EntityData;
 using MediatR;
@@ -19,6 +20,14 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
     private readonly IMapper _mapper = mapper;
     private readonly ILogger<CombatController> _logger = logger;
     private readonly IMediator _mediator = mediator;
+
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    {
+        var combat = await _mediator.Send(new GetByIdCombatQuery(id), cancellationToken);
+
+        return Ok(combat);
+    }
 
     [HttpGet("getByCombatLogId/{combatLogId:int:min(1)}")]
     public async Task<IActionResult> GetByCombatLogId(int combatLogId, CancellationToken cancellationToken)

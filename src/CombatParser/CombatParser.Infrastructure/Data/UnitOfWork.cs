@@ -1,5 +1,5 @@
 ﻿using CombatParser.Domain.Data;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 
 namespace CombatParser.Infrastructure.Data;
 

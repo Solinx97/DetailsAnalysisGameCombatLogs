@@ -77,7 +77,7 @@ const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ comb
     }
 
     return (
-        <div className="details-specifical-combat__container_general-details-charts">
+        <div className="selected-combat__container_general-details-charts">
             <DetailsPieChart
                 payload={damageDonePieChart}
             />

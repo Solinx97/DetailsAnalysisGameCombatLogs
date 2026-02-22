@@ -174,7 +174,6 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
                         />
                     </div>
                     <AddPeople
-                        user={myself}
                         usersId={communityUsersId}
                         peopleToJoin={peopleToJoin}
                         setPeopleToJoin={setPeopleToJoin}

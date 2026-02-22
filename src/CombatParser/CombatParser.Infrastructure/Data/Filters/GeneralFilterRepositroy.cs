@@ -1,6 +1,6 @@
 ﻿using CombatParser.Domain.Data.Filters;
 using CombatParser.Domain.Interfaces;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data.Filters;

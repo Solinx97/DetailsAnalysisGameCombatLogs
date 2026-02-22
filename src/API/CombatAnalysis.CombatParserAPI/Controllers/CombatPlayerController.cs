@@ -1,4 +1,5 @@
-﻿using CombatParser.Application.Queries.GetCombatPlayersByCombatId;
+﻿using CombatParser.Application.Queries.GetCombatPlayerById;
+using CombatParser.Application.Queries.GetCombatPlayersByCombatId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,5 +17,13 @@ public class CombatPlayerController(IMediator mediator) : ControllerBase
         var combatPlayers = await _mediator.Send(new GetCombatPlayersByCombatIdQuery(combatId), cancellationToken);
 
         return Ok(combatPlayers);
+    }
+
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    {
+        var combatPlayer = await _mediator.Send(new GetCombatPlayerByIdQuery(id), cancellationToken);
+
+        return Ok(combatPlayer);
     }
 }

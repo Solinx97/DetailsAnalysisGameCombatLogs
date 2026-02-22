@@ -12,7 +12,6 @@ export type CombatModel = {
     startDate: string;
     finishDate: string;
     duration: string;
-    isReady: boolean;
     combatLogId: number;
     boss: BossModel;
 }

@@ -4,7 +4,7 @@ using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace CombatParser.Infrastructure.Persistence;
+namespace CombatParser.Infrastructure.Persistent;
 
 public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> options) : DbContext(options)
 {

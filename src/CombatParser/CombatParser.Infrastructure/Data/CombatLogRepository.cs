@@ -1,6 +1,6 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
-using CombatParser.Infrastructure.Persistence;
+using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data;
