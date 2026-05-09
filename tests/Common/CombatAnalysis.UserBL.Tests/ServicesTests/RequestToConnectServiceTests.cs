@@ -5,6 +5,7 @@ using CombatAnalysis.UserBL.Mapping;
 using CombatAnalysis.UserBL.Services;
 using CombatAnalysis.UserDAL.Entities;
 using CombatAnalysis.UserDAL.Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Linq.Expressions;
 
@@ -328,7 +329,8 @@ public class RequestToConnectServiceTests
         var mockRepository = new Mock<IGenericRepository<RequestToConnect, int>>();
 
         // Use real Automapper as method call MapperExpresiion extension
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserBLMapper>());
+        var loggerFactory = LoggerFactory.Create(builder => { });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserBLMapper>(), loggerFactory);
         var mapper = config.CreateMapper();
 
         mockRepository
@@ -364,7 +366,8 @@ public class RequestToConnectServiceTests
         var mockRepository = new Mock<IGenericRepository<RequestToConnect, int>>();
 
         // Use real Automapper as method call MapperExpresiion extension
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserBLMapper>());
+        var loggerFactory = LoggerFactory.Create(builder => { });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserBLMapper>(), loggerFactory);
         var mapper = config.CreateMapper();
 
         mockRepository

@@ -17,8 +17,6 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<Players>(builder.Configuration.GetSection("Players"));
-
 var databasePropsOptions = new DatabaseProps();
 builder.Configuration.Bind("Database", databasePropsOptions);
 
@@ -29,12 +27,14 @@ builder.Services.CombatParserBLDependencies(databasePropsOptions.DefaultConnecti
 builder.Services.AddInfrastructure(databasePropsOptions.DefaultConnection);
 builder.Services.AddMediatorSource();
 
+var loggerFactory = LoggerFactory.Create(builder => { });
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new CombatParserApiMapper());
     mc.AddProfile(new BLMapper());
     mc.AddProfile(new ApplicationMapper());
-});
+}, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
@@ -82,7 +82,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Warning)
+    .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
     .WriteTo.File("logs/parserapi.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, restrictedToMinimumLevel: LogEventLevel.Error)
     .CreateLogger();
 

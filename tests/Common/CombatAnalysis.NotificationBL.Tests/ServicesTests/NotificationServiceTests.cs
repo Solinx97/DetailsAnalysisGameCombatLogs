@@ -5,6 +5,7 @@ using CombatAnalysis.NotificationBL.Services;
 using CombatAnalysis.NotificationBL.Tests.Factory;
 using CombatAnalysis.NotificationDAL.Entities;
 using CombatAnalysis.NotificationDAL.Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Linq.Expressions;
 
@@ -296,7 +297,8 @@ public class NotificationServiceTests
         var mockRepository = new Mock<IGenericRepository<Notification, int>>();
 
         // Use real Automapper as method call MapperExpresiion extension
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<NotificationBLMapper>());
+        var loggerFactory = LoggerFactory.Create(builder => { });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<NotificationBLMapper>(), loggerFactory);
         var mapper = config.CreateMapper();
 
         mockRepository
@@ -332,7 +334,8 @@ public class NotificationServiceTests
         var mockRepository = new Mock<IGenericRepository<Notification, int>>();
 
         // Use real Automapper as method call MapperExpresiion extension
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<NotificationBLMapper>());
+        var loggerFactory = LoggerFactory.Create(builder => { });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<NotificationBLMapper>(), loggerFactory);
         var mapper = config.CreateMapper();
 
         mockRepository

@@ -5,6 +5,7 @@ using CombatAnalysis.CommunicationBL.Services.Post;
 using CombatAnalysis.CommunicationBL.Tests.Factory;
 using CombatAnalysis.CommunicationDAL.Entities.Post;
 using CombatAnalysis.CommunicationDAL.Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Linq.Expressions;
 
@@ -310,7 +311,8 @@ public class UserPostLikeServiceTests
         var mockRepository = new Mock<IGenericRepository<UserPostLike, int>>();
 
         // Use real Automapper as method call MapperExpresiion extension
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<BLMapper>());
+        var loggerFactory = LoggerFactory.Create(builder => { });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<BLMapper>(), loggerFactory);
         var mapper = config.CreateMapper();
 
         mockRepository
@@ -346,7 +348,8 @@ public class UserPostLikeServiceTests
         var mockRepository = new Mock<IGenericRepository<UserPostLike, int>>();
 
         // Use real Automapper as method call MapperExpresiion extension
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<BLMapper>());
+        var loggerFactory = LoggerFactory.Create(builder => { });
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<BLMapper>(), loggerFactory);
         var mapper = config.CreateMapper();
 
         mockRepository

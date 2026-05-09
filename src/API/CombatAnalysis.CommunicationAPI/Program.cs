@@ -17,12 +17,14 @@ builder.Configuration.Bind("Database", databasePropsOptions);
 
 builder.Services.CommunicationBLDependencies(databasePropsOptions.DefaultConnection);
 
+var loggerFactory = LoggerFactory.Create(builder => { });
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddExpressionMapping();
     mc.AddProfile(new CommunicationMapper());
     mc.AddProfile(new BLMapper());
-});
+}, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

@@ -24,12 +24,14 @@ builder.Configuration.Bind("Database", databasePropsOptions);
 
 builder.Services.NotificationBLDependencies(databasePropsOptions.DefaultConnection);
 
+var loggerFactory = LoggerFactory.Create(builder => { });
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddExpressionMapping();
     mc.AddProfile(new NotificationMapper());
     mc.AddProfile(new NotificationBLMapper());
-});
+}, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

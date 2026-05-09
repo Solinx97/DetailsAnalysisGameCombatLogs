@@ -17,9 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.1.3" />
     <PackageReference Include="MediatR" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -34,6 +35,15 @@
     <ProjectReference Include="..\..\Common\CombatAnalysis.BL\CombatAnalysis.BL.csproj" />
     <ProjectReference Include="..\..\Common\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj" />
     <ProjectReference Include="..\..\Parser\CombatAnalysis.CombatParser\CombatAnalysis.CombatParser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Production.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
