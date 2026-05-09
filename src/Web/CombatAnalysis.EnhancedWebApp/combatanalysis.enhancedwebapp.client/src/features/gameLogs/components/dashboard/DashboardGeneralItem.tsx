@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import type { CombatDetailsModel } from '../../types/dashboard/CombatDetailsModel';
-import DashboardExtractedDetails from './DashboardExtractedDetails';
 import TopPlayers from './TopPlayers';
 
 export interface DashboardGeneralItemProps {
@@ -16,15 +15,14 @@ export interface DashboardGeneralItemProps {
 }
 
 const DashboardGeneralItem: React.FC<DashboardGeneralItemProps> = ({ name, details, duration, combatPlayers, detailsType, getValueShortName }) => {
-    const minCount = 4;
-    const topPlayersCount = 3;
+    const minTopPlayersCount = 3;
 
     const { t } = useTranslation('combatDetails/dashboard');
 
     const navigate = useNavigate();
 
     const [sum, setSum] = useState(0);
-    const [itemCount, setItemCount] = useState(minCount);
+    const [topPlayersCount, setTopPlayersCount] = useState(3);
     const [sortedPlayerData, setSortedPlayerData] = useState<CombatPlayerModel[]>([]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,6 +86,10 @@ const DashboardGeneralItem: React.FC<DashboardGeneralItemProps> = ({ name, detai
         navigate(`/combat-details?id=${details.id}&playerId=${playerId}&detailsType=${detailsType}&combatLogId=${details.combatLogId}&name=${details.name}&tab=${0}&number=${details.number}&isWin=${details.isWin}`);
     }
 
+    const updatePlayersList = () => {
+        setTopPlayersCount(topPlayersCount === minTopPlayersCount ? combatPlayers.length : minTopPlayersCount);
+    }
+
     return (
         <>
             <div className="title">
@@ -101,22 +103,9 @@ const DashboardGeneralItem: React.FC<DashboardGeneralItemProps> = ({ name, detai
                 topPlayers={sortedPlayerData.slice(0, topPlayersCount)}
                 detailsType={detailsType}
             />
-            {itemCount !== minCount &&
-                <DashboardExtractedDetails
-                    name={name}
-                    calculation={calculation}
-                    calculationValuePerTime={calculationValuePerTime}
-                    goToCombatGeneralDetails={goToCombatGeneralDetails}
-                    getDetailsValue={getDetailsValue}
-                    combatPlayers={sortedPlayerData}
-                    detailsType={detailsType}
-                    itemCount={itemCount}
-                    setItemCount={setItemCount}
-                />
-            }
-            {itemCount === minCount
-                ? <div className="extend" onClick={() => setItemCount(sortedPlayerData.length)}>{t("More")}</div>
-                : <div className="extend" onClick={() => setItemCount(minCount)}>{t("Less")}</div>
+            {topPlayersCount === minTopPlayersCount 
+                ? <div className="extend" onClick={updatePlayersList}>{t("More")}</div>
+                : <div className="extend" onClick={updatePlayersList}>{t("Less")}</div>
             }
         </>
     );

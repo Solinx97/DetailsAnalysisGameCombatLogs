@@ -11,5 +11,6 @@
   "Times": "Время",
   "When": "Когда",
   "Apply": "Применить",
-  "SelectCombat": "Выбрать бой"
+  "SelectCombat": "Выбрать бой",
+    "SeeOnlyPinnedAuras": "Показать только закрепленные ауры"
 }

@@ -87,9 +87,11 @@ const Dashboard: React.FC<DashboardProps> = ({ details, combatPlayers, playersDe
     }
 
     const getTopDamageByTargetAsync = async () => {
-        const response = await getDamageDoneDamageByEachTarget(details.id);
-        if (response.data !== undefined) {
-            setTargets(response.data);
+        try {
+        const result = await getDamageDoneDamageByEachTarget(details.id).unwrap();;
+        setTargets(result);
+        } catch (error) {
+            console.error("Failed to fetch taregts:", error);
         }
     }
 

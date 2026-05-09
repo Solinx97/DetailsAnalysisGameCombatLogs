@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { CombatTargetModel } from '../../types/CombatTargetModel';
 import type { CombatDetailsModel } from '../../types/dashboard/CombatDetailsModel';
-import DashboardTargetsExtractedDetails from './DashboardTargetsExtractedDetails';
 import TopPlayersByTarget from './TopPlayersByTarget';
 
 interface DashboardTargetItemProps {
@@ -15,15 +14,14 @@ interface DashboardTargetItemProps {
 }
 
 const DashboardTargetItem: React.FC<DashboardTargetItemProps> = ({ combatTarget, details, duration, detailsType, getValueShortName }) => {
-    const minCount = 4;
-    const topPlayersCount = 3;
+    const minTopPlayersCount = 3;
 
     const { t } = useTranslation("combatDetails/dashboard");
 
     const navigate = useNavigate();
 
     const [sum, setSum] = useState(0);
-    const [itemCount, setItemCount] = useState(minCount);
+    const [topPlayersCount, setTopPlayersCount] = useState(3);
 
     useEffect(() => {
         const sum = calculateSum(combatTarget);
@@ -54,6 +52,10 @@ const DashboardTargetItem: React.FC<DashboardTargetItemProps> = ({ combatTarget,
         navigate(`/combat-details?id=${details.id}&playerId=${playerId}&detailsType=${detailsType}&combatLogId=${details.combatLogId}&name=${details.name}&tab=${0}&number=${details.number}&isWin=${details.isWin}`);
     }
 
+    const updatePlayersList = () => {
+        setTopPlayersCount(topPlayersCount === minTopPlayersCount ? combatTarget.length : minTopPlayersCount);
+    }
+
     return (
         <>
             <div className="title">
@@ -66,21 +68,9 @@ const DashboardTargetItem: React.FC<DashboardTargetItemProps> = ({ combatTarget,
                 getValueShortName={getValueShortName}
                 targetTopPlayers={combatTarget.slice(0, topPlayersCount)}
             />
-            {itemCount !== minCount &&
-                <DashboardTargetsExtractedDetails
-                    name={combatTarget[0].target}
-                    calculation={calculation}
-                    calculationDamagePerTimeByTarget={calculationDamagePerTimeByTarget}
-                    goToCombatGeneralDetails={goToCombatGeneralDetails}
-                    getValueShortName={getValueShortName}
-                    targets={combatTarget}
-                    itemCount={itemCount}
-                    setItemCount={setItemCount}
-                />
-            }
-            {itemCount === minCount
-                ? <div className="extend" onClick={() => setItemCount(combatTarget.length)}>{t("More")}</div>
-                : <div className="extend" onClick={() => setItemCount(minCount)}>{t("Less")}</div>
+            {topPlayersCount === minTopPlayersCount 
+                ? <div className="extend" onClick={updatePlayersList}>{t("More")}</div>
+                : <div className="extend" onClick={updatePlayersList}>{t("Less")}</div>
             }
         </>
     );

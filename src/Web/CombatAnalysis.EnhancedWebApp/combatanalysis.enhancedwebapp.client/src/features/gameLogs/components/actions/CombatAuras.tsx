@@ -30,9 +30,10 @@ const CombatAuras: React.FC = () => {
     const [selectedCreatorAuras, setSelectedCreatorAuras] = useState<CombatAuraModel[]>([]);
     const [defaultSelectedCreatorAuras, setDefaultSelectedCreatorAuras] = useState<CombatAuraModel[]>([]);
     const [selectedCreator, setSelectedCreator] = useState("");
-    const [pinnedAuras, setPinnedAuras] = useState< CombatAuraModel[]>([]);
+    const [pinnedAuras, setPinnedAuras] = useState<Map<string, CombatAuraModel[]>>(new Map());
     const [defaultWhenPinnedAuras, setDefaultPinnedAuras] = useState<CombatAuraModel[]>([]);
     const [showSearch, setShowSearch] = useState(false);
+    const [onlyPinnedAuras, setOnlyPinnedAuras] = useState(false);
 
     const [getCombatById] = useLazyGetCombatByIdQuery();
     const [getCombatAurasByCombatId] = useLazyGetCombatAurasByCombatIdQuery();
@@ -94,6 +95,19 @@ const CombatAuras: React.FC = () => {
         handleCleanSearch();
     }, [showSearch]);
 
+    useEffect(() => {
+        if (onlyPinnedAuras) {
+            const pinnedAurasNames = Array.from(pinnedAuras.keys());
+            const filteredAuras = combatAuras.filter(aura => pinnedAurasNames.includes(aura.name));
+
+            setSelectedCreatorAuras(filteredAuras);
+            setDefaultSelectedCreatorAuras(filteredAuras);
+        }
+        else {
+            initSelectedCreatorCombatAuras(selectedCreator);
+        }
+    }, [onlyPinnedAuras]);
+
     const getAuraCreators = (): void => {
         const uniqueCreators = new Set();
         const creators = new Array<CombatAuraModel>();
@@ -112,13 +126,11 @@ const CombatAuras: React.FC = () => {
     }
 
     const initSelectedCreatorCombatAuras = (creator: string): void => {
-        const auras = new Array<CombatAuraModel>();
+        const availableAuras = onlyPinnedAuras ? Array.from(allCombatAuras.filter(aura => pinnedAuras.has(aura.name))) : Array.from(allCombatAuras);
 
-        allCombatAuras.forEach(aura => {
-            if (creator === "All" || aura.creator === creator) {
-                auras.push(aura);
-            }
-        });
+        const auras = availableAuras.filter(
+            value => creator === "All" || value.creator === creator
+        );
 
         setSelectedCreatorAuras(auras);
         setDefaultSelectedCreatorAuras(auras);
@@ -130,8 +142,9 @@ const CombatAuras: React.FC = () => {
         initSelectedCreatorCombatAuras(creator);
     }
 
-    const handleRemovePinAura = (aura: CombatAuraModel) => {
-        const pinned = Array.from(pinnedAuras).filter(x => x !== aura);
+    const handleRemovePinAura = (auraName: string) => {
+        const pinned = new Map(pinnedAuras);
+        pinned.delete(auraName);
 
         setPinnedAuras(pinned);
     }
@@ -142,13 +155,13 @@ const CombatAuras: React.FC = () => {
         }
 
         setSelectedCreatorAuras(defaultSelectedCreatorAuras);
-        setPinnedAuras(Array.from(pinnedAuras));
+        setPinnedAuras(new Map(pinnedAuras));
     }
 
     const handleSearchAura = (e: ChangeEvent<HTMLInputElement> | undefined) => {
         let selectedAuras = [];
         const searchAura = e?.target.value;
-        const defaultAura = pinnedAuras.length > 0 ? defaultWhenPinnedAuras : defaultSelectedCreatorAuras;
+        const defaultAura = pinnedAuras.size > 0 ? defaultWhenPinnedAuras : defaultSelectedCreatorAuras;
 
         if (!searchAura) {
             return;
@@ -165,9 +178,14 @@ const CombatAuras: React.FC = () => {
     }
 
     const removeQuotes = (str: string): string => {
-        const newStr = str.slice(1, -1);
+        const newStr = str?.slice(0, -1);
 
         return newStr;
+    }
+
+    const usePinnedAurasHandler = (e: ChangeEvent<HTMLInputElement> | undefined): void => {
+        const checked = e?.target.checked;
+        setOnlyPinnedAuras(checked || false);
     }
 
     if (combat === null) {
@@ -226,12 +244,16 @@ const CombatAuras: React.FC = () => {
                     defaultSelectedCreatorAuras={defaultSelectedCreatorAuras}
                     t={t}
                 />
+                <div className="mb-3 form-check">
+                    <input type="checkbox" className="form-check-input" id="exampleCheck1" defaultChecked={false} onChange={usePinnedAurasHandler} />
+                    <label className="form-check-label" htmlFor="exampleCheck1">{t("SeeOnlyPinnedAuras")}</label>
+                </div>
             </div>
-            {pinnedAuras.length > 0 &&
+            {pinnedAuras.size > 0 &&
                 <ul className="pinned-auras">
-                    {pinnedAuras.map((aura, index) => (
-                        <li key={index} onClick={() => handleRemovePinAura(aura)}>
-                            <div>{removeQuotes(aura.name)}</div>
+                    {Array.from(pinnedAuras.entries()).map(([key]) => (
+                        <li key={key} onClick={() => handleRemovePinAura(key)}>
+                            <div>{key}</div>
                         </li>
                     ))}
                 </ul>
@@ -240,9 +262,8 @@ const CombatAuras: React.FC = () => {
                 <CombatAuraItem
                     selectedCreatorAuras={selectedCreatorAuras}
                     pinnedAuras={pinnedAuras}
-                    removeQuotes={removeQuotes}
+                    setPinnedAuras={setPinnedAuras}
                     selectedCreator={selectedCreator}
-                    setDefaultAurasWhenPin={setDefaultPinnedAuras}
                     t={t}
                 />
             }

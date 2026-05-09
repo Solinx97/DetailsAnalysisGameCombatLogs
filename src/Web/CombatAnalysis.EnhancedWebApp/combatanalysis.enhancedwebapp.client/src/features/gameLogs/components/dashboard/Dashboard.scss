@@ -69,8 +69,9 @@ $mobile-max-width: 425px;
     &__items {
         display: flex;
         justify-content: flex-start;
-        gap: 50px 10px;
-        width: 80vw;
+        gap: 10px;
+        margin-left: -10vw;
+        width: 90vw;
         overflow: auto;
     }
 
@@ -176,8 +177,8 @@ $mobile-max-width: 425px;
         gap: 15px;
         box-shadow: 2px 2px 2px 2px green;
         border-radius: 25px;
-        padding: 20px;
-        min-width: 33vw;
+        padding: 10px;
+        min-width: 35vw;
         margin: 10px 5px;
 
         .title {
@@ -225,7 +226,9 @@ $mobile-max-width: 425px;
 
         .top-players {
             display: flex;
+            flex-direction: row;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 10px;
             width: 100%;
 
@@ -240,7 +243,7 @@ $mobile-max-width: 425px;
                 cursor: default;
                 animation-name: top-players;
                 animation-duration: 2s;
-                min-width: 33%;
+                min-width: 30%;
 
                 .stars {
                     display: flex;
@@ -319,7 +322,7 @@ $mobile-max-width: 425px;
     .top-players .value-per-time, .min-details .value-per-time {
         box-shadow: 2px 2px yellow;
         border-radius: 20px;
-        padding: 2px 0;
+        padding: 5px;
         margin: 5px 0;
         font-size: 0.8em;
     }
