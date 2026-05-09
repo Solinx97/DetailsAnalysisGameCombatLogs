@@ -1,64 +1,16 @@
-.creator-auras {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.8em;
-    gap: 15px;
-    margin-top: 10px;
-
-    &__details {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 25px;
-
-        .details-collection {
-            display: flex;
-            gap: 20px;
-            width: 100vw;
-
-            &__spell, &__spell_ready {
-                display: flex;
-                align-items: center;
-
-                svg {
-                    color: purple;
-                    font-size: 0.8em;
-                }
-            }
-
-            &__spell_ready {
-                cursor: pointer;
-            }
-
-            li {
-                position: relative;
-                display: flex;
-                gap: 20px;
-                width: 25%;
-            }
-        }
-
-        .details-opened {
-            box-shadow: 2px 2px 2px 2px green;
-        }
-
-        .targets {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            left: 35%;
-            padding: 10px 15px !important;
-            box-shadow: 1px 1px 1px 1px gray;
-            border-radius: 20px;
-            gap: 10px;
-        }
-    }
-}
-
 .creators {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    &__navigate {
+        display: flex;
+        gap: 10px;
+
+        .active {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+    }
 
     .select-combat {
         width: 40px;
@@ -195,6 +147,63 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+        }
+    }
+}
+
+.creator-auras {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8em;
+    gap: 15px;
+    margin-top: 10px;
+
+    &__details {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 25px;
+
+        .details-collection {
+            display: flex;
+            gap: 20px;
+            width: 100vw;
+
+            &__spell, &__spell_ready {
+                display: flex;
+                align-items: center;
+
+                svg {
+                    color: purple;
+                    font-size: 0.8em;
+                }
+            }
+
+            &__spell_ready {
+                cursor: pointer;
+            }
+
+            li {
+                position: relative;
+                display: flex;
+                gap: 20px;
+                width: 25%;
+            }
+        }
+
+        .details-opened {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+
+        .targets {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            left: 35%;
+            padding: 10px 15px !important;
+            box-shadow: 1px 1px 1px 1px gray;
+            border-radius: 20px;
+            gap: 10px;
         }
     }
 }

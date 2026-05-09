@@ -53,8 +53,8 @@ const CombatAuras: React.FC = () => {
 
         const getCombat = async (): Promise<void> => {
             try {
-                const combat = await getCombatById(combatId).unwrap();
-                setCombat(combat);
+                const result = await getCombatById(combatId).unwrap();
+                setCombat(result);
             } catch (e) {
                 console.error(e);
             }
@@ -70,9 +70,9 @@ const CombatAuras: React.FC = () => {
 
         const getCombatAuras = async () => {
             try {
-                const combatAuras = await getCombatAurasByCombatId(combat?.id).unwrap();
-                setCombatAuras(combatAuras);
-                setAllCombatAuras(combatAuras);
+                const result = await getCombatAurasByCombatId(combat?.id).unwrap();
+                setCombatAuras(result);
+                setAllCombatAuras(result);
             } catch (e) {
                 console.error(e);
             }
@@ -176,20 +176,33 @@ const CombatAuras: React.FC = () => {
 
     return (
         <div className="creators">
-            <div className="details-specifical-combat__navigate">
+            <div className="creators__navigate">
                 <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />
                     <div>{t("SelectCombat")}</div>
                 </div>
-                <div className="btn-shadow" onClick={() => setShowSearch(prev => !prev)}>
+                <div className={`btn-shadow ${showSearch ? 'active' : ''}`} onClick={() => setShowSearch(prev => !prev)}>
                     <FontAwesomeIcon
                         icon={showSearch ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
                     />
                     <div>{t("Search")}</div>
                 </div>
             </div>
+            {showSearch &&
+                <div className="mb-3 search">
+                    <label htmlFor="inputAura" className="form-label">{t("Search")}</label>
+                    <div className="search__aura">
+                        <input type="text" className="form-control" placeholder={t("TypeAuraName")} id="inputAura" ref={searchRef} onChange={handleSearchAura} />
+                        <FontAwesomeIcon
+                            icon={faXmark}
+                            title={t("Clean")}
+                            onClick={handleCleanSearch}
+                        />
+                    </div>
+                </div>
+            }
             <div>{t("Creator")}</div>
             <div className="creators__select-creator">
                 <select className="form-control" value={selectedCreator} onChange={(e) => handleSelectCreator(e.target.value)}>
@@ -214,19 +227,6 @@ const CombatAuras: React.FC = () => {
                     t={t}
                 />
             </div>
-            {showSearch &&
-                <div className="mb-3 search">
-                    <label htmlFor="inputAura" className="form-label">{t("Search")}</label>
-                    <div className="search__aura">
-                        <input type="text" className="form-control" placeholder={t("TypeAuraName")} id="inputAura" ref={searchRef} onChange={handleSearchAura} />
-                        <FontAwesomeIcon
-                            icon={faXmark}
-                            title={t("Clean")}
-                            onClick={handleCleanSearch}
-                        />
-                    </div>
-                </div>
-            }
             {pinnedAuras.length > 0 &&
                 <ul className="pinned-auras">
                     {pinnedAuras.map((aura, index) => (

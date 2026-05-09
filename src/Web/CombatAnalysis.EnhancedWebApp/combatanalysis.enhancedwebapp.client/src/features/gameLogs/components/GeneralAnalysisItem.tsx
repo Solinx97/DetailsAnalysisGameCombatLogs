@@ -137,7 +137,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                         className="list-group-item__player-statistic-item"
                         title={t("Buffs") || ""}
                     />
-                    <div className="auras-details" onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>More...</div>
+                    <div className="auras-details" onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>{t("Buffs")}</div>
                 </li>
             </ul>
             <div className="card-body details">
