@@ -67,7 +67,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByGroupChatId',
-                        { chatId: chat.id },
+                        { chatId: chat.id, page, pageSize: pageSizeRef.current },
                         draft => {
                             draft.unshift(message);
                         }
@@ -79,7 +79,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByGroupChatId',
-                        { chatId: chat.id },
+                        { chatId: chat.id, page, pageSize: pageSizeRef.current },
                         draft => {
                             const message = draft.find(m => m.id === messagePatch.id);
                             if (message && messagePatch) {
