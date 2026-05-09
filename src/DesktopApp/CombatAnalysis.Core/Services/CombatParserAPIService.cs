@@ -28,53 +28,42 @@ internal class CombatParserAPIService : ICombatParserAPIService
     public async Task SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancelationToken)
     {
         var readyCombatsNumber = 0;
+        var cancellationToken = requestCancelationToken();
 
-        try
+        var combatTasks = combats.Select(async combat =>
         {
-            var cancellationToken = requestCancelationToken();
-            var combatTasks = combats.Select(async item =>
+            try
             {
-                item.CombatLogId = combatLog.Id;
+                combat.CombatLogId = combatLog.Id;
 
-                var response = await _httpClient.PostAsync("Combat", JsonContent.Create(item), cancellationToken);
+                using var response = await _httpClient.PostAsync("Combat", JsonContent.Create(combat), cancellationToken);
                 response.EnsureSuccessStatusCode();
 
-                uplodedCallback(item.DungeonName, item.Boss.Name);
+                uplodedCallback(combat.DungeonName, combat.Boss.Name);
 
                 readyCombatsNumber++;
-            });
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            await Task.WhenAll(combatTasks);
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
 
-            await UpdateCombatLogAsync(combatLog, readyCombatsNumber, 0, cancellationToken);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+            }
+        });
 
-            var cancellationToken = requestCancelationToken();
-            await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combats.Count - readyCombatsNumber, cancellationToken);
+        await Task.WhenAll(combatTasks);
 
-            throw;
-        }
-        catch (OperationCanceledException ex)
-        {
-            var cancellationToken = requestCancelationToken();
-            _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
-
-            await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combats.Count - readyCombatsNumber, cancellationToken);
-
-            throw;
-        }
-        catch (Exception ex)
-        {
-            var cancellationToken = requestCancelationToken();
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-            await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combats.Count - readyCombatsNumber, cancellationToken);
-
-            throw;
-        }
+        await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combatTasks.Count() - readyCombatsNumber, cancellationToken);
     }
 
     public async Task DeleteCombatLogByUserAsync(int id, CancellationToken cancellationToken)
@@ -314,7 +303,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
             combatLog.NumberReadyCombats = numberReadyCombats;
             combatLog.CombatsInQueue = combatsInQueue;
 
-            var response = await _httpClient.PutAsync($"CombatLog/{combatLog.Id}", JsonContent.Create(combatLog), cancellationToken);
+            var response = await _httpClient.PatchAsync($"CombatLog/combatLogIsReady/{combatLog.Id}", JsonContent.Create(combatLog), cancellationToken);
             response.EnsureSuccessStatusCode();
         }
         catch (HttpRequestException ex)
@@ -358,7 +347,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
             var leftHealth = item.Boss.Health - damageToBoss;
             var precentage = (double)leftHealth / (double)item.Boss.Health;
 
-            item.BossHealthPercentage = Math.Round(precentage * 100, 2);
+            item.BossHealthPercentage = precentage < 0 ? 0 : Math.Round(precentage * 100, 2);
         }
     }
 }

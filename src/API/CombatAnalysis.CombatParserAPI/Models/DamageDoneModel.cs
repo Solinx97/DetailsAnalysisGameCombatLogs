@@ -7,11 +7,11 @@ public class DamageDoneModel
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
 
-    [Required]
+    [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
 
     [Required]
-    public string Spell { get; set; }
+    public string Spell { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int Value { get; set; }
@@ -20,24 +20,20 @@ public class DamageDoneModel
     public TimeSpan Time { get; set; }
 
     [Required]
-    public string Creator { get; set; }
+    public string Creator { get; set; } = string.Empty;
 
     [Required]
-    public string Target { get; set; }
+    public string Target { get; set; } = string.Empty;
 
-    [Required]
     public bool IsTargetBoss { get; set; }
 
     [Range(0, int.MaxValue)]
     public int DamageType { get; set; }
 
-    [Required]
     public bool IsPeriodicDamage { get; set; }
 
-    [Required]
     public bool IsSingleTarget { get; set; }
 
-    [Required]
     public bool IsPet { get; set; }
 
     [Range(0, int.MaxValue)]

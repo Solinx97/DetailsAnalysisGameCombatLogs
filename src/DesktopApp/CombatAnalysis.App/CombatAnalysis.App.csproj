@@ -18,10 +18,12 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.1.0" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.6" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.6" />
+    <PackageReference Include="Microsoft.Bcl.Memory" Version="9.0.14" />
     <PackageReference Include="MvvmCross.Platforms.Wpf" Version="9.3.0" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.15" />
   </ItemGroup>
 
   <ItemGroup>

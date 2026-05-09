@@ -98,14 +98,14 @@ const CombatDetails: React.FC = () => {
             <div className="general-details__navigate">
                 <div className="player">
                     <div className="btn-shadow select-another-player"
-                        onClick={() => navigate(`/details-specifical-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}`)}>
+                        onClick={() => navigate(`/selected-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}`)}>
                         <FontAwesomeIcon
                             icon={faDeleteLeft}
                         />
                         <div>{t("SelectPlayer")}</div>
                     </div>
                     <div className="btn-shadow username">
-                        <div>{combatPlayer?.player.username}</div>
+                        <div>{combatPlayer?.player?.username}</div>
                     </div>
                 </div>
                 <div className="boss">

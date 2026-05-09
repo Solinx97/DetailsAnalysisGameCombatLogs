@@ -261,7 +261,6 @@ const CommunityMenu: React.FC<CommunityMenuProps> = ({ setShowMenu, user, commun
                         <>
                             <>
                                 <AddPeople
-                                    user={user}
                                     usersId={[user?.id]}
                                     peopleToJoin={peopleIdToJoin}
                                     setPeopleToJoin={setPeopleIdToJoin}

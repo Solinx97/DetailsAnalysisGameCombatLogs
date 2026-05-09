@@ -210,7 +210,7 @@
   <data name="CreateLog" xml:space="preserve">
     <value>Create log</value>
   </data>
-  <data name="PrivateLogs" xml:space="preserve">
-    <value>Private logs</value>
+  <data name="Empty" xml:space="preserve">
+    <value>Empty</value>
   </data>
 </root>

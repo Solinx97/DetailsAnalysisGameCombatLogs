@@ -6,13 +6,13 @@ using System.Globalization;
 
 namespace CombatAnalysis.CombatParser.Details;
 
-internal class CombatDetailsManager(List<string> playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
+internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
 {
-    private readonly List<string> _playersId = playersId;
+    private readonly string[] _playersId = playersId;
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
-    public (string, CombatAura?) GetAuras(List<string> combatDataLine, ConcurrentDictionary<string, ConcurrentDictionary<string, CombatAura>> auras, List<string> petsId)
+    public (string, CombatAura?) GetAuras(string[] combatDataLine, ConcurrentDictionary<string, ConcurrentDictionary<string, CombatAura>> auras, List<string> petsId)
     {
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraRemoved)
             && auras.TryGetValue(combatDataLine[2], out var playerGameId))
@@ -46,10 +46,10 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (combatDataLine[2], buff);
     }
 
-    public (string, CombatPlayerPosition?) GetPositions(List<string> combatDataLine)
+    public (string, CombatPlayerPosition?) GetPositions(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
-            || combatDataLine.Count <= 25)
+            || combatDataLine.Length <= 25)
         {
             return (string.Empty, null);
         }
@@ -80,7 +80,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (string.Empty, null);
     }
 
-    public (string, DamageDone?) GetPlayerDamageDone(List<string> combatDataLine)
+    public (string, DamageDone?) GetPlayerDamageDone(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
             || _playersId.Any(playerId => playerId.Equals(combatDataLine[6]))
@@ -94,7 +94,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (combatDataLine[2], damageDone);
     }
 
-    public (string, DamageDone?) GetPetsDamageDone(List<string> combatDataLine, Dictionary<string, List<string>> petsId)
+    public (string, DamageDone?) GetPetsDamageDone(string[] combatDataLine, Dictionary<string, List<string>> petsId)
     {
         if (combatDataLine[2].Contains(CombatLogKeyWords.Player) ||
             (!combatDataLine[2].Contains(CombatLogKeyWords.Creature) && !combatDataLine[2].Contains(CombatLogKeyWords.Pet)))
@@ -127,7 +127,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (petPlayerId, damageDone);
     }
 
-    public (string, HealDone?) GetHealDone(List<string> combatDataLine)
+    public (string, HealDone?) GetHealDone(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2])))
         {
@@ -154,7 +154,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (combatDataLine[2], healDone);
     }
 
-    public (string, HealDone?) GetAbsorb(List<string> combatDataLine)
+    public (string, HealDone?) GetAbsorb(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[10])) 
             && !_playersId.Any(playerId => playerId.Equals(combatDataLine[13])))
@@ -184,7 +184,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (playerId, absorbeDone);
     }
 
-    public (string, DamageTaken?) GetDamageTaken(List<string> combatDataLine)
+    public (string, DamageTaken?) GetDamageTaken(string[] combatDataLine)
     {
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
@@ -284,7 +284,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (combatDataLine[6], damageTaken);
     }
 
-    public (string, ResourceRecovery?) GetResourceRecovery(List<string> combatDataLine)
+    public (string, ResourceRecovery?) GetResourceRecovery(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
         {
@@ -308,14 +308,14 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (combatDataLine[6], energyRecovery);
     }
 
-    public (string, PlayerDeath?) GetPlayerDeath(List<string> combatDataLine)
+    public (string, CombatPlayerDeath?) GetPlayerDeath(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
         {
             return (string.Empty, null);
         }
 
-        var userDeath = new PlayerDeath
+        var userDeath = new CombatPlayerDeath
         {
             Username = combatDataLine[7].Trim('"'),
             Time = GetTimeFromStart(combatDataLine[0]),
@@ -324,7 +324,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return (combatDataLine[6], userDeath);
     }
 
-    private DamageDone GetDamageDone(List<string> combatDataLine, bool isPet, string spell = "")
+    private DamageDone GetDamageDone(string[] combatDataLine, bool isPet, string spell = "")
     {
         var isAutoAttack = false;
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
@@ -398,7 +398,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         return damageDone;
     }
 
-    private void RemoveAura(List<string> combatDataLine, ConcurrentDictionary<string, CombatAura> auras)
+    private void RemoveAura(string[] combatDataLine, ConcurrentDictionary<string, CombatAura> auras)
     {
         if (auras.TryGetValue(combatDataLine[11], out var auraName))
         {
@@ -406,7 +406,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
         }
     }
 
-    private static AuraType SelectAuraType(List<string> combatDataLine)
+    private static AuraType SelectAuraType(string[] combatDataLine)
     {
         if (combatDataLine[2].Equals(combatDataLine[6]))
         {
@@ -469,7 +469,7 @@ internal class CombatDetailsManager(List<string> playersId, DateTimeOffset comba
 
     private TimeSpan GetTimeFromStart(string time)
     {
-        if (DateTimeOffset.TryParseExact(time, "MM/dd/yyyy HH:mm:ss.ffff", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var startTime))
+        if (DateTimeOffset.TryParse(time, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var startTime))
         {
             var timeFromStart = startTime - _combatStarted;
 

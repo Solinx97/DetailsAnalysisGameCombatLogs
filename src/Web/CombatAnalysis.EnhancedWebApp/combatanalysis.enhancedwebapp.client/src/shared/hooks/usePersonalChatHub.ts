@@ -5,6 +5,7 @@ import type { RefObject } from 'react';
 import type { PersonalChatMessageModel } from '../../features/chat/types/PersonalChatMessageModel';
 import type { PersonalChatModel } from '../../features/chat/types/PersonalChatModel';
 import type { AppUserModel } from '../../features/user/types/AppUserModel';
+import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessagePatch';
 
 const usePersonalChatHub = (
     myself: AppUserModel | null,
@@ -81,9 +82,9 @@ const usePersonalChatHub = (
         });
     }
 
-    const subscribeToPersonalChatMessageEdit = (callback: (messageId: number) => void) => {
-        personalChatMessagesHubConnectionRef.current?.on("ReceiveEditedMessage", (messageId: number) => {
-            callback(messageId);
+    const subscribeToPersonalChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
+        personalChatMessagesHubConnectionRef.current?.on("ReceiveEditedMessage", (mssagePatch: ChatMessagePatch) => {
+            callback(mssagePatch);
         });
     }
 

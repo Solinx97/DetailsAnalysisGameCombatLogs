@@ -116,7 +116,7 @@ const Dashboard: React.FC<DashboardProps> = ({ details, combatPlayers, playersDe
         }
 
         return (<ul className="dashboard__items">
-            {targets.filter(x => combatPlayers.filter(u => u.username === x[0].target).length === 0).map((combatTarget, index) => (
+            {targets.filter(x => combatPlayers.filter(u => u.player.username === x[0].target).length === 0).map((combatTarget, index) => (
                 <li key={index} className="dashboard__statistics">
                     <DashboardTargetItem
                         combatTarget={combatTarget}

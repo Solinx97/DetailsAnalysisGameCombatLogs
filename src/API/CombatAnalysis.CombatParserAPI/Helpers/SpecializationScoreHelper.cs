@@ -1,7 +1,7 @@
 ﻿using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParserAPI.Interfaces;
+using CombatAnalysis.CombatParserAPI.Models;
 
 namespace CombatAnalysis.CombatParserAPI.Helpers;
 
@@ -11,11 +11,8 @@ internal class SpecializationScoreHelper(ISpecializationScoreService service, IB
     private readonly IBestSpecializationScoreService _bestScoreService = bestScoreService;
     private readonly ISpecializationService _specService = specService;
 
-    public async Task CreateSpecializationScoreAsync(CombatPlayerDto combatPlayer, CombatDetails combatDetails, CancellationToken cancellationToken)
+    public async Task CreateSpecializationScoreAsync(CombatPlayerModel combatPlayer, int[] spellIds, CancellationToken cancellationToken)
     {
-        var spellIds = combatPlayer.DamageDone > combatPlayer.HealDone
-            ? combatDetails.DamageDoneGeneral[combatPlayer.Player.GameId].Select(d => d.GameSpellId).ToArray()
-            : [.. combatDetails.HealDoneGeneral[combatPlayer.Player.GameId].Select(d => d.GameSpellId)];
         var spellsIdsStr = string.Join(',', spellIds);
 
         var spec = await _specService.GetBySpellsAsync(spellsIdsStr, cancellationToken);
@@ -24,12 +21,11 @@ internal class SpecializationScoreHelper(ISpecializationScoreService service, IB
             return;
         }
 
-        var score = new SpecializationScoreDto
+        var score = new SpecializationScoreModel
         {
             DamageDone = combatPlayer.DamageDone,
             HealDone = combatPlayer.HealDone,
             SpecializationId = spec.Id,
-            CombatPlayerId = combatPlayer.Id,
         };
 
         combatPlayer.Score = score;

@@ -79,10 +79,12 @@ public class App : MvxApplication
             AppInformation.VersionType = appVersionType;
         }
 
+        var loggerFactory = LoggerFactory.Create(builder => { });
+
         var mappingConfig = new MapperConfiguration(mc =>
         {
             mc.AddProfile(new CombatAnalysisMapper());
-        });
+        }, loggerFactory);
 
         var memoryCacheOptions = new MemoryCacheOptions();
         var memoryCache = new MemoryCache(memoryCacheOptions);

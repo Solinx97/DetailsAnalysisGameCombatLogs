@@ -55,7 +55,7 @@
             <TabItem Header="{loc:Loc PublicLogs}" Style="{StaticResource TabItemStyle1}">
                 <combatLogsViews:PublicCombatLogsView DataContext="{Binding PublicCombatLogsVM}" />
             </TabItem>
-            <TabItem Header="{loc:Loc Title}" Style="{StaticResource TabItemStyle1}" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
+            <TabItem Header="{loc:Loc PersonalLogs}" Style="{StaticResource TabItemStyle1}" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                 <combatLogsViews:PrivateCombatLogsView DataContext="{Binding PrivateCombatLogsVM}" />
             </TabItem>
         </TabControl>

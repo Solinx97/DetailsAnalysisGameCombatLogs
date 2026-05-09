@@ -1,20 +1,20 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+﻿using CombatParser.Application.Queries.GetHealGenerals;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class HealDoneGeneralController(IPlayerInfoService<HealDoneGeneralDto> playerInfoService) : ControllerBase
+public class HealDoneGeneralController(IMediator mediator) : ControllerBase
 {
-    private readonly IPlayerInfoService<HealDoneGeneralDto> _playerInfoService = playerInfoService;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var healDoneGenerals = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var healGenerals = await _mediator.Send(new GetHealGeneralsQuery(combatPlayerId), cancellationToken);
 
-        return Ok(healDoneGenerals);
+        return Ok(healGenerals);
     }
 }

@@ -27,12 +27,14 @@ var connectionString = databasePropsOptions.DefaultConnection;
 builder.Services.AddChatApplication();
 builder.Services.AddChatInfrastructure(connectionString);
 
+var loggerFactory = LoggerFactory.Create(builder => { });
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddExpressionMapping();
     mc.AddProfile(new ChatMapper());
     mc.AddProfile(new ChatProfile());
-});
+}, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

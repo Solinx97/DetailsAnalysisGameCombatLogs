@@ -7,11 +7,11 @@ public class DamageTakenGeneralModel
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
 
-    [Required]
+    [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
 
     [Required]
-    public string Spell { get; set; }
+    public string Spell { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int Value { get; set; }

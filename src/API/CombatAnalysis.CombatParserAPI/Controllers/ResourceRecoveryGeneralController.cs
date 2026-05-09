@@ -1,20 +1,20 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+﻿using CombatParser.Application.Queries.GetResourcesGenerals;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class ResourceRecoveryGeneralController(IPlayerInfoService<ResourceRecoveryGeneralDto> playerInfoService) : ControllerBase
+public class ResourceRecoveryGeneralController(IMediator mediator) : ControllerBase
 {
-    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto> _playerInfoService = playerInfoService;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var resourceRecoveryGenerals = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var resourcesGenerals = await _mediator.Send(new GetResourcesGeneralsQuery(combatPlayerId), cancellationToken);
 
-        return Ok(resourceRecoveryGenerals);
+        return Ok(resourcesGenerals);
     }
 }

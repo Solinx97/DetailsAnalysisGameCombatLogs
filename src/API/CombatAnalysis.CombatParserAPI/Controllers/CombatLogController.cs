@@ -1,111 +1,78 @@
-﻿using AutoMapper;
-using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces.General;
-using CombatAnalysis.CombatParserAPI.Models;
+﻿using CombatAnalysis.CombatParserAPI.PartialModels;
+using CombatParser.Application.Commands.CombatLogIsReady;
+using CombatParser.Application.Commands.CreateCombatLog;
+using CombatParser.Application.Commands.DeleteCombatLog;
+using CombatParser.Application.Commands.UpdateCombatLog;
+using CombatParser.Application.Queries.GetAllCombatLogs;
+using CombatParser.Application.Queries.GetByIdCombatLog;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatLogController(IQueryService<CombatLogDto> queryCombatLogService, IMutationService<CombatLogDto> mutationCombatLogService,
-    IMapper mapper, ILogger<CombatLogController> logger) : ControllerBase
+public class CombatLogController(IMediator mediator) : ControllerBase
 {
-    private readonly IQueryService<CombatLogDto> _queryCombatLogService = queryCombatLogService;
-    private readonly IMutationService<CombatLogDto> _mutationCombatLogService = mutationCombatLogService;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<CombatLogController> _logger = logger;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var combatLogs = await _queryCombatLogService.GetAllAsync(cancellationToken);
+        var allCombatLogs = await _mediator.Send(new GetAllCombatLogsQuery(), cancellationToken);
 
-        return Ok(combatLogs);
+        return Ok(allCombatLogs);
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var combatLog = await _queryCombatLogService.GetByIdAsync(id, cancellationToken);
+        var combatLog = await _mediator.Send(new GetByIdCombatLogQuery(id), cancellationToken);
 
         return Ok(combatLog);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CombatLogModel combatLog, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateCombatLogCommand command, CancellationToken cancellationToken)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid CombatLog create received: {@CombatLog}", combatLog);
+        var combatLog = await _mediator.Send(command, cancellationToken);
 
-                return ValidationProblem(ModelState);
-            }
-
-            var map = _mapper.Map<CombatLogDto>(combatLog);
-            var createdItem = await _mutationCombatLogService.CreateAsync(map, cancellationToken);
-
-            return Ok(createdItem);
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to create combat log.");
-
-            return StatusCode(500, "Internal server error.");
-        }
+        return Ok(combatLog);
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CombatLogModel combatLog, CancellationToken cancellationToken)
+    [HttpPatch("{id:int:min(1)}")]
+    public async Task<IActionResult> PartialUpdate(int id, [FromBody] CombatLogPatch combatLog, CancellationToken cancellationToken)
     {
-        try
+        if (id != combatLog.Id)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid CombatLog create received: {@CombatLog}", combatLog);
-
-                return ValidationProblem(ModelState);
-            }
-
-            if (id != combatLog.Id)
-            {
-                return BadRequest("Route ID and body ID do not match.");
-            }
-
-            var map = _mapper.Map<CombatLogDto>(combatLog);
-            await _mutationCombatLogService.UpdateAsync(map, cancellationToken);
-
-            return NoContent();
+            return BadRequest("Route ID and body ID do not match.");
         }
-        catch (DbUpdateConcurrencyException ex)
+
+        var command = new UpdateCombatLogCommand(combatLog.Id, combatLog.Name);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPatch("combatLogIsReady/{id:int:min(1)}")]
+    public async Task<IActionResult> CombatLogIsReady(int id, [FromBody] CombatLogIsReadyPatch combatLog, CancellationToken cancellationToken)
+    {
+        if (id != combatLog.Id)
         {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
+            return BadRequest("Route ID and body ID do not match.");
         }
+
+        var command = new CombatLogIsReadyCommand(combatLog.Id, combatLog.NumberReadyCombats, combatLog.CombatsInQueue);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var entityDeleted = await _mutationCombatLogService.DeleteAsync(id, cancellationToken);
-            if (!entityDeleted)
-            {
-                return NotFound();
-            }
+        await _mediator.Send(new DeleteCombatLogCommand(id), cancellationToken);
 
-            return NoContent();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-        }
+        return NoContent();
     }
 }

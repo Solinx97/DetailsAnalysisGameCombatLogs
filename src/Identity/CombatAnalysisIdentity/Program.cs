@@ -31,12 +31,14 @@ builder.Configuration.Bind("Database", databasePropsOptions);
 builder.Services.RegisterIdentityDependencies(databasePropsOptions.AppIdentity);
 builder.Services.UserBLDependencies(databasePropsOptions.UserConnection);
 
+var loggerFactory = LoggerFactory.Create(builder => { });
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new IdentityMapper());
     mc.AddProfile(new UserBLMapper());
     mc.AddProfile(new CombatAnalysisIdentityMapper());
-});
+}, loggerFactory);
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 

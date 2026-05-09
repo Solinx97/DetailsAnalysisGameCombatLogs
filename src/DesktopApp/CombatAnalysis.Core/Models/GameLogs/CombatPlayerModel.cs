@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models.GameLogs;
+﻿using CombatAnalysis.CombatParser.Entities;
+
+namespace CombatAnalysis.Core.Models.GameLogs;
 
 public class CombatPlayerModel
 {
@@ -16,7 +18,7 @@ public class CombatPlayerModel
 
     public int ResourcesRecovery { get; set; }
 
-    public CombatPlayerStatsModel? Stats { get; set; }
+    public CombatPlayerStatsModel Stats { get; set; }
 
     public SpecializationScoreModel? Score { get; set; }
 
@@ -41,4 +43,24 @@ public class CombatPlayerModel
     public double DamageTakenPercentages { get; set; }
 
     public double ResourcesRecoveryPercentages { get; set; }
+
+    public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
+
+    public IReadOnlyList<DamageDoneGeneralModel> DamageDoneGenerals { get; set; } = [];
+
+    public IReadOnlyList<HealDoneModel> HealDones { get; set; } = [];
+
+    public IReadOnlyList<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
+
+    public IReadOnlyList<DamageTakenModel> DamageTakens { get; set; } = [];
+
+    public IReadOnlyList<DamageTakenGeneralModel> DamageTakenGenerals { get; set; } = [];
+
+    public IReadOnlyList<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
+
+    public IReadOnlyList<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
+
+    public IReadOnlyCollection<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
+
+    public IReadOnlyCollection<CombatPlayerPosition> CombatPlayerPositions { get; set; } = [];
 }

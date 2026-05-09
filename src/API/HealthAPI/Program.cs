@@ -12,10 +12,12 @@ builder.Configuration.Bind("Database", databasePropsOptions);
 
 builder.Services.RegisterIdentityDependencies(databasePropsOptions.DefaultConnection);
 
+var loggerFactory = LoggerFactory.Create(builder => { });
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new IdentityMapper());
-});
+}, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

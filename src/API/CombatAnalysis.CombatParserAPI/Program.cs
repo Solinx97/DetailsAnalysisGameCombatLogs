@@ -5,15 +5,17 @@ using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
+using CombatParser.Application.Extensions;
+using CombatParser.Application.Mapping;
+using CombatParser.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.Configure<Players>(builder.Configuration.GetSection("Players"));
 
 var databasePropsOptions = new DatabaseProps();
 builder.Configuration.Bind("Database", databasePropsOptions);
@@ -22,25 +24,51 @@ var databaseConfigsOptions = new DBConfiguration();
 builder.Configuration.Bind("DBConfiguration", databaseConfigsOptions);
 
 builder.Services.CombatParserBLDependencies(databasePropsOptions.DefaultConnection, databaseConfigsOptions.CommandTimeout);
+builder.Services.AddInfrastructure(databasePropsOptions.DefaultConnection);
+builder.Services.AddMediatorSource();
+
+var loggerFactory = LoggerFactory.Create(builder => { });
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new CombatParserApiMapper());
     mc.AddProfile(new BLMapper());
-});
+    mc.AddProfile(new ApplicationMapper());
+}, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 
-builder.Services.AddScoped<ICombatDataHelper, CombatDataHelper>();
 builder.Services.AddScoped<ISpecializationScoreHelper, SpecializationScoreHelper>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
     options.Limits.MaxRequestBodySize = databaseConfigsOptions.MaxRequestBodySize;
 });
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(e => e.Value!.Errors.Count > 0)
+            .Select(e => new
+            {
+                Field = e.Key,
+                Errors = e.Value!.Errors.Select(x => x.ErrorMessage)
+            });
+
+        return new BadRequestObjectResult(new
+        {
+            Message = "Validation failed",
+            ErrorCount = errors.Count(),
+            Errors = errors
+        });
+    };
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -54,7 +82,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Debug)
+    .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
     .WriteTo.File("logs/parserapi.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, restrictedToMinimumLevel: LogEventLevel.Error)
     .CreateLogger();
 

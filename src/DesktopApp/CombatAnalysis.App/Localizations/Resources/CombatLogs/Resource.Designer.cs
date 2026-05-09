@@ -124,6 +124,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empty.
+        /// </summary>
+        public static string Empty {
+            get {
+                return ResourceManager.GetString("Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File:.
         /// </summary>
         public static string File {
@@ -165,15 +174,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogs {
         public static string PersonalLogsLoginRequired {
             get {
                 return ResourceManager.GetString("PersonalLogsLoginRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Private logs.
-        /// </summary>
-        public static string PrivateLogs {
-            get {
-                return ResourceManager.GetString("PrivateLogs", resourceCulture);
             }
         }
         

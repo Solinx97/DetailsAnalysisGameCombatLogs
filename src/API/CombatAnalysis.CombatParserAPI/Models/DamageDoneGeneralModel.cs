@@ -11,7 +11,7 @@ public class DamageDoneGeneralModel
     public int GameSpellId { get; set; }
 
     [Required]
-    public string Spell { get; set; }
+    public string Spell { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int Value { get; set; }
@@ -37,7 +37,6 @@ public class DamageDoneGeneralModel
     [Range(0, int.MaxValue)]
     public double AverageValue { get; set; }
 
-    [Required]
     public bool IsPet { get; set; }
 
     [Range(0, int.MaxValue)]

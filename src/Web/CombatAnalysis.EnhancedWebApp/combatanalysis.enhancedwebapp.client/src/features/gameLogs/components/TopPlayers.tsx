@@ -64,7 +64,7 @@ const TopPlayers: React.FC<TopPlayersProps> = ({ calculation, calculationValuePe
                             />
                         }
                     </div>
-                    <div className="username" onClick={() => goToCombatGeneralDetails(player.id)}>{player.username.split('-')[0]}</div>
+                    <div className="username" onClick={() => goToCombatGeneralDetails(player.id)}>{player.player.username.split('-')[0]}</div>
                     <div className="top-players__values">
                         <div className="actual-value">{getDetailsValue(player)}</div>
                         <div className="player-contribution">{calculation(player, dashboardDetailsType[detailsType])}%</div>

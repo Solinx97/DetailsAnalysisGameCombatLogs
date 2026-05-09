@@ -56,9 +56,9 @@ public class CombatDetails(ILogger logger)
 
     public ILogger Logger { get; private set; } = logger;
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerPosition>> Positions { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerPosition>> CombatPlayerPositions { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, PlayerDeath>> PlayersDeath { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> CombatPlayersDeath { get; private set; } = [];
 
     public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageDone>> DamageDone { get; private set; } = [];
 
@@ -83,16 +83,19 @@ public class CombatDetails(ILogger logger)
         _petsId = petsId;
     }
 
-    public void Calculate(List<string> playersId, List<string> combatData, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
+    public void Calculate(string[] playersId, string[] combatData, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         try
         {
             ArgumentNullException.ThrowIfNull(playersId, nameof(playersId));
             ArgumentNullException.ThrowIfNull(combatData, nameof(combatData));
-            ArgumentOutOfRangeException.ThrowIfZero(playersId.Count);
-            ArgumentOutOfRangeException.ThrowIfZero(combatData.Count);
+            ArgumentOutOfRangeException.ThrowIfZero(playersId.Length);
+            ArgumentOutOfRangeException.ThrowIfZero(combatData.Length);
 
-            PrepareCollections(playersId);
+            for (int i = 0; i < playersId.Length; i++)
+            {
+                PrepareCollections(playersId[i]);
+            }
 
             Parallel.ForEach(
                     combatData,
@@ -112,22 +115,19 @@ public class CombatDetails(ILogger logger)
         }
     }
 
-    private void PrepareCollections(List<string> playersId)
+    private void PrepareCollections(string playersd)
     {
-        foreach(var playerId in playersId)
-        {
-            Positions.TryAdd(playerId, []);
-            PlayersDeath.TryAdd(playerId, []);
-            Auras.TryAdd(playerId, []);
+        CombatPlayerPositions.TryAdd(playersd, []);
+        CombatPlayersDeath.TryAdd(playersd, []);
+        Auras.TryAdd(playersd, []);
 
-            DamageDone.TryAdd(playerId, []);
-            HealDone.TryAdd(playerId, []);
-            DamageTaken.TryAdd(playerId, []);
-            ResourcesRecovery.TryAdd(playerId, []);
-        }
+        DamageDone.TryAdd(playersd, []);
+        HealDone.TryAdd(playersd, []);
+        DamageTaken.TryAdd(playersd, []);
+        ResourcesRecovery.TryAdd(playersd, []);
     }
 
-    private void Parse(List<string> playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
+    private void Parse(string[] playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         var hasPositions = _positions.Any(combatDataLine.Contains);
         var hasDieds = _dieds.Any(combatDataLine.Contains);
@@ -143,15 +143,15 @@ public class CombatDetails(ILogger logger)
             return;
         }
 
-        var clearCombatData = RemoveTime(combatDataLine);
+        var splitCombatData = SplitCombatData(combatDataLine);
         var combatDetailsManager = new CombatDetailsManager(playersId, combatStarted, combatFinished);
 
         if (hasPositions)
         {
-            var (playerId, positions) = combatDetailsManager.GetPositions(clearCombatData);
+            var (playerId, positions) = combatDetailsManager.GetPositions(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || positions != null)
             {
-                if (Positions.TryGetValue(playerId, out var collection))
+                if (CombatPlayerPositions.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), positions);
                 }
@@ -160,7 +160,7 @@ public class CombatDetails(ILogger logger)
 
         if (hasDamage)
         {
-            var (playerId, damageTaken) = combatDetailsManager.GetDamageTaken(clearCombatData);
+            var (playerId, damageTaken) = combatDetailsManager.GetDamageTaken(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || damageTaken != null)
             {
                 if (DamageTaken.TryGetValue(playerId, out var collection))
@@ -172,10 +172,10 @@ public class CombatDetails(ILogger logger)
 
         if (hasDieds)
         {
-            var (playerId, playerDeath) = combatDetailsManager.GetPlayerDeath(clearCombatData);
+            var (playerId, playerDeath) = combatDetailsManager.GetPlayerDeath(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || playerDeath != null)
             {
-                if (PlayersDeath.TryGetValue(playerId, out var collection))
+                if (CombatPlayersDeath.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), playerDeath);
                 }
@@ -184,7 +184,7 @@ public class CombatDetails(ILogger logger)
         else if (hasAuras)
         {
             var allPetsId = _petsId.SelectMany(x => x.Value).ToList();
-            var t = clearCombatData;
+            var t = splitCombatData;
             var (creatorId, auras) = combatDetailsManager.GetAuras(t, Auras, allPetsId);
             if (!string.IsNullOrEmpty(creatorId) || auras != null)
             {
@@ -202,7 +202,7 @@ public class CombatDetails(ILogger logger)
         }
         else if (hasHeal)
         {
-            var (playerId, healDone) = combatDetailsManager.GetHealDone(clearCombatData);
+            var (playerId, healDone) = combatDetailsManager.GetHealDone(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || healDone != null)
             {
                 if (HealDone.TryGetValue(playerId, out var collection))
@@ -213,7 +213,7 @@ public class CombatDetails(ILogger logger)
         }
         else if (hasAbsorb)
         {
-            var (playerId, absorb) = combatDetailsManager.GetAbsorb(clearCombatData);
+            var (playerId, absorb) = combatDetailsManager.GetAbsorb(splitCombatData);
             if (absorb != null)
             {
                 if (HealDone.TryGetValue(playerId, out var collection))
@@ -224,7 +224,7 @@ public class CombatDetails(ILogger logger)
         }
         else if (hasDamage)
         {
-            var (playerId, damageDone) = combatDetailsManager.GetPlayerDamageDone(clearCombatData);
+            var (playerId, damageDone) = combatDetailsManager.GetPlayerDamageDone(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || damageDone != null)
             {
                 if (DamageDone.TryGetValue(playerId, out var collection))
@@ -233,7 +233,7 @@ public class CombatDetails(ILogger logger)
                 }
             }
 
-            (playerId, damageDone) = combatDetailsManager.GetPetsDamageDone(clearCombatData, _petsId);
+            (playerId, damageDone) = combatDetailsManager.GetPetsDamageDone(splitCombatData, _petsId);
             if (!string.IsNullOrEmpty(playerId) || damageDone != null)
             {
                 if (DamageDone.TryGetValue(playerId, out var colelction))
@@ -244,7 +244,7 @@ public class CombatDetails(ILogger logger)
         }
         else if (hasResources)
         {
-            var (playerId, resourceRecovery) = combatDetailsManager.GetResourceRecovery(clearCombatData);
+            var (playerId, resourceRecovery) = combatDetailsManager.GetResourceRecovery(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || resourceRecovery != null)
             {
                 if (ResourcesRecovery.TryGetValue(playerId, out var collection))
@@ -255,7 +255,7 @@ public class CombatDetails(ILogger logger)
         }
     }
 
-    private static List<string> RemoveTime(string combatData)
+    private static string[] SplitCombatData(string combatData)
     {
         var log = combatData.Split("  ");
         var parse = log[1].Split(',');
@@ -267,6 +267,6 @@ public class CombatDetails(ILogger logger)
 
         data.AddRange(parse);
 
-        return data;
+        return [.. data];
     }
 }

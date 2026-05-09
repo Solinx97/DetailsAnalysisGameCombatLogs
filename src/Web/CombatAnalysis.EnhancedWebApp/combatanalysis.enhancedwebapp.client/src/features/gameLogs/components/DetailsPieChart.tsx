@@ -1,5 +1,4 @@
-﻿import { useTranslation } from 'react-i18next';
-import {
+﻿import {
     Pie, PieChart, Sector
 } from 'recharts';
 import type { ChartPayloadModel } from '../types/ChartPayloadModel';
@@ -9,8 +8,6 @@ interface DetailsPieChartProps {
 }
 
 const DetailsPieChart: React.FC<DetailsPieChartProps> = ({ payload }) => {
-    const { t } = useTranslation("childs/detailsPieChart");
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderActiveShape = (props: any) => {
         const RADIAN = Math.PI / 180;
@@ -23,7 +20,7 @@ const DetailsPieChart: React.FC<DetailsPieChartProps> = ({ payload }) => {
         const my = cy + (outerRadius + 30) * sin;
         const ex = mx + (cos >= 0 ? 1 : -1) * 60;
         const ey = my;
-        const textAnchor = cos >= 0 ? t("TextAnchorStart") : t("TextAnchorEnd");
+        const textAnchor: 'start' | 'end' = cos >= 0 ? 'start' : 'end';
 
         return (
             <g>

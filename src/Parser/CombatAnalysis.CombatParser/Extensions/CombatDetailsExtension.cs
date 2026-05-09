@@ -7,13 +7,13 @@ namespace CombatAnalysis.CombatParser.Extensions;
 
 public static class CombatDetailsExtension
 {
-    public static void CalculateGeneralData(this CombatDetails combatDetails, List<string>? playersId, string? duration)
+    public static void CalculateGeneralData(this CombatDetails combatDetails, string[] playersId, string? duration)
     {
         try
         {
             ArgumentNullException.ThrowIfNull(playersId, nameof(playersId));
             ArgumentException.ThrowIfNullOrEmpty(duration, nameof(duration));
-            ArgumentOutOfRangeException.ThrowIfZero(playersId.Count);
+            ArgumentOutOfRangeException.ThrowIfZero(playersId.Length);
 
             foreach (var playerId in playersId)
             {

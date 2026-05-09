@@ -1,4 +1,4 @@
-import { faBolt, faCheck, faCircleNodes, faClock, faDatabase, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -73,11 +73,6 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                             <p className="card-text">{selectedCombat.dungeonName}</p>
                         </div>
                     </div>
-                    <FontAwesomeIcon
-                        icon={selectedCombat.isReady ? faCheck : faClock}
-                        className="list-group-item__player-statistic-item"
-                        title={(selectedCombat.isReady ? t("Ready") : t("NotReady")) || ""}
-                    />
                 </div>
                 <div className="combat-time">
                     <div className="combat-time__range">
@@ -146,15 +141,12 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                 </li>
             </ul>
             <div className="card-body details">
-                {uniqueCombats[selectedCombatIndex].isReady
-                    ? <div className="btn-shadow" onClick={() => navigate(`/selected-combat?id=${uniqueCombats[selectedCombatIndex].id}&combatLogId=${combatLogId}&name=${uniqueCombats[selectedCombatIndex].boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}`)}>
-                        <FontAwesomeIcon
-                            icon={faDatabase}
-                        />
-                        <div>{t("MoreDetails")}</div>
-                    </div>
-                    : <div>{t("NeedWait")}</div>
-                }
+                <div className="btn-shadow" onClick={() => navigate(`/selected-combat?id=${uniqueCombats[selectedCombatIndex].id}&combatLogId=${combatLogId}&name=${uniqueCombats[selectedCombatIndex].boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}`)}>
+                    <FontAwesomeIcon
+                        icon={faDatabase}
+                    />
+                    <div>{t("MoreDetails")}</div>
+                </div>
             </div>
         </div>
     );

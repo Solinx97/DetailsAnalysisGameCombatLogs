@@ -2,7 +2,6 @@
 using CombatAnalysis.DAL.Interfaces.Entities;
 using CombatAnalysis.DAL.Interfaces.Filters;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace CombatAnalysis.DAL.Repositories.Filters;
 

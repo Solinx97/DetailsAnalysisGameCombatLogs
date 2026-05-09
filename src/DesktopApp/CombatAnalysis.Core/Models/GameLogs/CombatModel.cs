@@ -14,8 +14,6 @@ public class CombatModel
 
     public double BossHealthPercentage { get; set; }
 
-    public List<string> Data { get; set; } = [];
-
     public long DamageDone { get; set; }
 
     public long HealDone { get; set; }
@@ -43,5 +41,7 @@ public class CombatModel
 
     public int CombatLogId { get; set; }
 
-    public BossModel Boss { get; set; } = new();
+    public BossModel Boss { get; set; }
+
+    public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; set; } = [];
 }

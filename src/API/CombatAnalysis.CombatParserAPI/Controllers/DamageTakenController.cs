@@ -1,23 +1,26 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.BL.Interfaces.Filters;
-using CombatAnalysis.BL.Interfaces.General;
+﻿using CombatParser.Application.Queries.DamageTaken.CountDamageTakenByCreator;
+using CombatParser.Application.Queries.DamageTaken.CountDamageTakenBySpell;
+using CombatParser.Application.Queries.DamageTaken.GetDamageTakenCount;
+using CombatParser.Application.Queries.DamageTaken.GetDamageTakens;
+using CombatParser.Application.Queries.DamageTaken.GetDamageTakensByCreator;
+using CombatParser.Application.Queries.DamageTaken.GetDamageTakensBySpell;
+using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenCreators;
+using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenSpells;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class DamageTakenController(IPlayerInfoPaginationService<DamageTakenDto> playerInfoService, ICountService<DamageTakenDto> countService, IGeneralFilterService<DamageTakenDto> filterService) : ControllerBase
+public class DamageTakenController(IMediator mediator) : ControllerBase
 {
-    private readonly IPlayerInfoPaginationService<DamageTakenDto> _playerInfoService = playerInfoService;
-    private readonly ICountService<DamageTakenDto> _countService = countService;
-    private readonly IGeneralFilterService<DamageTakenDto> _filterService = filterService;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCombatPlayerId")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damageTakens = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize, cancellationToken);
+        var damageTakens = await _mediator.Send(new GetDamageTakensQuery(combatPlayerId, page, pageSize), cancellationToken);
 
         return Ok(damageTakens);
     }
@@ -25,7 +28,7 @@ public class DamageTakenController(IPlayerInfoPaginationService<DamageTakenDto> 
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var count = await _mediator.Send(new GetDamageTakenCountQuery(combatPlayerId), cancellationToken);
 
         return Ok(count);
     }
@@ -33,15 +36,15 @@ public class DamageTakenController(IPlayerInfoPaginationService<DamageTakenDto> 
     [HttpGet("getUniqueCreators/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueCreators(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueTargets = await _filterService.GetCreatorNamesByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var uniqueCreators = await _mediator.Send(new GetUniqueDamageTakenCreatorsQuery(combatPlayerId), cancellationToken);
 
-        return Ok(uniqueTargets);
+        return Ok(uniqueCreators);
     }
 
     [HttpGet("getByCreator")]
     public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damageTakens = await _filterService.GetByCreatorAsync(combatPlayerId, creator, page, pageSize, cancellationToken);
+        var damageTakens = await _mediator.Send(new GetDamageTakensByCreatorQuery(combatPlayerId, creator, page, pageSize), cancellationToken); ;
 
         return Ok(damageTakens);
     }
@@ -49,7 +52,7 @@ public class DamageTakenController(IPlayerInfoPaginationService<DamageTakenDto> 
     [HttpGet("countByCreator")]
     public async Task<IActionResult> CountByCreator(int combatPlayerId, string creator, CancellationToken cancellationToken)
     {
-        var count = await _filterService.CountCreatorByCombatPlayerIdAsync(combatPlayerId, creator, cancellationToken);
+        var count = await _mediator.Send(new CountDamageTakenByCreatorQuery(combatPlayerId, creator), cancellationToken);
 
         return Ok(count);
     }
@@ -57,7 +60,7 @@ public class DamageTakenController(IPlayerInfoPaginationService<DamageTakenDto> 
     [HttpGet("getUniqueSpells/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _filterService.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var uniqueSpells = await _mediator.Send(new GetUniqueDamageTakenSpellsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueSpells);
     }
@@ -65,15 +68,15 @@ public class DamageTakenController(IPlayerInfoPaginationService<DamageTakenDto> 
     [HttpGet("getBySpell")]
     public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var daamgeTakens = await _filterService.GetBySpellAsync(combatPlayerId, spell, page, pageSize, cancellationToken);
+        var damageTakens = await _mediator.Send(new GetDamageTakensBySpellQuery(combatPlayerId, spell, page, pageSize), cancellationToken);
 
-        return Ok(daamgeTakens);
+        return Ok(damageTakens);
     }
 
     [HttpGet("countBySpell")]
     public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
     {
-        var count = await _filterService.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell, cancellationToken);
+        var count = await _mediator.Send(new CountDamageTakenBySpellQuery(combatPlayerId, spell), cancellationToken);
 
         return Ok(count);
     }

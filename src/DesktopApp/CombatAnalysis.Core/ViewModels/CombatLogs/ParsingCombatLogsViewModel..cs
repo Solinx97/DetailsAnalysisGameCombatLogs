@@ -367,7 +367,7 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         {
             var combat = combatDetails[i];
 
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_Positions}_{i}", combat.Positions.AsReadOnly());
+            _cacheService.Add($"{AppCacheKeys.CombatDetails_Positions}_{i}", combat.CombatPlayerPositions.AsReadOnly());
 
             _cacheService.Add($"{AppCacheKeys.CombatDetails_DamageDone}_{i}", combat.DamageDone.AsReadOnly());
             _cacheService.Add($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{i}", combat.DamageDoneGeneral.AsReadOnly());
