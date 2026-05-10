@@ -21,7 +21,7 @@ public class CombatController : ControllerBase
     [HttpGet("getByCombatLogId/{combatLogId:int:min(1)}")]
     public async Task<IActionResult> GetByCombatLogId(int combatLogId)
     {
-        var responseMessage = await _httpClient.GetAsync($"Combat/GetByCombatLogId/{combatLogId}");
+        var responseMessage = await _httpClient.GetAsync($"Combat/getByCombatLogId/{combatLogId}");
         var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 
         return Ok(combats);

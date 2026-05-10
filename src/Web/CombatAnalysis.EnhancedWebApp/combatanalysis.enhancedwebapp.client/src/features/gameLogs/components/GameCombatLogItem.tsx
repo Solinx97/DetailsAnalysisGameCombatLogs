@@ -12,7 +12,7 @@ interface CombatLogItemProps {
     isAuth: boolean;
 }
 
-const CombatLogItem: React.FC<CombatLogItemProps> = ({ log, isAuth }) => {
+const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ log, isAuth }) => {
     const { t } = useTranslation("combatDetails/mainInformation");
 
     const navigate = useNavigate();
@@ -95,4 +95,4 @@ const CombatLogItem: React.FC<CombatLogItemProps> = ({ log, isAuth }) => {
     );
 }
 
-export default CombatLogItem;
+export default GameCombatLogItem;

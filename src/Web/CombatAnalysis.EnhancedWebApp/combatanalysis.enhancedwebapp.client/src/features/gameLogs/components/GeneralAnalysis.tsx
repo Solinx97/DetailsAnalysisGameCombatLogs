@@ -85,7 +85,7 @@ const GeneralAnalysis: React.FC = () => {
     return (
         <div className="general-analysis__container">
             <div className="general-analysis__navigate">
-                <div className="btn-shadow select-logs" onClick={() => navigate("/main-information")}>
+                <div className="btn-shadow select-logs" onClick={() => navigate("/game-combat-logs")}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />

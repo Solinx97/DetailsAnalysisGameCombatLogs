@@ -31,6 +31,7 @@ internal class DamageFilterRepository(CombatParserContextOne context) : IDamageF
                                     cp.CombatId
                                 })
                             .GroupBy(x => new { x.Username, x.Target, x.CombatId })
+                            .Where(c => c.Key.Target == target)
                             .Select(g => new
                             {
                                 g.Key.Username,

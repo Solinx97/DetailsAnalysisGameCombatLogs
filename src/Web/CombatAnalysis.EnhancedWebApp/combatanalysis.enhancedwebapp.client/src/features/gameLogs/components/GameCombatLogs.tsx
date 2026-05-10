@@ -6,7 +6,7 @@ import { useLazyAuthenticationQuery } from '../../../features/user/api/User.api'
 import Loading from '../../../shared/components/Loading';
 import { useGetCombatLogsQuery } from '../api/GameLogs.api';
 import type { CombatLogModel } from '../types/CombatLogModel';
-import CombatLogItem from './CombatLogItem';
+import GameCombatLogItem from './GameCombatLogItem';
 
 import './GameCombatLogs.scss';
 
@@ -68,7 +68,7 @@ const GameCombatLogs: React.FC = () => {
                 <ul className="combats__container">
                     {publicCombatLogs?.map((item) => (
                         <li key={item.id}>
-                            <CombatLogItem
+                            <GameCombatLogItem
                                 log={item}
                                 isAuth={isAuth}
                             />
