@@ -43,6 +43,7 @@ builder.Configuration.Bind("Authentication:Client", authenticationClientOptions)
 var apiOptions = new API();
 builder.Configuration.Bind("API", apiOptions);
 
+var keySet = await JwtBearerOptionsHelper.GetJWKSAsync(authenticationOptions.Authority);
 var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
@@ -50,11 +51,12 @@ builder.Services.AddAuthentication("Bearer")
         options.Authority = authenticationOptions.Authority;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
             ValidateIssuer = true,
             ValidIssuer = authenticationOptions.Issuer,
             ValidateAudience = true,
             ValidAudiences = audiences,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKeys = keySet.Keys,
             ClockSkew = TimeSpan.Zero
         };
         // Skip checking HTTPS (should be HTTPS in production)

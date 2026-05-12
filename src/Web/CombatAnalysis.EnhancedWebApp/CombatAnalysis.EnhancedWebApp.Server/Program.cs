@@ -25,6 +25,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var server = new Server();
+builder.Configuration.Bind("Server", server);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -33,7 +36,7 @@ builder.Services.AddAuthentication(options =>
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddOpenIdConnect(options =>
 {
-    options.Authority = "https://localhost:7064/";
+    options.Authority = server.Identity;
     options.ClientId = "web-app";
     options.ResponseType = "code";
     options.SaveTokens = true;

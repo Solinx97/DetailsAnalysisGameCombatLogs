@@ -26,6 +26,7 @@ builder.Configuration.Bind("Authentication", authenticationOptions);
 var authenticationClientOptions = new AuthenticationClient();
 builder.Configuration.Bind("Authentication:Client", authenticationClientOptions);
 
+var keySet = await JwtBearerOptionsHelper.GetJWKSAsync(authenticationOptions.Authority);
 var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -33,11 +34,12 @@ builder.Services.AddAuthentication("Bearer")
         options.Authority = authenticationOptions.Authority;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
             ValidateIssuer = true,
             ValidIssuer = authenticationOptions.Issuer,
             ValidateAudience = true,
             ValidAudiences = audiences,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKeys = keySet.Keys,
             ClockSkew = TimeSpan.Zero
         };
 
