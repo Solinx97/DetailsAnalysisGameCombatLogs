@@ -62,8 +62,6 @@ internal class CombatParserAPIService : ICombatParserAPIService
         });
 
         await Task.WhenAll(combatTasks);
-
-        await UpdateCombatLogAsync(combatLog, readyCombatsNumber, combatTasks.Count() - readyCombatsNumber, cancellationToken);
     }
 
     public async Task DeleteCombatLogByUserAsync(int id, CancellationToken cancellationToken)
@@ -225,9 +223,6 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 Date = DateTimeOffset.UtcNow,
                 LogType = (int)logType,
                 AppUserId = user.Id,
-                IsReady = true,
-                NumberReadyCombats = 0,
-                CombatsInQueue = combats.Count
             };
 
             var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken);
@@ -291,33 +286,9 @@ internal class CombatParserAPIService : ICombatParserAPIService
         var response = await _httpClient.GetAsync($"Boss?gameBossId={gameBossId}&difficult={difficult}&groupSize={groupSize}", cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var boss = await response.Content.ReadFromJsonAsync<BossModel>();
+        var boss = await response.Content.ReadFromJsonAsync<BossModel>(cancellationToken: cancellationToken);
 
         return boss;
-    }
-
-    private async Task UpdateCombatLogAsync(CombatLogModel combatLog, int numberReadyCombats, int combatsInQueue, CancellationToken cancellationToken)
-    {
-        try
-        {
-            combatLog.NumberReadyCombats = numberReadyCombats;
-            combatLog.CombatsInQueue = combatsInQueue;
-
-            var response = await _httpClient.PatchAsync($"CombatLog/combatLogIsReady/{combatLog.Id}", JsonContent.Create(combatLog), cancellationToken);
-            response.EnsureSuccessStatusCode();
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-        }
-        catch (OperationCanceledException ex)
-        {
-            _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-        }
     }
 
     private static string CreateCombatLogName(List<string> dungeonNames)

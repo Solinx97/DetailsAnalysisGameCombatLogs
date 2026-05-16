@@ -22,9 +22,8 @@ public class PrivateCombatLogsViewModel : ParentTemplate
     private int _combatListSelectedIndex;
     private bool _isAuth;
     private LoadingStatus _combatLogLoadingStatus;
-    private bool _noCombatsUploaded;
-    private bool _uploadingLogs;
     private bool _removingInProgress;
+    private bool _uploadingLogs;
 
     public PrivateCombatLogsViewModel(IMvxNavigationService mvvmNavigation, ICombatParserAPIService combatParserAPIService, IMemoryCache memoryCache)
     {
@@ -52,15 +51,6 @@ public class PrivateCombatLogsViewModel : ParentTemplate
     #endregion
 
     #region View model properties
-
-    public bool NoCombatsUploaded
-    {
-        get { return _noCombatsUploaded; }
-        set
-        {
-            SetProperty(ref _noCombatsUploaded, value);
-        }
-    }
 
     public bool UploadingLogs
     {
@@ -133,8 +123,6 @@ public class PrivateCombatLogsViewModel : ParentTemplate
 
     private async Task LoadCombatLogsAsync(CancellationToken cancellationToken)
     {
-        NoCombatsUploaded = false;
-
         CombatLogLoadingStatus = LoadingStatus.Pending;
 
         var combatLogsData = await _combatParserAPIService.LoadCombatLogsAsync(cancellationToken);
@@ -145,37 +133,21 @@ public class PrivateCombatLogsViewModel : ParentTemplate
             return;
         }
 
-        var readyCombatLogData = new List<CombatLogModel>();
-        foreach (var item in combatLogsData)
-        {
-            if (item.IsReady)
-            {
-                readyCombatLogData.Add(item);
-            }
-        }
+        var privateLogs = combatLogsData.Where(x => x.LogType == (int)LogType.Private).ToList();
+        LoadCombatLogsForTargetUser(privateLogs);
 
         CombatLogLoadingStatus = LoadingStatus.Successful;
-
-        LoadCombatLogsForTargetUser(readyCombatLogData);
     }
 
     private async Task LoadSelectedCombatLogAsync(ObservableCollection<CombatLogModel> combatCollection)
     {
-        NoCombatsUploaded = false;
+        UploadingLogs = true;
 
         var combatLog = combatCollection[CombatListSelectedIndex];
-        if (combatLog.NumberReadyCombats == 0)
-        {
-            NoCombatsUploaded = true;
-
-            return;
-        }
-
-        UploadingLogs = true;
 
         var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id, token);
-        if (loadedCombats == null)
+        if (!loadedCombats.Any())
         {
             return;
         }
@@ -186,6 +158,8 @@ public class PrivateCombatLogsViewModel : ParentTemplate
 
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.CombatLog), combatLog);
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Combats), loadedCombats.ToList());
+
+        UploadingLogs = false;
     }
 
     private void LoadCombatLogsForTargetUser(List<CombatLogModel> combatLogs)

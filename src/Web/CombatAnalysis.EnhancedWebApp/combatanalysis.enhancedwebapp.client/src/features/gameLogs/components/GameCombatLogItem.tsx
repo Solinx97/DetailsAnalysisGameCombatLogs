@@ -1,4 +1,4 @@
-import { faArrowDown, faArrowUp, faCircleXmark, faMagnifyingGlassChart, faSpinner, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faCircleXmark, faMagnifyingGlassChart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import { useState } from 'react';
@@ -26,15 +26,6 @@ const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ log, isAuth }) => {
             <ul className="list-group list-group-flush">
                 <li className="list-group-item title">
                     <div className="title__main">
-                        {log.combatsInQueue > 0 &&
-                            <>
-                                <FontAwesomeIcon
-                                    icon={faSpinner}
-                                    title={t("Uploading")}
-                                />
-                                <div>{log.numberReadyCombats} / {log.combatsInQueue}</div>
-                            </>
-                        }
                         <div>{log.name}</div>
                     </div>
                     <div className="actions">
@@ -51,14 +42,12 @@ const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ log, isAuth }) => {
                 <li className="list-group-item">{format(new Date(log.date), 'MM/dd/yyyy HH:mm')}</li>
             </ul>
             <div className="card-body">
-                {log.numberReadyCombats > 0 &&
-                    <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${log.id}`)}>
-                        <FontAwesomeIcon
-                            icon={faMagnifyingGlassChart}
-                        />
-                        <div>{t("Analyzing")}</div>
-                    </div>
-                }
+                <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${log.id}`)}>
+                    <FontAwesomeIcon
+                        icon={faMagnifyingGlassChart}
+                    />
+                    <div>{t("Analyzing")}</div>
+                </div>
             </div>
             {showChats &&
                 <div className="chat-list">
