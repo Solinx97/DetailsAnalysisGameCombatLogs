@@ -1,4 +1,5 @@
-﻿using CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Entities;
 
 namespace CombatParser.Infrastructure.Extensions;
 

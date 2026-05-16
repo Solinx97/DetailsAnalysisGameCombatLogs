@@ -6,7 +6,6 @@ using CombatAnalysis.Core.Models.Identity;
 using CombatAnalysis.Core.Security;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text;

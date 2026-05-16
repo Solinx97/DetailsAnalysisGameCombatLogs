@@ -3,7 +3,7 @@ export type AppUserModel = {
     username: string;
     firstName: string;
     lastName: string;
-    phoneNumber: number;
+    phoneNumber: string;
     birthday: string;
     aboutMe: string;
     gender: number;

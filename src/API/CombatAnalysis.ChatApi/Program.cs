@@ -46,11 +46,12 @@ builder.Configuration.Bind("Authentication:Client", authenticationClientOptions)
 var apiOptions = new API();
 builder.Configuration.Bind("API", apiOptions);
 
-var keySet = await JwtBearerOptionsHelper.GetJWKSAsync(authenticationOptions.Authority);
 var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
+        var keySet = JwtBearerOptionsHelper.GetJWKSAsync(authenticationOptions.Authority).GetAwaiter().GetResult();
+
         options.Authority = authenticationOptions.Authority;
         options.TokenValidationParameters = new TokenValidationParameters
         {

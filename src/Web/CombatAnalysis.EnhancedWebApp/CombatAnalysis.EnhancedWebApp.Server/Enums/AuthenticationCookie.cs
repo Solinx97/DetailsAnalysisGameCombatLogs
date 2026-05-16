@@ -5,5 +5,6 @@ public enum AuthenticationCookie
     AccessToken,
     RefreshToken,
     State,
-    CodeVerifier
+    CodeVerifier,
+    idsrv
 }

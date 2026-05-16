@@ -32,8 +32,8 @@ public class RegistrationDataModel
     public string LastName { get; set; }
 
     [Required]
-    [DataType(DataType.PhoneNumber)]
-    public int PhoneNumber { get; set; }
+    [Phone]
+    public string PhoneNumber { get; set; }
 
     [Required]
     public string Country { get; set; }

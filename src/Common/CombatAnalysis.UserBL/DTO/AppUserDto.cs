@@ -5,7 +5,7 @@ public record AppUserDto(
      string Username,
      string FirstName,
      string LastName,
-     int PhoneNumber,
+     string PhoneNumber,
      DateTimeOffset Birthday,
      string AboutMe,
      int Gender,

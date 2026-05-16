@@ -30,11 +30,11 @@ builder.Configuration.Bind("Authentication:Client", authenticationClientOptions)
 
 var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
-        .AddJwtBearer(async options =>
+        .AddJwtBearer(options =>
         {
-            options.Authority = authenticationOptions.Authority;
+            var keySet = options.GetJWKSAsync(authenticationOptions.Authority).GetAwaiter().GetResult();
 
-            var keySet = await options.GetJWKSAsync(options.Authority);
+            options.Authority = authenticationOptions.Authority;
 
             options.TokenValidationParameters = new TokenValidationParameters
             {

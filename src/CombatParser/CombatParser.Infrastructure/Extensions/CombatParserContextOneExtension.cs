@@ -1,7 +1,9 @@
-﻿using CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Entities;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -88,6 +90,29 @@ internal static class CombatParserContextOneExtension
         if (scores.Count > 0)
         {
             await context.BulkInsertAsync(scores, cancellationToken: cancelationToken);
+        }
+    }
+
+    public static async Task BulkUpdateCombatPlayerDataAsync(this CombatParserContextOne context, int bossId, List<CombatPlayer> players, CancellationToken cancelationToken)
+    {
+        var bestScores = await context.Set<BestSpecializationScore>()
+            .Where(x => x.BossId == bossId).ToListAsync(cancellationToken: cancelationToken);
+        var scores = players.Select(p => p.Score)
+            .Where(s => s != null).ToList();
+
+        foreach (var score in scores)
+        {
+            var selectedBestScore = bestScores.FirstOrDefault(bs => bs.SpecializationId == score!.SpecializationId);
+            if (selectedBestScore != null 
+                && (selectedBestScore.DamageDone < score!.DamageDone || selectedBestScore.HealDone < score.HealDone))
+            {
+                selectedBestScore.Update(score.DamageDone, score.HealDone);
+            }
+        }
+
+        if (bestScores.Count > 0)
+        {
+            await context.BulkUpdateAsync(bestScores, cancellationToken: cancelationToken);
         }
     }
 }

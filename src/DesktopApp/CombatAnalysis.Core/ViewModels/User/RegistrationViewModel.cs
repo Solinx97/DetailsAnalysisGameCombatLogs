@@ -44,7 +44,7 @@ public class RegistrationViewModel : ParentTemplate
 
     private async Task SendAuthorizationRequestAsync()
     {
-        await _identityService.SendAuthorizationRequestAsync("registration");
+        await _identityService.SendAuthorizationRequestAsync("Account/Registration");
 
         IsVerification = true;
 

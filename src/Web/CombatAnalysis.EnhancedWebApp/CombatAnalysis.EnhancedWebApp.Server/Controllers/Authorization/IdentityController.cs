@@ -202,6 +202,7 @@ public class IdentityController : ControllerBase
 
             HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.RefreshToken));
             HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.AccessToken));
+            HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.idsrv));
             HttpContext.Response.Cookies.Delete("idsrv.session");
 
             return SignOut(
