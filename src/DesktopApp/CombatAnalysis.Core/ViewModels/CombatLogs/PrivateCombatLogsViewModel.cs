@@ -106,7 +106,6 @@ public class PrivateCombatLogsViewModel : ParentTemplate
         }
     }
 
-
     #endregion
 
     #region Ovveride methods
@@ -178,11 +177,6 @@ public class PrivateCombatLogsViewModel : ParentTemplate
 
     private async Task DeleteAsync()
     {
-        if (CombatListSelectedIndex < 0)
-        {
-            return;
-        }
-
         RemovingInProgress = true;
 
         var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
