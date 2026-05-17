@@ -9,6 +9,7 @@ using CombatAnalysisIdentity.Core;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Mapping;
 using CombatAnalysisIdentity.Services;
+using Duende.IdentityServer;
 using Duende.IdentityServer.Configuration;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -64,16 +65,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddAuthentication("Cookies")
-       .AddCookie("Cookies");
-
 var certificateOptions = new Certificate();
 builder.Configuration.Bind("Certificate", certificateOptions);
 
 var certificate = new X509Certificate2(certificateOptions.PfxPath, certificateOptions.PWD);
 builder.Services.AddIdentityServer(options =>
             {
-                options.Authentication.CookieAuthenticationScheme = "Cookies";
+                options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
             })
             .AddSigningCredential(certificate)
             .AddConfigurationStore(options =>

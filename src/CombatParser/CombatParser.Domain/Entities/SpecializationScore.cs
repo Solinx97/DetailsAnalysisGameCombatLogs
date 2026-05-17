@@ -4,7 +4,7 @@ public class SpecializationScore
 {
     private SpecializationScore() { }
 
-    public SpecializationScore(double damageScore, int damageDone, double healScore, int healDone, DateTimeOffset? updated, 
+    public SpecializationScore(double damageScore, int damageDone, double healScore, int healDone, DateTimeOffset? updated,
         int specializationId, int combatPlayerId)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(damageScore, nameof(damageScore));
@@ -45,5 +45,31 @@ public class SpecializationScore
     public void SetCombatPlayerId(int combatPlayerId)
     {
         CombatPlayerId = combatPlayerId;
+    }
+
+    public void SetScore(int bestSpecialziationDamageDone, int bestSpecialziationHealDone)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(bestSpecialziationDamageDone, nameof(bestSpecialziationDamageDone));
+        ArgumentOutOfRangeException.ThrowIfNegative(bestSpecialziationHealDone, nameof(bestSpecialziationHealDone));
+
+        if (bestSpecialziationDamageDone == 0 || DamageDone >= bestSpecialziationDamageDone)
+        {
+            DamageScore = 100;
+        }
+        else
+        {
+            DamageScore = (double)DamageDone / (double)bestSpecialziationDamageDone;
+        }
+
+        if (bestSpecialziationHealDone == 0 || HealDone >= bestSpecialziationHealDone)
+        {
+            HealScore = 100;
+        }
+        else
+        {
+            HealScore = (double)HealDone / (double)bestSpecialziationHealDone;
+        }
+
+        Updated = DateTimeOffset.UtcNow;
     }
 }

@@ -8,14 +8,11 @@ public class CombatLog
 
     private CombatLog() { }
 
-    private CombatLog(string name, int logType, int numberReadyCombats, int combatsInQueue, string appUserId)
+    private CombatLog(string name, int logType, string appUserId)
     {
         Name = name;
         Date = DateTimeOffset.UtcNow;
         LogType = logType;
-        NumberReadyCombats = numberReadyCombats;
-        CombatsInQueue = combatsInQueue;
-        IsReady = false;
         AppUserId = appUserId;
     }
 
@@ -27,27 +24,19 @@ public class CombatLog
 
     public int LogType { get; private set; }
 
-    public int NumberReadyCombats { get; private set; }
-
-    public int CombatsInQueue { get; private set; }
-
-    public bool IsReady { get; private set; }
-
     public string AppUserId { get; private set; } = string.Empty;
 
     public ICollection<Combat> Combats { get; set; } = [];
 
-    public static CombatLog Create(string name, int logType, int numberReadyCombats, int combatsInQueue, string appUserId)
+    public static CombatLog Create(string name, int logType, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
         ArgumentOutOfRangeException.ThrowIfNegative(logType, nameof(logType));
-        ArgumentOutOfRangeException.ThrowIfNegative(numberReadyCombats, nameof(numberReadyCombats));
-        ArgumentOutOfRangeException.ThrowIfNegative(combatsInQueue, nameof(combatsInQueue));
 
         CombatLogException.ThrowIfLong(name);
 
-        return new CombatLog(name, logType, numberReadyCombats, combatsInQueue, appUserId);
+        return new CombatLog(name, logType, appUserId);
     }
 
     public void Edit(string name)
@@ -59,12 +48,5 @@ public class CombatLog
         {
             Name = name;
         }
-    }
-
-    public void CombatLogIsReady(int numberReadyCombats, int combatsInQueue)
-    {
-        NumberReadyCombats = numberReadyCombats;
-        CombatsInQueue = combatsInQueue;
-        IsReady = true;
     }
 }

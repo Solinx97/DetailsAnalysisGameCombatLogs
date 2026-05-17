@@ -10,7 +10,7 @@ public class AppUserModel
 
     public string LastName { get; set; } = string.Empty;
 
-    public int PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; }
 
     public DateTimeOffset Birthday { get; set; }
 

@@ -2,6 +2,7 @@ using AutoMapper;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
 using HealthAPI.Consts;
+using HealthAPI.Extensions;
 using HealthAPI.Services;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,15 +32,18 @@ var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer(options =>
         {
+            var keySet = options.GetJWKSAsync(authenticationOptions.Authority).GetAwaiter().GetResult();
+
             options.Authority = authenticationOptions.Authority;
+
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(authenticationOptions.IssuerSigningKey),
                 ValidateIssuer = true,
                 ValidIssuer = authenticationOptions.Issuer,
                 ValidateAudience = true,
                 ValidAudiences = audiences,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKeys = keySet.Keys,
                 ClockSkew = TimeSpan.Zero
             };
             // Skip checking HTTPS (should be HTTPS in production)

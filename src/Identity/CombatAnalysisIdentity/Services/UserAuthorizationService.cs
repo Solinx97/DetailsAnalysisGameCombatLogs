@@ -8,6 +8,7 @@ using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using Duende.IdentityModel;
+using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -28,18 +29,18 @@ internal class UserAuthorizationService(IMapper mapper, IOptions<Cluster> api, I
     private readonly IIdentityTransactionService _identityTransactionService = identityTransactionService;
     private readonly ILogger<UserAuthorizationService> _logger = logger;
 
-    async Task IUserAuthorizationService.AuthorizationAsync(HttpContext context, string email, string password)
+    async Task<bool> IUserAuthorizationService.AuthorizationAsync(HttpContext context, string email, string password)
     {
         var user = await _identityUserService.GetByEmailAsync(email);
         if (user == null)
         {
-            return;
+            return false;
         }
 
         var passwordIsValid = PasswordHashing.VerifyPassword(password, user.PasswordHash, user.Salt);
         if (!passwordIsValid)
         {
-            return;
+            return false;
         }
 
         var claims = new List<Claim>
@@ -48,13 +49,15 @@ internal class UserAuthorizationService(IMapper mapper, IOptions<Cluster> api, I
             new(JwtClaimTypes.Name, user.Email)
         };
 
-        var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+        var claimsIdentity = new ClaimsIdentity(claims, IdentityServerConstants.DefaultCookieAuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-        await context.SignInAsync("Cookies", claimsPrincipal, new AuthenticationProperties
+        await context.SignInAsync(IdentityServerConstants.DefaultCookieAuthenticationScheme, claimsPrincipal, new AuthenticationProperties
         {
             IsPersistent = true
         });
+
+        return true;
     }
 
     async Task<bool> IUserAuthorizationService.CreateUserAsync(IdentityUserModel identityUser, AppUserModel appUser, CustomerModel customer)

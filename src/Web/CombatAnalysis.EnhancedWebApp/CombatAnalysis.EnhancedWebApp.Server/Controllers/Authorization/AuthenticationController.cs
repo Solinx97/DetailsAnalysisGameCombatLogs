@@ -39,11 +39,11 @@ public class AuthenticationController : ControllerBase
         {
             if (!HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
             {
-                ArgumentNullException.ThrowIfNullOrEmpty(accessToken, nameof(accessToken));
+                ArgumentException.ThrowIfNullOrEmpty(accessToken, nameof(accessToken));
             }
 
             var identityUserId = AccessTokenHelper.GetUserIdFromAccessToken(accessToken);
-            ArgumentNullException.ThrowIfNullOrEmpty(identityUserId, nameof(identityUserId));
+            ArgumentException.ThrowIfNullOrEmpty(identityUserId, nameof(identityUserId));
 
             var responseMessage = await _httpClient.GetAsync($"User/find/{identityUserId}");
             responseMessage.EnsureSuccessStatusCode();
@@ -56,6 +56,12 @@ public class AuthenticationController : ControllerBase
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, "Failed to refresh Authentication token. Paramter '{ParamName} was null", ex.ParamName);
+
+            return BadRequest();
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, "Failed to refresh Authentication token. Paramter '{ParamName} was incorrect", ex.ParamName);
 
             return BadRequest();
         }
@@ -72,16 +78,16 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            ArgumentNullException.ThrowIfNullOrEmpty(identityPath, nameof(identityPath));
+            ArgumentException.ThrowIfNullOrEmpty(identityPath, nameof(identityPath));
 
             var codeVerifier = PKCEHelper.GenerateCodeVerifier();
-            ArgumentNullException.ThrowIfNullOrEmpty(codeVerifier, nameof(codeVerifier));
+            ArgumentException.ThrowIfNullOrEmpty(codeVerifier, nameof(codeVerifier));
 
             var state = PKCEHelper.GenerateCodeVerifier();
-            ArgumentNullException.ThrowIfNullOrEmpty(state, nameof(state));
+            ArgumentException.ThrowIfNullOrEmpty(state, nameof(state));
 
             var codeChallenge = PKCEHelper.GenerateCodeChallenge(codeVerifier);
-            ArgumentNullException.ThrowIfNullOrEmpty(codeChallenge, nameof(codeChallenge));
+            ArgumentException.ThrowIfNullOrEmpty(codeChallenge, nameof(codeChallenge));
 
             var uri = $"{_server.Identity}{identityPath}?" +
                 $"client_id={_authenticationClient.ClientId}" +
@@ -110,9 +116,9 @@ public class AuthenticationController : ControllerBase
 
             return Ok(new { uri });
         }
-        catch (ArgumentNullException ex)
+        catch (ArgumentException ex)
         {
-            _logger.LogError(ex, "Failed to Authorize. Paramter '{ParamName} was null", ex.ParamName);
+            _logger.LogError(ex, "Failed to Authorize. Paramter '{ParamName} was incorrect", ex.ParamName);
 
             return BadRequest();
         }
@@ -123,13 +129,13 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            ArgumentNullException.ThrowIfNullOrEmpty(identityPath, nameof(identityPath));
+            ArgumentException.ThrowIfNullOrEmpty(identityPath, nameof(identityPath));
 
             return Ok(new { uri = $"{_server.Identity}{identityPath}?cancel_uri={_authentication.CancelUri}" });
         }
-        catch (ArgumentNullException ex)
+        catch (ArgumentException ex)
         {
-            _logger.LogError(ex, "Failed to Authorize. Paramter '{ParamName} was null", ex.ParamName);
+            _logger.LogError(ex, "Failed to Authorize. Paramter '{ParamName} was incorrect", ex.ParamName);
 
             return BadRequest();
         }
@@ -149,16 +155,16 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            ArgumentNullException.ThrowIfNullOrEmpty(identityPath, nameof(identityPath));
-            ArgumentNullException.ThrowIfNullOrEmpty(email, nameof(email));
+            ArgumentException.ThrowIfNullOrEmpty(identityPath, nameof(identityPath));
+            ArgumentException.ThrowIfNullOrEmpty(email, nameof(email));
 
             var uri = $"{_server.Identity}{identityPath}?email={email}&redirectUri={_authentication.RedirectUri}";
 
             return Ok(new { uri });
         }
-        catch (ArgumentNullException ex)
+        catch (ArgumentException ex)
         {
-            _logger.LogError(ex, "Failed to Authorize. Paramter '{ParamName} was null", ex.ParamName);
+            _logger.LogError(ex, "Failed to Authorize. Paramter '{ParamName} was incorrect", ex.ParamName);
 
             return BadRequest();
         }
@@ -193,7 +199,7 @@ public class AuthenticationController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            _logger.LogError(ex, "Failed to State validate. Paramter '{ParamName} was failed", ex.ParamName);
+            _logger.LogError(ex, "Failed to State validate. Paramter '{ParamName} was incorrect", ex.ParamName);
 
             return BadRequest();
         }

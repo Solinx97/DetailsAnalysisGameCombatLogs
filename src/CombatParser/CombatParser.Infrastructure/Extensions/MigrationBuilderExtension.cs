@@ -1,4 +1,5 @@
-﻿using CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Entities;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -86,13 +87,17 @@ internal static class MigrationBuilderExtension
             new(4, "Balance", "50288,78674,8921"),
             new(5, "Shadow", "129197,2944,15407"),
             new(6, "Arms", "12294,86346,7384"),
-            new(7, "Protection", "6572,23922,20243"),
+            new(7, "ProtectionWarrior", "6572,23922,20243"),
             new(8, "Brewmaster", "121253,124335,100787"),
-            new(9, "Discipline", "47750,81751,47753"),
+            new(9, "Discipline", "47750,81751,585"),
             new(10, "Restoration", "61295,52752,51945"),
             new(11, "Combat", "57841,84617,1752"),
             new(12, "Subtlety", "53,2098,8676"),
             new(13, "Destruction", "29722,116858,348"),
+            new(14, "HolyPaladin", "82327,85222,25914"),
+            new(15, "ProtectionPaladin", "31935,53600,20271"),
+            new(16, "Elemental", "51505,403,8050"),
+            new(17, "Frost", "116,44614,30455"),
         ];
 
         return collection;

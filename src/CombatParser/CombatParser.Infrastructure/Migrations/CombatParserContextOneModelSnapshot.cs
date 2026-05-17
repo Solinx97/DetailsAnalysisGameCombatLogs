@@ -17,7 +17,7 @@ namespace CombatParser.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.12")
+                .HasAnnotation("ProductVersion", "9.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -70,6 +70,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BossId");
+
                     b.HasIndex("CombatLogId");
 
                     b.ToTable("Combat");
@@ -87,14 +89,8 @@ namespace CombatParser.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CombatsInQueue")
-                        .HasColumnType("int");
-
                     b.Property<DateTimeOffset>("Date")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("IsReady")
-                        .HasColumnType("bit");
 
                     b.Property<int>("LogType")
                         .HasColumnType("int");
@@ -103,9 +99,6 @@ namespace CombatParser.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("NumberReadyCombats")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -6593,6 +6586,67 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatPlayer");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerDeath", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LastHitSpell")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("LastHitValue")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("CombatPlayerDeath");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("PositionX")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PositionY")
+                        .HasColumnType("float");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("CombatPlayerPosition");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
                 {
                     b.Property<int>("Id")
@@ -7066,67 +7120,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("ResourceRecoveryGeneral");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerDeath", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastHitSpell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("LastHitValue")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("CombatPlayerDeath");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerPosition", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("PositionX")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PositionY")
-                        .HasColumnType("float");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("CombatPlayerPosition");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatTarget", b =>
                 {
                     b.Property<int>("Id")
@@ -7325,11 +7318,19 @@ namespace CombatParser.Infrastructure.Migrations
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Combat", b =>
                 {
+                    b.HasOne("CombatParser.Domain.Entities.Boss", "Boss")
+                        .WithMany()
+                        .HasForeignKey("BossId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CombatParser.Domain.Aggregates.CombatLog", "CombatLog")
                         .WithMany("Combats")
                         .HasForeignKey("CombatLogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Boss");
 
                     b.Navigation("CombatLog");
                 });
@@ -7381,6 +7382,28 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Combat");
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerDeath", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("CombatPlayerDeathes")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPosition", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("CombatPlayerPositions")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
@@ -7475,28 +7498,6 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
                         .WithMany("ResourceRecoveryGenerals")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerDeath", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("CombatPlayerDeathes")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerPosition", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("CombatPlayerPositions")
                         .HasForeignKey("CombatPlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -5,7 +5,6 @@ namespace CombatAnalysis.UserDAL.Data;
 
 public class UserContext(DbContextOptions<UserContext> options) : DbContext(options)
 {
-
     public DbSet<AppUser>? AppUser { get; }
 
     public DbSet<Customer>? Customer { get; }

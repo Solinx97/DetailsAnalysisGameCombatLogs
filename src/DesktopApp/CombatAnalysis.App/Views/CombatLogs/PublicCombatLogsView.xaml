@@ -22,6 +22,7 @@
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
             <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
+            <converters:EqualsToVisibilityConverter x:Key="EqualsToVisibility" />
         </Grid.Resources>
 
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}" 
@@ -44,10 +45,19 @@
                     </Icon:PackIconMaterial.InputBindings>
                 </Icon:PackIconMaterial>
             </StackPanel>
-            <Button mvx:Bi.nd="Command LoadSelectedCombatLogCommand" Content="{loc:Loc Upload}" Width="100" FontSize="16"
-                                        Margin="10,10" Style="{StaticResource showButton}"
-                                        Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
-                                        IsEnabled="{Binding CombatListSelectedIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"/>
+            <StackPanel Orientation="Horizontal" Width="250" IsEnabled="{Binding RemovingInProgress, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
+                <Button mvx:Bi.nd="Command LoadSelectedCombatLogCommand" Content="{loc:Loc Upload}" Width="100" FontSize="16"
+                        Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
+                        IsEnabled="{Binding CombatListSelectedIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"
+                        Margin="10,10" Style="{StaticResource showButton}" HorizontalAlignment="Center"/>
+                <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Cursor="Hand" Style="{StaticResource menuButtonIcon}"
+                                       Visibility="{Binding UserOwner, Converter={StaticResource BoolToVisibility}}"
+                                       HorizontalAlignment="Center" ToolTip="{loc:Loc RemovePrivateLog}">
+                    <Icon:PackIconMaterial.InputBindings>
+                        <MouseBinding Command="{Binding DeleteCombatCommand}" Gesture="LeftClick"/>
+                    </Icon:PackIconMaterial.InputBindings>
+                </Icon:PackIconMaterial>
+            </StackPanel>
             <ScrollViewer MaxHeight="600" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <ListBox ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding CombatListSelectedIndex}">
                     <ListBox.Style>
@@ -62,16 +72,19 @@
                     </ListBox.Style>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel HorizontalAlignment="Center" Width="300" Margin="10">
-                                <TextBlock TextAlignment="Center" FontSize="10" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="5" />
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"
-                                                            Visibility="{Binding Path=CombatsInQueue, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
-                                    <Icon:PackIconMaterial Kind="ProgressDownload" Height="15" Width="15" VerticalAlignment="Center" Margin="5 0" />
-                                    <TextBlock TextAlignment="Center" FontSize="12" Text="{Binding Path=NumberReadyCombats}" Margin="5" />
-                                    <TextBlock TextAlignment="Center" FontSize="12" Text="/" Margin="0 5" />
-                                    <TextBlock TextAlignment="Center" FontSize="12" Text="{Binding Path=CombatsInQueue}" Margin="5" />
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel HorizontalAlignment="Center" Width="300" Margin="10">
+                                    <TextBlock TextAlignment="Center" FontSize="10" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="5" />
+                                    <TextBlock TextAlignment="Center" FontSize="14" Text="{Binding Path=Name}" Margin="5" />
                                 </StackPanel>
-                                <TextBlock TextAlignment="Center" FontSize="14" Text="{Binding Path=Name}" Margin="5" />
+                                <Icon:PackIconMaterial Kind="Account" VerticalAlignment="Center" Width="15" Height="15" Margin="10 0">
+                                    <Icon:PackIconMaterial.Visibility>
+                                        <MultiBinding Converter="{StaticResource EqualsToVisibility}">
+                                            <Binding Path="DataContext.User.Id" RelativeSource="{RelativeSource AncestorType=ListBox}" />
+                                            <Binding Path="AppUserId" />
+                                        </MultiBinding>
+                                    </Icon:PackIconMaterial.Visibility>
+                                </Icon:PackIconMaterial>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -86,13 +99,12 @@
                     </TextBlock.Triggers>
                 </TextBlock>
             </StackPanel>
-            <StackPanel Visibility="{Binding NoCombatsUploaded, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                <TextBlock Text="No any uploaded combats" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="0 5"/>
-            </StackPanel>
             <StackPanel Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}">
                 <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"
                                            Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"/>
             </StackPanel>
+            <TextBlock Text="{loc:Loc RemovingInProgress}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"
+                        Visibility="{Binding RemovingInProgress, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

@@ -1,7 +1,9 @@
-﻿using CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Entities;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -75,7 +77,7 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkInsertCombatPlayerScoresAsync(this CombatParserContextOne context, List<CombatPlayer> players, CancellationToken cancelationToken)
+    public static async Task BulkInsertCombatPlayerScoresAsync(this CombatParserContextOne context, int bossId, List<CombatPlayer> players, CancellationToken cancelationToken)
     {
         var scores = players.Select(p =>
         {
@@ -85,9 +87,44 @@ internal static class CombatParserContextOneExtension
             return score;
         }).Where(s => s != null).ToList();
 
+        var bestScores = await context.Set<BestSpecializationScore>()
+            .Where(x => x.BossId == bossId).ToListAsync(cancellationToken: cancelationToken);
+
+        foreach (var score in scores)
+        {
+            var selectedBestScore = bestScores.FirstOrDefault(bs => bs.SpecializationId == score!.SpecializationId);
+
+            var bestSpecialziationDamageDone = selectedBestScore == null ? 0 : selectedBestScore.DamageDone;
+            var bestSpecialziationHealDone = selectedBestScore == null ? 0 : selectedBestScore.HealDone;
+            score!.SetScore(bestSpecialziationDamageDone, bestSpecialziationHealDone);
+        }
+
         if (scores.Count > 0)
         {
             await context.BulkInsertAsync(scores, cancellationToken: cancelationToken);
+        }
+    }
+
+    public static async Task BulkUpdateBestSpecializationScoreAsync(this CombatParserContextOne context, int bossId, List<CombatPlayer> players, CancellationToken cancelationToken)
+    {
+        var bestScores = await context.Set<BestSpecializationScore>()
+            .Where(x => x.BossId == bossId).ToListAsync(cancellationToken: cancelationToken);
+        var scores = players.Select(p => p.Score)
+            .Where(s => s != null).ToList();
+
+        foreach (var score in scores)
+        {
+            var selectedBestScore = bestScores.FirstOrDefault(bs => bs.SpecializationId == score!.SpecializationId);
+            if (selectedBestScore != null 
+                && (selectedBestScore.DamageDone < score!.DamageDone || selectedBestScore.HealDone < score.HealDone))
+            {
+                selectedBestScore.Update(score.DamageDone, score.HealDone);
+            }
+        }
+
+        if (bestScores.Count > 0)
+        {
+            await context.BulkUpdateAsync(bestScores, cancellationToken: cancelationToken);
         }
     }
 }

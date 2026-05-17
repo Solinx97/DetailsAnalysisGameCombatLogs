@@ -1,4 +1,6 @@
-﻿namespace CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Entities;
+
+namespace CombatParser.Domain.Aggregates;
 
 public class BestSpecializationScore
 {
@@ -34,4 +36,22 @@ public class BestSpecializationScore
     public Boss Boss { get; private set; }
 
     public int BossId { get; private set; }
+
+    public void Update(int damageDone, int healDone)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
+        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
+
+        if (damageDone != DamageDone)
+        {
+            DamageDone = damageDone;
+        }
+
+        if (healDone != HealDone)
+        {
+            HealDone = healDone;
+        }
+
+        Updated = DateTimeOffset.UtcNow;
+    }
 }

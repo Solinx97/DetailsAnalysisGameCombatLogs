@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using CombatAnalysis.UserAPI.Consts;
+using CombatAnalysis.UserAPI.Helpers;
 using CombatAnalysis.UserAPI.Mapping;
 using CombatAnalysis.UserBL.Extensions;
 using CombatAnalysis.UserBL.Mapping;
@@ -40,14 +41,17 @@ var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer(options =>
         {
+            var keySet = JwtBearerOptionsHelper.GetJWKSAsync(authenticationOptions.Authority).GetAwaiter().GetResult();
+
             options.Authority = authenticationOptions.Authority;
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
                 ValidIssuer = authenticationOptions.Issuer,
                 ValidateAudience = true,
                 ValidAudiences = audiences,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKeys = keySet.Keys,
                 ClockSkew = TimeSpan.Zero
             };
             // Skip checking HTTPS (should be HTTPS in production)

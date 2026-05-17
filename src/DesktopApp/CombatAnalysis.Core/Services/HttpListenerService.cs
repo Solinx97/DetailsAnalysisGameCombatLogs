@@ -39,6 +39,14 @@ internal class HttpListenerService
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
             response.ContentLength64 = buffer.Length;
 
+            var cookie = new Cookie("idsrv", "")
+            {
+                Expires = DateTime.UtcNow.AddDays(-1),
+                Path = "/"
+            };
+
+            response.Cookies.Add(cookie);
+
             var responseOutput = response.OutputStream;
             responseOutput.Write(buffer, 0, buffer.Length);
             responseOutput.Close();

@@ -25,7 +25,7 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
         _memoryCache = memoryCache;
 
         ParsingCombatLogsVM = new ParsingCombatLogsViewModel(mapper, mvvmNavigation, parser, cacheService, combatParserAPIService);
-        PublicCombatLogsVM = new PublicCombatLogsViewModel(mvvmNavigation, combatParserAPIService);
+        PublicCombatLogsVM = new PublicCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
         PrivateCombatLogsVM = new PrivateCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
 
         Basic.Parent = this;

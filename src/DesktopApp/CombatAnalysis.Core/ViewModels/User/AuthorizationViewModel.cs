@@ -116,7 +116,7 @@ public class AuthorizationViewModel : ParentTemplate
     {
         AuthorizationIsRan = true;
 
-        await _identityService.SendAuthorizationRequestAsync("Account/Login");
+        await _identityService.SendAuthorizationRequestAsync("connect/authorize");
 
         IsVerification = true;
 

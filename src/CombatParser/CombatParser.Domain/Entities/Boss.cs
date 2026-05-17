@@ -1,4 +1,6 @@
-﻿namespace CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Aggregates;
+
+namespace CombatParser.Domain.Entities;
 
 public class Boss
 {

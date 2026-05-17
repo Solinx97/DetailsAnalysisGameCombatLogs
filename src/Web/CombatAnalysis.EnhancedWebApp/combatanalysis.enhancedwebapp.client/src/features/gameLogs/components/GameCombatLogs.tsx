@@ -39,7 +39,7 @@ const GameCombatLogs: React.FC = () => {
         let filteredCombatLogs: CombatLogModel[] = [];
         switch (selectedLogType) {
             case 0:
-                filteredCombatLogs = combatLogs?.filter(log => log.isReady && log.logType === 0);
+                filteredCombatLogs = combatLogs?.filter(log => log.logType === 0);
                 break;
             case 1:
                 filteredCombatLogs = combatLogs?.filter(log => log.appUserId === user?.id);
