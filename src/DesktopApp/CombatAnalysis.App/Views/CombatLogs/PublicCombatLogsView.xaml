@@ -103,6 +103,8 @@
                 <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"
                                            Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"/>
             </StackPanel>
+            <TextBlock Text="{loc:Loc RemovingInProgress}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"
+                        Visibility="{Binding RemovingInProgress, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

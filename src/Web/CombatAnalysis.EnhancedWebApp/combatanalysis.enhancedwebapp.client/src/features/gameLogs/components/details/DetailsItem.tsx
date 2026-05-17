@@ -32,7 +32,9 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                 <div>{getValueShortName(player.damageDone)}</div>
                 {player.damageDone > 0 &&
                     <div>
-                        <div className="player-score">{player.score?.damageScore.toFixed(2)}%</div>
+                        {player.score !== null &&
+                            <div className="player-score">{player.score.damageScore.toFixed(2)}%</div>
+                        }
                         <div className="btn-shadow"
                             onClick={() => navigateToDetails(0)}
                             title={t("OpenDamageAnalyzing") || ""}>
@@ -52,7 +54,9 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                 <div>{getValueShortName(player.healDone)}</div>
                 {player.healDone > 0 &&
                     <div>
-                        <div className="player-score">{player.score?.healScore.toFixed(2)}%</div>
+                        {player.score !== null &&
+                            <div className="player-score">{player.score.healScore.toFixed(2)}%</div>
+                        }
                         <div className="btn-shadow"
                             onClick={() => navigateToDetails(1)}
                             title={t("OpenHealingAnalyzing") || ""}>
