@@ -1,5 +1,6 @@
 export type CombatAuraModel = {
     id: number;
+    gameAuraId: number;
     name: string;
     creator: string;
     target: string;

@@ -7,6 +7,9 @@ public class CombatAuraModel
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
 
+    [Range(0, int.MaxValue)]
+    public int GameAuraId { get; set; }
+
     [Required]
     public string Name { get; set; } = string.Empty;
 

@@ -2,6 +2,8 @@
 
 public class CombatAura
 {
+    public int GameAuraId { get; set; }
+
     public string Name { get; set; }
 
     public string Creator { get; set; }

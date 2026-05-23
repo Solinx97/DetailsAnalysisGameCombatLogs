@@ -28,7 +28,6 @@ public class Combat
         IsWin = isWin;
         StartDate = startDate;
         FinishDate = finishDate;
-        IsReady = false;
         BossId = bossId;
         CombatLogId = combatLogId;
     }
@@ -58,8 +57,6 @@ public class Combat
     {
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
     }
-
-    public bool IsReady { get; private set; }
 
     public Boss Boss { get; private set; }
 
@@ -107,11 +104,6 @@ public class Combat
         return combat;
     }
 
-    public void CombatIsReady()
-    {
-        IsReady = true;
-    }
-
     private void AddCombatPlayer(CombatPlayerData player)
     {
         var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
@@ -123,7 +115,7 @@ public class Combat
 
     private void AddCombatAura(CombatAuraData aura)
     {
-        var createdAura = new CombatAura(aura.Name, aura.Creator, aura.Target, aura.AuraCreatorType, aura.AuraType,
+        var createdAura = new CombatAura(aura.GameAuraId, aura.Name, aura.Creator, aura.Target, aura.AuraCreatorType, aura.AuraType,
             aura.StartTime, aura.FinishTime, aura.Stacks, aura.CombatId);
         _auras.Add(createdAura);
     }

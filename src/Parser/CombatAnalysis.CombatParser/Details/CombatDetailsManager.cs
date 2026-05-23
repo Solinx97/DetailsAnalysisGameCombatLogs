@@ -17,33 +17,19 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraRemoved)
             && auras.TryGetValue(combatDataLine[2], out var playerGameId))
         {
-            RemoveAura(combatDataLine, playerGameId);
+            RemoveAura(combatDataLine, playerGameId, petsId);
 
             return (string.Empty, null);
         }
 
-        var startTime = GetTimeFromStart(combatDataLine[0]);
-        var finishTime = GetTimeFromStart(_combatFinished.ToString());
-        var auraType = SelectAuraType(combatDataLine);
-        var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], petsId);
-
-        var buff = new CombatAura
-        {
-            Name = combatDataLine[11].Trim('"'),
-            Creator = combatDataLine[3].Trim('"'),
-            Target = combatDataLine[7].Trim('"'),
-            StartTime = startTime,
-            FinishTime = finishTime,
-            AuraCreatorType = (int)auraCreatorType,
-            AuraType = (int)auraType
-        };
- 
+        var name = combatDataLine[11].Trim('"');
+        var aura = CreateCombatAura(combatDataLine, name, combatDataLine[0], _combatFinished.ToString(), petsId); 
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[14], out var stacks))
         {
-            buff.Stacks = stacks;
+            aura.Stacks = stacks;
         }
 
-        return (combatDataLine[2], buff);
+        return (combatDataLine[2], aura);
     }
 
     public (string, CombatPlayerPosition?) GetPositions(string[] combatDataLine)
@@ -398,11 +384,39 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return damageDone;
     }
 
-    private void RemoveAura(string[] combatDataLine, ConcurrentDictionary<string, CombatAura> auras)
+    private CombatAura CreateCombatAura(string[] combatDataLine, string name, string startTimeAura, string finishTimeAura, List<string> petsId)
     {
-        if (auras.TryGetValue(combatDataLine[11], out var auraName))
+        var startTime = GetTimeFromStart(startTimeAura);
+        var finishTime = GetTimeFromStart(finishTimeAura);
+        var auraType = SelectAuraType(combatDataLine);
+        var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], petsId);
+
+        var aura = new CombatAura
         {
-            auraName.FinishTime = GetTimeFromStart(combatDataLine[0]);
+            GameAuraId = int.Parse(combatDataLine[10]),
+            Name = name,
+            Creator = combatDataLine[3].Trim('"'),
+            Target = combatDataLine[7].Trim('"'),
+            StartTime = startTime,
+            FinishTime = finishTime,
+            AuraCreatorType = (int)auraCreatorType,
+            AuraType = (int)auraType
+        };
+
+        return aura;
+    }
+
+    private void RemoveAura(string[] combatDataLine, ConcurrentDictionary<string, CombatAura> auras, List<string> petsId)
+    {
+        if (auras.TryGetValue(combatDataLine[11], out var aura))
+        {
+            aura.FinishTime = GetTimeFromStart(combatDataLine[0]);
+        }
+        else
+        {
+            var name = combatDataLine[11].Trim('"');
+            var alreadyRunAura = CreateCombatAura(combatDataLine, name, _combatStarted.ToString(), combatDataLine[0], petsId);
+            auras.TryAdd(name, alreadyRunAura);
         }
     }
 
@@ -473,7 +487,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         {
             var timeFromStart = startTime - _combatStarted;
 
-            return timeFromStart;
+            return timeFromStart < TimeSpan.Zero ? TimeSpan.Zero : timeFromStart;
         }
 
         return TimeSpan.Zero;

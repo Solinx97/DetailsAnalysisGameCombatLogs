@@ -11,9 +11,10 @@ public class CombatAura : CombatDataBase, ICombatRefs
 
     private CombatAura() { }
 
-    public CombatAura(string name, string creator, string target, int auraCreatorType, int auraType,
+    public CombatAura(int gameAuraId, string name, string creator, string target, int auraCreatorType, int auraType,
         TimeSpan startTime, TimeSpan finishTime, int stacks, int combatId)
     {
+        GameAuraId = gameAuraId;
         Name = name;
         Creator = creator;
         Target = target;
@@ -26,6 +27,8 @@ public class CombatAura : CombatDataBase, ICombatRefs
     }
 
     public int Id { get; private set; }
+
+    public int GameAuraId { get; private set; }
 
     public string Name { get; private set; } = string.Empty;
 

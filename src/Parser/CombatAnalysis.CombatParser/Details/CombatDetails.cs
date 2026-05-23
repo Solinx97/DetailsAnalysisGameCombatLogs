@@ -184,8 +184,7 @@ public class CombatDetails(ILogger logger)
         else if (hasAuras)
         {
             var allPetsId = _petsId.SelectMany(x => x.Value).ToList();
-            var t = splitCombatData;
-            var (creatorId, auras) = combatDetailsManager.GetAuras(t, Auras, allPetsId);
+            var (creatorId, auras) = combatDetailsManager.GetAuras(splitCombatData, Auras, allPetsId);
             if (!string.IsNullOrEmpty(creatorId) || auras != null)
             {
                 if (Auras.TryGetValue(creatorId, out var collection))

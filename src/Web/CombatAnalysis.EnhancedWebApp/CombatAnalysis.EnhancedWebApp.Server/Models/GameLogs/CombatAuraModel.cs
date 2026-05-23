@@ -4,6 +4,8 @@ public class CombatAuraModel
 {
     public int Id { get; set; }
 
+    public int GameAuraId { get; set; }
+
     public string Name { get; set; }
 
     public string Creator { get; set; }

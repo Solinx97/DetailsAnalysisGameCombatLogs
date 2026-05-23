@@ -4,6 +4,7 @@ using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    partial class CombatParserContextOneModelSnapshot : ModelSnapshot
+    [Migration("20260523090749_RemoveCombatStatus")]
+    partial class RemoveCombatStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8312,9 +8315,6 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<TimeSpan>("FinishTime")
                         .HasColumnType("time");
-
-                    b.Property<int>("GameAuraId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

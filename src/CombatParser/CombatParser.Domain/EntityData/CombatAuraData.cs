@@ -1,6 +1,7 @@
 ﻿namespace CombatParser.Domain.EntityData;
 
 public record CombatAuraData(
+    int GameAuraId,
     string Name, 
     string Creator,
     string Target,

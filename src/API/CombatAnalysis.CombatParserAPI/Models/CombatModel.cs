@@ -45,8 +45,6 @@ public class CombatModel
     [Required]
     public string Duration { get; init; } = string.Empty;
 
-    public bool IsReady { get; init; }
-
     [Range(1, int.MaxValue)]
     public int CombatLogId { get; init; }
 

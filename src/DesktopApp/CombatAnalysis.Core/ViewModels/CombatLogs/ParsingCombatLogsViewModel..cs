@@ -311,10 +311,9 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AllowStep), 0);
 
         CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
-        await _parser.ParseAsync(combatLogPaths, _cancellationTokenSource.Token);
+        await Task.Run(() => _parser.ParseAsync(combatLogPaths, _cancellationTokenSource.Token));
 
         var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
-
         await _combatParserAPIService.GetBossAsync(combatsList, _cancellationTokenSource.Token);
 
         ClearCache();
