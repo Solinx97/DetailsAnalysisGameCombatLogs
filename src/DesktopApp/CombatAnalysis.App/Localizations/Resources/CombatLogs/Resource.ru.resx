@@ -213,4 +213,7 @@
   <data name="Empty" xml:space="preserve">
     <value>Пусто</value>
   </data>
+  <data name="Private" xml:space="preserve">
+    <value>Приватные</value>
+  </data>
 </root>

@@ -3,6 +3,7 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Domain.EntityData;
+using CombatParserApplication = CombatParser.Application;
 
 namespace CombatAnalysis.CombatParserAPI.Mapping;
 
@@ -26,7 +27,8 @@ internal class CombatParserApiMapper : Profile
 
         CreateMap<PlayerModel, PlayerDto>().ReverseMap();
         CreateMap<BossModel, Boss>().ReverseMap();
-        CreateMap<BossModel, BossDto>().ReverseMap();
+        CreateMap<BossModel, CombatParserApplication.DTOs.BossDto>().ReverseMap();
+        CreateMap<CombatAbilityModel, CombatParserApplication.DTOs.CombatAbilityDto>().ReverseMap();
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
         CreateMap<CombatAuraDto, CombatAuraModel>().ReverseMap();
         CreateMap<CombatPlayerPositionDto, CombatPlayerPositionModel>().ReverseMap();

@@ -1,5 +1,6 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
+using CombatParser.Infrastructure.Enums;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -102,7 +103,28 @@ internal static class MigrationBuilderExtension
 
         return collection;
     }
-    
+
+    public static CombatAbility[] GenerateCombatAbilityCollection()
+    {
+        CombatAbility[] collection =
+        [
+            new(1, 105702, "Зелье Нефритовой Змеи", (int)CombatAbilityType.EfficiencyPotion),
+            new(2, 105697, "Укус гну-синя", (int)CombatAbilityType.EfficiencyPotion),
+            new(3, 105706, "Зелье силы могу", (int)CombatAbilityType.EfficiencyPotion),
+            new(4, 125282, "Бодрящая кафа", (int)CombatAbilityType.EfficiencyPotion),
+            new(5, 105696, "Настой кусачих морозов", (int)CombatAbilityType.Elixir),
+            new(6, 105689, "Настой весенних цветов", (int)CombatAbilityType.Elixir),
+            new(7, 105691, "Настой ласкового солнца", (int)CombatAbilityType.Elixir),
+            new(8, 104277, "Сытость", (int)CombatAbilityType.Food),
+            new(9, 80353, "Искажение времени", (int)CombatAbilityType.PartyEfficiency),
+            new(10, 2825, "Жажда крови", (int)CombatAbilityType.PartyEfficiency),
+            new(11, 114207, "Знамя с черепом", (int)CombatAbilityType.PartyEfficiency),
+            new(12, 120676, "Тотем порыва бури", (int)CombatAbilityType.PartyEfficiency),
+        ];
+
+        return collection;
+    }
+
     public static BestSpecializationScore[] GenerateBestSpecializationScoreCollection()
     {
         var bosses = GenerateBossCollection();

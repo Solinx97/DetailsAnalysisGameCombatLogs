@@ -18,6 +18,8 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<CombatAura>? CombatAura { get; }
 
+    public DbSet<CombatAbility>? CombatAbility { get; }
+
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
     public DbSet<CombatTarget>? CombatTarget { get; }
@@ -63,6 +65,12 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<Specialization>().HasData(MigrationBuilderExtension.GenerateSpecializationCollection());
+
+        modelBuilder.Entity<CombatAbility>()
+            .Property(b => b.Id)
+            .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<CombatAbility>().HasData(MigrationBuilderExtension.GenerateCombatAbilityCollection());
 
         modelBuilder.Entity<BestSpecializationScore>()
             .Property(b => b.Id)
