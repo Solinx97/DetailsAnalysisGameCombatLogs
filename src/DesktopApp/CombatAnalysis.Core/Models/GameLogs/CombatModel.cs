@@ -40,6 +40,4 @@ public class CombatModel
     public int CombatLogId { get; set; }
 
     public BossModel Boss { get; set; }
-
-    public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; set; } = [];
 }

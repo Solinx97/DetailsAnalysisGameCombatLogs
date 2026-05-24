@@ -16,7 +16,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<Combat>? Combat { get; }
 
-    public DbSet<CombatAura>? CombatAura { get; }
+    public DbSet<CombatPlayerAura>? CombatPlayerAura { get; }
 
     public DbSet<CombatAbility>? CombatAbility { get; }
 
@@ -108,23 +108,6 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CombatAura>(ca =>
-        {
-            ca.Property(p => p.Name)
-                .HasMaxLength(Domain.Entities.CombatAura.NAME_MAX_LENGTH);
-
-            ca.Property(p => p.Creator)
-                .HasMaxLength(Domain.Entities.CombatAura.CREATOR_MAX_LENGTH);
-            
-            ca.Property(p => p.Target)
-                .HasMaxLength(Domain.Entities.CombatAura.TARGET_MAX_LENGTH);
-
-            ca.HasOne(bs => bs.Combat)
-                .WithMany(s => s.CombatAuras)
-                .HasForeignKey(bs => bs.CombatId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<CombatTarget>(ct =>
         {
             ct.Property(p => p.Username)
@@ -133,7 +116,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             ct.Property(p => p.Target)
                 .HasMaxLength(Domain.Entities.CombatTarget.TARGET_MAX_LENGTH);
 
-            ct.HasOne(bs => bs.Combat)
+            ct.HasOne(ct => ct.Combat)
                 .WithMany(s => s.CombatTargets)
                 .HasForeignKey(bs => bs.CombatId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -144,7 +127,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             cps.Property(p => p.Talents)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.CombatPlayerStats.TALENTS_MAX_LENGTH);
 
-            cps.HasOne(ddg => ddg.CombatPlayer)
+            cps.HasOne(cps => cps.CombatPlayer)
                 .WithOne(cp => cp.Stats)
                 .HasForeignKey<CombatPlayerStats>(s => s.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -218,6 +201,23 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     private static void AddCombatPlayerDataTableRefs(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CombatPlayerAura>(cpa =>
+        {
+            cpa.Property(p => p.Name)
+                .HasMaxLength(Domain.Entities.CombatPlayerData.CombatPlayerAura.NAME_MAX_LENGTH);
+
+            cpa.Property(p => p.Creator)
+                .HasMaxLength(Domain.Entities.CombatPlayerData.CombatPlayerAura.CREATOR_MAX_LENGTH);
+
+            cpa.Property(p => p.Target)
+                .HasMaxLength(Domain.Entities.CombatPlayerData.CombatPlayerAura.TARGET_MAX_LENGTH);
+
+            cpa.HasOne(a => a.CombatPlayer)
+                .WithMany(cp => cp.Auras)
+                .HasForeignKey(a => a.CombatPlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<DamageDone>(dd =>
         {
             dd.Property(p => p.Spell)
@@ -229,7 +229,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             dd.Property(p => p.Target)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.DamageDone.TARGET_MAX_LENGTH);
 
-            dd.HasOne(ddg => ddg.CombatPlayer)
+            dd.HasOne(dd => dd.CombatPlayer)
                 .WithMany(cp => cp.DamageDones)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -257,7 +257,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             hd.Property(p => p.Target)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.HealDone.TARGET_MAX_LENGTH);
 
-            hd.HasOne(ddg => ddg.CombatPlayer)
+            hd.HasOne(hd => hd.CombatPlayer)
                 .WithMany(cp => cp.HealDones)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -268,7 +268,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             hdg.Property(p => p.Spell)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.HealDoneGeneral.SPELL_MAX_LENGTH);
 
-            hdg.HasOne(ddg => ddg.CombatPlayer)
+            hdg.HasOne(hdg => hdg.CombatPlayer)
                 .WithMany(cp => cp.HealDoneGenerals)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -285,7 +285,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             dt.Property(p => p.Target)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.DamageTaken.TARGET_MAX_LENGTH);
 
-            dt.HasOne(ddg => ddg.CombatPlayer)
+            dt.HasOne(dt => dt.CombatPlayer)
                 .WithMany(cp => cp.DamageTakens)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -296,7 +296,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             dtg.Property(p => p.Spell)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.DamageTakenGeneral.SPELL_MAX_LENGTH);
 
-            dtg.HasOne(ddg => ddg.CombatPlayer)
+            dtg.HasOne(dtg => dtg.CombatPlayer)
                 .WithMany(cp => cp.DamageTakenGenerals)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -313,7 +313,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             rr.Property(p => p.Target)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.ResourceRecovery.TARGET_MAX_LENGTH);
 
-            rr.HasOne(ddg => ddg.CombatPlayer)
+            rr.HasOne(rr => rr.CombatPlayer)
                 .WithMany(cp => cp.ResourceRecoveries)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -324,7 +324,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             rrg.Property(p => p.Spell)
                 .HasMaxLength(Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral.SPELL_MAX_LENGTH);
 
-            rrg.HasOne(ddg => ddg.CombatPlayer)
+            rrg.HasOne(rrg => rrg.CombatPlayer)
                 .WithMany(cp => cp.ResourceRecoveryGenerals)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -347,7 +347,7 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
         modelBuilder.Entity<CombatPlayerPosition>()
             .HasOne(cpp => cpp.CombatPlayer)
             .WithMany(cp => cp.CombatPlayerPositions)
-            .HasForeignKey(ddg => ddg.CombatPlayerId)
+            .HasForeignKey(cpp => cpp.CombatPlayerId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -12,7 +12,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
-    public (string, CombatAura?) GetAuras(string[] combatDataLine, ConcurrentDictionary<string, ConcurrentDictionary<string, CombatAura>> auras, List<string> petsId)
+    public (string, CombatPlayerAura?) GetAuras(string[] combatDataLine, ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerAura>> auras, List<string> petsId)
     {
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraRemoved)
             && auras.TryGetValue(combatDataLine[2], out var playerGameId))
@@ -384,14 +384,14 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return damageDone;
     }
 
-    private CombatAura CreateCombatAura(string[] combatDataLine, string name, string startTimeAura, string finishTimeAura, List<string> petsId)
+    private CombatPlayerAura CreateCombatAura(string[] combatDataLine, string name, string startTimeAura, string finishTimeAura, List<string> petsId)
     {
         var startTime = GetTimeFromStart(startTimeAura);
         var finishTime = GetTimeFromStart(finishTimeAura);
         var auraType = SelectAuraType(combatDataLine);
         var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], petsId);
 
-        var aura = new CombatAura
+        var aura = new CombatPlayerAura
         {
             GameAuraId = int.Parse(combatDataLine[10]),
             Name = name,
@@ -406,7 +406,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return aura;
     }
 
-    private void RemoveAura(string[] combatDataLine, ConcurrentDictionary<string, CombatAura> auras, List<string> petsId)
+    private void RemoveAura(string[] combatDataLine, ConcurrentDictionary<string, CombatPlayerAura> auras, List<string> petsId)
     {
         if (auras.TryGetValue(combatDataLine[11], out var aura))
         {

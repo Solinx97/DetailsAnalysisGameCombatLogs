@@ -50,8 +50,6 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             }
 
             var combatPlayersData = new List<CombatPlayerData>();
-            var auras = _mapper.Map<List<CombatAuraData>>(combat.CombatAuras);
-
             foreach (var player in combat.CombatPlayers)
             {
                 var playerData = await ExtractCombatPlayerDataAsync(player, cancellationToken);
@@ -59,7 +57,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             }
 
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, auras);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData);
 
             await _mediator.Send(command, cancellationToken);
 
@@ -83,6 +81,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
     {
         var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
 
+        var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
         var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
         var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
         var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
@@ -111,6 +110,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             combatPlayer.CombatId,
             statsMap,
             scoreMap,
+            aurasMap,
             damageDonesMap,
             damageDoneGeneralsMap,
             healDonesMap,

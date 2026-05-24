@@ -1,18 +1,17 @@
-﻿using CombatParser.Domain.Aggregates;
-using CombatParser.Domain.Interfaces;
+﻿using CombatParser.Domain.Interfaces;
 
-namespace CombatParser.Domain.Entities;
+namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class CombatAura : CombatDataBase, ICombatRefs
+public class CombatPlayerAura : CombatPlayerDataBase, ICombatPlayerRefs
 {
     public const int NAME_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;
     public const int TARGET_MAX_LENGTH = 128;
 
-    private CombatAura() { }
+    private CombatPlayerAura() { }
 
-    public CombatAura(int gameAuraId, string name, string creator, string target, int auraCreatorType, int auraType,
-        TimeSpan startTime, TimeSpan finishTime, int stacks, int combatId)
+    public CombatPlayerAura(int gameAuraId, string name, string creator, string target, int auraCreatorType, int auraType,
+        TimeSpan startTime, TimeSpan finishTime, int stacks, int combatPlayerId)
     {
         GameAuraId = gameAuraId;
         Name = name;
@@ -23,10 +22,8 @@ public class CombatAura : CombatDataBase, ICombatRefs
         StartTime = startTime;
         FinishTime = finishTime;
         Stacks = stacks;
-        CombatId = combatId;
+        CombatPlayerId = combatPlayerId;
     }
-
-    public int Id { get; private set; }
 
     public int GameAuraId { get; private set; }
 
@@ -46,5 +43,5 @@ public class CombatAura : CombatDataBase, ICombatRefs
 
     public int Stacks { get; private set; }
 
-    public Combat Combat { get; private set; }
+    public CombatPlayer CombatPlayer { get; private set; }
 }

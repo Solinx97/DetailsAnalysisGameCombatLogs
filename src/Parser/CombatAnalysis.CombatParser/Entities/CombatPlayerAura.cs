@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class CombatAura
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class CombatPlayerAura : ICombatPlayerEntity
 {
     public int GameAuraId { get; set; }
 
@@ -20,5 +22,5 @@ public class CombatAura
 
     public int Stacks { get; set; }
 
-    public int CombatId { get; set; }
+    public int CombatPlayerId { get; set; }
 }

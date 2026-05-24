@@ -1,13 +1,13 @@
 ﻿import { faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type SetStateAction } from 'react';
-import type { CombatAuraModel } from '../../types/CombatAuraModel';
+import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 import CombatAuraTargets from './CombatAuraTargets';
 
 interface CombatAuraItemProps {
-    selectedCreatorAuras: CombatAuraModel[];
-    pinnedAuras: Map<string, CombatAuraModel[]>;
-    setPinnedAuras: (value: SetStateAction<Map<string, CombatAuraModel[]>>) => void;
+    selectedCreatorAuras: CombatPlayerAuraModel[];
+    pinnedAuras: Map<string, CombatPlayerAuraModel[]>;
+    setPinnedAuras: (value: SetStateAction<Map<string, CombatPlayerAuraModel[]>>) => void;
     selectedCreator: string;
     t: (key: string) => string;
 }
@@ -39,8 +39,8 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ selectedCreatorAuras, p
         }
     }, [pinnedAuras]);
 
-    const makeCreatorAurasMap = (): Map<string, CombatAuraModel[]> => {
-        const auraMap = new Map<string, CombatAuraModel[]>();
+    const makeCreatorAurasMap = (): Map<string, CombatPlayerAuraModel[]> => {
+        const auraMap = new Map<string, CombatPlayerAuraModel[]>();
 
         selectedCreatorAuras?.forEach(aura => {
             if (auraMap.has(aura.name)) {
@@ -72,7 +72,7 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ selectedCreatorAuras, p
         setSelectedAura(auraName);
     }
 
-    const handlePinAura = (auraName: string, aura: CombatAuraModel) => {
+    const handlePinAura = (auraName: string, aura: CombatPlayerAuraModel) => {
         const contains = Array.from(pinnedAuras.keys()).filter(pin => pin === auraName).length > 0;
         if (contains) {
             return;

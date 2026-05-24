@@ -76,7 +76,7 @@ public class CombatDetails(ILogger logger)
 
     public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGeneral { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatAura>> Auras { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerAura>> Auras { get; private set; } = [];
 
     public CombatDetails(ILogger logger, Dictionary<string, List<string>> petsId) : this(logger)
     {
@@ -193,7 +193,7 @@ public class CombatDetails(ILogger logger)
                 }
                 else
                 {
-                    var concurrentAuraColelction = new ConcurrentDictionary<string, CombatAura>();
+                    var concurrentAuraColelction = new ConcurrentDictionary<string, CombatPlayerAura>();
                     concurrentAuraColelction.TryAdd(auras.Name, auras);
                     Auras.TryAdd(creatorId, concurrentAuraColelction);
                 }

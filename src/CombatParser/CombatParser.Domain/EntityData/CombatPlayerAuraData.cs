@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.EntityData;
 
-public record CombatAuraData(
+public record CombatPlayerAuraData(
     int GameAuraId,
     string Name, 
     string Creator,
@@ -10,5 +10,5 @@ public record CombatAuraData(
     TimeSpan StartTime,
     TimeSpan FinishTime, 
     int Stacks,
-    int CombatId
+    int CombatPlayerId
     );

@@ -310,8 +310,12 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
 
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
 
-            var combats = _allCombats?.ToList();
+            var combats = _allCombats == null ? [] : _allCombats.ToList();
             var combatLog = ((BasicTemplateViewModel)Basic).CombatLog;
+            if (combatLog == null)
+            {
+                return;
+            }
 
             await _combatParserAPIService.SaveAsync(combats, combatLog, CombatUploaded, ((BasicTemplateViewModel)Basic).RequestCancelationToken);
 

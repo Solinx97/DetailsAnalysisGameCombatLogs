@@ -313,8 +313,8 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
         await Task.Run(() => _parser.ParseAsync(combatLogPaths, _cancellationTokenSource.Token));
 
-        var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
-        await _combatParserAPIService.GetBossAsync(combatsList, _cancellationTokenSource.Token);
+        var combatList = _mapper.Map<List<CombatModel>>(_parser.Combats);
+        await _combatParserAPIService.GetBossAsync(combatList, _cancellationTokenSource.Token);
 
         ClearCache();
 
@@ -336,13 +336,13 @@ public class ParsingCombatLogsViewModel : ParentTemplate
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AllowStep), 1);
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.None);
 
-            await _mvvmNavigation.Navigate<CombatsViewModel, List<CombatModel>>(combatsList);
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Combats), combatsList);
+            await _mvvmNavigation.Navigate<CombatsViewModel, List<CombatModel>>(combatList);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Combats), combatList);
 
             return;
         }
 
-        await UploadingCombatLogAsync(combatsList, combatsList);
+        await UploadingCombatLogAsync(combatList, combatList);
     }
 
     private void ClearCache()

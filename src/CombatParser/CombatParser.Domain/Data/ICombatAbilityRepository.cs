@@ -4,5 +4,5 @@ namespace CombatParser.Domain.Data;
 
 public interface ICombatAbilityRepository
 {
-    Task<IEnumerable<CombatAbility>> GetByAbiityTypeAsync(int abilityType, CancellationToken cancellationToken);
+    Task<IEnumerable<CombatAbility>> GetByAbilityTypeAsync(int combatPlayerId, int abilityType, CancellationToken cancellationToken);
 }

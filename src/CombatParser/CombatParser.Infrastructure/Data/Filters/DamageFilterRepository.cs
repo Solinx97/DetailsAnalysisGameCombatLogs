@@ -56,6 +56,7 @@ internal class DamageFilterRepository(CombatParserContextOne context) : IDamageF
     private async Task<List<string>> GetTargetsAsync(int combatId, CancellationToken cancellationToken)
     {
         var targets = await _context.Set<Combat>()
+                .AsNoTracking()
                 .Where(x => x.Id == combatId)
                 .Join(_context.Set<CombatPlayer>(),
                     x => x.Id,

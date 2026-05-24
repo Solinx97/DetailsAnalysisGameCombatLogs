@@ -1,11 +1,11 @@
 ﻿import { faPlus, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type ChangeEvent, type SetStateAction } from 'react';
-import type { CombatAuraModel } from '../../types/CombatAuraModel';
+import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 
 interface CombatAuraTimesProps {
-    setSelectedCreatorAuras: (value: SetStateAction<CombatAuraModel[]>) => void;
-    defaultSelectedCreatorAuras: CombatAuraModel[];
+    setSelectedCreatorAuras: (value: SetStateAction<CombatPlayerAuraModel[]>) => void;
+    defaultSelectedCreatorAuras: CombatPlayerAuraModel[];
     t: (key: string) => string;
 }
 
@@ -36,7 +36,7 @@ const CombatAuraTimes: React.FC<CombatAuraTimesProps> = ({ setSelectedCreatorAur
     }
 
     const applyTime = (): void => {
-        const auras = new Array<CombatAuraModel>();
+        const auras = new Array<CombatPlayerAuraModel>();
 
         defaultSelectedCreatorAuras.forEach(aura => {
             if (aura.startTime >= startTime && aura.finishTime <= finishTime) {

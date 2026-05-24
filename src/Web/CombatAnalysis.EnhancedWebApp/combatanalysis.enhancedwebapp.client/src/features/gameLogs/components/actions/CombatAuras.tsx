@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLazyGetCombatAurasByCombatIdQuery, useLazyGetCombatByIdQuery } from '../../api/GameLogs.api';
-import type { CombatAuraModel } from '../../types/CombatAuraModel';
+import { useLazyGetCombatPlayerAurasByCombatIdQuery, useLazyGetCombatByIdQuery } from '../../api/GameLogs.api';
+import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 import type { CombatModel } from '../../types/CombatModel';
 import CombatAuraFilters from './CombatAuraFilters';
 import CombatAuraItem from './CombatAuraItem';
@@ -23,20 +23,20 @@ const CombatAuras: React.FC = () => {
     const [combatId, setCombatId] = useState(0);
     const [combatLogId, setCombatLogId] = useState(0);
     const [combat, setCombat] = useState<CombatModel | null>(null);
-    const [combatAuras, setCombatAuras] = useState<CombatAuraModel[]>([]);
-    const [allCombatAuras, setAllCombatAuras] = useState<CombatAuraModel[]>([]);
-    const [creatorsAuras, setCreatorsAuras] = useState<CombatAuraModel[]>([]);
-    const [allCreators, setAllCreators] = useState<CombatAuraModel[]>([]);
-    const [selectedCreatorAuras, setSelectedCreatorAuras] = useState<CombatAuraModel[]>([]);
-    const [defaultSelectedCreatorAuras, setDefaultSelectedCreatorAuras] = useState<CombatAuraModel[]>([]);
+    const [combatAuras, setCombatAuras] = useState<CombatPlayerAuraModel[]>([]);
+    const [allCombatAuras, setAllCombatAuras] = useState<CombatPlayerAuraModel[]>([]);
+    const [creatorsAuras, setCreatorsAuras] = useState<CombatPlayerAuraModel[]>([]);
+    const [allCreators, setAllCreators] = useState<CombatPlayerAuraModel[]>([]);
+    const [selectedCreatorAuras, setSelectedCreatorAuras] = useState<CombatPlayerAuraModel[]>([]);
+    const [defaultSelectedCreatorAuras, setDefaultSelectedCreatorAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [selectedCreator, setSelectedCreator] = useState("");
-    const [pinnedAuras, setPinnedAuras] = useState<Map<string, CombatAuraModel[]>>(new Map());
-    const [defaultWhenPinnedAuras, setDefaultPinnedAuras] = useState<CombatAuraModel[]>([]);
+    const [pinnedAuras, setPinnedAuras] = useState<Map<string, CombatPlayerAuraModel[]>>(new Map());
+    const [defaultWhenPinnedAuras, setDefaultPinnedAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [showSearch, setShowSearch] = useState(false);
     const [onlyPinnedAuras, setOnlyPinnedAuras] = useState(false);
 
     const [getCombatById] = useLazyGetCombatByIdQuery();
-    const [getCombatAurasByCombatId] = useLazyGetCombatAurasByCombatIdQuery();
+    const [getCombatAurasByCombatId] = useLazyGetCombatPlayerAurasByCombatIdQuery();
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -110,7 +110,7 @@ const CombatAuras: React.FC = () => {
 
     const getAuraCreators = (): void => {
         const uniqueCreators = new Set();
-        const creators = new Array<CombatAuraModel>();
+        const creators = new Array<CombatPlayerAuraModel>();
 
         combatAuras.forEach(aura => {
             if (!uniqueCreators.has(aura.creator)) {

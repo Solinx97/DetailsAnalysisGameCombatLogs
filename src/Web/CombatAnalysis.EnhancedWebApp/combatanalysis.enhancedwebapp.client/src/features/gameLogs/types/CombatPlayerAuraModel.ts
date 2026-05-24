@@ -1,4 +1,4 @@
-export type CombatAuraModel = {
+export type CombatPlayerAuraModel = {
     id: number;
     gameAuraId: number;
     name: string;
@@ -9,5 +9,5 @@ export type CombatAuraModel = {
     startTime: string;
     finishTime: string;
     stacks: number;
-    combatId: number;
+    combatIPlayerd: number;
 }

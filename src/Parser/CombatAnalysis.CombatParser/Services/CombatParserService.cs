@@ -326,15 +326,10 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
         CombatDetails.Add(combatDetails);
 
-        var combatAuras = new List<CombatAura>();
         foreach (var combatPlayer in combatPlayers)
         {
             FillCombatPlayerData(combatPlayer, combatDetails);
-
-            combatAuras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId].Select(x => x.Value));
         }
-
-        combat.CombatAuras = combatAuras;
 
         return combatPlayers;
     }
@@ -392,6 +387,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         combatPlayer.DamageTaken = combatDetails.DamageTaken[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
         combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecovery[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
 
+        combatPlayer.Auras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.DamageDones.AddRange(combatDetails.DamageDone[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.DamageDoneGenerals.AddRange(combatDetails.DamageDoneGeneral[combatPlayer.Player.GameId]);
         combatPlayer.HealDones.AddRange(combatDetails.HealDone[combatPlayer.Player.GameId].Select(x => x.Value));

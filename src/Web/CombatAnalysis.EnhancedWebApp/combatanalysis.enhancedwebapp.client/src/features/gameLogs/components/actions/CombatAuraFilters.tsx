@@ -1,7 +1,7 @@
 ﻿import { faPlus, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, type SetStateAction } from 'react';
-import type { CombatAuraModel } from '../../types/CombatAuraModel';
+import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 
 const auraType = {
     myselfBuff: 0,
@@ -24,13 +24,13 @@ const auraCreatorType = {
 };
 
 interface CombatAuraFiltersProps {
-    setCreators: (value: SetStateAction<CombatAuraModel[]>) => void;
+    setCreators: (value: SetStateAction<CombatPlayerAuraModel[]>) => void;
     selectedCreator: string;
     handleSelectCreator: (creator: string) => void;
-    allCreators: CombatAuraModel[];
-    setSelectedCreatorAuras: (value: SetStateAction<CombatAuraModel[]>) => void;
+    allCreators: CombatPlayerAuraModel[];
+    setSelectedCreatorAuras: (value: SetStateAction<CombatPlayerAuraModel[]>) => void;
     getAuraCreators: () => void;
-    defaultSelectedCreatorAuras: CombatAuraModel[];
+    defaultSelectedCreatorAuras: CombatPlayerAuraModel[];
     t: (key: string) => string;
 }
 
@@ -43,7 +43,7 @@ const CombatAuraFilters: React.FC<CombatAuraFiltersProps> = ({ setCreators, sele
     const [showFilters, setShowFilters] = useState(false);
 
     const applyFilterCreatorAuraType = (number: number): void => {
-        const newCreators = new Array<CombatAuraModel>();
+        const newCreators = new Array<CombatPlayerAuraModel>();
         const filteredCreators = allCreators.filter(creator => creator.auraCreatorType === number);
 
         setCreators(newCreators.concat(filteredCreators));
@@ -51,7 +51,7 @@ const CombatAuraFilters: React.FC<CombatAuraFiltersProps> = ({ setCreators, sele
     }
 
     const applyFilterAuraType = (auraType: number, include = true): void => {
-        const auras = new Array<CombatAuraModel>();
+        const auras = new Array<CombatPlayerAuraModel>();
 
         defaultSelectedCreatorAuras.forEach(aura => {
             const condition = include

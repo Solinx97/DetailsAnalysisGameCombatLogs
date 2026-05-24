@@ -120,7 +120,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
             var response = await _httpClient.GetAsync($"Combat/getByCombatLogId/{combatLogId}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            var combats = await response.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+            var combats = await response.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>(cancellationToken);
             ArgumentNullException.ThrowIfNull(combats, nameof(combats));
 
             return combats;
@@ -152,14 +152,14 @@ internal class CombatParserAPIService : ICombatParserAPIService
             var response = await _httpClient.GetAsync($"CombatPlayer/getByCombatId/{combatId}", cancellationToke);
             response.EnsureSuccessStatusCode();
 
-            var combatPlayers = await response.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
+            var combatPlayers = await response.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>(cancellationToke);
             ArgumentNullException.ThrowIfNull(combatPlayers, nameof(combatPlayers));
 
             return combatPlayers;
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "Some arguments is null: {Message}", ex.Message);
 
             return [];
         }
@@ -177,14 +177,14 @@ internal class CombatParserAPIService : ICombatParserAPIService
         }
     }
 
-    public async Task<int> LoadCountAsync(string address, CancellationToken token)
+    public async Task<int> LoadCountAsync(string address, CancellationToken cancellationToken)
     {
         try
         {
-            var response = await _httpClient.GetAsync(address, token);
+            var response = await _httpClient.GetAsync(address, cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            var details = await response.Content.ReadFromJsonAsync<int>();
+            var details = await response.Content.ReadFromJsonAsync<int>(cancellationToken);
 
             return details;
         }
@@ -235,7 +235,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "Some arguments is null: {Message}", ex.Message);
 
             return new CombatLogModel();
         }

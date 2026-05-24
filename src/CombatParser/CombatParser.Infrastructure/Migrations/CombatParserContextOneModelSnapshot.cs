@@ -8397,57 +8397,6 @@ namespace CombatParser.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatAura", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AuraCreatorType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AuraType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Creator")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<TimeSpan>("FinishTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("GameAuraId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Stacks")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Target")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatId");
-
-                    b.ToTable("CombatAura");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
                     b.Property<int>("Id")
@@ -8485,6 +8434,57 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasIndex("PlayerId");
 
                     b.ToTable("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerAura", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuraCreatorType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AuraType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<TimeSpan>("FinishTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("GameAuraId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("Stacks")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("CombatPlayerAura");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerDeath", b =>
@@ -9279,17 +9279,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("CombatLog");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatAura", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
-                        .WithMany("CombatAuras")
-                        .HasForeignKey("CombatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Combat");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
@@ -9307,6 +9296,17 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Combat");
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerAura", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("Auras")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerDeath", b =>
@@ -9462,8 +9462,6 @@ namespace CombatParser.Infrastructure.Migrations
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Combat", b =>
                 {
-                    b.Navigation("CombatAuras");
-
                     b.Navigation("CombatPlayers");
 
                     b.Navigation("CombatTargets");
@@ -9481,6 +9479,8 @@ namespace CombatParser.Infrastructure.Migrations
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
+                    b.Navigation("Auras");
+
                     b.Navigation("CombatPlayerDeathes");
 
                     b.Navigation("CombatPlayerPositions");

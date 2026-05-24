@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.CombatParserAPI.Models;
 
-public class CombatAuraModel
+public class CombatPlayerAuraModel
 {
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
@@ -35,5 +35,5 @@ public class CombatAuraModel
     public int Stacks { get; set; }
 
     [Range(0, int.MaxValue)]
-    public int CombatId { get; set; }
+    public int CombatPlayerId { get; set; }
 }

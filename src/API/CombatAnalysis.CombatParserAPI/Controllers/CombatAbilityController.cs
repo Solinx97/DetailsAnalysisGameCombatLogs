@@ -11,9 +11,9 @@ public class CombatAbilityController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
-    public async Task<IActionResult> GetByAbilityType(int abilityType, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByAbilityType(int combatPlayerId, int abilityType, CancellationToken cancellationToken)
     {
-        var abilities = await _mediator.Send(new GetAbilitiesByAbilityTypeQuery(abilityType), cancellationToken);
+        var abilities = await _mediator.Send(new GetAbilitiesByAbilityTypeQuery(combatPlayerId, abilityType), cancellationToken);
 
         return Ok(abilities);
     }

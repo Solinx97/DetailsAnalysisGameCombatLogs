@@ -1,7 +1,7 @@
-﻿import type { CombatAuraModel } from '../../types/CombatAuraModel';
+﻿import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 
 interface CombatAuraTargetsProps {
-    combatAuras: CombatAuraModel[];
+    combatAuras: CombatPlayerAuraModel[];
 }
 
 const CombatAuraTargets: React.FC<CombatAuraTargetsProps> = ({ combatAuras }) => {

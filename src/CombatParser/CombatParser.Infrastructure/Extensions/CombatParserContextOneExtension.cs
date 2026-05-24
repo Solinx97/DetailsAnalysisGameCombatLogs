@@ -46,21 +46,6 @@ internal static class CombatParserContextOneExtension
         return players;
     }
 
-    public static async Task BulkInsertCombatAurasAsync(this CombatParserContextOne context, int combatId, IEnumerable<CombatAura> combatAuras, CancellationToken cancelationToken)
-    {
-        var data = combatAuras.Select(cd =>
-        {
-            cd.SetCombatId(combatId);
-
-            return cd;
-        }).ToList();
-
-        if (data.Count > 0)
-        {
-            await context.BulkInsertAsync(data, cancellationToken: cancelationToken);
-        }
-    }
-
     public static async Task BulkInsertCombatPlayerStatsAsync(this CombatParserContextOne context, List<CombatPlayer> players, CancellationToken cancelationToken)
     {
         var stats = players.Select(p =>

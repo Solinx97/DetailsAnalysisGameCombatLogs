@@ -1,19 +1,21 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { CombatAuraModel } from '../types/CombatAuraModel';
+import type { CombatPlayerAuraModel } from '../types/CombatPlayerAuraModel';
 import type { CombatLogModel } from '../types/CombatLogModel';
 import type { CombatModel } from '../types/CombatModel';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
+import type { CombatAbilityModel } from '../types/CombatAbilityModel';
 
 const apiURL = '/api/v1';
 
 export const GameLogsApi = createApi({
     reducerPath: 'combatParserAPi',
     tagTypes: [
+        'CombatAbility',
         'CombatLog',
         'Combat',
         'CombatPlayer',
-        'CombatAura',
+        'CombatPlayerAura',
         'DamageDone',
         'DamageDoneGeneral',
         'DamageTaken',
@@ -28,6 +30,16 @@ export const GameLogsApi = createApi({
         baseUrl: apiURL
     }),
     endpoints: builder => ({
+        getCombatAbilities: builder.query<CombatAbilityModel[], { combatPlayerId: number, abilityType: number }>({
+            query: ({ combatPlayerId, abilityType }) => `/CombatAbility?combatPlayerId=${combatPlayerId}&abilityType=${abilityType}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(ability => ({ type: 'CombatAbility' as const, id: ability.id })),
+                        { type: 'CombatAbility', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatAbility', id: 'LIST' }]
+        }),
         getCombatLogs: builder.query<CombatLogModel[], void>({
             query: () => '/CombatLog',
             providesTags: result =>
@@ -76,25 +88,26 @@ export const GameLogsApi = createApi({
             query: id => `/Combat/${id}`,
             providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
         }),
-        getCombatAurasByCombatId: builder.query<CombatAuraModel[], number>({
-            query: combatId => `/CombatAura/getByCombatId/${combatId}`,
+        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], number>({
+            query: combatId => `/CombatPlayerAura/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [
-                        ...result.map(combatAura => ({ type: 'CombatAura' as const, id: combatAura.id })),
-                        { type: 'CombatAura', id: 'LIST' },
+                        ...result.map(combatPlayerAura => ({ type: 'CombatPlayerAura' as const, id: combatPlayerAura.id })),
+                        { type: 'CombatPlayerAura', id: 'LIST' },
                     ]
-                    : [{ type: 'CombatAura', id: 'LIST' }]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
         }),
     })
 })
 
 export const {
+    useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
     useLazyGetPlayersDeathByPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,
     useLazyGetCombatPlayerByIdQuery,
     useLazyGetCombatByIdQuery,
-    useLazyGetCombatAurasByCombatIdQuery,
+    useLazyGetCombatPlayerAurasByCombatIdQuery,
 } = GameLogsApi;

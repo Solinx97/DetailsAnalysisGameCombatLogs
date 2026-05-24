@@ -47,7 +47,4 @@ public class CombatModel
 
     [Range(1, int.MaxValue)]
     public int CombatLogId { get; init; }
-
-    [Required]
-    public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; init; } = [];
 }
