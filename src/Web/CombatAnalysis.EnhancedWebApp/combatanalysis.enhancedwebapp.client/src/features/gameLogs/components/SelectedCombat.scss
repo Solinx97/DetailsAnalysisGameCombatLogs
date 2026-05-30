@@ -100,9 +100,14 @@
         .details {
             &__filter {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
                 align-items: flex-start;
-                gap: 5px;
+                gap: 25px;
+
+                .options {
+                    color: black;
+                    min-width: 175px;
+                }
             }
 
             &__item {
@@ -125,7 +130,7 @@
                 margin: 5px 10px;
                 overflow-x: auto;
                 font-size: 0.75em;
-                ;
+
                 &__item {
                     display: flex;
                     align-items: center;

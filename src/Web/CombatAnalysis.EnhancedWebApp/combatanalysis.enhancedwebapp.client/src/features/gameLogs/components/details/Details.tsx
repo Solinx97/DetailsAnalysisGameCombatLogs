@@ -1,11 +1,12 @@
-﻿import { faFlask } from '@fortawesome/free-solid-svg-icons';
+﻿import { faFlask, faHourglass, faAppleWhole } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useState, type ChangeEvent } from 'react';
+import { memo, useEffect, useState } from 'react';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import type { CombatDetailsModel } from '../../types/dashboard/CombatDetailsModel';
 import DetailsItem from './DetailsItem';
 import { useLazyGetCombatAbilitiesQuery } from '../../api/GameLogs.api';
 import type { CombatAbilityModel } from '../../types/CombatAbilityModel';
+import Select from 'react-select';
 
 interface DetailsProps {
     combatPlayers: CombatPlayerModel[];
@@ -14,32 +15,45 @@ interface DetailsProps {
     t(key: string): string;
 }
 
+type Option = {
+    value: number;
+    label: string;
+}
+
 const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShortName, t }) => {
-    const [filterValue, setFilterValue] = useState<number>(-1);
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
     const [allAbilities, setAllAbilities] = useState<Map<number, CombatAbilityModel[]>>();
     const [abilityVisisble, setAbilityVisisble] = useState<string>("");
 
     const [getCombatPlayerAbilities] = useLazyGetCombatAbilitiesQuery();
+    const sortOptions: Option[] = [
+        { value: -1, label: t("Username") },
+        { value: 0, label: t("Damage") },
+        { value: 1, label: t("Healing") },
+        { value: 2, label: t("DamageTaken") },
+        { value: 3, label: t("ResourcesRecovery") },
+    ];
+    const [sortingValue, setSortingValue] = useState<Option | null>(sortOptions[0]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const detailsType: any = {
-        0: "damageDone",
-        1: "healDone",
-        2: "damageTaken",
-        3: "resourcesRecovery"
-    };
+    const abilityOptions: Option[] = [
+        { value: 1, label: t("Potions") },
+        { value: 3, label: t("Protection") },
+        { value: 4, label: t("Efficiency") },
+        { value: 7, label: t("PartyEfficiency") },
+        { value: 9, label: t("Food") },
+    ];
+    const [abilitiesValues, setAbilitiesValues] = useState<readonly Option[]>([abilityOptions[0]]);
 
     useEffect(() => {
         filter();
-    }, [filterValue]);
+    }, [sortingValue]);
 
     useEffect(() => {
         const loadAbilities = async () => {
             try {
                 const results = await Promise.all(
                     filteredCombatPlayers.map(async player => {
-                        const abilities = await getAbilities(player.id, 1);
+                        const abilities = await getAbilities(player.id);
                         return { playerId: player.id, abilities: abilities ?? [] };
                     })
                 );
@@ -56,11 +70,18 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
         };
 
         loadAbilities();
-    }, [filteredCombatPlayers]);
+    }, [abilitiesValues]);
 
-    const getAbilities = async (combatPlayerId: number, abilityType: number) => {
+    const getAbilities = async (combatPlayerId: number) => {
         try {
-            const abilities = await getCombatPlayerAbilities({ combatPlayerId, abilityType }).unwrap();
+            const selectedAbilities = abilitiesValues.map(x => x.value);
+            if (selectedAbilities.length === 0) {
+                return [];
+            }
+
+            const query = selectedAbilities.map(x => `abilityTypes=${x}`).join("&");
+            const abilities = await getCombatPlayerAbilities({ combatPlayerId, query }).unwrap();
+
             return abilities;
         } catch (e) {
             console.error(e);
@@ -74,9 +95,21 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
             <ul className="ability">
                 {abilities.map((ability, index) => (
                     <li key={`${combatPlayerId}-${ability.id}-${index}`} className="ability__item" onMouseOver={() => setAbilityVisisble(`${combatPlayerId}-${index}`)} onMouseLeave={() => setAbilityVisisble("")}>
-                        <FontAwesomeIcon
-                            icon={faFlask}
-                        />
+                        {ability.abilityType === 1 &&
+                            <FontAwesomeIcon
+                                icon={faFlask}
+                            />
+                        }
+                        {ability.abilityType === 7 &&
+                            <FontAwesomeIcon
+                                icon={faHourglass}
+                            />
+                        }
+                        {ability.abilityType === 9 &&
+                            <FontAwesomeIcon
+                                icon={faAppleWhole}
+                            />
+                        }
                         {(abilityVisisble === `${combatPlayerId}-${index}`) &&
                             <div>{ability.name}</div>
                         }
@@ -88,7 +121,7 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
 
     const compare = (playerA: CombatPlayerModel, playerB: CombatPlayerModel) => {
         const keys: (keyof CombatPlayerModel)[] = ['damageDone', 'healDone', 'damageTaken', 'resourcesRecovery'];
-        const key = keys[detailsType];
+        const key = keys[sortingValue === null ? 0 : sortingValue.value];
 
         if (playerA[key] > playerB[key]) {
             return -1;
@@ -102,8 +135,11 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
 
     const filter = () => {
         let result = new Array<CombatPlayerModel>();
+        if (sortingValue === undefined || sortingValue === null) {
+            return;
+        }
 
-        if (filterValue >= 0) {
+        if (sortingValue.value >= 0) {
             result = [...combatPlayers].sort(compare);
         }
         else {
@@ -113,24 +149,29 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
         setFilteredCombatPlayers(result);
     }
 
-    const handleSelecteFilter = (e: ChangeEvent<HTMLSelectElement>) => {
-        setFilterValue(parseInt(e.target.value || "0"));
-    }
-
     return (
         <div className="details">
-            <div className="details__filter">
-                <div>{t("Filter")}:</div>
-                <span>
-                    <select className="form-control" value={filterValue} onChange={handleSelecteFilter}>
-                        <option value="-1">{t("Username")}</option>
-                        <option value="0">{t("Damage")}</option>
-                        <option value="1">{t("Healing")}</option>
-                        <option value="2">{t("DamageTaken")}</option>
-                        <option value="3">{t("ResourcesRecovery")}</option>
-                    </select>
-                </span>
-            </div>
+            <ul className="details__filter">
+                <li>
+                    <div>{t("Sorting")}:</div>
+                    <Select<Option>
+                        className="options"
+                        options={sortOptions}
+                        value={sortingValue}
+                        onChange={(selected) => setSortingValue(selected)}
+                    />
+                </li>
+                <li>
+                    <div>{t("Abilities")}:</div>
+                    <Select<Option, true>
+                        isMulti
+                        className="options"
+                        options={abilityOptions}
+                        value={abilitiesValues}
+                        onChange={setAbilitiesValues}
+                    />
+                </li>
+            </ul>
             <ul>
                 {filteredCombatPlayers?.map((combatPlayer) => (
                     <li key={combatPlayer.id} className="card">

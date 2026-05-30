@@ -12,7 +12,7 @@ internal class GetAbilitiesByAbilityTypeHandler(ICombatAbilityRepository reposit
 
     public async Task<IEnumerable<CombatAbilityDto>> Handle(GetAbilitiesByAbilityTypeQuery request, CancellationToken cancellationToken)
     {
-        var abilities = await _repository.GetByAbilityTypeAsync(request.CombatPlayerId, request.AbilityType, cancellationToken);
+        var abilities = await _repository.GetByAbilityTypeAsync(request.CombatPlayerId, request.AbilityTypes, cancellationToken);
         var map = _mapper.Map<IEnumerable<CombatAbilityDto>>(abilities);
 
         return map;

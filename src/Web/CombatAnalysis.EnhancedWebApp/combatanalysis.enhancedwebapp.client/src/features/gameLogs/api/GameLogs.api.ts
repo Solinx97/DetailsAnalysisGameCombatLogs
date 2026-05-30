@@ -30,8 +30,8 @@ export const GameLogsApi = createApi({
         baseUrl: apiURL
     }),
     endpoints: builder => ({
-        getCombatAbilities: builder.query<CombatAbilityModel[], { combatPlayerId: number, abilityType: number }>({
-            query: ({ combatPlayerId, abilityType }) => `/CombatAbility?combatPlayerId=${combatPlayerId}&abilityType=${abilityType}`,
+        getCombatAbilities: builder.query<CombatAbilityModel[], { combatPlayerId: number, query: string }>({
+            query: ({ combatPlayerId, query }) => `/CombatAbility?combatPlayerId=${combatPlayerId}&${query}`,
             providesTags: result =>
                 result
                     ? [

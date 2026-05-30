@@ -5,5 +5,5 @@ namespace CombatParser.Application.Queries.GetAbilitiesByAbilityType;
 
 public record GetAbilitiesByAbilityTypeQuery(
     int CombatPlayerId,
-    int AbilityType
+    int[] AbilityTypes
     ) : IRequest<IEnumerable<CombatAbilityDto>>;

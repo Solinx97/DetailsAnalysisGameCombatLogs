@@ -16,5 +16,11 @@
   "PlayerInfo": "Player info",
   "ZeroDeaths": "0 deaths",
   "Username": "Username",
-  "Filter": "Filter"
+  "Sorting": "Sorting",
+  "Abilities": "Abilities",
+  "Potions": "Potions",
+  "Protection": "Protection",
+  "Efficiency": "Efficiency",
+  "PartyEfficiency": "Party efficiency",
+  "Food": "Food"
 }

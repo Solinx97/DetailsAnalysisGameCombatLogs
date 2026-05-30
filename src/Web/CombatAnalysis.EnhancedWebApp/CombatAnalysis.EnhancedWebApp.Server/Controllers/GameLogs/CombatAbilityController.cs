@@ -19,9 +19,10 @@ public class CombatAbilityController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetByAbilityType(int combatPlayerId, int abilityType)
+    public async Task<IActionResult> GetByAbilityTypes(int combatPlayerId, [FromQuery] int[] abilityTypes)
     {
-        var responseMessage = await _httpClient.GetAsync($"CombatAbility?combatPlayerId={combatPlayerId}&abilityType={abilityType}");
+        var query = string.Join("&", abilityTypes.Select(x => $"abilityTypes={x}"));
+        var responseMessage = await _httpClient.GetAsync($"CombatAbility?combatPlayerId={combatPlayerId}&{query}");
         var abilitties = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatAbilityModel>>();
 
         return Ok(abilitties);
