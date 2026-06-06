@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260524081813_Init")]
+    [Migration("20260606162707_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -7833,6 +7833,83 @@ namespace CombatParser.Infrastructure.Migrations
                             AbilityType = 7,
                             GameId = 120676,
                             Name = "Тотем порыва бури"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AbilityType = 9,
+                            GameId = 104272,
+                            Name = "Сытость"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AbilityType = 7,
+                            GameId = 61316,
+                            Name = "Чародейская гениальность Даларана"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AbilityType = 7,
+                            GameId = 1126,
+                            Name = "Знак дикой природы"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AbilityType = 7,
+                            GameId = 109773,
+                            Name = "Узы Тьмы"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            AbilityType = 7,
+                            GameId = 116956,
+                            Name = "Легкость воздуха"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            AbilityType = 7,
+                            GameId = 77747,
+                            Name = "Пылающая ярость"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            AbilityType = 7,
+                            GameId = 113742,
+                            Name = "Искусство быстрой битвы"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            AbilityType = 7,
+                            GameId = 19740,
+                            Name = "Благословение могущества"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            AbilityType = 7,
+                            GameId = 135678,
+                            Name = "Бодрящие споры"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            AbilityType = 7,
+                            GameId = 20217,
+                            Name = "Благословение королей"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            AbilityType = 10,
+                            GameId = 25780,
+                            Name = "Праведное неистовство"
                         });
                 });
 
@@ -8549,6 +8626,34 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasIndex("CombatPlayerId");
 
                     b.ToTable("CombatPlayerPosition");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPreAura", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatorGameId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId");
+
+                    b.ToTable("CombatPlayerPreAura");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
@@ -9334,6 +9439,17 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("CombatPlayer");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPreAura", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithMany("PreAuras")
+                        .HasForeignKey("CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
                 {
                     b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
@@ -9499,6 +9615,8 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("HealDoneGenerals");
 
                     b.Navigation("HealDones");
+
+                    b.Navigation("PreAuras");
 
                     b.Navigation("ResourceRecoveries");
 

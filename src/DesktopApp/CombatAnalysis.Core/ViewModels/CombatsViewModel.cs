@@ -264,10 +264,10 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
                 combat.UniqueCombatCount = c.Count();
 
                 int[] combatNumbers = [.. Enumerable.Range(0, combat.UniqueCombatCount - 1)];
-                foreach (var item in combatNumbers)
+                foreach (var index in combatNumbers)
                 {
-                    var percentage = allBossCombats[item].BossHealthPercentage;
-                    combat.Items.Add(item + 1, percentage);
+                    var percentage = index < allBossCombats.Length ? allBossCombats[index].BossHealthPercentage : 0.0;
+                    combat.Items.Add(index + 1, percentage);
                 }
 
                 return combat;

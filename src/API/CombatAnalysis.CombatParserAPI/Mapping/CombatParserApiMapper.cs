@@ -30,7 +30,8 @@ internal class CombatParserApiMapper : Profile
         CreateMap<BossModel, CombatParserApplication.DTOs.BossDto>().ReverseMap();
         CreateMap<CombatAbilityModel, CombatParserApplication.DTOs.CombatAbilityDto>().ReverseMap();
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
-        CreateMap<CombatAuraDto, CombatPlayerAuraModel>().ReverseMap();
+        CreateMap<CombatParserApplication.DTOs.CombatPlayerPreAuraDto, CombatPlayerPreAuraModel>().ReverseMap();
+        CreateMap<CombatParserApplication.DTOs.CombatPlayerAuraDto, CombatPlayerAuraModel>().ReverseMap();
         CreateMap<CombatPlayerPositionDto, CombatPlayerPositionModel>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDoneModel>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneralModel>().ReverseMap();
@@ -63,7 +64,8 @@ internal class CombatParserApiMapper : Profile
         CreateMap<PlayerModel, Player>().ReverseMap();
         CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatModel, Combat>().ReverseMap();
-        CreateMap<CombatAuraDto, CombatPlayerAura>().ReverseMap();
+        CreateMap<CombatParserApplication.DTOs.CombatPlayerPreAuraDto, CombatPlayerPreAura>().ReverseMap();
+        CreateMap<CombatParserApplication.DTOs.CombatPlayerAuraDto, CombatPlayerAura>().ReverseMap();
         CreateMap<CombatPlayerPositionDto, CombatPlayerPosition>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDone>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneral>().ReverseMap();
@@ -88,6 +90,7 @@ internal class CombatParserApiMapper : Profile
         CreateMap<CombatPlayerDeathData, CombatPlayerDeathModel>().ReverseMap();
         CreateMap<CombatPlayerPositionData, CombatPlayerPositionModel>().ReverseMap();
         CreateMap<SpecializationScoreData, SpecializationScoreModel>().ReverseMap();
+        CreateMap<CombatPlayerPreAuraData, CombatPlayerPreAuraModel>().ReverseMap();
         CreateMap<CombatPlayerAuraData, CombatPlayerAuraModel>().ReverseMap();
     }
 }

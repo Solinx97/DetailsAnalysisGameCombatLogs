@@ -37,6 +37,9 @@ public class CombatPlayerModel
     public int CombatId { get; set; }
 
     [Required]
+    public IReadOnlyList<CombatPlayerPreAuraModel> PreAuras { get; set; } = [];
+
+    [Required]
     public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
 
     [Required]

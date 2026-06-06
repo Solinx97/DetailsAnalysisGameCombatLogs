@@ -44,6 +44,8 @@ public class CombatPlayerModel
 
     public double ResourcesRecoveryPercentages { get; set; }
 
+    public IReadOnlyList<CombatPlayerPreAura> PreAuras { get; set; } = [];
+
     public IReadOnlyList<CombatPlayerAura> Auras { get; set; } = [];
 
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];

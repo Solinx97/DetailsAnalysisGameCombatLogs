@@ -280,6 +280,28 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CombatPlayerPreAura",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatorGameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CombatPlayerPreAura", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CombatPlayerPreAura_CombatPlayer_CombatPlayerId",
+                        column: x => x.CombatPlayerId,
+                        principalTable: "CombatPlayer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CombatPlayerStats",
                 columns: table => new
                 {
@@ -652,7 +674,18 @@ namespace CombatParser.Infrastructure.Migrations
                     { 9, 7, 80353, "Искажение времени" },
                     { 10, 7, 2825, "Жажда крови" },
                     { 11, 7, 114207, "Знамя с черепом" },
-                    { 12, 7, 120676, "Тотем порыва бури" }
+                    { 12, 7, 120676, "Тотем порыва бури" },
+                    { 13, 9, 104272, "Сытость" },
+                    { 14, 7, 61316, "Чародейская гениальность Даларана" },
+                    { 15, 7, 1126, "Знак дикой природы" },
+                    { 16, 7, 109773, "Узы Тьмы" },
+                    { 17, 7, 116956, "Легкость воздуха" },
+                    { 18, 7, 77747, "Пылающая ярость" },
+                    { 19, 7, 113742, "Искусство быстрой битвы" },
+                    { 20, 7, 19740, "Благословение могущества" },
+                    { 21, 7, 135678, "Бодрящие споры" },
+                    { 22, 7, 20217, "Благословение королей" },
+                    { 23, 10, 25780, "Праведное неистовство" }
                 });
 
             migrationBuilder.InsertData(
@@ -1684,6 +1717,11 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "CombatPlayerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CombatPlayerPreAura_CombatPlayerId",
+                table: "CombatPlayerPreAura",
+                column: "CombatPlayerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CombatPlayerStats_CombatPlayerId",
                 table: "CombatPlayerStats",
                 column: "CombatPlayerId",
@@ -1763,6 +1801,9 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CombatPlayerPosition");
+
+            migrationBuilder.DropTable(
+                name: "CombatPlayerPreAura");
 
             migrationBuilder.DropTable(
                 name: "CombatPlayerStats");

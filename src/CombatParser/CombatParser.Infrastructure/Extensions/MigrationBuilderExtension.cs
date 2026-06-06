@@ -120,6 +120,17 @@ internal static class MigrationBuilderExtension
             new(10, 2825, "Жажда крови", (int)CombatAbilityType.PartyEfficiency),
             new(11, 114207, "Знамя с черепом", (int)CombatAbilityType.PartyEfficiency),
             new(12, 120676, "Тотем порыва бури", (int)CombatAbilityType.PartyEfficiency),
+            new(13, 104272, "Сытость", (int)CombatAbilityType.Food),
+            new(14, 61316, "Чародейская гениальность Даларана", (int)CombatAbilityType.PartyEfficiency),
+            new(15, 1126, "Знак дикой природы", (int)CombatAbilityType.PartyEfficiency),
+            new(16, 109773, "Узы Тьмы", (int)CombatAbilityType.PartyEfficiency),
+            new(17, 116956, "Легкость воздуха", (int)CombatAbilityType.PartyEfficiency),
+            new(18, 77747, "Пылающая ярость", (int)CombatAbilityType.PartyEfficiency),
+            new(19, 113742, "Искусство быстрой битвы", (int)CombatAbilityType.PartyEfficiency),
+            new(20, 19740, "Благословение могущества", (int)CombatAbilityType.PartyEfficiency),
+            new(21, 135678, "Бодрящие споры", (int)CombatAbilityType.PartyEfficiency),
+            new(22, 20217, "Благословение королей", (int)CombatAbilityType.PartyEfficiency),
+            new(23, 25780, "Праведное неистовство", (int)CombatAbilityType.Other),
         ];
 
         return collection;

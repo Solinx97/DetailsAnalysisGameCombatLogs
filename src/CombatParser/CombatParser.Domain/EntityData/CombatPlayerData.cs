@@ -10,6 +10,7 @@ public record CombatPlayerData(
     int CombatId,
     CombatPlayerStatsData Stats,
     SpecializationScoreData Score,
+    IReadOnlyList<CombatPlayerPreAuraData> PreAuras,
     IReadOnlyList<CombatPlayerAuraData> Auras,
     IReadOnlyList<DamageDoneData> DamageDones,
     IReadOnlyList<DamageDoneGeneralData> DamageDoneGenerals,

@@ -16,6 +16,8 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<Combat>? Combat { get; }
 
+    public DbSet<CombatPlayerPreAura>? CombatPlayerPreAura { get; }
+
     public DbSet<CombatPlayerAura>? CombatPlayerAura { get; }
 
     public DbSet<CombatAbility>? CombatAbility { get; }
@@ -201,6 +203,14 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     private static void AddCombatPlayerDataTableRefs(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CombatPlayerPreAura>(cpa =>
+        {
+            cpa.HasOne(a => a.CombatPlayer)
+                .WithMany(cp => cp.PreAuras)
+                .HasForeignKey(a => a.CombatPlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<CombatPlayerAura>(cpa =>
         {
             cpa.Property(p => p.Name)

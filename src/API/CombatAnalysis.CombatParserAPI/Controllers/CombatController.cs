@@ -81,6 +81,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
     {
         var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
 
+        var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
         var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
         var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
         var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
@@ -110,6 +111,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             combatPlayer.CombatId,
             statsMap,
             scoreMap,
+            preAurasMap,
             aurasMap,
             damageDonesMap,
             damageDoneGeneralsMap,

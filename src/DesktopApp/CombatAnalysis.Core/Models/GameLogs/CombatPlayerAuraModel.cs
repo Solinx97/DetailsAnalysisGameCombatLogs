@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.Core.Models.GameLogs;
 
-public class CombatAuraModel
+public class CombatPlayerAuraModel
 {
     public int GameAuraId { get; set; }
 
@@ -20,5 +20,5 @@ public class CombatAuraModel
 
     public int Stacks { get; set; }
 
-    public int CombatId { get; set; }
+    public int CombatPlayerId { get; set; }
 }
