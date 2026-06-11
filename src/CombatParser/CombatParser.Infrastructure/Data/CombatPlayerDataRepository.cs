@@ -22,6 +22,26 @@ internal class CombatPlayerDataRepository<TModel>(CombatParserContextOne context
         return data;
     }
 
+    public async Task<IEnumerable<TModel>> GetByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken)
+    {
+        var data = await _context.Set<TModel>()
+            .AsNoTracking()
+            .Where(x => x.CombatPlayerId == combatPlayerId)
+            .ToListAsync(cancellationToken);
+
+        return data;
+    }
+
+    public async Task<TModel?> GetFirstByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken)
+    {
+        var data = await _context.Set<TModel>()
+            .AsNoTracking()
+            .Where(x => x.CombatPlayerId == combatPlayerId)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        return data;
+    }
+
     public async Task<int> CountAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
         var count = await _context.Set<TModel>()

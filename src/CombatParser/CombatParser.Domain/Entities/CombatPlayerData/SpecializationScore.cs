@@ -1,6 +1,8 @@
-﻿namespace CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Interfaces;
 
-public class SpecializationScore
+namespace CombatParser.Domain.Entities.CombatPlayerData;
+
+public class SpecializationScore : CombatPlayerDataBase, ICombatPlayerRefs
 {
     private SpecializationScore() { }
 
@@ -22,8 +24,6 @@ public class SpecializationScore
         CombatPlayerId = combatPlayerId;
     }
 
-    public int Id { get; private set; }
-
     public double DamageScore { get; private set; }
 
     public int DamageDone { get; private set; }
@@ -39,13 +39,6 @@ public class SpecializationScore
     public int SpecializationId { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
-
-    public int CombatPlayerId { get; private set; }
-
-    public void SetCombatPlayerId(int combatPlayerId)
-    {
-        CombatPlayerId = combatPlayerId;
-    }
 
     public void SetScore(int bestSpecialziationDamageDone, int bestSpecialziationHealDone)
     {
@@ -71,5 +64,23 @@ public class SpecializationScore
         }
 
         Updated = DateTimeOffset.UtcNow;
+    }
+
+    public void Update(double damageScore, double healScore)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(damageScore, nameof(damageScore));
+        ArgumentOutOfRangeException.ThrowIfNegative(healScore, nameof(healScore));
+
+        if (DamageScore != damageScore)
+        {
+            DamageScore = damageScore;
+            Updated = DateTimeOffset.UtcNow;
+        }
+
+        if (HealScore != healScore)
+        {
+            HealScore = healScore;
+            Updated = DateTimeOffset.UtcNow;
+        }
     }
 }

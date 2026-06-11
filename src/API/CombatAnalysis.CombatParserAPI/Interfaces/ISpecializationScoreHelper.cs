@@ -1,5 +1,5 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.CombatParserAPI.Models;
+﻿using CombatAnalysis.CombatParserAPI.Models;
+using CombatParser.Application.DTOs;
 
 namespace CombatAnalysis.CombatParserAPI.Interfaces;
 

@@ -27,4 +27,13 @@ public class Player
     public int Faction { get; private set; }
 
     public ICollection<CombatPlayer> CombatPlayers { get; private set; } = [];
+
+    public static Player Create(string gameId, string username, int faction)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
+        ArgumentException.ThrowIfNullOrEmpty(username, nameof(username));
+        ArgumentOutOfRangeException.ThrowIfNegative(faction, nameof(faction));
+
+        return new Player(gameId, username, faction);
+    }
 }

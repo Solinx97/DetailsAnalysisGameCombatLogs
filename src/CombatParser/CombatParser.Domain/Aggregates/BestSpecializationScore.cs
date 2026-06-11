@@ -45,13 +45,13 @@ public class BestSpecializationScore
         if (damageDone != DamageDone)
         {
             DamageDone = damageDone;
+            Updated = DateTimeOffset.UtcNow;
         }
 
         if (healDone != HealDone)
         {
             HealDone = healDone;
+            Updated = DateTimeOffset.UtcNow;
         }
-
-        Updated = DateTimeOffset.UtcNow;
     }
 }

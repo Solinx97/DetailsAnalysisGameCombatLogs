@@ -1,20 +1,20 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces.General;
-using CombatAnalysis.CombatParserAPI.Models;
+﻿using CombatParser.Application.Queries.GetCombatPlayerPositionById;
+using CombatParser.Application.Queries.GetCombatPlayerPositions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatPlayerPositionController(IQueryService<CombatPlayerPositionDto> queryCombatPlayerPosition) : ControllerBase
+public class CombatPlayerPositionController(IMediator mediator) : ControllerBase
 {
-    private readonly IQueryService<CombatPlayerPositionDto> _queryCombatPlayerPosition = queryCombatPlayerPosition;
+    private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatId, CancellationToken cancellationToken)
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var combatPlayerPositions = await _queryCombatPlayerPosition.GetByParamAsync(nameof(CombatPlayerPositionModel.CombatId), combatId, cancellationToken);
+        var combatPlayerPositions = await _mediator.Send(new GetCombatPlayerPositionsQuery(combatPlayerId), cancellationToken);
 
         return Ok(combatPlayerPositions);
     }
@@ -22,7 +22,7 @@ public class CombatPlayerPositionController(IQueryService<CombatPlayerPositionDt
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var combatPlayerPosition = await _queryCombatPlayerPosition.GetByIdAsync(id, cancellationToken);
+        var combatPlayerPosition = await _mediator.Send(new GetCombatPlayerPositionByIdQuery(id), cancellationToken);
 
         return Ok(combatPlayerPosition);
     }

@@ -1,6 +1,4 @@
 using AutoMapper;
-using CombatAnalysis.BL.Extensions;
-using CombatAnalysis.BL.Mapping;
 using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
@@ -23,7 +21,6 @@ builder.Configuration.Bind("Database", databasePropsOptions);
 var databaseConfigsOptions = new DBConfiguration();
 builder.Configuration.Bind("DBConfiguration", databaseConfigsOptions);
 
-builder.Services.CombatParserBLDependencies(databasePropsOptions.DefaultConnection, databaseConfigsOptions.CommandTimeout);
 builder.Services.AddInfrastructure(databasePropsOptions.DefaultConnection);
 builder.Services.AddMediatorSource();
 
@@ -32,7 +29,6 @@ var loggerFactory = LoggerFactory.Create(builder => { });
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new CombatParserApiMapper());
-    mc.AddProfile(new BLMapper());
     mc.AddProfile(new ApplicationMapper());
 }, loggerFactory);
 
