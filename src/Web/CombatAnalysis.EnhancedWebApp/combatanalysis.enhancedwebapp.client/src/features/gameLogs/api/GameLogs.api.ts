@@ -5,6 +5,7 @@ import type { CombatModel } from '../types/CombatModel';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
 import type { CombatAbilityModel } from '../types/CombatAbilityModel';
+import type { CombatPlayerPreAura } from '../types/CombatPlayerPreAura';
 
 const apiURL = '/api/v1';
 
@@ -39,6 +40,16 @@ export const GameLogsApi = createApi({
                         { type: 'CombatAbility', id: 'LIST' },
                     ]
                     : [{ type: 'CombatAbility', id: 'LIST' }]
+        }),
+        getCombatByPreAura: builder.query<CombatPlayerPreAura[], number>({
+            query: (combatId) => `/PreAura/getByCombatId/${combatId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(preAura => ({ type: 'CombatPlayerAura' as const, id: preAura.id })),
+                        { type: 'CombatPlayerAura', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
         }),
         getCombatLogs: builder.query<CombatLogModel[], void>({
             query: () => '/CombatLog',
@@ -103,6 +114,7 @@ export const GameLogsApi = createApi({
 
 export const {
     useLazyGetCombatAbilitiesQuery,
+    useLazyGetCombatByPreAuraQuery,
     useGetCombatLogsQuery,
     useLazyGetPlayersDeathByPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,

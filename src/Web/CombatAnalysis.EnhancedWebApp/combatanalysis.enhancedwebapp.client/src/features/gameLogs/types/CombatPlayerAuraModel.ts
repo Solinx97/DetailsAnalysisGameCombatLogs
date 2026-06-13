@@ -9,5 +9,5 @@ export type CombatPlayerAuraModel = {
     startTime: string;
     finishTime: string;
     stacks: number;
-    combatIPlayerd: number;
+    combatPlayerId: number;
 }

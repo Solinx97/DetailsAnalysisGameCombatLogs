@@ -23,8 +23,8 @@ public class CombatAbilityController : ControllerBase
     {
         var query = string.Join("&", abilityTypes.Select(x => $"abilityTypes={x}"));
         var responseMessage = await _httpClient.GetAsync($"CombatAbility?combatPlayerId={combatPlayerId}&{query}");
-        var abilitties = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatAbilityModel>>();
+        var abilities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatAbilityModel>>();
 
-        return Ok(abilitties);
+        return Ok(abilities);
     }
 }

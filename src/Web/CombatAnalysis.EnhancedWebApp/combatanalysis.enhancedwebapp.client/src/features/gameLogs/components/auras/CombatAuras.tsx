@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayerAurasByCombatIdQuery, useLazyGetCombatByIdQuery } from '../../api/GameLogs.api';
+import { useLazyGetCombatPlayerAurasByCombatIdQuery, useLazyGetCombatByPreAuraQuery, useLazyGetCombatByIdQuery } from '../../api/GameLogs.api';
 import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 import type { CombatModel } from '../../types/CombatModel';
 import CombatAuraFilters from './CombatAuraFilters';
 import CombatAuraItem from './CombatAuraItem';
 import CombatAuraTimes from './CombatAuraTimes';
+import CombatPreAuraItem from './CombatPreAuraItem';
+import type { CombatPlayerPreAura } from '../../types/CombatPlayerPreAura';
 
 import './CombatAuras.scss';
 
@@ -24,19 +26,22 @@ const CombatAuras: React.FC = () => {
     const [combatLogId, setCombatLogId] = useState(0);
     const [combat, setCombat] = useState<CombatModel | null>(null);
     const [combatAuras, setCombatAuras] = useState<CombatPlayerAuraModel[]>([]);
+    const [combatPreAuras, setCombatPreAuras] = useState<CombatPlayerPreAura[]>([]);
     const [allCombatAuras, setAllCombatAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [creatorsAuras, setCreatorsAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [allCreators, setAllCreators] = useState<CombatPlayerAuraModel[]>([]);
     const [selectedCreatorAuras, setSelectedCreatorAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [defaultSelectedCreatorAuras, setDefaultSelectedCreatorAuras] = useState<CombatPlayerAuraModel[]>([]);
-    const [selectedCreator, setSelectedCreator] = useState("");
+    const [selectedCombatPlayerAura, setSelectedCombatPlayerAura] = useState<CombatPlayerAuraModel>();
     const [pinnedAuras, setPinnedAuras] = useState<Map<string, CombatPlayerAuraModel[]>>(new Map());
     const [defaultWhenPinnedAuras, setDefaultPinnedAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [showSearch, setShowSearch] = useState(false);
     const [onlyPinnedAuras, setOnlyPinnedAuras] = useState(false);
+    const [seeRaidBuffs, setSeeRaidBuffs] = useState(true);
 
     const [getCombatById] = useLazyGetCombatByIdQuery();
-    const [getCombatAurasByCombatId] = useLazyGetCombatPlayerAurasByCombatIdQuery();
+    const [getAurasByCombatId] = useLazyGetCombatPlayerAurasByCombatIdQuery();
+    const [getByPreAuras] = useLazyGetCombatByPreAuraQuery();
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -71,7 +76,7 @@ const CombatAuras: React.FC = () => {
 
         const getCombatAuras = async () => {
             try {
-                const result = await getCombatAurasByCombatId(combat?.id).unwrap();
+                const result = await getAurasByCombatId(combat?.id).unwrap();
                 setCombatAuras(result);
                 setAllCombatAuras(result);
             } catch (e) {
@@ -79,7 +84,17 @@ const CombatAuras: React.FC = () => {
             }
         }
 
+        const getCombatByPreAuras = async () => {
+            try {
+                const result = await getByPreAuras(combat?.id).unwrap();
+                setCombatPreAuras(result);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         getCombatAuras();
+        getCombatByPreAuras();
     }, [combat]);
 
     useEffect(() => {
@@ -90,6 +105,10 @@ const CombatAuras: React.FC = () => {
         getAuraCreators();
         handleSelectCreator("All");
     }, [combatAuras]);
+
+    useEffect(() => {
+        initSelectedCreator(selectedCombatPlayerAura);
+    }, [selectedCombatPlayerAura]);
 
     useEffect(() => {
         handleCleanSearch();
@@ -104,32 +123,32 @@ const CombatAuras: React.FC = () => {
             setDefaultSelectedCreatorAuras(filteredAuras);
         }
         else {
-            initSelectedCreatorCombatAuras(selectedCreator);
+            initSelectedCreator(selectedCombatPlayerAura);
         }
     }, [onlyPinnedAuras]);
 
     const getAuraCreators = (): void => {
         const uniqueCreators = new Set();
-        const creators = new Array<CombatPlayerAuraModel>();
+        const combatPlayerAuras = new Array<CombatPlayerAuraModel>();
 
         combatAuras.forEach(aura => {
             if (!uniqueCreators.has(aura.creator)) {
                 uniqueCreators.add(aura.creator);
-                creators.push(aura);
+                combatPlayerAuras.push(aura);
             }
         });
 
-        setAllCreators(creators);
-        setCreatorsAuras(creators);
+        setAllCreators(combatPlayerAuras);
+        setCreatorsAuras(combatPlayerAuras);
 
-        initSelectedCreatorCombatAuras("All");
+        initSelectedCreator(undefined);
     }
 
-    const initSelectedCreatorCombatAuras = (creator: string): void => {
+    const initSelectedCreator = (combatPlayerAura: CombatPlayerAuraModel | undefined): void => {
         const availableAuras = onlyPinnedAuras ? Array.from(allCombatAuras.filter(aura => pinnedAuras.has(aura.name))) : Array.from(allCombatAuras);
 
         const auras = availableAuras.filter(
-            value => creator === "All" || value.creator === creator
+            value => combatPlayerAura === undefined || value.creator === combatPlayerAura.creator
         );
 
         setSelectedCreatorAuras(auras);
@@ -137,19 +156,19 @@ const CombatAuras: React.FC = () => {
         setDefaultPinnedAuras(auras);
     }
 
-    const handleSelectCreator = (creator: string): void => {
-        setSelectedCreator(creator);
-        initSelectedCreatorCombatAuras(creator);
+    const handleSelectCreator = (combatPlayerId: string): void => {
+        const selected = allCombatAuras.filter(x => x.combatPlayerId === Number.parseInt(combatPlayerId));
+        setSelectedCombatPlayerAura(selected.length > 0 ? selected[0] : undefined);
     }
 
-    const handleRemovePinAura = (auraName: string) => {
+    const handleRemovePinAura = (auraName: string): void => {
         const pinned = new Map(pinnedAuras);
         pinned.delete(auraName);
 
         setPinnedAuras(pinned);
     }
 
-    const handleCleanSearch = () => {
+    const handleCleanSearch = (): void => {
         if (searchRef.current !== null) {
             searchRef.current.value = "";
         }
@@ -158,7 +177,7 @@ const CombatAuras: React.FC = () => {
         setPinnedAuras(new Map(pinnedAuras));
     }
 
-    const handleSearchAura = (e: ChangeEvent<HTMLInputElement> | undefined) => {
+    const handleSearchAura = (e: ChangeEvent<HTMLInputElement> | undefined): void => {
         let selectedAuras = [];
         const searchAura = e?.target.value;
         const defaultAura = pinnedAuras.size > 0 ? defaultWhenPinnedAuras : defaultSelectedCreatorAuras;
@@ -186,6 +205,11 @@ const CombatAuras: React.FC = () => {
     const usePinnedAurasHandler = (e: ChangeEvent<HTMLInputElement> | undefined): void => {
         const checked = e?.target.checked;
         setOnlyPinnedAuras(checked || false);
+    }
+
+    const useRaidBuffsHandler = (e: ChangeEvent<HTMLInputElement> | undefined): void => {
+        const checked = e?.target.checked;
+        setSeeRaidBuffs(checked || false);
     }
 
     if (combat === null) {
@@ -223,15 +247,15 @@ const CombatAuras: React.FC = () => {
             }
             <div>{t("Creator")}</div>
             <div className="creators__select-creator">
-                <select className="form-control" value={selectedCreator} onChange={(e) => handleSelectCreator(e.target.value)}>
-                    <option key="-1" value="All">{t("All")}</option>
+                <select className="form-control" value={selectedCombatPlayerAura?.combatPlayerId} onChange={(e) => handleSelectCreator(e.target.value)}>
+                    <option key="-1" value="0">{t("All")}</option>
                     {creatorsAuras.map((creatorsAura, index) => (
-                        <option key={index} value={creatorsAura.creator}>{creatorsAura.creator}</option>
+                        <option key={index} value={creatorsAura.combatPlayerId}>{creatorsAura.creator}</option>
                     ))}
                 </select>
                 <CombatAuraFilters
                     setCreators={setCreatorsAuras}
-                    selectedCreator={selectedCreator}
+                    selectedCreator={selectedCombatPlayerAura === undefined ? "" : selectedCombatPlayerAura.creator}
                     handleSelectCreator={handleSelectCreator}
                     allCreators={allCreators}
                     setSelectedCreatorAuras={setSelectedCreatorAuras}
@@ -244,9 +268,13 @@ const CombatAuras: React.FC = () => {
                     defaultSelectedCreatorAuras={defaultSelectedCreatorAuras}
                     t={t}
                 />
-                <div className="mb-3 form-check">
+                <div className="mb-3 form-check other-filters">
                     <input type="checkbox" className="form-check-input" id="exampleCheck1" defaultChecked={false} onChange={usePinnedAurasHandler} />
                     <label className="form-check-label" htmlFor="exampleCheck1">{t("SeeOnlyPinnedAuras")}</label>
+                </div>
+                <div className="mb-3 form-check other-filters">
+                    <input type="checkbox" className="form-check-input" id="exampleCheck1" defaultChecked={true} onChange={useRaidBuffsHandler} />
+                    <label className="form-check-label" htmlFor="exampleCheck1">See raid buffs</label>
                 </div>
             </div>
             {pinnedAuras.size > 0 &&
@@ -258,12 +286,18 @@ const CombatAuras: React.FC = () => {
                     ))}
                 </ul>
             }
+            {(combatPreAuras.length > 0 && seeRaidBuffs) &&
+                <CombatPreAuraItem
+                    preAuras={combatPreAuras}
+                    combatPlayerId={selectedCombatPlayerAura === undefined ? 0 : selectedCombatPlayerAura.combatPlayerId}
+                />
+            }
             {combatAuras.length > 0 &&
                 <CombatAuraItem
                     selectedCreatorAuras={selectedCreatorAuras}
                     pinnedAuras={pinnedAuras}
                     setPinnedAuras={setPinnedAuras}
-                    selectedCreator={selectedCreator}
+                    selectedCreator={selectedCombatPlayerAura === undefined ? "" : selectedCombatPlayerAura.creator}
                     t={t}
                 />
             }

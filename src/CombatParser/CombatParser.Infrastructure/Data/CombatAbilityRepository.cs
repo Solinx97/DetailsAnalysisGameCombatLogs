@@ -1,5 +1,6 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
+using CombatParser.Domain.DTOs;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Infrastructure.Persistent;
@@ -42,5 +43,27 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
         ).ToListAsync(cancellationToken);
 
         return abilities;
+    }
+
+    public async Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, CancellationToken cancellationToken)
+    {
+        var preAuras = await (
+            from ability in _context.Set<CombatAbility>().AsNoTracking()
+
+            join preAura in _context.Set<CombatPlayerPreAura>().AsNoTracking()
+                on ability.GameId equals preAura.GameId
+
+            join player in _context.Set<CombatPlayer>().AsNoTracking()
+                on preAura.CombatPlayerId equals player.Id
+
+            join combatEntity in _context.Set<Combat>().AsNoTracking()
+                on player.CombatId equals combatEntity.Id
+
+            where combatEntity.Id == combatId
+
+            select new CombatPlayerPreAuraDto(preAura.CreatorGameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, preAura.CombatPlayerId)
+        ).Distinct().ToListAsync(cancellationToken);
+
+        return preAuras;
     }
 }

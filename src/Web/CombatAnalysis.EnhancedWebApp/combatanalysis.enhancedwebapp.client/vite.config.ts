@@ -24,6 +24,7 @@ const gameLogsEnpoints = (target: string, apiVersion: string) => {
     return {
         [`^/api/${apiVersion}/Boss`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatAbility`]: { target, secure: false },
+        [`^/api/${apiVersion}/PreAura`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatLog`]: { target, secure: false },
         [`^/api/${apiVersion}/Combat`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayer`]: { target, secure: false },

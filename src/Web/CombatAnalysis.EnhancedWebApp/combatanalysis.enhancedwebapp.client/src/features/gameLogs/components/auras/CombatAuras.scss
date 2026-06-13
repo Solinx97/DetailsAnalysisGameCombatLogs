@@ -74,6 +74,7 @@
     &__select-creator {
         display: flex;
         gap: 20px;
+        align-items: center;
 
         .filter-applied {
             box-shadow: 2px 2px 2px 2px green;
@@ -141,6 +142,13 @@
                     flex-wrap: wrap;
                 }
             }
+        }
+
+        .other-filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 0 !important;
         }
 
         &__container {
