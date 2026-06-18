@@ -60,25 +60,25 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
             .Property(b => b.Id)
             .ValueGeneratedOnAdd();
 
-        modelBuilder.Entity<Boss>().HasData(MigrationBuilderExtension.GenerateBossCollection());
+        modelBuilder.Entity<Boss>().HasData(MigrationBuilderExtension.GenerateBosses());
 
         modelBuilder.Entity<Specialization>()
             .Property(b => b.Id)
             .ValueGeneratedOnAdd();
 
-        modelBuilder.Entity<Specialization>().HasData(MigrationBuilderExtension.GenerateSpecializationCollection());
+        modelBuilder.Entity<Specialization>().HasData(MigrationBuilderExtension.GenerateSpecializations());
 
         modelBuilder.Entity<CombatAbility>()
             .Property(b => b.Id)
             .ValueGeneratedOnAdd();
 
-        modelBuilder.Entity<CombatAbility>().HasData(MigrationBuilderExtension.GenerateCombatAbilityCollection());
+        modelBuilder.Entity<CombatAbility>().HasData(MigrationBuilderExtension.GenerateCombatAbilities());
 
         modelBuilder.Entity<BestSpecializationScore>()
             .Property(b => b.Id)
             .ValueGeneratedOnAdd();
 
-        modelBuilder.Entity<BestSpecializationScore>().HasData(MigrationBuilderExtension.GenerateBestSpecializationScoreCollection());
+        modelBuilder.Entity<BestSpecializationScore>().HasData(MigrationBuilderExtension.GenerateBestSpecializationScores());
 
         modelBuilder.Entity<CombatPlayer>()
             .HasOne(ddg => ddg.Combat)

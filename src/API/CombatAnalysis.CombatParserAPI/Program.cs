@@ -77,6 +77,28 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var logger = context.HttpContext.RequestServices
+            .GetRequiredService<ILogger<Program>>();
+
+        foreach (var kvp in context.ModelState)
+        {
+            foreach (var error in kvp.Value.Errors)
+            {
+                logger.LogError(
+                    "Validation error. Field: {Field}, Error: {Error}",
+                    kvp.Key,
+                    error.ErrorMessage);
+            }
+        }
+
+        return new BadRequestObjectResult(context.ModelState);
+    };
+});
+
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
     .WriteTo.File("logs/parserapi.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, restrictedToMinimumLevel: LogEventLevel.Error)

@@ -13,10 +13,8 @@ public class CombatPlayerPreAuraModel
     [Range(0, int.MaxValue)]
     public int GameId { get; set; }
 
-    [Required]
     public string Name { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
     public int AbilityType { get; set; }
 
     [Range(0, int.MaxValue)]

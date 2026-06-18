@@ -13,6 +13,7 @@ public class Player
         ArgumentException.ThrowIfNullOrEmpty(username, nameof(username));
         ArgumentOutOfRangeException.ThrowIfNegative(faction, nameof(faction));
 
+        Id = Guid.NewGuid().ToString();
         GameId = gameId;
         Username = username;
         Faction = faction;

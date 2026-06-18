@@ -40,11 +40,11 @@ public class CombatModel
     public Dictionary<string, List<string>> PetsId { get; init; } = [];
 
     [Required]
-    public BossModel Boss { get; init; } = new();
-
-    [Required]
     public string Duration { get; init; } = string.Empty;
 
     [Range(1, int.MaxValue)]
     public int CombatLogId { get; init; }
+
+    [Required]
+    public BossModel Boss { get; init; } = new();
 }

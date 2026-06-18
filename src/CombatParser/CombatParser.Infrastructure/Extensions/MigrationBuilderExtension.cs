@@ -6,7 +6,7 @@ namespace CombatParser.Infrastructure.Extensions;
 
 internal static class MigrationBuilderExtension
 {
-    public static Boss[] GenerateBossCollection()
+    public static Boss[] GenerateBosses()
     {
         Boss[] collection =
         [
@@ -72,13 +72,43 @@ internal static class MigrationBuilderExtension
             new(53, 1560, "Небесные сестры", 219812670, 3, 10),
             new(54, 1560, "Небесные сестры", 628036200, 5, 10),
             new(55, 1579, "Лэй Шэнь", 329283435, 3, 10),
-            new(56, 1579, "Лэй Шэнь", 580498347, 5, 10)
+            new(56, 1579, "Лэй Шэнь", 580498347, 5, 10),
+
+            // Осада Огриммара
+            new(57, 1602, "Глубиний", 61900000, 3, 10),
+            new(58, 1602, "Глубиний", 91500000, 5, 10),
+            new(59, 1598, "Павшие защитники", 114000000, 3, 10),
+            new(60, 1598, "Павшие защитники", 250000000, 5, 10),
+            new(61, 1624, "Норусхен", 401000000, 3, 10),
+            new(62, 1624, "Норусхен", 702000000, 5, 10),
+            new(63, 1604, "Ша Гордыни", 426000000, 3, 10),
+            new(64, 1604, "Ша Гордыни", 661000000, 5, 10),
+            new(65, 1622, "Галакрас", 139000000, 3, 10),
+            new(66, 1622, "Галакрас", 218000000, 5, 10),
+            new(67, 1600, "Железный исполин", 451000000, 3, 10),
+            new(68, 1600, "Железный исполин", 592000000, 5, 10),
+            new(69, 1606, "Кор'кронские темные шаманы", 349000000, 3, 10),
+            new(70, 1606, "Кор'кронские темные шаманы", 654000000, 5, 10),
+            new(71, 1603, "Генерал Назгрим", 349000000, 3, 10),
+            new(72, 1603, "Генерал Назгрим", 523000000, 5, 10),
+            new(73, 1595, "Малкорок", 377000000, 3, 10),
+            new(74, 1595, "Малкорок", 630000000, 5, 10),
+            new(75, 1594, "Пандарийские трофеи", 621000000, 3, 10),
+            new(76, 1594, "Пандарийские трофеи", 1190000000, 5, 10),
+            new(77, 1599, "Ток Кровожадный", 445000000, 3, 10),
+            new(78, 1599, "Ток Кровожадный", 654000000, 5, 10),
+            new(79, 1601, "Мастер осады Черноплавс", 298000000, 3, 10),
+            new(80, 1601, "Мастер осады Черноплавс", 500000000, 5, 10),
+            new(81, 1593, "Идеалы клакси", 510000000, 3, 10),
+            new(82, 1593, "Идеалы клакси", 1260000000, 5, 10),
+            new(83, 1623, "Гаррош Адский Крик", 161000000, 3, 10),
+            new(84, 1623, "Гаррош Адский Крик", 228000000, 5, 10),
         ];
 
         return collection;
     }
 
-    public static Specialization[] GenerateSpecializationCollection()
+    public static Specialization[] GenerateSpecializations()
     {
         Specialization[] collection =
         [
@@ -104,7 +134,7 @@ internal static class MigrationBuilderExtension
         return collection;
     }
 
-    public static CombatAbility[] GenerateCombatAbilityCollection()
+    public static CombatAbility[] GenerateCombatAbilities()
     {
         CombatAbility[] collection =
         [
@@ -136,10 +166,10 @@ internal static class MigrationBuilderExtension
         return collection;
     }
 
-    public static BestSpecializationScore[] GenerateBestSpecializationScoreCollection()
+    public static BestSpecializationScore[] GenerateBestSpecializationScores()
     {
-        var bosses = GenerateBossCollection();
-        var specs = GenerateSpecializationCollection();
+        var bosses = GenerateBosses();
+        var specs = GenerateSpecializations();
         var bestScores = new BestSpecializationScore[bosses.Length * specs.Length];
         var index = 0;
 
