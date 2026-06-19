@@ -16,6 +16,7 @@ import Profile from '../features/user/components/userEnvironment/Profile';
 import UserFeed from '../features/user/components/userEnvironment/UserFeed';
 import VoiceChat from '../features/voiceChat/components/VoiceChat';
 import Home from '../shared/components/Home';
+import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
 
 type Route = {
     index?: boolean;
@@ -87,6 +88,10 @@ const AppRoutes: Route[] = [
     {
         path: '/general-analysis/auras',
         element: <CombatAuras />
+    },
+    {
+        path: '/general-analysis/reply',
+        element: <CombatReply />
     },
     {
         path: '/selected-combat',

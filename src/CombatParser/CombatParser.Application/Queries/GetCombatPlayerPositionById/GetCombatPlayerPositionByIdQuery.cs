@@ -4,5 +4,5 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetCombatPlayerPositionById;
 
 public record GetCombatPlayerPositionByIdQuery(
-    int Id
+    string Id
     ) : IRequest<CombatPlayerPositionDto>;

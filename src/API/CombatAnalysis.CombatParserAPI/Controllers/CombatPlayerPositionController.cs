@@ -12,15 +12,15 @@ public class CombatPlayerPositionController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, CancellationToken cancellationToken)
     {
         var combatPlayerPositions = await _mediator.Send(new GetCombatPlayerPositionsQuery(combatPlayerId), cancellationToken);
 
         return Ok(combatPlayerPositions);
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
     {
         var combatPlayerPosition = await _mediator.Send(new GetCombatPlayerPositionByIdQuery(id), cancellationToken);
 

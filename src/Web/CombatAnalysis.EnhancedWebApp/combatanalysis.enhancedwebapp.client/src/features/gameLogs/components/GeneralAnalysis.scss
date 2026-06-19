@@ -246,6 +246,14 @@ ul {
     svg {
         margin: 0 50px;
     }
+
+    .reply {
+        margin: 0 50px;
+        
+        svg {
+            margin: 0;
+        }
+    }
 }
 
 @media (max-width: $mobile-max-width) {

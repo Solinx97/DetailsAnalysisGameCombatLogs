@@ -2,7 +2,7 @@
 
 public class CombatPlayerPositionModel
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public double PositionX { get; set; }
 

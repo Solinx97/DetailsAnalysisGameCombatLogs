@@ -6,9 +6,9 @@ using MediatR;
 
 namespace CombatParser.Application.Queries.GetCombatPlayerPositionById;
 
-internal class GetCombatPlayerPositionByIdHandler(IGenericRepository<CombatPlayerPosition, int> repository, IMapper mapper) : IRequestHandler<GetCombatPlayerPositionByIdQuery, CombatPlayerPositionDto>
+internal class GetCombatPlayerPositionByIdHandler(IGenericRepository<CombatPlayerPosition, string> repository, IMapper mapper) : IRequestHandler<GetCombatPlayerPositionByIdQuery, CombatPlayerPositionDto>
 {
-    private readonly IGenericRepository<CombatPlayerPosition, int> _repository = repository;
+    private readonly IGenericRepository<CombatPlayerPosition, string> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<CombatPlayerPositionDto> Handle(GetCombatPlayerPositionByIdQuery request, CancellationToken cancellationToken)

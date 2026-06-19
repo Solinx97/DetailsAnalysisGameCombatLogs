@@ -61,7 +61,7 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
 
             where combatEntity.Id == combatId
 
-            select new CombatPlayerPreAuraDto(preAura.CreatorGameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, preAura.CombatPlayerId)
+            select new CombatPlayerPreAuraDto(preAura.Id, preAura.CreatorGameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, preAura.CombatPlayerId)
         ).Distinct().ToListAsync(cancellationToken);
 
         return preAuras;

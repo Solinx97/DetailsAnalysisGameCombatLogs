@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
-import type { CombatPlayerPreAura } from '../../types/CombatPlayerPreAura';
+import type { CombatPlayerPreAuraModel } from '../../types/CombatPlayerPreAuraModel';
 
 interface CombatPreAuraItemProps {
-    preAuras: CombatPlayerPreAura[];
+    preAuras: CombatPlayerPreAuraModel[];
     combatPlayerId: number;
 }
 
 const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ preAuras, combatPlayerId }) => {
-    const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAura[]>(preAuras);
+    const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>(preAuras);
 
     useEffect(() => {
         makeCreatorAurasMap();
     }, [combatPlayerId]);
 
     const makeCreatorAurasMap = () => {
-        let unique: CombatPlayerPreAura[] = [];
+        let unique: CombatPlayerPreAuraModel[] = [];
         const selectedCombatPlayerPreAuras = preAuras.filter(x => x.combatPlayerId === combatPlayerId);
 
         if (selectedCombatPlayerPreAuras.length > 0) {
@@ -32,7 +32,7 @@ const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ preAuras, combatP
     }
 
     return (
-        <ul className="creator-auras">
+        <ul className="creator-pre-auras">
             {combatPlayerPreAuras.map((value) => (
                 <li key={value.id} className="creator-auras__details">
                     <div>{value.name}</div>

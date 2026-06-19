@@ -20,16 +20,7 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ selectedCreatorAuras, p
 
     useEffect(() => {
         makeCreatorAurasMap();
-    }, [selectedCreatorAuras]);
-
-    useEffect(() => {
-        if (selectedCreatorAuras.length === 0) {
-            return;
-        }
-
-        const auraMap = makeCreatorAurasMap();
-        setDefaultAuras(auraMap);
-    }, [selectedCreator]);
+    }, [selectedCreatorAuras, selectedCreator]);
 
     useEffect(() => {
         if (Array.from(pinnedAuras.keys()).length === 0) {
@@ -38,8 +29,8 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ selectedCreatorAuras, p
             return;
         }
     }, [pinnedAuras]);
-
-    const makeCreatorAurasMap = (): Map<string, CombatPlayerAuraModel[]> => {
+    
+    const makeCreatorAurasMap = () => {
         const auraMap = new Map<string, CombatPlayerAuraModel[]>();
 
         selectedCreatorAuras?.forEach(aura => {
@@ -56,8 +47,7 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ selectedCreatorAuras, p
         });
 
         setAuras(auraMap);
-
-        return auraMap;
+        setDefaultAuras(auraMap);
     }
 
     const handleSelectAura = (auraName: string) => {
@@ -88,7 +78,7 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ selectedCreatorAuras, p
                 <li key={key} className="creator-auras__details">
                     <ul className="details-collection">
                         <li className={`details-collection__spell${Array.from(pinnedAuras.keys()).includes(key) ? '' : '_ready'}`}
-                            onClick={() => Array.from(pinnedAuras.keys()).includes(key) ? null : handlePinAura(key, value)}>
+                            key={`${key}-1`} onClick={() => Array.from(pinnedAuras.keys()).includes(key) ? null : handlePinAura(key, value)}>
                             {!Array.from(pinnedAuras.keys()).includes(key) &&
                                 <FontAwesomeIcon
                                     icon={faPlus}
@@ -96,8 +86,8 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ selectedCreatorAuras, p
                             }
                             <div>{key}</div>
                         </li>
-                        <li>{value.length}</li>
-                        <li>
+                        <li key={`${key}-2`}>{value.length}</li>
+                        <li key={`${key}-3`}>
                             <div className={`btn-shadow ${selectedAura === key ? 'details-opened' : ''}`} onClick={() => handleSelectAura(key)}>
                                 <FontAwesomeIcon
                                     icon={faEye}

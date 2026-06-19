@@ -1,4 +1,4 @@
-export type CombatPlayerPreAura = {
+export type CombatPlayerPreAuraModel = {
     id: number;
     creatorGameId: string;
     gameId: number;

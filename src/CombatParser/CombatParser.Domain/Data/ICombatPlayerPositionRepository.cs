@@ -4,5 +4,5 @@ namespace CombatParser.Domain.Data;
 
 public interface ICombatPlayerPositionRepository
 {
-    Task<IEnumerable<CombatPlayerPosition>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken);
+    Task<IEnumerable<CombatPlayerPosition>> GetByCombatPlayerIdAsync(int combatId, CancellationToken cancellationToken);
 }

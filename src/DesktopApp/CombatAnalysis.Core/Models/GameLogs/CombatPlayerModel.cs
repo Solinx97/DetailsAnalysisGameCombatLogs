@@ -1,6 +1,4 @@
-﻿using CombatAnalysis.CombatParser.Entities;
-
-namespace CombatAnalysis.Core.Models.GameLogs;
+﻿namespace CombatAnalysis.Core.Models.GameLogs;
 
 public class CombatPlayerModel
 {
@@ -44,9 +42,9 @@ public class CombatPlayerModel
 
     public double ResourcesRecoveryPercentages { get; set; }
 
-    public IReadOnlyList<CombatPlayerPreAura> PreAuras { get; set; } = [];
+    public IReadOnlyList<CombatPlayerPreAuraModel> PreAuras { get; set; } = [];
 
-    public IReadOnlyList<CombatPlayerAura> Auras { get; set; } = [];
+    public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
 
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
 
@@ -66,5 +64,5 @@ public class CombatPlayerModel
 
     public IReadOnlyCollection<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 
-    public IReadOnlyCollection<CombatPlayerPosition> CombatPlayerPositions { get; set; } = [];
+    public IReadOnlyCollection<CombatPlayerPositionModel> CombatPlayerPositions { get; set; } = [];
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CombatAnalysis.CombatParserAPI.Models;
+﻿namespace CombatAnalysis.Core.Models.GameLogs;
 
 public class CombatPlayerPositionModel
 {
@@ -10,12 +8,9 @@ public class CombatPlayerPositionModel
 
     public double PositionY { get; set; }
 
-    [Required]
     public TimeSpan Time { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
-
-    [Range(0, int.MaxValue)]
     public int CombatId { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

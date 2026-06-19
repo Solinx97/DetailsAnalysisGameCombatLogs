@@ -1,4 +1,4 @@
-.creators {
+.auras {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -159,7 +159,7 @@
     }
 }
 
-.creator-auras {
+.creator-auras, .creator-pre-auras {
     display: flex;
     flex-direction: column;
     font-size: 0.8em;

@@ -10,7 +10,7 @@ import CombatAuraFilters from './CombatAuraFilters';
 import CombatAuraItem from './CombatAuraItem';
 import CombatAuraTimes from './CombatAuraTimes';
 import CombatPreAuraItem from './CombatPreAuraItem';
-import type { CombatPlayerPreAura } from '../../types/CombatPlayerPreAura';
+import type { CombatPlayerPreAuraModel } from '../../types/CombatPlayerPreAuraModel';
 
 import './CombatAuras.scss';
 
@@ -26,7 +26,7 @@ const CombatAuras: React.FC = () => {
     const [combatLogId, setCombatLogId] = useState(0);
     const [combat, setCombat] = useState<CombatModel | null>(null);
     const [combatAuras, setCombatAuras] = useState<CombatPlayerAuraModel[]>([]);
-    const [combatPreAuras, setCombatPreAuras] = useState<CombatPlayerPreAura[]>([]);
+    const [combatPreAuras, setCombatPreAuras] = useState<CombatPlayerPreAuraModel[]>([]);
     const [allCombatAuras, setAllCombatAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [creatorsAuras, setCreatorsAuras] = useState<CombatPlayerAuraModel[]>([]);
     const [allCreators, setAllCreators] = useState<CombatPlayerAuraModel[]>([]);
@@ -57,45 +57,25 @@ const CombatAuras: React.FC = () => {
             return;
         }
 
-        const getCombat = async (): Promise<void> => {
+        const loadData = async () => {
             try {
-                const result = await getCombatById(combatId).unwrap();
-                setCombat(result);
+                const [combat, auras, preAuras] = await Promise.all([
+                    getCombatById(combatId).unwrap(),
+                    getAurasByCombatId(combatId).unwrap(),
+                    getByPreAuras(combatId).unwrap(),
+                ]);
+
+                setCombat(combat);
+                setCombatAuras(auras);
+                setAllCombatAuras(auras);
+                setCombatPreAuras(preAuras);
             } catch (e) {
                 console.error(e);
             }
-        }
+        };
 
-        getCombat();
+        loadData();
     }, [combatId]);
-
-    useEffect(() => {
-        if (combat === null) {
-            return;
-        }
-
-        const getCombatAuras = async () => {
-            try {
-                const result = await getAurasByCombatId(combat?.id).unwrap();
-                setCombatAuras(result);
-                setAllCombatAuras(result);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        const getCombatByPreAuras = async () => {
-            try {
-                const result = await getByPreAuras(combat?.id).unwrap();
-                setCombatPreAuras(result);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        getCombatAuras();
-        getCombatByPreAuras();
-    }, [combat]);
 
     useEffect(() => {
         if (combatAuras.length === 0) {
@@ -217,8 +197,8 @@ const CombatAuras: React.FC = () => {
     }
 
     return (
-        <div className="creators">
-            <div className="creators__navigate">
+        <div className="auras">
+            <div className="auras__navigate">
                 <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
@@ -246,7 +226,7 @@ const CombatAuras: React.FC = () => {
                 </div>
             }
             <div>{t("Creator")}</div>
-            <div className="creators__select-creator">
+            <div className="auras__select-creator">
                 <select className="form-control" value={selectedCombatPlayerAura?.combatPlayerId} onChange={(e) => handleSelectCreator(e.target.value)}>
                     <option key="-1" value="0">{t("All")}</option>
                     {creatorsAuras.map((creatorsAura, index) => (

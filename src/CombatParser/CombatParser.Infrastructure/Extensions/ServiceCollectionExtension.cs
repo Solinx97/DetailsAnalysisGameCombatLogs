@@ -26,8 +26,8 @@ public static class ServiceCollectionExtension
         services.AddScoped<IGenericRepository<SpecializationScore, int>, GenericRepository<SpecializationScore, int>>();
         services.AddScoped<IGenericRepository<BestSpecializationScore, int>, GenericRepository<BestSpecializationScore, int>>();
         services.AddScoped<IGenericRepository<CombatPlayerStats, int>, GenericRepository<CombatPlayerStats, int>>();
-        services.AddScoped<IGenericRepository<CombatPlayerPosition, int>, GenericRepository<CombatPlayerPosition, int>>();
         services.AddScoped<IGenericRepository<Player, string>, GenericRepository<Player, string>>();
+        services.AddScoped<IGenericRepository<CombatPlayerPosition, string>, GenericRepository<CombatPlayerPosition, string>>();
 
         services.AddScoped<ICombatLogRepository, CombatLogRepository>();
         services.AddScoped<ICombatRepository, CombatRepository>();
@@ -38,12 +38,12 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISpecializationRepository, SpecializationRepository>();
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IBestSpecializationScoreRepository, BestSpecializationScoreRepository>();
+        services.AddScoped<ICombatPlayerPositionRepository, CombatPlayerPositionRepository>();
 
         services.AddScoped<ICombatPlayerDataRepository<DamageDone>, CombatPlayerDataRepository<DamageDone>>();
         services.AddScoped<ICombatPlayerDataRepository<HealDone>, CombatPlayerDataRepository<HealDone>>();
         services.AddScoped<ICombatPlayerDataRepository<DamageTaken>, CombatPlayerDataRepository<DamageTaken>>();
         services.AddScoped<ICombatPlayerDataRepository<ResourceRecovery>, CombatPlayerDataRepository<ResourceRecovery>>();
-        services.AddScoped<ICombatPlayerDataRepository<CombatPlayerPosition>, CombatPlayerDataRepository<CombatPlayerPosition>>();
         services.AddScoped<ICombatPlayerDataRepository<CombatPlayerDeath>, CombatPlayerDataRepository<CombatPlayerDeath>>();
         services.AddScoped<ICombatPlayerDataRepository<SpecializationScore>, CombatPlayerDataRepository<SpecializationScore>>();
         services.AddScoped<ICombatPlayerDataRepository<CombatPlayerStats>, CombatPlayerDataRepository<CombatPlayerStats>>();

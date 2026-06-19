@@ -1,4 +1,4 @@
-import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -72,6 +72,12 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                             <h5 className="card-title">{selectedCombat.boss.name}</h5>
                             <p className="card-text">{selectedCombat.dungeonName}</p>
                         </div>
+                    </div>
+                    <div className="reply btn-shadow" onClick={() => navigate(`/general-analysis/reply?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>
+                        <FontAwesomeIcon
+                            icon={faLocationCrosshairs}
+                        />
+                        <div>{t("Reply")}</div>
                     </div>
                 </div>
                 <div className="combat-time">

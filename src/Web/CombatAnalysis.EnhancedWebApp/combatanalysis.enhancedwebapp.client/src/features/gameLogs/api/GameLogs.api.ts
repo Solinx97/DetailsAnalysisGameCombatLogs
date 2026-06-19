@@ -5,7 +5,8 @@ import type { CombatModel } from '../types/CombatModel';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
 import type { CombatAbilityModel } from '../types/CombatAbilityModel';
-import type { CombatPlayerPreAura } from '../types/CombatPlayerPreAura';
+import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
+import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
 
 const apiURL = '/api/v1';
 
@@ -17,6 +18,7 @@ export const GameLogsApi = createApi({
         'Combat',
         'CombatPlayer',
         'CombatPlayerAura',
+        'CombatPlayerPosition',
         'DamageDone',
         'DamageDoneGeneral',
         'DamageTaken',
@@ -41,7 +43,7 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatAbility', id: 'LIST' }]
         }),
-        getCombatByPreAura: builder.query<CombatPlayerPreAura[], number>({
+        getCombatByPreAura: builder.query<CombatPlayerPreAuraModel[], number>({
             query: (combatId) => `/PreAura/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
@@ -109,6 +111,16 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }]
         }),
+        getCombatPlayerPositionsByCombatPlayerId: builder.query<CombatPlayerPositionModel[], number>({
+            query: combatPlayerId => `/CombatPlayerPosition/getByCombatPlayerId/${combatPlayerId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(combatPlayerPosition => ({ type: 'CombatPlayerPosition' as const, id: combatPlayerPosition.id })),
+                        { type: 'CombatPlayerPosition', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerPosition', id: 'LIST' }]
+        }),
     })
 })
 
@@ -122,4 +134,5 @@ export const {
     useLazyGetCombatPlayerByIdQuery,
     useLazyGetCombatByIdQuery,
     useLazyGetCombatPlayerAurasByCombatIdQuery,
+    useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery
 } = GameLogsApi;

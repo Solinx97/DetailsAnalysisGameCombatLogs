@@ -2,7 +2,9 @@
 
 public class CombatPlayerPreAuraModel
 {
-    public string CreatorGameId { get; set; }
+    public int Id { get; set; }
+
+    public string CreatorGameId { get; set; } = string.Empty;
 
     public int GameId { get; set; }
 

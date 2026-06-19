@@ -40,14 +40,14 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
             return (string.Empty, null);
         }
 
-        var pos1Index = 24;
-        var pos2Index = 25;
+        var pos1Index = 26;
+        var pos2Index = 27;
 
         if (combatDataLine[1].Equals(CombatLogKeyWords.SwingDamage)
             || combatDataLine[1].Equals(CombatLogKeyWords.SwingDamageLanded))
         {
-            pos1Index = 21;
-            pos2Index = 22;
+            pos1Index = 23;
+            pos2Index = 24;
         }
 
         if (double.TryParse(combatDataLine[pos1Index], out var position1)
@@ -55,7 +55,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         {
             var position = new CombatPlayerPosition
             {
-                PositionX = -position2,
+                PositionX = position2,
                 PositionY = position1,
                 Time = GetTimeFromStart(combatDataLine[0])
             };

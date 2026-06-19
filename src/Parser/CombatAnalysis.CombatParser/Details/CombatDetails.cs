@@ -266,6 +266,39 @@ public class CombatDetails(ILogger logger)
 
         data.AddRange(parse);
 
+        CheckComplexText(data);
+
         return [.. data];
+    }
+
+    private static void CheckComplexText(List<string> content)
+    {
+        var craft = string.Empty;
+        var startIndex = -1;
+        var finishIndex = -1;
+        for (int i = 0; i < content.Count; i++)
+        {
+            if (content[i].StartsWith('\"') && !content[i].EndsWith('\"'))
+            {
+                craft += content[i];
+                startIndex = i;
+            }
+            else if (!string.IsNullOrEmpty(craft) && !content[i].EndsWith('\"'))
+            {
+                craft += content[i];
+            }
+            else if (!string.IsNullOrEmpty(craft) && content[i].EndsWith('\"'))
+            {
+                craft += content[i];
+                finishIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex >= 0 && startIndex + 1 < content.Count && finishIndex >= 0)
+        {
+            content[startIndex] = craft;
+            content.RemoveRange(startIndex + 1, finishIndex - startIndex);
+        }
     }
 }
