@@ -73,7 +73,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                             <p className="card-text">{selectedCombat.dungeonName}</p>
                         </div>
                     </div>
-                    <div className="reply btn-shadow" onClick={() => navigate(`/general-analysis/reply?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>
+                    <div className="see-reply btn-shadow" onClick={() => navigate(`/general-analysis/reply?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>
                         <FontAwesomeIcon
                             icon={faLocationCrosshairs}
                         />

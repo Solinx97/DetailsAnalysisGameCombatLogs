@@ -1,0 +1,55 @@
+.reply {
+    position: absolute;
+    display: flex;
+    left: 1vw;
+    flex-direction: column;
+    gap: 10px;
+    width: 97vw;
+
+    &__navigate {
+        display: flex;
+        gap: 10px;
+
+        .active {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+    }
+
+    .select-combat {
+        width: 40px;
+        overflow: hidden;
+        white-space: nowrap;
+
+        &:hover {
+            animation-name: select-combat;
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+        }
+    }
+
+    @keyframes select-combat {
+        from {
+            width: 40px;
+        }
+
+        to {
+            width: 160px;
+        }
+    }
+
+    .players {
+        display: flex;
+        gap: 20px;
+        text-align: center;
+        cursor: pointer;
+
+        li {
+            padding: 10px;
+        }
+
+        .selected {
+            box-shadow: 2px 2px 2px 2px green;
+            border-radius: 20px;
+        }
+    }
+}
