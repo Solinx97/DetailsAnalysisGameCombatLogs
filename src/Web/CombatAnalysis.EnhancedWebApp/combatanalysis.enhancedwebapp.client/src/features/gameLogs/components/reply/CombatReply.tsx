@@ -7,6 +7,7 @@ import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayerPositions
 import type { CombatPlayerPositionModel } from '../../types/CombatPlayerPositionModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import CombatReplyItem from './CombatReplyItem';
+import useCombatReply from '../../hooks/useCombatReply';
 
 import './CombatReply.scss';
 
@@ -20,35 +21,17 @@ const CombatReply: React.FC = () => {
     const [combatLogId, setCombatLogId] = useState(0);
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [combatPlayerPositions, setCombatPlayerPositions] = useState<CombatPlayerPositionModel[]>([]);
+    const [positions, setPositions] = useState<Map<number, CombatPlayerPositionModel[]>>(new Map());
 
-    const [currentTime, setCurrentTime] = useState(0);
     const [playing, setPlaying] = useState(false);
     const [selectedPlayerId, setSelectedPlayerId] = useState(0);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const currentTimeRef = useRef(currentTime);
+
+    const { view, currentTime, setCurrentTime } = useCombatReply(selectedPlayerId, canvasRef, combatPlayerPositions, positions);
 
     const [getCombatPlayers] = useLazyGetCombatPlayersByCombatIdQuery();
     const [getCombatPlayerPositions] = useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery();
-
-    const view = {
-        width: 1300,
-        height: 425,
-    };
-
-    const instanceBounds = {
-        minX: -10000,
-        maxX: 10000,
-        minY: -4000,
-        maxY: 4000
-    };
-
-    const playerIconSize = {
-        width: 20,
-        height: 20
-    };
-
-    const zoom = 30;
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -58,10 +41,6 @@ const CombatReply: React.FC = () => {
         setCombatId(combatId);
         setCombatLogId(combatLogId);
     }, []);
-
-    useEffect(() => {
-        currentTimeRef.current = currentTime;
-    }, [currentTime]);
 
     useEffect(() => {
         if (combatId < 1) {
@@ -94,7 +73,8 @@ const CombatReply: React.FC = () => {
                     getCombatPlayerPositions(combatPlayers[0].id).unwrap(),
                 ]);
 
-                sortByTime(combatPlayerPositions);
+                const positions = sortByTime(combatPlayerPositions);
+                setCombatPlayerPositions(positions);
             } catch (e) {
                 console.error(e);
             }
@@ -127,44 +107,36 @@ const CombatReply: React.FC = () => {
     }, [playing]);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-
-        if (!combatPlayerPositions || !canvas) {
+        if (combatPlayers.length < 1) {
             return;
         }
 
-        const ctx = canvas.getContext("2d");
+        const loadData = async (combatPlayerId: number) => {
+            try {
+                const [combatPlayerPositions] = await Promise.all([
+                    getCombatPlayerPositions(combatPlayerId).unwrap(),
+                ]);
 
-        if (!ctx) return;
-
-        let frameId: number;
-
-        const render = () => {
-            ctx.clearRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-
-            frameId =
-                requestAnimationFrame(render);
+                const sortedPositions = sortByTime(combatPlayerPositions);
+                positions.set(combatPlayerId, sortedPositions);
+                setPositions(positions);
+            } catch (e) {
+                console.error(e);
+            }
         }
 
-        frameId = requestAnimationFrame(render);
-
-        return () => {
-            cancelAnimationFrame(frameId);
+        for (const player of combatPlayers) {
+            loadData(player.id);
         }
-    }, [combatPlayerPositions]);
+    }, [combatPlayers]);
 
-    const sortByTime = (combatPlayerPositions: CombatPlayerPositionModel[]) => {
+    const sortByTime = (combatPlayerPositions: CombatPlayerPositionModel[]): CombatPlayerPositionModel[] => {
         const sortedPositions = [...combatPlayerPositions].sort(
             (a, b) =>
                 timeToMs(a.time) - timeToMs(b.time)
         );
 
-        setCombatPlayerPositions(sortedPositions);
+        return sortedPositions;
     }
 
     const timeToMs = (time: string): number => {
@@ -216,14 +188,13 @@ const CombatReply: React.FC = () => {
                     />
                     <ul className="players">
                         {combatPlayers.map(item => (
-                            <CombatReplyItem
-                                currentTimeRef={currentTimeRef}
-                                combatPlayer={item}
-                                container={{ zoom, view, instanceBounds, playerIconSize }}
-                                selectedPlayerId={selectedPlayerId}
-                                setSelectedPlayerId={setSelectedPlayerId}
-                                canvasRef={canvasRef}
-                            />
+                            <li key={item.id}>
+                                <CombatReplyItem
+                                    combatPlayer={item}
+                                    selectedPlayerId={selectedPlayerId}
+                                    setSelectedPlayerId={setSelectedPlayerId}
+                                />
+                            </li>
                         ))
                         }
                     </ul>

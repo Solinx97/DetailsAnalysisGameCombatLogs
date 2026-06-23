@@ -108,6 +108,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
         }
 
         &__aura-filters,
@@ -169,15 +170,12 @@
             display: flex;
             justify-content: space-between;
             gap: 50px;
-            
+
             .title {
                 display: flex;
                 gap: 20px;
                 align-items: center;
-
-                .action {
-                    cursor: pointer;
-                }
+                cursor: pointer;
             }
         }
 

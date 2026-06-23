@@ -120,6 +120,7 @@ const CombatAuraFilters: React.FC<CombatAuraFiltersProps> = ({ combatPlayerId, d
         setSelectedExcludeFromFilter(-1);
         setSelectedAuraCreatorType(-1);
         setFilterApplied(false);
+        setShowFilters(false);
     }
 
     const handleApplyAuraIncludeFilter = (number: number) => {

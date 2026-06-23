@@ -117,20 +117,16 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ onlyPinnedAuras, pinned
     return (
         <div className="creator-auras">
             <div className="creator-auras__title">
-                <div className="title">
+                <div className="title" onClick={() => setSeeBuffs(prev => !prev)}>
                     <div>All buffs</div>
                     {seeBuffs
                         ? <FontAwesomeIcon
                             icon={faArrowDown}
                             title={t("Hide")}
-                            className="action"
-                            onClick={() => setSeeBuffs(prev => !prev)}
                         />
                         : <FontAwesomeIcon
                             icon={faArrowUp}
                             title={t("See")}
-                            className="action"
-                            onClick={() => setSeeBuffs(prev => !prev)}
                         />
                     }
                 </div>

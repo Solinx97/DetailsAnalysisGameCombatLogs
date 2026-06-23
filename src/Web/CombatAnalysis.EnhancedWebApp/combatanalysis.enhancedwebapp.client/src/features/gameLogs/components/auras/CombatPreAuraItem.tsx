@@ -13,7 +13,7 @@ interface CombatPreAuraItemProps {
 
 const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, combatId, t }) => {
     const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>([]);
-    const [seeBuffs, setSeeBuffs] = useState(true);
+    const [seeBuffs, setSeeBuffs] = useState(false);
 
     const { data: allPreAuras, isLoading } = useGetCombatByPreAuraQuery({ combatPlayerId, combatId });
 
@@ -54,20 +54,16 @@ const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, c
     return (
         <div className="creator-pre-auras">
             <div className="creator-auras__title">
-                <div className="title">
+                <div className="title" onClick={() => setSeeBuffs(prev => !prev)}>
                     <div>All raid buffs</div>
                     {seeBuffs
                         ? <FontAwesomeIcon
                             icon={faArrowDown}
                             title={t("Hide")}
-                            className="action"
-                            onClick={() => setSeeBuffs(prev => !prev)}
                         />
                         : <FontAwesomeIcon
                             icon={faArrowUp}
                             title={t("See")}
-                            className="action"
-                            onClick={() => setSeeBuffs(prev => !prev)}
                         />
                     }
                 </div>
