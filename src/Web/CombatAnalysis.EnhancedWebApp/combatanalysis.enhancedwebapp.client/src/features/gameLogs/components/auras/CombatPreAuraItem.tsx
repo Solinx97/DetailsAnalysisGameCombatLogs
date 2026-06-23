@@ -1,44 +1,87 @@
+import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import type { CombatPlayerPreAuraModel } from '../../types/CombatPlayerPreAuraModel';
+import { useGetCombatByPreAuraQuery } from '../../api/GameLogs.api';
+import Loading from '@/shared/components/Loading';
 
 interface CombatPreAuraItemProps {
-    preAuras: CombatPlayerPreAuraModel[];
     combatPlayerId: number;
+    combatId: number;
+    t: (key: string) => string;
 }
 
-const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ preAuras, combatPlayerId }) => {
-    const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>(preAuras);
+const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, combatId, t }) => {
+    const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>([]);
+    const [seeBuffs, setSeeBuffs] = useState(true);
+
+    const { data: allPreAuras, isLoading } = useGetCombatByPreAuraQuery({ combatPlayerId, combatId });
 
     useEffect(() => {
+        if (!allPreAuras) {
+            return;
+        }
+
         makeCreatorAurasMap();
-    }, [combatPlayerId]);
+    }, [allPreAuras]);
 
     const makeCreatorAurasMap = () => {
         let unique: CombatPlayerPreAuraModel[] = [];
-        const selectedCombatPlayerPreAuras = preAuras.filter(x => x.combatPlayerId === combatPlayerId);
+        const selectedCombatPlayerPreAuras = allPreAuras!.filter(x => x.combatPlayerId === combatPlayerId);
 
         if (selectedCombatPlayerPreAuras.length > 0) {
-            unique =  [...new Map(
+            unique = [...new Map(
                 selectedCombatPlayerPreAuras.map(item => [item.name, item])
-                ).values()];
+            ).values()];
             setCombatPlayerPreAuras(unique);
         } else {
-            unique =  [...new Map(
-                preAuras.map(item => [item.name, item])
-                ).values()];
+            unique = [...new Map(
+                allPreAuras!.map(item => [item.name, item])
+            ).values()];
         }
 
         setCombatPlayerPreAuras(unique);
     }
 
+    if (isLoading) {
+        return (
+            <div>
+                <Loading />
+            </div>
+        );
+    }
+
     return (
-        <ul className="creator-pre-auras">
-            {combatPlayerPreAuras.map((value) => (
-                <li key={value.id} className="creator-auras__details">
-                    <div>{value.name}</div>
-                </li>
-            ))}
-        </ul>
+        <div className="creator-pre-auras">
+            <div className="creator-auras__title">
+                <div className="title">
+                    <div>All raid buffs</div>
+                    {seeBuffs
+                        ? <FontAwesomeIcon
+                            icon={faArrowDown}
+                            title={t("Hide")}
+                            className="action"
+                            onClick={() => setSeeBuffs(prev => !prev)}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faArrowUp}
+                            title={t("See")}
+                            className="action"
+                            onClick={() => setSeeBuffs(prev => !prev)}
+                        />
+                    }
+                </div>
+            </div>
+            {seeBuffs &&
+                <ul className="creator-pre-auras__content">
+                    {combatPlayerPreAuras.map((value) => (
+                        <li key={value.id} className="creator-auras__details">
+                            <div>{value.name}</div>
+                        </li>
+                    ))}
+                </ul>
+            }
+        </div>
     );
 }
 

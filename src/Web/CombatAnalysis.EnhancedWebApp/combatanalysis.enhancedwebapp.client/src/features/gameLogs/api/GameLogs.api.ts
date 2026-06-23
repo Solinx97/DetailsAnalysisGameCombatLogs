@@ -43,16 +43,6 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatAbility', id: 'LIST' }]
         }),
-        getCombatByPreAura: builder.query<CombatPlayerPreAuraModel[], number>({
-            query: (combatId) => `/PreAura/getByCombatId/${combatId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(preAura => ({ type: 'CombatPlayerAura' as const, id: preAura.id })),
-                        { type: 'CombatPlayerAura', id: 'LIST' },
-                    ]
-                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
-        }),
         getCombatLogs: builder.query<CombatLogModel[], void>({
             query: () => '/CombatLog',
             providesTags: result =>
@@ -101,15 +91,26 @@ export const GameLogsApi = createApi({
             query: id => `/Combat/${id}`,
             providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
         }),
-        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], number>({
-            query: combatId => `/CombatPlayerAura/getByCombatId/${combatId}`,
+        getCombatByPreAura: builder.query<CombatPlayerPreAuraModel[], { combatId: number, combatPlayerId: number }>({
+            query: ({ combatId, combatPlayerId }) => `/PreAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(preAura => ({ type: 'CombatPlayerAura' as const, id: preAura.id })),
+                        { type: 'CombatPlayerAura', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
+        }),
+        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], { combatId: number, combatPlayerId: number }>({
+            query: ({ combatId, combatPlayerId }) => `/CombatPlayerAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [
                         ...result.map(combatPlayerAura => ({ type: 'CombatPlayerAura' as const, id: combatPlayerAura.id })),
                         { type: 'CombatPlayerAura', id: 'LIST' },
                     ]
-                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }],
+            keepUnusedDataFor: 0,
         }),
         getCombatPlayerPositionsByCombatPlayerId: builder.query<CombatPlayerPositionModel[], number>({
             query: combatPlayerId => `/CombatPlayerPosition/getByCombatPlayerId/${combatPlayerId}`,
@@ -126,13 +127,13 @@ export const GameLogsApi = createApi({
 
 export const {
     useLazyGetCombatAbilitiesQuery,
-    useLazyGetCombatByPreAuraQuery,
     useGetCombatLogsQuery,
     useLazyGetPlayersDeathByPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,
     useLazyGetCombatPlayerByIdQuery,
     useLazyGetCombatByIdQuery,
-    useLazyGetCombatPlayerAurasByCombatIdQuery,
+    useGetCombatPlayerAurasByCombatIdQuery,
+    useGetCombatByPreAuraQuery,
     useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery
 } = GameLogsApi;

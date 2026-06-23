@@ -1,23 +1,23 @@
 ﻿import { faPlus, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState, type ChangeEvent, type SetStateAction } from 'react';
+import { useEffect, useState, type ChangeEvent, type Dispatch, type SetStateAction } from 'react';
 import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 
 interface CombatAuraTimesProps {
-    setSelectedCreatorAuras: (value: SetStateAction<CombatPlayerAuraModel[]>) => void;
-    defaultSelectedCreatorAuras: CombatPlayerAuraModel[];
+    defaultAuras: Map<string, CombatPlayerAuraModel[]>;
+    setAuras: Dispatch<SetStateAction<Map<string, CombatPlayerAuraModel[]>>>;
     t: (key: string) => string;
 }
 
-const CombatAuraTimes: React.FC<CombatAuraTimesProps> = ({ setSelectedCreatorAuras, defaultSelectedCreatorAuras, t }) => {
+const CombatAuraTimes: React.FC<CombatAuraTimesProps> = ({ defaultAuras, setAuras, t }) => {
     const defaultStartTime = "00:00:00";
     const defaultFinishTime = "00:00:01";
 
     const [timeApplied, setTimeApplied] = useState(false);
     const [timeSpanUsed, setTimeSpanUsed] = useState(false);
     const [showTime, setShowTime] = useState(false);
-    const [startTime, setStartTime] = useState("00:00:00");
-    const [finishTime, setFinishTime] = useState("00:00:01");
+    const [startTime, setStartTime] = useState(defaultStartTime);
+    const [finishTime, setFinishTime] = useState(defaultFinishTime);
 
     useEffect(() => {
         if (!timeApplied) {
@@ -28,32 +28,40 @@ const CombatAuraTimes: React.FC<CombatAuraTimesProps> = ({ setSelectedCreatorAur
     }, [timeApplied]);
 
     const handleStartTimeChange = (e: ChangeEvent<HTMLInputElement> | undefined) => {
-        setStartTime(e?.target.value ?? "00:00:00");
+        setStartTime(e?.target.value ?? defaultStartTime);
     }
 
     const handleFinishTimeChange = (e: ChangeEvent<HTMLInputElement> | undefined) => {
-        setFinishTime(e?.target.value ?? "00:00:00");
+        setFinishTime(e?.target.value ?? defaultStartTime);
     }
 
     const applyTime = (): void => {
-        const auras = new Array<CombatPlayerAuraModel>();
+        const filteredMap = new Map<string, CombatPlayerAuraModel[]>();
 
-        defaultSelectedCreatorAuras.forEach(aura => {
-            if (aura.startTime >= startTime && aura.finishTime <= finishTime) {
-                auras.push(aura);
+        for (const [key, value] of defaultAuras) {
+            const selectedAuras = new Array<CombatPlayerAuraModel>();
+            for (const aura of value) {
+                if (aura.startTime >= startTime && aura.finishTime <= finishTime) {
+                    selectedAuras.push(aura);
+                }
             }
-        });
 
-        setSelectedCreatorAuras(auras);
+            if (selectedAuras.length > 0) {
+                filteredMap.set(key, selectedAuras);
+            }
+        }
+
+        setAuras(filteredMap);
         setTimeSpanUsed(true);
         setTimeApplied(false);
     }
 
     const restoreFiltersToDefault = (): void => {
-        setSelectedCreatorAuras(defaultSelectedCreatorAuras);
+        setAuras(defaultAuras);
         setStartTime(defaultStartTime);
         setFinishTime(defaultFinishTime);
         setTimeSpanUsed(false);
+        setShowTime(false)
     }
 
     return (

@@ -18,10 +18,10 @@ public class PreAuraController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatId)
+    [HttpGet("getByCombatId")]
+    public async Task<IActionResult> GetByCombatId(int combatId, int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PreAura/getByCombatId/{combatId}");
+        var responseMessage = await _httpClient.GetAsync($"PreAura/getByCombatId?combatId={combatId}&combatPlayerId={combatPlayerId}");
         var preAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerPreAuraModel>>();
 
         return Ok(preAuras);

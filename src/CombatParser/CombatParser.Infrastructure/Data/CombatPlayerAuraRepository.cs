@@ -9,11 +9,21 @@ internal class CombatPlayerAuraRepository(CombatParserContextOne context) : ICom
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<CombatPlayerAura>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CombatPlayerAura>> GetAurasAsync(int combatId, CancellationToken cancellationToken)
     {
         var data = await _context.Set<CombatPlayerAura>()
             .AsNoTracking()
             .Where(x => x.CombatPlayer.CombatId == combatId)
+            .ToListAsync(cancellationToken);
+
+        return data;
+    }
+
+    public async Task<IEnumerable<CombatPlayerAura>> GetAurasAsync(int combatId, int combatPlayerId, CancellationToken cancellationToken)
+    {
+        var data = await _context.Set<CombatPlayerAura>()
+            .AsNoTracking()
+            .Where(x => x.CombatPlayerId == combatPlayerId && x.CombatPlayer.CombatId == combatId)
             .ToListAsync(cancellationToken);
 
         return data;

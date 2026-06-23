@@ -1,6 +1,6 @@
 ﻿import { faPlus, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState, type SetStateAction } from 'react';
+import React, { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 
 const auraType = {
@@ -24,17 +24,14 @@ const auraCreatorType = {
 };
 
 interface CombatAuraFiltersProps {
-    setCreators: (value: SetStateAction<CombatPlayerAuraModel[]>) => void;
-    selectedCreator: string;
-    handleSelectCreator: (creator: string) => void;
-    allCreators: CombatPlayerAuraModel[];
-    setSelectedCreatorAuras: (value: SetStateAction<CombatPlayerAuraModel[]>) => void;
-    getAuraCreators: () => void;
-    defaultSelectedCreatorAuras: CombatPlayerAuraModel[];
+    combatPlayerId: number;
+    defaultAuras: Map<string, CombatPlayerAuraModel[]>;
+    auras: Map<string, CombatPlayerAuraModel[]>;
+    setAuras: Dispatch<SetStateAction<Map<string, CombatPlayerAuraModel[]>>>;
     t: (key: string) => string;
 }
 
-const CombatAuraFilters: React.FC<CombatAuraFiltersProps> = ({ setCreators, selectedCreator, handleSelectCreator, allCreators, setSelectedCreatorAuras, getAuraCreators, defaultSelectedCreatorAuras, t }) => {
+const CombatAuraFilters: React.FC<CombatAuraFiltersProps> = ({ combatPlayerId, defaultAuras, auras, setAuras, t }) => {
     const [selectedIncludeToFilter, setSelectedIncludeToFilter] = useState(-1);
     const [selectedExcludeFromFilter, setSelectedExcludeFromFilter] = useState(-1);
     const [selectedAuraCreatorType, setSelectedAuraCreatorType] = useState(-1);
@@ -42,84 +39,99 @@ const CombatAuraFilters: React.FC<CombatAuraFiltersProps> = ({ setCreators, sele
 
     const [showFilters, setShowFilters] = useState(false);
 
+    useEffect(() => {
+        setShowFilters(false);
+        restoreFiltersToDefault();
+    }, [combatPlayerId]);
+
+    useEffect(() => {
+        if (selectedIncludeToFilter === -1) {
+            setAuras(defaultAuras);
+            return;
+        }
+
+        const applyFilterAuraTypeAsync = async () => {
+            await applyFilterAuraType(selectedIncludeToFilter, true);
+        }
+
+        applyFilterAuraTypeAsync();
+    }, [selectedIncludeToFilter]);
+
+    useEffect(() => {
+        if (selectedExcludeFromFilter === -1) {
+            setAuras(defaultAuras);
+            return;
+        }
+
+        const applyFilterAuraTypeAsync = async () => {
+            await applyFilterAuraType(selectedExcludeFromFilter, false);
+        }
+
+        applyFilterAuraTypeAsync();
+    }, [selectedExcludeFromFilter]);
+
+    useEffect(() => {
+        if (selectedAuraCreatorType === -1) {
+            setAuras(defaultAuras);
+            return;
+        }
+
+        const applyFilterCreatorAuraTypeAsync = async () => {
+            await applyFilterCreatorAuraType(selectedAuraCreatorType);
+        }
+
+        applyFilterCreatorAuraTypeAsync();
+    }, [selectedAuraCreatorType]);
+
     const applyFilterCreatorAuraType = (number: number): void => {
-        const newCreators = new Array<CombatPlayerAuraModel>();
-        const filteredCreators = allCreators.filter(creator => creator.auraCreatorType === number);
+        const filteredAuras = new Map<string, CombatPlayerAuraModel[]>();
 
-        setCreators(newCreators.concat(filteredCreators));
-        handleSelectCreator("All");
-    }
+        auras.forEach((value, key) => {
+            const condition = value[0].auraCreatorType === number;
 
-    const applyFilterAuraType = (auraType: number, include = true): void => {
-        const auras = new Array<CombatPlayerAuraModel>();
-
-        defaultSelectedCreatorAuras.forEach(aura => {
-            const condition = include
-                ? aura.auraType === auraType
-                : aura.auraType !== auraType;
-
-            if ((auraType < 0 || condition) && (aura.creator === selectedCreator || selectedCreator === "All")) {
-                auras.push(aura);
+            if (condition && (value[0].combatPlayerId === combatPlayerId || combatPlayerId === 0)) {
+                filteredAuras.set(key, value);
             }
         });
 
-        setSelectedCreatorAuras(auras);
+        setAuras(filteredAuras);
+        setFilterApplied(true);
+    }
+
+    const applyFilterAuraType = async (auraType: number, include: boolean) => {
+        const filteredAuras = new Map<string, CombatPlayerAuraModel[]>();
+
+        auras.forEach((value, key) => {
+            const condition = include
+                ? value[0].auraType === auraType
+                : value[0].auraType !== auraType;
+
+            if ((auraType < 0 || condition) && (value[0].combatPlayerId === combatPlayerId || combatPlayerId === 0)) {
+                filteredAuras.set(key, value);
+            }
+        });
+
+        setAuras(filteredAuras);
+        setFilterApplied(true);
     }
 
     const restoreFiltersToDefault = (): void => {
-        setCreators(allCreators);
         setSelectedIncludeToFilter(-1);
         setSelectedExcludeFromFilter(-1);
         setSelectedAuraCreatorType(-1);
-        applyFilterAuraType(-1);
-
-        setSelectedCreatorAuras(defaultSelectedCreatorAuras);
-
         setFilterApplied(false);
     }
 
-    const handleApplyAuraIncludeFilter = (number: number): void => {
-        if (selectedIncludeToFilter === number) {
-            applyFilterAuraType(-1);
-            setSelectedIncludeToFilter(-1);
-            setFilterApplied(false);
-        }
-        else {
-            applyFilterAuraType(number);
-            setSelectedIncludeToFilter(number);
-            setSelectedExcludeFromFilter(-1);
-            setFilterApplied(true);
-        }
+    const handleApplyAuraIncludeFilter = (number: number) => {
+        setSelectedIncludeToFilter(prev => prev == -1 ? number : -1);
     }
 
-    const handleApplyAuraExcludeFilter = (number: number): void => {
-        if (selectedExcludeFromFilter === number) {
-            applyFilterAuraType(-1);
-            setSelectedExcludeFromFilter(-1);
-            setFilterApplied(false);
-        }
-        else {
-            applyFilterAuraType(number, false);
-            setSelectedExcludeFromFilter(number);
-            setSelectedIncludeToFilter(-1);
-            setFilterApplied(true);
-        }
+    const handleApplyAuraExcludeFilter = (number: number) => {
+        setSelectedExcludeFromFilter(prev => prev == -1 ? number : -1);
     }
 
     const handleApplyCreatorAuraFilter = (number: number): void => {
-        if (selectedAuraCreatorType === number) {
-            applyFilterCreatorAuraType(-1);
-            setSelectedAuraCreatorType(-1);
-            getAuraCreators();
-            setFilterApplied(false);
-        }
-        else {
-            applyFilterCreatorAuraType(number);
-            setSelectedAuraCreatorType(number);
-            setSelectedIncludeToFilter(-1);
-            setSelectedExcludeFromFilter(-1);
-            setFilterApplied(true);
-        }
+        setSelectedAuraCreatorType(prev => prev == -1 ? number : -1);
     }
 
     return (
