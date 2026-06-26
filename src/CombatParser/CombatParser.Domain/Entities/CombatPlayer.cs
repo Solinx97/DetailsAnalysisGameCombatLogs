@@ -252,7 +252,7 @@ public class CombatPlayer : CombatDataBase, ICombatRefs
 
     private void AddCombatPlayerPosition(CombatPlayerPositionData position)
     {
-        var createdPosition = new CombatPlayerPosition(position.PositionX, position.PositionY, position.Time, position.CombatPlayerId);
+        var createdPosition = new CombatPlayerPosition(position.X, position.Y, position.Time, position.CombatPlayerId);
         _combatPlayerPositions.Add(createdPosition);
     }
 

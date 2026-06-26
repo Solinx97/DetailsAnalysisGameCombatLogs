@@ -14,20 +14,21 @@ namespace CombatParser.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Boss",
+                name: "BossMap",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GameId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Health = table.Column<long>(type: "bigint", nullable: false),
-                    Difficult = table.Column<int>(type: "int", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false)
+                    X0 = table.Column<double>(type: "float", nullable: false),
+                    X1 = table.Column<double>(type: "float", nullable: false),
+                    Y0 = table.Column<double>(type: "float", nullable: false),
+                    Y1 = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Boss", x => x.Id);
+                    table.PrimaryKey("PK_BossMap", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,6 +91,59 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Boss",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Health = table.Column<long>(type: "bigint", nullable: false),
+                    Difficult = table.Column<int>(type: "int", nullable: false),
+                    Size = table.Column<int>(type: "int", nullable: false),
+                    BossMapId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Boss", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Boss_BossMap_BossMapId",
+                        column: x => x.BossMapId,
+                        principalTable: "BossMap",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BestSpecializationScore",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DamageDone = table.Column<int>(type: "int", nullable: false),
+                    HealDone = table.Column<int>(type: "int", nullable: false),
+                    Updated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    SpecializationId = table.Column<int>(type: "int", nullable: false),
+                    BossId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BestSpecializationScore", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BestSpecializationScore_Boss_BossId",
+                        column: x => x.BossId,
+                        principalTable: "Boss",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BestSpecializationScore_Specialization_SpecializationId",
+                        column: x => x.SpecializationId,
+                        principalTable: "Specialization",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Combat",
                 columns: table => new
                 {
@@ -122,35 +176,6 @@ namespace CombatParser.Infrastructure.Migrations
                         principalTable: "CombatLog",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BestSpecializationScore",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DamageDone = table.Column<int>(type: "int", nullable: false),
-                    HealDone = table.Column<int>(type: "int", nullable: false),
-                    Updated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    SpecializationId = table.Column<int>(type: "int", nullable: false),
-                    BossId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BestSpecializationScore", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BestSpecializationScore_Boss_BossId",
-                        column: x => x.BossId,
-                        principalTable: "Boss",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_BestSpecializationScore_Specialization_SpecializationId",
-                        column: x => x.SpecializationId,
-                        principalTable: "Specialization",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -262,8 +287,8 @@ namespace CombatParser.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PositionX = table.Column<double>(type: "float", nullable: false),
-                    PositionY = table.Column<double>(type: "float", nullable: false),
+                    X = table.Column<double>(type: "float", nullable: false),
+                    Y = table.Column<double>(type: "float", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -595,94 +620,21 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Boss",
-                columns: new[] { "Id", "Difficult", "GameId", "Health", "Name", "Size" },
+                table: "BossMap",
+                columns: new[] { "Id", "GameId", "Name", "X0", "X1", "Y0", "Y1" },
                 values: new object[,]
                 {
-                    { 1, 3, 1395, 130841100L, "Каменные стражи", 10 },
-                    { 2, 5, 1395, 235513980L, "Каменные стражи", 10 },
-                    { 3, 3, 1390, 152647950L, "Фэн Проклятый", 10 },
-                    { 4, 5, 1390, 209345760L, "Фэн Проклятый", 10 },
-                    { 5, 3, 1434, 117756990L, "Душелов Гара'джал", 10 },
-                    { 6, 5, 1434, 179252307L, "Душелов Гара'джал", 10 },
-                    { 7, 3, 1436, 174454800L, "Призрачные короли", 10 },
-                    { 8, 5, 1436, 261682200L, "Призрачные короли", 10 },
-                    { 9, 3, 1500, 294392475L, "Элегон", 10 },
-                    { 10, 5, 1500, 339750723L, "Элегон", 10 },
-                    { 11, 3, 1407, 314018640L, "Воля императора", 10 },
-                    { 12, 5, 1407, 471027960L, "Воля императора", 10 },
-                    { 13, 3, 1409, 213968815L, "Вечные защитники", 10 },
-                    { 14, 5, 1409, 344082093L, "Вечные защитники", 10 },
-                    { 15, 3, 1505, 174454800L, "Цулон", 10 },
-                    { 16, 5, 1505, 279127680L, "Цулон", 10 },
-                    { 17, 3, 1506, 138168195L, "Лэй Ши", 10 },
-                    { 18, 5, 1506, 301457900L, "Лэй Ши", 10 },
-                    { 19, 3, 1431, 184704020L, "Ша Страха", 10 },
-                    { 20, 5, 1431, 544037304L, "Ша Страха", 10 },
-                    { 21, 3, 1507, 174454800L, "Императорский визирь Зор'лок", 10 },
-                    { 22, 5, 1507, 218068500L, "Императорский визирь Зор'лок", 10 },
-                    { 23, 3, 1504, 150467265L, "Повелитель клинков Та'як", 10 },
-                    { 24, 5, 1504, 196261650L, "Повелитель клинков Та'як", 10 },
-                    { 25, 3, 1463, 218068500L, "Гаралон", 10 },
-                    { 26, 5, 1463, 290759446L, "Гаралон", 10 },
-                    { 27, 3, 1498, 270404940L, "Повелитель ветров Мел'джарак", 10 },
-                    { 28, 5, 1498, 588784950L, "Повелитель ветров Мел'джарак", 10 },
-                    { 29, 3, 1499, 218068500L, "Ваятель янтаря Ун'сок", 10 },
-                    { 30, 5, 1499, 340186860L, "Ваятель янтаря Ун'сок", 10 },
-                    { 31, 3, 1501, 196261650L, "Великая императрица Шек'зир", 10 },
-                    { 32, 5, 1501, 307476585L, "Великая императрица Шек'зир", 10 },
-                    { 33, 3, 1577, 207601212L, "Джин'рок Разрушитель", 10 },
-                    { 34, 5, 1577, 317507736L, "Джин'рок Разрушитель", 10 },
-                    { 35, 3, 1575, 357632340L, "Хорридон", 10 },
-                    { 36, 5, 1575, 654205500L, "Хорридон", 10 },
-                    { 37, 3, 1570, 299538888L, "Совет старейшин", 10 },
-                    { 38, 5, 1570, 470330152L, "Совет старейшин", 10 },
-                    { 39, 3, 1565, 179999841L, "Тортос", 10 },
-                    { 40, 5, 1565, 319999818L, "Тортос", 10 },
-                    { 41, 3, 1578, 263317712L, "Мегера", 10 },
-                    { 42, 5, 1578, 342297774L, "Мегера", 10 },
-                    { 43, 3, 1573, 244236720L, "Цзи-Кунь", 10 },
-                    { 44, 5, 1573, 366355080L, "Цзи-Кунь", 10 },
-                    { 45, 3, 1572, 261682200L, "Дуруму Позабытый", 10 },
-                    { 46, 5, 1572, 392523300L, "Дуруму Позабытый", 10 },
-                    { 47, 3, 1574, 218068500L, "Изначалий", 10 },
-                    { 48, 5, 1574, 258193104L, "Изначалий", 10 },
-                    { 49, 3, 1576, 80999797L, "Темный Анимус", 10 },
-                    { 50, 5, 1576, 288000023L, "Темный Анимус", 10 },
-                    { 51, 3, 1559, 119937675L, "Кон Железный", 10 },
-                    { 52, 5, 1559, 155700909L, "Кон Железный", 10 },
-                    { 53, 3, 1560, 219812670L, "Небесные сестры", 10 },
-                    { 54, 5, 1560, 628036200L, "Небесные сестры", 10 },
-                    { 55, 3, 1579, 329283435L, "Лэй Шэнь", 10 },
-                    { 56, 5, 1579, 580498347L, "Лэй Шэнь", 10 },
-                    { 57, 3, 1602, 61900000L, "Глубиний", 10 },
-                    { 58, 5, 1602, 91500000L, "Глубиний", 10 },
-                    { 59, 3, 1598, 114000000L, "Павшие защитники", 10 },
-                    { 60, 5, 1598, 250000000L, "Павшие защитники", 10 },
-                    { 61, 3, 1624, 401000000L, "Норусхен", 10 },
-                    { 62, 5, 1624, 702000000L, "Норусхен", 10 },
-                    { 63, 3, 1604, 426000000L, "Ша Гордыни", 10 },
-                    { 64, 5, 1604, 661000000L, "Ша Гордыни", 10 },
-                    { 65, 3, 1622, 139000000L, "Галакрас", 10 },
-                    { 66, 5, 1622, 218000000L, "Галакрас", 10 },
-                    { 67, 3, 1600, 451000000L, "Железный исполин", 10 },
-                    { 68, 5, 1600, 592000000L, "Железный исполин", 10 },
-                    { 69, 3, 1606, 349000000L, "Кор'кронские темные шаманы", 10 },
-                    { 70, 5, 1606, 654000000L, "Кор'кронские темные шаманы", 10 },
-                    { 71, 3, 1603, 349000000L, "Генерал Назгрим", 10 },
-                    { 72, 5, 1603, 523000000L, "Генерал Назгрим", 10 },
-                    { 73, 3, 1595, 377000000L, "Малкорок", 10 },
-                    { 74, 5, 1595, 630000000L, "Малкорок", 10 },
-                    { 75, 3, 1594, 621000000L, "Пандарийские трофеи", 10 },
-                    { 76, 5, 1594, 1190000000L, "Пандарийские трофеи", 10 },
-                    { 77, 3, 1599, 445000000L, "Ток Кровожадный", 10 },
-                    { 78, 5, 1599, 654000000L, "Ток Кровожадный", 10 },
-                    { 79, 3, 1601, 298000000L, "Мастер осады Черноплавс", 10 },
-                    { 80, 5, 1601, 500000000L, "Мастер осады Черноплавс", 10 },
-                    { 81, 3, 1593, 510000000L, "Идеалы клакси", 10 },
-                    { 82, 5, 1593, 1260000000L, "Идеалы клакси", 10 },
-                    { 83, 3, 1623, 161000000L, "Гаррош Адский Крик", 10 },
-                    { 84, 5, 1623, 228000000L, "Гаррош Адский Крик", 10 }
+                    { 1, 556, "Осада Оргриммара", 1310.4169919999999, 806.25, 1239.5830080000001, 481.25 },
+                    { 2, 557, "Осада Оргриммара", 1729.1716309999999, 1095.8283690000001, 1150.01001, 199.99499499999999 },
+                    { 3, 558, "Осада Оргриммара", 1000.0, 625.0, 1278.75, 716.25 },
+                    { 4, 559, "Осада Оргриммара", 1654.5166019999999, 893.40338099999997, -4020.830078, -5162.5 },
+                    { 5, 560, "Осада Оргриммара", 2125.0, 1318.75, -3789.5839839999999, -5000.0 },
+                    { 6, 562, "Осада Оргриммара", 1900.0, 1500.0, -4237.5, -4837.5 },
+                    { 7, 563, "Осада Оргриммара", 2165.0, 1575.0, -4582.5, -5467.5 },
+                    { 8, 564, "Осада Оргриммара", 1865.833374, 1059.166626, -4490.0, -5700.0 },
+                    { 9, 565, "Осада Оргриммара", 2157.080078, 1727.079956, -5230.0, -5875.0 },
+                    { 10, 566, "Осада Оргриммара", 1790.0, 1200.0, -5082.5, -5967.5 },
+                    { 11, 567, "Осада Оргриммара", 1275.0, 960.0, -5403.75, -5876.25 }
                 });
 
             migrationBuilder.InsertData(
@@ -737,6 +689,97 @@ namespace CombatParser.Infrastructure.Migrations
                     { 15, "ProtectionPaladin", "31935,53600,20271" },
                     { 16, "Elemental", "51505,403,8050" },
                     { 17, "Frost", "116,44614,30455" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Boss",
+                columns: new[] { "Id", "BossMapId", "Difficult", "GameId", "Health", "Name", "Size" },
+                values: new object[,]
+                {
+                    { 1, 1, 3, 1395, 130841100L, "Каменные стражи", 10 },
+                    { 2, 1, 5, 1395, 235513980L, "Каменные стражи", 10 },
+                    { 3, 1, 3, 1390, 152647950L, "Фэн Проклятый", 10 },
+                    { 4, 1, 5, 1390, 209345760L, "Фэн Проклятый", 10 },
+                    { 5, 1, 3, 1434, 117756990L, "Душелов Гара'джал", 10 },
+                    { 6, 1, 5, 1434, 179252307L, "Душелов Гара'джал", 10 },
+                    { 7, 1, 3, 1436, 174454800L, "Призрачные короли", 10 },
+                    { 8, 1, 5, 1436, 261682200L, "Призрачные короли", 10 },
+                    { 9, 1, 3, 1500, 294392475L, "Элегон", 10 },
+                    { 10, 1, 5, 1500, 339750723L, "Элегон", 10 },
+                    { 11, 1, 3, 1407, 314018640L, "Воля императора", 10 },
+                    { 12, 1, 5, 1407, 471027960L, "Воля императора", 10 },
+                    { 13, 1, 3, 1409, 213968815L, "Вечные защитники", 10 },
+                    { 14, 1, 5, 1409, 344082093L, "Вечные защитники", 10 },
+                    { 15, 1, 3, 1505, 174454800L, "Цулон", 10 },
+                    { 16, 1, 5, 1505, 279127680L, "Цулон", 10 },
+                    { 17, 1, 3, 1506, 138168195L, "Лэй Ши", 10 },
+                    { 18, 1, 5, 1506, 301457900L, "Лэй Ши", 10 },
+                    { 19, 1, 3, 1431, 184704020L, "Ша Страха", 10 },
+                    { 20, 1, 5, 1431, 544037304L, "Ша Страха", 10 },
+                    { 21, 1, 3, 1507, 174454800L, "Императорский визирь Зор'лок", 10 },
+                    { 22, 1, 5, 1507, 218068500L, "Императорский визирь Зор'лок", 10 },
+                    { 23, 1, 3, 1504, 150467265L, "Повелитель клинков Та'як", 10 },
+                    { 24, 1, 5, 1504, 196261650L, "Повелитель клинков Та'як", 10 },
+                    { 25, 1, 3, 1463, 218068500L, "Гаралон", 10 },
+                    { 26, 1, 5, 1463, 290759446L, "Гаралон", 10 },
+                    { 27, 1, 3, 1498, 270404940L, "Повелитель ветров Мел'джарак", 10 },
+                    { 28, 1, 5, 1498, 588784950L, "Повелитель ветров Мел'джарак", 10 },
+                    { 29, 1, 3, 1499, 218068500L, "Ваятель янтаря Ун'сок", 10 },
+                    { 30, 1, 5, 1499, 340186860L, "Ваятель янтаря Ун'сок", 10 },
+                    { 31, 1, 3, 1501, 196261650L, "Великая императрица Шек'зир", 10 },
+                    { 32, 1, 5, 1501, 307476585L, "Великая императрица Шек'зир", 10 },
+                    { 33, 1, 3, 1577, 207601212L, "Джин'рок Разрушитель", 10 },
+                    { 34, 1, 5, 1577, 317507736L, "Джин'рок Разрушитель", 10 },
+                    { 35, 1, 3, 1575, 357632340L, "Хорридон", 10 },
+                    { 36, 1, 5, 1575, 654205500L, "Хорридон", 10 },
+                    { 37, 1, 3, 1570, 299538888L, "Совет старейшин", 10 },
+                    { 38, 1, 5, 1570, 470330152L, "Совет старейшин", 10 },
+                    { 39, 1, 3, 1565, 179999841L, "Тортос", 10 },
+                    { 40, 1, 5, 1565, 319999818L, "Тортос", 10 },
+                    { 41, 1, 3, 1578, 263317712L, "Мегера", 10 },
+                    { 42, 1, 5, 1578, 342297774L, "Мегера", 10 },
+                    { 43, 1, 3, 1573, 244236720L, "Цзи-Кунь", 10 },
+                    { 44, 1, 5, 1573, 366355080L, "Цзи-Кунь", 10 },
+                    { 45, 1, 3, 1572, 261682200L, "Дуруму Позабытый", 10 },
+                    { 46, 1, 5, 1572, 392523300L, "Дуруму Позабытый", 10 },
+                    { 47, 1, 3, 1574, 218068500L, "Изначалий", 10 },
+                    { 48, 1, 5, 1574, 258193104L, "Изначалий", 10 },
+                    { 49, 1, 3, 1576, 80999797L, "Темный Анимус", 10 },
+                    { 50, 1, 5, 1576, 288000023L, "Темный Анимус", 10 },
+                    { 51, 1, 3, 1559, 119937675L, "Кон Железный", 10 },
+                    { 52, 1, 5, 1559, 155700909L, "Кон Железный", 10 },
+                    { 53, 1, 3, 1560, 219812670L, "Небесные сестры", 10 },
+                    { 54, 1, 5, 1560, 628036200L, "Небесные сестры", 10 },
+                    { 55, 1, 3, 1579, 329283435L, "Лэй Шэнь", 10 },
+                    { 56, 1, 5, 1579, 580498347L, "Лэй Шэнь", 10 },
+                    { 57, 2, 3, 1602, 61900000L, "Глубиний", 10 },
+                    { 58, 2, 5, 1602, 91500000L, "Глубиний", 10 },
+                    { 59, 1, 3, 1598, 114000000L, "Павшие защитники", 10 },
+                    { 60, 1, 5, 1598, 250000000L, "Павшие защитники", 10 },
+                    { 61, 3, 3, 1624, 401000000L, "Норусхен", 10 },
+                    { 62, 3, 5, 1624, 702000000L, "Норусхен", 10 },
+                    { 63, 3, 3, 1604, 426000000L, "Ша Гордыни", 10 },
+                    { 64, 3, 5, 1604, 661000000L, "Ша Гордыни", 10 },
+                    { 65, 4, 3, 1622, 139000000L, "Галакрас", 10 },
+                    { 66, 4, 5, 1622, 218000000L, "Галакрас", 10 },
+                    { 67, 4, 3, 1600, 451000000L, "Железный исполин", 10 },
+                    { 68, 4, 5, 1600, 592000000L, "Железный исполин", 10 },
+                    { 69, 5, 3, 1606, 349000000L, "Кор'кронские темные шаманы", 10 },
+                    { 70, 5, 5, 1606, 654000000L, "Кор'кронские темные шаманы", 10 },
+                    { 71, 6, 3, 1603, 349000000L, "Генерал Назгрим", 10 },
+                    { 72, 6, 5, 1603, 523000000L, "Генерал Назгрим", 10 },
+                    { 73, 7, 3, 1595, 377000000L, "Малкорок", 10 },
+                    { 74, 7, 5, 1595, 630000000L, "Малкорок", 10 },
+                    { 75, 8, 3, 1594, 621000000L, "Пандарийские трофеи", 10 },
+                    { 76, 8, 5, 1594, 1190000000L, "Пандарийские трофеи", 10 },
+                    { 77, 8, 3, 1599, 445000000L, "Ток Кровожадный", 10 },
+                    { 78, 8, 5, 1599, 654000000L, "Ток Кровожадный", 10 },
+                    { 79, 9, 3, 1601, 298000000L, "Мастер осады Черноплавс", 10 },
+                    { 80, 9, 5, 1601, 500000000L, "Мастер осады Черноплавс", 10 },
+                    { 81, 10, 3, 1593, 510000000L, "Идеалы клакси", 10 },
+                    { 82, 10, 5, 1593, 1260000000L, "Идеалы клакси", 10 },
+                    { 83, 11, 3, 1623, 161000000L, "Гаррош Адский Крик", 10 },
+                    { 84, 11, 5, 1623, 228000000L, "Гаррош Адский Крик", 10 }
                 });
 
             migrationBuilder.InsertData(
@@ -2185,6 +2228,11 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "SpecializationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Boss_BossMapId",
+                table: "Boss",
+                column: "BossMapId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Combat_BossId",
                 table: "Combat",
                 column: "BossId");
@@ -2358,6 +2406,9 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CombatLog");
+
+            migrationBuilder.DropTable(
+                name: "BossMap");
         }
     }
 }

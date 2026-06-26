@@ -50,13 +50,13 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
             pos2Index = 24;
         }
 
-        if (double.TryParse(combatDataLine[pos1Index], out var position1)
-            && double.TryParse(combatDataLine[pos2Index], out var position2))
+        if (double.TryParse(combatDataLine[pos1Index], out var positionX)
+            && double.TryParse(combatDataLine[pos2Index], out var positionY))
         {
             var position = new CombatPlayerPosition
             {
-                PositionX = position2,
-                PositionY = position1,
+                X = positionX,
+                Y = positionY,
                 Time = GetTimeFromStart(combatDataLine[0])
             };
 

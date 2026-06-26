@@ -158,14 +158,18 @@ const CombatReply: React.FC = () => {
                     />
                     <div>{t("SelectCombat")}</div>
                 </div>
+                <h5>{t("Combats")}</h5>
             </div>
             {(combatPlayerPositions !== undefined && combatPlayerPositions.length > 0) &&
                 <>
-                    <button
-                        onClick={() => setPlaying(!playing)}
-                    >
-                        {playing ? "Pause" : "Play"}
-                    </button>
+                    <div className="reply__actions">
+                        <button
+                            onClick={() => setPlaying(!playing)}
+                            className="play"
+                        >
+                            {playing ? "Pause" : "Play"}
+                        </button>
+                    </div>
                     <input
                         type="range"
                         min={0}

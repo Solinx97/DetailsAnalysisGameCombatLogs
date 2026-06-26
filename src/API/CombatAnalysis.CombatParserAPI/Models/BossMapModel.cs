@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.CombatParserAPI.Models;
 
-public class BossModel
+public class BossMapModel
 {
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
@@ -13,15 +13,11 @@ public class BossModel
     [Required]
     public string Name { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
-    public long Health { get; set; }
+    public double X0 { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int Difficult { get; set; }
+    public double X1 { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int Size { get; set; }
+    public double Y0 { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int BossMapId { get; set; }
+    public double Y1 { get; set; }
 }

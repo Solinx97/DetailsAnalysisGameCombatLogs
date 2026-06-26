@@ -6,13 +6,8 @@ public class BestSpecializationScore
 {
     private BestSpecializationScore() { }
 
-    public BestSpecializationScore(int id, int damageDone, int healDone, DateTimeOffset? updated, int specializationId, int bossId)
+    private BestSpecializationScore(int id, int damageDone, int healDone, DateTimeOffset? updated, int specializationId, int bossId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
-        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
-        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(specializationId, nameof(specializationId));
-
         Id = id;
         DamageDone = damageDone;
         HealDone = healDone;
@@ -36,6 +31,16 @@ public class BestSpecializationScore
     public Boss Boss { get; private set; }
 
     public int BossId { get; private set; }
+
+    public static BestSpecializationScore Create(int id, int damageDone, int healDone, DateTimeOffset? updated, int specializationId, int bossId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
+        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
+        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(specializationId, nameof(specializationId));
+
+        return new BestSpecializationScore(id, damageDone, healDone, updated, specializationId, bossId);
+    }
 
     public void Update(int damageDone, int healDone)
     {

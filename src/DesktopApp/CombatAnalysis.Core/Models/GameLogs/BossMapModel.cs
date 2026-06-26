@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.Core.Models.GameLogs;
 
-public class BossModel
+public class BossMapModel
 {
     public int Id { get; set; }
 
@@ -8,11 +8,11 @@ public class BossModel
 
     public string Name { get; set; } = string.Empty;
 
-    public long Health { get; set; }
+    public double X0 { get; set; }
 
-    public int Difficult { get; set; }
+    public double X1 { get; set; }
 
-    public int Size { get; set; }
+    public double Y0 { get; set; }
 
-    public int BossMapId { get; set; }
+    public double Y1 { get; set; }
 }

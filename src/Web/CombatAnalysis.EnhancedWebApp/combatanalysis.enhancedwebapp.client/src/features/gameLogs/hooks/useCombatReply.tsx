@@ -1,34 +1,117 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
+import type { CombatModel } from '../types/CombatModel';
+import { useLazyGetCombatByIdQuery, useLazyGetBossMapByIdQuery } from '../api/GameLogs.api';
 
 interface Position {
     x: number;
     y: number;
 }
 
-const useCombatReply = (selectedPlayerId: number, canvasRef: RefObject<HTMLCanvasElement | null>, combatPlayerPositions: CombatPlayerPositionModel[], positions: Map<number, CombatPlayerPositionModel[]>) => {
+interface InstanceBounds {
+    x0: number;
+    x1: number;
+    y0: number;
+    y1: number;
+}
+
+interface WorldSize {
+    height: number;
+    width: number;
+}
+
+const useCombatReply = (
+    selectedPlayerId: number,
+    canvasRef: RefObject<HTMLCanvasElement | null>,
+    combatPlayerPositions: CombatPlayerPositionModel[],
+    positions: Map<number, CombatPlayerPositionModel[]>
+) => {
     const [currentTime, setCurrentTime] = useState(0);
+    const [combatId, setCombatId] = useState(0);
+    const [combat, setCombat] = useState<CombatModel>();
+    const [instanceBounds, setInstanceBounds] = useState<InstanceBounds>({
+        x0: 0,
+        x1: 0,
+        y0: 0,
+        y1: 0
+    });
+    const [worldSize, setWorldSize] = useState<WorldSize>({
+        width: 1,
+        height: 1
+    });
 
     const currentTimeRef = useRef(currentTime);
 
+    const [getCombat] = useLazyGetCombatByIdQuery();
+    const [getBossMap] = useLazyGetBossMapByIdQuery();
+
+    const zoom = 1;
     const view = {
         width: 1300,
         height: 425,
     };
 
-    const zoom = 1;
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const combatId = parseInt(searchParams.get("combat") ?? "1");
 
-    const instanceBounds = {
-        minX: -4837,
-        maxX: -4237,
-        minY: 1500,
-        maxY: 1900
-    };
+        setCombatId(combatId);
+    }, []);
+
+    useEffect(() => {
+        if (combatId < 1) {
+            return;
+        }
+
+        const loadData = async () => {
+            try {
+                const [combat] = await Promise.all([
+                    getCombat(combatId).unwrap(),
+                ]);
+
+                setCombat(combat);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        loadData();
+    }, [combatId]);
+
+    useEffect(() => {
+        if (!combat) {
+            return;
+        }
+
+        const loadData = async () => {
+            try {
+                const [bossMap] = await Promise.all([
+                    getBossMap(combat.boss.bossMapId).unwrap(),
+                ]);
+
+                const receivedInstanceBounds = {
+                    x0: bossMap.x0,
+                    x1: bossMap.x1,
+                    y0: bossMap.y0,
+                    y1: bossMap.y1,
+                };
+
+                setInstanceBounds(receivedInstanceBounds);
+                setWorldSize({
+                    width: receivedInstanceBounds.x0 - receivedInstanceBounds.x1,
+                    height: receivedInstanceBounds.y0 - receivedInstanceBounds.y1,
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        loadData();
+    }, [combat]);
 
     useEffect(() => {
         currentTimeRef.current = currentTime;
     }, [currentTime]);
-
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -91,7 +174,7 @@ const useCombatReply = (selectedPlayerId: number, canvasRef: RefObject<HTMLCanva
         return () => {
             cancelAnimationFrame(frameId);
         }
-    }, [combatPlayerPositions, selectedPlayerId]);
+    }, [combatPlayerPositions, selectedPlayerId, instanceBounds]);
 
     const getPosition = (combatPlayerPositions: CombatPlayerPositionModel[]): Position => {
         if (combatPlayerPositions.length < 1) {
@@ -117,32 +200,33 @@ const useCombatReply = (selectedPlayerId: number, canvasRef: RefObject<HTMLCanva
 
         return {
             x:
-                before.positionX +
-                (after.positionX - before.positionX) * progress,
+                before.x +
+                (after.x - before.x) * progress,
 
             y:
-                before.positionY +
-                (after.positionY - before.positionY) * progress
+                before.y +
+                (after.y - before.y) * progress
         };
     }
 
-    const toPixel = (x: number, y: number) => {
-        const rangeX =
-            instanceBounds.maxX - instanceBounds.minX;
+    const toPixel = (worldX: number, worldY: number) => {
+        const canvas = canvasRef.current;
 
-        const rangeY =
-            instanceBounds.maxY - instanceBounds.minY;
+        if (!canvas) {
+            return { x: 0, y: 0 };
+        }
+
+        const scale = Math.min(
+            canvas.width / worldSize.width,
+            canvas.height / worldSize.height
+        );
+
+        const offsetX = (canvas.width - worldSize.width * scale) / 2;
+        const offsetY = (canvas.height - worldSize.height * scale) / 2;
 
         return {
-            x:
-                ((x - instanceBounds.minX) / rangeX)
-                * view.width,
-
-            y:
-                (1 -
-                    ((y - instanceBounds.minY) / rangeY)
-                )
-                * view.height
+            x: (worldX - instanceBounds.x0) * scale + offsetX,
+            y: (instanceBounds.y0 - worldY) * scale + offsetY
         };
     }
 

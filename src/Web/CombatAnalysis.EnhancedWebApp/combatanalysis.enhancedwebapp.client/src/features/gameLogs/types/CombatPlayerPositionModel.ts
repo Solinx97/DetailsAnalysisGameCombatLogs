@@ -1,7 +1,7 @@
 export type CombatPlayerPositionModel = {
     id: string;
-    positionX: number;
-    positionY: number;
+    x: number;
+    y: number;
     time: string;
     combatPlayerId: number;
     combatId: number;

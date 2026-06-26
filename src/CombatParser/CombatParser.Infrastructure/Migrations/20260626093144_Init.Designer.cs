@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260619203126_Init")]
+    [Migration("20260626093144_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -11483,6 +11483,1028 @@ namespace CombatParser.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Aggregates.Boss", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BossMapId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Difficult")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Health")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("Size")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BossMapId");
+
+                    b.ToTable("Boss");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1395,
+                            Health = 130841100L,
+                            Name = "Каменные стражи",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1395,
+                            Health = 235513980L,
+                            Name = "Каменные стражи",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1390,
+                            Health = 152647950L,
+                            Name = "Фэн Проклятый",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1390,
+                            Health = 209345760L,
+                            Name = "Фэн Проклятый",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1434,
+                            Health = 117756990L,
+                            Name = "Душелов Гара'джал",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1434,
+                            Health = 179252307L,
+                            Name = "Душелов Гара'джал",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 7,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1436,
+                            Health = 174454800L,
+                            Name = "Призрачные короли",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 8,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1436,
+                            Health = 261682200L,
+                            Name = "Призрачные короли",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 9,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1500,
+                            Health = 294392475L,
+                            Name = "Элегон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 10,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1500,
+                            Health = 339750723L,
+                            Name = "Элегон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 11,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1407,
+                            Health = 314018640L,
+                            Name = "Воля императора",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 12,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1407,
+                            Health = 471027960L,
+                            Name = "Воля императора",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 13,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1409,
+                            Health = 213968815L,
+                            Name = "Вечные защитники",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 14,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1409,
+                            Health = 344082093L,
+                            Name = "Вечные защитники",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 15,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1505,
+                            Health = 174454800L,
+                            Name = "Цулон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 16,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1505,
+                            Health = 279127680L,
+                            Name = "Цулон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 17,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1506,
+                            Health = 138168195L,
+                            Name = "Лэй Ши",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 18,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1506,
+                            Health = 301457900L,
+                            Name = "Лэй Ши",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 19,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1431,
+                            Health = 184704020L,
+                            Name = "Ша Страха",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 20,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1431,
+                            Health = 544037304L,
+                            Name = "Ша Страха",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 21,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1507,
+                            Health = 174454800L,
+                            Name = "Императорский визирь Зор'лок",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 22,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1507,
+                            Health = 218068500L,
+                            Name = "Императорский визирь Зор'лок",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 23,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1504,
+                            Health = 150467265L,
+                            Name = "Повелитель клинков Та'як",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 24,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1504,
+                            Health = 196261650L,
+                            Name = "Повелитель клинков Та'як",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 25,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1463,
+                            Health = 218068500L,
+                            Name = "Гаралон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 26,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1463,
+                            Health = 290759446L,
+                            Name = "Гаралон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 27,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1498,
+                            Health = 270404940L,
+                            Name = "Повелитель ветров Мел'джарак",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 28,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1498,
+                            Health = 588784950L,
+                            Name = "Повелитель ветров Мел'джарак",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 29,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1499,
+                            Health = 218068500L,
+                            Name = "Ваятель янтаря Ун'сок",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 30,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1499,
+                            Health = 340186860L,
+                            Name = "Ваятель янтаря Ун'сок",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 31,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1501,
+                            Health = 196261650L,
+                            Name = "Великая императрица Шек'зир",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 32,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1501,
+                            Health = 307476585L,
+                            Name = "Великая императрица Шек'зир",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 33,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1577,
+                            Health = 207601212L,
+                            Name = "Джин'рок Разрушитель",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 34,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1577,
+                            Health = 317507736L,
+                            Name = "Джин'рок Разрушитель",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 35,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1575,
+                            Health = 357632340L,
+                            Name = "Хорридон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 36,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1575,
+                            Health = 654205500L,
+                            Name = "Хорридон",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 37,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1570,
+                            Health = 299538888L,
+                            Name = "Совет старейшин",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 38,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1570,
+                            Health = 470330152L,
+                            Name = "Совет старейшин",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 39,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1565,
+                            Health = 179999841L,
+                            Name = "Тортос",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 40,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1565,
+                            Health = 319999818L,
+                            Name = "Тортос",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 41,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1578,
+                            Health = 263317712L,
+                            Name = "Мегера",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 42,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1578,
+                            Health = 342297774L,
+                            Name = "Мегера",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 43,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1573,
+                            Health = 244236720L,
+                            Name = "Цзи-Кунь",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 44,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1573,
+                            Health = 366355080L,
+                            Name = "Цзи-Кунь",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 45,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1572,
+                            Health = 261682200L,
+                            Name = "Дуруму Позабытый",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 46,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1572,
+                            Health = 392523300L,
+                            Name = "Дуруму Позабытый",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 47,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1574,
+                            Health = 218068500L,
+                            Name = "Изначалий",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 48,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1574,
+                            Health = 258193104L,
+                            Name = "Изначалий",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 49,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1576,
+                            Health = 80999797L,
+                            Name = "Темный Анимус",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 50,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1576,
+                            Health = 288000023L,
+                            Name = "Темный Анимус",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 51,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1559,
+                            Health = 119937675L,
+                            Name = "Кон Железный",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 52,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1559,
+                            Health = 155700909L,
+                            Name = "Кон Железный",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 53,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1560,
+                            Health = 219812670L,
+                            Name = "Небесные сестры",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 54,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1560,
+                            Health = 628036200L,
+                            Name = "Небесные сестры",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 55,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1579,
+                            Health = 329283435L,
+                            Name = "Лэй Шэнь",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 56,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1579,
+                            Health = 580498347L,
+                            Name = "Лэй Шэнь",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 57,
+                            BossMapId = 2,
+                            Difficult = 3,
+                            GameId = 1602,
+                            Health = 61900000L,
+                            Name = "Глубиний",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 58,
+                            BossMapId = 2,
+                            Difficult = 5,
+                            GameId = 1602,
+                            Health = 91500000L,
+                            Name = "Глубиний",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 59,
+                            BossMapId = 1,
+                            Difficult = 3,
+                            GameId = 1598,
+                            Health = 114000000L,
+                            Name = "Павшие защитники",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 60,
+                            BossMapId = 1,
+                            Difficult = 5,
+                            GameId = 1598,
+                            Health = 250000000L,
+                            Name = "Павшие защитники",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 61,
+                            BossMapId = 3,
+                            Difficult = 3,
+                            GameId = 1624,
+                            Health = 401000000L,
+                            Name = "Норусхен",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 62,
+                            BossMapId = 3,
+                            Difficult = 5,
+                            GameId = 1624,
+                            Health = 702000000L,
+                            Name = "Норусхен",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 63,
+                            BossMapId = 3,
+                            Difficult = 3,
+                            GameId = 1604,
+                            Health = 426000000L,
+                            Name = "Ша Гордыни",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 64,
+                            BossMapId = 3,
+                            Difficult = 5,
+                            GameId = 1604,
+                            Health = 661000000L,
+                            Name = "Ша Гордыни",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 65,
+                            BossMapId = 4,
+                            Difficult = 3,
+                            GameId = 1622,
+                            Health = 139000000L,
+                            Name = "Галакрас",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 66,
+                            BossMapId = 4,
+                            Difficult = 5,
+                            GameId = 1622,
+                            Health = 218000000L,
+                            Name = "Галакрас",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 67,
+                            BossMapId = 4,
+                            Difficult = 3,
+                            GameId = 1600,
+                            Health = 451000000L,
+                            Name = "Железный исполин",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 68,
+                            BossMapId = 4,
+                            Difficult = 5,
+                            GameId = 1600,
+                            Health = 592000000L,
+                            Name = "Железный исполин",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 69,
+                            BossMapId = 5,
+                            Difficult = 3,
+                            GameId = 1606,
+                            Health = 349000000L,
+                            Name = "Кор'кронские темные шаманы",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 70,
+                            BossMapId = 5,
+                            Difficult = 5,
+                            GameId = 1606,
+                            Health = 654000000L,
+                            Name = "Кор'кронские темные шаманы",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 71,
+                            BossMapId = 6,
+                            Difficult = 3,
+                            GameId = 1603,
+                            Health = 349000000L,
+                            Name = "Генерал Назгрим",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 72,
+                            BossMapId = 6,
+                            Difficult = 5,
+                            GameId = 1603,
+                            Health = 523000000L,
+                            Name = "Генерал Назгрим",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 73,
+                            BossMapId = 7,
+                            Difficult = 3,
+                            GameId = 1595,
+                            Health = 377000000L,
+                            Name = "Малкорок",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 74,
+                            BossMapId = 7,
+                            Difficult = 5,
+                            GameId = 1595,
+                            Health = 630000000L,
+                            Name = "Малкорок",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 75,
+                            BossMapId = 8,
+                            Difficult = 3,
+                            GameId = 1594,
+                            Health = 621000000L,
+                            Name = "Пандарийские трофеи",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 76,
+                            BossMapId = 8,
+                            Difficult = 5,
+                            GameId = 1594,
+                            Health = 1190000000L,
+                            Name = "Пандарийские трофеи",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 77,
+                            BossMapId = 8,
+                            Difficult = 3,
+                            GameId = 1599,
+                            Health = 445000000L,
+                            Name = "Ток Кровожадный",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 78,
+                            BossMapId = 8,
+                            Difficult = 5,
+                            GameId = 1599,
+                            Health = 654000000L,
+                            Name = "Ток Кровожадный",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 79,
+                            BossMapId = 9,
+                            Difficult = 3,
+                            GameId = 1601,
+                            Health = 298000000L,
+                            Name = "Мастер осады Черноплавс",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 80,
+                            BossMapId = 9,
+                            Difficult = 5,
+                            GameId = 1601,
+                            Health = 500000000L,
+                            Name = "Мастер осады Черноплавс",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 81,
+                            BossMapId = 10,
+                            Difficult = 3,
+                            GameId = 1593,
+                            Health = 510000000L,
+                            Name = "Идеалы клакси",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 82,
+                            BossMapId = 10,
+                            Difficult = 5,
+                            GameId = 1593,
+                            Health = 1260000000L,
+                            Name = "Идеалы клакси",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 83,
+                            BossMapId = 11,
+                            Difficult = 3,
+                            GameId = 1623,
+                            Health = 161000000L,
+                            Name = "Гаррош Адский Крик",
+                            Size = 10
+                        },
+                        new
+                        {
+                            Id = 84,
+                            BossMapId = 11,
+                            Difficult = 5,
+                            GameId = 1623,
+                            Health = 228000000L,
+                            Name = "Гаррош Адский Крик",
+                            Size = 10
+                        });
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Aggregates.BossMap", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<double>("X0")
+                        .HasColumnType("float");
+
+                    b.Property<double>("X1")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Y0")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Y1")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BossMap");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            GameId = 556,
+                            Name = "Осада Оргриммара",
+                            X0 = 1310.4169919999999,
+                            X1 = 806.25,
+                            Y0 = 1239.5830080000001,
+                            Y1 = 481.25
+                        },
+                        new
+                        {
+                            Id = 2,
+                            GameId = 557,
+                            Name = "Осада Оргриммара",
+                            X0 = 1729.1716309999999,
+                            X1 = 1095.8283690000001,
+                            Y0 = 1150.01001,
+                            Y1 = 199.99499499999999
+                        },
+                        new
+                        {
+                            Id = 3,
+                            GameId = 558,
+                            Name = "Осада Оргриммара",
+                            X0 = 1000.0,
+                            X1 = 625.0,
+                            Y0 = 1278.75,
+                            Y1 = 716.25
+                        },
+                        new
+                        {
+                            Id = 4,
+                            GameId = 559,
+                            Name = "Осада Оргриммара",
+                            X0 = 1654.5166019999999,
+                            X1 = 893.40338099999997,
+                            Y0 = -4020.830078,
+                            Y1 = -5162.5
+                        },
+                        new
+                        {
+                            Id = 5,
+                            GameId = 560,
+                            Name = "Осада Оргриммара",
+                            X0 = 2125.0,
+                            X1 = 1318.75,
+                            Y0 = -3789.5839839999999,
+                            Y1 = -5000.0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            GameId = 562,
+                            Name = "Осада Оргриммара",
+                            X0 = 1900.0,
+                            X1 = 1500.0,
+                            Y0 = -4237.5,
+                            Y1 = -4837.5
+                        },
+                        new
+                        {
+                            Id = 7,
+                            GameId = 563,
+                            Name = "Осада Оргриммара",
+                            X0 = 2165.0,
+                            X1 = 1575.0,
+                            Y0 = -4582.5,
+                            Y1 = -5467.5
+                        },
+                        new
+                        {
+                            Id = 8,
+                            GameId = 564,
+                            Name = "Осада Оргриммара",
+                            X0 = 1865.833374,
+                            X1 = 1059.166626,
+                            Y0 = -4490.0,
+                            Y1 = -5700.0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            GameId = 565,
+                            Name = "Осада Оргриммара",
+                            X0 = 2157.080078,
+                            X1 = 1727.079956,
+                            Y0 = -5230.0,
+                            Y1 = -5875.0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            GameId = 566,
+                            Name = "Осада Оргриммара",
+                            X0 = 1790.0,
+                            X1 = 1200.0,
+                            Y0 = -5082.5,
+                            Y1 = -5967.5
+                        },
+                        new
+                        {
+                            Id = 11,
+                            GameId = 567,
+                            Name = "Осада Оргриммара",
+                            X0 = 1275.0,
+                            X1 = 960.0,
+                            Y0 = -5403.75,
+                            Y1 = -5876.25
+                        });
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Combat", b =>
                 {
                     b.Property<int>("Id")
@@ -11749,794 +12771,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatLog");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.Boss", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Difficult")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Health")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Boss");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Difficult = 3,
-                            GameId = 1395,
-                            Health = 130841100L,
-                            Name = "Каменные стражи",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Difficult = 5,
-                            GameId = 1395,
-                            Health = 235513980L,
-                            Name = "Каменные стражи",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Difficult = 3,
-                            GameId = 1390,
-                            Health = 152647950L,
-                            Name = "Фэн Проклятый",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Difficult = 5,
-                            GameId = 1390,
-                            Health = 209345760L,
-                            Name = "Фэн Проклятый",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Difficult = 3,
-                            GameId = 1434,
-                            Health = 117756990L,
-                            Name = "Душелов Гара'джал",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Difficult = 5,
-                            GameId = 1434,
-                            Health = 179252307L,
-                            Name = "Душелов Гара'джал",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Difficult = 3,
-                            GameId = 1436,
-                            Health = 174454800L,
-                            Name = "Призрачные короли",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Difficult = 5,
-                            GameId = 1436,
-                            Health = 261682200L,
-                            Name = "Призрачные короли",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Difficult = 3,
-                            GameId = 1500,
-                            Health = 294392475L,
-                            Name = "Элегон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Difficult = 5,
-                            GameId = 1500,
-                            Health = 339750723L,
-                            Name = "Элегон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Difficult = 3,
-                            GameId = 1407,
-                            Health = 314018640L,
-                            Name = "Воля императора",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Difficult = 5,
-                            GameId = 1407,
-                            Health = 471027960L,
-                            Name = "Воля императора",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Difficult = 3,
-                            GameId = 1409,
-                            Health = 213968815L,
-                            Name = "Вечные защитники",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Difficult = 5,
-                            GameId = 1409,
-                            Health = 344082093L,
-                            Name = "Вечные защитники",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Difficult = 3,
-                            GameId = 1505,
-                            Health = 174454800L,
-                            Name = "Цулон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Difficult = 5,
-                            GameId = 1505,
-                            Health = 279127680L,
-                            Name = "Цулон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 17,
-                            Difficult = 3,
-                            GameId = 1506,
-                            Health = 138168195L,
-                            Name = "Лэй Ши",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 18,
-                            Difficult = 5,
-                            GameId = 1506,
-                            Health = 301457900L,
-                            Name = "Лэй Ши",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 19,
-                            Difficult = 3,
-                            GameId = 1431,
-                            Health = 184704020L,
-                            Name = "Ша Страха",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Difficult = 5,
-                            GameId = 1431,
-                            Health = 544037304L,
-                            Name = "Ша Страха",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Difficult = 3,
-                            GameId = 1507,
-                            Health = 174454800L,
-                            Name = "Императорский визирь Зор'лок",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Difficult = 5,
-                            GameId = 1507,
-                            Health = 218068500L,
-                            Name = "Императорский визирь Зор'лок",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Difficult = 3,
-                            GameId = 1504,
-                            Health = 150467265L,
-                            Name = "Повелитель клинков Та'як",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Difficult = 5,
-                            GameId = 1504,
-                            Health = 196261650L,
-                            Name = "Повелитель клинков Та'як",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Difficult = 3,
-                            GameId = 1463,
-                            Health = 218068500L,
-                            Name = "Гаралон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 26,
-                            Difficult = 5,
-                            GameId = 1463,
-                            Health = 290759446L,
-                            Name = "Гаралон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 27,
-                            Difficult = 3,
-                            GameId = 1498,
-                            Health = 270404940L,
-                            Name = "Повелитель ветров Мел'джарак",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 28,
-                            Difficult = 5,
-                            GameId = 1498,
-                            Health = 588784950L,
-                            Name = "Повелитель ветров Мел'джарак",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 29,
-                            Difficult = 3,
-                            GameId = 1499,
-                            Health = 218068500L,
-                            Name = "Ваятель янтаря Ун'сок",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 30,
-                            Difficult = 5,
-                            GameId = 1499,
-                            Health = 340186860L,
-                            Name = "Ваятель янтаря Ун'сок",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 31,
-                            Difficult = 3,
-                            GameId = 1501,
-                            Health = 196261650L,
-                            Name = "Великая императрица Шек'зир",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 32,
-                            Difficult = 5,
-                            GameId = 1501,
-                            Health = 307476585L,
-                            Name = "Великая императрица Шек'зир",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 33,
-                            Difficult = 3,
-                            GameId = 1577,
-                            Health = 207601212L,
-                            Name = "Джин'рок Разрушитель",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 34,
-                            Difficult = 5,
-                            GameId = 1577,
-                            Health = 317507736L,
-                            Name = "Джин'рок Разрушитель",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 35,
-                            Difficult = 3,
-                            GameId = 1575,
-                            Health = 357632340L,
-                            Name = "Хорридон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 36,
-                            Difficult = 5,
-                            GameId = 1575,
-                            Health = 654205500L,
-                            Name = "Хорридон",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 37,
-                            Difficult = 3,
-                            GameId = 1570,
-                            Health = 299538888L,
-                            Name = "Совет старейшин",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 38,
-                            Difficult = 5,
-                            GameId = 1570,
-                            Health = 470330152L,
-                            Name = "Совет старейшин",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 39,
-                            Difficult = 3,
-                            GameId = 1565,
-                            Health = 179999841L,
-                            Name = "Тортос",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 40,
-                            Difficult = 5,
-                            GameId = 1565,
-                            Health = 319999818L,
-                            Name = "Тортос",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 41,
-                            Difficult = 3,
-                            GameId = 1578,
-                            Health = 263317712L,
-                            Name = "Мегера",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 42,
-                            Difficult = 5,
-                            GameId = 1578,
-                            Health = 342297774L,
-                            Name = "Мегера",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 43,
-                            Difficult = 3,
-                            GameId = 1573,
-                            Health = 244236720L,
-                            Name = "Цзи-Кунь",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 44,
-                            Difficult = 5,
-                            GameId = 1573,
-                            Health = 366355080L,
-                            Name = "Цзи-Кунь",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 45,
-                            Difficult = 3,
-                            GameId = 1572,
-                            Health = 261682200L,
-                            Name = "Дуруму Позабытый",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 46,
-                            Difficult = 5,
-                            GameId = 1572,
-                            Health = 392523300L,
-                            Name = "Дуруму Позабытый",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 47,
-                            Difficult = 3,
-                            GameId = 1574,
-                            Health = 218068500L,
-                            Name = "Изначалий",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 48,
-                            Difficult = 5,
-                            GameId = 1574,
-                            Health = 258193104L,
-                            Name = "Изначалий",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 49,
-                            Difficult = 3,
-                            GameId = 1576,
-                            Health = 80999797L,
-                            Name = "Темный Анимус",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 50,
-                            Difficult = 5,
-                            GameId = 1576,
-                            Health = 288000023L,
-                            Name = "Темный Анимус",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 51,
-                            Difficult = 3,
-                            GameId = 1559,
-                            Health = 119937675L,
-                            Name = "Кон Железный",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 52,
-                            Difficult = 5,
-                            GameId = 1559,
-                            Health = 155700909L,
-                            Name = "Кон Железный",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 53,
-                            Difficult = 3,
-                            GameId = 1560,
-                            Health = 219812670L,
-                            Name = "Небесные сестры",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 54,
-                            Difficult = 5,
-                            GameId = 1560,
-                            Health = 628036200L,
-                            Name = "Небесные сестры",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 55,
-                            Difficult = 3,
-                            GameId = 1579,
-                            Health = 329283435L,
-                            Name = "Лэй Шэнь",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 56,
-                            Difficult = 5,
-                            GameId = 1579,
-                            Health = 580498347L,
-                            Name = "Лэй Шэнь",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 57,
-                            Difficult = 3,
-                            GameId = 1602,
-                            Health = 61900000L,
-                            Name = "Глубиний",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 58,
-                            Difficult = 5,
-                            GameId = 1602,
-                            Health = 91500000L,
-                            Name = "Глубиний",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 59,
-                            Difficult = 3,
-                            GameId = 1598,
-                            Health = 114000000L,
-                            Name = "Павшие защитники",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 60,
-                            Difficult = 5,
-                            GameId = 1598,
-                            Health = 250000000L,
-                            Name = "Павшие защитники",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 61,
-                            Difficult = 3,
-                            GameId = 1624,
-                            Health = 401000000L,
-                            Name = "Норусхен",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 62,
-                            Difficult = 5,
-                            GameId = 1624,
-                            Health = 702000000L,
-                            Name = "Норусхен",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 63,
-                            Difficult = 3,
-                            GameId = 1604,
-                            Health = 426000000L,
-                            Name = "Ша Гордыни",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 64,
-                            Difficult = 5,
-                            GameId = 1604,
-                            Health = 661000000L,
-                            Name = "Ша Гордыни",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 65,
-                            Difficult = 3,
-                            GameId = 1622,
-                            Health = 139000000L,
-                            Name = "Галакрас",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 66,
-                            Difficult = 5,
-                            GameId = 1622,
-                            Health = 218000000L,
-                            Name = "Галакрас",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 67,
-                            Difficult = 3,
-                            GameId = 1600,
-                            Health = 451000000L,
-                            Name = "Железный исполин",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 68,
-                            Difficult = 5,
-                            GameId = 1600,
-                            Health = 592000000L,
-                            Name = "Железный исполин",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 69,
-                            Difficult = 3,
-                            GameId = 1606,
-                            Health = 349000000L,
-                            Name = "Кор'кронские темные шаманы",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 70,
-                            Difficult = 5,
-                            GameId = 1606,
-                            Health = 654000000L,
-                            Name = "Кор'кронские темные шаманы",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 71,
-                            Difficult = 3,
-                            GameId = 1603,
-                            Health = 349000000L,
-                            Name = "Генерал Назгрим",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 72,
-                            Difficult = 5,
-                            GameId = 1603,
-                            Health = 523000000L,
-                            Name = "Генерал Назгрим",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 73,
-                            Difficult = 3,
-                            GameId = 1595,
-                            Health = 377000000L,
-                            Name = "Малкорок",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 74,
-                            Difficult = 5,
-                            GameId = 1595,
-                            Health = 630000000L,
-                            Name = "Малкорок",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 75,
-                            Difficult = 3,
-                            GameId = 1594,
-                            Health = 621000000L,
-                            Name = "Пандарийские трофеи",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 76,
-                            Difficult = 5,
-                            GameId = 1594,
-                            Health = 1190000000L,
-                            Name = "Пандарийские трофеи",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 77,
-                            Difficult = 3,
-                            GameId = 1599,
-                            Health = 445000000L,
-                            Name = "Ток Кровожадный",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 78,
-                            Difficult = 5,
-                            GameId = 1599,
-                            Health = 654000000L,
-                            Name = "Ток Кровожадный",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 79,
-                            Difficult = 3,
-                            GameId = 1601,
-                            Health = 298000000L,
-                            Name = "Мастер осады Черноплавс",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 80,
-                            Difficult = 5,
-                            GameId = 1601,
-                            Health = 500000000L,
-                            Name = "Мастер осады Черноплавс",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 81,
-                            Difficult = 3,
-                            GameId = 1593,
-                            Health = 510000000L,
-                            Name = "Идеалы клакси",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 82,
-                            Difficult = 5,
-                            GameId = 1593,
-                            Health = 1260000000L,
-                            Name = "Идеалы клакси",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 83,
-                            Difficult = 3,
-                            GameId = 1623,
-                            Health = 161000000L,
-                            Name = "Гаррош Адский Крик",
-                            Size = 10
-                        },
-                        new
-                        {
-                            Id = 84,
-                            Difficult = 5,
-                            GameId = 1623,
-                            Health = 228000000L,
-                            Name = "Гаррош Адский Крик",
-                            Size = 10
-                        });
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
                     b.Property<int>("Id")
@@ -12669,14 +12903,14 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("CombatPlayerId")
                         .HasColumnType("int");
 
-                    b.Property<double>("PositionX")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PositionY")
-                        .HasColumnType("float");
-
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
+
+                    b.Property<double>("X")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -13408,10 +13642,10 @@ namespace CombatParser.Infrastructure.Migrations
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.BestSpecializationScore", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Entities.Boss", "Boss")
+                    b.HasOne("CombatParser.Domain.Aggregates.Boss", "Boss")
                         .WithMany("BestSpecializationScores")
                         .HasForeignKey("BossId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.Specialization", "Specialization")
@@ -13425,9 +13659,20 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Specialization");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Aggregates.Boss", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Aggregates.BossMap", "BossMap")
+                        .WithMany("Bosses")
+                        .HasForeignKey("BossMapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BossMap");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Combat", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Entities.Boss", "Boss")
+                    b.HasOne("CombatParser.Domain.Aggregates.Boss", "Boss")
                         .WithMany()
                         .HasForeignKey("BossId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -13636,6 +13881,16 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Combat");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Aggregates.Boss", b =>
+                {
+                    b.Navigation("BestSpecializationScores");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Aggregates.BossMap", b =>
+                {
+                    b.Navigation("Bosses");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Combat", b =>
                 {
                     b.Navigation("CombatPlayers");
@@ -13646,11 +13901,6 @@ namespace CombatParser.Infrastructure.Migrations
             modelBuilder.Entity("CombatParser.Domain.Aggregates.CombatLog", b =>
                 {
                     b.Navigation("Combats");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.Boss", b =>
-                {
-                    b.Navigation("BestSpecializationScores");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>

@@ -5,4 +5,5 @@ export type BossModel = {
     health: number;
     difficult: number;
     size: number;
+    bossMapId: number;
 }

@@ -1,4 +1,4 @@
-﻿using CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Aggregates;
 
 namespace CombatParser.Domain.Data;
 

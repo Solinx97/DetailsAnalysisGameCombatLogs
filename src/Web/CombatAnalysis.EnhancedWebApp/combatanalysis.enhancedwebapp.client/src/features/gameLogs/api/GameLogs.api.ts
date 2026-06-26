@@ -7,6 +7,7 @@ import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
 import type { CombatAbilityModel } from '../types/CombatAbilityModel';
 import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
 import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
+import type { BossMapModel } from '../types/BossMapModel';
 
 const apiURL = '/api/v1';
 
@@ -16,6 +17,7 @@ export const GameLogsApi = createApi({
         'CombatAbility',
         'CombatLog',
         'Combat',
+        'BossMap',
         'CombatPlayer',
         'CombatPlayerAura',
         'CombatPlayerPosition',
@@ -73,6 +75,14 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'Combat', id: 'LIST' }]
         }),
+        getCombatById: builder.query<CombatModel, number>({
+            query: id => `/Combat/${id}`,
+            providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
+        }),
+        getBossMapById: builder.query<BossMapModel, number>({
+            query: id => `/BossMap/${id}`,
+            providesTags: result => result ? [{ type: 'BossMap', id: result.id }] : [],
+        }),
         getCombatPlayersByCombatId: builder.query<CombatPlayerModel[], number>({
             query: combatId => `/CombatPlayer/getByCombatId/${combatId}`,
             providesTags: result =>
@@ -86,10 +96,6 @@ export const GameLogsApi = createApi({
         getCombatPlayerById: builder.query<CombatPlayerModel, number>({
             query: id => `/CombatPlayer/${id}`,
             providesTags: result => result ? [{ type: 'CombatPlayer', id: result.id }] : [],
-        }),
-        getCombatById: builder.query<CombatModel, number>({
-            query: id => `/Combat/${id}`,
-            providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
         }),
         getCombatByPreAura: builder.query<CombatPlayerPreAuraModel[], { combatId: number, combatPlayerId: number }>({
             query: ({ combatId, combatPlayerId }) => `/PreAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
@@ -130,9 +136,10 @@ export const {
     useGetCombatLogsQuery,
     useLazyGetPlayersDeathByPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
+    useLazyGetCombatByIdQuery,
+    useLazyGetBossMapByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,
     useLazyGetCombatPlayerByIdQuery,
-    useLazyGetCombatByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatByPreAuraQuery,
     useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery

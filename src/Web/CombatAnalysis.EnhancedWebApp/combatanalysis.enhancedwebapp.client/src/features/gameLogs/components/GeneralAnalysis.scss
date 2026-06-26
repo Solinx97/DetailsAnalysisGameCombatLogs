@@ -192,6 +192,10 @@ $mobile-max-width: 425px;
         align-items: center;
         gap: 25px;
 
+        h5 {
+            margin: 0;
+        }
+
         .select-logs {
             width: 40px;
             overflow: hidden;

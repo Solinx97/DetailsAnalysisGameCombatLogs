@@ -1,8 +1,8 @@
 ﻿namespace CombatParser.Domain.EntityData;
 
 public record CombatPlayerPositionData(
-    int PositionX, 
-    int PositionY,
+    int X, 
+    int Y,
     TimeSpan Time,
     int CombatPlayerId
     );

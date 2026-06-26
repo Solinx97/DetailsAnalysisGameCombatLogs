@@ -4,12 +4,8 @@ public class CombatAbility
 {
     private CombatAbility() { }
 
-    public CombatAbility(int id, int gameId, string name, int abilityType)
+    private CombatAbility(int id, int gameId, string name, int abilityType)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(gameId, nameof(gameId));
-        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-
         Id = id;
         GameId = gameId;
         Name = name;
@@ -23,4 +19,13 @@ public class CombatAbility
     public string Name { get; private set; }
 
     public int AbilityType { get; private set; }
+
+    public static CombatAbility Create(int id, int gameId, string name, int abilityType)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(gameId, nameof(gameId));
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+
+        return new CombatAbility(id, gameId, name, abilityType);
+    }
 }

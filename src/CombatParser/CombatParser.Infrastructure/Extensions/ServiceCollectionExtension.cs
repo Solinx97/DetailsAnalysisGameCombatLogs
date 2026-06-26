@@ -22,7 +22,7 @@ public static class ServiceCollectionExtension
         });
 
         services.AddScoped<IGenericRepository<CombatLog, int>, GenericRepository<CombatLog, int>>();
-        services.AddScoped<IGenericRepository<Combat, int>, GenericRepository<Combat, int>>();
+        services.AddScoped<IGenericRepository<BossMap, int>, GenericRepository<BossMap, int>>();
         services.AddScoped<IGenericRepository<SpecializationScore, int>, GenericRepository<SpecializationScore, int>>();
         services.AddScoped<IGenericRepository<BestSpecializationScore, int>, GenericRepository<BestSpecializationScore, int>>();
         services.AddScoped<IGenericRepository<CombatPlayerStats, int>, GenericRepository<CombatPlayerStats, int>>();

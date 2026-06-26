@@ -28,6 +28,7 @@ internal class CombatParserApiMapper : Profile
         CreateMap<PlayerModel, PlayerDto>().ReverseMap();
         CreateMap<BossModel, Boss>().ReverseMap();
         CreateMap<BossModel, BossDto>().ReverseMap();
+        CreateMap<BossMapModel, BossMapDto>().ReverseMap();
         CreateMap<CombatAbilityModel, CombatAbilityDto>().ReverseMap();
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
         CreateMap<CombatPlayerPreAuraDto, CombatPlayerPreAuraModel>().ReverseMap();

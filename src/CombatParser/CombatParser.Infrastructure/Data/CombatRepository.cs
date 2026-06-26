@@ -51,4 +51,13 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
 
         return combats;
     }
+
+    public async Task<Combat?> GetByIdAsync(int combatId, CancellationToken cancellationToken)
+    {
+        var combat = await _context.Set<Combat>()
+            .Include(c => c.Boss)
+            .FirstOrDefaultAsync(c => c.Id == combatId, cancellationToken);
+
+        return combat;
+    }
 }
