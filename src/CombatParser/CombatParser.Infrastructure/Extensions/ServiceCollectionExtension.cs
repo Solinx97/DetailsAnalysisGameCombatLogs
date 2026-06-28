@@ -45,8 +45,8 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICombatPlayerDataRepository<DamageTaken>, CombatPlayerDataRepository<DamageTaken>>();
         services.AddScoped<ICombatPlayerDataRepository<ResourceRecovery>, CombatPlayerDataRepository<ResourceRecovery>>();
         services.AddScoped<ICombatPlayerDataRepository<CombatPlayerDeath>, CombatPlayerDataRepository<CombatPlayerDeath>>();
-        services.AddScoped<ICombatPlayerDataRepository<SpecializationScore>, CombatPlayerDataRepository<SpecializationScore>>();
-        services.AddScoped<ICombatPlayerDataRepository<CombatPlayerStats>, CombatPlayerDataRepository<CombatPlayerStats>>();
+        services.AddScoped<ICombatPlayerInfoRepository<SpecializationScore>, CombatPlayerInfoRepository<SpecializationScore>>();
+        services.AddScoped<ICombatPlayerInfoRepository<CombatPlayerStats>, CombatPlayerInfoRepository<CombatPlayerStats>>();
 
         services.AddScoped<IGeneralFilterRepository<DamageDone>, GeneralFilterRepositroy<DamageDone>>();
         services.AddScoped<IGeneralFilterRepository<HealDone>, GeneralFilterRepositroy<HealDone>>();

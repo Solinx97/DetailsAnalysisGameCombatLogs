@@ -7,8 +7,8 @@ type QueryHook<TResult, TArg> = (arg: TArg) => { data?: TResult, isLoading: bool
 
 interface DetailsFilterProps {
     combatPlayerId: number;
-    setSelectedFilter: (value: SetStateAction<{ filter: string, value: number }>) => void;
-    selectedFilter: { filter: string, value: number };
+    setSelectedFilter: (value: SetStateAction<{ filter: string, value: string }>) => void;
+    selectedFilter: { filter: string, value: string };
     filter: string;
     filterName: string;
     useGetUniqueFilterValuesQuery: QueryHook<string[], { combatPlayerId: number, filter: string }>;
@@ -16,16 +16,18 @@ interface DetailsFilterProps {
 }
 
 const DetailsFilter: React.FC<DetailsFilterProps> = ({ combatPlayerId, setSelectedFilter, selectedFilter, filter, filterName, useGetUniqueFilterValuesQuery, t }) => {
-    const defaultFilter = { filter: "None", value: -1 };
+    const defaultFilter = { filter: "None", value: "All" };
 
     const { data: uniqueFilterValues, isLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter });
 
     const handleSelectedFilter = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
-        if (e?.target.value === "All") {
+        const value = e === undefined ? "All" : e.target.value;
+
+        if (value === "All") {
             setSelectedFilter(defaultFilter);
         }
         else {
-            setSelectedFilter({ filter, value: e?.target.value ? +e.target.value : 0 });
+            setSelectedFilter({ filter, value });
         }
     }
 

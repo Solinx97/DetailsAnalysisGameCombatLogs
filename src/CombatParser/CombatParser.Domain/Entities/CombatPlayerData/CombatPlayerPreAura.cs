@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class CombatPlayerPreAura : CombatPlayerDataBase, ICombatPlayerRefs
+public class CombatPlayerPreAura : CombatPlayerDataBase
 {
     private CombatPlayerPreAura() { }
 

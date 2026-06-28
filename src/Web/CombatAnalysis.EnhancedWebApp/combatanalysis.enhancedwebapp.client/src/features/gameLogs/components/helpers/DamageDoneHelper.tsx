@@ -31,8 +31,9 @@ interface DamageDoneHelperProps {
 const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
     const { getTimeWithoutMs } = useTime();
 
+    const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1});
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: "All" });
 
     const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountByFilterQuery(
         { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
@@ -41,11 +42,17 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
     );
 
-    const totalPages = Math.ceil(count ?? 1 / pageSize);
-
     useEffect(() => {
         setPage(1);
     }, [selectedFilter]);
+
+    useEffect(() => {
+        if (!count || count === 0) {
+            return;
+        }
+
+        setTotalPages(Math.ceil(count / pageSize));
+    }, [count]);
 
     const getIcon = (type: number): JSX.Element => {
         switch (type) {

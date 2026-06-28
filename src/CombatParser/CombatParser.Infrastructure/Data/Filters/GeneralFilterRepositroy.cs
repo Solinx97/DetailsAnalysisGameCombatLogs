@@ -108,7 +108,7 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
     {
         var values = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell))
-                     .OrderBy(x => x.Id)
+                     .OrderBy(x => x.Time)
                      .Skip((page - 1) * pageSize)
                      .Take(pageSize)
                      .ToListAsync(cancellationToken);

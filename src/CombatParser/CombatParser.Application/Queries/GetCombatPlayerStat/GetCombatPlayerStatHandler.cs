@@ -6,9 +6,9 @@ using MediatR;
 
 namespace CombatParser.Application.Queries.GetCombatPlayerStat;
 
-internal class GetCombatPlayerStatHandler(ICombatPlayerDataRepository<CombatPlayerStats> repository, IMapper mapper) : IRequestHandler<GetCombatPlayerStatQuery, CombatPlayerStatsDto>
+internal class GetCombatPlayerStatHandler(ICombatPlayerInfoRepository<CombatPlayerStats> repository, IMapper mapper) : IRequestHandler<GetCombatPlayerStatQuery, CombatPlayerStatsDto>
 {
-    private readonly ICombatPlayerDataRepository<CombatPlayerStats> _repository = repository;
+    private readonly ICombatPlayerInfoRepository<CombatPlayerStats> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<CombatPlayerStatsDto> Handle(GetCombatPlayerStatQuery request, CancellationToken cancellationToken)

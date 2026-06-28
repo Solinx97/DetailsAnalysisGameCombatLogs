@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecoveryGeneral : CombatPlayerDataBase, ICombatPlayerRefs
+public class ResourceRecoveryGeneral : CombatPlayerDataBase
 {
     public const int SPELL_MAX_LENGTH = 128;
 

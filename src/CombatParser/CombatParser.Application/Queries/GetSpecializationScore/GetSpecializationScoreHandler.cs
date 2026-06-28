@@ -6,9 +6,9 @@ using MediatR;
 
 namespace CombatParser.Application.Queries.GetSpecializationScore;
 
-internal class GetSpecializationScoreHandler(ICombatPlayerDataRepository<SpecializationScore> repository, IMapper mapper) : IRequestHandler<GetSpecializationScoreQuery, SpecializationScoreDto>
+internal class GetSpecializationScoreHandler(ICombatPlayerInfoRepository<SpecializationScore> repository, IMapper mapper) : IRequestHandler<GetSpecializationScoreQuery, SpecializationScoreDto>
 {
-    private readonly ICombatPlayerDataRepository<SpecializationScore> _repository = repository;
+    private readonly ICombatPlayerInfoRepository<SpecializationScore> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<SpecializationScoreDto> Handle(GetSpecializationScoreQuery request, CancellationToken cancellationToken)
