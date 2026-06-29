@@ -96,14 +96,6 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
         return uniqueSpells;
     }
 
-    public async Task<int> CountBySpellAsync(int combatPlayerId, string spell, CancellationToken cancellationToken)
-    {
-        var count = await _context.Set<TModel>()
-                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell), cancellationToken);
-
-        return count;
-    }
-
     public async Task<IEnumerable<TModel>> GetBySpellAsync(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
         var values = await _context.Set<TModel>()
@@ -115,4 +107,25 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
 
         return values;
     }
+
+    public async Task<IEnumerable<TModel>> GetByAllAsync(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var values = await _context.Set<TModel>()
+                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target) && x.Spell.Equals(spell))
+                     .OrderBy(x => x.Time)
+                     .Skip((page - 1) * pageSize)
+                     .Take(pageSize)
+                     .ToListAsync(cancellationToken);
+
+        return values;
+    }
+
+    public async Task<int> CountBySpellAsync(int combatPlayerId, string spell, CancellationToken cancellationToken)
+    {
+        var count = await _context.Set<TModel>()
+                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell), cancellationToken);
+
+        return count;
+    }
+
 }

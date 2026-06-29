@@ -3,6 +3,7 @@ using CombatParser.Application.Queries.DamageDone.CountDamageByTarget;
 using CombatParser.Application.Queries.DamageDone.GetDamageByEachTarget;
 using CombatParser.Application.Queries.DamageDone.GetDamageCount;
 using CombatParser.Application.Queries.DamageDone.GetDamages;
+using CombatParser.Application.Queries.DamageDone.GetDamagesByAll;
 using CombatParser.Application.Queries.DamageDone.GetDamagesBySpell;
 using CombatParser.Application.Queries.DamageDone.GetDamagesByTarget;
 using CombatParser.Application.Queries.DamageDone.GetDamageValueToTarget;
@@ -87,6 +88,14 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
         var damages = await _mediator.Send(new GetDamagesBySpellQuery(combatPlayerId, spell, page, pageSize), cancellationToken);
+
+        return Ok(damages);
+    }
+
+    [HttpGet("getByAll")]
+    public async Task<IActionResult> GetByAll(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var damages = await _mediator.Send(new GetDamagesByAllQuery(combatPlayerId, target, spell, page, pageSize), cancellationToken);
 
         return Ok(damages);
     }

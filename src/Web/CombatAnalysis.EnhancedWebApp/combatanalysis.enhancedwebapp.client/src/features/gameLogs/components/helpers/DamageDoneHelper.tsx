@@ -138,6 +138,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         <>
             <div className="player-filter-details">
                 <DetailsFilter
+                    number={0}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
@@ -147,6 +148,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
                     t={t}
                 />
                 <DetailsFilter
+                    number={1}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}

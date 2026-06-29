@@ -159,6 +159,16 @@ public class DamageDoneController : ControllerBase
                     filterName = "spell";
                     filterActionName = "getBySpell";
                     break;
+                case DetailsFilterType.All:
+                    var splitValue = filterValue.Split(';');
+                    if (splitValue.Length != 2)
+                    {
+                        return BadRequest();
+                    }
+                    else
+                    {
+                        return await GetByAll(combatPlayerId, splitValue[0], splitValue[1], page, pageSize);
+                    }
                 default:
                     return BadRequest();
             }
@@ -239,6 +249,31 @@ public class DamageDoneController : ControllerBase
             var count = await response.Content.ReadFromJsonAsync<int>();
 
             return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetByAll(int combatPlayerId, string target, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDone/getByAll?combatPlayerId={combatPlayerId}&target={target}&spell={spell}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+
+            return Ok(damageDones);
         }
         catch (HttpRequestException ex)
         {

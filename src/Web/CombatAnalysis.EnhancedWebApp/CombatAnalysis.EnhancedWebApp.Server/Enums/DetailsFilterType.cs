@@ -6,4 +6,5 @@ public enum DetailsFilterType
     Target,
     Creator,
     Spell,
+    All,
 }
