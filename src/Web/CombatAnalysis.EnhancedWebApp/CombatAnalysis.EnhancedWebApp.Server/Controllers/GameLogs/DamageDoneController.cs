@@ -141,44 +141,19 @@ public class DamageDoneController : ControllerBase
     }
 
     [HttpGet("getByFilter")]
-    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue, int page, int pageSize)
+    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string target, string spell, int page, int pageSize)
     {
         try
         {
-            string filterName;
-            string filterActionName;
-            switch (filter)
+            return filter switch
             {
-                case DetailsFilterType.None:
-                    return await GetByCombatPlayerId(combatPlayerId, page, pageSize);
-                case DetailsFilterType.Target:
-                    filterName = "target";
-                    filterActionName = "getByTarget";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "getBySpell";
-                    break;
-                case DetailsFilterType.All:
-                    var splitValue = filterValue.Split(';');
-                    if (splitValue.Length != 2)
-                    {
-                        return BadRequest();
-                    }
-                    else
-                    {
-                        return await GetByAll(combatPlayerId, splitValue[0], splitValue[1], page, pageSize);
-                    }
-                default:
-                    return BadRequest();
-            }
-
-            var response = await _httpClient.GetAsync($"DamageDone/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}&page={page}&pageSize={pageSize}");
-            response.EnsureSuccessStatusCode();
-
-            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
-
-            return Ok(damageDones);
+                DetailsFilterType.None => await GetByCombatPlayerId(combatPlayerId, page, pageSize),
+                DetailsFilterType.Target => await GetByTarget(combatPlayerId, target, page, pageSize),
+                DetailsFilterType.Spell => await GetBySpell(combatPlayerId, spell, page, pageSize),
+                DetailsFilterType.Creator => throw new NotImplementedException("Creator filter not implemented yet"),
+                DetailsFilterType.All => await GetByAll(combatPlayerId, target, spell, page, pageSize),
+                _ => BadRequest(),
+            };
         }
         catch (HttpRequestException ex)
         {
@@ -221,34 +196,144 @@ public class DamageDoneController : ControllerBase
     }
 
     [HttpGet("countByFilter")]
-    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue)
+    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string target, string spell)
     {
         try
         {
-            string filterName;
-            string filterActionName;
-            switch (filter)
+            return filter switch
             {
-                case DetailsFilterType.None:
-                    return await Count(combatPlayerId);
-                case DetailsFilterType.Target:
-                    filterName = "target";
-                    filterActionName = "countByTarget";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "countBySpell";
-                    break;
-                default:
-                    return BadRequest();
-            }
+                DetailsFilterType.None => await Count(combatPlayerId),
+                DetailsFilterType.Target => await CountByTarget(combatPlayerId, target),
+                DetailsFilterType.Spell => await CountBySpell(combatPlayerId, spell),
+                DetailsFilterType.Creator => throw new NotImplementedException("Count by creator not implemented yet"),
+                DetailsFilterType.All => await CountByAll(combatPlayerId, target, spell),
+                _ => BadRequest(),
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            var response = await _httpClient.GetAsync($"DamageDone/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}");
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDone/countByTarget?combatPlayerId={combatPlayerId}&target={target}");
             response.EnsureSuccessStatusCode();
 
             var count = await response.Content.ReadFromJsonAsync<int>();
 
             return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDone/countBySpell?combatPlayerId={combatPlayerId}&spell={spell}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountByAll(int combatPlayerId, string target, string spell)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDone/countByAll?combatPlayerId={combatPlayerId}&target={target}&spell={spell}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDone/getByTarget?combatPlayerId={combatPlayerId}&target={target}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+
+            return Ok(damageDones);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDone/getBySpell?combatPlayerId={combatPlayerId}&spell={spell}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+
+            return Ok(damageDones);
         }
         catch (HttpRequestException ex)
         {

@@ -33,13 +33,13 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: "All" });
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", target: "All", spell: "All" });
 
     const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+        { combatPlayerId, filter: selectedFilter.filter, target: selectedFilter.target, spell: selectedFilter.spell }
     );
     const { data, isLoading: dataIsLoading } = useGetDamageDoneByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+        { combatPlayerId, filter: selectedFilter.filter, target: selectedFilter.target, spell: selectedFilter.spell, page, pageSize }
     );
 
     useEffect(() => {
@@ -138,22 +138,9 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         <>
             <div className="player-filter-details">
                 <DetailsFilter
-                    number={0}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
-                    filter="Target"
-                    filterName={t("Target")}
-                    useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}
-                    t={t}
-                />
-                <DetailsFilter
-                    number={1}
-                    combatPlayerId={combatPlayerId}
-                    setSelectedFilter={setSelectedFilter}
-                    selectedFilter={selectedFilter}
-                    filter="Spell"
-                    filterName={t("Spell")}
                     useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}
                     t={t}
                 />

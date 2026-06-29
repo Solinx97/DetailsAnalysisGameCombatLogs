@@ -1,17 +1,14 @@
 ﻿import { faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type React from 'react';
-import { useEffect, useState, type ChangeEvent, type SetStateAction } from 'react';
+import { type ChangeEvent, type SetStateAction } from 'react';
 
 type QueryHook<TResult, TArg> = (arg: TArg) => { data?: TResult, isLoading: boolean };
 
 interface DetailsFilterProps {
-    number: number;
     combatPlayerId: number;
-    setSelectedFilter: (value: SetStateAction<{ filter: string, value: string }>) => void;
-    selectedFilter: { filter: string, value: string };
-    filter: string;
-    filterName: string;
+    setSelectedFilter: (value: SetStateAction<{ filter: string, target: string, spell: string }>) => void;
+    selectedFilter: { filter: string, target: string, spell: string };
     useGetUniqueFilterValuesQuery: QueryHook<string[], { combatPlayerId: number, filter: string }>;
     t: (key: string) => string;
 }
@@ -24,75 +21,79 @@ const filterTypes = {
     4: "All"
 }
 
-const DetailsFilter: React.FC<DetailsFilterProps> = ({ number, combatPlayerId, setSelectedFilter, selectedFilter, filter, filterName, useGetUniqueFilterValuesQuery, t }) => {
-    const defaultFilter = { filter: "None", value: "All" };
+const DetailsFilter: React.FC<DetailsFilterProps> = ({ combatPlayerId, setSelectedFilter, selectedFilter, useGetUniqueFilterValuesQuery, t }) => {
+    const defaultFilter = { filter: "None", target: "All", spell: "All" };
 
-    const { data: uniqueFilterValues, isLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter });
+    const { data: uniqueTargets, isLoading: targetsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filterTypes[1] });
+    const { data: uniqueSpells, isLoading: spellsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filterTypes[3] });
 
-    const [newSelectedFilter, setNewSelectedFilter] = useState(defaultFilter);
-
-    useEffect(() => {
-        const splitValue = selectedFilter.value.split(';');
-        if (splitValue.length === 2) {
-            setNewSelectedFilter({ filter: selectedFilter.filter, value: splitValue[number] });
-        }
-        else {
-            setNewSelectedFilter({ filter: selectedFilter.filter, value: selectedFilter.value });
-        }
-    }, [selectedFilter]);
-
-    const handleSelectedFilter = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
+    const handleSelectedTarget = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
         const value = e === undefined ? "All" : e.target.value;
 
-        if (value === defaultFilter.value) {
-            setSelectedFilter(defaultFilter);
+        if (value === defaultFilter.target && selectedFilter.spell === "All") {
+            setSelectedFilter({ filter: "None", target: value, spell: "All" });
         }
-        else if ((selectedFilter.filter !== filterTypes[0] && selectedFilter.filter !== filter)
-            || selectedFilter.filter === filterTypes[4]) {
-            const splitValue = selectedFilter.value.split(';');
-            if (splitValue.length === 1) {
-                if (number === 1) {
-                    setSelectedFilter({ filter: filterTypes[4], value: selectedFilter.value + ';' + value });
-                }
-                else {
-                    setSelectedFilter({ filter: filterTypes[4], value: value + ';' + selectedFilter.value });
-                }
-            }
-            else if (splitValue.length === 2) {
-                if (number === 1) {
-                    setSelectedFilter({ filter: filterTypes[4], value: splitValue[0] + ';' + value });
-                }
-                else {
-                    setSelectedFilter({ filter: filterTypes[4], value: value + ';' + splitValue[1] });
-                }
-            }
+        else if (selectedFilter.spell !== "All") {
+            setSelectedFilter({ filter: "All", target: value, spell: selectedFilter.spell });
         }
         else {
-            setSelectedFilter({ filter, value });
+            setSelectedFilter({ filter: "Target", target: value, spell: "All" });
         }
     }
 
-    if (isLoading) {
+    const handleSelectedSpell = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
+        const value = e === undefined ? "All" : e.target.value;
+
+        if (value === defaultFilter.spell && selectedFilter.target === "All") {
+            setSelectedFilter({ filter: "None", target: "All", spell: value });
+        }
+        else if (selectedFilter.target !== "All") {
+            setSelectedFilter({ filter: "All", target: selectedFilter.target, spell: value });
+        }
+        else {
+            setSelectedFilter({ filter: "Spell", target: "All", spell: value });
+        }
+    }
+
+    if (targetsIsLoading || spellsIsLoading) {
         return (<div>Loading...</div>);
     }
 
     return (
-        <div className="player-filter-details__filter">
-            <div>
-                <div>{filterName}</div>
-                <FontAwesomeIcon
-                    icon={faRotate}
-                    onClick={() => setSelectedFilter(defaultFilter)}
-                    title={t("FiltersReset")}
-                />
+        <>
+            <div className="filter-type">
+                <div className="title">
+                    <div>{t("Target")}</div>
+                    <FontAwesomeIcon
+                        icon={faRotate}
+                        onClick={() => setSelectedFilter(defaultFilter)}
+                        title={t("FiltersReset")}
+                    />
+                </div>
+                <select className="form-control" value={selectedFilter.target} onChange={handleSelectedTarget}>
+                    <option key="-1" value="All">{t("All")}</option>
+                    {uniqueTargets?.map((target, index) => (
+                        <option key={index} value={target}>{target}</option>
+                    ))}
+                </select>
             </div>
-            <select className="form-control" value={newSelectedFilter.value} onChange={handleSelectedFilter}>
-                <option key="-1" value="All">{t("All")}</option>
-                {uniqueFilterValues?.map((target, index) => (
-                    <option key={index} value={target}>{target}</option>
-                ))}
-            </select>
-        </div>
+            <div className="filter-type">
+                <div className="title">
+                    <div>{t("Spell")}</div>
+                    <FontAwesomeIcon
+                        icon={faRotate}
+                        onClick={() => setSelectedFilter(defaultFilter)}
+                        title={t("FiltersReset")}
+                    />
+                </div>
+                <select className="form-control" value={selectedFilter.spell} onChange={handleSelectedSpell}>
+                    <option key="-1" value="All">{t("All")}</option>
+                    {uniqueSpells?.map((target, index) => (
+                        <option key={index} value={target}>{target}</option>
+                    ))}
+                </select>
+            </div>
+        </>
     );
 }
 

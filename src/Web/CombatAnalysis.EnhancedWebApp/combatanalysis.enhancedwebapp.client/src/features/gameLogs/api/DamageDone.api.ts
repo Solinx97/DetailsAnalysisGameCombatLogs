@@ -21,8 +21,8 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
         getDamageDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/DamageDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
-        getDamageDoneByFilter: builder.query<DamageDoneModel[], { combatPlayerId: number, filter: string, filterValue: string, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => `/DamageDone/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+        getDamageDoneByFilter: builder.query<DamageDoneModel[], { combatPlayerId: number, filter: string, target: string, spell: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, filter, target, spell, page, pageSize }) => `/DamageDone/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&target=${target}&spell=${spell}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -37,8 +37,8 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
         getDamageDoneDamageByEachTarget: builder.query<Array<CombatTargetModel[]>, number>({
             query: combatId => `/DamageDone/getDamageByEachTarget/${combatId}`,
         }),
-        getDamageDoneCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, filterValue: string }>({
-            query: ({ combatPlayerId, filter, filterValue }) => `/DamageDone/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        getDamageDoneCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, target: string, spell: string }>({
+            query: ({ combatPlayerId, filter, target, spell }) => `/DamageDone/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&target=${target}&spell=${spell}`,
         }),
         getDamageDoneGeneralByCombatPlayerId: builder.query<DamageDoneGeneralModel[], number>({
             query: combatPlayerId => `/DamageDoneGeneral/getByCombatPlayerId/${combatPlayerId}`,
