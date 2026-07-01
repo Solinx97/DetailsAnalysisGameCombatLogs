@@ -20,8 +20,8 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
         getResourceRecoveryUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/ResourceRecovery/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
-        getResourceRecoveryByFilter: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, filter: string, filterValue: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => `/ResourceRecovery/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+        getResourceRecoveryByFilter: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, filter: string, creator: string, spell: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, filter, creator, spell, page, pageSize }) => `/ResourceRecovery/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&creator=${creator}&spell=${spell}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -30,8 +30,8 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
-        getResourceRecoveryCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, filterValue: number }>({
-            query: ({ combatPlayerId, filter, filterValue }) => `/ResourceRecovery/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        getResourceRecoveryCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, creator: string, spell: string }>({
+            query: ({ combatPlayerId, filter, creator, spell }) => `/ResourceRecovery/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&creator=${creator}&spell=${spell}`,
         }),
         getResourceRecoveryGeneralByCombatPlayerId: builder.query<ResourceRecoveryGeneralModel[], number>({
             query: combatPlayerId => `/ResourceRecoveryGeneral/getByCombatPlayerId/${combatPlayerId}`,

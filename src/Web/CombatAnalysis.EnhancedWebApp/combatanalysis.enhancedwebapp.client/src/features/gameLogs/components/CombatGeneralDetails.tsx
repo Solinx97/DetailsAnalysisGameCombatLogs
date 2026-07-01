@@ -12,7 +12,7 @@ import CustomTooltip from './CustomTooltip';
 
 interface CombatGeneralDetailsProps {
     combatPlayer: CombatPlayerModel;
-    detailsType: string;
+    detailsType: number;
 }
 
 const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlayer, detailsType }) => {

@@ -12,7 +12,7 @@ internal class GetDamageTakensByCreatorHandler(IGeneralFilterRepository<Domain.E
 
     public async Task<IEnumerable<DamageTakenDto>> Handle(GetDamageTakensByCreatorQuery request, CancellationToken cancellationToken)
     {
-        var damageTakens = await _repository.GetByTargetAsync(request.CombatPlayerId, request.Target, request.Page, request.PageSize, cancellationToken);
+        var damageTakens = await _repository.GetByCreatorAsync(request.CombatPlayerId, request.Creator, request.Page, request.PageSize, cancellationToken);
         var map = _mapper.Map<IEnumerable<DamageTakenDto>>(damageTakens);
 
         return map;

@@ -116,7 +116,7 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
         return count;
     }
 
-    public async Task<IEnumerable<TModel>> GetByAllAsync(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TModel>> GetByAllTargetsAsync(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
         var values = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target) && x.Spell.Equals(spell))
@@ -128,10 +128,30 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
         return values;
     }
 
-    public async Task<int> CountByAllAsync(int combatPlayerId, string target, string spell, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TModel>> GetByAllCreatorsAsync(int combatPlayerId, string creator, string spell, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var values = await _context.Set<TModel>()
+                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator) && x.Spell.Equals(spell))
+                     .OrderBy(x => x.Time)
+                     .Skip((page - 1) * pageSize)
+                     .Take(pageSize)
+                     .ToListAsync(cancellationToken);
+
+        return values;
+    }
+
+    public async Task<int> CountByAllTargetsAsync(int combatPlayerId, string target, string spell, CancellationToken cancellationToken)
     {
         var count = await _context.Set<TModel>()
                      .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target) && x.Spell.Equals(spell), cancellationToken);
+
+        return count;
+    }
+
+    public async Task<int> CountByAllCreatorsAsync(int combatPlayerId, string creator, string spell, CancellationToken cancellationToken)
+    {
+        var count = await _context.Set<TModel>()
+                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator) && x.Spell.Equals(spell), cancellationToken);
 
         return count;
     }

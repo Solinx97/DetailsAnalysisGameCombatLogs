@@ -5,14 +5,14 @@ using MediatR;
 
 namespace CombatParser.Application.Queries.DamageDone.GetDamagesByAll;
 
-internal class GetDamagesByAllHandler(IGeneralFilterRepository<Domain.Entities.CombatPlayerData.DamageDone> repository, IMapper mapper) : IRequestHandler<GetDamagesByAllQuery, IEnumerable<DamageDoneDto>>
+internal class GetDamagesByAllHandler(IGeneralFilterRepository<Domain.Entities.CombatPlayerData.DamageDone> repository, IMapper mapper) : IRequestHandler<GetDamageByAllQuery, IEnumerable<DamageDoneDto>>
 {
     private readonly IGeneralFilterRepository<Domain.Entities.CombatPlayerData.DamageDone> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IEnumerable<DamageDoneDto>> Handle(GetDamagesByAllQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<DamageDoneDto>> Handle(GetDamageByAllQuery request, CancellationToken cancellationToken)
     {
-        var damages = await _repository.GetByAllAsync(request.CombatPlayerId, request.Target, request.Spell, request.Page, request.PageSize, cancellationToken);
+        var damages = await _repository.GetByAllTargetsAsync(request.CombatPlayerId, request.Target, request.Spell, request.Page, request.PageSize, cancellationToken);
         var map = _mapper.Map<IEnumerable<DamageDoneDto>>(damages);
 
         return map;

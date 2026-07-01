@@ -6,6 +6,7 @@ import { type ChangeEvent, type SetStateAction } from 'react';
 type QueryHook<TResult, TArg> = (arg: TArg) => { data?: TResult, isLoading: boolean };
 
 interface DetailsFilterProps {
+    filters: string[];
     combatPlayerId: number;
     setSelectedFilter: (value: SetStateAction<{ filter: string, target: string, spell: string }>) => void;
     selectedFilter: { filter: string, target: string, spell: string };
@@ -13,45 +14,43 @@ interface DetailsFilterProps {
     t: (key: string) => string;
 }
 
-const filterTypes = {
-    0: "None",
-    1: "Target",
-    2: "Creator",
-    3: "Spell",
-    4: "All"
-}
-
-const DetailsFilter: React.FC<DetailsFilterProps> = ({ combatPlayerId, setSelectedFilter, selectedFilter, useGetUniqueFilterValuesQuery, t }) => {
+const DetailsFilter: React.FC<DetailsFilterProps> = ({ filters, combatPlayerId, setSelectedFilter, selectedFilter, useGetUniqueFilterValuesQuery, t }) => {
     const defaultFilter = { filter: "None", target: "All", spell: "All" };
 
-    const { data: uniqueTargets, isLoading: targetsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filterTypes[1] });
-    const { data: uniqueSpells, isLoading: spellsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filterTypes[3] });
+    const { data: uniqueTargets, isLoading: targetsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filters[0] });
+    const { data: uniqueSpells, isLoading: spellsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filters[1] });
 
     const handleSelectedTarget = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
         const value = e === undefined ? "All" : e.target.value;
 
-        if (value === defaultFilter.target && selectedFilter.spell === "All") {
-            setSelectedFilter({ filter: "None", target: value, spell: "All" });
+        if (value === defaultFilter.target && selectedFilter.spell === defaultFilter.spell) {
+            setSelectedFilter({ filter: "None", target: value, spell: defaultFilter.spell });
+        }
+        else if (value === defaultFilter.target && selectedFilter.filter === "All") {
+            setSelectedFilter({ filter: "Spell", target: defaultFilter.target, spell: selectedFilter.spell });
         }
         else if (selectedFilter.spell !== "All") {
             setSelectedFilter({ filter: "All", target: value, spell: selectedFilter.spell });
         }
         else {
-            setSelectedFilter({ filter: "Target", target: value, spell: "All" });
+            setSelectedFilter({ filter: "Target", target: value, spell: defaultFilter.spell });
         }
     }
 
     const handleSelectedSpell = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
         const value = e === undefined ? "All" : e.target.value;
 
-        if (value === defaultFilter.spell && selectedFilter.target === "All") {
-            setSelectedFilter({ filter: "None", target: "All", spell: value });
+        if (value === defaultFilter.spell && selectedFilter.target === defaultFilter.target) {
+            setSelectedFilter({ filter: "None", target: defaultFilter.target, spell: value });
+        }
+        else if (value === defaultFilter.target && selectedFilter.filter === "All") {
+            setSelectedFilter({ filter: "Target", target: selectedFilter.target, spell: defaultFilter.spell });
         }
         else if (selectedFilter.target !== "All") {
             setSelectedFilter({ filter: "All", target: selectedFilter.target, spell: value });
         }
         else {
-            setSelectedFilter({ filter: "Spell", target: "All", spell: value });
+            setSelectedFilter({ filter: "Spell", target: defaultFilter.target, spell: value });
         }
     }
 

@@ -112,7 +112,7 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
     [HttpGet("getByAll")]
     public async Task<IActionResult> GetByAll(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetDamagesByAllQuery(combatPlayerId, target, spell, page, pageSize), cancellationToken);
+        var damages = await _mediator.Send(new GetDamageByAllQuery(combatPlayerId, target, spell, page, pageSize), cancellationToken);
 
         return Ok(damages);
     }

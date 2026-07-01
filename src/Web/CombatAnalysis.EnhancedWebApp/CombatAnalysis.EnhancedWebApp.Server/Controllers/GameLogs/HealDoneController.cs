@@ -29,9 +29,9 @@ public class HealDoneController : ControllerBase
             var response = await _httpClient.GetAsync($"HealDone/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
 
-            return Ok(healDones);
+            return Ok(damageDones);
         }
         catch (HttpRequestException ex)
         {
@@ -96,9 +96,35 @@ public class HealDoneController : ControllerBase
             var response = await _httpClient.GetAsync($"HealDone/{filterActionName}/{combatPlayerId}");
             response.EnsureSuccessStatusCode();
 
-            var uniqueFilterValues = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
+            var result = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
 
-            return Ok(uniqueFilterValues);
+            return Ok(result);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getDamageByEachTarget/{combatId}")]
+    public async Task<IActionResult> GetDamageByEachTarget(int combatId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/getDamageByEachTarget/{combatId}");
+            response.EnsureSuccessStatusCode();
+
+            var damageByEachTarget = await response.Content.ReadFromJsonAsync<IEnumerable<List<CombatTargetModel>>>();
+
+            return Ok(damageByEachTarget);
         }
         catch (HttpRequestException ex)
         {
@@ -115,29 +141,169 @@ public class HealDoneController : ControllerBase
     }
 
     [HttpGet("getByFilter")]
-    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue, int page, int pageSize)
+    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string target, string spell, int page, int pageSize)
     {
         try
         {
-            string filterName;
-            string filterActionName;
-            switch (filter)
+            return filter switch
             {
-                case DetailsFilterType.None:
-                    return await GetByCombatPlayerId(combatPlayerId, page, pageSize);
-                case DetailsFilterType.Target:
-                    filterName = "target";
-                    filterActionName = "getByTarget";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "getBySpell";
-                    break;
-                default:
-                    return BadRequest();
-            }
+                DetailsFilterType.None => await GetByCombatPlayerId(combatPlayerId, page, pageSize),
+                DetailsFilterType.Target => await GetByTarget(combatPlayerId, target, page, pageSize),
+                DetailsFilterType.Spell => await GetBySpell(combatPlayerId, spell, page, pageSize),
+                DetailsFilterType.Creator => throw new NotImplementedException("Creator filter not implemented yet"),
+                DetailsFilterType.All => await GetByAll(combatPlayerId, target, spell, page, pageSize),
+                _ => BadRequest(),
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            var response = await _httpClient.GetAsync($"HealDone/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}&page={page}&pageSize={pageSize}");
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getValueByTarget")]
+    public async Task<IActionResult> GetValueByTarget(int combatPlayerId, string target)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/getValueByTarget?combatPlayerId={combatPlayerId}&target={target}");
+            response.EnsureSuccessStatusCode();
+
+            var valueByTarget = await response.Content.ReadAsStringAsync();
+
+            return Ok(valueByTarget);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countByFilter")]
+    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string target, string spell)
+    {
+        try
+        {
+            return filter switch
+            {
+                DetailsFilterType.None => await Count(combatPlayerId),
+                DetailsFilterType.Target => await CountByTarget(combatPlayerId, target),
+                DetailsFilterType.Spell => await CountBySpell(combatPlayerId, spell),
+                DetailsFilterType.Creator => throw new NotImplementedException("Count by creator not implemented yet"),
+                DetailsFilterType.All => await CountByAll(combatPlayerId, target, spell),
+                _ => BadRequest(),
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/countByTarget?combatPlayerId={combatPlayerId}&target={target}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/countBySpell?combatPlayerId={combatPlayerId}&spell={spell}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountByAll(int combatPlayerId, string target, string spell)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/countByAll?combatPlayerId={combatPlayerId}&target={target}&spell={spell}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/getByTarget?combatPlayerId={combatPlayerId}&target={target}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
             var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
@@ -158,35 +324,41 @@ public class HealDoneController : ControllerBase
         }
     }
 
-    [HttpGet("countByFilter")]
-    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue)
+    private async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize)
     {
         try
         {
-            string filterName;
-            string filterActionName;
-            switch (filter)
-            {
-                case DetailsFilterType.None:
-                    return await Count(combatPlayerId);
-                case DetailsFilterType.Target:
-                    filterName = "target";
-                    filterActionName = "countByTarget";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "countBySpell";
-                    break;
-                default:
-                    return BadRequest();
-            }
-
-            var response = await _httpClient.GetAsync($"HealDone/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}");
+            var response = await _httpClient.GetAsync($"HealDone/getBySpell?combatPlayerId={combatPlayerId}&spell={spell}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var count = await response.Content.ReadFromJsonAsync<int>();
+            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
 
-            return Ok(count);
+            return Ok(healDones);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetByAll(int combatPlayerId, string target, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/getByAll?combatPlayerId={combatPlayerId}&target={target}&spell={spell}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return Ok(healDones);
         }
         catch (HttpRequestException ex)
         {

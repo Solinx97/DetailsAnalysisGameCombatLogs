@@ -115,34 +115,19 @@ public class ResourceRecoveryController : ControllerBase
     }
 
     [HttpGet("getByFilter")]
-    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue, int page, int pageSize)
+    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string creator, string spell, int page, int pageSize)
     {
         try
         {
-            string filterName;
-            string filterActionName;
-            switch (filter)
+            return filter switch
             {
-                case DetailsFilterType.None:
-                    return await GetByCombatPlayerId(combatPlayerId, page, pageSize);
-                case DetailsFilterType.Creator:
-                    filterName = "creator";
-                    filterActionName = "getByCreator";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "getBySpell";
-                    break;
-                default:
-                    return BadRequest();
-            }
-
-            var response = await _httpClient.GetAsync($"ResourceRecovery/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}&page={page}&pageSize={pageSize}");
-            response.EnsureSuccessStatusCode();
-
-            var resourceRecoveries = await response.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryModel>>();
-
-            return Ok(resourceRecoveries);
+                DetailsFilterType.None => await GetByCombatPlayerId(combatPlayerId, page, pageSize),
+                DetailsFilterType.Target => await GetByCreator(combatPlayerId, creator, page, pageSize),
+                DetailsFilterType.Spell => await GetBySpell(combatPlayerId, spell, page, pageSize),
+                DetailsFilterType.Creator => throw new NotImplementedException("Creator filter not implemented yet"),
+                DetailsFilterType.All => await GetByAll(combatPlayerId, creator, spell, page, pageSize),
+                _ => BadRequest(),
+            };
         }
         catch (HttpRequestException ex)
         {
@@ -159,34 +144,169 @@ public class ResourceRecoveryController : ControllerBase
     }
 
     [HttpGet("countByFilter")]
-    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue)
+    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string creator, string spell)
     {
         try
         {
-            string filterName;
-            string filterActionName;
-            switch (filter)
+            return filter switch
             {
-                case DetailsFilterType.None:
-                    return await Count(combatPlayerId);
-                case DetailsFilterType.Creator:
-                    filterName = "creator";
-                    filterActionName = "countByCreator";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "countBySpell";
-                    break;
-                default:
-                    return BadRequest();
-            }
+                DetailsFilterType.None => await Count(combatPlayerId),
+                DetailsFilterType.Target => await CountByCreator(combatPlayerId, creator),
+                DetailsFilterType.Spell => await CountBySpell(combatPlayerId, spell),
+                DetailsFilterType.Creator => throw new NotImplementedException("Count by creator not implemented yet"),
+                DetailsFilterType.All => await CountByAll(combatPlayerId, creator, spell),
+                _ => BadRequest(),
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            var response = await _httpClient.GetAsync($"ResourceRecovery/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}");
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountByCreator(int combatPlayerId, string creator)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/countByCreator?combatPlayerId={combatPlayerId}&creator={creator}");
             response.EnsureSuccessStatusCode();
 
             var count = await response.Content.ReadFromJsonAsync<int>();
 
             return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/countBySpell?combatPlayerId={combatPlayerId}&spell={spell}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    public async Task<IActionResult> CountByAll(int combatPlayerId, string target, string spell)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/countByAll?combatPlayerId={combatPlayerId}&target={target}&spell={spell}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getByCreator?combatPlayerId={combatPlayerId}&creator={creator}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var resourcesRecovery = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return Ok(resourcesRecovery);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getBySpell?combatPlayerId={combatPlayerId}&spell={spell}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var resourcesRecovery = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return Ok(resourcesRecovery);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    private async Task<IActionResult> GetByAll(int combatPlayerId, string target, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getByAll?combatPlayerId={combatPlayerId}&target={target}&spell={spell}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var resourcesRecovery = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return Ok(resourcesRecovery);
         }
         catch (HttpRequestException ex)
         {

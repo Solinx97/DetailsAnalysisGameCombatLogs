@@ -23,7 +23,11 @@ public interface IGeneralFilterRepository<TModel>
 
     Task<int> CountBySpellAsync(int combatPlayerId, string spell, CancellationToken cancellationToken);
 
-    Task<IEnumerable<TModel>> GetByAllAsync(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken);
+    Task<IEnumerable<TModel>> GetByAllTargetsAsync(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken);
 
-    Task<int> CountByAllAsync(int combatPlayerId, string target, string spell, CancellationToken cancellationToken);
+    Task<IEnumerable<TModel>> GetByAllCreatorsAsync(int combatPlayerId, string creator, string spell, int page, int pageSize, CancellationToken cancellationToken);
+
+    Task<int> CountByAllTargetsAsync(int combatPlayerId, string target, string spell, CancellationToken cancellationToken);
+
+    Task<int> CountByAllCreatorsAsync(int combatPlayerId, string creator, string spell, CancellationToken cancellationToken);
 }

@@ -6,7 +6,7 @@ import './CombatMoreDetails.scss';
 
 interface CombatMoreDetailsProps {
     combatPlayerId: number;
-    detailsType: string;
+    detailsType: number;
 }
 
 const CombatMoreDetails: React.FC<CombatMoreDetailsProps> = ({ combatPlayerId, detailsType }) => {

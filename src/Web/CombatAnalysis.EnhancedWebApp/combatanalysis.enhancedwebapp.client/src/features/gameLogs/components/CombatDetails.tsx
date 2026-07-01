@@ -21,7 +21,7 @@ const CombatDetails: React.FC = () => {
     const [playerId, setPlayerId] = useState<number>(0);
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
-        detailsType: 'DamageDone',
+        detailsType: 0,
         combatLogId: 0,
         name: '',
         number: 0,
@@ -34,7 +34,7 @@ const CombatDetails: React.FC = () => {
         const queryParams = new URLSearchParams(window.location.search);
 
         const id: number = parseInt(queryParams.get("id") || '0');
-        const detailsType: string = queryParams.get("detailsType") ?? 'DamageDone';
+        const detailsType: number = +(queryParams.get("detailsType") ?? 0);
         const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
         const name: string = queryParams.get("name") || '';
         const number: number = parseInt(queryParams.get("number") || '0');

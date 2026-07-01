@@ -1,6 +1,8 @@
-﻿using CombatParser.Application.Queries.Resources.CountResourcesByCreator;
+﻿using CombatParser.Application.Queries.Resources.CountResourceByAll;
+using CombatParser.Application.Queries.Resources.CountResourcesByCreator;
 using CombatParser.Application.Queries.Resources.CountResourcesBySpell;
 using CombatParser.Application.Queries.Resources.GetResources;
+using CombatParser.Application.Queries.Resources.GetResourcesByAll;
 using CombatParser.Application.Queries.Resources.GetResourcesByCreator;
 using CombatParser.Application.Queries.Resources.GetResourcesBySpell;
 using CombatParser.Application.Queries.Resources.GetResourcesCount;
@@ -41,12 +43,12 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
         return Ok(uniqueTargets);
     }
 
-    [HttpGet("getByCreator")]
-    public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
+    [HttpGet("getUniqueSpells/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var resources = await _mediator.Send(new GetResourcesByCreatorQuery(combatPlayerId, creator, page, pageSize), cancellationToken); ;
+        var uniqueSpells = await _mediator.Send(new GetUniqueResourcesSpellsQuery(combatPlayerId), cancellationToken);
 
-        return Ok(resources);
+        return Ok(uniqueSpells);
     }
 
     [HttpGet("countByCreator")]
@@ -57,12 +59,28 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
         return Ok(count);
     }
 
-    [HttpGet("getUniqueSpells/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("countBySpell")]
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _mediator.Send(new GetUniqueResourcesSpellsQuery(combatPlayerId), cancellationToken);
+        var count = await _mediator.Send(new CountResourcesBySpellQuery(combatPlayerId, spell), cancellationToken);
 
-        return Ok(uniqueSpells);
+        return Ok(count);
+    }
+
+    [HttpGet("countByAll")]
+    public async Task<IActionResult> CountByAll(int combatPlayerId, string target, string spell, CancellationToken cancellationToken)
+    {
+        var count = await _mediator.Send(new CountResourceByAllQuery(combatPlayerId, target, spell), cancellationToken);
+
+        return Ok(count);
+    }
+
+    [HttpGet("getByCreator")]
+    public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var resources = await _mediator.Send(new GetResourcesByCreatorQuery(combatPlayerId, creator, page, pageSize), cancellationToken); ;
+
+        return Ok(resources);
     }
 
     [HttpGet("getBySpell")]
@@ -73,11 +91,11 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
         return Ok(resources);
     }
 
-    [HttpGet("countBySpell")]
-    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
+    [HttpGet("getByAll")]
+    public async Task<IActionResult> GetByAll(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var count = await _mediator.Send(new CountResourcesBySpellQuery(combatPlayerId, spell), cancellationToken);
+        var resources = await _mediator.Send(new GetResourcesByAllQuery(combatPlayerId, target, spell, page, pageSize), cancellationToken);
 
-        return Ok(count);
+        return Ok(resources);
     }
 }

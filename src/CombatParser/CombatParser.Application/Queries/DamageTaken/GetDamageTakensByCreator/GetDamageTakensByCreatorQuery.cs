@@ -5,7 +5,7 @@ namespace CombatParser.Application.Queries.DamageTaken.GetDamageTakensByCreator;
 
 public record GetDamageTakensByCreatorQuery(
     int CombatPlayerId,
-    string Target,
+    string Creator,
     int Page,
     int PageSize
     ) : IRequest<IEnumerable<DamageTakenDto>>;

@@ -20,8 +20,8 @@ export const DamageTakenApi = GameLogsApi.injectEndpoints({
         getDamageTakenUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/DamageTaken/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
-        getDamageTakenByFilter: builder.query<DamageTakenModel[], { combatPlayerId: number, filter: string, filterValue: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => `/DamageTaken/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+        getDamageTakenByFilter: builder.query<DamageTakenModel[], { combatPlayerId: number, filter: string, creator: string, spell: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, filter, creator, spell, page, pageSize }) => `/DamageTaken/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&creator=${creator}&spell=${spell}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -30,8 +30,8 @@ export const DamageTakenApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageTakenGeneral', id: 'LIST' }]
         }),
-        getDamageTakenCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, filterValue: number }>({
-            query: ({ combatPlayerId, filter, filterValue }) => `/DamageTaken/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        getDamageTakenCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, creator: string, spell: string }>({
+            query: ({ combatPlayerId, filter, creator, spell })  => `/DamageTaken/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&creator=${creator}&spell=${spell}`,
         }),
         getDamageTakenGeneralByCombatPlayerId: builder.query<DamageTakenGeneralModel[], number>({
             query: combatPlayerId => `/DamageTakenGeneral/getByCombatPlayerId/${combatPlayerId}`,

@@ -1,7 +1,9 @@
-﻿using CombatParser.Application.Queries.DamageTaken.CountDamageTakenByCreator;
+﻿using CombatParser.Application.Queries.DamageTaken.CountDamageTakenByAll;
+using CombatParser.Application.Queries.DamageTaken.CountDamageTakenByCreator;
 using CombatParser.Application.Queries.DamageTaken.CountDamageTakenBySpell;
 using CombatParser.Application.Queries.DamageTaken.GetDamageTakenCount;
 using CombatParser.Application.Queries.DamageTaken.GetDamageTakens;
+using CombatParser.Application.Queries.DamageTaken.GetDamageTakensByAll;
 using CombatParser.Application.Queries.DamageTaken.GetDamageTakensByCreator;
 using CombatParser.Application.Queries.DamageTaken.GetDamageTakensBySpell;
 using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenCreators;
@@ -41,12 +43,12 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
         return Ok(uniqueCreators);
     }
 
-    [HttpGet("getByCreator")]
-    public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
+    [HttpGet("getUniqueSpells/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var damageTakens = await _mediator.Send(new GetDamageTakensByCreatorQuery(combatPlayerId, creator, page, pageSize), cancellationToken); ;
+        var uniqueSpells = await _mediator.Send(new GetUniqueDamageTakenSpellsQuery(combatPlayerId), cancellationToken);
 
-        return Ok(damageTakens);
+        return Ok(uniqueSpells);
     }
 
     [HttpGet("countByCreator")]
@@ -57,13 +59,30 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
         return Ok(count);
     }
 
-    [HttpGet("getUniqueSpells/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("countBySpell")]
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _mediator.Send(new GetUniqueDamageTakenSpellsQuery(combatPlayerId), cancellationToken);
+        var count = await _mediator.Send(new CountDamageTakenBySpellQuery(combatPlayerId, spell), cancellationToken);
 
-        return Ok(uniqueSpells);
+        return Ok(count);
     }
+
+    [HttpGet("countByAll")]
+    public async Task<IActionResult> CountByAll(int combatPlayerId, string creator, string spell, CancellationToken cancellationToken)
+    {
+        var count = await _mediator.Send(new CountDamageTakenByAllQuery(combatPlayerId, creator, spell), cancellationToken);
+
+        return Ok(count);
+    }
+
+    [HttpGet("getByCreator")]
+    public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var damageTakens = await _mediator.Send(new GetDamageTakensByCreatorQuery(combatPlayerId, creator, page, pageSize), cancellationToken); ;
+
+        return Ok(damageTakens);
+    }
+
 
     [HttpGet("getBySpell")]
     public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
@@ -73,11 +92,11 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
         return Ok(damageTakens);
     }
 
-    [HttpGet("countBySpell")]
-    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
+    [HttpGet("getByAll")]
+    public async Task<IActionResult> GetByAll(int combatPlayerId, string creator, string spell, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var count = await _mediator.Send(new CountDamageTakenBySpellQuery(combatPlayerId, spell), cancellationToken);
+        var damageTaknes = await _mediator.Send(new GetDamageTakensByAllQuery(combatPlayerId, creator, spell, page, pageSize), cancellationToken);
 
-        return Ok(count);
+        return Ok(damageTaknes);
     }
 }

@@ -21,6 +21,14 @@ const damageTakenType = {
     Absorb: 7
 };
 
+const filterTypes = {
+    0: "None",
+    1: "Target",
+    2: "Creator",
+    3: "Spell",
+    4: "All"
+}
+
 interface DamageTakenHelperProps {
     combatPlayerId: number;
     pageSize: number;
@@ -31,21 +39,28 @@ interface DamageTakenHelperProps {
 const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, pageSize, t }) => {
     const { getTimeWithoutMs } = useTime();
 
+    const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", target: "All", spell: "All" });
 
     const { data: count, isLoading: countIsLoading } = useGetDamageTakenCountByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+        { combatPlayerId, filter: selectedFilter.filter, creator: selectedFilter.target, spell: selectedFilter.spell }
     );
-    const { data, isLoading } = useGetDamageTakenByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    const { data, isLoading: dataIsLoading  } = useGetDamageTakenByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, creator: selectedFilter.target, spell: selectedFilter.spell, page, pageSize }
     );
-
-    const totalPages = Math.ceil(count ?? 1 / pageSize);
 
     useEffect(() => {
         setPage(1);
     }, [selectedFilter]);
+
+    useEffect(() => {
+        if (!count || count === 0) {
+            return;
+        }
+
+        setTotalPages(Math.ceil(count / pageSize));
+    }, [count]);
 
     const getIcon = (type: number): JSX.Element => {
         switch (type) {
@@ -117,7 +132,7 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
         );
     }
 
-    if (isLoading || countIsLoading) {
+    if (countIsLoading || dataIsLoading) {
         return (<div>Loading...</div>);
     }
 
@@ -125,20 +140,10 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
         <>
             <div className="player-filter-details">
                 <DetailsFilter
+                    filters={[ filterTypes[2], filterTypes[3] ]}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
-                    filter="Creator"
-                    filterName={t("Creator")}
-                    useGetUniqueFilterValuesQuery={useGetDamageTakenUniqueFilterValuesQuery}
-                    t={t}
-                />
-                <DetailsFilter
-                    combatPlayerId={combatPlayerId}
-                    setSelectedFilter={setSelectedFilter}
-                    selectedFilter={selectedFilter}
-                    filter="Spell"
-                    filterName={t("Spell")}
                     useGetUniqueFilterValuesQuery={useGetDamageTakenUniqueFilterValuesQuery}
                     t={t}
                 />

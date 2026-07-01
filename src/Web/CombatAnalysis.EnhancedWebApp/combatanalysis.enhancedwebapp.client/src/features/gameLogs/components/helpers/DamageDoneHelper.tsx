@@ -21,6 +21,14 @@ const damageType = {
     Immune: 6,
 }
 
+const filterTypes = {
+    0: "None",
+    1: "Target",
+    2: "Creator",
+    3: "Spell",
+    4: "All"
+}
+
 interface DamageDoneHelperProps {
     combatPlayerId: number;
     pageSize: number;
@@ -138,6 +146,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         <>
             <div className="player-filter-details">
                 <DetailsFilter
+                    filters={[ filterTypes[1], filterTypes[3] ]}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}

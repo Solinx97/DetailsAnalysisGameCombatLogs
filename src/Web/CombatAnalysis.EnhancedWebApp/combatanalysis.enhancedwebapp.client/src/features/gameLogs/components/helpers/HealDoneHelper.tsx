@@ -10,6 +10,14 @@ import {
 import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
+const filterTypes = {
+    0: "None",
+    1: "Target",
+    2: "Creator",
+    3: "Spell",
+    4: "All"
+}
+
 interface HealDoneHelperProps {
     combatPlayerId: number;
     pageSize: number;
@@ -20,21 +28,28 @@ interface HealDoneHelperProps {
 const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
     const { getTimeWithoutMs } = useTime();
 
+    const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", target: "All", spell: "All" });
 
     const { data: count, isLoading: countIsLoading } = useGetHealDoneCountByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+        { combatPlayerId, filter: selectedFilter.filter, target: selectedFilter.target, spell: selectedFilter.spell }
     );
-    const { data, isLoading } = useGetHealDoneByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    const { data, isLoading: dataIsLoading } = useGetHealDoneByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, target: selectedFilter.target, spell: selectedFilter.spell, page, pageSize }
     );
-
-    const totalPages = Math.ceil(count ?? 1 / pageSize);
 
     useEffect(() => {
         setPage(1);
     }, [selectedFilter]);
+
+    useEffect(() => {
+        if (!count || count === 0) {
+            return;
+        }
+
+        setTotalPages(Math.ceil(count / pageSize));
+    }, [count]);
 
     const tableTitle = (): JSX.Element => {
         return (
@@ -57,7 +72,7 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
         );
     }
 
-    if (isLoading || countIsLoading) {
+    if (countIsLoading || dataIsLoading) {
         return (<div>Loading...</div>);
     }
 
@@ -65,20 +80,10 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
         <>
             <div className="player-filter-details">
                 <DetailsFilter
+                    filters={[ filterTypes[1], filterTypes[3] ]}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
-                    filter="Target"
-                    filterName={t("Target")}
-                    useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}
-                    t={t}
-                />
-                <DetailsFilter
-                    combatPlayerId={combatPlayerId}
-                    setSelectedFilter={setSelectedFilter}
-                    selectedFilter={selectedFilter}
-                    filter="Spell"
-                    filterName={t("Spell")}
                     useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}
                     t={t}
                 />

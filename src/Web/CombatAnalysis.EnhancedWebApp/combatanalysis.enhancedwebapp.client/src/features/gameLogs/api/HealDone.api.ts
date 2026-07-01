@@ -20,8 +20,8 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
         getHealDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/HealDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
-        getHealDoneByFilter: builder.query<HealDoneModel[], { combatPlayerId: number, filter: string, filterValue: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => `/HealDone/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+        getHealDoneByFilter: builder.query<HealDoneModel[], { combatPlayerId: number, filter: string, target: string, spell: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, filter, target, spell, page, pageSize }) => `/HealDone/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&target=${target}&spell=${spell}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -30,8 +30,8 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'HealDone', id: 'LIST' }]
         }),
-        getHealDoneCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, filterValue: number }>({
-            query: ({ combatPlayerId, filter, filterValue }) => `/HealDone/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        getHealDoneCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, target: string, spell: string }>({
+            query: ({ combatPlayerId, filter, target, spell }) => `/HealDone/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&target=${target}&spell=${spell}`,
         }),
         getHealDoneGeneralByCombatPlayerId: builder.query<HealDoneGeneralModel[], number>({
             query: combatPlayerId => `/HealDoneGeneral/getByCombatPlayerId/${combatPlayerId}`,

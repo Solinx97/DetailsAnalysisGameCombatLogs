@@ -9,7 +9,7 @@ internal class CountDamageByAllHandler(IGeneralFilterRepository<Domain.Entities.
 
     public async Task<int> Handle(CountDamageByAllQuery request, CancellationToken cancellationToken)
     {
-        var count = await _repository.CountByAllAsync(request.CombatPlayerId, request.Target, request.Spell, cancellationToken);
+        var count = await _repository.CountByAllTargetsAsync(request.CombatPlayerId, request.Target, request.Spell, cancellationToken);
 
         return count;
     }
