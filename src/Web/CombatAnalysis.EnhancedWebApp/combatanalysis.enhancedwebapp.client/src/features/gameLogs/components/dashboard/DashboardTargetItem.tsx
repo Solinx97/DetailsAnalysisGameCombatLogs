@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { CombatTargetModel } from '../../types/CombatTargetModel';
-import type { CombatDetailsModel } from '../../types/dashboard/CombatDetailsModel';
+import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import TopPlayersByTarget from './TopPlayersByTarget';
 
 interface DashboardTargetItemProps {

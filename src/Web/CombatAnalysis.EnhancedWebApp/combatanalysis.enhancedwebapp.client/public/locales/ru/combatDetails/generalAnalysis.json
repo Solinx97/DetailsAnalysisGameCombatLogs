@@ -1,6 +1,6 @@
 {
-  "Damage": "Урон",
-  "Healing": "Исцеление",
+  "DPS": "УВС",
+  "HPS": "ИВС",
   "DamageTaken": "Получено урона",
   "ResourcesRecovery": "Восстановлено ресурсов",
   "Deaths": "Смертей",

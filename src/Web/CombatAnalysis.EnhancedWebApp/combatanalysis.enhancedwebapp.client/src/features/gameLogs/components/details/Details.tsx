@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
-import type { CombatDetailsModel } from '../../types/dashboard/CombatDetailsModel';
+import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import DetailsItem from './DetailsItem';
 import { useLazyGetCombatAbilitiesQuery } from '../../api/GameLogs.api';
 import type { CombatAbilityModel } from '../../types/CombatAbilityModel';

@@ -9,7 +9,7 @@ import { useLazyGetCombatByIdQuery } from '../../api/GameLogs.api';
 import type { CombatModel } from "../../types//CombatModel";
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import type { CombatTargetModel } from '../../types/CombatTargetModel';
-import type { CombatDetailsModel } from '../../types/dashboard/CombatDetailsModel';
+import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import type { CombatPlayerDeathModel } from '../../types/CombatPlayerDeathModel';
 import DashboardDeathItem from './DashboardDeathItem';
 import DashboardGeneralItem from './DashboardGeneralItem';

@@ -5,4 +5,5 @@ export interface CombatDetailsModel {
     name: string;
     number: number;
     isWin: boolean;
+    duration: number;
 }

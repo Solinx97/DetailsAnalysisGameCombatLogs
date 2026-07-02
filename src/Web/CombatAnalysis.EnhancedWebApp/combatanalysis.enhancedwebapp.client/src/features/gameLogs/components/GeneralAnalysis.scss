@@ -8,10 +8,11 @@ $combat-lose: red;
 $mobile-max-width: 425px;
 
 @mixin box-shadow($type: 'standard') {
-    @if $type == 'standard' {
+    @if $type =='standard' {
         box-shadow: $box-shadow-standard;
     }
-    @else if $type == 'highlight' {
+
+    @else if $type =='highlight' {
         box-shadow: $box-shadow-highlight;
     }
 }
@@ -24,7 +25,9 @@ $mobile-max-width: 425px;
             background: $background-dark;
 
             .unique-combats {
-                &__all, &__selected {
+
+                &__all,
+                &__selected {
                     .combat-number {
                         font-size: 1em;
                         margin: 0 10px;
@@ -41,13 +44,36 @@ $mobile-max-width: 425px;
                     position: relative;
                     display: flex;
                     justify-content: flex-start;
-                    top: -70px;
+                    align-items: center;
+                    top: -120px;
                     font-size: 1em;
-                    gap: 20px;
                     overflow: auto;
                     width: 100%;
+                    height: 120px;
 
-                    li {
+                    .last-combat {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 10px 20px;
+                        box-shadow: -1px -1px 1px 1px greenyellow;
+                        border-radius: 25px;
+
+                        &__last {
+                            font-size: 0.7em;
+                        }
+
+                        &__space {
+                            width: 5px;
+                            background: green;
+                            height: 70px;
+                            margin-left: 10px;
+                        }
+                    }
+
+                    li,
+                    .last-combat__content {
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -57,17 +83,41 @@ $mobile-max-width: 425px;
                         gap: 5px;
                         cursor: pointer;
 
-                        &:hover {
-                            transform: scale(1.05)
-                        }
-
                         .combat-time {
                             margin: 0;
                         }
                     }
 
+                    li {
+                        &:hover {
+                            transform: scale(1.025)
+                        }
+                    }
+
                     .list-group-item {
                         background: #0c192c;
+                    }
+
+                    .show-all-combats, .hide-all-combats {
+                        display: flex;
+                        gap: 10px;
+                        border-radius: 20px;
+                        height: 50px;
+                        padding: 10px 20px;
+
+                        &__count {
+                            padding: 3px 7px;
+                            border-radius: 20px;
+                            border: 2px solid green;
+                        }
+                    }
+
+                    .show-all-combats {
+                        box-shadow: 2px 2px orange;
+                    }
+
+                    .hide-all-combats {
+                        box-shadow: 2px 2px gray;
                     }
                 }
 
@@ -88,7 +138,8 @@ $mobile-max-width: 425px;
                 }
             }
 
-            .win, .lose {
+            .win,
+            .lose {
                 @include box-shadow('highlight');
                 border-radius: $border-radius-standard;
                 padding: 5px;
@@ -105,7 +156,8 @@ $mobile-max-width: 425px;
                 margin: 0 0 10px 10px;
                 gap: 25px;
 
-                &__range, &__lasts {
+                &__range,
+                &__lasts {
                     display: flex;
                     align-items: center;
                     gap: 20px;
@@ -166,8 +218,8 @@ $mobile-max-width: 425px;
             &__container {
                 display: flex;
                 flex-direction: column;
-                gap: 75px;
-                margin-top: 80px;
+                gap: 130px;
+                margin-top: 130px;
                 padding: 0;
 
                 .details {
@@ -181,7 +233,10 @@ $mobile-max-width: 425px;
             justify-content: space-around;
             margin: 5px 0;
 
-            .auras-details {
+            .buffs {
+                padding: 5px 20px;
+                border-radius: 25px;
+                box-shadow: 2px 2px 2px 2px orange;
                 cursor: pointer;
             }
         }
@@ -253,7 +308,7 @@ ul {
 
     .see-reply {
         margin: 0 50px;
-        
+
         svg {
             margin: 0;
         }

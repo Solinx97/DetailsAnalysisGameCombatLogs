@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { CombatModel } from '../types/CombatModel';
+import GeneralAnalysisCombats from './GeneralAnalysisCombats';
 
 interface GeneralAnalysisItemProps {
     uniqueCombats: CombatModel[];
@@ -11,19 +12,19 @@ interface GeneralAnalysisItemProps {
     getValueShortName(value: number): string;
 }
 
-const getCombatDuration = (duration: string) => duration.substring(3);
-
 const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats, combatLogId, getValueShortName }) => {
     const { t } = useTranslation("combatDetails/generalAnalysis");
 
     const navigate = useNavigate();
 
     const [selectedCombatIndex, setSelectedCombatIndex] = useState<number>(uniqueCombats.length - 1);
-    const [selectedCombat, setSelectedCombat] = useState(uniqueCombats[selectedCombatIndex]);
+    const [selectedCombat, setSelectedCombat] = useState<CombatModel>(uniqueCombats[selectedCombatIndex]);
 
     useEffect(() => {
         setSelectedCombat(uniqueCombats[selectedCombatIndex]);
     }, [selectedCombatIndex]);
+
+    const getCombatDuration = (duration: string) => duration.substring(3);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -32,38 +33,25 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
         return hoursMins;
     }
 
+    const getTotalSeconds = (duration: string) => {
+        const [hours, minutes, seconds] = duration.split(":").map(Number);
+
+        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+        return totalSeconds;
+    }
+
     if (selectedCombat === null) {
         return (<div>Loading...</div>);
     }
 
     return (
         <div className="card">
-            <ul className="unique-combats__all">
-                {uniqueCombats.map((combat, index) => (
-                    <li key={combat.id + 2} className={`unique-combats__${combat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(index)}>
-                        <div className="combat-number">{index + 1}</div>
-                        <div className="combat-time">
-                            <div className="combat-time__range">
-                                <div>
-                                    <div>{formatDate(combat.startDate)}</div>
-                                </div>
-                                <div>-</div>
-                                <div>
-                                    <div>{formatDate(combat.finishDate)}</div>
-                                </div>
-                            </div>
-                            <div className="combat-time__lasts">
-                                <div>{getCombatDuration(combat.duration)}</div>
-                                <FontAwesomeIcon
-                                    icon={faHourglassStart}
-                                    className="list-group-item__duration"
-                                    title={t("Duration") || ""}
-                                />
-                            </div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            <GeneralAnalysisCombats
+                uniqueCombats={uniqueCombats}
+                setSelectedCombatIndex={setSelectedCombatIndex}
+                t={t}
+            />
             <div className="unique-combats__selected">
                 <div className="combat-title">
                     <div className={`status combat-title__${selectedCombat.isWin ? 'win' : 'lose'}`}>
@@ -106,48 +94,54 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
             </div>
             <ul className="information">
                 <li className="list-group-item">
+                    <div>{t("DPS")}</div>
                     <FontAwesomeIcon
                         icon={faKhanda}
                         className="list-group-item__player-statistic-item"
                         title={t("Damage") || ""}
                     />
-                    <div>{getValueShortName(uniqueCombats[selectedCombatIndex].damageDone)}</div>
+                    <div>{getValueShortName(selectedCombat.damageDone)}</div>
                 </li>
                 <li className="list-group-item">
+                    <div>{t("HPS")}</div>
                     <FontAwesomeIcon
                         icon={faPlusCircle}
                         className="list-group-item__player-statistic-item"
                         title={t("Healing") || ""}
                     />
-                    <div>{getValueShortName(uniqueCombats[selectedCombatIndex].healDone)}</div>
+                    <div>{getValueShortName(selectedCombat.healDone)}</div>
                 </li>
                 <li className="list-group-item">
+                    <div>{t("DamageTaken")}</div>
                     <FontAwesomeIcon
                         icon={faShieldHalved}
                         className="list-group-item__player-statistic-item"
                         title={t("DamageTaken") || ""}
                     />
-                    <div>{getValueShortName(uniqueCombats[selectedCombatIndex].damageTaken)}</div>
+                    <div>{getValueShortName(selectedCombat.damageTaken)}</div>
                 </li>
                 <li className="list-group-item">
+                    <div>{t("ResourcesRecovery")}</div>
                     <FontAwesomeIcon
                         icon={faBolt}
                         className="list-group-item__player-statistic-item"
                         title={t("ResourcesRecovery") || ""}
                     />
-                    <div>{getValueShortName(uniqueCombats[selectedCombatIndex].resourcesRecovery)}</div>
+                    <div>{getValueShortName(selectedCombat.resourcesRecovery)}</div>
                 </li>
-                <li className="list-group-item">
+                <li className="list-group-item buffs"
+                    onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>
                     <FontAwesomeIcon
                         icon={faCircleNodes}
                         className="list-group-item__player-statistic-item"
                         title={t("Buffs") || ""}
                     />
-                    <div className="auras-details" onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>{t("Buffs")}</div>
+                    <div>{t("Buffs")}</div>
                 </li>
             </ul>
             <div className="card-body details">
-                <div className="btn-shadow" onClick={() => navigate(`/selected-combat?id=${uniqueCombats[selectedCombatIndex].id}&combatLogId=${combatLogId}&name=${uniqueCombats[selectedCombatIndex].boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}`)}>
+                <div className="btn-shadow"
+                    onClick={() => navigate(`/selected-combat?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
                     <FontAwesomeIcon
                         icon={faDatabase}
                     />

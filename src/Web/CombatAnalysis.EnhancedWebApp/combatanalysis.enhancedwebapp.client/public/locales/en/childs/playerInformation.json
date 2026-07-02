@@ -1,7 +1,7 @@
 {
   "NeedToAddSomething": "Need to add at least 1 item.",
-  "Damage": "Damage",
-  "Healing": "Healing",
+  "DPS": "DPS",
+  "HPS": "HPS",
   "DamageTaken": "Damage taken",
   "ResourcesRecovery": "Resources recovery",
   "Resources": "Resources",

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetPlayersDeathByPlayerIdQuery } from '../api/GameLogs.api';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
-import type { CombatDetailsModel } from '../types/dashboard/CombatDetailsModel';
+import type { CombatDetailsModel } from '../types/CombatDetailsModel';
 import SelectedCombatChart from './SelectedCombatChart';
 import PersonalTabs from './PersonalTabs';
 import Dashboard from './dashboard/Dashboard';
@@ -24,11 +24,12 @@ const SelectedCombat: React.FC = () => {
 
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
-        detailsType: '',
+        detailsType: 0,
         combatLogId: 0,
         name: '',
         number: 0,
-        isWin: false
+        isWin: false,
+        duration: 0
     });
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [playersDeath, setPlayersDeath] = useState<CombatPlayerDeathModel[] | null>(null);
@@ -51,11 +52,12 @@ const SelectedCombat: React.FC = () => {
         const queryParams = new URLSearchParams(window.location.search);
 
         const id: number = parseInt(queryParams.get("id") || '0');
-        const detailsType: string = queryParams.get("detailsType") || '';
+        const detailsType: number = parseInt(queryParams.get("detailsType") || '0');
         const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
         const name: string = queryParams.get("name") || '';
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
+        const duration: number = parseInt(queryParams.get("duration") || "1");
 
         setDetails({
             id,
@@ -64,6 +66,7 @@ const SelectedCombat: React.FC = () => {
             name,
             number,
             isWin,
+            duration,
         });
     }, []);
 
@@ -125,7 +128,7 @@ const SelectedCombat: React.FC = () => {
             return `${thousands.toFixed(fixedNumberUntil)}K`;
         }
 
-        return `${value}`;
+        return value.toString();
     }
 
     return (

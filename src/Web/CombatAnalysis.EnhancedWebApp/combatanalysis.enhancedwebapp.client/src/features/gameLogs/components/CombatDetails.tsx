@@ -25,7 +25,8 @@ const CombatDetails: React.FC = () => {
         combatLogId: 0,
         name: '',
         number: 0,
-        isWin: false
+        isWin: false,
+        duration: 0
     });
 
     const [getCombatPlayerById] = useLazyGetCombatPlayerByIdQuery();
@@ -39,6 +40,7 @@ const CombatDetails: React.FC = () => {
         const name: string = queryParams.get("name") || '';
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
+        const duration: number = parseInt(queryParams.get("duration") || "1");
 
         const playerId: number = parseInt(queryParams.get("playerId") || '0');
         setPlayerId(playerId);
@@ -50,6 +52,7 @@ const CombatDetails: React.FC = () => {
             name,
             number,
             isWin,
+            duration,
         });
     }, []);
 
@@ -98,7 +101,7 @@ const CombatDetails: React.FC = () => {
             <div className="general-details__navigate">
                 <div className="player">
                     <div className="btn-shadow select-another-player"
-                        onClick={() => navigate(`/selected-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}`)}>
+                        onClick={() => navigate(`/selected-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}`)}>
                         <FontAwesomeIcon
                             icon={faDeleteLeft}
                         />
