@@ -23,7 +23,6 @@ type Option = {
 const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShortName, t }) => {
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
     const [allAbilities, setAllAbilities] = useState<Map<number, CombatAbilityModel[]>>();
-    const [abilityVisisble, setAbilityVisisble] = useState<string>("");
 
     const [getCombatPlayerAbilities] = useLazyGetCombatAbilitiesQuery();
     const sortOptions: Option[] = [
@@ -94,8 +93,8 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
         return (
             <div className="creator-pre-auras">
                 <ul className="creator-pre-auras__content">
-                    {abilities.map((value) => (
-                        <li key={value.id} className="creator-pre-auras details">
+                    {abilities.map((value, index) => (
+                        <li key={index} className="creator-pre-auras details">
                             {value.abilityType === 1 &&
                                 <FontAwesomeIcon
                                     icon={faVial}

@@ -1,4 +1,5 @@
-﻿using CombatParser.Domain.Data.Filters;
+﻿using Azure;
+using CombatParser.Domain.Data.Filters;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -20,26 +21,6 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
                      .ToListAsync(cancellationToken);
 
         return uniqueTargets;
-    }
-
-    public async Task<int> CountByTargetAsync(int combatPlayerId, string target, CancellationToken cancellationToken)
-    {
-        var count = await _context.Set<TModel>()
-                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target), cancellationToken);
-
-        return count;
-    }
-
-    public async Task<IEnumerable<TModel>> GetByTargetAsync(int combatPlayerId, string target, int page, int pageSize, CancellationToken cancellationToken)
-    {
-        var result = await _context.Set<TModel>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target))
-                     .OrderBy(x => x.Id)
-                     .Skip((page - 1) * pageSize)
-                     .Take(pageSize)
-                     .ToListAsync(cancellationToken);
-
-        return result;
     }
 
     public async Task<int> GetValueToTargetAsync(int combatPlayerId, string target, CancellationToken cancellationToken)
@@ -64,26 +45,6 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
         return uniqueCreatorNames;
     }
 
-    public async Task<int> CountByCreatorAsync(int combatPlayerId, string creator, CancellationToken cancellationToken)
-    {
-        var count = await _context.Set<TModel>()
-                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator), cancellationToken);
-
-        return count;
-    }
-
-    public async Task<IEnumerable<TModel>> GetByCreatorAsync(int combatPlayerId, string creator, int page, int pageSize, CancellationToken cancellationToken)
-    {
-        var result = await _context.Set<TModel>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator))
-                     .OrderBy(x => x.Id)
-                     .Skip((page - 1) * pageSize)
-                     .Take(pageSize)
-                     .ToListAsync(cancellationToken);
-
-        return result;
-    }
-
     public async Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
         var uniqueSpells = await _context.Set<TModel>()
@@ -96,10 +57,42 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
         return uniqueSpells;
     }
 
-    public async Task<IEnumerable<TModel>> GetBySpellAsync(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TModel>> GetAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var values = await _context.Set<TModel>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell))
+        var query = _context.Set<TModel>().AsQueryable();
+        if (combatPlayerId > 0)
+        {
+            query = query.Where(x => x.CombatPlayerId == combatPlayerId);
+        }
+
+        if (!string.IsNullOrEmpty(target))
+        {
+            query = query.Where(x => x.Target.Equals(target));
+        }
+
+        if (!string.IsNullOrEmpty(target))
+        {
+            query = query.Where(x => x.Target.Equals(target));
+        }
+
+        if (!string.IsNullOrEmpty(creator))
+        {
+            query = query.Where(x => x.Creator.Equals(creator));
+        }
+
+        if (!string.IsNullOrEmpty(spell))
+        {
+            query = query.Where(x => x.Spell.Equals(spell));
+        }
+
+        if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
+        {
+            var fromTime = TimeSpan.Parse(from);
+            var toTime = TimeSpan.Parse(to);
+            query = query.Where(x => x.Time >= fromTime && x.Time <= toTime);
+        }
+
+        var values = await query
                      .OrderBy(x => x.Time)
                      .Skip((page - 1) * pageSize)
                      .Take(pageSize)
@@ -108,50 +101,43 @@ internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) :
         return values;
     }
 
-    public async Task<int> CountBySpellAsync(int combatPlayerId, string spell, CancellationToken cancellationToken)
+    public async Task<int> CountAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
     {
-        var count = await _context.Set<TModel>()
-                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell), cancellationToken);
+        var query = _context.Set<TModel>().AsQueryable();
+        if (combatPlayerId > 0)
+        {
+            query = query.Where(x => x.CombatPlayerId == combatPlayerId);
+        }
 
-        return count;
-    }
+        if (!string.IsNullOrEmpty(target))
+        {
+            query = query.Where(x => x.Target.Equals(target));
+        }
 
-    public async Task<IEnumerable<TModel>> GetByAllTargetsAsync(int combatPlayerId, string target, string spell, int page, int pageSize, CancellationToken cancellationToken)
-    {
-        var values = await _context.Set<TModel>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target) && x.Spell.Equals(spell))
-                     .OrderBy(x => x.Time)
-                     .Skip((page - 1) * pageSize)
-                     .Take(pageSize)
-                     .ToListAsync(cancellationToken);
+        if (!string.IsNullOrEmpty(target))
+        {
+            query = query.Where(x => x.Target.Equals(target));
+        }
 
-        return values;
-    }
+        if (!string.IsNullOrEmpty(creator))
+        {
+            query = query.Where(x => x.Creator.Equals(creator));
+        }
 
-    public async Task<IEnumerable<TModel>> GetByAllCreatorsAsync(int combatPlayerId, string creator, string spell, int page, int pageSize, CancellationToken cancellationToken)
-    {
-        var values = await _context.Set<TModel>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator) && x.Spell.Equals(spell))
-                     .OrderBy(x => x.Time)
-                     .Skip((page - 1) * pageSize)
-                     .Take(pageSize)
-                     .ToListAsync(cancellationToken);
+        if (!string.IsNullOrEmpty(spell))
+        {
+            query = query.Where(x => x.Spell.Equals(spell));
+        }
 
-        return values;
-    }
+        if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
+        {
+            var fromTime = TimeSpan.Parse(from);
+            var toTime = TimeSpan.Parse(to);
+            query = query.Where(x => x.Time >= fromTime && x.Time <= toTime);
+        }
 
-    public async Task<int> CountByAllTargetsAsync(int combatPlayerId, string target, string spell, CancellationToken cancellationToken)
-    {
-        var count = await _context.Set<TModel>()
-                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target) && x.Spell.Equals(spell), cancellationToken);
-
-        return count;
-    }
-
-    public async Task<int> CountByAllCreatorsAsync(int combatPlayerId, string creator, string spell, CancellationToken cancellationToken)
-    {
-        var count = await _context.Set<TModel>()
-                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator) && x.Spell.Equals(spell), cancellationToken);
+        var count = await query
+                     .CountAsync(cancellationToken);
 
         return count;
     }

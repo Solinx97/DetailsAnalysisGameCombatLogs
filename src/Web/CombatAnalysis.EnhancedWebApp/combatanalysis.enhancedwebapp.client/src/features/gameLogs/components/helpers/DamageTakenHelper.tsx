@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
 import {
-    useGetDamageTakenByFilterQuery,
-    useGetDamageTakenCountByFilterQuery,
+    useCountDamageTakenQuery,
+    useGetAllDamageTakenQuery,
     useGetDamageTakenUniqueFilterValuesQuery
 } from '../../api/DamageTaken.api';
 import DetailsFilter from './DetailsFilter';
@@ -21,14 +21,6 @@ const damageTakenType = {
     Absorb: 7
 };
 
-const filterTypes = {
-    0: "None",
-    1: "Target",
-    2: "Creator",
-    3: "Spell",
-    4: "All"
-}
-
 interface DamageTakenHelperProps {
     combatPlayerId: number;
     pageSize: number;
@@ -37,17 +29,20 @@ interface DamageTakenHelperProps {
 }
 
 const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, pageSize, t }) => {
+    const NONE_VALUE = "NONE";
+    const ZERO_TIME_VALUE = "00:00:00";
+
     const { getTimeWithoutMs } = useTime();
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", target: "All", spell: "All" });
+    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
 
-    const { data: count, isLoading: countIsLoading } = useGetDamageTakenCountByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, creator: selectedFilter.target, spell: selectedFilter.spell }
+    const { data: count, isLoading: countIsLoading } = useCountDamageTakenQuery(
+        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
-    const { data, isLoading: dataIsLoading  } = useGetDamageTakenByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, creator: selectedFilter.target, spell: selectedFilter.spell, page, pageSize }
+    const { data, isLoading: dataIsLoading } = useGetAllDamageTakenQuery(
+        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
 
     useEffect(() => {
@@ -140,7 +135,7 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
         <>
             <div className="player-filter-details">
                 <DetailsFilter
-                    filters={[ filterTypes[2], filterTypes[3] ]}
+                    filters={[ "Creator", "Spell" ]}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}

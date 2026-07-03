@@ -20,6 +20,7 @@
             .filter-type {
                 display: flex;
                 flex-direction: column;
+                justify-content: center;
                 gap: 10px;
                 width: 225px;
 
@@ -27,6 +28,13 @@
                     display: flex;
                     align-items: center;
                     gap: 15px;
+                }
+
+                .time {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: 10px;
                 }
             }
         }

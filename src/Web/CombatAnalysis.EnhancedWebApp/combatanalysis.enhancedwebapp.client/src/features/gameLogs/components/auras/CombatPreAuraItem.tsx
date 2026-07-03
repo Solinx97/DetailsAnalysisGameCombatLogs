@@ -8,10 +8,9 @@ import Loading from '@/shared/components/Loading';
 interface CombatPreAuraItemProps {
     combatPlayerId: number;
     combatId: number;
-    t: (key: string) => string;
 }
 
-const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, combatId, t }) => {
+const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, combatId }) => {
     const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>([]);
 
     const { data: allPreAuras, isLoading } = useGetCombatByPreAuraQuery({ combatPlayerId, combatId });

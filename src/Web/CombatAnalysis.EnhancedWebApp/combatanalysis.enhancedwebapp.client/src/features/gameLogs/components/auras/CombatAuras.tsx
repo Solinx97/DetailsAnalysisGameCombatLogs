@@ -156,7 +156,6 @@ const CombatAuras: React.FC = () => {
             <CombatPreAuraItem
                 combatPlayerId={selectedCombatPlayerId}
                 combatId={combatId}
-                t={t}
             />
             <CombatAuraItem
                 onlyPinnedAuras={onlyPinnedAuras}

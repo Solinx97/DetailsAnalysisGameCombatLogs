@@ -14,14 +14,11 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
-        getResourceRecoveryCountByCombatPlayerId: builder.query<number, number>({
-            query: combatPlayerId => `/ResourceRecovery/count/${combatPlayerId}`,
+        countResourceRecovery: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to }) => `/ResourceRecovery/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getResourceRecoveryUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
-            query: ({ combatPlayerId, filter }) => `/ResourceRecovery/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
-        }),
-        getResourceRecoveryByFilter: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, filter: string, creator: string, spell: string, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, creator, spell, page, pageSize }) => `/ResourceRecovery/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&creator=${creator}&spell=${spell}&page=${page}&pageSize=${pageSize}`,
+        getAllResourceRecovery: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/ResourceRecovery/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -30,8 +27,8 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
-        getResourceRecoveryCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, creator: string, spell: string }>({
-            query: ({ combatPlayerId, filter, creator, spell }) => `/ResourceRecovery/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&creator=${creator}&spell=${spell}`,
+        getResourceRecoveryUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
+            query: ({ combatPlayerId, filter }) => `/ResourceRecovery/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
         getResourceRecoveryGeneralByCombatPlayerId: builder.query<ResourceRecoveryGeneralModel[], number>({
             query: combatPlayerId => `/ResourceRecoveryGeneral/getByCombatPlayerId/${combatPlayerId}`,
@@ -48,10 +45,9 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
 
 export const {
     useGetResourceRecoveryByCombatPlayerIdQuery,
-    useLazyGetResourceRecoveryCountByCombatPlayerIdQuery,
+    useCountResourceRecoveryQuery,
     useGetResourceRecoveryUniqueFilterValuesQuery,
-    useGetResourceRecoveryByFilterQuery,
-    useGetResourceRecoveryCountByFilterQuery,
+    useGetAllResourceRecoveryQuery,
     useGetResourceRecoveryGeneralByCombatPlayerIdQuery,
     useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery,
 } = ResourcesRecoveryApi;

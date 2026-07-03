@@ -15,14 +15,11 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageDone', id: 'LIST' }]
         }),
-        getDamageDoneCountByCombatPlayerId: builder.query<number, number>({
-            query: combatPlayerId => `/DamageDone/count/${combatPlayerId}`,
+        countDamageDone: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to }) => `/DamageDone/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getDamageDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
-            query: ({ combatPlayerId, filter }) => `/DamageDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
-        }),
-        getDamageDoneByFilter: builder.query<DamageDoneModel[], { combatPlayerId: number, filter: string, target: string, spell: string, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, target, spell, page, pageSize }) => `/DamageDone/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&target=${target}&spell=${spell}&page=${page}&pageSize=${pageSize}`,
+        getAllDamageDone: builder.query<DamageDoneModel[], { combatPlayerId: number, creator: string, target: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/DamageDone/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -31,14 +28,11 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageDone', id: 'LIST' }]
         }),
-        getDamageDoneValueByTarget: builder.query<number, { combatPlayerId: number, target: string }>({
-            query: ({ combatPlayerId, target }) => `/DamageDone/getValueByTarget?combatPlayerId=${combatPlayerId}&target=${target}`,
+        getDamageDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
+            query: ({ combatPlayerId, filter }) => `/DamageDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
         getDamageDoneDamageByEachTarget: builder.query<Array<CombatTargetModel[]>, number>({
             query: combatId => `/DamageDone/getDamageByEachTarget/${combatId}`,
-        }),
-        getDamageDoneCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, target: string, spell: string }>({
-            query: ({ combatPlayerId, filter, target, spell }) => `/DamageDone/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&target=${target}&spell=${spell}`,
         }),
         getDamageDoneGeneralByCombatPlayerId: builder.query<DamageDoneGeneralModel[], number>({
             query: combatPlayerId => `/DamageDoneGeneral/getByCombatPlayerId/${combatPlayerId}`,
@@ -55,14 +49,11 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
 
 export const {
     useGetDamageDoneByCombatPlayerIdQuery,
-    useLazyGetDamageDoneCountByCombatPlayerIdQuery,
+    useCountDamageDoneQuery,
     useLazyGetDamageDoneUniqueFilterValuesQuery,
     useGetDamageDoneUniqueFilterValuesQuery,
-    useGetDamageDoneValueByTargetQuery,
-    useLazyGetDamageDoneValueByTargetQuery,
-    useGetDamageDoneByFilterQuery,
+    useGetAllDamageDoneQuery,
     useLazyGetDamageDoneDamageByEachTargetQuery,
-    useGetDamageDoneCountByFilterQuery,
     useGetDamageDoneGeneralByCombatPlayerIdQuery,
     useLazyGetDamageDoneGeneralByCombatPlayerIdQuery,
 } = DamageDoneApi;
