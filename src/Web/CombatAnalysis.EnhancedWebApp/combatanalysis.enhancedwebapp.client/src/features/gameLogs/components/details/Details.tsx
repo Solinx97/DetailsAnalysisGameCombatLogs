@@ -1,4 +1,4 @@
-﻿import { faFlask, faHourglass, faAppleWhole } from '@fortawesome/free-solid-svg-icons';
+﻿import { faVial, faFlask, faHourglass, faAppleWhole, faBolt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
@@ -92,30 +92,40 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
         const abilities = allAbilities?.get(combatPlayerId) ?? [];
 
         return (
-            <ul className="ability">
-                {abilities.map((ability, index) => (
-                    <li key={`${combatPlayerId}-${ability.id}-${index}`} className="ability__item" onMouseOver={() => setAbilityVisisble(`${combatPlayerId}-${index}`)} onMouseLeave={() => setAbilityVisisble("")}>
-                        {ability.abilityType === 1 &&
-                            <FontAwesomeIcon
-                                icon={faFlask}
-                            />
-                        }
-                        {ability.abilityType === 7 &&
-                            <FontAwesomeIcon
-                                icon={faHourglass}
-                            />
-                        }
-                        {ability.abilityType === 9 &&
-                            <FontAwesomeIcon
-                                icon={faAppleWhole}
-                            />
-                        }
-                        {(abilityVisisble === `${combatPlayerId}-${index}`) &&
-                            <div>{ability.name}</div>
-                        }
-                    </li>
-                ))}
-            </ul>
+            <div className="creator-pre-auras">
+                <ul className="creator-pre-auras__content">
+                    {abilities.map((value) => (
+                        <li key={value.id} className="creator-pre-auras details">
+                            {value.abilityType === 1 &&
+                                <FontAwesomeIcon
+                                    icon={faVial}
+                                />
+                            }
+                            {value.abilityType === 0 &&
+                                <FontAwesomeIcon
+                                    icon={faFlask}
+                                />
+                            }
+                            {value.abilityType === 7 &&
+                                <FontAwesomeIcon
+                                    icon={faHourglass}
+                                />
+                            }
+                            {value.abilityType === 9 &&
+                                <FontAwesomeIcon
+                                    icon={faAppleWhole}
+                                />
+                            }
+                            {value.abilityType === 10 &&
+                                <FontAwesomeIcon
+                                    icon={faBolt}
+                                />
+                            }
+                            <div>{value.name}</div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         );
     }
 

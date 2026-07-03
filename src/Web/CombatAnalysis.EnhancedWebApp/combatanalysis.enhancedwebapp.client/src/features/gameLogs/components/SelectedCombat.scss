@@ -64,6 +64,36 @@
             .form-check {
                 margin: 15px;
             }
+
+            .creator-pre-auras {
+                display: flex;
+                overflow-x: auto;
+                margin: 0 5px;
+
+                &__content {
+                    display: flex;
+                    gap: 10px;
+                    margin: 5px 0;
+
+                    .details {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border: 1px solid orange;
+                        border-radius: 20px;
+                        padding: 5px 10px;
+                        font-size: 0.6em;
+                        text-align: center;
+                        gap: 10px;
+                        width: 120px;
+
+                        svg {
+                            width: 20px;
+                            height: 20px;
+                        }
+                    }
+                }
+            }
         }
 
         .form-check-input {

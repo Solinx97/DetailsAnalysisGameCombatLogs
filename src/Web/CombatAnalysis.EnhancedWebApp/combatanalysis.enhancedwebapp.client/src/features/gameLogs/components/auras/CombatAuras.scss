@@ -164,12 +164,10 @@
         }
     }
 
-    .creator-auras,
-    .creator-pre-auras {
+    .creator-auras {
         &__title {
             display: flex;
-            justify-content: space-between;
-            gap: 50px;
+            gap: 100px;
 
             .title {
                 display: flex;
@@ -233,6 +231,35 @@
                     box-shadow: 1px 1px 1px 1px gray;
                     border-radius: 20px;
                     gap: 10px;
+                }
+            }
+        }
+    }
+
+    .creator-pre-auras {
+        display: flex;
+        overflow-x: auto;
+
+        &__content {
+            display: flex;
+            gap: 10px;
+            margin: 5px 0;
+
+            .details {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid orange;
+                border-radius: 20px;
+                padding: 5px 10px;
+                font-size: 0.6em;
+                text-align: center;
+                gap: 10px;
+                width: 120px;
+
+                svg {
+                    width: 20px;
+                    height: 20px;
                 }
             }
         }

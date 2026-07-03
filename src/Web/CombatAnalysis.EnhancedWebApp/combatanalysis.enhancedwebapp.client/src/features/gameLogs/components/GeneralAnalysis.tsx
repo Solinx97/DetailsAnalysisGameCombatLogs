@@ -93,7 +93,7 @@ const GeneralAnalysis: React.FC = () => {
                 </div>
                 <h5>{t("Combats")}</h5>
             </div>
-            <ul className="combats__container">
+            <ul className="cards">
                 {allUniqueCombats.map((uniqueCombats, index) => (
                         <li key={index}>
                             <GeneralAnalysisItem

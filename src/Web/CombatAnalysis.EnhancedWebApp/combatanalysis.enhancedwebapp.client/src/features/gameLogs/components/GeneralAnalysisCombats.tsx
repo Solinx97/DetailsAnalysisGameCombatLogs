@@ -23,10 +23,10 @@ const GeneralAnalysisCombats: React.FC<GeneralAnalysisCombatsProps> = ({ uniqueC
     const getCombatDuration = (duration: string) => duration.substring(3);
 
     return (
-        <ul className="unique-combats__all">
+        <ul className="card__combats">
             <li key={0} className="last-combat">
                 <div className="last-combat__last">last combat</div>
-                <div className={`last-combat__content unique-combats__${lastCombat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(uniqueCombats.length - 1)}>
+                <div className={`last-combat__content card__${lastCombat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(uniqueCombats.length - 1)}>
                     <div className="combat-number">{uniqueCombats.length}</div>
                     <div className="combat-time">
                         <div className="combat-time__range">
@@ -67,7 +67,7 @@ const GeneralAnalysisCombats: React.FC<GeneralAnalysisCombatsProps> = ({ uniqueC
             {(uniqueCombats.length > 1 && showAll) &&
                 <>
                     {uniqueCombats.map((combat, index) => (
-                        <li key={combat.id} className={`unique-combats__${combat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(index)}>
+                        <li key={combat.id} className={`card__${combat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(index)}>
                             <div className="combat-number">{index + 1}</div>
                             <div className="combat-time">
                                 <div className="combat-time__range">

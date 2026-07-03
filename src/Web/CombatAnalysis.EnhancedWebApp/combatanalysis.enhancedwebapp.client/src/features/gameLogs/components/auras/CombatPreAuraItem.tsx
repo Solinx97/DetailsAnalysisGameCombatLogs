@@ -1,4 +1,4 @@
-import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { faFlask, faHourglass, faAppleWhole, faVial, faBolt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import type { CombatPlayerPreAuraModel } from '../../types/CombatPlayerPreAuraModel';
@@ -13,7 +13,6 @@ interface CombatPreAuraItemProps {
 
 const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, combatId, t }) => {
     const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>([]);
-    const [seeBuffs, setSeeBuffs] = useState(false);
 
     const { data: allPreAuras, isLoading } = useGetCombatByPreAuraQuery({ combatPlayerId, combatId });
 
@@ -53,30 +52,38 @@ const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, c
 
     return (
         <div className="creator-pre-auras">
-            <div className="creator-auras__title">
-                <div className="title" onClick={() => setSeeBuffs(prev => !prev)}>
-                    <div>All raid buffs</div>
-                    {seeBuffs
-                        ? <FontAwesomeIcon
-                            icon={faArrowDown}
-                            title={t("Hide")}
-                        />
-                        : <FontAwesomeIcon
-                            icon={faArrowUp}
-                            title={t("See")}
-                        />
-                    }
-                </div>
-            </div>
-            {seeBuffs &&
-                <ul className="creator-pre-auras__content">
-                    {combatPlayerPreAuras.map((value) => (
-                        <li key={value.id} className="creator-auras__details">
-                            <div>{value.name}</div>
-                        </li>
-                    ))}
-                </ul>
-            }
+            <ul className="creator-pre-auras__content">
+                {combatPlayerPreAuras.map((value) => (
+                    <li key={value.id} className="creator-pre-auras details">
+                        {value.abilityType === 1 &&
+                            <FontAwesomeIcon
+                                icon={faVial}
+                            />
+                        }
+                        {value.abilityType === 0 &&
+                            <FontAwesomeIcon
+                                icon={faFlask}
+                            />
+                        }
+                        {value.abilityType === 7 &&
+                            <FontAwesomeIcon
+                                icon={faHourglass}
+                            />
+                        }
+                        {value.abilityType === 9 &&
+                            <FontAwesomeIcon
+                                icon={faAppleWhole}
+                            />
+                        }
+                        {value.abilityType === 10 &&
+                            <FontAwesomeIcon
+                                icon={faBolt}
+                            />
+                        }
+                        <div>{value.name}</div>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
