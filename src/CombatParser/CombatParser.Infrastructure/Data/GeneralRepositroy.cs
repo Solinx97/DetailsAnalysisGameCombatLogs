@@ -1,13 +1,12 @@
-﻿using Azure;
-using CombatParser.Domain.Data.Filters;
+﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
-namespace CombatParser.Infrastructure.Data.Filters;
+namespace CombatParser.Infrastructure.Data;
 
-internal class GeneralFilterRepositroy<TModel>(CombatParserContextOne context) : IGeneralFilterRepository<TModel>
-    where TModel : class, ICombatPlayerRefs, IGeneralFilterEntity
+internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGeneralRepository<TModel>
+    where TModel : class, ICombatPlayerRefs, IGeneralEntity
 {
     private readonly CombatParserContextOne _context = context;
 

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CombatParser.Application.DTOs;
+using CombatParser.Application.DTOs.Chart;
 using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
+using CombatParser.Domain.Entities.Chart;
 using CombatParser.Domain.Entities.CombatPlayerData;
 
 namespace CombatParser.Application.Mapping;
@@ -35,5 +37,7 @@ public class ApplicationMapper : Profile
         CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
         CreateMap<CombatPlayerStatsDto, CombatPlayerStats>().ReverseMap();
         CreateMap<CombatTargetDto, CombatTarget>().ReverseMap();
+
+        CreateMap<ChartGenericDto, ChartGeneric>().ReverseMap();
     }
 }

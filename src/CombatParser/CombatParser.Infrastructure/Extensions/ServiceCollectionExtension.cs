@@ -48,10 +48,15 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICombatPlayerInfoRepository<SpecializationScore>, CombatPlayerInfoRepository<SpecializationScore>>();
         services.AddScoped<ICombatPlayerInfoRepository<CombatPlayerStats>, CombatPlayerInfoRepository<CombatPlayerStats>>();
 
-        services.AddScoped<IGeneralFilterRepository<DamageDone>, GeneralFilterRepositroy<DamageDone>>();
-        services.AddScoped<IGeneralFilterRepository<HealDone>, GeneralFilterRepositroy<HealDone>>();
-        services.AddScoped<IGeneralFilterRepository<DamageTaken>, GeneralFilterRepositroy<DamageTaken>>();
-        services.AddScoped<IGeneralFilterRepository<ResourceRecovery>, GeneralFilterRepositroy<ResourceRecovery>>();
+        services.AddScoped<IGeneralRepository<DamageDone>, GeneralRepositroy<DamageDone>>();
+        services.AddScoped<IGeneralRepository<HealDone>, GeneralRepositroy<HealDone>>();
+        services.AddScoped<IGeneralRepository<DamageTaken>, GeneralRepositroy<DamageTaken>>();
+        services.AddScoped<IGeneralRepository<ResourceRecovery>, GeneralRepositroy<ResourceRecovery>>();
+
+        services.AddScoped<IChartRepository<DamageDone>, ChartRepository<DamageDone>>();
+        services.AddScoped<IChartRepository<HealDone>, ChartRepository<HealDone>>();
+        services.AddScoped<IChartRepository<DamageTaken>, ChartRepository<DamageTaken>>();
+        services.AddScoped<IChartRepository<ResourceRecovery>, ChartRepository<ResourceRecovery>>();
 
         services.AddScoped<IDamageFilterRepository, DamageFilterRepository>();
 

@@ -1,11 +1,11 @@
-﻿using CombatParser.Domain.Data.Filters;
+﻿using CombatParser.Domain.Data;
 using MediatR;
 
 namespace CombatParser.Application.Queries.Resources.CountResource;
 
-internal class CountResourceHandler(IGeneralFilterRepository<Domain.Entities.CombatPlayerData.ResourceRecovery> repository) : IRequestHandler<CountResourceQuery, int>
+internal class CountResourceHandler(IGeneralRepository<Domain.Entities.CombatPlayerData.ResourceRecovery> repository) : IRequestHandler<CountResourceQuery, int>
 {
-    private readonly IGeneralFilterRepository<Domain.Entities.CombatPlayerData.ResourceRecovery> _repository = repository;
+    private readonly IGeneralRepository<Domain.Entities.CombatPlayerData.ResourceRecovery> _repository = repository;
 
     public async Task<int> Handle(CountResourceQuery request, CancellationToken cancellationToken)
     {

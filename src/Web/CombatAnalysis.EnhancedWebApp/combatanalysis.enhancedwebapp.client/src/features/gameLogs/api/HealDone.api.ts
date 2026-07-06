@@ -1,4 +1,5 @@
-﻿import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
+﻿import type { ChartModel } from '../types/chart/ChartModel';
+import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
 import type { HealDoneModel } from '../types/HealDoneModel';
 import { GameLogsApi } from './GameLogs.api';
 
@@ -27,6 +28,9 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'HealDone', id: 'LIST' }]
         }),
+        getChartHealDone: builder.query<ChartModel[], number>({
+            query: combatPlayerId => `/HealDone/getChart/${combatPlayerId}`
+        }),
         getHealDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/HealDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
@@ -48,6 +52,7 @@ export const {
     useCountHealDoneQuery,
     useGetHealDoneUniqueFilterValuesQuery,
     useGetAllHealDoneQuery,
+    useGetChartHealDoneQuery,
     useGetHealDoneGeneralByCombatPlayerIdQuery,
     useLazyGetHealDoneGeneralByCombatPlayerIdQuery,
 } = HealDoneApi;

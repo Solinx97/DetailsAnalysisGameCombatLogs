@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Enums;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs.Chart;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -82,6 +83,32 @@ public class ResourceRecoveryController : ControllerBase
             response.EnsureSuccessStatusCode();
 
             var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+
+            return Ok(damageDones);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetChart(int combatPlayerId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getChart/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
+
+            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();
 
             return Ok(damageDones);
         }

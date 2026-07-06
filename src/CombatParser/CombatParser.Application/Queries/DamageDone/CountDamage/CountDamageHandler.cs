@@ -1,11 +1,11 @@
-﻿using CombatParser.Domain.Data.Filters;
+﻿using CombatParser.Domain.Data;
 using MediatR;
 
 namespace CombatParser.Application.Queries.DamageDone.CountDamage;
 
-internal class CountDamageHandler(IGeneralFilterRepository<Domain.Entities.CombatPlayerData.DamageDone> repository) : IRequestHandler<CountDamageQuery, int>
+internal class CountDamageHandler(IGeneralRepository<Domain.Entities.CombatPlayerData.DamageDone> repository) : IRequestHandler<CountDamageQuery, int>
 {
-    private readonly IGeneralFilterRepository<Domain.Entities.CombatPlayerData.DamageDone> _repository = repository;
+    private readonly IGeneralRepository<Domain.Entities.CombatPlayerData.DamageDone> _repository = repository;
 
     public async Task<int> Handle(CountDamageQuery request, CancellationToken cancellationToken)
     {

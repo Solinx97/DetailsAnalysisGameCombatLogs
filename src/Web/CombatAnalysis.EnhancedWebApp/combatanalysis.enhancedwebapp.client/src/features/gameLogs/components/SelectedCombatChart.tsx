@@ -1,93 +1,120 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useMemo, useState } from 'react';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
-import type { CombatPlayerPropertyModel } from '../types/CombatPlayerPropertyModel';
-import DetailsPieChart from './DetailsPieChart';
-import type { ChartPayloadModel } from '../types/ChartPayloadModel';
+import {
+    ResponsiveContainer,
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid,
+    Legend
+} from 'recharts';
+import { useLazyGetChartDamageDoneQuery } from '../api/DamageDone.api';
+import type { ChartModel } from '../types/chart/ChartModel';
 
 interface DetailsSpecificalCombatChartProps {
     combatPlayers: CombatPlayerModel[];
+    colors: Array<string>;
 }
 
-const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ combatPlayers }) => {
-    const { t } = useTranslation("combatDetails/selectedCombat");
+const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ combatPlayers, colors }) => {
+    const [combatPlayersData, setCombatPlayersData] = useState<Map<string, ChartModel[]>>(new Map());
+    const [focusedPlayer, setFocusedPlayer] = useState<string | null>(null);
 
-    const [damageDonePieChart, setDamageDonePieChart] = useState<ChartPayloadModel | null>(null);
-    const [healDonePieChart, setHealDonePieChart] = useState<ChartPayloadModel | null>(null);
-    const [damageTakenPieChart, setDamageTakenPieChart] = useState<ChartPayloadModel | null>(null);
+    const [getChart] = useLazyGetChartDamageDoneQuery();
 
     useEffect(() => {
-        const data = createPieChardData();
-
-        setDamageDonePieChart({
-            title: t("Damage"),
-            color: "#83B4FF",
-            data: data.damageDone
-        });
-        setHealDonePieChart({
-            title: t("Healing"),
-            color: "#83B4FF",
-            data: data.healDone
-        });
-        setDamageTakenPieChart({
-            title: t("DamageTaken"),
-            color: "#83B4FF",
-            data: data.damageTaken
-        });
-    }, []);
-
-    const compare = (a: CombatPlayerPropertyModel, b: CombatPlayerPropertyModel) => {
-        if (a.value > b.value) {
-            return -1;
-        }
-        if (a.value < b.value) {
-            return 1;
+        if (!combatPlayers || combatPlayers.length === 0) {
+            return;
         }
 
-        return 0;
+        const loadCharts = () => {
+            combatPlayers.forEach(async player => {
+                const chart = await getChart(player.id).unwrap();
+                combatPlayersData.set(player.player.username, chart);
+                setCombatPlayersData(new Map(combatPlayersData));
+            });
+        }
+
+        loadCharts();
+    }, [combatPlayers]);
+
+    const pivot = () => {
+        const result = new Map<string, any>();
+
+        for (const [player, values] of combatPlayersData.entries()) {
+            for (const v of values) {
+                const t = v.time;
+
+                if (!result.has(t)) {
+                    result.set(t, { time: t });
+                }
+
+                result.get(t)[player] = v.value;
+            }
+        }
+
+        return Array.from(result.values())
+            .sort((a, b) => a.time - b.time);
     }
 
-    const createPieChardData = () => {
-        const healDone = new Array<CombatPlayerPropertyModel>(combatPlayers.length);
-        const damageTaken = new Array<CombatPlayerPropertyModel>(combatPlayers.length);
-        const damageDone = new Array<CombatPlayerPropertyModel>(combatPlayers.length);
+    const chartData = useMemo(() => {
+        const piv = pivot();
+        return piv;
+    }, [combatPlayersData]);
 
-        for (let i = 0; i < combatPlayers.length; i++) {
-            const realmNameIndex = combatPlayers[i].player.username.indexOf('-');
-            const username = combatPlayers[i].player.username.substr(0, realmNameIndex);
+    const renderLegend = (props: any) => {
+        return (
+            <div className="legends">
+                {props.payload.map((entry: any) => (
+                    <span className="legend"
+                        key={entry.value}
+                        onClick={() => handlePlayerClick(entry.value)}
+                        style={{
+                            color: entry.color,
+                            boxShadow: focusedPlayer === entry.value ? "1px 1px 1px 1px green" : "",
+                        }}
+                    >
+                        {entry.value}
+                    </span>
+                ))}
+            </div>
+        );
+    }
 
-            damageDone[i] = { name: "", value: 0 };
-            damageDone[i].name = username
-            damageDone[i].value = combatPlayers[i].damageDone;
+    const handlePlayerClick = (player: string) => {
+        setFocusedPlayer(prev =>
+            prev === player ? null : player
+        );
+    }
 
-            healDone[i] = { name: "", value: 0 };
-            healDone[i].name = username
-            healDone[i].value = combatPlayers[i].healDone;
-
-            damageTaken[i] = { name: "", value: 0 };
-            damageTaken[i].name = username
-            damageTaken[i].value = combatPlayers[i].damageTaken;
-        }
-
-        return {
-            damageDone: damageDone.sort(compare),
-            healDone: healDone.sort(compare),
-            damageTaken: damageTaken.sort(compare)
-        };
+    if (combatPlayersData.size === 0) {
+        return (<div>Loading...</div>);
     }
 
     return (
-        <div className="selected-combat__container_general-details-charts">
-            <DetailsPieChart
-                payload={damageDonePieChart}
-            />
-            <DetailsPieChart
-                payload={healDonePieChart}
-            />
-            <DetailsPieChart
-                payload={damageTakenPieChart}
-            />
-        </div>
+        <ResponsiveContainer width="100%" height={350}>
+            <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend content={renderLegend} />
+
+                {Array.from(combatPlayersData.keys()).map((player, index) => (
+                    <Line
+                        key={player}
+                        dataKey={player}
+                        stroke={colors[index]}
+                        dot={false}
+                        strokeWidth={focusedPlayer === player ? 2 : 1}
+                        opacity={focusedPlayer && focusedPlayer !== player ? 0.4 : 1}
+                    />
+                ))}
+            </LineChart>
+        </ResponsiveContainer>
     );
 }
 

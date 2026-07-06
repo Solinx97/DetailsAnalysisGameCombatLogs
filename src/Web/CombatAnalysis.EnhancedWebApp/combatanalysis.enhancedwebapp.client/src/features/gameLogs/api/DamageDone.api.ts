@@ -2,6 +2,7 @@
 import type { DamageDoneModel } from '../types/DamageDoneModel';
 import type { CombatTargetModel } from '../types/CombatTargetModel';
 import { GameLogsApi } from './GameLogs.api';
+import type { ChartModel } from '../types/chart/ChartModel';
 
 export const DamageDoneApi = GameLogsApi.injectEndpoints({
     endpoints: builder => ({
@@ -28,6 +29,9 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageDone', id: 'LIST' }]
         }),
+        getChartDamageDone: builder.query<ChartModel[], number>({
+            query: combatPlayerId => `/DamageDone/getChart/${combatPlayerId}`
+        }),
         getDamageDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/DamageDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
@@ -53,6 +57,8 @@ export const {
     useLazyGetDamageDoneUniqueFilterValuesQuery,
     useGetDamageDoneUniqueFilterValuesQuery,
     useGetAllDamageDoneQuery,
+    useGetChartDamageDoneQuery,
+    useLazyGetChartDamageDoneQuery,
     useLazyGetDamageDoneDamageByEachTargetQuery,
     useGetDamageDoneGeneralByCombatPlayerIdQuery,
     useLazyGetDamageDoneGeneralByCombatPlayerIdQuery,

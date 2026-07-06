@@ -1,6 +1,6 @@
-﻿namespace CombatParser.Domain.Data.Filters;
+﻿namespace CombatParser.Domain.Data;
 
-public interface IGeneralFilterEntity
+public interface IGeneralEntity
 {
     string Spell { get; }
 

@@ -131,6 +131,16 @@ const SelectedCombat: React.FC = () => {
         return value.toString();
     }
 
+    const getRandomColors = () => {
+        const colors = new Array<string>();
+
+        selectedPlayers?.forEach(() => {
+            colors.push(`hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`);
+        });
+
+        return colors;
+    }
+
     return (
         <div className="selected-combat__container">
             <div className="selected-combat__navigate">
@@ -180,6 +190,7 @@ const SelectedCombat: React.FC = () => {
             {showCommonStatistics &&
                 <SelectedCombatChart
                     combatPlayers={selectedPlayers}
+                    colors={getRandomColors()}
                 />
             }
             <PersonalTabs

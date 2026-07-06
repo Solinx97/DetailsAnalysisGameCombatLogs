@@ -1,4 +1,5 @@
 ﻿using CombatParser.Application.Queries.DamageDone.CountDamage;
+using CombatParser.Application.Queries.DamageDone.GetChart;
 using CombatParser.Application.Queries.DamageDone.GetDamageByEachTarget;
 using CombatParser.Application.Queries.DamageDone.GetDamages;
 using CombatParser.Application.Queries.DamageDone.GetDamageValueToTarget;
@@ -45,6 +46,14 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
             page,
             pageSize
             ), cancellationToken);
+
+        return Ok(damages);
+    }
+
+    [HttpGet("getChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetChart(int combatPlayerId, CancellationToken cancellationToken)
+    {
+        var damages = await _mediator.Send(new GetChartQuery(combatPlayerId), cancellationToken);
 
         return Ok(damages);
     }

@@ -1,4 +1,5 @@
-﻿import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
+﻿import type { ChartModel } from '../types/chart/ChartModel';
+import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
 import type { ResourceRecoveryModel } from '../types/ResourceRecoveryModel';
 import { GameLogsApi } from './GameLogs.api';
 
@@ -27,6 +28,9 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
+        getChartResourceRecovery: builder.query<ChartModel[], number>({
+            query: combatPlayerId => `/ResourceRecovery/getChart/${combatPlayerId}`
+        }),
         getResourceRecoveryUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/ResourceRecovery/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
@@ -48,6 +52,7 @@ export const {
     useCountResourceRecoveryQuery,
     useGetResourceRecoveryUniqueFilterValuesQuery,
     useGetAllResourceRecoveryQuery,
+    useGetChartResourceRecoveryQuery,
     useGetResourceRecoveryGeneralByCombatPlayerIdQuery,
     useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery,
 } = ResourcesRecoveryApi;

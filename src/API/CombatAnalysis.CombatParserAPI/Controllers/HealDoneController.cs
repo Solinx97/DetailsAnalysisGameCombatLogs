@@ -1,4 +1,5 @@
 ﻿using CombatParser.Application.Queries.HealDone.CountHeal;
+using CombatParser.Application.Queries.HealDone.GetChart;
 using CombatParser.Application.Queries.HealDone.GetHeals;
 using CombatParser.Application.Queries.HealDone.GetUniqueHealSpells;
 using CombatParser.Application.Queries.HealDone.GetUniqueHealTargets;
@@ -43,6 +44,14 @@ public class HealDoneController(IMediator mediator) : ControllerBase
             page,
             pageSize
             ), cancellationToken);
+
+        return Ok(damages);
+    }
+
+    [HttpGet("getChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetChart(int combatPlayerId, CancellationToken cancellationToken)
+    {
+        var damages = await _mediator.Send(new GetChartQuery(combatPlayerId), cancellationToken);
 
         return Ok(damages);
     }

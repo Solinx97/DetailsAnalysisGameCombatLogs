@@ -1,4 +1,5 @@
 ﻿using CombatParser.Application.Queries.DamageTaken.CountDamageTaken;
+using CombatParser.Application.Queries.DamageTaken.GetChart;
 using CombatParser.Application.Queries.DamageTaken.GetDamageTakens;
 using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenCreators;
 using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenSpells;
@@ -43,6 +44,14 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
             page,
             pageSize
             ), cancellationToken);
+
+        return Ok(damages);
+    }
+
+    [HttpGet("getChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetChart(int combatPlayerId, CancellationToken cancellationToken)
+    {
+        var damages = await _mediator.Send(new GetChartQuery(combatPlayerId), cancellationToken);
 
         return Ok(damages);
     }

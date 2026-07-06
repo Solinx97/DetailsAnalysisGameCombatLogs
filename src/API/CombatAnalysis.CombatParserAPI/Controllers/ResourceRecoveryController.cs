@@ -1,4 +1,5 @@
 ﻿using CombatParser.Application.Queries.Resources.CountResource;
+using CombatParser.Application.Queries.Resources.GetChart;
 using CombatParser.Application.Queries.Resources.GetResources;
 using CombatParser.Application.Queries.Resources.GetUniqueResourcesCreators;
 using CombatParser.Application.Queries.Resources.GetUniqueResourcesSpells;
@@ -43,6 +44,14 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
             page,
             pageSize
             ), cancellationToken);
+
+        return Ok(damages);
+    }
+
+    [HttpGet("getChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetChart(int combatPlayerId, CancellationToken cancellationToken)
+    {
+        var damages = await _mediator.Send(new GetChartQuery(combatPlayerId), cancellationToken);
 
         return Ok(damages);
     }

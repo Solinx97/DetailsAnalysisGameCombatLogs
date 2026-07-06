@@ -1,4 +1,8 @@
-﻿.selected-combat {
+﻿.recharts-tooltip-wrapper {
+    z-index: 9999 !important;
+}
+
+.selected-combat {
     &__container {
         .card {
             width: 100%;
@@ -104,26 +108,15 @@
             margin: 20px;
         }
 
-        &_general-details-charts {
+        .legends {
             display: flex;
-            justify-content: center;
 
-            text {
-                color: white;
-            }
-
-            .pie-chart-hook {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-
-                div {
-                    font-family: 'Comic Sans MS';
-                }
-
-                .title {
-                    font-size: 1.3em;
-                }
+            .legend {
+                cursor: pointer;
+                padding: 5px 10px;
+                border-Radius: 10px;
+                font-size: 0.7em;
+                text-align: center;
             }
         }
 

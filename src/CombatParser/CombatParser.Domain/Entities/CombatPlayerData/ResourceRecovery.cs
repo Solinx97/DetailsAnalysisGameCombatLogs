@@ -1,9 +1,9 @@
-﻿using CombatParser.Domain.Data.Filters;
+﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecovery : CombatPlayerDataBase, ICombatPlayerTime, IGeneralFilterEntity
+public class ResourceRecovery : CombatPlayerDataBase, ICombatPlayerTime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;

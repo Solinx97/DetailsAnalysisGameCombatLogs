@@ -1,6 +1,6 @@
-﻿namespace CombatParser.Domain.Data.Filters;
+﻿namespace CombatParser.Domain.Data;
 
-public interface IGeneralFilterRepository<TModel>
+public interface IGeneralRepository<TModel>
     where TModel : class
 {
     Task<IEnumerable<string>> GetUniqueTargetsAsync(int combatPlayerId, CancellationToken cancellationToken);

@@ -1,11 +1,11 @@
-﻿using CombatParser.Domain.Data.Filters;
+﻿using CombatParser.Domain.Data;
 using MediatR;
 
 namespace CombatParser.Application.Queries.HealDone.CountHeal;
 
-internal class CountHealHandler(IGeneralFilterRepository<Domain.Entities.CombatPlayerData.HealDone> repository) : IRequestHandler<CountHealQuery, int>
+internal class CountHealHandler(IGeneralRepository<Domain.Entities.CombatPlayerData.HealDone> repository) : IRequestHandler<CountHealQuery, int>
 {
-    private readonly IGeneralFilterRepository<Domain.Entities.CombatPlayerData.HealDone> _repository = repository;
+    private readonly IGeneralRepository<Domain.Entities.CombatPlayerData.HealDone> _repository = repository;
 
     public async Task<int> Handle(CountHealQuery request, CancellationToken cancellationToken)
     {
