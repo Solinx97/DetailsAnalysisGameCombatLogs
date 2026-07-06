@@ -82,9 +82,9 @@ public class ResourceRecoveryController : ControllerBase
             var response = await _httpClient.GetAsync($"ResourceRecovery/getAll?combatPlayerId={combatPlayerId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+            var resourceRecoveries = await response.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryModel>>();
 
-            return Ok(damageDones);
+            return Ok(resourceRecoveries);
         }
         catch (HttpRequestException ex)
         {
@@ -100,17 +100,17 @@ public class ResourceRecoveryController : ControllerBase
         }
     }
 
-    [HttpGet("getChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetChart(int combatPlayerId)
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"ResourceRecovery/getChart/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getCombatPlayerChart/{combatPlayerId}");
             response.EnsureSuccessStatusCode();
 
-            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();
+            var resourceRecoveries = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();
 
-            return Ok(damageDones);
+            return Ok(resourceRecoveries);
         }
         catch (HttpRequestException ex)
         {

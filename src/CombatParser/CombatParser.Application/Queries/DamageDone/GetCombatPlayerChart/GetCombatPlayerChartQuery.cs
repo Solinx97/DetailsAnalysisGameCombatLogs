@@ -1,8 +1,8 @@
 ﻿using CombatParser.Application.DTOs.Chart;
 using MediatR;
 
-namespace CombatParser.Application.Queries.DamageTaken.GetChart;
+namespace CombatParser.Application.Queries.DamageDone.GetCombatPlayerChart;
 
-public record GetChartQuery(
+public record GetCombatPlayerChartQuery(
     int CombatPlayerId
     ) : IRequest<IEnumerable<ChartGenericDto>>;

@@ -30,9 +30,9 @@ public class HealDoneController : ControllerBase
             var response = await _httpClient.GetAsync($"HealDone/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
 
-            return Ok(damageDones);
+            return Ok(healDones);
         }
         catch (HttpRequestException ex)
         {
@@ -82,9 +82,9 @@ public class HealDoneController : ControllerBase
             var response = await _httpClient.GetAsync($"HealDone/getAll?combatPlayerId={combatPlayerId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
 
-            return Ok(damageDones);
+            return Ok(healDones);
         }
         catch (HttpRequestException ex)
         {
@@ -100,17 +100,43 @@ public class HealDoneController : ControllerBase
         }
     }
 
-    [HttpGet("getChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetChart(int combatPlayerId)
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"HealDone/getChart/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"HealDone/getCombatPlayerChart/{combatPlayerId}");
             response.EnsureSuccessStatusCode();
 
-            var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();
+            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();
 
-            return Ok(damageDones);
+            return Ok(healDones);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getGenericChart/{combatId}")]
+    public async Task<IActionResult> GetGenericChart(int combatId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/getGenericChart/{combatId}");
+            response.EnsureSuccessStatusCode();
+
+            var healDones = await response.Content.ReadFromJsonAsync<Dictionary<string, ChartGenericModel[]>>();
+
+            return Ok(healDones);
         }
         catch (HttpRequestException ex)
         {

@@ -1,5 +1,5 @@
 ﻿using CombatParser.Application.Queries.DamageTaken.CountDamageTaken;
-using CombatParser.Application.Queries.DamageTaken.GetChart;
+using CombatParser.Application.Queries.DamageTaken.GetCombatPlayerChart;
 using CombatParser.Application.Queries.DamageTaken.GetDamageTakens;
 using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenCreators;
 using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenSpells;
@@ -34,7 +34,7 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
     [HttpGet("getAll")]
     public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetDamageTakensQuery(
+        var damageTakens = await _mediator.Send(new GetDamageTakensQuery(
             combatPlayerId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
@@ -45,15 +45,15 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
             pageSize
             ), cancellationToken);
 
-        return Ok(damages);
+        return Ok(damageTakens);
     }
 
-    [HttpGet("getChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetChartQuery(combatPlayerId), cancellationToken);
+        var damageTakens = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
 
-        return Ok(damages);
+        return Ok(damageTakens);
     }
 
     [HttpGet("getUniqueCreators/{combatPlayerId}")]

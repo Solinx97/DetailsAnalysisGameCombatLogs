@@ -1,5 +1,6 @@
-﻿using CombatParser.Application.Queries.HealDone.CountHeal;
-using CombatParser.Application.Queries.HealDone.GetChart;
+﻿using CombatParser.Application.Queries.HealDone.GetGenericChart;
+using CombatParser.Application.Queries.HealDone.CountHeal;
+using CombatParser.Application.Queries.HealDone.GetCombatPlayerChart;
 using CombatParser.Application.Queries.HealDone.GetHeals;
 using CombatParser.Application.Queries.HealDone.GetUniqueHealSpells;
 using CombatParser.Application.Queries.HealDone.GetUniqueHealTargets;
@@ -34,7 +35,7 @@ public class HealDoneController(IMediator mediator) : ControllerBase
     [HttpGet("getAll")]
     public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetHealsQuery(
+        var heals = await _mediator.Send(new GetHealsQuery(
             combatPlayerId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
@@ -45,15 +46,23 @@ public class HealDoneController(IMediator mediator) : ControllerBase
             pageSize
             ), cancellationToken);
 
-        return Ok(damages);
+        return Ok(heals);
     }
 
-    [HttpGet("getChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetChartQuery(combatPlayerId), cancellationToken);
+        var heals = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
 
-        return Ok(damages);
+        return Ok(heals);
+    }
+
+    [HttpGet("getGenericChart/{combatId}")]
+    public async Task<IActionResult> GetGenericChart(int combatId, CancellationToken cancellationToken)
+    {
+        var heals = await _mediator.Send(new GetGenericChartQuery(combatId), cancellationToken);
+
+        return Ok(heals);
     }
 
     [HttpGet("getUniqueTargets/{combatPlayerId}")]

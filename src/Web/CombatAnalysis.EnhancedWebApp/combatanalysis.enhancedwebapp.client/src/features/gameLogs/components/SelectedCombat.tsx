@@ -12,6 +12,8 @@ import PersonalTabs from './PersonalTabs';
 import Dashboard from './dashboard/Dashboard';
 import Details from './details/Details';
 import PlayerInfo from './details/PlayerInfo';
+import { useGetGenericChartDamageDoneQuery } from '../api/DamageDone.api';
+import { useGetGenericChartHealDoneQuery } from '../api/HealDone.api';
 
 import './SelectedCombat.scss';
 
@@ -188,9 +190,31 @@ const SelectedCombat: React.FC = () => {
                 </div>
             }
             {showCommonStatistics &&
-                <SelectedCombatChart
-                    combatPlayers={selectedPlayers}
-                    colors={getRandomColors()}
+                <PersonalTabs
+                    tab={0}
+                    tabs={[
+                        {
+                            id: 0,
+                            header: t("Damage"),
+                            content: <SelectedCombatChart
+                                combatPlayers={selectedPlayers}
+                                combatId={selectedPlayers[0].combatId}
+                                colors={getRandomColors()}
+                                useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
+                            />
+                        },
+                        {
+                            id: 1,
+                            header: t("Heal"),
+                            content: <SelectedCombatChart
+                                combatPlayers={selectedPlayers}
+                                combatId={selectedPlayers[0].combatId}
+                                colors={getRandomColors()}
+                                useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
+                            />
+                        }
+                    ]}
+                    tabsClassName={"charts"}
                 />
             }
             <PersonalTabs
@@ -224,6 +248,7 @@ const SelectedCombat: React.FC = () => {
                         />
                     }
                 ]}
+                tabsClassName={"information"}
             />
         </div>
     );

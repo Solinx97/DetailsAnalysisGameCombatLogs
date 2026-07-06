@@ -10,37 +10,36 @@ import {
     CartesianGrid,
     Legend
 } from 'recharts';
-import { useLazyGetChartDamageDoneQuery } from '../api/DamageDone.api';
 import type { ChartModel } from '../types/chart/ChartModel';
+
+type QueryHook<TResult, TArg> = (arg: TArg) => { data?: TResult, isLoading: boolean };
 
 interface DetailsSpecificalCombatChartProps {
     combatPlayers: CombatPlayerModel[];
+    combatId: number;
     colors: Array<string>;
+    useGetGenericChartQuery: QueryHook<Map<string, ChartModel[]>, number>;
 }
 
-const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ combatPlayers, colors }) => {
+const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ combatPlayers, combatId, colors, useGetGenericChartQuery }) => {
     const [combatPlayersData, setCombatPlayersData] = useState<Map<string, ChartModel[]>>(new Map());
     const [focusedPlayer, setFocusedPlayer] = useState<string | null>(null);
 
-    const [getChart] = useLazyGetChartDamageDoneQuery();
+    const { data, isLoading } = useGetGenericChartQuery(combatId);
 
     useEffect(() => {
-        if (!combatPlayers || combatPlayers.length === 0) {
+        if (!data || combatPlayers.length === 0) {
             return;
         }
 
-        const loadCharts = () => {
-            combatPlayers.forEach(async player => {
-                const chart = await getChart(player.id).unwrap();
-                combatPlayersData.set(player.player.username, chart);
-                setCombatPlayersData(new Map(combatPlayersData));
-            });
-        }
-
-        loadCharts();
-    }, [combatPlayers]);
+        setCombatPlayersData(new Map(Object.entries(data)));
+    }, [data]);
 
     const pivot = () => {
+        if (!combatPlayersData) {
+            return;
+        }
+
         const result = new Map<string, any>();
 
         for (const [player, values] of combatPlayersData.entries()) {
@@ -89,12 +88,12 @@ const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ comb
         );
     }
 
-    if (combatPlayersData.size === 0) {
+    if (isLoading || !combatPlayersData) {
         return (<div>Loading...</div>);
     }
 
     return (
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer className="generic-chart" width="100%" height={350}>
             <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
 

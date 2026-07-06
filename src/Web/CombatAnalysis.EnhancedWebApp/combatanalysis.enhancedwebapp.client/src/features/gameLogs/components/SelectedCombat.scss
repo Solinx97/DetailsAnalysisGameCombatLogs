@@ -4,6 +4,12 @@
 
 .selected-combat {
     &__container {
+        .tabs.charts {
+            .tab-name {
+                font-size: 0.7em;
+            }
+        }
+
         .card {
             width: 100%;
             box-shadow: 10px 10px #3AA6B9;

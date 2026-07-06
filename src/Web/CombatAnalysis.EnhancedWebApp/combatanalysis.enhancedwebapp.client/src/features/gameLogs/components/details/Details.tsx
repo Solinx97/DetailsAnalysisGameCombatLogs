@@ -26,7 +26,6 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
 
     const [getCombatPlayerAbilities] = useLazyGetCombatAbilitiesQuery();
     const sortOptions: Option[] = [
-        { value: -1, label: t("Username") },
         { value: 0, label: t("Damage") },
         { value: 1, label: t("Healing") },
         { value: 2, label: t("DamageTaken") },

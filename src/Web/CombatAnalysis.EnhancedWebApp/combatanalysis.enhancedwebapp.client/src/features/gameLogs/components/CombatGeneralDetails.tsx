@@ -7,11 +7,11 @@ import type { DamageTakenGeneralModel } from '../types/DamageTakenGeneralModel';
 import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
 import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
 import type { SpellsDataModel } from '../types/SpellsDataModel';
-import CombatPlayerGenericChart from './charts/CombatPLayerGenericChart';
-import { useGetChartDamageDoneQuery } from '../api/DamageDone.api';
-import { useGetChartDamageTakenQuery } from '../api/DamageTaken.api';
-import { useGetChartHealDoneQuery } from '../api/HealDone.api';
-import { useGetChartResourceRecoveryQuery } from '../api/ResourcesRecovery.api';
+import CombatPlayerGenericChart from './charts/CombatPlayerGenericChart';
+import { useGetCombatPlayerChartDamageDoneQuery } from '../api/DamageDone.api';
+import { useGetCombatPlayerChartDamageTakenQuery } from '../api/DamageTaken.api';
+import { useGetCombatPlayerChartHealDoneQuery } from '../api/HealDone.api';
+import { useGetCombatPlayerChartResourceRecoveryQuery } from '../api/ResourcesRecovery.api';
 
 interface CombatGeneralDetailsProps {
     combatPlayer: CombatPlayerModel;
@@ -75,27 +75,27 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
             case 0:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
-                    useGetChartQuery={useGetChartDamageDoneQuery}
+                    useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />
             case 1:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
-                    useGetChartQuery={useGetChartHealDoneQuery}
+                    useGetChartQuery={useGetCombatPlayerChartHealDoneQuery}
                 />
             case 2:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
-                    useGetChartQuery={useGetChartDamageTakenQuery}
+                    useGetChartQuery={useGetCombatPlayerChartDamageTakenQuery}
                 />
             case 3:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
-                    useGetChartQuery={useGetChartResourceRecoveryQuery}
+                    useGetChartQuery={useGetCombatPlayerChartResourceRecoveryQuery}
                 />
             default:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
-                    useGetChartQuery={useGetChartDamageDoneQuery}
+                    useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />
         }
     }

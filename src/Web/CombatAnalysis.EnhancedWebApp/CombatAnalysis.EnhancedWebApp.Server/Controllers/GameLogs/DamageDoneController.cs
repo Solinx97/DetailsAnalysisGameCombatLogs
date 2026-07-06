@@ -100,15 +100,41 @@ public class DamageDoneController : ControllerBase
         }
     }
 
-    [HttpGet("getChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetChart(int combatPlayerId)
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageDone/getChart/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"DamageDone/getCombatPlayerChart/{combatPlayerId}");
             response.EnsureSuccessStatusCode();
 
             var damageDones = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();
+
+            return Ok(damageDones);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getGenericChart/{combatId}")]
+    public async Task<IActionResult> GetGenericChart(int combatId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDone/getGenericChart/{combatId}");
+            response.EnsureSuccessStatusCode();
+
+            var damageDones = await response.Content.ReadFromJsonAsync<Dictionary<string, ChartGenericModel[]>>();
 
             return Ok(damageDones);
         }

@@ -1,5 +1,5 @@
 ﻿using CombatParser.Application.Queries.Resources.CountResource;
-using CombatParser.Application.Queries.Resources.GetChart;
+using CombatParser.Application.Queries.Resources.GetCombatPlayerChart;
 using CombatParser.Application.Queries.Resources.GetResources;
 using CombatParser.Application.Queries.Resources.GetUniqueResourcesCreators;
 using CombatParser.Application.Queries.Resources.GetUniqueResourcesSpells;
@@ -34,7 +34,7 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
     [HttpGet("getAll")]
     public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetResourcesQuery(
+        var resourceRecoveries = await _mediator.Send(new GetResourcesQuery(
             combatPlayerId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
@@ -45,15 +45,15 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
             pageSize
             ), cancellationToken);
 
-        return Ok(damages);
+        return Ok(resourceRecoveries);
     }
 
-    [HttpGet("getChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetChartQuery(combatPlayerId), cancellationToken);
+        var resourceRecoveries = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
 
-        return Ok(damages);
+        return Ok(resourceRecoveries);
     }
 
     [HttpGet("getUniqueCreators/{combatPlayerId}")]
