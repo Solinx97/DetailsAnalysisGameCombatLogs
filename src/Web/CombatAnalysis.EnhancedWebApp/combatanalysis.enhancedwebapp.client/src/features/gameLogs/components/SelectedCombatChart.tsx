@@ -88,6 +88,28 @@ const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ comb
         );
     }
 
+    const formatNumber = (value: number | string | undefined): string => {
+        if (value == null) {
+            return "";
+        }
+
+        const num = Number(value);
+
+        if (num >= 1_000_000_000) {
+            return `${(num / 1_000_000_000).toFixed(1)}B`;
+        }
+
+        if (num >= 1_000_000) {
+            return `${(num / 1_000_000).toFixed(1)}M`;
+        }
+
+        if (num >= 1_000) {
+            return `${(num / 1_000).toFixed(1)}K`;
+        }
+
+        return num.toString();
+    }
+
     if (isLoading || !combatPlayersData) {
         return (<div>Loading...</div>);
     }
@@ -98,8 +120,20 @@ const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ comb
                 <CartesianGrid strokeDasharray="3 3" />
 
                 <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
+                <YAxis tickFormatter={formatNumber} />
+                <Tooltip
+                    contentStyle={{
+                        backgroundColor: "#1f1f1f",
+                        border: "1px solid #555",
+                        borderRadius: "20px",
+                        color: "#fff"
+                    }}
+                    formatter={(value, name) => [
+                        formatNumber(Number(value)),
+                        name,
+                    ]}
+                    itemSorter={(item) => -Number(item.value)}
+                />
                 <Legend content={renderLegend} />
 
                 {Array.from(combatPlayersData.keys()).map((player, index) => (

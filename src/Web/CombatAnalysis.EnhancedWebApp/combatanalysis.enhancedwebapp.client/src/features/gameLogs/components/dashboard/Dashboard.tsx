@@ -153,7 +153,7 @@ const Dashboard: React.FC<DashboardProps> = ({ details, combatPlayers, playersDe
     }
 
     if (!combat || combatPlayers.length === 0) {
-        return (<></>);
+        return (<div>Loading...</div>);
     }
 
     return (

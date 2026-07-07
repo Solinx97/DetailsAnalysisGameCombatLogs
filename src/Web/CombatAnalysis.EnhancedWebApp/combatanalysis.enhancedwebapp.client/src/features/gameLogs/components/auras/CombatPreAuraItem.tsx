@@ -53,7 +53,7 @@ const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, c
         <div className="creator-pre-auras">
             <ul className="creator-pre-auras__content">
                 {combatPlayerPreAuras.map((value) => (
-                    <li key={value.id} className="creator-pre-auras details">
+                    <li key={value.id} className="creator-pre-auras pre-aura-item">
                         {value.abilityType === 1 &&
                             <FontAwesomeIcon
                                 icon={faVial}

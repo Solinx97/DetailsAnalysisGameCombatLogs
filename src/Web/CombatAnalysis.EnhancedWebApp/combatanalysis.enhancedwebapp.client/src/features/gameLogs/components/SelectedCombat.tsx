@@ -91,15 +91,17 @@ const SelectedCombat: React.FC = () => {
     }
 
     const getCombatPlayersAsync = async () => {
-        const combatPlayersResult = await getCombatPlayersByCombatIdAsync(details.id);
-        if (combatPlayersResult.data !== undefined) {
-            setCombatPlayers(combatPlayersResult.data);
-            setSelectedPlayers(combatPlayersResult.data);
+        try {
+            const combatPlayersResult = await getCombatPlayersByCombatIdAsync(details.id).unwrap();
+            setCombatPlayers(combatPlayersResult);
+            setSelectedPlayers(combatPlayersResult);
 
-            return combatPlayersResult.data;
+            return combatPlayersResult;
+        } catch (error) {
+            console.error("Errror to load Combat players");
+            
+            return [];
         }
-
-        return [];
     }
 
     const getPlayersDeathAsync = async (players: CombatPlayerModel[]) => {
@@ -218,7 +220,7 @@ const SelectedCombat: React.FC = () => {
                 />
             }
             <PersonalTabs
-                tab={0}
+                tab={1}
                 tabs={[
                     {
                         id: 0,
@@ -234,8 +236,8 @@ const SelectedCombat: React.FC = () => {
                         id: 1,
                         header: t("Details"),
                         content: <Details
-                            combatPlayers={selectedPlayers}
                             details={details}
+                            combatPlayers={selectedPlayers}
                             getValueShortName={getValueShortName}
                             t={t}
                         />

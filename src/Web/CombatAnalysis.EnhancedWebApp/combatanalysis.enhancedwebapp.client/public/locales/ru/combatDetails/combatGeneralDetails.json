@@ -1,9 +1,11 @@
 {
+  "DPS": "УВС",
+  "HPS": "ИВС",
+  "DamageTaken": "Получено урона",
+  "ResourcesRecovery": "Восстановлено ресурсов",
   "NeedToAddSomething": "Необходимо добавить как минимум 1 элемент.",
   "Damage": "Урон",
   "Healing": "Исцеление",
-  "DamageTaken": "Получено урона",
-  "ResourcesRecovery": "Восстановлено ресурсов",
   "ShowDiagram": "Показать диаграмму",
   "DetailsInform": "Подробее",
   "SelectPlayer": "Выбрать игрока",

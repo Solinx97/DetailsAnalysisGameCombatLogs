@@ -1,4 +1,5 @@
 ﻿.recharts-tooltip-wrapper {
+    background: transparent;
     z-index: 9999 !important;
 }
 
@@ -74,36 +75,6 @@
             .form-check {
                 margin: 15px;
             }
-
-            .creator-pre-auras {
-                display: flex;
-                overflow-x: auto;
-                margin: 0 5px;
-
-                &__content {
-                    display: flex;
-                    gap: 10px;
-                    margin: 5px 0;
-
-                    .details {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        border: 1px solid orange;
-                        border-radius: 20px;
-                        padding: 5px 10px;
-                        font-size: 0.6em;
-                        text-align: center;
-                        gap: 10px;
-                        width: 120px;
-
-                        svg {
-                            width: 20px;
-                            height: 20px;
-                        }
-                    }
-                }
-            }
         }
 
         .form-check-input {
@@ -116,26 +87,41 @@
 
         .legends {
             display: flex;
+            justify-content: center;
+            font-size: 0.75em;
+            text-align: center;
 
             .legend {
                 cursor: pointer;
                 padding: 5px 10px;
                 border-Radius: 10px;
-                font-size: 0.7em;
-                text-align: center;
             }
         }
 
         .details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
             &__filter {
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 align-items: flex-start;
-                gap: 25px;
+                gap: 5px;
 
                 .options {
                     color: black;
                     min-width: 175px;
+                }
+            }
+
+            &__content {
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+
+                .card {
+                    margin: 0;
                 }
             }
 
@@ -151,24 +137,6 @@
                     padding: 5px 10px;
                     border-radius: 25px;
                     box-shadow: 2px 2px green;
-                }
-            }
-
-            .ability {
-                display: flex;
-                margin: 5px 10px;
-                overflow-x: auto;
-                font-size: 0.75em;
-
-                &__item {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    margin: 5px 10px;
-                    padding: 10px 15px;
-                    box-shadow: 3px 3px aqua;
-                    border-radius: 20px;
-                    height: 35px;
                 }
             }
         }

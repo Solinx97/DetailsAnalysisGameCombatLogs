@@ -235,32 +235,34 @@
             }
         }
     }
+}
 
-    .creator-pre-auras {
+.creator-pre-auras {
+    display: flex;
+    overflow-x: auto;
+    font-size: 0.75em;
+    margin: 0 20px;
+
+    &__content {
         display: flex;
-        overflow-x: auto;
+        gap: 10px;
+        margin: 5px 0;
 
-        &__content {
+        .pre-aura-item {
             display: flex;
-            gap: 10px;
-            margin: 5px 0;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid orange;
+            border-radius: 20px;
+            padding: 5px 10px;
+            text-align: center;
+            width: 120px;
+            gap: 5px;
+            margin: 0;
 
-            .details {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                border: 1px solid orange;
-                border-radius: 20px;
-                padding: 5px 10px;
-                font-size: 0.6em;
-                text-align: center;
-                gap: 10px;
-                width: 120px;
-
-                svg {
-                    width: 20px;
-                    height: 20px;
-                }
+            svg {
+                width: 15px;
+                height: 15px;
             }
         }
     }

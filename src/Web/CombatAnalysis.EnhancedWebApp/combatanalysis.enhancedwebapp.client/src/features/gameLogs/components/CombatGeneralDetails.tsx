@@ -12,6 +12,7 @@ import { useGetCombatPlayerChartDamageDoneQuery } from '../api/DamageDone.api';
 import { useGetCombatPlayerChartDamageTakenQuery } from '../api/DamageTaken.api';
 import { useGetCombatPlayerChartHealDoneQuery } from '../api/HealDone.api';
 import { useGetCombatPlayerChartResourceRecoveryQuery } from '../api/ResourcesRecovery.api';
+import CombatPreAuraItem from './auras/CombatPreAuraItem';
 
 interface CombatGeneralDetailsProps {
     combatPlayer: CombatPlayerModel;
@@ -75,26 +76,31 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
             case 0:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
+                    name={t("DPS")}
                     useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />
             case 1:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
+                    name={t("HPS")}
                     useGetChartQuery={useGetCombatPlayerChartHealDoneQuery}
                 />
             case 2:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
+                    name={t("DamageTaken")}
                     useGetChartQuery={useGetCombatPlayerChartDamageTakenQuery}
                 />
             case 3:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
+                    name={t("ResourcesRecovery")}
                     useGetChartQuery={useGetCombatPlayerChartResourceRecoveryQuery}
                 />
             default:
                 return <CombatPlayerGenericChart
                     combatPlayerId={combatPlayer.id}
+                    name={t("DPS")}
                     useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />
         }
@@ -102,6 +108,10 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
 
     return (
         <div className="details__container">
+            <CombatPreAuraItem
+                combatPlayerId={combatPlayer.id}
+                combatId={combatPlayer.combatId}
+            />
             {(spells.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGenericChart((item) => !item)} defaultChecked={showGenericChart} />
