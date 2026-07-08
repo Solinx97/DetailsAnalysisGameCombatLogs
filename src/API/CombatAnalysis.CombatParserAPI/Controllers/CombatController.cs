@@ -4,6 +4,7 @@ using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Application.Commands.CreateCombat;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
+using CombatParser.Application.Queries.GetDashboard;
 using CombatParser.Domain.EntityData;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -37,18 +38,19 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         return Ok(combats);
     }
 
+    [HttpGet("getDashboards/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDashboards(int combatLogId, CancellationToken cancellationToken)
+    {
+        var dashboards = await _mediator.Send(new GetDashboardQuery(combatLogId), cancellationToken);
+
+        return Ok(dashboards);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CombatModel combat, CancellationToken cancellationToken)
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Combat create received: {@Combat}", combat);
-
-                return ValidationProblem(ModelState);
-            }
-
             var combatPlayersData = new List<CombatPlayerData>();
             foreach (var player in combat.CombatPlayers)
             {

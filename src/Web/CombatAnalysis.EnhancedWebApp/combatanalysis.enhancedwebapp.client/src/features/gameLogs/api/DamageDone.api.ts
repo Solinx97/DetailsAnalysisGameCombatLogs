@@ -1,6 +1,5 @@
 ﻿import type { DamageDoneGeneralModel } from '../types/DamageDoneGeneralModel';
 import type { DamageDoneModel } from '../types/DamageDoneModel';
-import type { CombatTargetModel } from '../types/CombatTargetModel';
 import { GameLogsApi } from './GameLogs.api';
 import type { ChartModel } from '../types/chart/ChartModel';
 
@@ -38,9 +37,6 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
         getDamageDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
             query: ({ combatPlayerId, filter }) => `/DamageDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
-        getDamageDoneDamageByEachTarget: builder.query<Array<CombatTargetModel[]>, number>({
-            query: combatId => `/DamageDone/getDamageByEachTarget/${combatId}`,
-        }),
         getDamageDoneGeneralByCombatPlayerId: builder.query<DamageDoneGeneralModel[], number>({
             query: combatPlayerId => `/DamageDoneGeneral/getByCombatPlayerId/${combatPlayerId}`,
             providesTags: result =>
@@ -63,7 +59,6 @@ export const {
     useGetCombatPlayerChartDamageDoneQuery,
     useLazyGetCombatPlayerChartDamageDoneQuery,
     useGetGenericChartDamageDoneQuery,
-    useLazyGetDamageDoneDamageByEachTargetQuery,
     useGetDamageDoneGeneralByCombatPlayerIdQuery,
     useLazyGetDamageDoneGeneralByCombatPlayerIdQuery,
 } = DamageDoneApi;

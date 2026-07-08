@@ -48,7 +48,7 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
     private CancellationTokenSource _cancelToken;
     private LoadingStatus _loadingStatus;
 
-    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMapper mapper, 
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMapper mapper,
         ICombatParserAPIService combatParserAPIService)
     {
         _httpClient = httpClient;
@@ -121,8 +121,7 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         set
         {
             SetProperty(ref _selectedDamageDoneSource, value);
-
-            Filter();
+            _ = LoadDetailsAsync(Page, _pageSize);
         }
     }
 
@@ -357,7 +356,18 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
     private async Task LoadDetailsAsync(int page, int pageSize)
     {
-        var detailsInformations = await _combatParserAPIService.LoadCombatDetailsAsync<DetailsModel>(_httpClient, _logger, $"{_apiName}/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}", _cancelToken.Token);
+        var source = SelectedSource;
+        if (string.IsNullOrEmpty(source))
+        {
+            source = "NONE";
+        }
+        else if (string.Equals(SelectedSource, SourcesType.All.ToString(), StringComparison.OrdinalIgnoreCase))
+        {
+            LoadDetailsFromCache(page, pageSize);
+            return;
+        }
+
+        var detailsInformations = await _combatParserAPIService.LoadCombatDetailsAsync<DetailsModel>(_httpClient, _logger, $"{_apiName}/getAll?combatPlayerId={SelectedPlayerId}&target=NONE&creator=NONE&spell={source}&from=00:00:00&to=00:00:00&page={page}&pageSize={pageSize}", _cancelToken.Token);
         if (detailsInformations.Any())
         {
             _allDetailsInformations = [.. detailsInformations.ToList()];

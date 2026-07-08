@@ -1,14 +1,8 @@
 ﻿{
-  "Damage": "Урон",
-  "Healing": "Исцеление",
-  "DamageTaken": "Полученный урон",
-  "ResourcesRecovery": "Восстановлено ресурсов",
+  "CombatsAverageDuration": "Среднее значение продолжительности боя",
+  "CombatsAverageDPS": "Среднее значение УВС",
+  "CombatsAverageHPS": "Среднее значение ИВС",
+  "CombatsAverageDeaths": "Среднее значение смертей",
   "More": "Больше",
-  "Less": "Меньше",
-  "PlayersDied": "Смерти игроков",
-  "Empty": "Пусто",
-  "ClosedItems": "Скрытые элементы",
-  "General": "Общее",
-  "Targets": "Цели",
-  "DamageToAlliances": "Урон по союзникам"
+  "Less": "Меньше"
 }

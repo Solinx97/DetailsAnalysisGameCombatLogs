@@ -1,8 +1,6 @@
 ﻿using CombatParser.Application.Queries.DamageDone.CountDamage;
 using CombatParser.Application.Queries.DamageDone.GetCombatPlayerChart;
-using CombatParser.Application.Queries.DamageDone.GetDamageByEachTarget;
 using CombatParser.Application.Queries.DamageDone.GetDamages;
-using CombatParser.Application.Queries.DamageDone.GetDamageValueToTarget;
 using CombatParser.Application.Queries.DamageDone.GetGenericChart;
 using CombatParser.Application.Queries.DamageDone.GetUniqueDamageSpells;
 using CombatParser.Application.Queries.DamageDone.GetUniqueDamageTargets;
@@ -67,28 +65,12 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
         return Ok(damages);
     }
 
-    [HttpGet("getDamageByEachTarget/{combatId}")]
-    public async Task<IActionResult> GetDamageByEachTarget(int combatId, CancellationToken cancellationToken)
-    {
-        var damages = await _mediator.Send(new GetDamageByEachTargetQuery(combatId), cancellationToken);
-
-        return Ok(damages);
-    }
-
     [HttpGet("getUniqueTargets/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueTargets(int combatPlayerId, CancellationToken cancellationToken)
     {
         var uniqueTargets = await _mediator.Send(new GetUniqueDamageTargetsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueTargets);
-    }
-
-    [HttpGet("getValueToTarget")]
-    public async Task<IActionResult> GetValueToTarget(int combatPlayerId, string target, CancellationToken cancellationToken)
-    {
-        var value = await _mediator.Send(new GetDamageValueToTargetQuery(combatPlayerId, target), cancellationToken);
-
-        return Ok(value);
     }
 
     [HttpGet("getUniqueSpells/{combatPlayerId}")]

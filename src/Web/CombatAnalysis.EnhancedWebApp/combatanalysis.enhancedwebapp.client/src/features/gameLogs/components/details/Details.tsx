@@ -49,19 +49,11 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
     }
 
     const filter = () => {
-        let result = new Array<CombatPlayerModel>();
         if (sortingValue === undefined || sortingValue === null) {
             return;
         }
 
-        if (sortingValue.value >= 0) {
-            result = [...combatPlayers].sort(compare);
-        }
-        else {
-            result = [...combatPlayers].sort((a: CombatPlayerModel, b: CombatPlayerModel) => a.player.username.localeCompare(b.player.username));
-        }
-
-        setFilteredCombatPlayers(result);
+        setFilteredCombatPlayers([...combatPlayers].sort(compare));
     }
 
     if (filteredCombatPlayers.length === 0) {

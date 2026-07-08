@@ -1,20 +1,20 @@
-﻿import { useContext, useEffect, useState } from 'react';
+import { memo, useContext, useEffect, useState } from 'react';
 import { DashboardContext } from './DashboardItem';
 import type { DashboardModel } from '../../types/dashboard/DashboardModel';
 
-const DashboardDeathItem = () => {
+const DashboardDamageDoneItem = () => {
     const context = useContext(DashboardContext);
 
     if (!context) {
         throw new Error("Child must be inside DashboardContext.Provider");
     }
 
-    const { dashboards, itemCount, compare, setFilter, filter } = context;
+    const { dashboards, itemCount, formatNumber, compare, setFilter, filter } = context;
 
     const [filteredDashboardItem, setFilteredDashboardItem] = useState<DashboardModel[]>([]);
 
     useEffect(() => {
-        setFilter(2);
+        setFilter(0);
     }, []);
 
     useEffect(() => {
@@ -30,11 +30,11 @@ const DashboardDeathItem = () => {
             {filteredDashboardItem.slice(0, itemCount).map((combat, index) => (
                 <li key={index} className="details-item">
                     <div>{combat.username}</div>
-                    <div>{combat.averageDeaths}</div>
+                    <div>{formatNumber(combat.averageDPS)}</div>
                 </li>
             ))}
         </ul>
     );
 }
 
-export default DashboardDeathItem;
+export default memo(DashboardDamageDoneItem);

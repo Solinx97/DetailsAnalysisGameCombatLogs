@@ -8,6 +8,7 @@ import type { CombatAbilityModel } from '../types/CombatAbilityModel';
 import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
 import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
 import type { BossMapModel } from '../types/BossMapModel';
+import type { DashboardModel } from '../types/dashboard/DashboardModel';
 
 const apiURL = '/api/v1';
 
@@ -75,6 +76,9 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'Combat', id: 'LIST' }]
         }),
+        getCombatsDashboard: builder.query<DashboardModel[], number>({
+            query: combatLogId => `/Combat/getDashboards/${combatLogId}`
+        }),
         getCombatById: builder.query<CombatModel, number>({
             query: id => `/Combat/${id}`,
             providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
@@ -136,6 +140,7 @@ export const {
     useGetCombatLogsQuery,
     useLazyGetPlayersDeathByPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
+    useGetCombatsDashboardQuery,
     useLazyGetCombatByIdQuery,
     useLazyGetBossMapByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,

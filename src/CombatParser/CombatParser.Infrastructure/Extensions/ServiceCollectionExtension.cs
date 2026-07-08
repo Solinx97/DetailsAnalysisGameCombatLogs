@@ -1,10 +1,12 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
+using CombatParser.Domain.Data.Dashboard;
 using CombatParser.Domain.Data.Filters;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Interfaces.Filters;
 using CombatParser.Infrastructure.Data;
+using CombatParser.Infrastructure.Data.Dashboard;
 using CombatParser.Infrastructure.Data.Filters;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +61,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IChartRepository<ResourceRecovery>, ChartRepository<ResourceRecovery>>();
 
         services.AddScoped<IDamageFilterRepository, DamageFilterRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddScoped<ICombatPlayerGenericDataRepository<DamageDoneGeneral>, CombatPlayerGenericDataRepository<DamageDoneGeneral>>();
         services.AddScoped<ICombatPlayerGenericDataRepository<HealDoneGeneral>, CombatPlayerGenericDataRepository<HealDoneGeneral>>();
