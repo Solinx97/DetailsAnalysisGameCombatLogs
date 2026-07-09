@@ -245,7 +245,7 @@
 
     &__content {
         display: flex;
-        gap: 10px;
+        gap: 15px;
         margin: 5px 0;
 
         .pre-aura-item {
@@ -259,11 +259,16 @@
             width: 120px;
             gap: 5px;
             margin: 0;
+            cursor: default;
 
             svg {
                 width: 15px;
                 height: 15px;
             }
+        }
+
+        .pre-aura-item:hover {
+            transform: scale(1.2);
         }
     }
 }

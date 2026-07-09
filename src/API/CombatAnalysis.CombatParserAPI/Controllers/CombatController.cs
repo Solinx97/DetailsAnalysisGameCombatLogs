@@ -5,6 +5,7 @@ using CombatParser.Application.Commands.CreateCombat;
 using CombatParser.Application.Queries.Dashboards.GetDamageSpells;
 using CombatParser.Application.Queries.Dashboards.GetDashboard;
 using CombatParser.Application.Queries.Dashboards.GetHealSpells;
+using CombatParser.Application.Queries.Dashboards.GetPotions;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
 using CombatParser.Domain.EntityData;
@@ -62,6 +63,14 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         var spells = await _mediator.Send(new GetHealSpellsQuery(combatLogId), cancellationToken);
 
         return Ok(spells);
+    }
+
+    [HttpGet("getPotions/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetPotions(int combatLogId, CancellationToken cancellationToken)
+    {
+        var potions = await _mediator.Send(new GetPotionsQuery(combatLogId), cancellationToken);
+
+        return Ok(potions);
     }
 
     [HttpPost]

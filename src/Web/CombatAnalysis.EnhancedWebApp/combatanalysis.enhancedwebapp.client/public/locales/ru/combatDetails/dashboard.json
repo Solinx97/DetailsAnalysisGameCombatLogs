@@ -6,5 +6,7 @@
   "OverallDamageSpells": "Общее значение способностей урона",
   "OverallHealSpells": "Общее значение способностей исцеления",
   "More": "Больше",
-  "Less": "Меньше"
+  "Less": "Меньше",
+  "OverallByRaid": "Итоговая информация по рейду",
+  "OverallEfficiencyPotionsUsed": "Общее значение использованых боевых зелий"
 }

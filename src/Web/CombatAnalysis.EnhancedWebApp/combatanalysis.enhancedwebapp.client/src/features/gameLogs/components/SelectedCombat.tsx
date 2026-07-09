@@ -19,7 +19,7 @@ import './SelectedCombat.scss';
 const SelectedCombat: React.FC = () => {
     const fixedNumberUntil = 2;
 
-    const { t } = useTranslation("combatDetails/selectedCombat");
+    const { t } = useTranslation('combatDetails/selectedCombat');
 
     const navigate = useNavigate();
 
@@ -206,7 +206,7 @@ const SelectedCombat: React.FC = () => {
                         },
                         {
                             id: 1,
-                            header: t("Heal"),
+                            header: t("Healing"),
                             content: <SelectedCombatChart
                                 combatPlayers={selectedPlayers}
                                 combatId={selectedPlayers[0].combatId}

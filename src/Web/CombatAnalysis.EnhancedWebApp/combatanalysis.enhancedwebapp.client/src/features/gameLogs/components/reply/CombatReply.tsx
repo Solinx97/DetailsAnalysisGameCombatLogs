@@ -12,7 +12,7 @@ import useCombatReply from '../../hooks/useCombatReply';
 import './CombatReply.scss';
 
 const CombatReply: React.FC = () => {
-    const { t } = useTranslation("combatDetails/auras");
+    const { t } = useTranslation('combatDetails/reply');
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -167,7 +167,7 @@ const CombatReply: React.FC = () => {
                             onClick={() => setPlaying(!playing)}
                             className="play"
                         >
-                            {playing ? "Pause" : "Play"}
+                            {playing ? t("Pause") : t("Play")}
                         </button>
                     </div>
                     <input

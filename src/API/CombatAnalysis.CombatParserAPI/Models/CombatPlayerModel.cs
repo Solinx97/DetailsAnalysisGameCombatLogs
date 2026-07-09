@@ -10,7 +10,6 @@ public class CombatPlayerModel
     [Range(0, int.MaxValue)]
     public double AverageItemLevel { get; set; }
 
-    [Range(0, int.MaxValue)]
     public int ResourcesRecovery { get; set; }
 
     [Range(0, int.MaxValue)]

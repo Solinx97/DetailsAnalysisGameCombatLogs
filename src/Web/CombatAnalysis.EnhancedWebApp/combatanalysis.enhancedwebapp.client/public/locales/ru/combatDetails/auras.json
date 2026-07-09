@@ -12,5 +12,7 @@
   "When": "Когда",
   "Apply": "Применить",
   "SelectCombat": "Выбрать бой",
-    "SeeOnlyPinnedAuras": "Показать только закрепленные ауры"
+  "SeeOnlyPinnedAuras": "Показать только закрепленные ауры",
+  "AllBuffs": "Все усиления",
+  "Targets": "Цели"
 }

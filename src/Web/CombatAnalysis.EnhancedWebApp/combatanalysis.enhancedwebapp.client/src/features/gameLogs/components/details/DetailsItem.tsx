@@ -29,7 +29,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faKhanda}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(player.damageDone / details.duration)}</div>
+                <div>{getValueShortName(Math.round(player.damageDone / details.duration))}</div>
                 {player.damageDone > 0 &&
                     <div>
                         {player.score !== null &&
@@ -51,7 +51,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faPlusCircle}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(player.healDone / details.duration)}</div>
+                <div>{getValueShortName(Math.round(player.healDone / details.duration))}</div>
                 {player.healDone > 0 &&
                     <div>
                         {player.score !== null &&
@@ -73,7 +73,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faShieldHalved}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(player.damageTaken)}</div>
+                <div>{getValueShortName(Math.round(player.damageTaken))}</div>
                 {player.damageTaken > 0 &&
                     <div className="btn-shadow"
                         onClick={() => navigateToDetails(2)}
@@ -90,7 +90,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faBolt}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(player.resourcesRecovery)}</div>
+                <div>{getValueShortName(Math.round(player.resourcesRecovery))}</div>
                 {player.resourcesRecovery > 0 &&
                     <div className="btn-shadow"
                         onClick={() => navigateToDetails(3)}

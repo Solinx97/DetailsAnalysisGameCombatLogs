@@ -13,6 +13,7 @@ import DashboardHealSpellsItem from './DashboardHealSpellsItem';
 import Loading from '@/shared/components/Loading.tsx';
 
 import './Dashboard.scss';
+import DashboardPotionsItem from './DashboardPotionsItem';
 
 interface DashboardProps {
     combatLogId: number;
@@ -30,6 +31,7 @@ const Dashboard: React.FC<DashboardProps> = ({ combatLogId, allUniqueCombats }) 
 
     return (
         <div className="dashboard">
+            <h5>{t("OverallByRaid")}</h5>
             <ul className="dashboard__items">
                 <DashboardItem
                     dashboards={dashboards}
@@ -81,6 +83,15 @@ const Dashboard: React.FC<DashboardProps> = ({ combatLogId, allUniqueCombats }) 
                         />
                     }
                     name={t("OverallHealSpells")}
+                />
+                <DashboardItem
+                    dashboards={dashboards}
+                    item={
+                        <DashboardPotionsItem
+                            combatLogId={combatLogId}
+                        />
+                    }
+                    name={t("OverallEfficiencyPotionsUsed")}
                 />
             </ul>
         </div>

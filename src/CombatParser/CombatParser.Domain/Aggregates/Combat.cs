@@ -78,7 +78,6 @@ public class Combat
         ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
         ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
         ArgumentOutOfRangeException.ThrowIfNegative(damageTaken, nameof(damageTaken));
-        ArgumentOutOfRangeException.ThrowIfNegative(resourcesRecovery, nameof(resourcesRecovery));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(combatLogId, nameof(combatLogId));
 
         CombatException.ThrowIfLong(dungeonName);

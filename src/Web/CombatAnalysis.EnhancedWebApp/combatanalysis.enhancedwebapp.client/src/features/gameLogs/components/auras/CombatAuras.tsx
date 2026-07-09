@@ -13,7 +13,7 @@ import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import './CombatAuras.scss';
 
 const CombatAuras: React.FC = () => {
-    const { t } = useTranslation("combatDetails/auras");
+    const { t } = useTranslation('combatDetails/auras');
 
     const navigate = useNavigate();
     const location = useLocation();

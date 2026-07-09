@@ -57,6 +57,15 @@ public class CombatController : ControllerBase
 
     }
 
+    [HttpGet("getPotions/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetPotions(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/getPotions/{combatLogId}");
+        var potions = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+
+        return Ok(potions);
+    }
+
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {

@@ -3,6 +3,7 @@ using CombatParser.Domain.Data;
 using CombatParser.Domain.DTOs;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Infrastructure.Enums;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,6 +44,31 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
         ).ToListAsync(cancellationToken);
 
         return abilities;
+    }
+
+    public async Task<Dictionary<string, int>> GetPotionsAsync(int combatLogId, CancellationToken cancellationToken)
+    {
+        var potions = await (
+            from ability in _context.Set<CombatAbility>().AsNoTracking()
+            where ability.AbilityType == (int)CombatAbilityType.EfficiencyPotion
+
+            join aura in _context.Set<CombatPlayerAura>().AsNoTracking()
+                on ability.GameId equals aura.GameAuraId
+
+            join player in _context.Set<CombatPlayer>().AsNoTracking()
+                on aura.CombatPlayerId equals player.Id
+
+            join combatEntity in _context.Set<Combat>().AsNoTracking()
+                on player.CombatId equals combatEntity.Id
+
+            where combatEntity.CombatLogId == combatLogId
+
+            select new { Username = player.Player.Username, Ability = ability.Id }
+        )
+        .GroupBy(x => x.Username)
+        .ToDictionaryAsync(g => g.Key, g => g.Count(), cancellationToken);
+
+        return potions;
     }
 
     public async Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, CancellationToken cancellationToken)

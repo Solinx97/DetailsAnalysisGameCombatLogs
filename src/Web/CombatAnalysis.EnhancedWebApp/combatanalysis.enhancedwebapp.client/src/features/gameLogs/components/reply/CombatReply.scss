@@ -8,6 +8,7 @@
 
     &__navigate {
         display: flex;
+        align-items: center;
         gap: 25px;
 
         .active {

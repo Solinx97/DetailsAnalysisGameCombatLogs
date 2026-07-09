@@ -13,7 +13,7 @@ import Dashboard from './dashboard/Dashboard';
 import './GeneralAnalysis.scss';
 
 const GeneralAnalysis: React.FC = () => {
-    const { t } = useTranslation("combatDetails/generalAnalysis");
+    const { t } = useTranslation('combatDetails/generalAnalysis');
     const navigate = useNavigate();
 
     const [combatLogId, setCombatLogId] = useState<number>(0);

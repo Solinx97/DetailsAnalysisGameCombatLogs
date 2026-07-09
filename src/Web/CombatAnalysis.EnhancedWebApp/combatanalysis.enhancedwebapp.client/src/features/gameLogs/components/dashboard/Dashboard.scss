@@ -26,6 +26,11 @@ $mobile-max-width: 425px;
 }
 
 .dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+
     .closed-items {
         @include flex-center;
         gap: 10px;

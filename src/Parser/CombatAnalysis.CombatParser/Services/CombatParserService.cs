@@ -44,7 +44,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
             foreach (var path in combatLogPaths)
             {
-                var lines = await fileManager.ReadAllLinesAsync(path, cancellationToken);
+                var lines = await _fileManager.ReadAllLinesAsync(path, cancellationToken);
                 await ProcessCombatLogLinesAsync(lines, petsId, bossCombatStarted, newCombatFromLogs);
             }
         }

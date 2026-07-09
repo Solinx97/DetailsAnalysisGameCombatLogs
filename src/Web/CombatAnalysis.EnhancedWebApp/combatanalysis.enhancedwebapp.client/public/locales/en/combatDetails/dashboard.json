@@ -6,5 +6,7 @@
   "OverallDamageSpells": "Overall damage spells",
   "OverallHealSpells": "Overall heal spells",
   "More": "More",
-  "Less": "Less"
+  "Less": "Less",
+  "OverallByRaid": "Overall by raid",
+  "OverallEfficiencyPotionsUsed": "Overall efficiency potions used"
 }

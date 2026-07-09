@@ -28,5 +28,8 @@
   "When": "When",
   "FiltersReset": "Reset",
   "TimesReset": "Times reset",
-  "SelectCombat": "Select combat"
+  "SelectCombat": "Select combat",
+  "Dashboard": "Dashboard",
+  "Informations": "Informations",
+  "Reply": "Reply"
 }
