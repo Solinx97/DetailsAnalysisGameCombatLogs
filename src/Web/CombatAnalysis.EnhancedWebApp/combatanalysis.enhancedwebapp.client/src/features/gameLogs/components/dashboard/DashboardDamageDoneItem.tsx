@@ -9,12 +9,13 @@ const DashboardDamageDoneItem = () => {
         throw new Error("Child must be inside DashboardContext.Provider");
     }
 
-    const { dashboards, itemCount, formatNumber, compare, setFilter, filter } = context;
+    const { dashboards, itemCount, setContentSize, formatNumber, compare, setFilter, filter } = context;
 
     const [filteredDashboardItem, setFilteredDashboardItem] = useState<DashboardModel[]>([]);
 
     useEffect(() => {
         setFilter(0);
+        setContentSize(dashboards.length);
     }, []);
 
     useEffect(() => {

@@ -8,6 +8,9 @@ import DashboardDamageDoneItem from './DashboardDamageDoneItem';
 import DashboardHealDoneItem from './DashboardHealDoneItem';
 import DashboardDeathItem from './DashboardDeathItem';
 import { useGetCombatsDashboardQuery } from '../../api/GameLogs.api';
+import DashboardDamageSpellsItem from './DashboardDamageSpellsItem';
+import DashboardHealSpellsItem from './DashboardHealSpellsItem';
+import Loading from '@/shared/components/Loading.tsx';
 
 import './Dashboard.scss';
 
@@ -22,7 +25,7 @@ const Dashboard: React.FC<DashboardProps> = ({ combatLogId, allUniqueCombats }) 
     const { data: dashboards, isLoading } = useGetCombatsDashboardQuery(combatLogId);
 
     if (allUniqueCombats.size === 0 || isLoading || !dashboards) {
-        return (<div>Loading...</div>);
+        return (<Loading />);
     }
 
     return (
@@ -35,8 +38,7 @@ const Dashboard: React.FC<DashboardProps> = ({ combatLogId, allUniqueCombats }) 
                             allUniqueCombats={allUniqueCombats}
                         />
                     }
-                    name={t("CombatsAverageDuration")}
-                    contentSize={dashboards.length}
+                    name={t("AverageDuration")}
                 />
                 <DashboardItem
                     dashboards={dashboards}
@@ -44,8 +46,7 @@ const Dashboard: React.FC<DashboardProps> = ({ combatLogId, allUniqueCombats }) 
                         <DashboardDamageDoneItem
                         />
                     }
-                    name={t("CombatsAverageDPS")}
-                    contentSize={dashboards.length}
+                    name={t("AverageDPS")}
                 />
                 <DashboardItem
                     dashboards={dashboards}
@@ -53,8 +54,7 @@ const Dashboard: React.FC<DashboardProps> = ({ combatLogId, allUniqueCombats }) 
                         <DashboardHealDoneItem
                         />
                     }
-                    name={t("CombatsAverageHPS")}
-                    contentSize={dashboards.length}
+                    name={t("AverageHPS")}
                 />
                 <DashboardItem
                     dashboards={dashboards}
@@ -62,8 +62,25 @@ const Dashboard: React.FC<DashboardProps> = ({ combatLogId, allUniqueCombats }) 
                         <DashboardDeathItem
                         />
                     }
-                    name={t("CombatsAverageDeaths")}
-                    contentSize={dashboards.length}
+                    name={t("OverallDeaths")}
+                />
+                <DashboardItem
+                    dashboards={dashboards}
+                    item={
+                        <DashboardDamageSpellsItem
+                            combatLogId={combatLogId}
+                        />
+                    }
+                    name={t("OverallDamageSpells")}
+                />
+                <DashboardItem
+                    dashboards={dashboards}
+                    item={
+                        <DashboardHealSpellsItem
+                            combatLogId={combatLogId}
+                        />
+                    }
+                    name={t("OverallHealSpells")}
                 />
             </ul>
         </div>

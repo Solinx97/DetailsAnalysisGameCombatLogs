@@ -1,8 +1,10 @@
 ﻿{
-  "CombatsAverageDuration": "Среднее значение продолжительности боя",
-  "CombatsAverageDPS": "Среднее значение УВС",
-  "CombatsAverageHPS": "Среднее значение ИВС",
-  "CombatsAverageDeaths": "Среднее значение смертей",
+  "AverageDuration": "Среднее значение продолжительности боя",
+  "AverageDPS": "Среднее значение УВС",
+  "AverageHPS": "Среднее значение ИВС",
+  "OverallDeaths": "Общее значение смертей",
+  "OverallDamageSpells": "Общее значение способностей урона",
+  "OverallHealSpells": "Общее значение способностей исцеления",
   "More": "Больше",
   "Less": "Меньше"
 }

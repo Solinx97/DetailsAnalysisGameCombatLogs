@@ -1,8 +1,10 @@
 {
-  "CombatsAverageDuration": "Combats average duration",
-  "CombatsAverageDPS": "Combats average DPS",
-  "CombatsAverageHPS": "Combats average HPS",
-  "CombatsAverageDeaths": "Combats average deaths",
+  "AverageDuration": "Average duration",
+  "AverageDPS": "Average DPS",
+  "AverageHPS": "Average HPS",
+  "OverallDeaths": "Overall deaths",
+  "OverallDamageSpells": "Overall damage spells",
+  "OverallHealSpells": "Overall heal spells",
   "More": "More",
   "Less": "Less"
 }

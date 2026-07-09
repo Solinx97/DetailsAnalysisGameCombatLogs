@@ -48,4 +48,56 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
 
         return dashboards;
     }
+
+    public async Task<Dictionary<string, int>> GetDamageSpellsAsync(int combatLogId, CancellationToken cancellationToken)
+    {
+        var spells = await _context.Set<Combat>()
+            .AsNoTracking()
+            .Where(x => x.CombatLogId == combatLogId)
+            .Join(_context.Set<CombatPlayer>(),
+                    x => x.Id,
+                    u => u.CombatId,
+                    (x, u) => new
+                    {
+                        u.Id,
+                    })
+            .Join(_context.Set<DamageDone>(),
+                    x => x.Id,
+                    u => u.CombatPlayerId,
+                    (x, u) => new
+                    {
+                        u.Spell,
+                        u.Value
+                    })
+            .GroupBy(x => x.Spell)
+            .ToDictionaryAsync(x => x.Key, g => g.Sum(x => x.Value), cancellationToken);
+
+        return spells;
+    }
+
+    public async Task<Dictionary<string, int>> GetHealSpellsAsync(int combatLogId, CancellationToken cancellationToken)
+    {
+        var spells = await _context.Set<Combat>()
+            .AsNoTracking()
+            .Where(x => x.CombatLogId == combatLogId)
+            .Join(_context.Set<CombatPlayer>(),
+                    x => x.Id,
+                    u => u.CombatId,
+                    (x, u) => new
+                    {
+                        u.Id,
+                    })
+            .Join(_context.Set<HealDone>(),
+                    x => x.Id,
+                    u => u.CombatPlayerId,
+                    (x, u) => new
+                    {
+                        u.Spell,
+                        u.Value
+                    })
+            .GroupBy(x => x.Spell)
+            .ToDictionaryAsync(x => x.Key, g => g.Sum(x => x.Value), cancellationToken);
+
+        return spells;
+    }
 }

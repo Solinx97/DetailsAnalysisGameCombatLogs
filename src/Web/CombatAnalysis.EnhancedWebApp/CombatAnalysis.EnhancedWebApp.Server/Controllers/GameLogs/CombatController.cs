@@ -37,6 +37,26 @@ public class CombatController : ControllerBase
         return Ok(dashboards);
     }
 
+    [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDamageSpells(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/getDamageSpells/{combatLogId}");
+        var spells = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+
+        return Ok(spells);
+
+    }
+
+    [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetHealSpells(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/getHealSpells/{combatLogId}");
+        var spells = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+
+        return Ok(spells);
+
+    }
+
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {

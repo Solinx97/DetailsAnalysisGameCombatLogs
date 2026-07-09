@@ -79,6 +79,12 @@ export const GameLogsApi = createApi({
         getCombatsDashboard: builder.query<DashboardModel[], number>({
             query: combatLogId => `/Combat/getDashboards/${combatLogId}`
         }),
+        getCombatsDamageSpells: builder.query<Map<string, number>, number>({
+            query: combatLogId => `/Combat/getDamageSpells/${combatLogId}`
+        }),
+        getCombatsHealSpells: builder.query<Map<string, number>, number>({
+            query: combatLogId => `/Combat/getHealSpells/${combatLogId}`
+        }),
         getCombatById: builder.query<CombatModel, number>({
             query: id => `/Combat/${id}`,
             providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
@@ -141,6 +147,8 @@ export const {
     useLazyGetPlayersDeathByPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
     useGetCombatsDashboardQuery,
+    useGetCombatsDamageSpellsQuery,
+    useGetCombatsHealSpellsQuery,
     useLazyGetCombatByIdQuery,
     useLazyGetBossMapByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,

@@ -3,7 +3,7 @@ using CombatParser.Application.DTOs.Dashboard;
 using CombatParser.Domain.Data.Dashboard;
 using MediatR;
 
-namespace CombatParser.Application.Queries.GetDashboard;
+namespace CombatParser.Application.Queries.Dashboards.GetDashboard;
 
 internal class GetDashboardHandler(IDashboardRepository repository, IMapper mapper) : IRequestHandler<GetDashboardQuery, DashboardDto[]>
 {

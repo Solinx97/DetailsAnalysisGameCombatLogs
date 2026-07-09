@@ -7,6 +7,7 @@ interface DashboardContextValue {
     dashboards: DashboardModel[];
     setItemCount: Dispatch<SetStateAction<number>>;
     itemCount: number;
+    setContentSize: Dispatch<SetStateAction<number>>;
     formatNumber: (value: number | string | undefined) => string;
     compare: (boardA: DashboardModel, boardB: DashboardModel) => number;
     setFilter: Dispatch<SetStateAction<number>>;
@@ -19,14 +20,14 @@ interface DashboardItemProps {
     dashboards: DashboardModel[];
     item: ReactNode;
     name: string;
-    contentSize: number;
 }
 
-const DashboardItem: React.FC<DashboardItemProps> = ({ dashboards, item, name, contentSize }) => {
+const DashboardItem: React.FC<DashboardItemProps> = ({ dashboards, item, name }) => {
     const minCount = 3;
 
     const { t } = useTranslation('combatDetails/dashboard');
 
+    const [contentSize, setContentSize] = useState(minCount);
     const [itemCount, setItemCount] = useState(minCount);
     const [filter, setFilter] = useState(-1);
 
@@ -72,6 +73,7 @@ const DashboardItem: React.FC<DashboardItemProps> = ({ dashboards, item, name, c
                 dashboards: dashboards,
                 setItemCount: setItemCount,
                 itemCount: itemCount,
+                setContentSize: setContentSize,
                 formatNumber: formatNumber,
                 compare: compare,
                 setFilter: setFilter,

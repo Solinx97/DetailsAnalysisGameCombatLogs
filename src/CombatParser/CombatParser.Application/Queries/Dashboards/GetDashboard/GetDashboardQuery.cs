@@ -1,7 +1,7 @@
 ﻿using CombatParser.Application.DTOs.Dashboard;
 using MediatR;
 
-namespace CombatParser.Application.Queries.GetDashboard;
+namespace CombatParser.Application.Queries.Dashboards.GetDashboard;
 
 public record GetDashboardQuery(
     int CombatLogId

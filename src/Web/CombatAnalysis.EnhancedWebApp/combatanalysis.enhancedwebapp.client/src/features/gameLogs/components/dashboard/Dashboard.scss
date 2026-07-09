@@ -95,6 +95,8 @@ $mobile-max-width: 425px;
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
+                max-height: 400px;
+                overflow-y: auto;
 
                 .details {
                     display: flex;

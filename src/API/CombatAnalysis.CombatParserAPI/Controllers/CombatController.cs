@@ -2,9 +2,11 @@
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Application.Commands.CreateCombat;
+using CombatParser.Application.Queries.Dashboards.GetDamageSpells;
+using CombatParser.Application.Queries.Dashboards.GetDashboard;
+using CombatParser.Application.Queries.Dashboards.GetHealSpells;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
-using CombatParser.Application.Queries.GetDashboard;
 using CombatParser.Domain.EntityData;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +46,22 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         var dashboards = await _mediator.Send(new GetDashboardQuery(combatLogId), cancellationToken);
 
         return Ok(dashboards);
+    }
+
+    [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDamageSpells(int combatLogId, CancellationToken cancellationToken)
+    {
+        var spells = await _mediator.Send(new GetDamageSpellsQuery(combatLogId), cancellationToken);
+
+        return Ok(spells);
+    }
+
+    [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetHealSpells(int combatLogId, CancellationToken cancellationToken)
+    {
+        var spells = await _mediator.Send(new GetHealSpellsQuery(combatLogId), cancellationToken);
+
+        return Ok(spells);
     }
 
     [HttpPost]
