@@ -5,6 +5,7 @@ using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models.GameLogs;
+using CombatAnalysis.Core.Models.GameLogs.Details;
 using CombatAnalysis.Core.Security;
 using CombatAnalysis.Core.ViewModels.Chat;
 using Microsoft.Extensions.Caching.Memory;
@@ -134,7 +135,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     public CombatPlayerModel Data { get; set; } = new();
 
-    public Dictionary<string, List<string>> PetsId { get; set; } = new();
+    public Dictionary<string, List<string>> PetsId { get; set; } = [];
 
     public CombatModel? SelectedCombat
     {
@@ -144,10 +145,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
             if (value != null)
             {
                 _selectedCombat = value;
-                DetailsGenericTemplate<DamageDoneModel, DamageDoneGeneralModel>.SelectedCombat = value;
-                DetailsGenericTemplate<HealDoneModel, HealDoneGeneralModel>.SelectedCombat = value;
-                DetailsGenericTemplate<DamageTakenModel, DamageTakenGeneralModel>.SelectedCombat = value;
-                DetailsGenericTemplate<ResourceRecoveryModel, ResourceRecoveryGeneralModel>.SelectedCombat = value;
+                DetailsGenericTemplateViewModel.SelectedCombat = value;
             }
         }
     }
@@ -347,22 +345,54 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     public async Task DamageDoneDetailsAsync()
     {
-        await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, CombatPlayerModel>(Data);
+        var details = new DetailsGenericModel
+        { 
+            GenericModelType = typeof(DamageDoneGeneralModel).AssemblyQualifiedName!,
+            GenericAPIName = typeof(DamageDoneGeneralModel).Name.Replace("Model", ""), 
+            ModelType = typeof(DamageDoneModel).AssemblyQualifiedName!,
+            APIName = typeof(DamageDoneModel).Name.Replace("Model", ""),
+            CombatPlayer = Data 
+        };
+        await _mvvmNavigation.Navigate<DetailsGenericTemplateViewModel, DetailsGenericModel>(details);
     }
 
     public async Task HealDoneDetailsAsync()
     {
-        await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, CombatPlayerModel>(Data);
+        var details = new DetailsGenericModel
+        {
+            GenericModelType = typeof(HealDoneGeneralModel).AssemblyQualifiedName!,
+            GenericAPIName = typeof(HealDoneGeneralModel).Name.Replace("Model", ""),
+            ModelType = typeof(HealDoneModel).AssemblyQualifiedName!,
+            APIName = typeof(HealDoneModel).Name.Replace("Model", ""),
+            CombatPlayer = Data
+        };
+        await _mvvmNavigation.Navigate<DetailsGenericTemplateViewModel, DetailsGenericModel>(details);
     }
 
     public async Task DamageTakenDetailsAsync()
     {
-        await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, CombatPlayerModel>(Data);
+        var details = new DetailsGenericModel
+        {
+            GenericModelType = typeof(DamageTakenGeneralModel).AssemblyQualifiedName!,
+            GenericAPIName = typeof(DamageTakenGeneralModel).Name.Replace("Model", ""),
+            ModelType = typeof(DamageTakenModel).AssemblyQualifiedName!,
+            APIName = typeof(DamageTakenModel).Name.Replace("Model", ""),
+            CombatPlayer = Data
+        };
+        await _mvvmNavigation.Navigate<DetailsGenericTemplateViewModel, DetailsGenericModel>(details);
     }
 
     public async Task ResourceDetailsAsync()
     {
-        await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, CombatPlayerModel>(Data);
+        var details = new DetailsGenericModel
+        {
+            GenericModelType = typeof(ResourceRecoveryGeneralModel).AssemblyQualifiedName!,
+            GenericAPIName = typeof(ResourceRecoveryGeneralModel).Name.Replace("Model", ""),
+            ModelType = typeof(ResourceRecoveryModel).AssemblyQualifiedName!,
+            APIName = typeof(ResourceRecoveryModel).Name.Replace("Model", ""),
+            CombatPlayer = Data
+        };
+        await _mvvmNavigation.Navigate<DetailsGenericTemplateViewModel, DetailsGenericModel>(details);
     }
 
     public async Task ChatAsync()

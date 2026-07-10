@@ -39,9 +39,14 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 using var response = await _httpClient.PostAsync("Combat", JsonContent.Create(combat), cancellationToken);
                 response.EnsureSuccessStatusCode();
 
+                var combatId = int.Parse(await response.Content.ReadAsStringAsync());
+                combat.Id = combatId;
+
                 uplodedCallback(combat.DungeonName, combat.Boss.Name);
 
                 readyCombatsNumber++;
+
+                combat.CombatPlayers.Clear();
             }
             catch (HttpRequestException ex)
             {

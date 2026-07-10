@@ -17,7 +17,8 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
 
         await _context.BulkInsertAsync([combat], new BulkConfig
         {
-            SetOutputIdentity = true
+            SetOutputIdentity = true,
+            PreserveInsertOrder = true
         }, cancellationToken: cancellationToken);
 
         var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);

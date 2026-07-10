@@ -268,15 +268,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save.
-        /// </summary>
-        public static string SaveData {
-            get {
-                return ResourceManager.GetString("SaveData", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Saved data is allow to see details in the future and share with other users..
         /// </summary>
         public static string SaveDataDescribe {

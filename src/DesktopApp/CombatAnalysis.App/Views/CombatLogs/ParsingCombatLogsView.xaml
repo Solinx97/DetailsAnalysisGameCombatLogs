@@ -102,15 +102,10 @@
 
             <StackPanel Grid.Row="0" IsEnabled="{Binding CombatLogNames.Count, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0:>}">
                 <Button Name="combatLogFileAnalysis" Width="150" Margin="0 20" Content="{loc:Loc Processing}" FontSize="16"
-                        mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" IsEnabled="{Binding IsAllowSaveLogs, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
-                    <CheckBox Style="{DynamicResource CheckBoxStyle1}" Name="isSaveCombatLog" Width="150"
-                              VerticalAlignment="Center" VerticalContentAlignment="Center"
-                              Content="{loc:Loc SaveData}" IsChecked="{Binding IsNeedSave}" FontSize="14"
-                              IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}" />
-                    <TextBlock Text="{loc:Loc ToSaveYouShouldBeLogin}" TextAlignment="Center" Opacity="0.5" Foreground="White" Margin="0 5"
-                            Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=false:true}"/>
-                </StackPanel>
+                        mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}"
+                        IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}"/>
+                <TextBlock Text="{loc:Loc ToSaveYouShouldBeLogin}" TextAlignment="Center" Opacity="0.5" Foreground="White" Margin="0 5"
+                        Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=false:true}"/>
             </StackPanel>
             
             <StackPanel Grid.Row="1" Margin="0 10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"

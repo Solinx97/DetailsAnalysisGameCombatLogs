@@ -117,6 +117,105 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Average" xml:space="preserve">
+    <value>Среднее</value>
+  </data>
+  <data name="Common" xml:space="preserve">
+    <value>Общий</value>
+  </data>
+  <data name="Count" xml:space="preserve">
+    <value>Кол-во</value>
+  </data>
+  <data name="Crit" xml:space="preserve">
+    <value>Крит</value>
+  </data>
+  <data name="Damage" xml:space="preserve">
+    <value>Урон</value>
+  </data>
+  <data name="DPS" xml:space="preserve">
+    <value>УВС</value>
+  </data>
+  <data name="Dodge" xml:space="preserve">
+    <value>Уклонение</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>Первая</value>
+  </data>
+  <data name="Immune" xml:space="preserve">
+    <value>Иммун</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Последняя</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Мин</value>
+  </data>
+  <data name="Miss" xml:space="preserve">
+    <value>Промах</value>
+  </data>
+  <data name="MoreDetails" xml:space="preserve">
+    <value>Подробнее</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Сл.</value>
+  </data>
+  <data name="Parry" xml:space="preserve">
+    <value>Парирование</value>
+  </data>
+  <data name="PeriodicDamage" xml:space="preserve">
+    <value>Периодический урон</value>
+  </data>
+  <data name="Player" xml:space="preserve">
+    <value>Игрок</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Пред.</value>
+  </data>
+  <data name="Resist" xml:space="preserve">
+    <value>Сопротивление</value>
+  </data>
+  <data name="ShowPets" xml:space="preserve">
+    <value>Питомцы и существа</value>
+  </data>
+  <data name="Spell" xml:space="preserve">
+    <value>Заклинание</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Цель</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Время</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Анализ нанесенного урона</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Всего</value>
+  </data>
+  <data name="TypeOf" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Фильтры</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Загрузка</value>
+  </data>
+  <data name="Creator" xml:space="preserve">
+    <value>Инитиатор</value>
+  </data>
+  <data name="HPS" xml:space="preserve">
+    <value>ИВС</value>
+  </data>
   <data name="All" xml:space="preserve">
     <value>Все</value>
   </data>

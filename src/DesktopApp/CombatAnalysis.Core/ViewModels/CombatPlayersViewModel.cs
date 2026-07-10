@@ -11,10 +11,6 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
     private readonly ICombatParserAPIService _combatparserAPIService;
 
     private int _selectedTabIndex = 1;
-    private CombatModel? _combat;
-    private List<CombatPlayerModel>? _players;
-    private List<CombatPlayerModel>? _mainPlayersCombat;
-    private CombatPlayerModel? _selectedPlayer;
 
     public CombatPlayersViewModel(ICombatParserAPIService combatparserAPIService)
     {
@@ -30,8 +26,6 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         PlayerInfoVM = new PlayerInfoViewModel();
     }
 
-    #region View model properties
-
     public int SelectedTabIndex
     {
         get { return _selectedTabIndex; }
@@ -45,48 +39,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         }
     }
 
-    public List<CombatPlayerModel>? Players
-    {
-        get => _players;
-        set
-        {
-            SetProperty(ref _players, value);
-
-            if (value != null && value.Count > 0)
-            {
-                SelectedPlayer = value[0];
-            }
-        }
-    }
-
-    public CombatPlayerModel? SelectedPlayer
-    {
-        get => _selectedPlayer;
-        set
-        {
-            SetProperty(ref _selectedPlayer, value);
-
-            if (value != null)
-            {
-                if (Basic is BasicTemplateViewModel basicTemplateViewModel)
-                {
-                    basicTemplateViewModel.Data = value;
-                    basicTemplateViewModel.PetsId = (Combat?.PetsId) ?? [];
-                }
-            }
-        }
-    }
-
-    public CombatModel? Combat
-    {
-        get => _combat;
-        set
-        {
-            SetProperty(ref _combat, value);
-        }
-    }
-
-    #endregion
+    public CombatModel? Combat { get; set; }
 
     public DamageDoneScoreViewModel DamageDoneScoreVM { get; }
 
@@ -101,12 +54,6 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
     public override void Prepare(CombatModel parameter)
     {
         Combat = parameter;
-        if (Combat != null && Combat.CombatPlayers.Count != 0)
-        {
-            _mainPlayersCombat = [.. Combat.CombatPlayers];
-
-            InitCombatPlayersData(_mainPlayersCombat);
-        } 
     }
 
     public override async Task Initialize()
@@ -118,9 +65,8 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
         var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
         var combatPlayers = await _combatparserAPIService.LoadCombatPlayersAsync(Combat.Id, token);
-        _mainPlayersCombat = [.. combatPlayers];
 
-        InitCombatPlayersData(_mainPlayersCombat);
+        InitCombatPlayersData([.. combatPlayers]);
 
         await base.Initialize();
     }
@@ -132,7 +78,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        Players = [.. combatPlayers
+        var updatedCombatPlayers = combatPlayers
             .Select(p => {
                 var damageDonePercentages = (double)p.DamageDone / (double)Combat.DamageDone;
                 p.DamageDonePercentages = double.Round(damageDonePercentages * 100, 2);
@@ -148,15 +94,16 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
                 return p;
             })
-            .OrderByDescending(p => p.DamageDone)];
+            .OrderByDescending(p => p.DamageDone)
+            .ToList();
 
-        GetCombatAverageInformation(Combat.Duration, Players);
+        GetCombatAverageInformation(Combat.Duration, updatedCombatPlayers);
 
-        DamageDoneScoreVM.Prepare(Players);
-        HealDoneScoreVM.Prepare(Players);
-        DamageTakenScoreVM.Prepare(Players);
-        ResourcesRecoveryScoreVM.Prepare(Players);
-        PlayerInfoVM.Prepare(Players);
+        DamageDoneScoreVM.Prepare(updatedCombatPlayers);
+        HealDoneScoreVM.Prepare(updatedCombatPlayers);
+        DamageTakenScoreVM.Prepare(updatedCombatPlayers);
+        ResourcesRecoveryScoreVM.Prepare(updatedCombatPlayers);
+        PlayerInfoVM.Prepare(updatedCombatPlayers);
 
         base.Prepare();
     }
