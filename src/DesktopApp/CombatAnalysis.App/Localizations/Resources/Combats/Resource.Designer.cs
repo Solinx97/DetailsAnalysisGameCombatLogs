@@ -403,7 +403,7 @@ namespace CombatAnalysis.App.Localizations.Resources.Combats {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analysing.
+        ///   Looks up a localized string similar to Raid combats.
         /// </summary>
         public static string Title {
             get {

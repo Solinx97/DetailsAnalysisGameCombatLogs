@@ -331,7 +331,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DetailsGeneric {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analyzing of damage done.
+        ///   Looks up a localized string similar to Analyzing data.
         /// </summary>
         public static string Title {
             get {
