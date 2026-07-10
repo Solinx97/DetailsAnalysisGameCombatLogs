@@ -129,6 +129,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         {
             SetProperty(ref _selectedCreator, value);
             _ = LoadDetailsAsync(Page, _pageSize);
+            _ = LoadCountAsync();
         }
     }
 
@@ -139,6 +140,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         {
             SetProperty(ref _selectedTarget, value);
             _ = LoadDetailsAsync(Page, _pageSize);
+            _ = LoadCountAsync();
         }
     }
 
@@ -149,6 +151,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         {
             SetProperty(ref _selectedSpell, value);
             _ = LoadDetailsAsync(Page, _pageSize);
+            _ = LoadCountAsync();
         }
     }
 
