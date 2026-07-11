@@ -14,6 +14,7 @@ import './GeneralAnalysis.scss';
 
 const GeneralAnalysis: React.FC = () => {
     const { t } = useTranslation('combatDetails/generalAnalysis');
+    
     const navigate = useNavigate();
 
     const [combatLogId, setCombatLogId] = useState<number>(0);
@@ -78,7 +79,7 @@ const GeneralAnalysis: React.FC = () => {
                 <h5>{t("Combats")}</h5>
             </div>
             <PersonalTabs
-                tab={0}
+                tab={1}
                 tabs={[
                     {
                         id: 0,

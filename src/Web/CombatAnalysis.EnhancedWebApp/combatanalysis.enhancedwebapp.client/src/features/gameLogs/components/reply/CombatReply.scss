@@ -22,10 +22,16 @@
 
     &__actions {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
 
         .play {
-            width: 250px;
+            width: 100px;
+        }
+
+        .range {
+            width: 100%;
         }
     }
 
@@ -53,17 +59,49 @@
 
     .players {
         display: flex;
-        gap: 20px;
+        justify-content: center;
         text-align: center;
+        gap: 20px;
+        font-size: 0.85em;
         cursor: pointer;
 
-        li {
-            padding: 10px;
+        li div {
+            padding: 5px 10px;
         }
 
         .selected {
             box-shadow: 2px 2px 2px 2px green;
             border-radius: 20px;
+        }
+    }
+
+    canvas {
+        border: 1px solid gray;
+    }
+}
+
+.boss-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .boss {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+
+        .combat-number {
+            border-radius: 20px;
+            padding: 5px 15px;
+            cursor: default;
+        }
+
+        .combat-number.win {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+
+        .combat-number.lose {
+            box-shadow: 2px 2px 2px 2px red;
         }
     }
 }

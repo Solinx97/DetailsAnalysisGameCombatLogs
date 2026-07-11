@@ -53,7 +53,6 @@ const SelectedCombat: React.FC = () => {
         const queryParams = new URLSearchParams(window.location.search);
 
         const id: number = parseInt(queryParams.get("id") || '0');
-        const detailsType: number = parseInt(queryParams.get("detailsType") || '0');
         const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
         const name: string = queryParams.get("name") || '';
         const number: number = parseInt(queryParams.get("number") || '0');
@@ -62,7 +61,7 @@ const SelectedCombat: React.FC = () => {
 
         setDetails({
             id,
-            detailsType,
+            detailsType: 0,
             combatLogId,
             name,
             number,
@@ -134,12 +133,12 @@ const SelectedCombat: React.FC = () => {
         return value.toString();
     }
 
-    const getRandomColors = () => {
+    const getRandomColors = (raidSize: number) => {
         const colors = new Array<string>();
 
-        selectedPlayers?.forEach(() => {
+        for (let index = 0; index < raidSize; index++) {
             colors.push(`hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`);
-        });
+        }
 
         return colors;
     }
@@ -200,7 +199,7 @@ const SelectedCombat: React.FC = () => {
                             content: <SelectedCombatChart
                                 combatPlayers={selectedPlayers}
                                 combatId={selectedPlayers[0].combatId}
-                                colors={getRandomColors()}
+                                colors={getRandomColors(selectedPlayers.length)}
                                 useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
                             />
                         },
@@ -210,7 +209,7 @@ const SelectedCombat: React.FC = () => {
                             content: <SelectedCombatChart
                                 combatPlayers={selectedPlayers}
                                 combatId={selectedPlayers[0].combatId}
-                                colors={getRandomColors()}
+                                colors={getRandomColors(selectedPlayers.length)}
                                 useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
                             />
                         }

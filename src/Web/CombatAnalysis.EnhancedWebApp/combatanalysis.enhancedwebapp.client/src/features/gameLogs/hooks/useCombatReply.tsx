@@ -24,8 +24,12 @@ const useCombatReply = (
     selectedPlayerId: number,
     canvasRef: RefObject<HTMLCanvasElement | null>,
     combatPlayerPositions: CombatPlayerPositionModel[],
-    positions: Map<number, CombatPlayerPositionModel[]>
+    positions: Map<number, CombatPlayerPositionModel[]>,
+    colors: Map<number, string>
 ) => {
+    const zoom = 5;
+    const otherElementsHeight = 250;
+
     const [currentTime, setCurrentTime] = useState(0);
     const [combatId, setCombatId] = useState(0);
     const [combat, setCombat] = useState<CombatModel>();
@@ -39,23 +43,37 @@ const useCombatReply = (
         width: 1,
         height: 1
     });
+    const [view, setView] = useState<WorldSize>({
+        width: window.innerWidth,
+        height: window.innerHeight - otherElementsHeight,
+    });
 
     const currentTimeRef = useRef(currentTime);
 
     const [getCombat] = useLazyGetCombatByIdQuery();
     const [getBossMap] = useLazyGetBossMapByIdQuery();
 
-    const zoom = 1;
-    const view = {
-        width: 1300,
-        height: 425,
-    };
-
     useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const combatId = parseInt(searchParams.get("combat") ?? "1");
+        const queryParams = new URLSearchParams(location.search);
+
+        const combatId = parseInt(queryParams.get("id") ?? "0");
 
         setCombatId(combatId);
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setView({
+                width: window.innerWidth,
+                height: window.innerHeight - otherElementsHeight,
+            });
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        }
     }, []);
 
     useEffect(() => {
@@ -127,7 +145,6 @@ const useCombatReply = (
         }
 
         let frameId: number;
-
         const render = () => {
             ctx.clearRect(
                 0,
@@ -161,12 +178,11 @@ const useCombatReply = (
                     ctx,
                     zoomed.x,
                     zoomed.y,
-                    "red"
+                    colors.get(key) ?? "#000000"
                 );
             });
 
-            frameId =
-                requestAnimationFrame(render);
+            frameId = requestAnimationFrame(render);
         }
 
         frameId = requestAnimationFrame(render);
@@ -174,39 +190,37 @@ const useCombatReply = (
         return () => {
             cancelAnimationFrame(frameId);
         }
-    }, [combatPlayerPositions, selectedPlayerId, instanceBounds]);
+    }, [combatPlayerPositions, selectedPlayerId, colors, view, instanceBounds]);
 
-    const getPosition = (combatPlayerPositions: CombatPlayerPositionModel[]): Position => {
-        if (combatPlayerPositions.length < 1) {
+    const getPosition = (positions: CombatPlayerPositionModel[]): Position => {
+        if (positions.length === 0) {
             return { x: 1, y: 1 };
         }
 
-        let before = combatPlayerPositions[0];
-        let after = combatPlayerPositions[combatPlayerPositions.length - 1];
         const time = currentTimeRef.current!;
 
-        for (let i = 0; i < combatPlayerPositions.length - 1; i++) {
-            if (time >= timeToMs(combatPlayerPositions[i].time) &&
-                time <= timeToMs(combatPlayerPositions[i + 1].time)) {
-                before = combatPlayerPositions[i];
-                after = combatPlayerPositions[i + 1];
-                break;
+        const last = positions[positions.length - 1];
+
+        for (let i = 0; i < positions.length - 1; i++) {
+            const before = positions[i];
+            const after = positions[i + 1];
+
+            const beforeMs = timeToMs(before.time);
+            const afterMs = timeToMs(after.time);
+
+            if (time >= beforeMs && time <= afterMs) {
+                const progress =
+                    (time - beforeMs) /
+                    (afterMs - beforeMs);
+
+                return {
+                    x: before.x + (after.x - before.x) * progress,
+                    y: before.y + (after.y - before.y) * progress
+                };
             }
         }
 
-        const progress =
-            (time - timeToMs(before.time)) /
-            (timeToMs(after.time) - timeToMs(before.time));
-
-        return {
-            x:
-                before.x +
-                (after.x - before.x) * progress,
-
-            y:
-                before.y +
-                (after.y - before.y) * progress
-        };
+        return { x: last.x, y: last.y };
     }
 
     const toPixel = (worldX: number, worldY: number) => {
@@ -226,7 +240,7 @@ const useCombatReply = (
 
         return {
             x: (worldX - instanceBounds.x0) * scale + offsetX,
-            y: (instanceBounds.y0 - worldY) * scale + offsetY
+            y: (worldY - instanceBounds.y1) * scale + offsetY
         };
     }
 
@@ -245,20 +259,27 @@ const useCombatReply = (
         };
     }
 
-    const drawPlayer = (combatPlayerId: number, ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
+    const drawPlayer = (playerId: number, ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
         ctx.beginPath();
 
         ctx.arc(
             x,
             y,
-            5,
+            7,
             0,
             Math.PI * 2
         );
 
-        ctx.fillStyle = selectedPlayerId === combatPlayerId ? "green" : color;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
 
-        ctx.fill();
+        ctx.stroke();
+
+        if (playerId === selectedPlayerId) {
+            ctx.fillStyle = color;
+
+            ctx.fill();
+        }
     }
 
     const timeToMs = (time: string): number => {

@@ -19,13 +19,10 @@ public class CombatDetails(ILogger logger)
     ];
     private readonly string[] _positions =
     [
-        CombatLogKeyWords.SpellHeal,
-        CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SwingDamageLanded,
+        CombatLogKeyWords.AuraApplied,
         CombatLogKeyWords.SpellCastSuccess,
-        CombatLogKeyWords.DamageShieldMissed,
-        CombatLogKeyWords.RangeDamage,
-        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SpellCastFailed,
+        CombatLogKeyWords.UnitDied,
     ];
     private readonly string[] _healVariations =
     [
