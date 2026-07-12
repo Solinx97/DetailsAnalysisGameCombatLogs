@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParserAPI.Models;
+﻿using CombatAnalysis.CombatParserAPI.Models;
+using CombatParser.Application.Commands.CreatePlayer;
+using CombatParser.Application.Queries.GetPlayerByGameId;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,16 +9,15 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class PlayerController(IPlayerService service, IMapper mapper, ILogger<PlayerController> logger) : ControllerBase
+public class PlayerController(IMediator mediator, ILogger<PlayerController> logger) : ControllerBase
 {
-    private readonly IPlayerService _service = service;
-    private readonly IMapper _mapper = mapper;
+    private readonly IMediator _mediator = mediator;
     private readonly ILogger<PlayerController> _logger = logger;
 
     [HttpGet("getByGamePlayerId/{gamePlayerId}")]
     public async Task<IActionResult> GetByGamePlayerId(string gamePlayerId, CancellationToken cancellationToken)
     {
-        var player = await _service.GetByGameIdAsync(gamePlayerId, cancellationToken);
+        var player = await _mediator.Send(new GetPlayerByGameIdQuery(gamePlayerId), cancellationToken);
 
         return Ok(player);
     }
@@ -35,8 +34,7 @@ public class PlayerController(IPlayerService service, IMapper mapper, ILogger<Pl
                 return ValidationProblem(ModelState);
             }
 
-            var map = _mapper.Map<PlayerDto>(player);
-            var createdItem = await _service.CreateAsync(map, cancellationToken);
+            var createdItem = await _mediator.Send(new CreatePlayerCommand(player.GameId, player.Username, player.Faction), cancellationToken);
 
             return Ok(createdItem);
         }

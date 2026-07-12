@@ -1,7 +1,7 @@
 {
   "NeedToAddSomething": "Необходимо добавить как минимум 1 элемент.",
-  "Damage": "Урон",
-  "Healing": "Исцеление",
+  "DPS": "УВС",
+  "HPS": "ИВС",
   "DamageTaken": "Полученный урон",
   "ResourcesRecovery": "Восстановлено ресурсов",
   "Resources": "Ресурсы",

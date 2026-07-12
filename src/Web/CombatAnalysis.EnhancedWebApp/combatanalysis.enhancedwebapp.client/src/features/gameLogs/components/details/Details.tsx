@@ -1,34 +1,42 @@
-﻿import { memo, useEffect, useState, type ChangeEvent } from 'react';
+﻿import { memo, useEffect, useState } from 'react';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
-import type { CombatDetailsModel } from '../../types/dashboard/CombatDetailsModel';
+import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import DetailsItem from './DetailsItem';
+import Select from 'react-select';
+import CombatPreAuraItem from '../auras/CombatPreAuraItem';
+
+import '../auras/CombatAuras.scss';
 
 interface DetailsProps {
-    combatPlayers: CombatPlayerModel[];
     details: CombatDetailsModel;
+    combatPlayers: CombatPlayerModel[];
     getValueShortName(value: number): string;
     t(key: string): string;
 }
 
-const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShortName, t }) => {
-    const [filterValue, setFilterValue] = useState<number>(-1);
+type Option = {
+    value: number;
+    label: string;
+}
+
+const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, t }) => {
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const detailsType: any = {
-        0: "damageDone",
-        1: "healDone",
-        2: "damageTaken",
-        3: "resourcesRecovery"
-    };
+    const sortOptions: Option[] = [
+        { value: 0, label: t("Damage") },
+        { value: 1, label: t("Healing") },
+        { value: 2, label: t("DamageTaken") },
+        { value: 3, label: t("ResourcesRecovery") },
+    ];
+    const [sortingValue, setSortingValue] = useState<Option | null>(sortOptions[0]);
 
     useEffect(() => {
         filter();
-    }, [filterValue]);
+    }, [sortingValue, combatPlayers]);
 
     const compare = (playerA: CombatPlayerModel, playerB: CombatPlayerModel) => {
         const keys: (keyof CombatPlayerModel)[] = ['damageDone', 'healDone', 'damageTaken', 'resourcesRecovery'];
-        const key = keys[detailsType];
+        const key = keys[sortingValue === null ? 0 : sortingValue.value];
 
         if (playerA[key] > playerB[key]) {
             return -1;
@@ -41,42 +49,38 @@ const Details: React.FC<DetailsProps> = ({ combatPlayers, details, getValueShort
     }
 
     const filter = () => {
-        let result = new Array<CombatPlayerModel>();
-
-        if (filterValue >= 0) {
-            result = [...combatPlayers].sort(compare);
-        }
-        else {
-            result = [...combatPlayers].sort((a: CombatPlayerModel, b: CombatPlayerModel) => a.player.username.localeCompare(b.player.username));
+        if (sortingValue === undefined || sortingValue === null) {
+            return;
         }
 
-        setFilteredCombatPlayers(result);
+        setFilteredCombatPlayers([...combatPlayers].sort(compare));
     }
 
-    const handleSelecteFilter = (e: ChangeEvent<HTMLSelectElement>) => {
-        setFilterValue(parseInt(e.target.value || "0"));
+    if (filteredCombatPlayers.length === 0) {
+        return (<div>Loading...</div>);
     }
 
     return (
         <div className="details">
             <div className="details__filter">
-                <div>{t("Filter")}:</div>
-                <span>
-                    <select className="form-control" value={filterValue} onChange={handleSelecteFilter}>
-                        <option value="-1">{t("Username")}</option>
-                        <option value="0">{t("Damage")}</option>
-                        <option value="1">{t("Healing")}</option>
-                        <option value="2">{t("DamageTaken")}</option>
-                        <option value="3">{t("ResourcesRecovery")}</option>
-                    </select>
-                </span>
+                <div>{t("Sorting")}</div>
+                <Select<Option>
+                    className="options"
+                    options={sortOptions}
+                    value={sortingValue}
+                    onChange={(selected) => setSortingValue(selected)}
+                />
             </div>
-            <ul>
+            <ul className="details__content">
                 {filteredCombatPlayers?.map((combatPlayer) => (
                     <li key={combatPlayer.id} className="card">
                         <div className="card-body">
                             <h5 className="card-title">{combatPlayer.player.username}</h5>
                         </div>
+                        <CombatPreAuraItem
+                            combatPlayerId={combatPlayer.id}
+                            combatId={combatPlayer.combatId}
+                        />
                         <DetailsItem
                             player={combatPlayer}
                             details={details}

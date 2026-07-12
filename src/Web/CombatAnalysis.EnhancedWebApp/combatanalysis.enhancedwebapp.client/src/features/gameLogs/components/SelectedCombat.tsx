@@ -6,29 +6,31 @@ import { useNavigate } from 'react-router-dom';
 import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetPlayersDeathByPlayerIdQuery } from '../api/GameLogs.api';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
-import type { CombatDetailsModel } from '../types/dashboard/CombatDetailsModel';
+import type { CombatDetailsModel } from '../types/CombatDetailsModel';
 import SelectedCombatChart from './SelectedCombatChart';
 import PersonalTabs from './PersonalTabs';
-import Dashboard from './dashboard/Dashboard';
 import Details from './details/Details';
 import PlayerInfo from './details/PlayerInfo';
+import { useGetGenericChartDamageDoneQuery } from '../api/DamageDone.api';
+import { useGetGenericChartHealDoneQuery } from '../api/HealDone.api';
 
 import './SelectedCombat.scss';
 
 const SelectedCombat: React.FC = () => {
     const fixedNumberUntil = 2;
 
-    const { t } = useTranslation("combatDetails/selectedCombat");
+    const { t } = useTranslation('combatDetails/selectedCombat');
 
     const navigate = useNavigate();
 
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
-        detailsType: '',
+        detailsType: 0,
         combatLogId: 0,
         name: '',
         number: 0,
-        isWin: false
+        isWin: false,
+        duration: 0
     });
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [playersDeath, setPlayersDeath] = useState<CombatPlayerDeathModel[] | null>(null);
@@ -51,19 +53,20 @@ const SelectedCombat: React.FC = () => {
         const queryParams = new URLSearchParams(window.location.search);
 
         const id: number = parseInt(queryParams.get("id") || '0');
-        const detailsType: string = queryParams.get("detailsType") || '';
         const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
         const name: string = queryParams.get("name") || '';
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
+        const duration: number = parseInt(queryParams.get("duration") || "1");
 
         setDetails({
             id,
-            detailsType,
+            detailsType: 0,
             combatLogId,
             name,
             number,
             isWin,
+            duration,
         });
     }, []);
 
@@ -86,15 +89,17 @@ const SelectedCombat: React.FC = () => {
     }
 
     const getCombatPlayersAsync = async () => {
-        const combatPlayersResult = await getCombatPlayersByCombatIdAsync(details.id);
-        if (combatPlayersResult.data !== undefined) {
-            setCombatPlayers(combatPlayersResult.data);
-            setSelectedPlayers(combatPlayersResult.data);
+        try {
+            const combatPlayersResult = await getCombatPlayersByCombatIdAsync(details.id).unwrap();
+            setCombatPlayers(combatPlayersResult);
+            setSelectedPlayers(combatPlayersResult);
 
-            return combatPlayersResult.data;
+            return combatPlayersResult;
+        } catch (error) {
+            console.error("Errror to load Combat players");
+            
+            return [];
         }
-
-        return [];
     }
 
     const getPlayersDeathAsync = async (players: CombatPlayerModel[]) => {
@@ -125,7 +130,17 @@ const SelectedCombat: React.FC = () => {
             return `${thousands.toFixed(fixedNumberUntil)}K`;
         }
 
-        return `${value}`;
+        return value.toString();
+    }
+
+    const getRandomColors = (raidSize: number) => {
+        const colors = new Array<string>();
+
+        for (let index = 0; index < raidSize; index++) {
+            colors.push(`hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`);
+        }
+
+        return colors;
     }
 
     return (
@@ -175,8 +190,31 @@ const SelectedCombat: React.FC = () => {
                 </div>
             }
             {showCommonStatistics &&
-                <SelectedCombatChart
-                    combatPlayers={selectedPlayers}
+                <PersonalTabs
+                    tab={0}
+                    tabs={[
+                        {
+                            id: 0,
+                            header: t("Damage"),
+                            content: <SelectedCombatChart
+                                combatPlayers={selectedPlayers}
+                                combatId={selectedPlayers[0].combatId}
+                                colors={getRandomColors(selectedPlayers.length)}
+                                useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
+                            />
+                        },
+                        {
+                            id: 1,
+                            header: t("Healing"),
+                            content: <SelectedCombatChart
+                                combatPlayers={selectedPlayers}
+                                combatId={selectedPlayers[0].combatId}
+                                colors={getRandomColors(selectedPlayers.length)}
+                                useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
+                            />
+                        }
+                    ]}
+                    tabsClassName={"charts"}
                 />
             }
             <PersonalTabs
@@ -184,32 +222,23 @@ const SelectedCombat: React.FC = () => {
                 tabs={[
                     {
                         id: 0,
-                        header: t("Dashboard"),
-                        content: <Dashboard
-                            details={details}
-                            combatPlayers={combatPlayers}
-                            playersDeath={playersDeath ? playersDeath : []}
-                            getValueShortName={getValueShortName}
-                        />
-                    },
-                    {
-                        id: 1,
                         header: t("Details"),
                         content: <Details
-                            combatPlayers={selectedPlayers}
                             details={details}
+                            combatPlayers={selectedPlayers}
                             getValueShortName={getValueShortName}
                             t={t}
                         />
                     },
                     {
-                        id: 2,
+                        id: 1,
                         header: t("PlayerInfo"),
                         content: <PlayerInfo
                             combatPlayers={selectedPlayers}
                         />
                     }
                 ]}
+                tabsClassName={"information"}
             />
         </div>
     );

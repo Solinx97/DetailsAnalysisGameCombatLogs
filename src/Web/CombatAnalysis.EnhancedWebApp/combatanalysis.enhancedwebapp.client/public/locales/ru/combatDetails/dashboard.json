@@ -1,14 +1,12 @@
 ﻿{
-  "Damage": "Урон",
-  "Healing": "Исцеление",
-  "DamageTaken": "Полученный урон",
-  "ResourcesRecovery": "Восстановлено ресурсов",
+  "AverageDuration": "Среднее значение продолжительности боя",
+  "AverageDPS": "Среднее значение УВС",
+  "AverageHPS": "Среднее значение ИВС",
+  "OverallDeaths": "Общее значение смертей",
+  "OverallDamageSpells": "Общее значение способностей урона",
+  "OverallHealSpells": "Общее значение способностей исцеления",
   "More": "Больше",
   "Less": "Меньше",
-  "PlayersDied": "Смерти игроков",
-  "Empty": "Пусто",
-  "ClosedItems": "Скрытые элементы",
-  "General": "Общее",
-  "Targets": "Цели",
-  "DamageToAlliances": "Урон по союзникам"
+  "OverallByRaid": "Итоговая информация по рейду",
+  "OverallEfficiencyPotionsUsed": "Общее значение использованых боевых зелий"
 }

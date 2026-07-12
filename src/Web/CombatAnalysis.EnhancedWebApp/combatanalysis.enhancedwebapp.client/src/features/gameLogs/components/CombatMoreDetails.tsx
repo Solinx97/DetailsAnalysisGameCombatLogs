@@ -6,13 +6,13 @@ import './CombatMoreDetails.scss';
 
 interface CombatMoreDetailsProps {
     combatPlayerId: number;
-    detailsType: string;
+    detailsType: number;
 }
 
 const CombatMoreDetails: React.FC<CombatMoreDetailsProps> = ({ combatPlayerId, detailsType }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
-    const pageSize = 20;
+    const pageSize = 50;
 
     const [detailsDataRender, setDetailsDataRender] = useState<JSX.Element>(<></>);
 

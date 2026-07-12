@@ -1,21 +1,24 @@
-﻿using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParserAPI.Interfaces;
+﻿using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
+using CombatParser.Application.Commands.UpdateBestSpecializationScore;
+using CombatParser.Application.Commands.UpdateSpecializationScore;
+using CombatParser.Application.DTOs;
+using CombatParser.Application.Queries.GetBestSpecializationScore;
+using CombatParser.Application.Queries.GetSpecializationBySpell;
+using CombatParser.Application.Queries.GetSpecializationScore;
+using MediatR;
 
 namespace CombatAnalysis.CombatParserAPI.Helpers;
 
-internal class SpecializationScoreHelper(ISpecializationScoreService service, IBestSpecializationScoreService bestScoreService, ISpecializationService specService) : ISpecializationScoreHelper
+internal class SpecializationScoreHelper(IMediator mediator) : ISpecializationScoreHelper
 {
-    private readonly ISpecializationScoreService _service = service;
-    private readonly IBestSpecializationScoreService _bestScoreService = bestScoreService;
-    private readonly ISpecializationService _specService = specService;
+    private readonly IMediator _mediator = mediator;
 
-    public async Task CreateSpecializationScoreAsync(CombatPlayerModel combatPlayer, int[] spellIds, CancellationToken cancellationToken)
+    public async Task CreateSpecializationScoreAsync(CombatPlayerModel combatPlayer, int[] spellsId, CancellationToken cancellationToken)
     {
-        var spellsIdsStr = string.Join(',', spellIds);
+        var spellsIdAsString = string.Join(',', spellsId);
 
-        var spec = await _specService.GetBySpellsAsync(spellsIdsStr, cancellationToken);
+        var spec = await _mediator.Send(new GetSpecializationBySpellQuery(spellsIdAsString), cancellationToken);
         if (spec == null)
         {
             return;
@@ -33,14 +36,14 @@ internal class SpecializationScoreHelper(ISpecializationScoreService service, IB
 
     public async Task<SpecializationScoreDto?> GetSpecializationScoreAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var specScores = await _service.GetByCombatPlayerIdAsync(combatPlayerId, cancellationToken);
+        var specScores = await _mediator.Send(new GetSpecializationScoreQuery(combatPlayerId), cancellationToken);
 
         return specScores;
     }
 
     public async Task<BestSpecializationScoreDto?> GetBestSpecializationScoreAsync(int specId, int bossId, CancellationToken cancellationToken)
     {
-        var bestScore = await _bestScoreService.GetAsync(specId, bossId, cancellationToken);
+        var bestScore = await _mediator.Send(new GetBestSpecializationScoreQuery(specId, bossId), cancellationToken);
 
         return bestScore;
     }
@@ -65,13 +68,11 @@ internal class SpecializationScoreHelper(ISpecializationScoreService service, IB
             specScore.HealScore = healDone == 0 ? 0 : ((double)healDone / (double)bestScore.HealDone) * 100;
         }
 
-        specScore.Updated = DateTimeOffset.UtcNow;
-        await _service.UpdateAsync(specScore, cancellationToken);
+        await _mediator.Send(new UpdateSpecializationScoreCommand(specScore.Id, specScore.DamageScore, specScore.HealScore), cancellationToken);
     }
 
     public async Task UpdateBestSpecializationScoreAsync(int damageDone, int healDone, BestSpecializationScoreDto bestScore, CancellationToken cancellationToken)
     {
-        var bestSpecScoreMustBeUpdated = false;
         var updatedBestScore = new BestSpecializationScoreDto
         {
             Id = bestScore.Id,
@@ -82,19 +83,13 @@ internal class SpecializationScoreHelper(ISpecializationScoreService service, IB
         if (bestScore.DamageDone < damageDone)
         {
             updatedBestScore.DamageDone = damageDone;
-            bestSpecScoreMustBeUpdated = true;
         }
 
         if (bestScore.HealDone < healDone)
         {
             updatedBestScore.HealDone = healDone;
-            bestSpecScoreMustBeUpdated = true;
         }
 
-        if (bestSpecScoreMustBeUpdated)
-        {
-            updatedBestScore.Updated = DateTimeOffset.UtcNow;
-            await _bestScoreService.UpdateAsync(updatedBestScore, cancellationToken);
-        }
+        await _mediator.Send(new UpdateBestSpecializationScoreQuery(updatedBestScore.Id, updatedBestScore.DamageDone, updatedBestScore.HealDone), cancellationToken);
     }
 }

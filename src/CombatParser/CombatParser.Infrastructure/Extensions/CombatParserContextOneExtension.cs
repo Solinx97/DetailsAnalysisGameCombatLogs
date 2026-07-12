@@ -1,5 +1,6 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
+using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
@@ -11,6 +12,22 @@ internal static class CombatParserContextOneExtension
 {
     public static async Task BulkInsertCombatPlayerDataAsync<TModel>(this CombatParserContextOne context, List<CombatPlayer> players, Func<CombatPlayer, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
         where TModel : class, ICombatPlayerRefs
+    {
+        var combatPlayerData = players.SelectMany(p =>
+            selector(p).Select(dd =>
+            {
+                dd.SetCombatPlayerId(p.Id);
+                return dd;
+            }
+        )).ToList();
+
+        if (combatPlayerData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatPlayerData, cancellationToken: cancelationToken);
+        }
+    }
+
+    public static async Task BulkInsertCombatPlayerPositionsAsync(this CombatParserContextOne context, List<CombatPlayer> players, Func<CombatPlayer, IEnumerable<CombatPlayerPosition>> selector, CancellationToken cancelationToken)
     {
         var combatPlayerData = players.SelectMany(p =>
             selector(p).Select(dd =>
@@ -44,21 +61,6 @@ internal static class CombatParserContextOneExtension
         }
 
         return players;
-    }
-
-    public static async Task BulkInsertCombatAurasAsync(this CombatParserContextOne context, int combatId, IEnumerable<CombatAura> combatAuras, CancellationToken cancelationToken)
-    {
-        var data = combatAuras.Select(cd =>
-        {
-            cd.SetCombatId(combatId);
-
-            return cd;
-        }).ToList();
-
-        if (data.Count > 0)
-        {
-            await context.BulkInsertAsync(data, cancellationToken: cancelationToken);
-        }
     }
 
     public static async Task BulkInsertCombatPlayerStatsAsync(this CombatParserContextOne context, List<CombatPlayer> players, CancellationToken cancelationToken)

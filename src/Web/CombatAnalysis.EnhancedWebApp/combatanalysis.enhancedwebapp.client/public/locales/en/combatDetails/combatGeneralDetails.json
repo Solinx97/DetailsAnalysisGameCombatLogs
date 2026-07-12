@@ -1,9 +1,11 @@
 {
+  "DPS": "DPS",
+  "HPS": "HPS",
+  "DamageTaken": "Damage taken",
+  "ResourcesRecovery": "Resources recovery",
   "NeedToAddSomething": "Need to add at least 1 item.",
   "Damage": "Damage",
   "Healing": "Healing",
-  "DamageTaken": "Damage taken",
-  "ResourcesRecovery": "Resources recovery",
   "ShowDiagram": "Show a diagram",
   "DetailsInform": "Details information",
   "SelectPlayer": "Select player",

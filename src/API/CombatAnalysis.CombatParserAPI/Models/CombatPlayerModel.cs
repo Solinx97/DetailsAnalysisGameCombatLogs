@@ -10,7 +10,6 @@ public class CombatPlayerModel
     [Range(0, int.MaxValue)]
     public double AverageItemLevel { get; set; }
 
-    [Range(0, int.MaxValue)]
     public int ResourcesRecovery { get; set; }
 
     [Range(0, int.MaxValue)]
@@ -35,6 +34,12 @@ public class CombatPlayerModel
 
     [Range(0, int.MaxValue)]
     public int CombatId { get; set; }
+
+    [Required]
+    public IReadOnlyList<CombatPlayerPreAuraModel> PreAuras { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
 
     [Required]
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];

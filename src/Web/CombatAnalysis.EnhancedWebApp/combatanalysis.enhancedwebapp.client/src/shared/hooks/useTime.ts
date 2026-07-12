@@ -1,7 +1,10 @@
 ﻿type Time = {
     getTimeWithoutMs: (time: string) => string;
-    getSeconds: (time: string) => number;
-    getDuration: (time1: string, time2: string) => string
+    getTotalSeconds: (time: string) => number;
+    getDuration: (time1: string, time2: string) => string;
+    formatSeconds: (totalSeconds: number) => string;
+    formatDate: (dateString: string) => string;
+    timeToMs: (time: string) => number;
 }
 
 const useTime = (): Time => {
@@ -12,18 +15,17 @@ const useTime = (): Time => {
         return timeWithoutMs;
     }
 
-    const getSeconds = (time: string): number => {
-        const timeElementsByTime = time.split(':');
-        const hoursByTime = +timeElementsByTime[0];
-        const minutesByTime = (hoursByTime * 60) + +timeElementsByTime[1];
-        const secondsByTime = (minutesByTime * 60) + +timeElementsByTime[2];
+    const getTotalSeconds = (duration: string) => {
+        const [hours, minutes, seconds] = duration.split(":").map(Number);
 
-        return secondsByTime;
+        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+        return totalSeconds;
     }
 
     const getDuration = (time1: string, time2: string): string => {
-        const secondsByTime1 = getSeconds(time1);
-        const secondsByTime2 = getSeconds(time2);
+        const secondsByTime1 = getTotalSeconds(time1);
+        const secondsByTime2 = getTotalSeconds(time2);
 
         let durationToMinutes = 0;
         let durationToHours = 0;
@@ -44,7 +46,38 @@ const useTime = (): Time => {
         return duration;
     }
 
-    return { getTimeWithoutMs, getSeconds, getDuration };
+    const formatSeconds = (totalSeconds: number): string => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        return [
+            hours,
+            minutes,
+            seconds
+        ]
+            .map(value => String(value).padStart(2, "0"))
+            .join(":");
+    }
+
+    const formatDate = (dateString: string): string => {
+        const date = new Date(dateString);
+        const hoursMins = `${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
+
+        return hoursMins;
+    }
+
+    const timeToMs = (time: string): number => {
+        const [hours, minutes, seconds] = time.split(":").map(Number);
+
+        return (
+            hours * 3600 * 1000 +
+            minutes * 60 * 1000 +
+            seconds * 1000
+        );
+    }
+
+    return { getTimeWithoutMs, getTotalSeconds, getDuration, formatSeconds, formatDate, timeToMs };
 }
 
 export default useTime;

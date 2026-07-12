@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
 import {
-    useGetDamageTakenByFilterQuery,
-    useGetDamageTakenCountByFilterQuery,
+    useCountDamageTakenQuery,
+    useGetAllDamageTakenQuery,
     useGetDamageTakenUniqueFilterValuesQuery
 } from '../../api/DamageTaken.api';
 import DetailsFilter from './DetailsFilter';
@@ -29,23 +29,33 @@ interface DamageTakenHelperProps {
 }
 
 const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, pageSize, t }) => {
+    const NONE_VALUE = "NONE";
+    const ZERO_TIME_VALUE = "00:00:00";
+
     const { getTimeWithoutMs } = useTime();
 
+    const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
+    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
 
-    const { data: count, isLoading: countIsLoading } = useGetDamageTakenCountByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    const { data: count, isLoading: countIsLoading } = useCountDamageTakenQuery(
+        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
-    const { data, isLoading } = useGetDamageTakenByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    const { data, isLoading: dataIsLoading } = useGetAllDamageTakenQuery(
+        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
-
-    const totalPages = Math.ceil(count ?? 1 / pageSize);
 
     useEffect(() => {
         setPage(1);
     }, [selectedFilter]);
+
+    useEffect(() => {
+        if (!count || count === 0) {
+            return;
+        }
+
+        setTotalPages(Math.ceil(count / pageSize));
+    }, [count]);
 
     const getIcon = (type: number): JSX.Element => {
         switch (type) {
@@ -117,7 +127,7 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
         );
     }
 
-    if (isLoading || countIsLoading) {
+    if (countIsLoading || dataIsLoading) {
         return (<div>Loading...</div>);
     }
 
@@ -125,20 +135,10 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
         <>
             <div className="player-filter-details">
                 <DetailsFilter
+                    filters={[ "Creator", "Spell" ]}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
-                    filter="Creator"
-                    filterName={t("Creator")}
-                    useGetUniqueFilterValuesQuery={useGetDamageTakenUniqueFilterValuesQuery}
-                    t={t}
-                />
-                <DetailsFilter
-                    combatPlayerId={combatPlayerId}
-                    setSelectedFilter={setSelectedFilter}
-                    selectedFilter={selectedFilter}
-                    filter="Spell"
-                    filterName={t("Spell")}
                     useGetUniqueFilterValuesQuery={useGetDamageTakenUniqueFilterValuesQuery}
                     t={t}
                 />

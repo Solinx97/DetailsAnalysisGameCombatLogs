@@ -1,14 +1,12 @@
 {
-  "Damage": "Damage",
-  "Healing": "Healing",
-  "DamageTaken": "Damage taken",
-  "ResourcesRecovery": "Resources recovery",
+  "AverageDuration": "Average duration",
+  "AverageDPS": "Average DPS",
+  "AverageHPS": "Average HPS",
+  "OverallDeaths": "Overall deaths",
+  "OverallDamageSpells": "Overall damage spells",
+  "OverallHealSpells": "Overall heal spells",
   "More": "More",
   "Less": "Less",
-  "PlayersDied": "Players died",
-  "Empty": "Empty",
-  "ClosedItems": "Closed items",
-  "General": "General",
-  "Targets": "Targets",
-  "DamageToAlliances": "Damage to alliances"
+  "OverallByRaid": "Overall by raid",
+  "OverallEfficiencyPotionsUsed": "Overall efficiency potions used"
 }

@@ -1,4 +1,5 @@
-﻿import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
+﻿import type { ChartModel } from '../types/chart/ChartModel';
+import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
 import type { ResourceRecoveryModel } from '../types/ResourceRecoveryModel';
 import { GameLogsApi } from './GameLogs.api';
 
@@ -14,14 +15,11 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
-        getResourceRecoveryCountByCombatPlayerId: builder.query<number, number>({
-            query: combatPlayerId => `/ResourceRecovery/count/${combatPlayerId}`,
+        countResourceRecovery: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to }) => `/ResourceRecovery/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getResourceRecoveryUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
-            query: ({ combatPlayerId, filter }) => `/ResourceRecovery/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
-        }),
-        getResourceRecoveryByFilter: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, filter: string, filterValue: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => `/ResourceRecovery/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+        getAllResourceRecovery: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/ResourceRecovery/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -30,8 +28,11 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
-        getResourceRecoveryCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, filterValue: number }>({
-            query: ({ combatPlayerId, filter, filterValue }) => `/ResourceRecovery/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        getCombatPlayerChartResourceRecovery: builder.query<ChartModel[], number>({
+            query: combatPlayerId => `/ResourceRecovery/getCombatPlayerChart/${combatPlayerId}`
+        }),
+        getResourceRecoveryUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
+            query: ({ combatPlayerId, filter }) => `/ResourceRecovery/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
         getResourceRecoveryGeneralByCombatPlayerId: builder.query<ResourceRecoveryGeneralModel[], number>({
             query: combatPlayerId => `/ResourceRecoveryGeneral/getByCombatPlayerId/${combatPlayerId}`,
@@ -48,10 +49,10 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
 
 export const {
     useGetResourceRecoveryByCombatPlayerIdQuery,
-    useLazyGetResourceRecoveryCountByCombatPlayerIdQuery,
+    useCountResourceRecoveryQuery,
     useGetResourceRecoveryUniqueFilterValuesQuery,
-    useGetResourceRecoveryByFilterQuery,
-    useGetResourceRecoveryCountByFilterQuery,
+    useGetAllResourceRecoveryQuery,
+    useGetCombatPlayerChartResourceRecoveryQuery,
     useGetResourceRecoveryGeneralByCombatPlayerIdQuery,
     useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery,
 } = ResourcesRecoveryApi;

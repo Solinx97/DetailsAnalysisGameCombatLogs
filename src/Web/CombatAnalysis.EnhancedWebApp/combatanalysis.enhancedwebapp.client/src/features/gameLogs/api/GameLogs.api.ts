@@ -1,19 +1,27 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { CombatAuraModel } from '../types/CombatAuraModel';
+import type { CombatPlayerAuraModel } from '../types/CombatPlayerAuraModel';
 import type { CombatLogModel } from '../types/CombatLogModel';
 import type { CombatModel } from '../types/CombatModel';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
+import type { CombatAbilityModel } from '../types/CombatAbilityModel';
+import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
+import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
+import type { BossMapModel } from '../types/BossMapModel';
+import type { DashboardModel } from '../types/dashboard/DashboardModel';
 
 const apiURL = '/api/v1';
 
 export const GameLogsApi = createApi({
     reducerPath: 'combatParserAPi',
     tagTypes: [
+        'CombatAbility',
         'CombatLog',
         'Combat',
+        'BossMap',
         'CombatPlayer',
-        'CombatAura',
+        'CombatPlayerAura',
+        'CombatPlayerPosition',
         'DamageDone',
         'DamageDoneGeneral',
         'DamageTaken',
@@ -28,6 +36,16 @@ export const GameLogsApi = createApi({
         baseUrl: apiURL
     }),
     endpoints: builder => ({
+        getCombatAbilities: builder.query<CombatAbilityModel[], { combatPlayerId: number, query: string }>({
+            query: ({ combatPlayerId, query }) => `/CombatAbility?combatPlayerId=${combatPlayerId}&${query}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(ability => ({ type: 'CombatAbility' as const, id: ability.id })),
+                        { type: 'CombatAbility', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatAbility', id: 'LIST' }]
+        }),
         getCombatLogs: builder.query<CombatLogModel[], void>({
             query: () => '/CombatLog',
             providesTags: result =>
@@ -58,6 +76,26 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'Combat', id: 'LIST' }]
         }),
+        getCombatsDashboard: builder.query<DashboardModel[], number>({
+            query: combatLogId => `/Combat/getDashboards/${combatLogId}`
+        }),
+        getCombatsDamageSpells: builder.query<Map<string, number>, number>({
+            query: combatLogId => `/Combat/getDamageSpells/${combatLogId}`
+        }),
+        getCombatsHealSpells: builder.query<Map<string, number>, number>({
+            query: combatLogId => `/Combat/getHealSpells/${combatLogId}`
+        }),
+        getPotions: builder.query<Map<string, number>, number>({
+            query: combatLogId => `/Combat/getPotions/${combatLogId}`
+        }),
+        getCombatById: builder.query<CombatModel, number>({
+            query: id => `/Combat/${id}`,
+            providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
+        }),
+        getBossMapById: builder.query<BossMapModel, number>({
+            query: id => `/BossMap/${id}`,
+            providesTags: result => result ? [{ type: 'BossMap', id: result.id }] : [],
+        }),
         getCombatPlayersByCombatId: builder.query<CombatPlayerModel[], number>({
             query: combatId => `/CombatPlayer/getByCombatId/${combatId}`,
             providesTags: result =>
@@ -72,29 +110,54 @@ export const GameLogsApi = createApi({
             query: id => `/CombatPlayer/${id}`,
             providesTags: result => result ? [{ type: 'CombatPlayer', id: result.id }] : [],
         }),
-        getCombatById: builder.query<CombatModel, number>({
-            query: id => `/Combat/${id}`,
-            providesTags: result => result ? [{ type: 'Combat', id: result.id }] : [],
-        }),
-        getCombatAurasByCombatId: builder.query<CombatAuraModel[], number>({
-            query: combatId => `/CombatAura/getByCombatId/${combatId}`,
+        getCombatByPreAura: builder.query<CombatPlayerPreAuraModel[], { combatId: number, combatPlayerId: number }>({
+            query: ({ combatId, combatPlayerId }) => `/PreAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [
-                        ...result.map(combatAura => ({ type: 'CombatAura' as const, id: combatAura.id })),
-                        { type: 'CombatAura', id: 'LIST' },
+                        ...result.map(preAura => ({ type: 'CombatPlayerAura' as const, id: preAura.id })),
+                        { type: 'CombatPlayerAura', id: 'LIST' },
                     ]
-                    : [{ type: 'CombatAura', id: 'LIST' }]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
+        }),
+        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], { combatId: number, combatPlayerId: number }>({
+            query: ({ combatId, combatPlayerId }) => `/CombatPlayerAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(combatPlayerAura => ({ type: 'CombatPlayerAura' as const, id: combatPlayerAura.id })),
+                        { type: 'CombatPlayerAura', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }],
+            keepUnusedDataFor: 0,
+        }),
+        getCombatPlayerPositionsByCombatPlayerId: builder.query<CombatPlayerPositionModel[], number>({
+            query: combatPlayerId => `/CombatPlayerPosition/getByCombatPlayerId/${combatPlayerId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(combatPlayerPosition => ({ type: 'CombatPlayerPosition' as const, id: combatPlayerPosition.id })),
+                        { type: 'CombatPlayerPosition', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerPosition', id: 'LIST' }]
         }),
     })
 })
 
 export const {
+    useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
     useLazyGetPlayersDeathByPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
+    useGetCombatsDashboardQuery,
+    useGetCombatsDamageSpellsQuery,
+    useGetCombatsHealSpellsQuery,
+    useGetPotionsQuery,
+    useLazyGetCombatByIdQuery,
+    useLazyGetBossMapByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,
     useLazyGetCombatPlayerByIdQuery,
-    useLazyGetCombatByIdQuery,
-    useLazyGetCombatAurasByCombatIdQuery,
+    useGetCombatPlayerAurasByCombatIdQuery,
+    useGetCombatByPreAuraQuery,
+    useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery
 } = GameLogsApi;

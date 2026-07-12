@@ -1,9 +1,7 @@
-﻿using CombatParser.Application.Queries.HealDone.CountHealBySpell;
-using CombatParser.Application.Queries.HealDone.CountHealByTarget;
-using CombatParser.Application.Queries.HealDone.GetHealCount;
+﻿using CombatParser.Application.Queries.HealDone.GetGenericChart;
+using CombatParser.Application.Queries.HealDone.CountHeal;
+using CombatParser.Application.Queries.HealDone.GetCombatPlayerChart;
 using CombatParser.Application.Queries.HealDone.GetHeals;
-using CombatParser.Application.Queries.HealDone.GetHealsBySpell;
-using CombatParser.Application.Queries.HealDone.GetHealsByTarget;
 using CombatParser.Application.Queries.HealDone.GetUniqueHealSpells;
 using CombatParser.Application.Queries.HealDone.GetUniqueHealTargets;
 using MediatR;
@@ -15,22 +13,56 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class HealDoneController(IMediator mediator) : ControllerBase
 {
+    private const string NONE_VALUE = "NONE";
+    private const string ZERO_TIME_VALUE = "00:00:00";
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatPlayerId")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize, CancellationToken cancellationToken)
+    [HttpGet("count")]
+    public async Task<IActionResult> Count(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
     {
-        var heals = await _mediator.Send(new GetHealsQuery(combatPlayerId, page, pageSize), cancellationToken);
+        var count = await _mediator.Send(new CountHealQuery(
+            combatPlayerId,
+            target.Equals(NONE_VALUE) ? string.Empty : target,
+            creator.Equals(NONE_VALUE) ? string.Empty : creator,
+            spell.Equals(NONE_VALUE) ? string.Empty : spell,
+            from.Equals(ZERO_TIME_VALUE) ? string.Empty : from,
+            to.Equals(ZERO_TIME_VALUE) ? string.Empty : to
+            ), cancellationToken);
+
+        return Ok(count);
+    }
+
+    [HttpGet("getAll")]
+    public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var heals = await _mediator.Send(new GetHealsQuery(
+            combatPlayerId,
+            target.Equals(NONE_VALUE) ? string.Empty : target,
+            creator.Equals(NONE_VALUE) ? string.Empty : creator,
+            spell.Equals(NONE_VALUE) ? string.Empty : spell,
+            from.Equals(ZERO_TIME_VALUE) ? string.Empty : from,
+            to.Equals(ZERO_TIME_VALUE) ? string.Empty : to,
+            page,
+            pageSize
+            ), cancellationToken);
 
         return Ok(heals);
     }
 
-    [HttpGet("count/{combatPlayerId}")]
-    public async Task<IActionResult> Count(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
     {
-        var count = await _mediator.Send(new GetHealCountQuery(combatPlayerId), cancellationToken);
+        var heals = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
 
-        return Ok(count);
+        return Ok(heals);
+    }
+
+    [HttpGet("getGenericChart/{combatId}")]
+    public async Task<IActionResult> GetGenericChart(int combatId, CancellationToken cancellationToken)
+    {
+        var heals = await _mediator.Send(new GetGenericChartQuery(combatId), cancellationToken);
+
+        return Ok(heals);
     }
 
     [HttpGet("getUniqueTargets/{combatPlayerId}")]
@@ -41,43 +73,11 @@ public class HealDoneController(IMediator mediator) : ControllerBase
         return Ok(uniqueTargets);
     }
 
-    [HttpGet("getByTarget")]
-    public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize, CancellationToken cancellationToken)
-    {
-        var heals = await _mediator.Send(new GetHealsByTargetQuery(combatPlayerId, target, page, pageSize), cancellationToken); ;
-
-        return Ok(heals);
-    }
-
-    [HttpGet("countByTarget")]
-    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target, CancellationToken cancellationToken)
-    {
-        var count = await _mediator.Send(new CountHealByTargetQuery(combatPlayerId, target), cancellationToken);
-
-        return Ok(count);
-    }
-
     [HttpGet("getUniqueSpells/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
     {
         var uniqueSpells = await _mediator.Send(new GetUniqueHealSpellsQuery(combatPlayerId), cancellationToken);
 
         return Ok(uniqueSpells);
-    }
-
-    [HttpGet("getBySpell")]
-    public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize, CancellationToken cancellationToken)
-    {
-        var heals = await _mediator.Send(new GetHealsBySpellQuery(combatPlayerId, spell, page, pageSize), cancellationToken);
-
-        return Ok(heals);
-    }
-
-    [HttpGet("countBySpell")]
-    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell, CancellationToken cancellationToken)
-    {
-        var count = await _mediator.Send(new CountHealBySpellQuery(combatPlayerId, spell), cancellationToken);
-
-        return Ok(count);
     }
 }

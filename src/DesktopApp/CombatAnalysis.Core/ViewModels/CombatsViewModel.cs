@@ -46,7 +46,6 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
         RepeatSaveCommand = new MvxAsyncCommand(SaveCombatsAsync);
         CancelCommand = new MvxCommand(UploadingCancel);
         ShowDetailsCommand = new MvxAsyncCommand(ShowDetailsAsync);
-        CombatSortCommand = new MvxCommand<int>(CombatsSort);
 
         Basic.Parent = this;
         Basic.SavedViewModel = this;
@@ -232,17 +231,6 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
 
     #endregion
 
-    public override async Task Initialize()
-    {
-        var isCombatLogsMustSave = ((BasicTemplateViewModel)Basic).IsCombatLogsMustSave;
-        if (isCombatLogsMustSave)
-        {
-            await SaveCombatsAsync();
-        }
-
-        await base.Initialize();
-    }
-
     public override void Prepare(List<CombatModel> parameter)
     {
         if (parameter == null || parameter.Count == 0)
@@ -264,10 +252,10 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
                 combat.UniqueCombatCount = c.Count();
 
                 int[] combatNumbers = [.. Enumerable.Range(0, combat.UniqueCombatCount - 1)];
-                foreach (var item in combatNumbers)
+                foreach (var index in combatNumbers)
                 {
-                    var percentage = allBossCombats[item].BossHealthPercentage;
-                    combat.Items.Add(item + 1, percentage);
+                    var percentage = index < allBossCombats.Length ? allBossCombats[index].BossHealthPercentage : 0.0;
+                    combat.Items.Add(index + 1, percentage);
                 }
 
                 return combat;
@@ -277,6 +265,17 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
         UniqueCombats = new ObservableCollection<CombatModel>(uniqueCombats);
 
         GetUniqueDungeonNames(parameter);
+    }
+
+    public override async Task Initialize()
+    {
+        var isCombatLogsMustBeSaved = ((BasicTemplateViewModel)Basic).IsCombatLogsMustSave;
+        if (isCombatLogsMustBeSaved)
+        {
+            await SaveCombatsAsync();
+        }
+
+        await base.Initialize();
     }
 
     public override void ViewDestroy(bool viewFinishing = true)
@@ -310,8 +309,12 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
 
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
 
-            var combats = _allCombats?.ToList();
+            var combats = _allCombats == null ? [] : _allCombats.ToList();
             var combatLog = ((BasicTemplateViewModel)Basic).CombatLog;
+            if (combatLog == null)
+            {
+                return;
+            }
 
             await _combatParserAPIService.SaveAsync(combats, combatLog, CombatUploaded, ((BasicTemplateViewModel)Basic).RequestCancelationToken);
 
@@ -328,81 +331,6 @@ public class CombatsViewModel : ParentTemplate<List<CombatModel>>, IResponseStat
     public void Update(LoadingStatus status)
     {
         ResponseStatus = status;
-    }
-
-    private void CombatsSort(int sortNumber)
-    {
-        if (UniqueCombats == null)
-        {
-            return;
-        }
-
-        var sortedCollection = UniqueCombats.ToList();
-        switch (sortNumber)
-        {
-            case 0:
-                sortedCollection = SortedByName == 0
-                    ? [.. UniqueCombats.OrderByDescending(x => x.Boss.Name)]
-                    : [.. UniqueCombats.OrderBy(x => x.Boss.Name)];
-                SortedByName = SortedByName == 0 ? 1 : 0;
-
-                SortedByDamageDone = -1;
-                SortedByHealDone = -1;
-                SortedByDamageTaken = -1;
-                SortedByResources = -1;
-                SortedByDeaths = -1;
-                break;
-            case 1:
-                sortedCollection = SortedByDamageDone == 0
-                    ? [.. UniqueCombats.OrderByDescending(x => x.DamageDone)]
-                    : [.. UniqueCombats.OrderBy(x => x.DamageDone)];
-                SortedByDamageDone = SortedByDamageDone == 0 ? 1 : 0;
-
-                SortedByName = -1;
-                SortedByHealDone = -1;
-                SortedByDamageTaken = -1;
-                SortedByResources = -1;
-                SortedByDeaths = -1;
-                break;
-            case 2:
-                sortedCollection = SortedByHealDone == 0
-                    ? [.. UniqueCombats.OrderByDescending(x => x.HealDone)]
-                    : [.. UniqueCombats.OrderBy(x => x.HealDone)];
-                SortedByHealDone = SortedByHealDone == 0 ? 1 : 0;
-
-                SortedByName = -1;
-                SortedByDamageDone = -1;
-                SortedByDamageTaken = -1;
-                SortedByResources = -1;
-                SortedByDeaths = -1;
-                break;
-            case 3:
-                sortedCollection = SortedByDamageTaken == 0
-                    ? [.. UniqueCombats.OrderByDescending(x => x.DamageTaken)]
-                    : [.. UniqueCombats.OrderBy(x => x.DamageTaken)];
-                SortedByDamageTaken = SortedByDamageTaken == 0 ? 1 : 0;
-
-                SortedByName = SortedByName == -1 ? 0 : 1;
-                SortedByDamageDone = -1;
-                SortedByHealDone = -1;
-                SortedByResources = -1;
-                SortedByDeaths = -1;
-                break;
-            case 4:
-                sortedCollection = SortedByResources == 0
-                    ? [.. UniqueCombats.OrderByDescending(x => x.ResourcesRecovery)]
-                    : [.. UniqueCombats.OrderBy(x => x.ResourcesRecovery)];
-                SortedByResources = SortedByResources == 0 ? 1 : 0;
-
-                SortedByName = -1;
-                SortedByDamageDone = -1;
-                SortedByHealDone = -1;
-                SortedByDamageTaken = -1;
-                SortedByDeaths = -1;
-                break;
-        }
-
-        UniqueCombats = new ObservableCollection<CombatModel>(sortedCollection);
     }
 
     public void UploadingCancel()

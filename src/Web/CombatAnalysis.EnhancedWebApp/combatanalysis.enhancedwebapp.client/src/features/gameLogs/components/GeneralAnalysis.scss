@@ -8,66 +8,117 @@ $combat-lose: red;
 $mobile-max-width: 425px;
 
 @mixin box-shadow($type: 'standard') {
-    @if $type == 'standard' {
+    @if $type =='standard' {
         box-shadow: $box-shadow-standard;
     }
-    @else if $type == 'highlight' {
+
+    @else if $type =='highlight' {
         box-shadow: $box-shadow-highlight;
     }
 }
 
 .general-analysis {
     &__container {
-        .card {
-            box-shadow: 10px 10px #3AA6B9;
-            margin: 10px 0;
-            background: $background-dark;
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 15px;
 
-            .unique-combats {
-                &__all, &__selected {
+            .card {
+                display: flex;
+                background: transparent;
+
+                &__combats,
+                &__selected {
                     .combat-number {
                         font-size: 1em;
                         margin: 0 10px;
                     }
                 }
 
-                &__selected {
-                    .combat-number {
-                        color: white;
-                    }
-                }
-
-                &__all {
-                    position: relative;
+                &__combats {
                     display: flex;
                     justify-content: flex-start;
-                    top: -70px;
+                    align-items: center;
                     font-size: 1em;
-                    gap: 20px;
                     overflow: auto;
                     width: 100%;
+                    height: 120px;
+                    gap: 5px;
 
-                    li {
+                    .last-combat {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+
+                        &__last {
+                            font-size: 0.7em;
+                        }
+
+                        &__space {
+                            width: 5px;
+                            background: green;
+                            height: 70px;
+                            margin-left: 10px;
+                        }
+                    }
+
+                    li,
+                    .last-combat__content {
                         display: flex;
                         justify-content: center;
                         align-items: center;
                         border-radius: 20px;
-                        padding: 5px;
                         margin: 5px;
                         gap: 5px;
                         cursor: pointer;
-
-                        &:hover {
-                            transform: scale(1.05)
-                        }
 
                         .combat-time {
                             margin: 0;
                         }
                     }
 
+                    li {
+                        &:hover {
+                            transform: scale(1.025)
+                        }
+                    }
+
                     .list-group-item {
                         background: #0c192c;
+                    }
+
+                    .show-all-combats,
+                    .hide-all-combats {
+                        display: flex;
+                        gap: 10px;
+                        border-radius: 20px;
+                        height: 50px;
+                        padding: 10px 20px;
+
+                        &__count {
+                            padding: 3px 7px;
+                            border-radius: 20px;
+                            border: 2px solid green;
+                        }
+                    }
+
+                    .show-all-combats {
+                        box-shadow: 2px 2px orange;
+                    }
+
+                    .hide-all-combats {
+                        box-shadow: 2px 2px gray;
+                    }
+                }
+
+                &__win {
+                    box-shadow: 2px 2px 2px 2px green;
+
+                    .combat-number {
+                        color: $combat-win;
                     }
                 }
 
@@ -79,110 +130,103 @@ $mobile-max-width: 425px;
                     }
                 }
 
-                &__win {
-                    box-shadow: 2px 2px 2px 2px green;
+                &__win,
+                &__lose {
+                    border-radius: $border-radius-standard;
+                    padding: 10px;
+                }
 
-                    .combat-number {
-                        color: $combat-win;
+                &__information {
+                    background: $background-dark;
+                    box-shadow: 10px 10px #3AA6B9;
+
+                    .selected {
+                        .combat-number {
+                            color: white;
+                        }
+                    }
+
+                    .stats {
+                        display: flex;
+                        justify-content: space-around;
+                        margin: 5px 0;
+
+                        .buffs {
+                            padding: 5px 20px;
+                            border-radius: 25px;
+                            box-shadow: 2px 2px 2px 2px orange;
+                            cursor: pointer;
+                        }
+                    }
+
+                    .details {
+                        display: flex;
+                        margin: 20px;
                     }
                 }
-            }
 
-            .win, .lose {
-                @include box-shadow('highlight');
-                border-radius: $border-radius-standard;
-                padding: 5px;
-                background: $background-light;
-            }
-
-            .lose {
-                background: #D04848;
-            }
-
-            .combat-time {
-                display: flex;
-                justify-content: flex-start;
-                margin: 0 0 10px 10px;
-                gap: 25px;
-
-                &__range, &__lasts {
+                .combat-time {
                     display: flex;
-                    align-items: center;
-                    gap: 20px;
-                    padding: 10px;
-                    border-radius: 20px;
-                    box-shadow: $box-shadow-standard;
-                    font-size: 14px;
-                }
-            }
+                    justify-content: flex-start;
+                    margin: 0 0 10px 10px;
+                    gap: 25px;
 
-            .list-group-item {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 10px;
-                background: #135D66;
-                color: white;
-
-                div {
-                    display: flex;
+                    &__range,
+                    &__lasts {
+                        display: flex;
+                        align-items: center;
+                        gap: 20px;
+                        padding: 10px;
+                        border-radius: 20px;
+                        box-shadow: $box-shadow-standard;
+                        font-size: 14px;
+                    }
                 }
 
-                &__date {
+                .list-group-item {
                     display: flex;
                     flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 10px;
+                    background: #135D66;
+                    color: white;
+
+                    div {
+                        display: flex;
+                    }
+
+                    &__date {
+                        display: flex;
+                        flex-direction: column;
+                    }
+
+                    svg {
+                        height: 20px;
+                    }
+
+
+                    &__player-statistic-item {
+                        @include box-shadow('highlight');
+                        border-radius: $border-radius-standard;
+                        padding: 5px;
+                    }
+
+                    &__death-number-zero {
+                        padding: 5px;
+                        box-shadow: 2px 2px 2px 2px white;
+                        border-radius: 15px;
+                    }
+
+                    &__ready {
+                        background: #7F27FF;
+                    }
                 }
 
-                svg {
-                    height: 20px;
-                }
-
-
-                &__player-statistic-item {
-                    @include box-shadow('highlight');
-                    border-radius: $border-radius-standard;
-                    padding: 5px;
-                }
-
-                &__death-number-zero {
-                    padding: 5px;
-                    box-shadow: 2px 2px 2px 2px white;
-                    border-radius: 15px;
-                }
-
-                &__ready {
-                    background: #7F27FF;
-                }
-            }
-
-            .list-group {
-                display: flex;
-                flex-direction: row;
-            }
-        }
-
-        .combats {
-            &__container {
-                display: flex;
-                flex-direction: column;
-                gap: 75px;
-                margin-top: 80px;
-                padding: 0;
-
-                .details {
+                .list-group {
                     display: flex;
+                    flex-direction: row;
                 }
-            }
-        }
-
-        .information {
-            display: flex;
-            justify-content: space-around;
-            margin: 5px 0;
-
-            .auras-details {
-                cursor: pointer;
             }
         }
     }
@@ -191,6 +235,10 @@ $mobile-max-width: 425px;
         display: flex;
         align-items: center;
         gap: 25px;
+
+        h5 {
+            margin: 0;
+        }
 
         .select-logs {
             width: 40px;
@@ -232,7 +280,7 @@ ul {
         border: 1px solid #3AA6B9;
         border-radius: 25px;
         margin: 10px;
-        padding: 5px;
+        padding: 5px 20px;
     }
 
     &__win {
@@ -245,6 +293,14 @@ ul {
 
     svg {
         margin: 0 50px;
+    }
+
+    .see-reply {
+        margin: 0 50px;
+
+        svg {
+            margin: 0;
+        }
     }
 }
 

@@ -1,8 +1,9 @@
 export interface CombatDetailsModel {
     id: number;
-    detailsType: string;
+    detailsType: number;
     combatLogId: number;
     name: string;
     number: number;
     isWin: boolean;
+    duration: number;
 }

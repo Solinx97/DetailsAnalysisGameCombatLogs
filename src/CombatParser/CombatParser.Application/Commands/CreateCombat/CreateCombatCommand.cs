@@ -15,6 +15,5 @@ public record CreateCombatCommand(
     DateTimeOffset FinishDate,
     int BossId,
     int CombatLogId,
-    IReadOnlyList<CombatPlayerData> CombatPlayers,
-    IReadOnlyList<CombatAuraData> CombatAuras
-    ) : IRequest;
+    IReadOnlyList<CombatPlayerData> CombatPlayers
+    ) : IRequest<int>;

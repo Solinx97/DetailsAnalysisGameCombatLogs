@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Entities.CombatPlayerData;
 
 namespace CombatParser.Domain.Entities;
 
@@ -11,10 +12,6 @@ public class Specialization
 
     public Specialization(int id, string name, string specializationSpellsId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
-        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-        ArgumentException.ThrowIfNullOrEmpty(specializationSpellsId, nameof(specializationSpellsId));
-
         Id = id;
         Name = name;
         SpecializationSpellsId = specializationSpellsId;
@@ -29,4 +26,13 @@ public class Specialization
     public ICollection<SpecializationScore> SpecializationScores { get; private set; } = [];
 
     public ICollection<BestSpecializationScore> BestSpecializationScores { get; private set; } = [];
+
+    public static Specialization Create(int id, string name, string specializationSpellsId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        ArgumentException.ThrowIfNullOrEmpty(specializationSpellsId, nameof(specializationSpellsId));
+
+        return new Specialization(id, name, specializationSpellsId);
+    }
 }

@@ -56,6 +56,8 @@ internal static class CombatLogKeyWords
 
     public static string SpellCastSuccess { get; } = "SPELL_CAST_SUCCESS";
 
+    public static string SpellCastFailed { get; } = "SPELL_CAST_FAILED";
+
     public static string SpellMissed { get; } = "SPELL_MISSED";
 
     public static string SwingDamageLanded { get; } = "SWING_DAMAGE_LANDED";

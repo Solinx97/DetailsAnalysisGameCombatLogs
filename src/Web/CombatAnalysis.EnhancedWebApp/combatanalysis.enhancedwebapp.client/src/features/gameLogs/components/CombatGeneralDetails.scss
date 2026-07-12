@@ -17,20 +17,30 @@
                 font-size: 0.9em;
             }
 
-            &__filter {
+            .filter-type {
                 display: flex;
                 flex-direction: column;
-                gap: 5px;
+                justify-content: center;
+                gap: 10px;
+                width: 225px;
 
-                :first-child {
+                .title {
                     display: flex;
                     align-items: center;
-                    gap: 20px;
+                    gap: 15px;
+                }
+
+                .time {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: 10px;
                 }
             }
         }
 
-        .player-general-data-details, .player-data-details {
+        .player-general-data-details,
+        .player-data-details {
             display: flex;
             flex-direction: column;
             gap: 25px;
@@ -136,7 +146,8 @@
                 }
             }
 
-            &__item ul, &__title ul {
+            &__item ul,
+            &__title ul {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -168,7 +179,8 @@
             font-size: 1em;
             background: #135D66;
 
-            .card-title, .from-who {
+            .card-title,
+            .from-who {
                 font-weight: bold;
             }
 
@@ -212,7 +224,14 @@
                     }
                 }
 
-                &__value, &__average-value, &__damage-per-second, &__cast-number, &__crit-number, &__miss-number, &__max-value, &__min-value {
+                &__value,
+                &__average-value,
+                &__damage-per-second,
+                &__cast-number,
+                &__crit-number,
+                &__miss-number,
+                &__max-value,
+                &__min-value {
                     padding: 5px;
                     box-shadow: 3px 3px 3px 3px black;
                     border-radius: 15px;
@@ -285,7 +304,7 @@
             }
 
             .username.btn-shadow {
-                box-shadow: 3px 3px 3px 3px blue;
+                box-shadow: 2px 2px 2px 2px #3AA6B9;
                 font-weight: bold;
             }
         }
@@ -331,7 +350,7 @@
     }
 }
 
-@media (max-width: $mobile-max-width)  {
+@media (max-width: $mobile-max-width) {
     .general-details {
         &__container {
             .card {

@@ -4,9 +4,9 @@ namespace CombatAnalysis.CombatParser.Entities;
 
 public class CombatPlayerPosition : ICombatPlayerEntity
 {
-    public double PositionX { get; set; }
+    public double X { get; set; }
 
-    public double PositionY { get; set; }
+    public double Y { get; set; }
 
     public TimeSpan Time { get; set; }
 

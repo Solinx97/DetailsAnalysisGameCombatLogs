@@ -13,4 +13,6 @@ public class BossDto
     public int Difficult { get; set; }
 
     public int Size { get; set; }
+
+    public int BossMapId { get; set; }
 }

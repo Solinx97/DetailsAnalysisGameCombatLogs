@@ -22,7 +22,6 @@ public class ResourceRecoveryGeneralModel
 
     public int MinValue { get; set; }
 
-    [Range(0, int.MaxValue)]
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }

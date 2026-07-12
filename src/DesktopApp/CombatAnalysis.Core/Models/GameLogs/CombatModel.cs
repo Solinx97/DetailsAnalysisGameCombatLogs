@@ -37,11 +37,7 @@ public class CombatModel
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
     }
 
-    public bool IsReady { get; set; }
-
     public int CombatLogId { get; set; }
 
     public BossModel Boss { get; set; }
-
-    public IReadOnlyCollection<CombatAuraModel> CombatAuras { get; set; } = [];
 }

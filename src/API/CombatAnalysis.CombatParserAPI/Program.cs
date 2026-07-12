@@ -1,6 +1,4 @@
 using AutoMapper;
-using CombatAnalysis.BL.Extensions;
-using CombatAnalysis.BL.Mapping;
 using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
@@ -23,7 +21,6 @@ builder.Configuration.Bind("Database", databasePropsOptions);
 var databaseConfigsOptions = new DBConfiguration();
 builder.Configuration.Bind("DBConfiguration", databaseConfigsOptions);
 
-builder.Services.CombatParserBLDependencies(databasePropsOptions.DefaultConnection, databaseConfigsOptions.CommandTimeout);
 builder.Services.AddInfrastructure(databasePropsOptions.DefaultConnection);
 builder.Services.AddMediatorSource();
 
@@ -32,7 +29,6 @@ var loggerFactory = LoggerFactory.Create(builder => { });
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new CombatParserApiMapper());
-    mc.AddProfile(new BLMapper());
     mc.AddProfile(new ApplicationMapper());
 }, loggerFactory);
 
@@ -79,6 +75,28 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Combat parser API",
         Version = "v1",
     });
+});
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var logger = context.HttpContext.RequestServices
+            .GetRequiredService<ILogger<Program>>();
+
+        foreach (var kvp in context.ModelState)
+        {
+            foreach (var error in kvp.Value.Errors)
+            {
+                logger.LogError(
+                    "Validation error. Field: {Field}, Error: {Error}",
+                    kvp.Key,
+                    error.ErrorMessage);
+            }
+        }
+
+        return new BadRequestObjectResult(context.ModelState);
+    };
 });
 
 Log.Logger = new LoggerConfiguration()

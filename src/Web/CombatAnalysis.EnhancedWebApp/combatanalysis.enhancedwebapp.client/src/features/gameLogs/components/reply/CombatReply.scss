@@ -1,0 +1,107 @@
+.reply {
+    position: absolute;
+    display: flex;
+    left: 1vw;
+    flex-direction: column;
+    gap: 15px;
+    width: 97vw;
+
+    &__navigate {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+
+        .active {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+
+        h5 {
+            margin: 0;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+
+        .play {
+            width: 100px;
+        }
+
+        .range {
+            width: 100%;
+        }
+    }
+
+    .select-combat {
+        width: 40px;
+        overflow: hidden;
+        white-space: nowrap;
+
+        &:hover {
+            animation-name: select-combat;
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+        }
+    }
+
+    @keyframes select-combat {
+        from {
+            width: 40px;
+        }
+
+        to {
+            width: 160px;
+        }
+    }
+
+    .players {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        gap: 20px;
+        font-size: 0.85em;
+        cursor: pointer;
+
+        li div {
+            padding: 5px 10px;
+        }
+
+        .selected {
+            box-shadow: 2px 2px 2px 2px green;
+            border-radius: 20px;
+        }
+    }
+
+    canvas {
+        border: 1px solid gray;
+    }
+}
+
+.boss-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .boss {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+
+        .combat-number {
+            border-radius: 20px;
+            padding: 5px 15px;
+            cursor: default;
+        }
+
+        .combat-number.win {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+
+        .combat-number.lose {
+            box-shadow: 2px 2px 2px 2px red;
+        }
+    }
+}

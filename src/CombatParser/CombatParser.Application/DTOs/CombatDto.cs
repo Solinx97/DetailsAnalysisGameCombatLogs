@@ -24,8 +24,6 @@ public class CombatDto
 
     public string Duration { get; set; } = string.Empty;
 
-    public bool IsReady { get; set; }
-
     public BossDto Boss { get; set; }
 
     public int CombatLogId { get; set; }

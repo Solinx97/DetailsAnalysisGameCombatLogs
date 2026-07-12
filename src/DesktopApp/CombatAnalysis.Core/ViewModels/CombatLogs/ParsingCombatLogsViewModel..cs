@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
@@ -17,7 +16,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IMapper _mapper;
-    private readonly ICacheService _cacheService;
     private readonly ICombatParserService _parser;
     private readonly ICombatParserAPIService _combatParserAPIService;
 
@@ -25,7 +23,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
     private string? _dungeonName;
     private string? _combatName;
     private ObservableCollection<string> _combatLogPaths = [];
-    private bool _isNeedSave;
     private ObservableCollection<CombatLogModel> _combatLogs = [];
     private ObservableCollection<CombatLogModel> _combatLogsForTargetUser = [];
     private bool _isAllowSaveLogs = true;
@@ -43,12 +40,11 @@ public class ParsingCombatLogsViewModel : ParentTemplate
     private bool _showConnectMore;
 
     public ParsingCombatLogsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, ICombatParserService parser,
-        ICacheService cacheService, ICombatParserAPIService combatParserAPIService)
+        ICombatParserAPIService combatParserAPIService)
     {
         _mapper = mapper;
         _mvvmNavigation = mvvmNavigation;
         _parser = parser;
-        _cacheService = cacheService;
         _combatParserAPIService = combatParserAPIService;
 
         OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
@@ -152,15 +148,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         set
         {
             SetProperty(ref _fileIsCorrect, value);
-        }
-    }
-
-    public bool IsNeedSave
-    {
-        get { return _isNeedSave; }
-        set
-        {
-            SetProperty(ref _isNeedSave, value);
         }
     }
 
@@ -311,17 +298,12 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AllowStep), 0);
 
         CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
-        await _parser.ParseAsync(combatLogPaths, _cancellationTokenSource.Token);
+        await Task.Run(() => _parser.ParseAsync(combatLogPaths, _cancellationTokenSource.Token));
 
-        var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
-
-        await _combatParserAPIService.GetBossAsync(combatsList, _cancellationTokenSource.Token);
-
-        ClearCache();
+        var combats = _mapper.Map<List<CombatModel>>(_parser.Combats);
+        await _combatParserAPIService.GetBossAsync(combats, _cancellationTokenSource.Token);
 
         AppStaticData.PreparedCombatsCount = _parser.Combats.Count;
-
-        CreateCache(_parser.CombatDetails);
 
         _parser.Clear();
 
@@ -332,52 +314,7 @@ public class ParsingCombatLogsViewModel : ParentTemplate
             return;
         }
 
-        if (!IsNeedSave)
-        {
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AllowStep), 1);
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.None);
-
-            await _mvvmNavigation.Navigate<CombatsViewModel, List<CombatModel>>(combatsList);
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Combats), combatsList);
-
-            return;
-        }
-
-        await UploadingCombatLogAsync(combatsList, combatsList);
-    }
-
-    private void ClearCache()
-    {
-        for (var i = 0; i < AppStaticData.PreparedCombatsCount; i++)
-        {
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_DamageDone}_{i}");
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{i}");
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_HealDone}_{i}");
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{i}");
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_DamageTaken}_{i}");
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_DamageTakenGeneral}_{i}");
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_ResourcesRecovery}_{i}");
-            _cacheService.Remove($"{AppCacheKeys.CombatDetails_ResourcesRecoveryGeneral}_{i}");
-        }
-    }
-
-    private void CreateCache(List<CombatDetails> combatDetails)
-    {
-        for (var i = 0; i < combatDetails.Count; i++)
-        {
-            var combat = combatDetails[i];
-
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_Positions}_{i}", combat.CombatPlayerPositions.AsReadOnly());
-
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_DamageDone}_{i}", combat.DamageDone.AsReadOnly());
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{i}", combat.DamageDoneGeneral.AsReadOnly());
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_HealDone}_{i}", combat.HealDone.AsReadOnly());
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{i}", combat.HealDoneGeneral.AsReadOnly());
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_DamageTaken}_{i}", combat.DamageTaken.AsReadOnly());
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_DamageTakenGeneral}_{i}", combat.DamageTakenGeneral.AsReadOnly());
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_ResourcesRecovery}_{i}", combat.ResourcesRecovery.AsReadOnly());
-            _cacheService.Add($"{AppCacheKeys.CombatDetails_ResourcesRecoveryGeneral}_{i}", combat.ResourcesRecoveryGeneral.AsReadOnly());
-        }
+        await UploadingCombatLogAsync(combats, combats);
     }
 
     private async Task UploadingCombatLogAsync(List<CombatModel> combatList, List<CombatModel> combats)

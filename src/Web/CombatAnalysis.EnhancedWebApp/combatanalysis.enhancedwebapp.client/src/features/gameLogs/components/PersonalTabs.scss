@@ -15,42 +15,41 @@ ul {
             display: flex;
             justify-content: center;
             gap: 35px;
-            padding: 20px 0;
 
             li {
-                padding-bottom: 15px;
+                padding-bottom: 10px;
 
                 div {
                     border-radius: 10px;
                     padding: 10px;
                     font-size: 18px;
-                    box-shadow: 2px 2px 2px 2px white;
+                    box-shadow: 1px 1px 1px 1px white;
                     cursor: pointer;
                 }
 
                 div:hover {
-                    box-shadow: 2px 2px 2px 2px #3AA6B9;
+                    box-shadow: 1px 1px 1px 1px #3AA6B9;
                 }
             }
 
             .tab-active {
-                border-bottom: 4px solid #8DECB4;
+                border-bottom: 2px solid #8DECB4;
 
                 div {
                     color: #6DC5D1;
                     border: 1px solid white;
-                    box-shadow: 5px 5px #6295A2;
+                    box-shadow: 3px 3px #6295A2;
                 }
             }
         }
     }
 
     &__header li.atives {
-        box-shadow: 3px 3px 3px 3px green;
+        box-shadow: 2px 2px 2px 2px green;
     }
 
     li.unative {
-        box-shadow: 3px 3px 3px 3px white;
+        box-shadow: 2px 2px 2px 2px white;
     }
 
     &__content {

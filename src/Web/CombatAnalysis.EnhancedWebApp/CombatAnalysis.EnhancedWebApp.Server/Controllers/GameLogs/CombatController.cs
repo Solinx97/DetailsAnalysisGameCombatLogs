@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs.Dashboard;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -25,6 +26,44 @@ public class CombatController : ControllerBase
         var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 
         return Ok(combats);
+    }
+
+    [HttpGet("getDashboards/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDashboards(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/getDashboards/{combatLogId}");
+        var dashboards = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DashboardModel>>();
+
+        return Ok(dashboards);
+    }
+
+    [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDamageSpells(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/getDamageSpells/{combatLogId}");
+        var spells = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+
+        return Ok(spells);
+
+    }
+
+    [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetHealSpells(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/getHealSpells/{combatLogId}");
+        var spells = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+
+        return Ok(spells);
+
+    }
+
+    [HttpGet("getPotions/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetPotions(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/getPotions/{combatLogId}");
+        var potions = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+
+        return Ok(potions);
     }
 
     [HttpGet("{id:int:min(1)}")]

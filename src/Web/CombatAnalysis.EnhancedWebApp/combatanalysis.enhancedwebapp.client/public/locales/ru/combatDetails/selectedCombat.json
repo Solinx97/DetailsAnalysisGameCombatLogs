@@ -16,5 +16,11 @@
   "PlayerInfo": "Информация об игроке",
   "ZeroDeaths": "0 смертей",
   "Username": "Никнейм",
-  "Filter": "Фильтр"
+  "Sorting": "Сортировка",
+  "Abilities": "Способности",
+  "Potions": "Зелья",
+  "Protection": "Защитные",
+  "Efficiency": "Ув. эффективности",
+  "PartyEfficiency": "Групповое ув. эффективности",
+  "Food": "Еда"
 }
