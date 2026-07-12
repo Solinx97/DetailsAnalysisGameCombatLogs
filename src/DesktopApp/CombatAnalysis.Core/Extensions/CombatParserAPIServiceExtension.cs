@@ -6,18 +6,17 @@ namespace CombatAnalysis.Core.Extensions;
 
 internal static class CombatParserAPIServiceExtension
 {
-    public static async Task<IEnumerable<T>> LoadCombatDetailsAsync<T>(this ICombatParserAPIService _, IHttpClientHelper httpClient, ILogger logger, string address, CancellationToken token)
-        where T : class
+    public static async Task<IEnumerable<object>> LoadCombatDetailsAsync(this ICombatParserAPIService _, Type type, IHttpClientHelper httpClient, ILogger logger, string address, CancellationToken token)
     {
         try
         {
             var response = await httpClient.GetAsync(address, token);
             response.EnsureSuccessStatusCode();
 
-            var details = await response.Content.ReadFromJsonAsync<IEnumerable<T>>();
+            var details = await response.Content.ReadFromJsonAsync(type, cancellationToken: token);
             ArgumentNullException.ThrowIfNull(details, nameof(details));
 
-            return details;
+            return (IEnumerable<object>)details;
         }
         catch (ArgumentNullException ex)
         {

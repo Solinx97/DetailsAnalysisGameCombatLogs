@@ -1,4 +1,5 @@
-﻿import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
+﻿import type { ChartModel } from '../types/chart/ChartModel';
+import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
 import type { HealDoneModel } from '../types/HealDoneModel';
 import { GameLogsApi } from './GameLogs.api';
 
@@ -14,14 +15,11 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'HealDone', id: 'LIST' }]
         }),
-        getHealDoneCountByCombatPlayerId: builder.query<number, number>({
-            query: combatPlayerId => `/HealDone/count/${combatPlayerId}`,
+        countHealDone: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to }) => `/HealDone/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getHealDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
-            query: ({ combatPlayerId, filter }) => `/HealDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
-        }),
-        getHealDoneByFilter: builder.query<HealDoneModel[], { combatPlayerId: number, filter: string, filterValue: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => `/HealDone/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+        getAllHealDone: builder.query<HealDoneModel[], { combatPlayerId: number, creator: string, target: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+            query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/HealDone/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -30,8 +28,14 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'HealDone', id: 'LIST' }]
         }),
-        getHealDoneCountByFilter: builder.query<number, { combatPlayerId: number, filter: string, filterValue: number }>({
-            query: ({ combatPlayerId, filter, filterValue }) => `/HealDone/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        getCombatPlayerChartHealDone: builder.query<ChartModel[], number>({
+            query: combatPlayerId => `/HealDone/getCombatPlayerChart/${combatPlayerId}`
+        }),
+        getGenericChartHealDone: builder.query<Map<string, ChartModel[]>, number>({
+            query: combatId => `/HealDone/getGenericChart/${combatId}`
+        }),
+        getHealDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
+            query: ({ combatPlayerId, filter }) => `/HealDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
         }),
         getHealDoneGeneralByCombatPlayerId: builder.query<HealDoneGeneralModel[], number>({
             query: combatPlayerId => `/HealDoneGeneral/getByCombatPlayerId/${combatPlayerId}`,
@@ -48,10 +52,11 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
 
 export const {
     useGetHealDoneByCombatPlayerIdQuery,
-    useLazyGetHealDoneCountByCombatPlayerIdQuery,
+    useCountHealDoneQuery,
     useGetHealDoneUniqueFilterValuesQuery,
-    useGetHealDoneByFilterQuery,
-    useGetHealDoneCountByFilterQuery,
+    useGetAllHealDoneQuery,
+    useGetCombatPlayerChartHealDoneQuery,
     useGetHealDoneGeneralByCombatPlayerIdQuery,
+    useGetGenericChartHealDoneQuery,
     useLazyGetHealDoneGeneralByCombatPlayerIdQuery,
 } = HealDoneApi;

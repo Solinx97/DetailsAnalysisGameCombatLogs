@@ -21,4 +21,7 @@ public class BossModel
 
     [Range(0, int.MaxValue)]
     public int Size { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int BossMapId { get; set; }
 }

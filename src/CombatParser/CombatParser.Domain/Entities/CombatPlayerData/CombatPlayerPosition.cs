@@ -1,24 +1,32 @@
-﻿using CombatParser.Domain.Interfaces;
+﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-namespace CombatParser.Domain.Entities.CombatPlayerData;
-
-public class CombatPlayerPosition : CombatPlayerDataBase, ICombatPlayerRefs
+public class CombatPlayerPosition
 {
     private CombatPlayerPosition() { }
 
-    public CombatPlayerPosition(int positionX, int positionY, TimeSpan time, int combatPlayerId)
+    public CombatPlayerPosition(int x, int y, TimeSpan time, int combatPlayerId)
     {
-        PositionX = positionX;
-        PositionY = positionY;
+        Id = Guid.NewGuid().ToString();
+        X = x;
+        Y = y;
         Time = time;
         CombatPlayerId = combatPlayerId;
     }
 
-    public double PositionX { get; private set; }
+    public string Id { get; set; } = string.Empty;
 
-    public double PositionY { get; private set; }
+    public double X { get; private set; }
+
+    public double Y { get; private set; }
 
     public TimeSpan Time { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
+
+    public int CombatPlayerId { get; set; }
+
+    public void SetCombatPlayerId(int combatPlayerId)
+    {
+        CombatPlayerId = combatPlayerId;
+    }
 }

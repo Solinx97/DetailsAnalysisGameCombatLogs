@@ -21,11 +21,12 @@ const CombatDetails: React.FC = () => {
     const [playerId, setPlayerId] = useState<number>(0);
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
-        detailsType: 'DamageDone',
+        detailsType: 0,
         combatLogId: 0,
         name: '',
         number: 0,
-        isWin: false
+        isWin: false,
+        duration: 0
     });
 
     const [getCombatPlayerById] = useLazyGetCombatPlayerByIdQuery();
@@ -34,11 +35,12 @@ const CombatDetails: React.FC = () => {
         const queryParams = new URLSearchParams(window.location.search);
 
         const id: number = parseInt(queryParams.get("id") || '0');
-        const detailsType: string = queryParams.get("detailsType") ?? 'DamageDone';
+        const detailsType: number = +(queryParams.get("detailsType") ?? 0);
         const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
         const name: string = queryParams.get("name") || '';
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
+        const duration: number = parseInt(queryParams.get("duration") || "1");
 
         const playerId: number = parseInt(queryParams.get("playerId") || '0');
         setPlayerId(playerId);
@@ -50,6 +52,7 @@ const CombatDetails: React.FC = () => {
             name,
             number,
             isWin,
+            duration,
         });
     }, []);
 
@@ -98,7 +101,7 @@ const CombatDetails: React.FC = () => {
             <div className="general-details__navigate">
                 <div className="player">
                     <div className="btn-shadow select-another-player"
-                        onClick={() => navigate(`/selected-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}`)}>
+                        onClick={() => navigate(`/selected-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}`)}>
                         <FontAwesomeIcon
                             icon={faDeleteLeft}
                         />

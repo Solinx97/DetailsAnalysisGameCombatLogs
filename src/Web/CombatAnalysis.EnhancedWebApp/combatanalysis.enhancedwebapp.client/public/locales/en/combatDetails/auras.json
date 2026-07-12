@@ -12,5 +12,7 @@
   "When": "When",
   "Apply": "Apply",
   "SelectCombat": "Select combat",
-  "SeeOnlyPinnedAuras": "See only pinned auras"
+  "SeeOnlyPinnedAuras": "See only pinned auras",
+  "AllBuffs": "All buffs",
+  "Targets": "Targets"
 }

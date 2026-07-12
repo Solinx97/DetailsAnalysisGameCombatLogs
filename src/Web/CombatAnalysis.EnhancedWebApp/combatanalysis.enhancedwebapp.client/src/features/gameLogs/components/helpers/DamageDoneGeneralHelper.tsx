@@ -173,7 +173,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                             </li>
                         }
                         <li>
-                            {item.damagePerSecond.toFixed(fixedNumberUntil)}
+                            {getValueShortName(parseInt(item.damagePerSecond.toFixed(fixedNumberUntil)))}
                         </li>
                         {!hideColumns.includes("Count") &&
                             <li>

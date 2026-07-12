@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class DamageTakenGeneral : CombatPlayerDataBase, ICombatPlayerRefs
+public class DamageTakenGeneral : CombatPlayerDataBase
 {
     public const int SPELL_MAX_LENGTH = 128;
 

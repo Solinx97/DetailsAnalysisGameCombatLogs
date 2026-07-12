@@ -20,11 +20,11 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
     private bool _isAuth;
 
     public CombatLogsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, ICombatParserService parser,
-        IMemoryCache memoryCache, ICacheService cacheService, ICombatParserAPIService combatParserAPIService)
+        IMemoryCache memoryCache, ICombatParserAPIService combatParserAPIService)
     {
         _memoryCache = memoryCache;
 
-        ParsingCombatLogsVM = new ParsingCombatLogsViewModel(mapper, mvvmNavigation, parser, cacheService, combatParserAPIService);
+        ParsingCombatLogsVM = new ParsingCombatLogsViewModel(mapper, mvvmNavigation, parser, combatParserAPIService);
         PublicCombatLogsVM = new PublicCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
         PrivateCombatLogsVM = new PrivateCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
 

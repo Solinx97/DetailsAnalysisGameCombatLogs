@@ -1,8 +1,8 @@
 ﻿import { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
 import {
-    useGetResourceRecoveryByFilterQuery,
-    useGetResourceRecoveryCountByFilterQuery,
+    useCountResourceRecoveryQuery,
+    useGetAllResourceRecoveryQuery,
     useGetResourceRecoveryUniqueFilterValuesQuery
 } from '../../api/ResourcesRecovery.api';
 import DetailsFilter from './DetailsFilter';
@@ -16,23 +16,33 @@ interface ResourceRecoveryHelperProps {
 }
 
 const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
+    const NONE_VALUE = "NONE";
+    const ZERO_TIME_VALUE = "00:00:00";
+
     const { getTimeWithoutMs } = useTime();
 
+    const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
+    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
 
-    const { data: count, isLoading: countIsLoading } = useGetResourceRecoveryCountByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    const { data: count, isLoading: countIsLoading } = useCountResourceRecoveryQuery(
+        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
-    const { data, isLoading } = useGetResourceRecoveryByFilterQuery(
-        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    const { data, isLoading: dataIsLoading } = useGetAllResourceRecoveryQuery(
+        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
-
-    const totalPages = Math.ceil(count ?? 1 / pageSize);
 
     useEffect(() => {
         setPage(1);
     }, [selectedFilter]);
+
+    useEffect(() => {
+        if (!count || count === 0) {
+            return;
+        }
+
+        setTotalPages(Math.ceil(count / pageSize));
+    }, [count]);
 
     const tableTitle = (): JSX.Element => {
         return (
@@ -55,7 +65,7 @@ const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ combatP
         );
     }
 
-    if (isLoading || countIsLoading) {
+    if (countIsLoading || dataIsLoading) {
         return (<div>Loading...</div>);
     }
 
@@ -63,20 +73,10 @@ const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ combatP
         <>
             <div className="player-filter-details">
                 <DetailsFilter
+                    filters={["Creator", "Spell"]}
                     combatPlayerId={combatPlayerId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
-                    filter="Creator"
-                    filterName={t("Creator")}
-                    useGetUniqueFilterValuesQuery={useGetResourceRecoveryUniqueFilterValuesQuery}
-                    t={t}
-                />
-                <DetailsFilter
-                    combatPlayerId={combatPlayerId}
-                    setSelectedFilter={setSelectedFilter}
-                    selectedFilter={selectedFilter}
-                    filter="Spell"
-                    filterName={t("Spell")}
                     useGetUniqueFilterValuesQuery={useGetResourceRecoveryUniqueFilterValuesQuery}
                     t={t}
                 />

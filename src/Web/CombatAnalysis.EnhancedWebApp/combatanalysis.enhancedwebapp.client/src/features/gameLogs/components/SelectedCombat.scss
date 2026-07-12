@@ -1,5 +1,16 @@
-﻿.selected-combat {
+﻿.recharts-tooltip-wrapper {
+    background: transparent;
+    z-index: 9999 !important;
+}
+
+.selected-combat {
     &__container {
+        .tabs.charts {
+            .tab-name {
+                font-size: 0.7em;
+            }
+        }
+
         .card {
             width: 100%;
             box-shadow: 10px 10px #3AA6B9;
@@ -74,35 +85,44 @@
             margin: 20px;
         }
 
-        &_general-details-charts {
+        .legends {
             display: flex;
             justify-content: center;
+            font-size: 0.75em;
+            text-align: center;
 
-            text {
-                color: white;
-            }
-
-            .pie-chart-hook {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-
-                div {
-                    font-family: 'Comic Sans MS';
-                }
-
-                .title {
-                    font-size: 1.3em;
-                }
+            .legend {
+                cursor: pointer;
+                padding: 5px 10px;
+                border-Radius: 10px;
             }
         }
 
         .details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
             &__filter {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 5px;
+
+                .options {
+                    color: black;
+                    min-width: 175px;
+                }
+            }
+
+            &__content {
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+
+                .card {
+                    margin: 0;
+                }
             }
 
             &__item {
@@ -214,6 +234,10 @@
         display: flex;
         align-items: center;
         gap: 25px;
+
+        h5 {
+            margin: 0;
+        }
 
         .boss {
             display: flex;

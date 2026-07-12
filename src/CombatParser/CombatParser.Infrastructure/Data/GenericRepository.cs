@@ -26,7 +26,8 @@ internal class GenericRepository<TModel, TId>(CombatParserContextOne context) : 
 
     public async Task<TModel> GetByIdAsync(TId id, CancellationToken cancelationToken)
     {
-        var entity = await _context.Set<TModel>().FindAsync(id, cancelationToken) 
+        var entity = await _context.Set<TModel>()
+            .FindAsync(id, cancelationToken)
             ?? throw new EntityNotFoundException(typeof(TModel), id);
 
         return entity;

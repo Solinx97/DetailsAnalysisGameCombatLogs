@@ -19,13 +19,10 @@ public class CombatDetails(ILogger logger)
     ];
     private readonly string[] _positions =
     [
-        CombatLogKeyWords.SpellHeal,
-        CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SwingDamageLanded,
+        CombatLogKeyWords.AuraApplied,
         CombatLogKeyWords.SpellCastSuccess,
-        CombatLogKeyWords.DamageShieldMissed,
-        CombatLogKeyWords.RangeDamage,
-        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SpellCastFailed,
+        CombatLogKeyWords.UnitDied,
     ];
     private readonly string[] _healVariations =
     [
@@ -76,7 +73,7 @@ public class CombatDetails(ILogger logger)
 
     public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGeneral { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatAura>> Auras { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerAura>> Auras { get; private set; } = [];
 
     public CombatDetails(ILogger logger, Dictionary<string, List<string>> petsId) : this(logger)
     {
@@ -184,8 +181,7 @@ public class CombatDetails(ILogger logger)
         else if (hasAuras)
         {
             var allPetsId = _petsId.SelectMany(x => x.Value).ToList();
-            var t = splitCombatData;
-            var (creatorId, auras) = combatDetailsManager.GetAuras(t, Auras, allPetsId);
+            var (creatorId, auras) = combatDetailsManager.GetAuras(splitCombatData, Auras, allPetsId);
             if (!string.IsNullOrEmpty(creatorId) || auras != null)
             {
                 if (Auras.TryGetValue(creatorId, out var collection))
@@ -194,7 +190,7 @@ public class CombatDetails(ILogger logger)
                 }
                 else
                 {
-                    var concurrentAuraColelction = new ConcurrentDictionary<string, CombatAura>();
+                    var concurrentAuraColelction = new ConcurrentDictionary<string, CombatPlayerAura>();
                     concurrentAuraColelction.TryAdd(auras.Name, auras);
                     Auras.TryAdd(creatorId, concurrentAuraColelction);
                 }
@@ -267,6 +263,39 @@ public class CombatDetails(ILogger logger)
 
         data.AddRange(parse);
 
+        CheckComplexText(data);
+
         return [.. data];
+    }
+
+    private static void CheckComplexText(List<string> content)
+    {
+        var craft = string.Empty;
+        var startIndex = -1;
+        var finishIndex = -1;
+        for (int i = 0; i < content.Count; i++)
+        {
+            if (content[i].StartsWith('\"') && !content[i].EndsWith('\"'))
+            {
+                craft += content[i];
+                startIndex = i;
+            }
+            else if (!string.IsNullOrEmpty(craft) && !content[i].EndsWith('\"'))
+            {
+                craft += content[i];
+            }
+            else if (!string.IsNullOrEmpty(craft) && content[i].EndsWith('\"'))
+            {
+                craft += content[i];
+                finishIndex = i;
+                break;
+            }
+        }
+
+        if (startIndex >= 0 && startIndex + 1 < content.Count && finishIndex >= 0)
+        {
+            content[startIndex] = craft;
+            content.RemoveRange(startIndex + 1, finishIndex - startIndex);
+        }
     }
 }

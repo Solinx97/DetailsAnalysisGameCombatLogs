@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Enums;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs.Chart;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -47,17 +48,69 @@ public class ResourceRecoveryController : ControllerBase
         }
     }
 
-    [HttpGet("count/{combatPlayerId}")]
-    public async Task<IActionResult> Count(int combatPlayerId)
+    [HttpGet("count")]
+    public async Task<IActionResult> Count(int combatPlayerId, string target, string creator, string spell, string from, string to)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"ResourceRecovery/count/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"ResourceRecovery/count?combatPlayerId={combatPlayerId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}");
             response.EnsureSuccessStatusCode();
 
             var count = await response.Content.ReadFromJsonAsync<int>();
 
             return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getAll")]
+    public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getAll?combatPlayerId={combatPlayerId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var resourceRecoveries = await response.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryModel>>();
+
+            return Ok(resourceRecoveries);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
+    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getCombatPlayerChart/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
+
+            var resourceRecoveries = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();
+
+            return Ok(resourceRecoveries);
         }
         catch (HttpRequestException ex)
         {
@@ -99,94 +152,6 @@ public class ResourceRecoveryController : ControllerBase
             var uniqueFilterValues = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
 
             return Ok(uniqueFilterValues);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpGet("getByFilter")]
-    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue, int page, int pageSize)
-    {
-        try
-        {
-            string filterName;
-            string filterActionName;
-            switch (filter)
-            {
-                case DetailsFilterType.None:
-                    return await GetByCombatPlayerId(combatPlayerId, page, pageSize);
-                case DetailsFilterType.Creator:
-                    filterName = "creator";
-                    filterActionName = "getByCreator";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "getBySpell";
-                    break;
-                default:
-                    return BadRequest();
-            }
-
-            var response = await _httpClient.GetAsync($"ResourceRecovery/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}&page={page}&pageSize={pageSize}");
-            response.EnsureSuccessStatusCode();
-
-            var resourceRecoveries = await response.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryModel>>();
-
-            return Ok(resourceRecoveries);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpGet("countByFilter")]
-    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue)
-    {
-        try
-        {
-            string filterName;
-            string filterActionName;
-            switch (filter)
-            {
-                case DetailsFilterType.None:
-                    return await Count(combatPlayerId);
-                case DetailsFilterType.Creator:
-                    filterName = "creator";
-                    filterActionName = "countByCreator";
-                    break;
-                case DetailsFilterType.Spell:
-                    filterName = "spell";
-                    filterActionName = "countBySpell";
-                    break;
-                default:
-                    return BadRequest();
-            }
-
-            var response = await _httpClient.GetAsync($"ResourceRecovery/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}");
-            response.EnsureSuccessStatusCode();
-
-            var count = await response.Content.ReadFromJsonAsync<int>();
-
-            return Ok(count);
         }
         catch (HttpRequestException ex)
         {

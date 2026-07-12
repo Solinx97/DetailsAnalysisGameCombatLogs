@@ -11,9 +11,10 @@ type PersonalTabItemModel = {
 interface PersonalTabsProps {
     tab: number;
     tabs: PersonalTabItemModel[];
+    tabsClassName: string;
 }
 
-const PersonalTabs: React.FC<PersonalTabsProps> = ({ tab, tabs }) => {
+const PersonalTabs: React.FC<PersonalTabsProps> = ({ tab, tabs, tabsClassName }) => {
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
     useEffect(() => {
@@ -25,12 +26,12 @@ const PersonalTabs: React.FC<PersonalTabsProps> = ({ tab, tabs }) => {
     }
 
     return (
-        <div className="tabs">
+        <div className={`tabs ${tabsClassName}`}>
             <div className="tabs__header">
                 <ul className="title">
                     {tabs.map((item, index) => (
                         <li key={index} onClick={() => selectTab(index)} className={`${item.id === selectedTabIndex ? 'tab-active' : ''}`}>
-                            <div>{item.header}</div>
+                            <div className="tab-name">{item.header}</div>
                         </li>
                     ))}
                 </ul>

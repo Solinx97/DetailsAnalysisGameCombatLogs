@@ -1,8 +1,6 @@
-﻿using CombatParser.Domain.Interfaces;
+﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-namespace CombatParser.Domain.Entities.CombatPlayerData;
-
-public class CombatPlayerStats : CombatPlayerDataBase, ICombatPlayerRefs
+public class CombatPlayerStats : CombatPlayerDataBase
 {
     public const int TALENTS_MAX_LENGTH = 128;
 

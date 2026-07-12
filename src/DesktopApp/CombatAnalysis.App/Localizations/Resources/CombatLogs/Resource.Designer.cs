@@ -178,6 +178,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Private.
+        /// </summary>
+        public static string Private {
+            get {
+                return ResourceManager.GetString("Private", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Processing.
         /// </summary>
         public static string Processing {
@@ -255,15 +264,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogs {
         public static string Result {
             get {
                 return ResourceManager.GetString("Result", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save.
-        /// </summary>
-        public static string SaveData {
-            get {
-                return ResourceManager.GetString("SaveData", resourceCulture);
             }
         }
         

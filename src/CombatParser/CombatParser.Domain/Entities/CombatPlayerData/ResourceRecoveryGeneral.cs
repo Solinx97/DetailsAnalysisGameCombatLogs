@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecoveryGeneral : CombatPlayerDataBase, ICombatPlayerRefs
+public class ResourceRecoveryGeneral : CombatPlayerDataBase
 {
     public const int SPELL_MAX_LENGTH = 128;
 
@@ -14,7 +14,6 @@ public class ResourceRecoveryGeneral : CombatPlayerDataBase, ICombatPlayerRefs
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
         ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
-        ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
 
         GameSpellId = gameSpellId;
         Spell = spell;

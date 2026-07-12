@@ -2,6 +2,10 @@
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Application.Commands.CreateCombat;
+using CombatParser.Application.Queries.Dashboards.GetDamageSpells;
+using CombatParser.Application.Queries.Dashboards.GetDashboard;
+using CombatParser.Application.Queries.Dashboards.GetHealSpells;
+using CombatParser.Application.Queries.Dashboards.GetPotions;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
 using CombatParser.Domain.EntityData;
@@ -37,21 +41,44 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         return Ok(combats);
     }
 
+    [HttpGet("getDashboards/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDashboards(int combatLogId, CancellationToken cancellationToken)
+    {
+        var dashboards = await _mediator.Send(new GetDashboardQuery(combatLogId), cancellationToken);
+
+        return Ok(dashboards);
+    }
+
+    [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDamageSpells(int combatLogId, CancellationToken cancellationToken)
+    {
+        var spells = await _mediator.Send(new GetDamageSpellsQuery(combatLogId), cancellationToken);
+
+        return Ok(spells);
+    }
+
+    [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetHealSpells(int combatLogId, CancellationToken cancellationToken)
+    {
+        var spells = await _mediator.Send(new GetHealSpellsQuery(combatLogId), cancellationToken);
+
+        return Ok(spells);
+    }
+
+    [HttpGet("getPotions/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetPotions(int combatLogId, CancellationToken cancellationToken)
+    {
+        var potions = await _mediator.Send(new GetPotionsQuery(combatLogId), cancellationToken);
+
+        return Ok(potions);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CombatModel combat, CancellationToken cancellationToken)
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Combat create received: {@Combat}", combat);
-
-                return ValidationProblem(ModelState);
-            }
-
             var combatPlayersData = new List<CombatPlayerData>();
-            var auras = _mapper.Map<List<CombatAuraData>>(combat.CombatAuras);
-
             foreach (var player in combat.CombatPlayers)
             {
                 var playerData = await ExtractCombatPlayerDataAsync(player, cancellationToken);
@@ -59,11 +86,11 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             }
 
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, auras);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData);
 
-            await _mediator.Send(command, cancellationToken);
+            var combatId = await _mediator.Send(command, cancellationToken);
 
-            return Ok();
+            return Ok(combatId);
         }
         catch (OperationCanceledException ex)
         {
@@ -83,6 +110,8 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
     {
         var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
 
+        var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
+        var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
         var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
         var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
         var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
@@ -111,6 +140,8 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             combatPlayer.CombatId,
             statsMap,
             scoreMap,
+            preAurasMap,
+            aurasMap,
             damageDonesMap,
             damageDoneGeneralsMap,
             healDonesMap,

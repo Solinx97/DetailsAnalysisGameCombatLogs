@@ -8,12 +8,12 @@ type CombatDetailsData = {
     getComponentByDetailsTypeAsync: () => Promise<JSX.Element>;
 }
 
-const useCombatDetailsData = (combatPlayerId: number, pageSize: number, detailsType: string, t: (key: string) => string): CombatDetailsData => {
+const useCombatDetailsData = (combatPlayerId: number, pageSize: number, detailsType: number, t: (key: string) => string): CombatDetailsData => {
     const helpersComponent = {
-        "DamageDone": DamageDoneHelper,
-        "HealDone": HealDoneHelper,
-        "DamageTaken": DamageTakenHelper,
-        "ResourceRecovery": ResourceRecoveryHelper
+        0: DamageDoneHelper,
+        1: HealDoneHelper,
+        2: DamageTakenHelper,
+        3: ResourceRecoveryHelper
     };
 
     const getComponentByDetailsTypeAsync = async (): Promise<JSX.Element> => {

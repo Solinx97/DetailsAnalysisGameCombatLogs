@@ -20,6 +20,10 @@ public class CombatPlayer
 
     public int CombatId { get; set; }
 
+    public List<CombatPlayerPreAura> PreAuras { get; set; } = [];
+
+    public List<CombatPlayerAura> Auras { get; set; } = [];
+
     public List<DamageDone> DamageDones { get; set; } = [];
 
     public List<DamageDoneGeneral> DamageDoneGenerals { get; set; } = [];

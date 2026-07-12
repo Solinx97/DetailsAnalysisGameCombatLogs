@@ -3,7 +3,7 @@ import AllCommunities from '../features/community/components/AllCommunities';
 import SelectedCommunity from '../features/community/components/selectedCommunity/SelectedCommunity';
 import UserEnvironmentCommunities from '../features/community/components/userEnvironment/UserEnvironmentCommunities';
 import Feed from '../features/feed/components/Feed';
-import CombatAuras from '../features/gameLogs/components/actions/CombatAuras';
+import CombatAuras from '../features/gameLogs/components/auras/CombatAuras';
 import CombatDetails from '../features/gameLogs/components/CombatDetails';
 import SelectedCombat from '../features/gameLogs/components/SelectedCombat';
 import GameCombatLogs from '../features/gameLogs/components/GameCombatLogs';
@@ -16,6 +16,7 @@ import Profile from '../features/user/components/userEnvironment/Profile';
 import UserFeed from '../features/user/components/userEnvironment/UserFeed';
 import VoiceChat from '../features/voiceChat/components/VoiceChat';
 import Home from '../shared/components/Home';
+import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
 
 type Route = {
     index?: boolean;
@@ -87,6 +88,10 @@ const AppRoutes: Route[] = [
     {
         path: '/general-analysis/auras',
         element: <CombatAuras />
+    },
+    {
+        path: '/general-analysis/reply',
+        element: <CombatReply />
     },
     {
         path: '/selected-combat',

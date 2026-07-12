@@ -1,6 +1,6 @@
 {
-  "Damage": "Урон",
-  "Healing": "Исцеление",
+  "DPS": "УВС",
+  "HPS": "ИВС",
   "DamageTaken": "Получено урона",
   "ResourcesRecovery": "Восстановлено ресурсов",
   "Deaths": "Смертей",
@@ -28,5 +28,8 @@
   "When": "Когда",
   "FiltersReset": "Сброс",
   "TimesReset": "Сброс времени",
-  "SelectCombat": "Выбрать бой"
+  "SelectCombat": "Выбрать бой",
+  "Dashboard": "Обзор",
+  "Informations": "Информация",
+   "Reply": "Повтор"
 }

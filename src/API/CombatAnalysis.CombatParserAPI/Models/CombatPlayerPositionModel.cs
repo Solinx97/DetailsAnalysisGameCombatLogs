@@ -4,12 +4,11 @@ namespace CombatAnalysis.CombatParserAPI.Models;
 
 public class CombatPlayerPositionModel
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
-    public double PositionX { get; set; }
+    public double X { get; set; }
 
-    public double PositionY { get; set; }
+    public double Y { get; set; }
 
     [Required]
     public TimeSpan Time { get; set; }

@@ -2,13 +2,13 @@
 
 namespace CombatAnalysis.Core.Models.GameLogs;
 
-public class DamageDoneGeneralModel : IDetailsEntity
+public class DamageDoneGeneralModel : IGeneralDetailsEntity
 {
     public int Id { get; set; }
 
     public int GameSpellId { get; set; }
 
-    public string Spell { get; set; }
+    public string Spell { get; set; } = string.Empty;
 
     public int Value { get; set; }
 

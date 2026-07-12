@@ -1,49 +1,40 @@
-﻿import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyGetDamageTakenByCombatPlayerIdQuery } from '../../api/DamageTaken.api';
-import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
-import type { CombatPlayerDeathModel } from '../../types/CombatPlayerDeathModel';
+﻿import { useContext, useEffect, useState } from 'react';
+import { DashboardContext } from './DashboardItem';
+import type { DashboardModel } from '../../types/dashboard/DashboardModel';
 
-const minCount = 3;
+const DashboardDeathItem = () => {
+    const context = useContext(DashboardContext);
 
-export interface DashboardDeathItemProps {
-    playersDeath: CombatPlayerDeathModel[];
-    combatPlayers: CombatPlayerModel[];
-}
-
-const DashboardDeathItem: React.FC<DashboardDeathItemProps> = ({ playersDeath, combatPlayers }) => {
-    const { t } = useTranslation('combatDetails/dashboard');
-
-    const [getDamageTakenByCombatPlayerId] = useLazyGetDamageTakenByCombatPlayerIdQuery();
-
-    const [itemCount, setItemCount] = useState(minCount);
-
-    useEffect(() => {
-        if (!playersDeath || playersDeath.length === 0) {
-            return;
-        }
-    }, [playersDeath, combatPlayers, getDamageTakenByCombatPlayerId]);
-
-    if (playersDeath === undefined) {
-        return (<div>Loading...</div>);
+    if (!context) {
+        throw new Error("Child must be inside DashboardContext.Provider");
     }
 
+    const { dashboards, itemCount, setContentSize, compare, setFilter, filter } = context;
+
+    const [filteredDashboardItem, setFilteredDashboardItem] = useState<DashboardModel[]>([]);
+
+    useEffect(() => {
+        setFilter(2);
+        setContentSize(dashboards.length);
+    }, []);
+
+    useEffect(() => {
+        if (!dashboards) {
+            return;
+        }
+
+        setFilteredDashboardItem([...dashboards].sort(compare));
+    }, [filter, dashboards]);
+
     return (
-        <>
-            <div>{t("PlayersDied")}</div>
-            <ul className="death-info">
-                {playersDeath?.slice(0, itemCount).map((death, index) => (
-                    <li key={index} className="death-info__details">
-                        <div>{death?.username}</div>
-                        <div>{death?.lastHitSpellOrItem}</div>
-                        <div>{death?.lastHitValue}</div>
-                    </li>
-                ))}
-            </ul>
-            <div className="extend" onClick={() => setItemCount(itemCount === minCount ? playersDeath.length : minCount)}>
-                {itemCount === minCount ? t("More") : t("Less")}
-            </div>
-        </>
+        <ul className="details">
+            {filteredDashboardItem.slice(0, itemCount).map((combat, index) => (
+                <li key={index} className="details-item">
+                    <div>{combat.username}</div>
+                    <div>{combat.averageDeaths}</div>
+                </li>
+            ))}
+        </ul>
     );
 }
 

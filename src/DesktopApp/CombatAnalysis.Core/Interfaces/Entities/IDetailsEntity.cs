@@ -1,6 +1,8 @@
 ﻿namespace CombatAnalysis.Core.Interfaces.Entities;
 
-public interface IDetailsEntity
+public interface IDetailsEntity : IGeneralDetailsEntity
 {
-    string Spell { get; set; }
+    string Creator { get; set; }
+
+    string Target { get; set; }
 }

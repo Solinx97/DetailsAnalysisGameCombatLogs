@@ -44,7 +44,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
             foreach (var path in combatLogPaths)
             {
-                var lines = await fileManager.ReadAllLinesAsync(path, cancellationToken);
+                var lines = await _fileManager.ReadAllLinesAsync(path, cancellationToken);
                 await ProcessCombatLogLinesAsync(lines, petsId, bossCombatStarted, newCombatFromLogs);
             }
         }
@@ -326,15 +326,10 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
         CombatDetails.Add(combatDetails);
 
-        var combatAuras = new List<CombatAura>();
         foreach (var combatPlayer in combatPlayers)
         {
             FillCombatPlayerData(combatPlayer, combatDetails);
-
-            combatAuras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId].Select(x => x.Value));
         }
-
-        combat.CombatAuras = combatAuras;
 
         return combatPlayers;
     }
@@ -342,12 +337,15 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
     private async Task<CombatPlayer> CreateCombatPlayerAsync(string combatInformation, string[] combatData)
     {
         var combatInfoList = combatInformation.Split(',');
-        var combatInfoEquipments = combatInformation.Split(['[', ']']);
+        var combatInfoSpecialParams = combatInformation.Split(['[', ']']);
+        var equipmentsInformation = combatInfoSpecialParams[1];
+        var preAurasInformation = combatInfoSpecialParams[3];
 
-        var averageItemLevel = GetAverageItemLevel(combatInfoEquipments[1]);
+        var averageItemLevel = GetAverageItemLevel(equipmentsInformation);
 
         var statsInformation = combatInfoList.Skip(3).Take(30).ToArray();
         var stats = GetStats(statsInformation);
+        var preAuras = GetPreAuras(preAurasInformation);
 
         var combatPlayer = new CombatPlayer
         {
@@ -357,6 +355,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
             {
                 GameId = combatInfoList[1],
             },
+            PreAuras = preAuras,
         };
 
         var player = await combatPlayer.Player.LoadAsync(_httpHelper, _logger);
@@ -392,6 +391,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         combatPlayer.DamageTaken = combatDetails.DamageTaken[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
         combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecovery[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
 
+        combatPlayer.Auras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.DamageDones.AddRange(combatDetails.DamageDone[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.DamageDoneGenerals.AddRange(combatDetails.DamageDoneGeneral[combatPlayer.Player.GameId]);
         combatPlayer.HealDones.AddRange(combatDetails.HealDone[combatPlayer.Player.GameId].Select(x => x.Value));
@@ -482,5 +482,23 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         stats.Talents = talents;
 
         return stats;
+    }
+
+    private static List<CombatPlayerPreAura> GetPreAuras(string preAurasInformation)
+    {
+        var allPreAuras = preAurasInformation.Split(',');
+        var preAuras = new List<CombatPlayerPreAura>();
+        for (var i = 0; i + 2 < allPreAuras.Length; i+= 3)
+        {
+            var preAura = new CombatPlayerPreAura
+            {
+                CreatorGameId = allPreAuras[i],
+                GameId = int.Parse(allPreAuras[i + 1]),
+                Status = int.Parse(allPreAuras[i + 2]),
+            };
+            preAuras.Add(preAura);
+        }
+
+        return preAuras;
     }
 }

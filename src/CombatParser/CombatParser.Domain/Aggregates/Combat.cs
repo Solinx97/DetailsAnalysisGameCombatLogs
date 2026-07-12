@@ -10,7 +10,6 @@ public class Combat
     public const int DUNGEON_NAME_MAX_LENGTH = 128;
 
     private readonly List<CombatPlayer> _players = [];
-    private readonly List<CombatAura> _auras = [];
     private readonly List<CombatTarget> _targets = [];
 
     private Combat() { }
@@ -28,7 +27,6 @@ public class Combat
         IsWin = isWin;
         StartDate = startDate;
         FinishDate = finishDate;
-        IsReady = false;
         BossId = bossId;
         CombatLogId = combatLogId;
     }
@@ -59,8 +57,6 @@ public class Combat
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
     }
 
-    public bool IsReady { get; private set; }
-
     public Boss Boss { get; private set; }
 
     public int BossId { get; private set; }
@@ -71,20 +67,17 @@ public class Combat
 
     public IEnumerable<CombatPlayer> CombatPlayers => _players;
 
-    public IReadOnlyCollection<CombatAura> CombatAuras => _auras.AsReadOnly();
-
     public IReadOnlyCollection<CombatTarget> CombatTargets => _targets.AsReadOnly();
 
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatAuraData> auras)
+        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
         ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
         ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
         ArgumentOutOfRangeException.ThrowIfNegative(damageTaken, nameof(damageTaken));
-        ArgumentOutOfRangeException.ThrowIfNegative(resourcesRecovery, nameof(resourcesRecovery));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(combatLogId, nameof(combatLogId));
 
         CombatException.ThrowIfLong(dungeonName);
@@ -99,32 +92,15 @@ public class Combat
             combat.AddCombatPlayer(player);
         }
 
-        foreach (var aura in auras)
-        {
-            combat.AddCombatAura(aura);
-        }
-
         return combat;
-    }
-
-    public void CombatIsReady()
-    {
-        IsReady = true;
     }
 
     private void AddCombatPlayer(CombatPlayerData player)
     {
         var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
-            player.PlayerId, player.CombatId, player.Stats, player.Score, player.DamageDones,
+            player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.DamageDones,
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals, player.DamageTakens, player.DamageTakenGenerals,
             player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths, player.CombatPlayerPositions);
         _players.Add(createdPlayer);
-    }
-
-    private void AddCombatAura(CombatAuraData aura)
-    {
-        var createdAura = new CombatAura(aura.Name, aura.Creator, aura.Target, aura.AuraCreatorType, aura.AuraType,
-            aura.StartTime, aura.FinishTime, aura.Stacks, aura.CombatId);
-        _auras.Add(createdAura);
     }
 }
