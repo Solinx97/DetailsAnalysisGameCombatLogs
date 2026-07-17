@@ -32,8 +32,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     private CombatModel? _selectedCombat;
     private CombatLogModel? _combatLog;
     private bool _isAuth;
-    private bool _authorizationIsOpen;
-    private bool _loginIsRan;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
 
@@ -47,8 +45,8 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         _mvvmNavigation = mvvmNavigation;
         _memoryCache = memoryCache;
 
-        _responseStatusObservers = new List<IResponseStatusObserver>();
-        _authObservers = new List<IAuthObserver>();
+        _responseStatusObservers = [];
+        _authObservers = [];
 
         CloseCommand = new MvxCommand(CloseWindow);
         LoginCommand = new MvxAsyncCommand(LoginAsync);
@@ -66,14 +64,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         HealDoneDetailsCommand = new MvxAsyncCommand(HealDoneDetailsAsync);
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
-
-        Task.Run(InitializationAsync);
     }
-
-    public event AuthorizationWindowEventHandler? OpenAuthorizationWindow;
-    public event AuthorizationWindowEventHandler? OpenRegistrationWindow;
-    public event AuthorizationWindowEventHandler? CloseAuthorizationWindow;
-    public event AuthorizationWindowEventHandler? CloseRegistrationWindow;
 
     public IVMHandler Handler { get; set; }
 
@@ -197,25 +188,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         }
     }
 
-    public bool LoginIsRan
-    {
-        get { return _loginIsRan; }
-        set
-        {
-            SetProperty(ref _loginIsRan, value);
-        }
-    }
-
-    public bool AuthorizationIsOpen
-    {
-        get { return _authorizationIsOpen; }
-        set
-        {
-            SetProperty(ref _authorizationIsOpen, value);
-            NotifyAuthObservers();
-        }
-    }
-
     public bool IsAuth
     {
         get { return _isAuth; }
@@ -265,6 +237,11 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     #endregion
 
+    public override void ViewAppeared()
+    {
+        _ = InitializationAsync();
+    }
+
     public CancellationToken RequestCancelationToken()
     {
         CancellationTokenSource = new CancellationTokenSource();
@@ -280,22 +257,12 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     public async Task LoginAsync()
     {
-        LoginIsRan = true;
-
-        await _mvvmNavigation.Navigate<HomeViewModel>();
-        await InvokeOnMainThreadAsync(() =>
-        {
-            OpenAuthorizationWindow?.Invoke();
-        });
+        await _mvvmNavigation.Navigate<HomeViewModel, AuthAction>(AuthAction.Login);
     }
 
     public async Task RegistrationAsync()
     {
-        await _mvvmNavigation.Navigate<HomeViewModel>();
-        await InvokeOnMainThreadAsync(() =>
-        {
-            OpenRegistrationWindow?.Invoke();
-        });
+        await _mvvmNavigation.Navigate<HomeViewModel, AuthAction>(AuthAction.Registration);
     }
 
     public async Task LogoutAsync()
@@ -323,7 +290,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     {
         Step = -1;
         await _mvvmNavigation.Close(Parent);
-        await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth);
+        await _mvvmNavigation.Navigate<HomeViewModel>();
     }
 
     public async Task UploadCombatLogsAsync()
@@ -441,14 +408,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         }
     }
 
-    public void ClearEvents()
-    {
-        OpenAuthorizationWindow = null;
-        CloseAuthorizationWindow = null;
-        OpenRegistrationWindow = null;
-        CloseRegistrationWindow = null;
-    }
-
     private async Task InitializationAsync()
     {
         BasicViewModel.Template = this;
@@ -456,7 +415,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         SavedViewModel = this;
         Handler = new VMHandler<BasicTemplateViewModel>();
 
-        await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth);
+        await _mvvmNavigation.Navigate<HomeViewModel, AuthAction>(AuthAction.Login);
     }
 
     private void CloseWindow()
@@ -465,6 +424,4 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
         Environment.Exit(0);
     }
-
-    public delegate void AuthorizationWindowEventHandler();
 }

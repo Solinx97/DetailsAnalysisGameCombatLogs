@@ -126,6 +126,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="ContinueAuthInBrowser" xml:space="preserve">
     <value>Continue Authorization in your Browser</value>
   </data>

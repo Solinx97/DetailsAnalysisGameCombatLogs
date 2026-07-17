@@ -1,21 +1,29 @@
-﻿using CombatAnalysis.Core.Interfaces.Observers;
+﻿using CombatAnalysis.Core.Enums;
+using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.Chat;
+using CombatAnalysis.Core.ViewModels.User;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
+public class HomeViewModel : ParentTemplate<AuthAction>, IAuthObserver
 {
     private readonly IMvxNavigationService _mvvmNavigation;
+    private readonly IAuthWindowService<AuthorizationViewModel> _loginWindowService;
+    private readonly IAuthWindowService<RegistrationViewModel> _registrationWindowService;
 
-    private bool _chatIsEnabled;
+    private bool _isAuth;
+    private AuthAction _authAction = AuthAction.None;
 
-    public HomeViewModel(IMvxNavigationService mvvmNavigation)
+    public HomeViewModel(IMvxNavigationService mvvmNavigation, IAuthWindowService<AuthorizationViewModel> loginWindowService, IAuthWindowService<RegistrationViewModel> registrationWindowService)
     {
         _mvvmNavigation = mvvmNavigation;
+        _loginWindowService = loginWindowService;
+        _registrationWindowService = registrationWindowService;
 
         OpenChatCommand = new MvxAsyncCommand(OpenChatAsync);
         OpenLognCommand = new MvxAsyncCommand(OpenLoginAsync);
@@ -39,20 +47,39 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
 
     #region View model properties
 
-    public bool ChatIsEnabled
+    public bool IsAuth
     {
-        get { return _chatIsEnabled; }
+        get { return _isAuth; }
         set
         {
-            SetProperty(ref _chatIsEnabled, value);
+            SetProperty(ref _isAuth, value);
         }
     }
 
     #endregion
 
-    public override void Prepare(bool isAuth)
+    public override Task Initialize()
     {
-        ChatIsEnabled = isAuth;
+        IsAuth = ((BasicTemplateViewModel)Basic).IsAuth;
+        return base.Initialize();
+    }
+
+    public override void ViewAppeared()
+    {
+        switch (_authAction)
+        {
+            case AuthAction.Login:
+                AsyncDispatcher.ExecuteOnMainThreadAsync(_loginWindowService.ShowAsync);
+                break;
+            case AuthAction.Registration:
+                AsyncDispatcher.ExecuteOnMainThreadAsync(_registrationWindowService.ShowAsync);
+                break;
+        }
+    }
+
+    public override void Prepare(AuthAction triggerAuth)
+    {
+        _authAction = triggerAuth;
     }
 
     public async Task OpenChatAsync()
@@ -75,6 +102,6 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
 
     public void AuthUpdate(bool isAuth)
     {
-        ChatIsEnabled = isAuth;
+        IsAuth = isAuth;
     }
 }

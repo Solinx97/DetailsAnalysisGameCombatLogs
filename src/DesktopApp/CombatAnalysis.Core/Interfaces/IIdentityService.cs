@@ -2,7 +2,7 @@
 
 public interface IIdentityService
 {
-    Task SendAuthorizationRequestAsync(string authorizationRequestType);
+    Task SendAuthorizationRequestAsync(string authorizationRequestType, CancellationToken cancellationToken);
 
-    Task SendTokenRequestAsync();
+    Task SendTokenRequestAsync(CancellationToken cancellationToken);
 }

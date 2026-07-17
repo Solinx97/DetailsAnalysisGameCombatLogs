@@ -14,36 +14,50 @@ public class AuthorizationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IIdentityService _identityService;
+    private readonly ILogger _logger;
     private readonly SecurityStorage _securityStorage;
+    private readonly CancellationTokenSource _cts = new();
 
+    private bool _checkIsRan;
     private bool _checkAuthIsRan;
     private bool _isVerification;
     private bool _authorizationIsRan;
+
+    public event Action<bool>? LoginCompleted;
 
     public AuthorizationViewModel(IMemoryCache memoryCache, IIdentityService identityService, IHttpClientHelper httpClient, ILogger logger)
     {
         _memoryCache = memoryCache;
         _identityService = identityService;
+        _logger = logger;
 
         _securityStorage = new SecurityStorage(memoryCache, httpClient, logger);
 
         LoginCommand = new MvxAsyncCommand(SendAuthorizationRequestAsync);
+        AbortCommand = new MvxCommand(Abort);
 
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsRegistrationNotActivated), true);
         Basic.Parent = this;
-
-        RunCheckAuth();
     }
-
-    public event Action? CloseAuthorizationWindow;
 
     #region Commands
 
     public IMvxAsyncCommand LoginCommand { get; set; }
 
+    public IMvxCommand AbortCommand { get; set; }
+
     #endregion
 
     #region View model properties
+
+    public bool CheckIsRan
+    {
+        get { return _checkIsRan; }
+        set
+        {
+            SetProperty(ref _checkIsRan, value);
+        }
+    }
 
     public bool CheckAuthIsRan
     {
@@ -74,64 +88,78 @@ public class AuthorizationViewModel : ParentTemplate
 
     #endregion
 
-    private void RunCheckAuth()
+    public override async Task Initialize()
     {
-        var basicViewModel = (BasicTemplateViewModel)Basic;
-        basicViewModel.AuthorizationIsOpen = true;
-
-        if (basicViewModel.LoginIsRan)
-        {
-            Task.Run(SendAuthorizationRequestAsync);
-        }
-        else
-        {
-            Task.Run(CheckAuthAsync);
-        }
+        await CheckAuthAsync();
     }
 
     private async Task CheckAuthAsync()
     {
-        CheckAuthIsRan = true;
-
-        var user = await _securityStorage.GetUserAsync();
-        if (user == null)
+        try
         {
-            CheckAuthIsRan = false;
+            CheckIsRan = true;
+            CheckAuthIsRan = true;
 
-            return;
+            var user = await _securityStorage.GetUserAsync(_cts.Token);
+            _cts.Token.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                CheckAuthIsRan = false;
+                CheckIsRan = false;
+
+                return;
+            }
+
+            _securityStorage.GetAccessToken();
+
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
+
+            LoginCompleted?.Invoke(true);
         }
-
-        _securityStorage.GetAccessToken();
-
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
-
-        await InvokeOnMainThreadAsync(() =>
+        catch (OperationCanceledException)
         {
-            CloseAuthorizationWindow?.Invoke();
-        });
+            _logger.LogInformation("Listening cancelled");
+        }
     }
 
     private async Task SendAuthorizationRequestAsync()
     {
-        AuthorizationIsRan = true;
-
-        await _identityService.SendAuthorizationRequestAsync("connect/authorize");
-
-        IsVerification = true;
-
-        await _identityService.SendTokenRequestAsync();
-
-        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        if (user != null)
+        try
         {
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
+            CheckIsRan = true;
+            AuthorizationIsRan = true;
+
+            await _identityService.SendAuthorizationRequestAsync("connect/authorize", _cts.Token);
+            _cts.Token.ThrowIfCancellationRequested();
+
+            IsVerification = true;
+
+            await _identityService.SendTokenRequestAsync(_cts.Token);
+            _cts.Token.ThrowIfCancellationRequested();
+
+            var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+            if (user != null)
+            {
+                Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
+                Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
+            }
+
+            LoginCompleted?.Invoke(true);
         }
-
-        await InvokeOnMainThreadAsync(() =>
+        catch (OperationCanceledException)
         {
-            CloseAuthorizationWindow?.Invoke();
-        });
+            _logger.LogInformation("Listening cancelled");
+        }
+    }
+
+    private void Abort()
+    {
+        _cts.Cancel();
+
+        CheckIsRan = false;
+        AuthorizationIsRan = false;
+        CheckAuthIsRan = false;
     }
 }

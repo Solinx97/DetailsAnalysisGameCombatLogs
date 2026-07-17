@@ -22,7 +22,7 @@ internal class IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpC
     private string? _code;
     private HttpListenerService? _httpListenerService;
 
-    public async Task SendAuthorizationRequestAsync(string authorizationRequestType)
+    public async Task SendAuthorizationRequestAsync(string authorizationRequestType, CancellationToken cancellationToken)
     {
         _codeVerifier = PKCEHelper.GenerateCodeVerifier();
         var state = PKCEHelper.GenerateCodeVerifier();
@@ -45,11 +45,11 @@ internal class IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpC
         };
         Process.Start(psi);
 
-        _httpListenerService = new HttpListenerService(Authentication.Listener, _logger);
-        await _httpListenerService.StartListeningAsync(OnCallbackReceived);
+        _httpListenerService = new HttpListenerService(_logger);
+        await _httpListenerService.StartListeningAsync(Authentication.Listener, OnCallbackReceived, cancellationToken);
     }
 
-    public async Task SendTokenRequestAsync()
+    public async Task SendTokenRequestAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -59,7 +59,7 @@ internal class IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpC
                 throw new ArgumentNullException(nameof(token));
             }
 
-            await SaveAccountDataAsync(token);
+            await SaveAccountDataAsync(token, cancellationToken);
         }
         catch (ArgumentNullException ex)
         {
@@ -108,9 +108,9 @@ internal class IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpC
         }
     }
 
-    private async Task SaveAccountDataAsync(TokenResponseModel token)
+    private async Task SaveAccountDataAsync(TokenResponseModel token, CancellationToken cancellationToken)
     {
         _securityStorage.SaveAccessToken(token);
-        await _securityStorage.GetUserAsync();
+        await _securityStorage.GetUserAsync(cancellationToken);
     }
 }
