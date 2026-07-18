@@ -39,7 +39,10 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.CombatPlayerDeathes, cancellationToken);
         await _context.BulkInsertCombatPlayerPositionsAsync(players, p => p.CombatPlayerPositions, cancellationToken);
 
-        await _context.BulkUpdateBestSpecializationScoreAsync(combat.BossId, players, cancellationToken);
+        if (combat.IsWin)
+        {
+            await _context.BulkUpdateBestSpecializationScoreAsync(combat.BossId, players, cancellationToken);
+        }
 
         await transaction.CommitAsync(cancellationToken);
     }
