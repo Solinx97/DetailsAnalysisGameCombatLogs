@@ -198,6 +198,23 @@ internal static class ModelBuilderExtension
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<CombatPlayerCast>(dd =>
+        {
+            dd.Property(p => p.Spell)
+                .HasMaxLength(CombatPlayerCast.SPELL_MAX_LENGTH);
+
+            dd.Property(p => p.Creator)
+                .HasMaxLength(CombatPlayerCast.CREATOR_MAX_LENGTH);
+
+            dd.Property(p => p.Target)
+                .HasMaxLength(CombatPlayerCast.TARGET_MAX_LENGTH);
+
+            dd.HasOne(cpc => cpc.CombatPlayer)
+                .WithMany(cp => cp.Casts)
+                .HasForeignKey(cpc => cpc.CombatPlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<DamageDone>(dd =>
         {
             dd.Property(p => p.Spell)

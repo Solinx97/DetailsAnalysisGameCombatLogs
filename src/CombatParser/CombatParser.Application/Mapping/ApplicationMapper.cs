@@ -24,6 +24,7 @@ public class ApplicationMapper : Profile
         CreateMap<CombatPlayerPreAuraDto, CombatPlayerPreAura>().ReverseMap();
         CreateMap<Domain.DTOs.CombatPlayerPreAuraDto, CombatPlayerPreAuraDto>().ReverseMap();
         CreateMap<CombatPlayerAuraDto, CombatPlayerAura>().ReverseMap();
+        CreateMap<CombatPlayerCastDto, CombatPlayerCast>().ReverseMap();
         CreateMap<CombatPlayerPositionDto, CombatPlayerPosition>().ReverseMap();
         CreateMap<SpecializationDto, Specialization>().ReverseMap();
         CreateMap<SpecializationScoreDto, SpecializationScore>().ReverseMap();

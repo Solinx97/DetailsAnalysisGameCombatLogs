@@ -112,6 +112,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
 
         var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
         var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
+        var castMap = _mapper.Map<List<CombatPlayerCastData>>(combatPlayer.Casts);
         var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
         var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
         var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
@@ -142,6 +143,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             scoreMap,
             preAurasMap,
             aurasMap,
+            castMap,
             damageDonesMap,
             damageDoneGeneralsMap,
             healDonesMap,

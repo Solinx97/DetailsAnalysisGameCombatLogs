@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class CombatPlayerPosition
+public class CombatPlayerPosition : CombatPlayerDataBase
 {
     private CombatPlayerPosition() { }
 
@@ -22,11 +22,4 @@ public class CombatPlayerPosition
     public TimeSpan Time { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
-
-    public int CombatPlayerId { get; set; }
-
-    public void SetCombatPlayerId(int combatPlayerId)
-    {
-        CombatPlayerId = combatPlayerId;
-    }
 }

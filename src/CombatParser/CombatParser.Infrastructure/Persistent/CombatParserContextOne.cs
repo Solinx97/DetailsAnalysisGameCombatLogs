@@ -28,6 +28,8 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<CombatTarget>? CombatTarget { get; }
 
+    public DbSet<CombatPlayerCast>? CombatPlayerCast { get; }
+
     public DbSet<CombatPlayerPosition>? CombatPlayerPosition { get; }
 
     public DbSet<DamageDone>? DamageDone { get; }

@@ -289,10 +289,10 @@ public class CombatParserServiceTests
         // Assert
         Assert.NotEmpty(service.Combats);
         Assert.NotEmpty(service.CombatDetails);
-        Assert.NotEmpty(service.CombatDetails.First().DamageDone);
-        Assert.NotEmpty(service.CombatDetails.First().HealDone);
-        Assert.NotEmpty(service.CombatDetails.First().DamageTaken);
-        Assert.NotEmpty(service.CombatDetails.First().ResourcesRecovery);
+        Assert.NotEmpty(service.CombatDetails.First().DamageDones);
+        Assert.NotEmpty(service.CombatDetails.First().HealDones);
+        Assert.NotEmpty(service.CombatDetails.First().DamageTakens);
+        Assert.NotEmpty(service.CombatDetails.First().ResourcesRecoveries);
     }
 
     [Fact]
@@ -343,13 +343,13 @@ public class CombatParserServiceTests
         Assert.NotEmpty(service.CombatDetails);
         Assert.Equal(2, service.Combats.Count);
         Assert.Equal(2, service.CombatDetails.Count);
-        Assert.NotEmpty(service.CombatDetails[0].DamageDone);
-        Assert.NotEmpty(service.CombatDetails[0].HealDone);
-        Assert.NotEmpty(service.CombatDetails[0].DamageTaken);
-        Assert.NotEmpty(service.CombatDetails[0].ResourcesRecovery);
-        Assert.NotEmpty(service.CombatDetails[1].DamageDone);
-        Assert.NotEmpty(service.CombatDetails[1].HealDone);
-        Assert.NotEmpty(service.CombatDetails[1].DamageTaken);
-        Assert.NotEmpty(service.CombatDetails[1].ResourcesRecovery);
+        Assert.NotEmpty(service.CombatDetails[0].DamageDones);
+        Assert.NotEmpty(service.CombatDetails[0].HealDones);
+        Assert.NotEmpty(service.CombatDetails[0].DamageTakens);
+        Assert.NotEmpty(service.CombatDetails[0].ResourcesRecoveries);
+        Assert.NotEmpty(service.CombatDetails[1].DamageDones);
+        Assert.NotEmpty(service.CombatDetails[1].HealDones);
+        Assert.NotEmpty(service.CombatDetails[1].DamageTakens);
+        Assert.NotEmpty(service.CombatDetails[1].ResourcesRecoveries);
     }
 }

@@ -98,7 +98,7 @@ public class Combat
     private void AddCombatPlayer(CombatPlayerData player)
     {
         var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
-            player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.DamageDones,
+            player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.Casts, player.DamageDones,
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals, player.DamageTakens, player.DamageTakenGenerals,
             player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths, player.CombatPlayerPositions);
         _players.Add(createdPlayer);

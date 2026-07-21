@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
+
+namespace CombatAnalysis.CombatParser.Entities;
 
 public class CombatPlayer
 {
@@ -14,7 +16,7 @@ public class CombatPlayer
 
     public int ResourcesRecovery { get; set; }
 
-    public PlayerStats Stats { get; set; } = new();
+    public CombatPlayerStats Stats { get; set; } = new();
 
     public Player Player { get; set; } = new();
 
@@ -23,6 +25,8 @@ public class CombatPlayer
     public List<CombatPlayerPreAura> PreAuras { get; set; } = [];
 
     public List<CombatPlayerAura> Auras { get; set; } = [];
+
+    public List<CombatPlayerCast> Casts { get; set; } = [];
 
     public List<DamageDone> DamageDones { get; set; } = [];
 

@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.CombatParser.Core;
-using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.CombatParser.Enums;
 using System.Collections.Concurrent;
 using System.Globalization;
@@ -12,27 +12,52 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
-    public (string, CombatPlayerAura?) GetAuras(string[] combatDataLine, ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerAura>> auras, List<string> petsId)
+    public void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<string> petsId)
     {
-        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraRemoved)
-            && auras.TryGetValue(combatDataLine[2], out var playerGameId))
+        if (!auras.TryGetValue(combatDataLine[2], out var combatPlayerAuras))
         {
-            RemoveAura(combatDataLine, playerGameId, petsId);
-
-            return (string.Empty, null);
+            combatPlayerAuras = [];
+            auras.TryAdd(combatDataLine[2], combatPlayerAuras);
         }
 
-        var name = combatDataLine[11].Trim('"');
-        var aura = CreateCombatAura(combatDataLine, name, combatDataLine[0], _combatFinished.ToString(), petsId); 
-        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[14], out var stacks))
+        var gameSpellId = int.Parse(combatDataLine[10]);
+        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraApplied) || combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose))
         {
-            aura.Stacks = stacks;
-        }
+            var aura = CreateCombatAura(gameSpellId, combatDataLine, combatDataLine[0], string.Empty, petsId);
+            if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[^1], out var stacks))
+            {
+                aura.Stacks = stacks;
+            }
 
-        return (combatDataLine[2], aura);
+            combatPlayerAuras.Add(aura);
+        }
+        else
+        {
+            RemoveAura(gameSpellId, combatDataLine, combatPlayerAuras, petsId);
+        }
     }
 
-    public (string, CombatPlayerPosition?) GetPositions(string[] combatDataLine)
+    public void GetCast(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerCast>> casts)
+    {
+        if (!casts.TryGetValue(combatDataLine[2], out var combatPlayerCasts))
+        {
+            combatPlayerCasts = [];
+            casts.TryAdd(combatDataLine[2], combatPlayerCasts);
+        }
+
+        var gameSpellId = int.Parse(combatDataLine[10]);
+        if (combatDataLine[1].Equals(CombatLogKeyWords.SpellCastStart))
+        {
+            var newCast = CreateCombatCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+            combatPlayerCasts.Add(newCast);
+        }
+        else
+        {
+            FinishCast(gameSpellId, combatDataLine, combatPlayerCasts, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+        }
+    }
+
+    public (string, CombatPlayerPosition?) GetPosition(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
             || combatDataLine.Length <= 25)
@@ -384,7 +409,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return damageDone;
     }
 
-    private CombatPlayerAura CreateCombatAura(string[] combatDataLine, string name, string startTimeAura, string finishTimeAura, List<string> petsId)
+    private CombatPlayerAura CreateCombatAura(int gameSpellId, string[] combatDataLine, string startTimeAura, string finishTimeAura, List<string> petsId)
     {
         var startTime = GetTimeFromStart(startTimeAura);
         var finishTime = GetTimeFromStart(finishTimeAura);
@@ -394,7 +419,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         var aura = new CombatPlayerAura
         {
             GameAuraId = int.Parse(combatDataLine[10]),
-            Name = name,
+            Name = combatDataLine[11].Trim('"'),
             Creator = combatDataLine[3].Trim('"'),
             Target = combatDataLine[7].Trim('"'),
             StartTime = startTime,
@@ -406,17 +431,54 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return aura;
     }
 
-    private void RemoveAura(string[] combatDataLine, ConcurrentDictionary<string, CombatPlayerAura> auras, List<string> petsId)
+    private CombatPlayerCast CreateCombatCast(int gameSpellId, string[] combatDataLine, string startTimeCast, string finishTimeCast, bool isSuccess)
     {
-        if (auras.TryGetValue(combatDataLine[11], out var aura))
+        var startTime = GetTimeFromStart(startTimeCast);
+        var finishTime = GetTimeFromStart(finishTimeCast);
+
+        var cast = new CombatPlayerCast
+        {
+            GameSpellId = gameSpellId,
+            Spell = combatDataLine[11].Trim('"'),
+            StartTime = startTime == TimeSpan.Zero ? null : startTime,
+            FinishTime = finishTime,
+            Creator = combatDataLine[3].Trim('"'),
+            Target = combatDataLine[7].Trim('"'),
+            IsSuccess = isSuccess,
+        };
+
+        return cast;
+    }
+
+    private void RemoveAura(int gameSpellId, string[] combatDataLine, List<CombatPlayerAura> combatPlayerAuras, List<string> petsId)
+    {
+        var aura = combatPlayerAuras
+            .FirstOrDefault(x => x.GameAuraId == gameSpellId);
+        if (aura != null)
         {
             aura.FinishTime = GetTimeFromStart(combatDataLine[0]);
         }
+        //else
+        //{
+        //    var alreadyExistAura = CreateCombatAura(gameSpellId, combatDataLine, _combatStarted.ToString(), combatDataLine[0], petsId);
+        //    combatPlayerAuras.Add(alreadyExistAura);
+        //}
+    }
+
+    private void FinishCast(int gameSpellId, string[] combatDataLine, List<CombatPlayerCast> combatPlayerCasts, bool isSuccess)
+    {
+        var lastStartedCast = combatPlayerCasts
+            .LastOrDefault(x => x.GameSpellId == gameSpellId
+                && x.StartTime != null);
+        if (lastStartedCast != null)
+        {
+            lastStartedCast.FinishTime = GetTimeFromStart(combatDataLine[0]);
+            lastStartedCast.IsSuccess = isSuccess;
+        }
         else
         {
-            var name = combatDataLine[11].Trim('"');
-            var alreadyRunAura = CreateCombatAura(combatDataLine, name, _combatStarted.ToString(), combatDataLine[0], petsId);
-            auras.TryAdd(name, alreadyRunAura);
+            var instaCast = CreateCombatCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], isSuccess);
+            combatPlayerCasts.Add(instaCast);
         }
     }
 

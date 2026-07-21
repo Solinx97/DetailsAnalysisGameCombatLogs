@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.CombatParser.Core;
-using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
@@ -14,8 +14,15 @@ public class CombatDetails(ILogger logger)
     private readonly string[] _auras =
     [
         CombatLogKeyWords.AuraApplied,
-        CombatLogKeyWords.AuraAppliedDose,
         CombatLogKeyWords.AuraRemoved,
+        CombatLogKeyWords.AuraAppliedDose,
+        CombatLogKeyWords.AuraRemovedDose,
+    ];
+    private readonly string[] _casts =
+    [
+        CombatLogKeyWords.SpellCastStart,
+        CombatLogKeyWords.SpellCastSuccess,
+        CombatLogKeyWords.SpellCastFailed,
     ];
     private readonly string[] _positions =
     [
@@ -53,27 +60,33 @@ public class CombatDetails(ILogger logger)
 
     public ILogger Logger { get; private set; } = logger;
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerPosition>> CombatPlayerPositions { get; private set; } = [];
+    #region Details collections
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> CombatPlayersDeath { get; private set; } = [];
+    public ConcurrentDictionary<string, List<CombatPlayerAura>> Auras { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageDone>> DamageDone { get; private set; } = [];
+    public ConcurrentDictionary<string, List<CombatPlayerCast>> Casts { get; private set; } = [];
 
-    public Dictionary<string, List<DamageDoneGeneral>> DamageDoneGeneral { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerPosition>> Positions { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, HealDone>> HealDone { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> Deathes { get; private set; } = [];
 
-    public Dictionary<string, List<HealDoneGeneral>> HealDoneGeneral { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageDone>> DamageDones { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageTaken>> DamageTaken { get; private set; } = [];
+    public Dictionary<string, List<DamageDoneGeneral>> DamageDoneGenerals { get; private set; } = [];
 
-    public Dictionary<string, List<DamageTakenGeneral>> DamageTakenGeneral { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, HealDone>> HealDones { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, ResourceRecovery>> ResourcesRecovery { get; private set; } = [];
+    public Dictionary<string, List<HealDoneGeneral>> HealDoneGenerals { get; private set; } = [];
 
-    public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGeneral { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageTaken>> DamageTakens { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerAura>> Auras { get; private set; } = [];
+    public Dictionary<string, List<DamageTakenGeneral>> DamageTakenGenerals { get; private set; } = [];
+
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, ResourceRecovery>> ResourcesRecoveries { get; private set; } = [];
+
+    public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGenerals { get; private set; } = [];
+
+    #endregion
 
     public CombatDetails(ILogger logger, Dictionary<string, List<string>> petsId) : this(logger)
     {
@@ -94,13 +107,10 @@ public class CombatDetails(ILogger logger)
                 PrepareCollections(playersId[i]);
             }
 
-            Parallel.ForEach(
-                    combatData,
-                    new ParallelOptions
-                    {
-                        MaxDegreeOfParallelism = Environment.ProcessorCount
-                    },
-                    combat => Parse(playersId, combat, combatStarted, combatFinished));
+            foreach (var CombatDataLine in combatData)
+            {
+                Parse(playersId, CombatDataLine, combatStarted, combatFinished);
+            }
         }
         catch (ArgumentNullException ex)
         {
@@ -114,18 +124,20 @@ public class CombatDetails(ILogger logger)
 
     private void PrepareCollections(string playersd)
     {
-        CombatPlayerPositions.TryAdd(playersd, []);
-        CombatPlayersDeath.TryAdd(playersd, []);
+        Positions.TryAdd(playersd, []);
+        Deathes.TryAdd(playersd, []);
+        Casts.TryAdd(playersd, []);
         Auras.TryAdd(playersd, []);
 
-        DamageDone.TryAdd(playersd, []);
-        HealDone.TryAdd(playersd, []);
-        DamageTaken.TryAdd(playersd, []);
-        ResourcesRecovery.TryAdd(playersd, []);
+        DamageDones.TryAdd(playersd, []);
+        HealDones.TryAdd(playersd, []);
+        DamageTakens.TryAdd(playersd, []);
+        ResourcesRecoveries.TryAdd(playersd, []);
     }
 
     private void Parse(string[] playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
+        var hasCasts = _casts.Any(combatDataLine.Contains);
         var hasPositions = _positions.Any(combatDataLine.Contains);
         var hasDieds = _dieds.Any(combatDataLine.Contains);
         var hasAuras = _auras.Any(combatDataLine.Contains);
@@ -134,8 +146,8 @@ public class CombatDetails(ILogger logger)
         var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
         var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
-        if (!hasPositions && !hasDieds && !hasAuras && !hasHeal 
-            && !hasDamage && !hasAbsorb && !hasResources)
+        if (!hasCasts && !hasPositions && !hasDieds && !hasAuras 
+            && !hasHeal && !hasDamage && !hasAbsorb && !hasResources)
         {
             return;
         }
@@ -143,65 +155,95 @@ public class CombatDetails(ILogger logger)
         var splitCombatData = SplitCombatData(combatDataLine);
         var combatDetailsManager = new CombatDetailsManager(playersId, combatStarted, combatFinished);
 
-        if (hasPositions)
-        {
-            var (playerId, positions) = combatDetailsManager.GetPositions(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) || positions != null)
-            {
-                if (CombatPlayerPositions.TryGetValue(playerId, out var collection))
+        Parallel.Invoke(
+                () =>
                 {
-                    collection.TryAdd(Guid.NewGuid().ToString(), positions);
+                    if (hasCasts)
+                    {
+                        CalculateCasts(combatDetailsManager, splitCombatData);
+                    }
+                },
+                () =>
+                {
+                    if (hasPositions)
+                    {
+                        CalculatePositions(combatDetailsManager, splitCombatData);
+                    }
+                },
+                () =>
+                {
+                    if (hasDamage)
+                    {
+                        CalculateDamageTaken(combatDetailsManager, splitCombatData);
+                    }
+                },
+                () =>
+                {
+                    CalculateGeneral(combatDataLine, combatDetailsManager, splitCombatData);
                 }
-            }
-        }
+            );
+    }
 
-        if (hasDamage)
+    private void CalculateCasts(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    {
+        combatDetailsManager.GetCast(splitCombatData, Casts);
+    }
+
+    private void CalculatePositions(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    {
+        var (playerId, position) = combatDetailsManager.GetPosition(splitCombatData);
+        if (!string.IsNullOrEmpty(playerId) || position != null)
         {
-            var (playerId, damageTaken) = combatDetailsManager.GetDamageTaken(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) || damageTaken != null)
+            if (Positions.TryGetValue(playerId, out var collection))
             {
-                if (DamageTaken.TryGetValue(playerId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), damageTaken);
-                }
+                collection.TryAdd(Guid.NewGuid().ToString(), position);
             }
         }
+    }
+
+    private void CalculateDamageTaken(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    {
+        var (playerId, damageTaken) = combatDetailsManager.GetDamageTaken(splitCombatData);
+        if (!string.IsNullOrEmpty(playerId) || damageTaken != null)
+        {
+            if (DamageTakens.TryGetValue(playerId, out var collection))
+            {
+                collection.TryAdd(Guid.NewGuid().ToString(), damageTaken);
+            }
+        }
+    }
+
+    private void CalculateGeneral(string combatDataLine, CombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    {
+        var hasDieds = _dieds.Any(combatDataLine.Contains);
+        var hasAuras = _auras.Any(combatDataLine.Contains);
+        var hasHeal = _healVariations.Any(combatDataLine.Contains);
+        var hasDamage = _damageVariations.Any(combatDataLine.Contains);
+        var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
+        var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
         if (hasDieds)
         {
-            var (playerId, playerDeath) = combatDetailsManager.GetPlayerDeath(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) || playerDeath != null)
+            var (playerId, death) = combatDetailsManager.GetPlayerDeath(splitCombatData);
+            if (!string.IsNullOrEmpty(playerId) || death != null)
             {
-                if (CombatPlayersDeath.TryGetValue(playerId, out var collection))
+                if (Deathes.TryGetValue(playerId, out var collection))
                 {
-                    collection.TryAdd(Guid.NewGuid().ToString(), playerDeath);
+                    collection.TryAdd(Guid.NewGuid().ToString(), death);
                 }
             }
         }
         else if (hasAuras)
         {
             var allPetsId = _petsId.SelectMany(x => x.Value).ToList();
-            var (creatorId, auras) = combatDetailsManager.GetAuras(splitCombatData, Auras, allPetsId);
-            if (!string.IsNullOrEmpty(creatorId) || auras != null)
-            {
-                if (Auras.TryGetValue(creatorId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), auras);
-                }
-                else
-                {
-                    var concurrentAuraColelction = new ConcurrentDictionary<string, CombatPlayerAura>();
-                    concurrentAuraColelction.TryAdd(auras.Name, auras);
-                    Auras.TryAdd(creatorId, concurrentAuraColelction);
-                }
-            }
+            combatDetailsManager.GetAuras(splitCombatData, Auras, allPetsId);
         }
         else if (hasHeal)
         {
             var (playerId, healDone) = combatDetailsManager.GetHealDone(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || healDone != null)
             {
-                if (HealDone.TryGetValue(playerId, out var collection))
+                if (HealDones.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), healDone);
                 }
@@ -212,7 +254,7 @@ public class CombatDetails(ILogger logger)
             var (playerId, absorb) = combatDetailsManager.GetAbsorb(splitCombatData);
             if (absorb != null)
             {
-                if (HealDone.TryGetValue(playerId, out var collection))
+                if (HealDones.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), absorb);
                 }
@@ -223,7 +265,7 @@ public class CombatDetails(ILogger logger)
             var (playerId, damageDone) = combatDetailsManager.GetPlayerDamageDone(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || damageDone != null)
             {
-                if (DamageDone.TryGetValue(playerId, out var collection))
+                if (DamageDones.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), damageDone);
                 }
@@ -232,7 +274,7 @@ public class CombatDetails(ILogger logger)
             (playerId, damageDone) = combatDetailsManager.GetPetsDamageDone(splitCombatData, _petsId);
             if (!string.IsNullOrEmpty(playerId) || damageDone != null)
             {
-                if (DamageDone.TryGetValue(playerId, out var colelction))
+                if (DamageDones.TryGetValue(playerId, out var colelction))
                 {
                     colelction.TryAdd(Guid.NewGuid().ToString(), damageDone);
                 }
@@ -243,7 +285,7 @@ public class CombatDetails(ILogger logger)
             var (playerId, resourceRecovery) = combatDetailsManager.GetResourceRecovery(splitCombatData);
             if (!string.IsNullOrEmpty(playerId) || resourceRecovery != null)
             {
-                if (ResourcesRecovery.TryGetValue(playerId, out var collection))
+                if (ResourcesRecoveries.TryGetValue(playerId, out var collection))
                 {
                     collection.TryAdd(Guid.NewGuid().ToString(), resourceRecovery);
                 }

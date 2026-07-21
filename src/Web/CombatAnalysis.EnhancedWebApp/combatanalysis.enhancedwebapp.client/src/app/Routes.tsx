@@ -90,7 +90,7 @@ const AppRoutes: Route[] = [
         element: <CombatAuras />
     },
     {
-        path: '/general-analysis/reply',
+        path: '/general-analysis/watch',
         element: <CombatReply />
     },
     {

@@ -5,6 +5,7 @@ using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models.GameLogs;
+using CombatAnalysis.Core.Models.GameLogs.CombatPlayerData;
 using CombatAnalysis.Core.Models.GameLogs.Details;
 using CombatAnalysis.Core.Security;
 using CombatAnalysis.Core.ViewModels.Chat;

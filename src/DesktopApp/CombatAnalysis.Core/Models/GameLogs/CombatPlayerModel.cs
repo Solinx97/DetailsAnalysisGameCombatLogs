@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models.GameLogs;
+﻿using CombatAnalysis.Core.Models.GameLogs.CombatPlayerData;
+
+namespace CombatAnalysis.Core.Models.GameLogs;
 
 public class CombatPlayerModel
 {
@@ -45,6 +47,8 @@ public class CombatPlayerModel
     public IReadOnlyList<CombatPlayerPreAuraModel> PreAuras { get; set; } = [];
 
     public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
+
+    public IReadOnlyList<CombatPlayerCastModel> Casts { get; set; } = [];
 
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
 
