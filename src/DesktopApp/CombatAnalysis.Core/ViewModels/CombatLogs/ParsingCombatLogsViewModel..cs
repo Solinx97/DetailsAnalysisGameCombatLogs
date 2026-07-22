@@ -20,12 +20,7 @@ public class ParsingCombatLogsViewModel : ParentTemplate
     private readonly ICombatParserAPIService _combatParserAPIService;
 
     private ObservableCollection<string> _combatLogNames = [];
-    private string? _dungeonName;
-    private string? _combatName;
     private ObservableCollection<string> _combatLogPaths = [];
-    private ObservableCollection<CombatLogModel> _combatLogs = [];
-    private ObservableCollection<CombatLogModel> _combatLogsForTargetUser = [];
-    private bool _isAllowSaveLogs = true;
     private CancellationTokenSource _cancellationTokenSource = new();
 
     private bool _fileIsCorrect = true;
@@ -33,9 +28,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
     private bool _combatLogUploadingFailed;
     private bool _isAuth;
     private LogType _logType;
-    private LoadingStatus _combatLogLoadingStatus;
-    private bool _uploadingLogs;
-    private bool _noCombatsUploaded;
     private bool _processAborted;
     private bool _showConnectMore;
 
@@ -51,10 +43,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         CancelParsingCommand = new MvxCommand(CancelParsing);
 
         GetLogTypeCommand = new MvxCommand<int>(GetLogType);
-
-        Basic.Parent = this;
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 0);
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.LogPanelStatusIsVisibly), true);
     }
 
     #region Commands
@@ -68,42 +56,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
     #endregion
 
     #region View model properties
-
-    public bool NoCombatsUploaded
-    {
-        get { return _noCombatsUploaded; }
-        set
-        {
-            SetProperty(ref _noCombatsUploaded, value);
-        }
-    }
-
-    public bool UploadingLogs
-    {
-        get { return _uploadingLogs; }
-        set
-        {
-            SetProperty(ref _uploadingLogs, value);
-        }
-    }
-
-    public ObservableCollection<CombatLogModel> CombatLogs
-    {
-        get { return _combatLogs; }
-        set
-        {
-            SetProperty(ref _combatLogs, value);
-        }
-    }
-
-    public ObservableCollection<CombatLogModel> CombatLogsForTargetUser
-    {
-        get { return _combatLogsForTargetUser; }
-        set
-        {
-            SetProperty(ref _combatLogsForTargetUser, value);
-        }
-    }
 
     public ObservableCollection<string> CombatLogNames
     {
@@ -130,6 +82,9 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         set
         {
             SetProperty(ref _isParsing, value);
+
+            var parent = (CombatLogsViewModel)Basic.Parent;
+            parent.IsAllowSwitchTabs = !value;
         }
     }
 
@@ -151,33 +106,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         }
     }
 
-    public string? DungeonName
-    {
-        get { return _dungeonName; }
-        set
-        {
-            SetProperty(ref _dungeonName, value);
-        }
-    }
-
-    public string? CombatName
-    {
-        get { return _combatName; }
-        set
-        {
-            SetProperty(ref _combatName, value);
-        }
-    }
-
-    public bool IsAllowSaveLogs
-    {
-        get { return _isAllowSaveLogs; }
-        set
-        {
-            SetProperty(ref _isAllowSaveLogs, value);
-        }
-    }
-
     public bool IsAuth
     {
         get { return _isAuth; }
@@ -194,15 +122,6 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         {
             SetProperty(ref _logType, value);
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.LogType), value);
-        }
-    }
-
-    public LoadingStatus CombatLogLoadingStatus
-    {
-        get { return _combatLogLoadingStatus; }
-        set
-        {
-            SetProperty(ref _combatLogLoadingStatus, value);
         }
     }
 
