@@ -14926,6 +14926,9 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsImmediatly")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsSuccess")
                         .HasColumnType("bit");
 
@@ -14934,7 +14937,7 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<TimeSpan?>("StartTime")
+                    b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
                     b.Property<string>("Target")

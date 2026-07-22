@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260721091644_Init")]
+    [Migration("20260722084205_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -14929,6 +14929,9 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsImmediatly")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsSuccess")
                         .HasColumnType("bit");
 
@@ -14937,7 +14940,7 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<TimeSpan?>("StartTime")
+                    b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
                     b.Property<string>("Target")

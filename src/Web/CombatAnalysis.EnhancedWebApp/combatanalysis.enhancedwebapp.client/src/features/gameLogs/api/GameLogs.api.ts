@@ -9,6 +9,7 @@ import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel
 import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
 import type { BossMapModel } from '../types/BossMapModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
+import type { CombatPlayerCastModel } from '../types/CombatPlayerCastModel';
 
 const apiURL = '/api/v1';
 
@@ -31,6 +32,7 @@ export const GameLogsApi = createApi({
         'ResourceRecovery',
         'ResourceRecoveryGeneral',
         'PlayerDeath',
+        'CombatPlayerCast',
     ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
@@ -141,6 +143,16 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatPlayerPosition', id: 'LIST' }]
         }),
+        getCombatPlayerCastsByCombatPlayerId: builder.query<CombatPlayerCastModel[], number>({
+            query: combatPlayerId => `/CombatPlayerCast/getByCombatPlayerId/${combatPlayerId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(combatPlayerCast => ({ type: 'CombatPlayerCast' as const, id: combatPlayerCast.id })),
+                        { type: 'CombatPlayerCast', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerCast', id: 'LIST' }]
+        }),
     })
 })
 
@@ -159,5 +171,6 @@ export const {
     useLazyGetCombatPlayerByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatByPreAuraQuery,
-    useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery
+    useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery,
+    useLazyGetCombatPlayerCastsByCombatPlayerIdQuery
 } = GameLogsApi;

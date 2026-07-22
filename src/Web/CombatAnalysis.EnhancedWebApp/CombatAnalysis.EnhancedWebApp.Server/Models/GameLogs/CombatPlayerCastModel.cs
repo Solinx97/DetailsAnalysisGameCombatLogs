@@ -1,6 +1,6 @@
-﻿namespace CombatParser.Application.DTOs;
+﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
 
-public class CombatPlayerCastDto
+public class CombatPlayerCastModel
 {
     public int Id { get; set; }
 

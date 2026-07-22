@@ -267,10 +267,11 @@ namespace CombatParser.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GameSpellId = table.Column<int>(type: "int", nullable: false),
                     Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     FinishTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    IsImmediatly = table.Column<bool>(type: "bit", nullable: false),
                     IsSuccess = table.Column<bool>(type: "bit", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)
                 },

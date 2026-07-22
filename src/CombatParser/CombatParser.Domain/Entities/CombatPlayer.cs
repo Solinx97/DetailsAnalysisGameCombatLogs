@@ -195,7 +195,7 @@ public class CombatPlayer : CombatDataBase, ICombatRefs
     private void AddCast(CombatPlayerCastData cast)
     {
         var createdCast = new CombatPlayerCast(cast.GameSpellId, cast.Spell, cast.StartTime, cast.FinishTime,
-            cast.Creator, cast.Target, cast.IsSuccess, cast.CombatPlayerId);
+            cast.Creator, cast.Target, cast.IsImmediatly, cast.IsSuccess, cast.CombatPlayerId);
         _casts.Add(createdCast);
     }
 

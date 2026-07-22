@@ -13,7 +13,8 @@ public class CombatPlayerCastModel
     [Required]
     public string Spell { get; set; } = string.Empty;
 
-    public TimeSpan? StartTime { get; set; }
+    [Required]
+    public TimeSpan StartTime { get; set; }
 
     [Required]
     public TimeSpan FinishTime { get; set; }
@@ -23,6 +24,8 @@ public class CombatPlayerCastModel
 
     [Required]
     public string Target { get; set; } = string.Empty;
+
+    public bool IsImmediatly { get; set; }
 
     public bool IsSuccess { get; set; }
 

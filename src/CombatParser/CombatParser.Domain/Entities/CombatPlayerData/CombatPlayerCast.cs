@@ -8,8 +8,8 @@ public class CombatPlayerCast : CombatPlayerDataBase
 
     private CombatPlayerCast() { }
 
-    public CombatPlayerCast(int gameSpellId, string spell, TimeSpan? startTime, TimeSpan finishTime,
-        string creator, string target, bool isSuccess, int combatPlayerId)
+    public CombatPlayerCast(int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
+        string creator, string target, bool isImmediatly, bool isSuccess, int combatPlayerId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentException.ThrowIfNullOrEmpty(creator, nameof(creator));
@@ -22,6 +22,7 @@ public class CombatPlayerCast : CombatPlayerDataBase
         FinishTime = finishTime;
         Creator = creator;
         Target = target;
+        IsImmediatly = isImmediatly;
         IsSuccess = isSuccess;
         CombatPlayerId = combatPlayerId;
     }
@@ -30,13 +31,15 @@ public class CombatPlayerCast : CombatPlayerDataBase
 
     public string Spell { get; private set; } = string.Empty;
 
-    public TimeSpan? StartTime { get; private set; }
+    public TimeSpan StartTime { get; private set; }
 
     public TimeSpan FinishTime { get; private set; }
 
     public string Creator { get; private set; } = string.Empty;
 
     public string Target { get; private set; } = string.Empty;
+
+    public bool IsImmediatly { get; private set; }
 
     public bool IsSuccess { get; private set; }
 

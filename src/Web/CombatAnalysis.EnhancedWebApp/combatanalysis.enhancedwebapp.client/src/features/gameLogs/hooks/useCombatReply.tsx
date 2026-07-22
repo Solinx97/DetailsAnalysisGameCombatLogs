@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
 import type { CombatModel } from '../types/CombatModel';
 import { useLazyGetCombatByIdQuery, useLazyGetBossMapByIdQuery } from '../api/GameLogs.api';
+import useTime from '@/shared/hooks/useTime';
 
 interface Position {
     x: number;
@@ -49,6 +50,8 @@ const useCombatReply = (
     });
 
     const currentTimeRef = useRef(currentTime);
+
+    const { timeToMs } = useTime();
 
     const [getCombat] = useLazyGetCombatByIdQuery();
     const [getBossMap] = useLazyGetBossMapByIdQuery();
@@ -280,16 +283,6 @@ const useCombatReply = (
 
             ctx.fill();
         }
-    }
-
-    const timeToMs = (time: string): number => {
-        const [hours, minutes, seconds] = time.split(":").map(Number);
-
-        return (
-            hours * 3600 * 1000 +
-            minutes * 60 * 1000 +
-            seconds * 1000
-        );
     }
 
     return { view, currentTime, setCurrentTime };

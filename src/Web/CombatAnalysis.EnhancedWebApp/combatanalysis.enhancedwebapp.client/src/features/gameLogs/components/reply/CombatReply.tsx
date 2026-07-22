@@ -37,6 +37,7 @@ const CombatReply: React.FC = () => {
     const [playing, setPlaying] = useState(false);
     const [selectedPlayerId, setSelectedPlayerId] = useState(0);
 
+    const playingRef = useRef(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const lastFrameRef = useRef<number>(0);
 
@@ -158,17 +159,21 @@ const CombatReply: React.FC = () => {
 
     useEffect(() => {
         if (!playing) {
+            lastFrameRef.current = 0;
             return;
         }
 
         let frameId: number;
         const animate = (timestamp: number) => {
-            if (lastFrameRef.current == null) {
+            if (!playingRef.current) {
+                return;
+            }
+
+            if (lastFrameRef.current === 0) {
                 lastFrameRef.current = timestamp;
             }
 
             const delta = timestamp - lastFrameRef.current;
-
             lastFrameRef.current = timestamp;
 
             const duration = timeToMs(combatPlayerPositions.at(-1)!.time);
@@ -184,7 +189,9 @@ const CombatReply: React.FC = () => {
                 return next;
             });
 
-            frameId = requestAnimationFrame(animate);
+            if (playingRef.current) {
+                frameId = requestAnimationFrame(animate);
+            }
         }
 
         frameId = requestAnimationFrame(animate);
@@ -192,6 +199,10 @@ const CombatReply: React.FC = () => {
         return () => {
             cancelAnimationFrame(frameId);
         }
+    }, [playing, combatPlayerPositions]);
+
+    useEffect(() => {
+        playingRef.current = playing;
     }, [playing]);
 
     const sortByTime = (combatPlayerPositions: CombatPlayerPositionModel[]): CombatPlayerPositionModel[] => {
@@ -240,7 +251,7 @@ const CombatReply: React.FC = () => {
                     <div className="reply__actions">
                         <div className="details">
                             <div className="play btn-shadow"
-                                onClick={() => setPlaying(!playing)}>
+                                onClick={() => setPlaying(prev => !prev)}>
                                 <FontAwesomeIcon
                                     icon={playing ? faPause : faPlay}
                                 />
@@ -266,11 +277,12 @@ const CombatReply: React.FC = () => {
                     </div>
                     <ul className="players">
                         {combatPlayers.map((item) => (
-                            <li key={item.id}>
+                            <li className="players__player" key={item.id}>
                                 <CombatReplyItem
                                     combatPlayer={item}
                                     selectedPlayerId={selectedPlayerId}
                                     setSelectedPlayerId={setSelectedPlayerId}
+                                    currentTime={currentTime}
                                     color={colors.get(item.id) ?? "#000000"}
                                 />
                             </li>
