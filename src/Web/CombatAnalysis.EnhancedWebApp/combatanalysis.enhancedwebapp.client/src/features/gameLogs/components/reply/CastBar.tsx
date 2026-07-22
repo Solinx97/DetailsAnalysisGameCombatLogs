@@ -1,11 +1,12 @@
 interface CastBarProps {
     spell: string;
     progress: number;
+    isSuccess: boolean;
 }
 
-const CastBar: React.FC<CastBarProps> = ({ spell, progress }) => {
+const CastBar: React.FC<CastBarProps> = ({ spell, progress, isSuccess }) => {
     return (
-        <div className="cast-bar">
+        <div className={`cast-bar ${isSuccess ? 'success' : 'failed'}`}>
             <div
                 className="cast-bar-fill"
                 style={{ width: `${progress}%` }}

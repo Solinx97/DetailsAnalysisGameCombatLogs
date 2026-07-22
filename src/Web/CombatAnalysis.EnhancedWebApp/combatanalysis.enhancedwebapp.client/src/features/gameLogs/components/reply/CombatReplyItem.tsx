@@ -68,7 +68,7 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, selecte
     }, [currentTime, currentNotImmediatlyCast]);
 
     const immediatlyCasts = useMemo(
-        () => combatPlayerCasts.filter(x => x.isImmediatly),
+        () => combatPlayerCasts.filter(x => x.isImmediatly && x.isSuccess),
         [combatPlayerCasts]
     );
 
@@ -99,6 +99,7 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, selecte
                 <CastBar
                     spell={currentNotImmediatlyCast.spell}
                     progress={progressNotImmediatly}
+                    isSuccess={currentNotImmediatlyCast.isSuccess}
                 />
             }
             {(currentImmediatlyCast && selectedPlayerId === combatPlayer.id) &&
