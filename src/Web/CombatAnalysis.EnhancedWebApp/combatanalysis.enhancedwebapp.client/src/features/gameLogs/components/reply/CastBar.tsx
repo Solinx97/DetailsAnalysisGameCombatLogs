@@ -1,19 +1,24 @@
 interface CastBarProps {
-    spell: string;
+    spell: string | undefined;
     progress: number;
-    isSuccess: boolean;
+    isSuccess: boolean | undefined;
+    isRunCast: boolean;
 }
 
-const CastBar: React.FC<CastBarProps> = ({ spell, progress, isSuccess }) => {
+const CastBar: React.FC<CastBarProps> = ({ spell, progress, isSuccess, isRunCast }) => {
     return (
-        <div className={`cast-bar ${isSuccess ? 'success' : 'failed'}`}>
-            <div
-                className="cast-bar-fill"
-                style={{ width: `${progress}%` }}
-            />
-            <span className="cast-bar-text">
-                {spell}
-            </span>
+        <div className={`cast-bar ${isRunCast ? (isSuccess ? 'success' : isSuccess === false ? 'failed' : '') : ''}`}>
+            {isRunCast &&
+                <>
+                    <div
+                        className="cast-bar-fill"
+                        style={{ width: `${progress}%` }}
+                    />
+                    <span className="cast-bar-text">
+                        {spell}
+                    </span>
+                </>
+            }
         </div>
     );
 }

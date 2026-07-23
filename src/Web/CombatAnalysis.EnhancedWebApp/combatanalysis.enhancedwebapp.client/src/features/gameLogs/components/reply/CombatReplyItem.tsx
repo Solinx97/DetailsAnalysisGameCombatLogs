@@ -93,21 +93,26 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, selecte
         }
     }
 
+    const removeServerName = (username: string): string => {
+        const fullname = username.split('-')[0];
+
+        return fullname;
+    }
+
     return (
         <>
-            {(currentNotImmediatlyCast && selectedPlayerId === combatPlayer.id) &&
-                <CastBar
-                    spell={currentNotImmediatlyCast.spell}
-                    progress={progressNotImmediatly}
-                    isSuccess={currentNotImmediatlyCast.isSuccess}
-                />
-            }
-            {(currentImmediatlyCast && selectedPlayerId === combatPlayer.id) &&
-                <InstantCast
-                    spell={currentImmediatlyCast.spell}
-                />
-            }
-            <div className={`username ${selectedPlayerId === combatPlayer.id ? "selected" : ""}`} style={{ color: color }} onClick={handleSelectPlayer}>{combatPlayer.player.username}</div>
+            <CastBar
+                spell={currentNotImmediatlyCast?.spell}
+                progress={progressNotImmediatly}
+                isSuccess={currentNotImmediatlyCast?.isSuccess}
+                isRunCast={selectedPlayerId === combatPlayer.id}
+            />
+            <div className={`username ${selectedPlayerId === combatPlayer.id ? "selected" : ""}`} style={{ color: color }} 
+                onClick={handleSelectPlayer}>{removeServerName(combatPlayer.player.username)}</div>
+            <InstantCast
+                spell={currentImmediatlyCast?.spell}
+                isRunCast={selectedPlayerId === combatPlayer.id}
+            />
         </>
     );
 }

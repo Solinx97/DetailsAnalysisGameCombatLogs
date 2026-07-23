@@ -1,11 +1,12 @@
 interface InstantCastProps {
-    spell: string;
+    spell: string | undefined;
+    isRunCast: boolean;
 }
 
-const InstantCast: React.FC<InstantCastProps> = ({ spell }) => {
+const InstantCast: React.FC<InstantCastProps> = ({ spell, isRunCast }) => {
     return (
         <div className="instant-cast">
-            {spell}
+            {isRunCast ? spell : ''}
         </div>
     );
 }
