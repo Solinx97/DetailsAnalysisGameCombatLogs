@@ -220,8 +220,12 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
             return;
         }
 
-        var players = await GetCombatPlayers(combat);
+        var combatDetails = new CombatDetails(_logger, combat.PetsId);
+
+        var players = await GetCombatPlayers(combat, combatDetails);
         combat.CombatPlayers = [.. players];
+
+        combat.UnitHealths = [.. combatDetails.UnitHealths.Values.SelectMany(x => x)];
 
         CalculatingCommonCombatDetails(combat);
 
@@ -306,7 +310,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         Combats.Add(combat);
     }
 
-    private async Task<CombatPlayer[]> GetCombatPlayers(Combat combat)
+    private async Task<CombatPlayer[]> GetCombatPlayers(Combat combat, CombatDetails combatDetails)
     {
         var combatInformations = combat.Data
             .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
@@ -321,7 +325,6 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
         var playersId = combatPlayers.Select(x => x.Player.GameId).ToArray();
 
-        var combatDetails = new CombatDetails(_logger, combat.PetsId);
         combatDetails.Calculate(playersId, combat.Data, combat.StartDate, combat.FinishDate);
         combatDetails.CalculateGeneralData(playersId, combat.Duration);
 

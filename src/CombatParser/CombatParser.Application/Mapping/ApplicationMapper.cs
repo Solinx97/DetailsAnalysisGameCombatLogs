@@ -39,7 +39,6 @@ public class ApplicationMapper : Profile
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
         CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
         CreateMap<CombatPlayerStatsDto, CombatPlayerStats>().ReverseMap();
-        CreateMap<CombatTargetDto, CombatTarget>().ReverseMap();
 
         CreateMap<ChartGenericDto, ChartGeneric>().ReverseMap();
         CreateMap<DashboardDto, Dashboard>().ReverseMap();

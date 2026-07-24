@@ -23,6 +23,8 @@ export const GameLogsApi = createApi({
         'CombatPlayer',
         'CombatPlayerAura',
         'CombatPlayerPosition',
+        'CombatPlayerDeath',
+        'CombatPlayerCast',
         'DamageDone',
         'DamageDoneGeneral',
         'DamageTaken',
@@ -31,8 +33,6 @@ export const GameLogsApi = createApi({
         'HealDoneGeneral',
         'ResourceRecovery',
         'ResourceRecoveryGeneral',
-        'PlayerDeath',
-        'CombatPlayerCast',
     ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
@@ -58,15 +58,15 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatLog', id: 'LIST' }]
         }),
-        getPlayersDeathByPlayerId: builder.query<CombatPlayerDeathModel[], number>({
-            query: combatPlayerId => `/PlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
+        getCombatPlayersDeathByCombatPlayerId: builder.query<CombatPlayerDeathModel[], number>({
+            query: combatPlayerId => `/CombatPlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [
-                        ...result.map(playerDeath => ({ type: 'PlayerDeath' as const, id: playerDeath.id })),
-                        { type: 'PlayerDeath', id: 'LIST' },
+                        ...result.map(playerDeath => ({ type: 'CombatPlayerDeath' as const, id: playerDeath.id })),
+                        { type: 'CombatPlayerDeath', id: 'LIST' },
                     ]
-                    : [{ type: 'PlayerDeath', id: 'LIST' }]
+                    : [{ type: 'CombatPlayerDeath', id: 'LIST' }]
         }),
         getCombatsByCombatLogId: builder.query<CombatModel[], number>({
             query: combatLogId => `/Combat/getByCombatLogId/${combatLogId}`,
@@ -159,7 +159,7 @@ export const GameLogsApi = createApi({
 export const {
     useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
-    useLazyGetPlayersDeathByPlayerIdQuery,
+    useLazyGetCombatPlayersDeathByCombatPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
     useGetCombatsDashboardQuery,
     useGetCombatsDamageSpellsQuery,

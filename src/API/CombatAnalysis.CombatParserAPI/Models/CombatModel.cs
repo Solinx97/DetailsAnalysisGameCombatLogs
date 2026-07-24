@@ -37,6 +37,9 @@ public class CombatModel
     public List<CombatPlayerModel> CombatPlayers { get; init; } = [];
 
     [Required]
+    public List<UnitHealthModel> UnitHealths { get; init; } = [];
+
+    [Required]
     public Dictionary<string, List<string>> PetsId { get; init; } = [];
 
     [Required]

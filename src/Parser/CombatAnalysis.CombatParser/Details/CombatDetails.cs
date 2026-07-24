@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
@@ -7,6 +8,17 @@ namespace CombatAnalysis.CombatParser.Details;
 
 public class CombatDetails(ILogger logger)
 {
+    private readonly string[] _health =
+    [
+        CombatLogKeyWords.SpellHeal,
+        CombatLogKeyWords.SpellPeriodicHeal,
+        CombatLogKeyWords.SpellAbsorbed,
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SwingDamageLanded,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+    ];
     private readonly string[] _dieds =
     [
         CombatLogKeyWords.UnitDied,
@@ -61,6 +73,8 @@ public class CombatDetails(ILogger logger)
     public ILogger Logger { get; private set; } = logger;
 
     #region Details collections
+
+    public ConcurrentDictionary<string, List<UnitHealth>> UnitHealths { get; private set; } = [];
 
     public ConcurrentDictionary<string, List<CombatPlayerAura>> Auras { get; private set; } = [];
 
@@ -124,6 +138,7 @@ public class CombatDetails(ILogger logger)
 
     private void PrepareCollections(string playersd)
     {
+        UnitHealths.TryAdd(playersd, []);
         Positions.TryAdd(playersd, []);
         Deathes.TryAdd(playersd, []);
         Casts.TryAdd(playersd, []);
@@ -137,6 +152,7 @@ public class CombatDetails(ILogger logger)
 
     private void Parse(string[] playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
+        var hasHealth = _health.Any(combatDataLine.Contains);
         var hasCasts = _casts.Any(combatDataLine.Contains);
         var hasPositions = _positions.Any(combatDataLine.Contains);
         var hasDieds = _dieds.Any(combatDataLine.Contains);
@@ -156,6 +172,13 @@ public class CombatDetails(ILogger logger)
         var combatDetailsManager = new CombatDetailsManager(playersId, combatStarted, combatFinished);
 
         Parallel.Invoke(
+                () =>
+                {
+                    if (hasHealth || hasDieds)
+                    {
+                        CalculateHealth(combatDetailsManager, splitCombatData, hasDieds);
+                    }
+                },
                 () =>
                 {
                     if (hasCasts)
@@ -184,6 +207,17 @@ public class CombatDetails(ILogger logger)
             );
     }
 
+    private void CalculateHealth(CombatDetailsManager combatDetailsManager, string[] splitCombatData, bool isDied)
+    {
+        var unitHealth = isDied 
+            ? combatDetailsManager.GetUnitDeathHealth(splitCombatData, UnitHealths) 
+            : combatDetailsManager.GetUnitHealth(splitCombatData, UnitHealths);
+        if (unitHealth != null && UnitHealths.TryGetValue(unitHealth.GamePlayerId, out var healthCollection))
+        {
+            healthCollection.Add(unitHealth);
+        }
+    }
+
     private void CalculateCasts(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
         combatDetailsManager.GetCast(splitCombatData, Casts);
@@ -192,24 +226,18 @@ public class CombatDetails(ILogger logger)
     private void CalculatePositions(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
         var (playerId, position) = combatDetailsManager.GetPosition(splitCombatData);
-        if (!string.IsNullOrEmpty(playerId) || position != null)
+        if (!string.IsNullOrEmpty(playerId) && position != null && Positions.TryGetValue(playerId, out var collection))
         {
-            if (Positions.TryGetValue(playerId, out var collection))
-            {
-                collection.TryAdd(Guid.NewGuid().ToString(), position);
-            }
+            collection.TryAdd(Guid.NewGuid().ToString(), position);
         }
     }
 
     private void CalculateDamageTaken(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
         var (playerId, damageTaken) = combatDetailsManager.GetDamageTaken(splitCombatData);
-        if (!string.IsNullOrEmpty(playerId) || damageTaken != null)
+        if (!string.IsNullOrEmpty(playerId) && damageTaken != null && DamageTakens.TryGetValue(playerId, out var collection))
         {
-            if (DamageTakens.TryGetValue(playerId, out var collection))
-            {
-                collection.TryAdd(Guid.NewGuid().ToString(), damageTaken);
-            }
+            collection.TryAdd(Guid.NewGuid().ToString(), damageTaken);
         }
     }
 
@@ -225,12 +253,9 @@ public class CombatDetails(ILogger logger)
         if (hasDieds)
         {
             var (playerId, death) = combatDetailsManager.GetPlayerDeath(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) || death != null)
+            if (!string.IsNullOrEmpty(playerId) && death != null && Deathes.TryGetValue(playerId, out var collection))
             {
-                if (Deathes.TryGetValue(playerId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), death);
-                }
+                collection.TryAdd(Guid.NewGuid().ToString(), death);
             }
         }
         else if (hasAuras)
@@ -241,54 +266,39 @@ public class CombatDetails(ILogger logger)
         else if (hasHeal)
         {
             var (playerId, healDone) = combatDetailsManager.GetHealDone(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) || healDone != null)
+            if (!string.IsNullOrEmpty(playerId) && healDone != null && HealDones.TryGetValue(playerId, out var collection))
             {
-                if (HealDones.TryGetValue(playerId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), healDone);
-                }
+                collection.TryAdd(Guid.NewGuid().ToString(), healDone);
             }
         }
         else if (hasAbsorb)
         {
             var (playerId, absorb) = combatDetailsManager.GetAbsorb(splitCombatData);
-            if (absorb != null)
+            if (absorb != null && HealDones.TryGetValue(playerId, out var collection))
             {
-                if (HealDones.TryGetValue(playerId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), absorb);
-                }
+                collection.TryAdd(Guid.NewGuid().ToString(), absorb);
             }
         }
         else if (hasDamage)
         {
             var (playerId, damageDone) = combatDetailsManager.GetPlayerDamageDone(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) || damageDone != null)
+            if (!string.IsNullOrEmpty(playerId) && damageDone != null && DamageDones.TryGetValue(playerId, out var collection))
             {
-                if (DamageDones.TryGetValue(playerId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), damageDone);
-                }
+                collection.TryAdd(Guid.NewGuid().ToString(), damageDone);
             }
 
             (playerId, damageDone) = combatDetailsManager.GetPetsDamageDone(splitCombatData, _petsId);
-            if (!string.IsNullOrEmpty(playerId) || damageDone != null)
+            if (!string.IsNullOrEmpty(playerId) && damageDone != null && DamageDones.TryGetValue(playerId, out var colelction))
             {
-                if (DamageDones.TryGetValue(playerId, out var colelction))
-                {
-                    colelction.TryAdd(Guid.NewGuid().ToString(), damageDone);
-                }
+                colelction.TryAdd(Guid.NewGuid().ToString(), damageDone);
             }
         }
         else if (hasResources)
         {
             var (playerId, resourceRecovery) = combatDetailsManager.GetResourceRecovery(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) || resourceRecovery != null)
+            if (!string.IsNullOrEmpty(playerId) && resourceRecovery != null && ResourcesRecoveries.TryGetValue(playerId, out var collection))
             {
-                if (ResourcesRecoveries.TryGetValue(playerId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), resourceRecovery);
-                }
+                collection.TryAdd(Guid.NewGuid().ToString(), resourceRecovery);
             }
         }
     }

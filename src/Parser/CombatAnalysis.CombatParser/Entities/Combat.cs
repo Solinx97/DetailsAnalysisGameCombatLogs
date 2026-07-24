@@ -22,6 +22,8 @@ public class Combat
 
     public List<CombatPlayer> CombatPlayers { get; set; } = [];
 
+    public List<UnitHealth> UnitHealths { get; set; } = [];
+
     public Dictionary<string, List<string>> PetsId { get; set; } = [];
 
     public Boss Boss { get; set; } = new();

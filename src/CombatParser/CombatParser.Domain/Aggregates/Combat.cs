@@ -10,7 +10,7 @@ public class Combat
     public const int DUNGEON_NAME_MAX_LENGTH = 128;
 
     private readonly List<CombatPlayer> _players = [];
-    private readonly List<CombatTarget> _targets = [];
+    private readonly List<UnitHealth> _unitHealths = [];
 
     private Combat() { }
 
@@ -67,11 +67,11 @@ public class Combat
 
     public IEnumerable<CombatPlayer> CombatPlayers => _players;
 
-    public IReadOnlyCollection<CombatTarget> CombatTargets => _targets.AsReadOnly();
+    public IEnumerable<UnitHealth> UnitHeaths => _unitHealths;
 
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers)
+        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<UnitHealthData> unitHeaths)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
@@ -92,6 +92,11 @@ public class Combat
             combat.AddCombatPlayer(player);
         }
 
+        foreach (var unitHeath in unitHeaths)
+        {
+            combat.AddUnitHealth(unitHeath);
+        }
+
         return combat;
     }
 
@@ -102,5 +107,12 @@ public class Combat
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals, player.DamageTakens, player.DamageTakenGenerals,
             player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths, player.CombatPlayerPositions);
         _players.Add(createdPlayer);
+    }
+
+    private void AddUnitHealth(UnitHealthData unitHealth)
+    {
+        var createdUnitHeath = UnitHealth.Create(unitHealth.GamePlayerId, unitHealth.CurrentHealth, unitHealth.MaxHealth,
+            unitHealth.Time, unitHealth.CombatId);
+        _unitHealths.Add(createdUnitHeath);
     }
 }

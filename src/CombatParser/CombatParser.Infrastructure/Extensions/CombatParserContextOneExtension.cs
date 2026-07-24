@@ -27,6 +27,21 @@ internal static class CombatParserContextOneExtension
         }
     }
 
+    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatRefs
+    {
+        var combatData = selector(combat).Select(cr =>
+        {
+            cr.SetCombatId(combat.Id);
+            return cr;
+        }).ToList();
+
+        if (combatData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatData, cancellationToken: cancelationToken);
+        }
+    }
+
     public static async Task BulkInsertCombatPlayerPositionsAsync(this CombatParserContextOne context, List<CombatPlayer> players, Func<CombatPlayer, IEnumerable<CombatPlayerPosition>> selector, CancellationToken cancelationToken)
     {
         var combatPlayerData = players.SelectMany(p =>

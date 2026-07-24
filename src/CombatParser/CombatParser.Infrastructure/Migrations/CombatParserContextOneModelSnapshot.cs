@@ -15550,37 +15550,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("SpecializationScore");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatTarget", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sum")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Target")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatId");
-
-                    b.ToTable("CombatTarget");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>
                 {
                     b.Property<string>("Id")
@@ -15747,6 +15716,35 @@ namespace CombatParser.Infrastructure.Migrations
                             Name = "HolyPriest",
                             SpecializationSpellsId = "596,77489,139"
                         });
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.UnitHealth", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CombatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrentHealth")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GamePlayerId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("MaxHealth")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatId");
+
+                    b.ToTable("UnitHealth");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.BestSpecializationScore", b =>
@@ -15990,10 +15988,10 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Specialization");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatTarget", b =>
+            modelBuilder.Entity("CombatParser.Domain.Entities.UnitHealth", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
-                        .WithMany("CombatTargets")
+                        .WithMany("UnitHeaths")
                         .HasForeignKey("CombatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -16015,7 +16013,7 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     b.Navigation("CombatPlayers");
 
-                    b.Navigation("CombatTargets");
+                    b.Navigation("UnitHeaths");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.CombatLog", b =>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
@@ -203,12 +204,14 @@ public class ParsingCombatLogsViewModel : ParentTemplate
 
         IsParsing = true;
 
-        await PrepareCombatDataAsync(combatLogPaths);
+        var combats = await PrepareCombatDataAsync(combatLogPaths);
 
         IsParsing = false;
+
+        await UploadingCombatLogAsync(combats);
     }
 
-    private async Task PrepareCombatDataAsync(List<string> combatLogPaths)
+    private async Task<List<CombatModel>> PrepareCombatDataAsync(List<string> combatLogPaths)
     {
         _cancellationTokenSource = new CancellationTokenSource();
 
@@ -217,7 +220,7 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AllowStep), 0);
 
         CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
-        await Task.Run(() => _parser.ParseAsync(combatLogPaths, _cancellationTokenSource.Token));
+        await _parser.ParseAsync(combatLogPaths, _cancellationTokenSource.Token);
 
         var combats = _mapper.Map<List<CombatModel>>(_parser.Combats);
         await _combatParserAPIService.GetBossAsync(combats, _cancellationTokenSource.Token);
@@ -230,16 +233,16 @@ public class ParsingCombatLogsViewModel : ParentTemplate
         {
             _processAborted = false;
 
-            return;
+            return [];
         }
 
-        await UploadingCombatLogAsync(combats, combats);
+        return combats;
     }
 
-    private async Task UploadingCombatLogAsync(List<CombatModel> combatList, List<CombatModel> combats)
+    private async Task UploadingCombatLogAsync(List<CombatModel> combats)
     {
         var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
-        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList, LogType, token);
+        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combats, LogType, token);
         if (createdCombatLog.AppUserId == null)
         {
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -249,7 +252,7 @@ public class ParsingCombatLogsViewModel : ParentTemplate
             return;
         }
 
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Combats), combatList);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Combats), combats);
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.CombatLog), createdCombatLog);
 
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AllowStep), 1);

@@ -23,6 +23,8 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
 
         var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);
 
+        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitHeaths, cancellationToken);
+
         await _context.BulkInsertCombatPlayerStatsAsync(players, cancellationToken);
         await _context.BulkInsertCombatPlayerScoresAsync(combat.BossId, players, cancellationToken);
 

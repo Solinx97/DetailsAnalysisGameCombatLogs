@@ -78,15 +78,17 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
     {
         try
         {
-            var combatPlayersData = new List<CombatPlayerData>();
+            var combatPlayersData = new List<CombatParser.Domain.EntityData.CombatPlayerData>();
             foreach (var player in combat.CombatPlayers)
             {
                 var playerData = await ExtractCombatPlayerDataAsync(player, cancellationToken);
                 combatPlayersData.Add(playerData);
             }
 
+            var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
+
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitHealthData);
 
             var combatId = await _mediator.Send(command, cancellationToken);
 
@@ -106,7 +108,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         }
     }
 
-    private async Task<CombatPlayerData> ExtractCombatPlayerDataAsync(CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
+    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
     {
         var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
 
@@ -131,7 +133,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, spellIds, cancellationToken);
         var scoreMap = _mapper.Map<SpecializationScoreData>(combatPlayer.Score);
 
-        var playerData = new CombatPlayerData(
+        var playerData = new CombatParser.Domain.EntityData.CombatPlayerData(
             combatPlayer.AverageItemLevel,
             combatPlayer.ResourcesRecovery,
             combatPlayer.DamageDone,

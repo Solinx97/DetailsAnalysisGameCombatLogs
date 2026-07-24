@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models;
 
