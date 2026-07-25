@@ -2,6 +2,7 @@
 using CombatAnalysis.CombatParserAPI.Models;
 using CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 using CombatParser.Application.DTOs;
+using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Domain.EntityData;
 
 namespace CombatAnalysis.CombatParserAPI.Mapping;

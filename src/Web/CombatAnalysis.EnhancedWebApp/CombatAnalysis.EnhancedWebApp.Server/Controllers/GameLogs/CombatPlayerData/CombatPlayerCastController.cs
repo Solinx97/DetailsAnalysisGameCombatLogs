@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
-using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs.CombatPlayerData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -19,7 +19,7 @@ public class CombatPlayerCastController : ControllerBase
     }
 
     [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatPlayerId)
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
         var responseMessage = await _httpClient.GetAsync($"CombatPlayerCast/getByCombatPlayerId/{combatPlayerId}");
         var casts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerCastModel>>();

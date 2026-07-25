@@ -10,6 +10,7 @@ import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionMod
 import type { BossMapModel } from '../types/BossMapModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
 import type { CombatPlayerCastModel } from '../types/CombatPlayerCastModel';
+import type { UnitHealthModel } from '../types/UnitHealthModel';
 
 const apiURL = '/api/v1';
 
@@ -33,6 +34,7 @@ export const GameLogsApi = createApi({
         'HealDoneGeneral',
         'ResourceRecovery',
         'ResourceRecoveryGeneral',
+        'UnitHealth',
     ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
@@ -153,6 +155,16 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatPlayerCast', id: 'LIST' }]
         }),
+        getUnitsHealthByCombatId: builder.query<UnitHealthModel[], number>({
+            query: combatId => `/UnitHealth/getByCombatId/${combatId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(unitHealth => ({ type: 'UnitHealth' as const, id: unitHealth.id })),
+                        { type: 'UnitHealth', id: 'LIST' },
+                    ]
+                    : [{ type: 'UnitHealth', id: 'LIST' }]
+        }),
     })
 })
 
@@ -172,5 +184,6 @@ export const {
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatByPreAuraQuery,
     useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery,
-    useLazyGetCombatPlayerCastsByCombatPlayerIdQuery
+    useLazyGetCombatPlayerCastsByCombatPlayerIdQuery,
+    useLazyGetUnitsHealthByCombatIdQuery,
 } = GameLogsApi;

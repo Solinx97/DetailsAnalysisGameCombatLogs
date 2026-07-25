@@ -3,7 +3,7 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class DamageTaken : CombatPlayerDataBase, ICombatPlayerTime, IGeneralEntity
+public class DamageTaken : CombatPlayerDataBase, ICombatTime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;

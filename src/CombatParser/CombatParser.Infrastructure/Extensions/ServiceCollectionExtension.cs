@@ -41,14 +41,19 @@ public static class ServiceCollectionExtension
         services.AddScoped<IBestSpecializationScoreRepository, BestSpecializationScoreRepository>();
         services.AddScoped<ICombatPlayerPositionRepository, CombatPlayerPositionRepository>();
 
-        services.AddScoped<ICombatPlayerDataRepository<DamageDone>, CombatPlayerDataRepository<DamageDone>>();
-        services.AddScoped<ICombatPlayerDataRepository<HealDone>, CombatPlayerDataRepository<HealDone>>();
-        services.AddScoped<ICombatPlayerDataRepository<DamageTaken>, CombatPlayerDataRepository<DamageTaken>>();
-        services.AddScoped<ICombatPlayerDataRepository<ResourceRecovery>, CombatPlayerDataRepository<ResourceRecovery>>();
-        services.AddScoped<ICombatPlayerDataRepository<CombatPlayerDeath>, CombatPlayerDataRepository<CombatPlayerDeath>>();
+        services.AddScoped<ICombatPlayerDataByTimeRepository<DamageDone>, CombatPlayerDataByTimeRepository<DamageDone>>();
+        services.AddScoped<ICombatPlayerDataByTimeRepository<HealDone>, CombatPlayerDataByTimeRepository<HealDone>>();
+        services.AddScoped<ICombatPlayerDataByTimeRepository<DamageTaken>, CombatPlayerDataByTimeRepository<DamageTaken>>();
+        services.AddScoped<ICombatPlayerDataByTimeRepository<ResourceRecovery>, CombatPlayerDataByTimeRepository<ResourceRecovery>>();
+        services.AddScoped<ICombatPlayerDataByTimeRepository<CombatPlayerDeath>, CombatPlayerDataByTimeRepository<CombatPlayerDeath>>();
+
         services.AddScoped<ICombatPlayerInfoRepository<SpecializationScore>, CombatPlayerInfoRepository<SpecializationScore>>();
         services.AddScoped<ICombatPlayerInfoRepository<CombatPlayerStats>, CombatPlayerInfoRepository<CombatPlayerStats>>();
         services.AddScoped<ICombatPlayerInfoRepository<CombatPlayerCast>, CombatPlayerInfoRepository<CombatPlayerCast>>();
+        services.AddScoped<ICombatPlayerInfoRepository<DamageDoneGeneral>, CombatPlayerInfoRepository<DamageDoneGeneral>>();
+        services.AddScoped<ICombatPlayerInfoRepository<HealDoneGeneral>, CombatPlayerInfoRepository<HealDoneGeneral>>();
+        services.AddScoped<ICombatPlayerInfoRepository<DamageTakenGeneral>, CombatPlayerInfoRepository<DamageTakenGeneral>>();
+        services.AddScoped<ICombatPlayerInfoRepository<ResourceRecoveryGeneral>, CombatPlayerInfoRepository<ResourceRecoveryGeneral>>();
 
         services.AddScoped<IGeneralRepository<DamageDone>, GeneralRepositroy<DamageDone>>();
         services.AddScoped<IGeneralRepository<HealDone>, GeneralRepositroy<HealDone>>();
@@ -62,10 +67,7 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IDashboardRepository, DashboardRepository>();
 
-        services.AddScoped<ICombatPlayerGenericDataRepository<DamageDoneGeneral>, CombatPlayerGenericDataRepository<DamageDoneGeneral>>();
-        services.AddScoped<ICombatPlayerGenericDataRepository<HealDoneGeneral>, CombatPlayerGenericDataRepository<HealDoneGeneral>>();
-        services.AddScoped<ICombatPlayerGenericDataRepository<DamageTakenGeneral>, CombatPlayerGenericDataRepository<DamageTakenGeneral>>();
-        services.AddScoped<ICombatPlayerGenericDataRepository<ResourceRecoveryGeneral>, CombatPlayerGenericDataRepository<ResourceRecoveryGeneral>>();
+        services.AddScoped<ICombatDataRepository<UnitHealth>, CombatDataRepository<UnitHealth>>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

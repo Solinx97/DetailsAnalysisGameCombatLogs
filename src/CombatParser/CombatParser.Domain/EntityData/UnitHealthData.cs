@@ -5,5 +5,6 @@ public record UnitHealthData(
     int CurrentHealth,
     int MaxHealth,
     TimeSpan Time,
+    bool IsDead,
     int CombatId
     );

@@ -5,12 +5,13 @@ import useTime from '@/shared/hooks/useTime';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery } from '../../api/GameLogs.api';
+import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery, useLazyGetUnitsHealthByCombatIdQuery } from '../../api/GameLogs.api';
 import type { CombatPlayerPositionModel } from '../../types/CombatPlayerPositionModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import CombatReplyItem from './CombatReplyItem';
 import useCombatReply from '../../hooks/useCombatReply';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import type { UnitHealthModel } from '../../types/UnitHealthModel';
 
 import './CombatReply.scss';
 
@@ -31,6 +32,7 @@ const CombatReply: React.FC = () => {
         duration: 0
     });
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
+    const [unitsHealth, setUnitsHealth] = useState<UnitHealthModel[]>([]);
     const [combatPlayerPositions, setCombatPlayerPositions] = useState<CombatPlayerPositionModel[]>([]);
     const [positions, setPositions] = useState<Map<number, CombatPlayerPositionModel[]>>(new Map());
 
@@ -45,6 +47,7 @@ const CombatReply: React.FC = () => {
     const { formatSeconds, timeToMs } = useTime();
 
     const [getCombatPlayers] = useLazyGetCombatPlayersByCombatIdQuery();
+    const [getUnitsHealth] = useLazyGetUnitsHealthByCombatIdQuery();
     const [getCombatPlayerPositions] = useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery();
 
     useEffect(() => {
@@ -91,11 +94,13 @@ const CombatReply: React.FC = () => {
 
         const loadData = async () => {
             try {
-                const [combatPlayers] = await Promise.all([
+                const [combatPlayers, unitHealths] = await Promise.all([
                     getCombatPlayers(details.id).unwrap(),
+                    getUnitsHealth(details.id).unwrap()
                 ]);
 
                 setCombatPlayers(combatPlayers);
+                setUnitsHealth(unitHealths);
             } catch (e) {
                 console.error(e);
             }
@@ -176,7 +181,7 @@ const CombatReply: React.FC = () => {
             const delta = timestamp - lastFrameRef.current;
             lastFrameRef.current = timestamp;
 
-            const duration = timeToMs(combatPlayerPositions.at(-1)!.time);
+            const duration = details.duration * 1000;
 
             setCurrentTime(prev => {
                 const next = prev + delta;
@@ -261,7 +266,7 @@ const CombatReply: React.FC = () => {
                         <input
                             type="range"
                             min={0}
-                            max={timeToMs(combatPlayerPositions.at(-1)!.time)}
+                            max={details.duration * 1000}
                             value={currentTime}
                             className="range"
 
@@ -280,6 +285,7 @@ const CombatReply: React.FC = () => {
                             <li className="players__player" key={item.id}>
                                 <CombatReplyItem
                                     combatPlayer={item}
+                                    unitsHealth={unitsHealth.filter(x => x.gamePlayerId === item.player.gameId)}
                                     selectedPlayerId={selectedPlayerId}
                                     setSelectedPlayerId={setSelectedPlayerId}
                                     currentTime={currentTime}

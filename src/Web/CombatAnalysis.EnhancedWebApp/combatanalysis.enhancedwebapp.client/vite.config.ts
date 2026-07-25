@@ -41,6 +41,7 @@ const gameLogsEnpoints = (target: string, apiVersion: string) => {
         [`^/api/${apiVersion}/HealDoneGeneral`]: { target, secure: false },
         [`^/api/${apiVersion}/ResourceRecovery`]: { target, secure: false },
         [`^/api/${apiVersion}/ResourceRecoveryGeneral`]: { target, secure: false },
+        [`^/api/${apiVersion}/UnitHealth`]: { target, secure: false },
     }
 }
 

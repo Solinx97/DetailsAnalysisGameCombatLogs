@@ -1,3 +1,5 @@
+import { faSkull } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useTime from '@/shared/hooks/useTime';
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
@@ -5,19 +7,23 @@ import type { CombatPlayerCastModel } from '../../types/CombatPlayerCastModel';
 import { useLazyGetCombatPlayerCastsByCombatPlayerIdQuery } from '../../api/GameLogs.api';
 import CastBar from './CastBar';
 import InstantCast from './InstantCast';
+import type { UnitHealthModel } from '../../types/UnitHealthModel';
 
 interface CombatReplyItemProps {
     combatPlayer: CombatPlayerModel;
+    unitsHealth: UnitHealthModel[];
     selectedPlayerId: number;
     setSelectedPlayerId: Dispatch<SetStateAction<number>>;
     currentTime: number;
     color: string;
 }
 
-const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, selectedPlayerId, setSelectedPlayerId, currentTime, color }) => {
+const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, unitsHealth, selectedPlayerId, setSelectedPlayerId, currentTime, color }) => {
     const INSTANT_CAST_DURATION = 500;
 
     const [combatPlayerCasts, setCombatPlayerCasts] = useState<CombatPlayerCastModel[]>([]);
+    const [currentHealth, setCurrentHealth] = useState(100);
+    const [maxHealth, setMaxHealth] = useState(100);
 
     const { timeToMs } = useTime();
 
@@ -80,6 +86,20 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, selecte
             );
     }, [currentTime, combatPlayerCasts]);
 
+    const health = useMemo(() => {
+        return unitsHealth
+            .filter(health => timeToMs(health.time) <= currentTime).at(-1);
+    }, [currentTime, unitsHealth]);
+
+    useEffect(() => {
+        if (health === undefined) {
+            return;
+        }
+
+        setCurrentHealth(health.currentHealth);
+        setMaxHealth(health.maxHealth);
+    }, [health]);
+
     const handleSelectPlayer = () => {
         if (selectedPlayerId !== 0 && selectedPlayerId !== combatPlayer.id) {
             setSelectedPlayerId(0);
@@ -101,14 +121,24 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, selecte
 
     return (
         <>
+            <div className={`username ${selectedPlayerId === combatPlayer.id ? "selected" : ""}`} style={{ color: color }}
+                onClick={handleSelectPlayer}>
+                {health?.isDead &&
+                    <FontAwesomeIcon
+                        icon={faSkull}
+                    />
+                }
+                <div>{removeServerName(combatPlayer.player.username)}</div>
+            </div>
+            <div className={`health ${health?.isDead ? 'dead' : ''}`}>
+                <div className="health__current" style={{ width: `${currentHealth}%` }}>{currentHealth}/{maxHealth}</div>
+            </div>
             <CastBar
                 spell={currentNotImmediatlyCast?.spell}
                 progress={progressNotImmediatly}
                 isSuccess={currentNotImmediatlyCast?.isSuccess}
                 isRunCast={selectedPlayerId === combatPlayer.id}
             />
-            <div className={`username ${selectedPlayerId === combatPlayer.id ? "selected" : ""}`} style={{ color: color }} 
-                onClick={handleSelectPlayer}>{removeServerName(combatPlayer.player.username)}</div>
             <InstantCast
                 spell={currentImmediatlyCast?.spell}
                 isRunCast={selectedPlayerId === combatPlayer.id}

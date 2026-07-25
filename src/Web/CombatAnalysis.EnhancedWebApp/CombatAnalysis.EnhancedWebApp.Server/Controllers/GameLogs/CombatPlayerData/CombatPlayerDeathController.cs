@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
-using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs.CombatPlayerData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -28,7 +28,7 @@ public class CombatPlayerDeathController : ControllerBase
             var response = await _httpClient.GetAsync($"CombatPlayerDeath/getByCombatPlayerId/{combatPlayerId}");
             response.EnsureSuccessStatusCode();
 
-            var playerDeaths = await response.Content.ReadFromJsonAsync<IEnumerable<PlayerDeathModel>>();
+            var playerDeaths = await response.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerDeathModel>>();
 
             return Ok(playerDeaths);
         }

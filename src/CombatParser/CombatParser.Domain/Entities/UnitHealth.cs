@@ -3,13 +3,13 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class UnitHealth : CombatDataBase, ICombatRefs
+public class UnitHealth : CombatDataBase, ICombatTime
 {
     public const int GAMEID_MAX_LENGTH = 128;
 
     private UnitHealth() { }
 
-    private UnitHealth(string gamePlayerId, int currentHealth, int maxHealth, TimeSpan time, int combatId)
+    private UnitHealth(string gamePlayerId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
     {
         ArgumentException.ThrowIfNullOrEmpty(gamePlayerId, nameof(gamePlayerId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
@@ -21,6 +21,7 @@ public class UnitHealth : CombatDataBase, ICombatRefs
         CurrentHealth = currentHealth;
         MaxHealth = maxHealth;
         Time = time;
+        IsDead = isDead;
         CombatId = combatId;
     }
 
@@ -34,15 +35,17 @@ public class UnitHealth : CombatDataBase, ICombatRefs
 
     public TimeSpan Time { get; private set; }
 
+    public bool IsDead { get; private set; }
+
     public Combat Combat { get; private set; }
 
-    public static UnitHealth Create(string gamePlayerId, int currentHealth, int maxHealth, TimeSpan time, int combatId)
+    public static UnitHealth Create(string gamePlayerId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
     {
         ArgumentException.ThrowIfNullOrEmpty(gamePlayerId, nameof(gamePlayerId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(combatId, nameof(combatId));
 
-        return new UnitHealth(gamePlayerId, currentHealth, maxHealth, time, combatId);
+        return new UnitHealth(gamePlayerId, currentHealth, maxHealth, time, isDead, combatId);
     }
 }

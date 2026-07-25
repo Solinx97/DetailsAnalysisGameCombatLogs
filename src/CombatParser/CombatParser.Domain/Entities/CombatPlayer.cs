@@ -1,11 +1,10 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.EntityData;
-using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class CombatPlayer : CombatDataBase, ICombatRefs
+public class CombatPlayer : CombatDataBase
 {
     private readonly List<CombatPlayerPreAura> _preAuras = [];
     private readonly List<CombatPlayerAura> _auras = [];

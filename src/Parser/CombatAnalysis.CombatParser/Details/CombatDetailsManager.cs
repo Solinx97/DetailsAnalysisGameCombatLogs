@@ -15,9 +15,9 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
     public UnitHealth? GetUnitDeathHealth(string[] combatDataLine, ConcurrentDictionary<string, List<UnitHealth>> units)
     {
-        if (!units.TryGetValue(combatDataLine[2], out var _))
+        if (!units.TryGetValue(combatDataLine[6], out var _))
         {
-            units.TryAdd(combatDataLine[2], []);
+            units.TryAdd(combatDataLine[6], []);
         }
 
         var health = new UnitHealth
@@ -26,6 +26,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
             CurrentHealth = 0,
             MaxHealth = 0,
             Time = GetTimeFromStart(combatDataLine[0]),
+            IsDead = true,
         };
 
         return health;
@@ -33,22 +34,25 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
     public UnitHealth? GetUnitHealth(string[] combatDataLine, ConcurrentDictionary<string, List<UnitHealth>> units)
     {
-        if (!units.TryGetValue(combatDataLine[2], out var _))
-        {
-            units.TryAdd(combatDataLine[2], []);
-        }
-
         if (!int.TryParse(combatDataLine[15], out var currentHealth) || !int.TryParse(combatDataLine[16], out var maxHealth))
         {
             return null;
         }
 
+        var creatorId = maxHealth > 100 ? combatDataLine[6] : combatDataLine[2];
+        if (!units.TryGetValue(creatorId, out var _))
+        {
+            units.TryAdd(creatorId, []);
+        }
+
+        var time = GetTimeFromStart(combatDataLine[0]);
         var health = new UnitHealth
         {
-            GamePlayerId = combatDataLine[2],
+            GamePlayerId = creatorId,
             CurrentHealth = currentHealth,
             MaxHealth = maxHealth,
-            Time = GetTimeFromStart(combatDataLine[0]),
+            Time = time,
+            IsDead = currentHealth == 0,
         };
 
         return health;

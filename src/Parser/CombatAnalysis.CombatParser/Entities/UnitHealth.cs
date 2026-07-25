@@ -10,5 +10,7 @@ public class UnitHealth
 
     public TimeSpan Time { get; set; }
 
+    public bool IsDead { get; set; }
+
     public int CombatId { get; set; }
 }

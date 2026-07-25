@@ -14,10 +14,7 @@ public class CombatDetails(ILogger logger)
         CombatLogKeyWords.SpellPeriodicHeal,
         CombatLogKeyWords.SpellAbsorbed,
         CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SwingDamageLanded,
         CombatLogKeyWords.SpellPeriodicDamage,
-        CombatLogKeyWords.DamageShieldMissed,
-        CombatLogKeyWords.RangeDamage,
     ];
     private readonly string[] _dieds =
     [

@@ -112,7 +112,7 @@ public class Combat
     private void AddUnitHealth(UnitHealthData unitHealth)
     {
         var createdUnitHeath = UnitHealth.Create(unitHealth.GamePlayerId, unitHealth.CurrentHealth, unitHealth.MaxHealth,
-            unitHealth.Time, unitHealth.CombatId);
+            unitHealth.Time, unitHealth.IsDead, unitHealth.CombatId);
         _unitHealths.Add(createdUnitHeath);
     }
 }

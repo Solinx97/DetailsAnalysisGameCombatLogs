@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using CombatParser.Application.DTOs;
+using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using MediatR;
 
 namespace CombatParser.Application.Queries.GetDamageTakenGenerals;
 
-internal class GetDamageTakenGeneralsHandler(ICombatPlayerGenericDataRepository<DamageTakenGeneral> repository, IMapper mapper) : IRequestHandler<GetDamageTakenGeneralsQuery, IEnumerable<DamageTakenGeneralDto>>
+internal class GetDamageTakenGeneralsHandler(ICombatPlayerInfoRepository<DamageTakenGeneral> repository, IMapper mapper) : IRequestHandler<GetDamageTakenGeneralsQuery, IEnumerable<DamageTakenGeneralDto>>
 {
-    private readonly ICombatPlayerGenericDataRepository<DamageTakenGeneral> _repository = repository;
+    private readonly ICombatPlayerInfoRepository<DamageTakenGeneral> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<IEnumerable<DamageTakenGeneralDto>> Handle(GetDamageTakenGeneralsQuery request, CancellationToken cancellationToken)

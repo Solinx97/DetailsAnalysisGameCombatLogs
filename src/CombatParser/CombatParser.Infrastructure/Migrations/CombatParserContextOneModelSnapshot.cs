@@ -15734,6 +15734,9 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<bool>("IsDead")
+                        .HasColumnType("bit");
+
                     b.Property<int>("MaxHealth")
                         .HasColumnType("int");
 

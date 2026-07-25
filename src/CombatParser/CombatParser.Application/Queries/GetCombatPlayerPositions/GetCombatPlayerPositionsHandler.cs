@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CombatParser.Application.DTOs;
+using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Domain.Data;
 using MediatR;
 
