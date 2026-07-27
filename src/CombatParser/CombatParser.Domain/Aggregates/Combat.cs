@@ -127,7 +127,7 @@ public class Combat
 
     private void AddUnit(CombatUnitData unit)
     {
-        var createdUnit = CombatUnit.Create(unit.GameId, unit.Username, unit.CreatorGameId);
+        var createdUnit = CombatUnit.Create(unit.GameId, unit.Username, unit.CreatorGameId, unit.UnitType);
         _units.Add(createdUnit);
     }
 

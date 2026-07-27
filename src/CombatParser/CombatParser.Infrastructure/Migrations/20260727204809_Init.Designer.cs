@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260727165909_Init")]
+    [Migration("20260727204809_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -15544,6 +15544,9 @@ namespace CombatParser.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("UnitType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()

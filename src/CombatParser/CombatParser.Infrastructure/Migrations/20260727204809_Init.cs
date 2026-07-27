@@ -217,6 +217,7 @@ namespace CombatParser.Infrastructure.Migrations
                     GameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatorGameId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UnitType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CombatId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

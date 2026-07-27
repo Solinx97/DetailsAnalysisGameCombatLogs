@@ -22,6 +22,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
                 GameId = combatDataLine[6],
                 Username = combatDataLine[7],
                 CreatorGameId = combatDataLine[2],
+                UnitType = combatDataLine[^1],
             });
         }
     }

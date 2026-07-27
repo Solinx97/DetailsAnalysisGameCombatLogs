@@ -68,6 +68,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddScoped<ICombatDataRepository<UnitHealth>, CombatDataRepository<UnitHealth>>();
+        services.AddScoped<ICombatDataRepository<CombatUnit>, CombatDataRepository<CombatUnit>>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

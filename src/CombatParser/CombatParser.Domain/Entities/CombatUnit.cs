@@ -9,12 +9,13 @@ public class CombatUnit : CombatDataBase
 
     private CombatUnit() { }
 
-    private CombatUnit(string gameId, string username, string? creatorGameId)
+    private CombatUnit(string gameId, string username, string? creatorGameId, string? unitType)
     {
         Id = Guid.NewGuid().ToString();
         GameId = gameId;
         Username = username;
         CreatorGameId = creatorGameId;
+        UnitType = unitType;
     }
 
     public string Id { get; private set; } = string.Empty;
@@ -25,13 +26,15 @@ public class CombatUnit : CombatDataBase
 
     public string? CreatorGameId { get; private set; }
 
+    public string? UnitType { get; private set; }
+
     public Combat Combat { get; private set; }
 
-    public static CombatUnit Create(string gameId, string username, string? creatorGameId)
+    public static CombatUnit Create(string gameId, string username, string? creatorGameId, string? unitType)
     {
         ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
         ArgumentException.ThrowIfNullOrEmpty(username, nameof(username));
 
-        return new CombatUnit(gameId, username, creatorGameId);
+        return new CombatUnit(gameId, username, creatorGameId, unitType);
     }
 }

@@ -8,5 +8,7 @@ public class CombatUnit
 
     public string? CreatorGameId { get; set; }
 
+    public string? UnitType { get; set; }
+
     public int CombatId { get; set; }
 }

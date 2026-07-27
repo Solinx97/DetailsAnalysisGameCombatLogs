@@ -5,13 +5,11 @@ import useTime from '@/shared/hooks/useTime';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetUnitPositionsByCombatIdQuery, useLazyGetUnitsHealthByCombatIdQuery } from '../../api/GameLogs.api';
+import { useLazyGetUnitPositionsByCombatIdQuery } from '../../api/GameLogs.api';
 import type { UnitPositionModel } from '../../types/UnitPositionModel';
-import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
-import CombatReplyItem from './CombatReplyItem';
 import useCombatReply from '../../hooks/useCombatReply';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
-import type { UnitHealthModel } from '../../types/UnitHealthModel';
+import CombatReplyUnits from './CombatReplyUnits';
 
 import './CombatReply.scss';
 
@@ -31,8 +29,6 @@ const CombatReply: React.FC = () => {
         isWin: false,
         duration: 0
     });
-    const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
-    const [unitsHealth, setUnitsHealth] = useState<UnitHealthModel[]>([]);
     const [unitPositions, setUnitPositions] = useState<Map<string, UnitPositionModel[]>>(new Map());
 
     const [playing, setPlaying] = useState(false);
@@ -45,8 +41,6 @@ const CombatReply: React.FC = () => {
     const { view, currentTime, setCurrentTime } = useCombatReply(selectedGameId, canvasRef, unitPositions, colors);
     const { formatSeconds, timeToMs } = useTime();
 
-    const [getCombatPlayers] = useLazyGetCombatPlayersByCombatIdQuery();
-    const [getUnitsHealth] = useLazyGetUnitsHealthByCombatIdQuery();
     const [getUnitPositions] = useLazyGetUnitPositionsByCombatIdQuery();
 
     useEffect(() => {
@@ -85,28 +79,6 @@ const CombatReply: React.FC = () => {
             window.removeEventListener("keydown", handleKeyDown);
         }
     }, []);
-
-    useEffect(() => {
-        if (details.id === 0) {
-            return;
-        }
-
-        const loadData = async () => {
-            try {
-                const [combatPlayers, unitHealths] = await Promise.all([
-                    getCombatPlayers(details.id).unwrap(),
-                    getUnitsHealth(details.id).unwrap()
-                ]);
-
-                setCombatPlayers(combatPlayers);
-                setUnitsHealth(unitHealths);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-
-        loadData();
-    }, [details]);
 
     useEffect(() => {
         if (unitPositions.size === 0) {
@@ -265,21 +237,13 @@ const CombatReply: React.FC = () => {
                             {formatSeconds(Math.floor(currentTime / 1000))}
                         </div>
                     </div>
-                    <ul className="players">
-                        {combatPlayers.map((item) => (
-                            <li className="players__player" key={item.id}>
-                                <CombatReplyItem
-                                    combatPlayer={item}
-                                    unitsHealth={unitsHealth.filter(x => x.gameId === item.player.gameId)}
-                                    selectedPlayerId={selectedGameId}
-                                    setSelectedPlayerId={setSelectedGameId}
-                                    currentTime={currentTime}
-                                    color={colors.get(item.player.gameId) ?? "#000000"}
-                                />
-                            </li>
-                        ))
-                        }
-                    </ul>
+                    <CombatReplyUnits
+                        details={details}
+                        selectedGameId={selectedGameId}
+                        setSelectedGameId={setSelectedGameId}
+                        currentTime={currentTime}
+                        colors={colors}
+                    />
                 </>
             }
         </div>

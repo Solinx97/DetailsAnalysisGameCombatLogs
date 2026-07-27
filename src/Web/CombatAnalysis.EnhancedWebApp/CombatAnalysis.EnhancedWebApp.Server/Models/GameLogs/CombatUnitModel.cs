@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.CombatParserAPI.Models;
+﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
 
 public class CombatUnitModel
 {
