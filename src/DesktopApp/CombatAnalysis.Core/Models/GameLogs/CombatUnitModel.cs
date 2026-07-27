@@ -1,18 +1,14 @@
 ﻿namespace CombatAnalysis.Core.Models.GameLogs;
 
-public class UnitHealthModel
+public class CombatUnitModel
 {
     public string Id { get; set; } = string.Empty;
 
     public string GameId { get; set; } = string.Empty;
 
-    public int CurrentHealth { get; set; }
+    public string Username { get; set; } = string.Empty;
 
-    public int MaxHealth { get; set; }
-
-    public TimeSpan Time { get; set; }
-
-    public bool IsDead { get; set; }
+    public string? CreatorGameId { get; set; }
 
     public int CombatId { get; set; }
 }

@@ -9,15 +9,15 @@ public class UnitHealth : CombatDataBase, ICombatTime
 
     private UnitHealth() { }
 
-    private UnitHealth(string gamePlayerId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
+    private UnitHealth(string gameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(gamePlayerId, nameof(gamePlayerId));
+        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(combatId, nameof(combatId));
 
         Id = Guid.NewGuid().ToString();
-        GamePlayerId = gamePlayerId;
+        GameId = gameId;
         CurrentHealth = currentHealth;
         MaxHealth = maxHealth;
         Time = time;
@@ -27,7 +27,7 @@ public class UnitHealth : CombatDataBase, ICombatTime
 
     public string Id { get; private set; }
 
-    public string GamePlayerId { get; private set; }
+    public string GameId { get; private set; }
 
     public int CurrentHealth { get; private set; }
 
@@ -39,13 +39,13 @@ public class UnitHealth : CombatDataBase, ICombatTime
 
     public Combat Combat { get; private set; }
 
-    public static UnitHealth Create(string gamePlayerId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
+    public static UnitHealth Create(string gameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(gamePlayerId, nameof(gamePlayerId));
+        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(combatId, nameof(combatId));
 
-        return new UnitHealth(gamePlayerId, currentHealth, maxHealth, time, isDead, combatId);
+        return new UnitHealth(gameId, currentHealth, maxHealth, time, isDead, combatId);
     }
 }

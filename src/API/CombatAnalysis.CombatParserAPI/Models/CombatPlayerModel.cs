@@ -27,7 +27,6 @@ public class CombatPlayerModel
 
     public SpecializationScoreModel? Score { get; set; }
 
-    [Required]
     public PlayerModel Player { get; set; } = new();
 
     [Required]
@@ -73,5 +72,5 @@ public class CombatPlayerModel
     public IReadOnlyList<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 
     [Required]
-    public IReadOnlyList<CombatPlayerPositionModel> CombatPlayerPositions { get; set; } = [];
+    public IReadOnlyList<UnitPositionModel> CombatPlayerPositions { get; set; } = [];
 }

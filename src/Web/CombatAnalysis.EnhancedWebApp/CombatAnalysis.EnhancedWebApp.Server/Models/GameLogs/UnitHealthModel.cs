@@ -4,7 +4,7 @@ public class UnitHealthModel
 {
     public string Id { get; set; } = string.Empty;
 
-    public string GamePlayerId { get; set; } = string.Empty;
+    public string GameId { get; set; } = string.Empty;
 
     public int CurrentHealth { get; set; }
 

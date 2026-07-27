@@ -85,10 +85,12 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
                 combatPlayersData.Add(playerData);
             }
 
+            var unitData = _mapper.Map<List<CombatUnitData>>(combat.Units);
             var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
+            var unitPositionData = _mapper.Map<List<UnitPositionData>>(combat.UnitPositions);
 
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitHealthData);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitHealthData, unitPositionData);
 
             var combatId = await _mediator.Send(command, cancellationToken);
 
@@ -124,7 +126,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatPlayer.ResourceRecoveries);
         var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatPlayer.ResourceRecoveryGenerals);
         var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatPlayer.CombatPlayerDeathes);
-        var positionsMap = _mapper.Map<List<CombatPlayerPositionData>>(combatPlayer.CombatPlayerPositions);
+        var positionsMap = _mapper.Map<List<UnitPositionData>>(combatPlayer.CombatPlayerPositions);
 
         var spellIds = combatPlayer.DamageDone > combatPlayer.HealDone
             ? combatPlayer.DamageDones.Select(d => d.GameSpellId).ToArray()

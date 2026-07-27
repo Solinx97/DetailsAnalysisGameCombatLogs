@@ -1,8 +1,10 @@
-﻿namespace CombatAnalysis.Core.Models.GameLogs.CombatPlayerData;
+﻿namespace CombatAnalysis.Core.Models.GameLogs;
 
-public class CombatPlayerPositionModel
+public class UnitPositionModel
 {
     public string Id { get; set; } = string.Empty;
+
+    public string GameId { get; set; } = string.Empty;
 
     public double X { get; set; }
 
@@ -11,6 +13,4 @@ public class CombatPlayerPositionModel
     public TimeSpan Time { get; set; }
 
     public int CombatId { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

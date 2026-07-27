@@ -27,10 +27,11 @@ const gameLogsEnpoints = (target: string, apiVersion: string) => {
         [`^/api/${apiVersion}/CombatLog`]: { target, secure: false },
         [`^/api/${apiVersion}/Combat`]: { target, secure: false },
         [`^/api/${apiVersion}/BossMap`]: { target, secure: false },
+        [`^/api/${apiVersion}/UnitHealth`]: { target, secure: false },
+        [`^/api/${apiVersion}/UnitPosition`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayer`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayerAura`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayerPreAura`]: { target, secure: false },
-        [`^/api/${apiVersion}/CombatPlayerPosition`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayerCast`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayerDeath`]: { target, secure: false },
         [`^/api/${apiVersion}/DamageDone`]: { target, secure: false },
@@ -41,7 +42,6 @@ const gameLogsEnpoints = (target: string, apiVersion: string) => {
         [`^/api/${apiVersion}/HealDoneGeneral`]: { target, secure: false },
         [`^/api/${apiVersion}/ResourceRecovery`]: { target, secure: false },
         [`^/api/${apiVersion}/ResourceRecoveryGeneral`]: { target, secure: false },
-        [`^/api/${apiVersion}/UnitHealth`]: { target, secure: false },
     }
 }
 

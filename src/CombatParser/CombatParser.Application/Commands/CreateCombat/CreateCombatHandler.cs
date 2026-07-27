@@ -12,7 +12,7 @@ internal class CreateCombatHandler(ICombatRepository repository) : IRequestHandl
     {
         var combat = Combat.Create(request.DungeonName, request.BossHealthPercentage, request.DamageDone, request.HealDone, request.DamageTaken, 
             request.ResourcesRecovery, request.IsWin, request.StartDate, request.FinishDate, request.BossId, 
-            request.CombatLogId, request.CombatPlayers, request.UnitHeaths);
+            request.CombatLogId, request.CombatPlayers, request.Units, request.UnitHeaths, request.UnitPositions);
 
         await _repository.AddBulkAsync(combat, cancelationToken);
 

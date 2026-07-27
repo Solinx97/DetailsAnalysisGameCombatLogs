@@ -68,5 +68,5 @@ public class CombatPlayerModel
 
     public IReadOnlyCollection<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 
-    public IReadOnlyCollection<CombatPlayerPositionModel> CombatPlayerPositions { get; set; } = [];
+    public IReadOnlyCollection<UnitPositionModel> CombatPlayerPositions { get; set; } = [];
 }

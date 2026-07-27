@@ -14986,30 +14986,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatPlayerDeath");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPosition", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
-                    b.Property<double>("X")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Y")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("CombatPlayerPosition");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPreAura", b =>
                 {
                     b.Property<int>("Id")
@@ -15550,6 +15526,33 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("SpecializationScore");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatUnit", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CombatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatorGameId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GameId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatId");
+
+                    b.ToTable("CombatUnit");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>
                 {
                     b.Property<string>("Id")
@@ -15729,7 +15732,7 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("CurrentHealth")
                         .HasColumnType("int");
 
-                    b.Property<string>("GamePlayerId")
+                    b.Property<string>("GameId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
@@ -15748,6 +15751,35 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasIndex("CombatId");
 
                     b.ToTable("UnitHealth");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.UnitPosition", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CombatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GameId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
+
+                    b.Property<double>("X")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatId");
+
+                    b.ToTable("UnitPosition");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.BestSpecializationScore", b =>
@@ -15844,17 +15876,6 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
                         .WithMany("CombatPlayerDeathes")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPosition", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("CombatPlayerPositions")
                         .HasForeignKey("CombatPlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -15991,10 +16012,32 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Specialization");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatUnit", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
+                        .WithMany("Units")
+                        .HasForeignKey("CombatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Combat");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.UnitHealth", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
                         .WithMany("UnitHeaths")
+                        .HasForeignKey("CombatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Combat");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.UnitPosition", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
+                        .WithMany("UnitPositions")
                         .HasForeignKey("CombatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -16017,6 +16060,10 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("CombatPlayers");
 
                     b.Navigation("UnitHeaths");
+
+                    b.Navigation("UnitPositions");
+
+                    b.Navigation("Units");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.CombatLog", b =>
@@ -16031,8 +16078,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Casts");
 
                     b.Navigation("CombatPlayerDeathes");
-
-                    b.Navigation("CombatPlayerPositions");
 
                     b.Navigation("DamageDoneGenerals");
 

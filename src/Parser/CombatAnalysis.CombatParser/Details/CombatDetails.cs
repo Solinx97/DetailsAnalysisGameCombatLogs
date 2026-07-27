@@ -8,6 +8,10 @@ namespace CombatAnalysis.CombatParser.Details;
 
 public class CombatDetails(ILogger logger)
 {
+    private readonly string[] _summon =
+    [
+        CombatLogKeyWords.SpellSummon,
+    ];
     private readonly string[] _health =
     [
         CombatLogKeyWords.SpellHeal,
@@ -35,10 +39,14 @@ public class CombatDetails(ILogger logger)
     ];
     private readonly string[] _positions =
     [
-        CombatLogKeyWords.AuraApplied,
         CombatLogKeyWords.SpellCastSuccess,
-        CombatLogKeyWords.SpellCastFailed,
-        CombatLogKeyWords.UnitDied,
+        CombatLogKeyWords.SwingDamageLanded,
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellHeal,
+        CombatLogKeyWords.SpellEnergize,
+        CombatLogKeyWords.SpellPeriodicEnergize,
     ];
     private readonly string[] _healVariations =
     [
@@ -71,13 +79,15 @@ public class CombatDetails(ILogger logger)
 
     #region Details collections
 
+    public ConcurrentDictionary<string, CombatUnit> Units { get; private set; } = [];
+
     public ConcurrentDictionary<string, List<UnitHealth>> UnitHealths { get; private set; } = [];
+
+    public ConcurrentDictionary<string, List<UnitPosition>> UnitPositions { get; private set; } = [];
 
     public ConcurrentDictionary<string, List<CombatPlayerAura>> Auras { get; private set; } = [];
 
     public ConcurrentDictionary<string, List<CombatPlayerCast>> Casts { get; private set; } = [];
-
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerPosition>> Positions { get; private set; } = [];
 
     public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> Deathes { get; private set; } = [];
 
@@ -136,7 +146,7 @@ public class CombatDetails(ILogger logger)
     private void PrepareCollections(string playersd)
     {
         UnitHealths.TryAdd(playersd, []);
-        Positions.TryAdd(playersd, []);
+        UnitPositions.TryAdd(playersd, []);
         Deathes.TryAdd(playersd, []);
         Casts.TryAdd(playersd, []);
         Auras.TryAdd(playersd, []);
@@ -149,6 +159,7 @@ public class CombatDetails(ILogger logger)
 
     private void Parse(string[] playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
+        var hasSummon = _summon.Any(combatDataLine.Contains);
         var hasHealth = _health.Any(combatDataLine.Contains);
         var hasCasts = _casts.Any(combatDataLine.Contains);
         var hasPositions = _positions.Any(combatDataLine.Contains);
@@ -159,7 +170,7 @@ public class CombatDetails(ILogger logger)
         var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
         var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
-        if (!hasCasts && !hasPositions && !hasDieds && !hasAuras 
+        if (!hasSummon && !hasCasts && !hasPositions && !hasDieds && !hasAuras 
             && !hasHeal && !hasDamage && !hasAbsorb && !hasResources)
         {
             return;
@@ -167,6 +178,11 @@ public class CombatDetails(ILogger logger)
 
         var splitCombatData = SplitCombatData(combatDataLine);
         var combatDetailsManager = new CombatDetailsManager(playersId, combatStarted, combatFinished);
+
+        if (hasSummon)
+        {
+            combatDetailsManager.GetSummonUnit(splitCombatData, Units);
+        }
 
         Parallel.Invoke(
                 () =>
@@ -209,9 +225,9 @@ public class CombatDetails(ILogger logger)
         var unitHealth = isDied 
             ? combatDetailsManager.GetUnitDeathHealth(splitCombatData, UnitHealths) 
             : combatDetailsManager.GetUnitHealth(splitCombatData, UnitHealths);
-        if (unitHealth != null && UnitHealths.TryGetValue(unitHealth.GamePlayerId, out var healthCollection))
+        if (unitHealth != null && UnitHealths.TryGetValue(unitHealth.GameId, out var collection))
         {
-            healthCollection.Add(unitHealth);
+            collection.Add(unitHealth);
         }
     }
 
@@ -222,10 +238,10 @@ public class CombatDetails(ILogger logger)
 
     private void CalculatePositions(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
-        var (playerId, position) = combatDetailsManager.GetPosition(splitCombatData);
-        if (!string.IsNullOrEmpty(playerId) && position != null && Positions.TryGetValue(playerId, out var collection))
+        var position = combatDetailsManager.GetPosition(splitCombatData, UnitPositions, Units);
+        if (position != null && UnitPositions.TryGetValue(position.GameId, out var collection))
         {
-            collection.TryAdd(Guid.NewGuid().ToString(), position);
+            collection.Add(position);
         }
     }
 

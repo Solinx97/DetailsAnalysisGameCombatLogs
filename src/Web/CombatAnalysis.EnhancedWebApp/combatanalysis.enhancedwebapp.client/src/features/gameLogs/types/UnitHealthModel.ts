@@ -1,6 +1,6 @@
 export type UnitHealthModel = {
     id: string;
-    gamePlayerId: string;
+    gameId: string;
     currentHealth: number;
     maxHealth: number;
     time: string;

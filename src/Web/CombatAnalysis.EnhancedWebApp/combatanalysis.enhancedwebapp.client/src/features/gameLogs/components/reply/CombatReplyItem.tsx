@@ -12,8 +12,8 @@ import type { UnitHealthModel } from '../../types/UnitHealthModel';
 interface CombatReplyItemProps {
     combatPlayer: CombatPlayerModel;
     unitsHealth: UnitHealthModel[];
-    selectedPlayerId: number;
-    setSelectedPlayerId: Dispatch<SetStateAction<number>>;
+    selectedPlayerId: string;
+    setSelectedPlayerId: Dispatch<SetStateAction<string>>;
     currentTime: number;
     color: string;
 }
@@ -30,14 +30,14 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, unitsHe
     const [getCombatPlayerCasts] = useLazyGetCombatPlayerCastsByCombatPlayerIdQuery();
 
     useEffect(() => {
-        if (selectedPlayerId < 1) {
+        if (combatPlayer.player.gameId !== selectedPlayerId) {
             return;
         }
 
-        const loadData = async (combatPlayerId: number) => {
+        const loadData = async () => {
             try {
                 const [combatPlayerCasts] = await Promise.all([
-                    getCombatPlayerCasts(combatPlayerId).unwrap(),
+                    getCombatPlayerCasts(combatPlayer.id).unwrap(),
                 ]);
 
                 setCombatPlayerCasts(combatPlayerCasts);
@@ -46,7 +46,7 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, unitsHe
             }
         }
 
-        loadData(selectedPlayerId);
+        loadData();
     }, [selectedPlayerId]);
 
     const notImmediatlyCasts = useMemo(
@@ -101,15 +101,15 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, unitsHe
     }, [health]);
 
     const handleSelectPlayer = () => {
-        if (selectedPlayerId !== 0 && selectedPlayerId !== combatPlayer.id) {
-            setSelectedPlayerId(0);
-            setSelectedPlayerId(combatPlayer.id);
+        if (selectedPlayerId !== combatPlayer.player.gameId) {
+            setSelectedPlayerId("");
+            setSelectedPlayerId(combatPlayer.player.gameId);
         }
-        else if (selectedPlayerId !== 0 && selectedPlayerId === combatPlayer.id) {
-            setSelectedPlayerId(0);
+        else if (selectedPlayerId !== "" && selectedPlayerId === combatPlayer.player.gameId) {
+            setSelectedPlayerId("");
         }
         else {
-            setSelectedPlayerId(combatPlayer.id);
+            setSelectedPlayerId(combatPlayer.player.gameId);
         }
     }
 
@@ -121,7 +121,7 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, unitsHe
 
     return (
         <>
-            <div className={`username ${selectedPlayerId === combatPlayer.id ? "selected" : ""}`} style={{ color: color }}
+            <div className={`username ${selectedPlayerId === combatPlayer.player.gameId ? "selected" : ""}`} style={{ color: color }}
                 onClick={handleSelectPlayer}>
                 {health?.isDead &&
                     <FontAwesomeIcon
@@ -137,11 +137,11 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayer, unitsHe
                 spell={currentNotImmediatlyCast?.spell}
                 progress={progressNotImmediatly}
                 isSuccess={currentNotImmediatlyCast?.isSuccess}
-                isRunCast={selectedPlayerId === combatPlayer.id}
+                isRunCast={selectedPlayerId === combatPlayer.player.gameId}
             />
             <InstantCast
                 spell={currentImmediatlyCast?.spell}
-                isRunCast={selectedPlayerId === combatPlayer.id}
+                isRunCast={selectedPlayerId === combatPlayer.player.gameId}
             />
         </>
     );

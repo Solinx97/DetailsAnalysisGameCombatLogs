@@ -46,5 +46,5 @@ public class CombatPlayer
 
     public List<CombatPlayerDeath> CombatPlayerDeathes { get; set; } = [];
 
-    public List<CombatPlayerPosition> CombatPlayerPositions { get; set; } = [];
+    public List<UnitPosition> CombatPlayerPositions { get; set; } = [];
 }

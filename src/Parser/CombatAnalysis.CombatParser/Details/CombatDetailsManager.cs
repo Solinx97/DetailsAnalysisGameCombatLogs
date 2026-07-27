@@ -13,6 +13,19 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
+    public void GetSummonUnit(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
+    {
+        if (!units.TryGetValue(combatDataLine[6], out var _))
+        {
+            units.TryAdd(combatDataLine[6], new CombatUnit
+            {
+                GameId = combatDataLine[6],
+                Username = combatDataLine[7],
+                CreatorGameId = combatDataLine[2],
+            });
+        }
+    }
+
     public UnitHealth? GetUnitDeathHealth(string[] combatDataLine, ConcurrentDictionary<string, List<UnitHealth>> units)
     {
         if (!units.TryGetValue(combatDataLine[6], out var _))
@@ -22,7 +35,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
         var health = new UnitHealth
         {
-            GamePlayerId = combatDataLine[6],
+            GameId = combatDataLine[6],
             CurrentHealth = 0,
             MaxHealth = 0,
             Time = GetTimeFromStart(combatDataLine[0]),
@@ -48,7 +61,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         var time = GetTimeFromStart(combatDataLine[0]);
         var health = new UnitHealth
         {
-            GamePlayerId = creatorId,
+            GameId = creatorId,
             CurrentHealth = currentHealth,
             MaxHealth = maxHealth,
             Time = time,
@@ -103,12 +116,16 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         }
     }
 
-    public (string, CombatPlayerPosition?) GetPosition(string[] combatDataLine)
+    public UnitPosition? GetPosition(string[] combatDataLine, ConcurrentDictionary<string, List<UnitPosition>> positions, ConcurrentDictionary<string, CombatUnit> units)
     {
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
-            || combatDataLine.Length <= 25)
+        if (combatDataLine.Length <= 25)
         {
-            return (string.Empty, null);
+            return null;
+        }
+
+        if (!positions.TryGetValue(combatDataLine[2], out var _))
+        {
+            positions.TryAdd(combatDataLine[2], []);
         }
 
         var pos1Index = 26;
@@ -124,17 +141,27 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         if (double.TryParse(combatDataLine[pos1Index], out var positionX)
             && double.TryParse(combatDataLine[pos2Index], out var positionY))
         {
-            var position = new CombatPlayerPosition
+            if (!units.TryGetValue(combatDataLine[2], out var _))
             {
+                units.TryAdd(combatDataLine[2], new CombatUnit
+                {
+                    GameId = combatDataLine[2],
+                    Username = combatDataLine[3],
+                });
+            }
+
+            var position = new UnitPosition
+            {
+                GameId = combatDataLine[2],
                 X = positionX,
                 Y = positionY,
                 Time = GetTimeFromStart(combatDataLine[0])
             };
 
-            return (combatDataLine[2], position);
+            return position;
         }
 
-        return (string.Empty, null);
+        return null;
     }
 
     public (string, DamageDone?) GetPlayerDamageDone(string[] combatDataLine)

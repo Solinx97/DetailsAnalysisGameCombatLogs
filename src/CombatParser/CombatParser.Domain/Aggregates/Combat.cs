@@ -9,14 +9,16 @@ public class Combat
 {
     public const int DUNGEON_NAME_MAX_LENGTH = 128;
 
+    private readonly List<CombatUnit> _units = [];
     private readonly List<CombatPlayer> _players = [];
     private readonly List<UnitHealth> _unitHealths = [];
+    private readonly List<UnitPosition> _unitPositions = [];
 
     private Combat() { }
 
     private Combat(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
-        long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId)
+        long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, 
+        int bossId, int combatLogId)
     {
         DungeonName = dungeonName;
         BossHealthPercentage = bossHealthPercentage;
@@ -65,13 +67,17 @@ public class Combat
 
     public int CombatLogId { get; private set; }
 
+    public IEnumerable<CombatUnit> Units => _units;
+
     public IEnumerable<CombatPlayer> CombatPlayers => _players;
 
     public IEnumerable<UnitHealth> UnitHeaths => _unitHealths;
 
+    public IEnumerable<UnitPosition> UnitPositions => _unitPositions;
+
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<UnitHealthData> unitHeaths)
+        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatUnitData> units, IReadOnlyList<UnitHealthData> unitHeaths, IReadOnlyList<UnitPositionData> unitPositions)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
@@ -92,9 +98,19 @@ public class Combat
             combat.AddCombatPlayer(player);
         }
 
+        foreach (var unit in units)
+        {
+            combat.AddUnit(unit);
+        }
+
         foreach (var unitHeath in unitHeaths)
         {
             combat.AddUnitHealth(unitHeath);
+        }
+
+        foreach (var unitPosition in unitPositions)
+        {
+            combat.AddUnitPosition(unitPosition);
         }
 
         return combat;
@@ -105,14 +121,27 @@ public class Combat
         var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
             player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.Casts, player.DamageDones,
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals, player.DamageTakens, player.DamageTakenGenerals,
-            player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths, player.CombatPlayerPositions);
+            player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths);
         _players.Add(createdPlayer);
+    }
+
+    private void AddUnit(CombatUnitData unit)
+    {
+        var createdUnit = CombatUnit.Create(unit.GameId, unit.Username, unit.CreatorGameId);
+        _units.Add(createdUnit);
     }
 
     private void AddUnitHealth(UnitHealthData unitHealth)
     {
-        var createdUnitHeath = UnitHealth.Create(unitHealth.GamePlayerId, unitHealth.CurrentHealth, unitHealth.MaxHealth,
+        var createdUnitHeath = UnitHealth.Create(unitHealth.GameId, unitHealth.CurrentHealth, unitHealth.MaxHealth,
             unitHealth.Time, unitHealth.IsDead, unitHealth.CombatId);
         _unitHealths.Add(createdUnitHeath);
+    }
+
+    private void AddUnitPosition(UnitPositionData unitPosition)
+    {
+        var createdUnitPosition = UnitPosition.Create(unitPosition.GameId, unitPosition.X, unitPosition.Y,
+            unitPosition.Time, unitPosition.CombatId);
+        _unitPositions.Add(createdUnitPosition);
     }
 }

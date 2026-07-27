@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿namespace CombatAnalysis.CombatParserAPI.Models;
 
-public class Player
+public class CombatUnitModel
 {
     public string Id { get; set; } = string.Empty;
 
@@ -8,5 +8,7 @@ public class Player
 
     public string Username { get; set; } = string.Empty;
 
-    public int Faction { get; set; }
+    public string? CreatorGameId { get; set; }
+
+    public int CombatId { get; set; }
 }

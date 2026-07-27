@@ -18,7 +18,11 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<BossMap>? BossMap { get; }
 
+    public DbSet<CombatUnit>? CombatUnit { get; }
+
     public DbSet<UnitHealth>? UnitHealth { get; }
+
+    public DbSet<UnitPosition>? UnitPosition { get; }
 
     public DbSet<CombatPlayerPreAura>? CombatPlayerPreAura { get; }
 
@@ -29,8 +33,6 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
     public DbSet<CombatPlayerCast>? CombatPlayerCast { get; }
-
-    public DbSet<CombatPlayerPosition>? CombatPlayerPosition { get; }
 
     public DbSet<DamageDone>? DamageDone { get; }
 

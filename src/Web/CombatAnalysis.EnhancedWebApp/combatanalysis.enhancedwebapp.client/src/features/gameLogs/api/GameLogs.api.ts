@@ -6,7 +6,7 @@ import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
 import type { CombatAbilityModel } from '../types/CombatAbilityModel';
 import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
-import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
 import type { BossMapModel } from '../types/BossMapModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
 import type { CombatPlayerCastModel } from '../types/CombatPlayerCastModel';
@@ -21,9 +21,10 @@ export const GameLogsApi = createApi({
         'CombatLog',
         'Combat',
         'BossMap',
+        'UnitHealth',
+        'UnitPosition',
         'CombatPlayer',
         'CombatPlayerAura',
-        'CombatPlayerPosition',
         'CombatPlayerDeath',
         'CombatPlayerCast',
         'DamageDone',
@@ -34,7 +35,6 @@ export const GameLogsApi = createApi({
         'HealDoneGeneral',
         'ResourceRecovery',
         'ResourceRecoveryGeneral',
-        'UnitHealth',
     ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
@@ -135,15 +135,8 @@ export const GameLogsApi = createApi({
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }],
             keepUnusedDataFor: 0,
         }),
-        getCombatPlayerPositionsByCombatPlayerId: builder.query<CombatPlayerPositionModel[], number>({
-            query: combatPlayerId => `/CombatPlayerPosition/getByCombatPlayerId/${combatPlayerId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(combatPlayerPosition => ({ type: 'CombatPlayerPosition' as const, id: combatPlayerPosition.id })),
-                        { type: 'CombatPlayerPosition', id: 'LIST' },
-                    ]
-                    : [{ type: 'CombatPlayerPosition', id: 'LIST' }]
+        getUnitPositionsByCombatId: builder.query<Map<string, UnitPositionModel[]>, number>({
+            query: combatId => `/UnitPosition/getByCombatId/${combatId}`,
         }),
         getCombatPlayerCastsByCombatPlayerId: builder.query<CombatPlayerCastModel[], number>({
             query: combatPlayerId => `/CombatPlayerCast/getByCombatPlayerId/${combatPlayerId}`,
@@ -183,7 +176,7 @@ export const {
     useLazyGetCombatPlayerByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatByPreAuraQuery,
-    useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery,
+    useLazyGetUnitPositionsByCombatIdQuery,
     useLazyGetCombatPlayerCastsByCombatPlayerIdQuery,
     useLazyGetUnitsHealthByCombatIdQuery,
 } = GameLogsApi;

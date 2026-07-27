@@ -17,8 +17,6 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
     private readonly ILogger _logger = logger;
     private readonly IHttpClientHelper _httpHelper = httpHelper;
 
-    private readonly TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
-
     public List<Combat> Combats { get; private set; } = [];
 
     public List<CombatDetails> CombatDetails { get; private set; } = [];
@@ -215,7 +213,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         };
 
         var duration = combat.FinishDate - combat.StartDate;
-        if (duration < _minCombatDuration)
+        if (duration < CombatLogKeyWords.MinCombatDuration)
         {
             return;
         }
@@ -225,7 +223,9 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         var players = await GetCombatPlayers(combat, combatDetails);
         combat.CombatPlayers = [.. players];
 
+        combat.Units = [.. combatDetails.Units.Values];
         combat.UnitHealths = [.. combatDetails.UnitHealths.Values.SelectMany(x => x)];
+        combat.UnitPositions = [.. combatDetails.UnitPositions.Values.SelectMany(x => x)];
 
         CalculatingCommonCombatDetails(combat);
 
@@ -366,18 +366,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
         if (player == null)
         {
-            var username = GetUsernameByPlayerGameId(combatData, combatInfoList[1]);
-            var faction = int.Parse(combatInfoList[2]);
-
-            combatPlayer.Player.Id = Guid.NewGuid().ToString();
-            combatPlayer.Player.Username = username;
-            combatPlayer.Player.Faction = faction;
-
-            var newPlayer = await combatPlayer.Player.CreateAsync(_httpHelper, _logger);
-            if (newPlayer != null)
-            {
-                combatPlayer.Player = newPlayer;
-            }
+            await CreatePlayer(combatData, combatInfoList, combatPlayer);
         }
         else
         {
@@ -385,6 +374,21 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         }
 
         return combatPlayer;
+    }
+
+    private async Task CreatePlayer(string[] combatData, string[] combatInfoList, CombatPlayer combatPlayer)
+    {
+        var username = GetUsernameByPlayerGameId(combatData, combatInfoList[1]);
+        var faction = int.Parse(combatInfoList[2]);
+
+        combatPlayer.Player.Username = username;
+        combatPlayer.Player.Faction = faction;
+
+        var unit = await combatPlayer.Player.CreateAsync(_httpHelper, _logger);
+        if (unit != null)
+        {
+            combatPlayer.Player = unit;
+        }
     }
 
     private static void FillCombatPlayerData(CombatPlayer combatPlayer, CombatDetails combatDetails)
@@ -407,7 +411,6 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         combatPlayer.ResourceRecoveryGenerals.AddRange(combatDetails.ResourcesRecoveryGenerals[combatPlayer.Player.GameId]);
 
         combatPlayer.CombatPlayerDeathes.AddRange(combatDetails.Deathes[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.CombatPlayerPositions.AddRange(combatDetails.Positions[combatPlayer.Player.GameId].Select(x => x.Value));
     }
 
     private void ZoneName(string combatLog)

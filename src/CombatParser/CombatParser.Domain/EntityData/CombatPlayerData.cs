@@ -22,5 +22,5 @@ public record CombatPlayerData(
     IReadOnlyList<ResourceRecoveryData> ResourceRecoveries,
     IReadOnlyList<ResourceRecoveryGeneralData> ResourceRecoveryGenerals,
     IReadOnlyList<CombatPlayerDeathData> CombatPlayerDeaths,
-    IReadOnlyList<CombatPlayerPositionData> CombatPlayerPositions
+    IReadOnlyList<UnitPositionData> CombatPlayerPositions
     );

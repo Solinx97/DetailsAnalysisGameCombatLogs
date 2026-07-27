@@ -28,7 +28,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IGenericRepository<BestSpecializationScore, int>, GenericRepository<BestSpecializationScore, int>>();
         services.AddScoped<IGenericRepository<CombatPlayerStats, int>, GenericRepository<CombatPlayerStats, int>>();
         services.AddScoped<IGenericRepository<Player, string>, GenericRepository<Player, string>>();
-        services.AddScoped<IGenericRepository<CombatPlayerPosition, string>, GenericRepository<CombatPlayerPosition, string>>();
+        services.AddScoped<IGenericRepository<UnitPosition, string>, GenericRepository<UnitPosition, string>>();
 
         services.AddScoped<ICombatLogRepository, CombatLogRepository>();
         services.AddScoped<ICombatRepository, CombatRepository>();
@@ -39,7 +39,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISpecializationRepository, SpecializationRepository>();
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IBestSpecializationScoreRepository, BestSpecializationScoreRepository>();
-        services.AddScoped<ICombatPlayerPositionRepository, CombatPlayerPositionRepository>();
+        services.AddScoped<IUnitPositionRepository, UnitPositionRepository>();
 
         services.AddScoped<ICombatPlayerDataByTimeRepository<DamageDone>, CombatPlayerDataByTimeRepository<DamageDone>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<HealDone>, CombatPlayerDataByTimeRepository<HealDone>>();

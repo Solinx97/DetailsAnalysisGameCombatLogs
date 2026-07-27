@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
 import type { CombatModel } from '../types/CombatModel';
 import { useLazyGetCombatByIdQuery, useLazyGetBossMapByIdQuery } from '../api/GameLogs.api';
 import useTime from '@/shared/hooks/useTime';
@@ -22,11 +22,10 @@ interface WorldSize {
 }
 
 const useCombatReply = (
-    selectedPlayerId: number,
+    selectedGameId: string,
     canvasRef: RefObject<HTMLCanvasElement | null>,
-    combatPlayerPositions: CombatPlayerPositionModel[],
-    positions: Map<number, CombatPlayerPositionModel[]>,
-    colors: Map<number, string>
+    unitPositions: Map<string, UnitPositionModel[]>,
+    colors: Map<string, string>
 ) => {
     const zoom = 5;
     const otherElementsHeight = 250;
@@ -137,7 +136,7 @@ const useCombatReply = (
     useEffect(() => {
         const canvas = canvasRef.current;
 
-        if (!combatPlayerPositions || !canvas) {
+        if (!unitPositions || !canvas) {
             return;
         }
 
@@ -158,7 +157,7 @@ const useCombatReply = (
 
             ctx.save();
 
-            positions.forEach((position, key) => {
+            unitPositions.forEach((position, key) => {
                 const pos =
                     getPosition(
                         position
@@ -193,9 +192,9 @@ const useCombatReply = (
         return () => {
             cancelAnimationFrame(frameId);
         }
-    }, [combatPlayerPositions, selectedPlayerId, colors, view, instanceBounds]);
+    }, [unitPositions, selectedGameId, colors, view, instanceBounds]);
 
-    const getPosition = (positions: CombatPlayerPositionModel[]): Position => {
+    const getPosition = (positions: UnitPositionModel[]): Position => {
         if (positions.length === 0) {
             return { x: 1, y: 1 };
         }
@@ -262,7 +261,7 @@ const useCombatReply = (
         };
     }
 
-    const drawPlayer = (playerId: number, ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
+    const drawPlayer = (gameId: string, ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
         ctx.beginPath();
 
         ctx.arc(
@@ -278,7 +277,7 @@ const useCombatReply = (
 
         ctx.stroke();
 
-        if (playerId === selectedPlayerId) {
+        if (gameId === selectedGameId) {
             ctx.fillStyle = color;
 
             ctx.fill();

@@ -1,8 +1,8 @@
-export type CombatPlayerPositionModel = {
+export type UnitPositionModel = {
     id: string;
+    gameId: string;
     x: number;
     y: number;
     time: string;
-    combatPlayerId: number;
     combatId: number;
 }

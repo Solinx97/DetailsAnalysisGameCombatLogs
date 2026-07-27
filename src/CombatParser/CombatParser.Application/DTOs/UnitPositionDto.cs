@@ -1,8 +1,10 @@
-﻿namespace CombatParser.Application.DTOs.CombatPlayerData;
+﻿namespace CombatParser.Application.DTOs;
 
-public class CombatPlayerPositionDto
+public class UnitPositionDto
 {
     public string Id { get; set; } = string.Empty;
+
+    public string GameId { get; set; } = string.Empty;
 
     public double X { get; set; }
 
@@ -11,6 +13,4 @@ public class CombatPlayerPositionDto
     public TimeSpan Time { get; set; }
 
     public int CombatId { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

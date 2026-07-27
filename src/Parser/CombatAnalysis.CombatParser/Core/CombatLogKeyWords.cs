@@ -4,6 +4,8 @@ internal static class CombatLogKeyWords
 {
     #region Common
 
+    public static TimeSpan MinCombatDuration { get; } = TimeSpan.Parse("00:00:20");
+
     public static string CombatLogVersion { get; } = "COMBAT_LOG_VERSION";
 
     public static string EncounterStart { get; } = "ENCOUNTER_START";

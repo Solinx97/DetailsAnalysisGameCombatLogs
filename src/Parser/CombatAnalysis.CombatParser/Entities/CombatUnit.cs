@@ -1,12 +1,12 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class Player
+public class CombatUnit
 {
-    public string Id { get; set; } = string.Empty;
-
     public string GameId { get; set; } = string.Empty;
 
     public string Username { get; set; } = string.Empty;
 
-    public int Faction { get; set; }
+    public string? CreatorGameId { get; set; }
+
+    public int CombatId { get; set; }
 }

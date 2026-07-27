@@ -18,7 +18,6 @@ public class CombatPlayer : CombatDataBase
     private readonly List<ResourceRecovery> _resourceRecoveries = [];
     private readonly List<ResourceRecoveryGeneral> _resourceRecoveryGenerals = [];
     private readonly List<CombatPlayerDeath> _combatPlayerDeathes = [];
-    private readonly List<CombatPlayerPosition> _combatPlayerPositions = [];
 
     private CombatPlayer() { }
 
@@ -80,13 +79,11 @@ public class CombatPlayer : CombatDataBase
 
     public IReadOnlyCollection<CombatPlayerDeath> CombatPlayerDeathes => _combatPlayerDeathes.AsReadOnly();
 
-    public IReadOnlyCollection<CombatPlayerPosition> CombatPlayerPositions => _combatPlayerPositions.AsReadOnly();
-
     public static CombatPlayer Create(double averageItemLevel, int resourcesRecovery, int damageDone, int healDone, int damageTaken,
         string playerId, int combatId, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras, IReadOnlyList<CombatPlayerCastData> casts,
         IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals,
         IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
-        IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes, IReadOnlyCollection<CombatPlayerPositionData> combatPlayerPositions)
+        IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
     {
         ArgumentException.ThrowIfNullOrEmpty(playerId, nameof(playerId));
         ArgumentOutOfRangeException.ThrowIfNegative(averageItemLevel, nameof(averageItemLevel));
@@ -99,7 +96,7 @@ public class CombatPlayer : CombatDataBase
 
         AddCombatPlayerData(combatPlayer, stats, score, preAuras, auras, casts, damageDones, damageDoneGenerals, 
             healDones, healDoneGenerals, damageTakens, damageTakenGenerals, resourceRecoveries, 
-            resourceRecoveryGenerals, combatPlayerDeathes, combatPlayerPositions);
+            resourceRecoveryGenerals, combatPlayerDeathes);
 
         return combatPlayer;
     }
@@ -107,7 +104,7 @@ public class CombatPlayer : CombatDataBase
     private static void AddCombatPlayerData(CombatPlayer combatPlayer, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
         IReadOnlyList<CombatPlayerCastData> casts, IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals, 
         IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
-        IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes, IReadOnlyCollection<CombatPlayerPositionData> combatPlayerPositions)
+        IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
     {
         combatPlayer.AddStats(stats);
         combatPlayer.AddSpecializationScore(score);
@@ -170,11 +167,6 @@ public class CombatPlayer : CombatDataBase
         foreach (var combatPlayerDeath in combatPlayerDeathes)
         {
             combatPlayer.AddCombatPlayerDeath(combatPlayerDeath);
-        }
-
-        foreach (var combatPlayerPosition in combatPlayerPositions)
-        {
-            combatPlayer.AddCombatPlayerPosition(combatPlayerPosition);
         }
     }
 
@@ -262,12 +254,6 @@ public class CombatPlayer : CombatDataBase
     {
         var createdCombatPlayerDeath = new CombatPlayerDeath(death.Username, death.LastHitSpell, death.LastHitValue, death.Time, death.CombatPlayerId);
         _combatPlayerDeathes.Add(createdCombatPlayerDeath);
-    }
-
-    private void AddCombatPlayerPosition(CombatPlayerPositionData position)
-    {
-        var createdPosition = new CombatPlayerPosition(position.X, position.Y, position.Time, position.CombatPlayerId);
-        _combatPlayerPositions.Add(createdPosition);
     }
 
     private void AddStats(CombatPlayerStatsData stats)

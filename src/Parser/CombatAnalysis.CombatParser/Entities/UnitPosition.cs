@@ -1,16 +1,14 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class UnitHealth
+public class UnitPosition
 {
     public string GameId { get; set; } = string.Empty;
 
-    public int CurrentHealth { get; set; }
+    public double X { get; set; }
 
-    public int MaxHealth { get; set; }
+    public double Y { get; set; }
 
     public TimeSpan Time { get; set; }
-
-    public bool IsDead { get; set; }
 
     public int CombatId { get; set; }
 }

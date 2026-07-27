@@ -5,8 +5,8 @@ import useTime from '@/shared/hooks/useTime';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery, useLazyGetUnitsHealthByCombatIdQuery } from '../../api/GameLogs.api';
-import type { CombatPlayerPositionModel } from '../../types/CombatPlayerPositionModel';
+import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetUnitPositionsByCombatIdQuery, useLazyGetUnitsHealthByCombatIdQuery } from '../../api/GameLogs.api';
+import type { UnitPositionModel } from '../../types/UnitPositionModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import CombatReplyItem from './CombatReplyItem';
 import useCombatReply from '../../hooks/useCombatReply';
@@ -21,7 +21,7 @@ const CombatReply: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [colors, setColors] = useState<Map<number, string>>(new Map());
+    const [colors, setColors] = useState<Map<string, string>>(new Map());
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
         detailsType: 0,
@@ -33,22 +33,21 @@ const CombatReply: React.FC = () => {
     });
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [unitsHealth, setUnitsHealth] = useState<UnitHealthModel[]>([]);
-    const [combatPlayerPositions, setCombatPlayerPositions] = useState<CombatPlayerPositionModel[]>([]);
-    const [positions, setPositions] = useState<Map<number, CombatPlayerPositionModel[]>>(new Map());
+    const [unitPositions, setUnitPositions] = useState<Map<string, UnitPositionModel[]>>(new Map());
 
     const [playing, setPlaying] = useState(false);
-    const [selectedPlayerId, setSelectedPlayerId] = useState(0);
+    const [selectedGameId, setSelectedGameId] = useState<string>("");
 
     const playingRef = useRef(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const lastFrameRef = useRef<number>(0);
 
-    const { view, currentTime, setCurrentTime } = useCombatReply(selectedPlayerId, canvasRef, combatPlayerPositions, positions, colors);
+    const { view, currentTime, setCurrentTime } = useCombatReply(selectedGameId, canvasRef, unitPositions, colors);
     const { formatSeconds, timeToMs } = useTime();
 
     const [getCombatPlayers] = useLazyGetCombatPlayersByCombatIdQuery();
     const [getUnitsHealth] = useLazyGetUnitsHealthByCombatIdQuery();
-    const [getCombatPlayerPositions] = useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery();
+    const [getUnitPositions] = useLazyGetUnitPositionsByCombatIdQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -110,57 +109,35 @@ const CombatReply: React.FC = () => {
     }, [details]);
 
     useEffect(() => {
-        if (positions.size === 0) {
+        if (unitPositions.size === 0) {
             return;
         }
 
-        setColors(getRandomColors(positions));
-    }, [positions]);
+        const randomColors = getRandomColors(unitPositions);
+        setColors(randomColors);
+    }, [unitPositions]);
 
     useEffect(() => {
-        if (combatPlayers.length < 1) {
+        if (details.id < 1) {
             return;
         }
 
         const loadData = async () => {
             try {
-                const [combatPlayerPositions] = await Promise.all([
-                    getCombatPlayerPositions(combatPlayers[0].id).unwrap(),
+                const [unitPositions] = await Promise.all([
+                    getUnitPositions(details.id).unwrap(),
                 ]);
 
-                const positions = sortByTime(combatPlayerPositions);
-                setCombatPlayerPositions(positions);
+                const unitPositionsMap = new Map(Object.entries(unitPositions));
+                const positions = sortByTime(unitPositionsMap);
+                setUnitPositions(positions);
             } catch (e) {
                 console.error(e);
             }
         };
 
         loadData();
-    }, [combatPlayers]);
-
-    useEffect(() => {
-        if (combatPlayers.length < 1) {
-            return;
-        }
-
-        const loadData = async (combatPlayerId: number) => {
-            try {
-                const [combatPlayerPositions] = await Promise.all([
-                    getCombatPlayerPositions(combatPlayerId).unwrap(),
-                ]);
-
-                const sortedPositions = sortByTime(combatPlayerPositions);
-                positions.set(combatPlayerId, sortedPositions);
-                setPositions(new Map(positions));
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        for (const player of combatPlayers) {
-            loadData(player.id);
-        }
-    }, [combatPlayers]);
+    }, [details]);
 
     useEffect(() => {
         if (!playing) {
@@ -204,23 +181,31 @@ const CombatReply: React.FC = () => {
         return () => {
             cancelAnimationFrame(frameId);
         }
-    }, [playing, combatPlayerPositions]);
+    }, [playing, unitPositions]);
 
     useEffect(() => {
         playingRef.current = playing;
     }, [playing]);
 
-    const sortByTime = (combatPlayerPositions: CombatPlayerPositionModel[]): CombatPlayerPositionModel[] => {
-        const sortedPositions = [...combatPlayerPositions].sort(
-            (a, b) =>
-                timeToMs(a.time) - timeToMs(b.time)
-        );
+    const sortByTime = (combatPlayerPositions: Map<string, UnitPositionModel[]>): Map<string, UnitPositionModel[]> => {
+        if (combatPlayerPositions.size === 0) {
+            return combatPlayerPositions;
+        }
 
-        return sortedPositions;
+        combatPlayerPositions.forEach((positions, key) => {
+            combatPlayerPositions.set(
+                key,
+                [...positions].sort(
+                    (a, b) => timeToMs(a.time) - timeToMs(b.time)
+                )
+            );
+        });
+
+        return combatPlayerPositions;
     }
 
-    const getRandomColors = (positions: Map<number, CombatPlayerPositionModel[]>) => {
-        const colors = new Map<number, string>();
+    const getRandomColors = (positions: Map<string, UnitPositionModel[]>) => {
+        const colors = new Map<string, string>();
 
         positions.forEach((_, key) => {
             colors.set(key, `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`);
@@ -246,7 +231,7 @@ const CombatReply: React.FC = () => {
                     </div>
                 </div>
             </div>
-            {(combatPlayerPositions !== undefined && combatPlayerPositions.length > 0) &&
+            {(unitPositions !== undefined && unitPositions.size > 0) &&
                 <>
                     <canvas
                         ref={canvasRef}
@@ -285,11 +270,11 @@ const CombatReply: React.FC = () => {
                             <li className="players__player" key={item.id}>
                                 <CombatReplyItem
                                     combatPlayer={item}
-                                    unitsHealth={unitsHealth.filter(x => x.gamePlayerId === item.player.gameId)}
-                                    selectedPlayerId={selectedPlayerId}
-                                    setSelectedPlayerId={setSelectedPlayerId}
+                                    unitsHealth={unitsHealth.filter(x => x.gameId === item.player.gameId)}
+                                    selectedPlayerId={selectedGameId}
+                                    setSelectedPlayerId={setSelectedGameId}
                                     currentTime={currentTime}
-                                    color={colors.get(item.id) ?? "#000000"}
+                                    color={colors.get(item.player.gameId) ?? "#000000"}
                                 />
                             </li>
                         ))
