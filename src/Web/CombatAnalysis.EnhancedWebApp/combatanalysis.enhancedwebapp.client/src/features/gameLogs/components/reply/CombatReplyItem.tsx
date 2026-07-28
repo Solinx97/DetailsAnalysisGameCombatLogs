@@ -1,6 +1,7 @@
+import useNumber from '@/shared/hooks/useNumber';
+import useTime from '@/shared/hooks/useTime';
 import { faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import useTime from '@/shared/hooks/useTime';
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import type { CombatPlayerCastModel } from '../../types/CombatPlayerCastModel';
 import { useLazyGetCombatPlayerCastsByCombatPlayerIdQuery } from '../../api/GameLogs.api';
@@ -8,8 +9,10 @@ import CastBar from './CastBar';
 import InstantCast from './InstantCast';
 import type { UnitHealthModel } from '../../types/UnitHealthModel';
 import type { CombatUnitModel } from '../../types/CombatUnitModel';
+import type { UnitPositionModel } from '../../types/UnitPositionModel';
 
 interface CombatReplyItemProps {
+    unitPositions: UnitPositionModel[] | undefined;
     combatPlayerId: number;
     unit: CombatUnitModel;
     unitsHealth: UnitHealthModel[];
@@ -19,7 +22,7 @@ interface CombatReplyItemProps {
     color: string;
 }
 
-const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayerId, unit, unitsHealth, selectedPlayerId, setSelectedPlayerId, currentTime, color }) => {
+const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitPositions, combatPlayerId, unit, unitsHealth, selectedPlayerId, setSelectedPlayerId, currentTime, color }) => {
     const INSTANT_CAST_DURATION = 500;
 
     const [combatPlayerCasts, setCombatPlayerCasts] = useState<CombatPlayerCastModel[]>([]);
@@ -27,7 +30,8 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayerId, unit,
     const [maxHealth, setMaxHealth] = useState(100);
 
     const { timeToMs } = useTime();
-
+    const { formatNumber } = useNumber();
+    
     const [getCombatPlayerCasts] = useLazyGetCombatPlayerCastsByCombatPlayerIdQuery();
 
     useEffect(() => {
@@ -92,6 +96,14 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayerId, unit,
             .filter(health => timeToMs(health.time) <= currentTime).at(-1);
     }, [currentTime, unitsHealth]);
 
+    const currentHealthProcentage = useMemo(() => {
+        if (currentHealth === 0 || maxHealth === 0) {
+            return 0;
+        }
+
+        return (currentHealth / maxHealth) * 100;
+    }, [currentHealth, maxHealth]);
+
     useEffect(() => {
         if (health === undefined) {
             return;
@@ -120,6 +132,11 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayerId, unit,
         return fullname;
     }
 
+    if (!unitPositions || unitPositions.length === 0 
+        || unitPositions[0].timeMs > currentTime || unitPositions.at(-1)!.timeMs < currentTime) {
+        return (<></>);
+    }
+
     return (
         <>
             <div className={`username ${selectedPlayerId === unit.gameId ? "selected" : ""}`} style={{ color: color }}
@@ -132,7 +149,7 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ combatPlayerId, unit,
                 <div>{removeServerName(unit.username)}</div>
             </div>
             <div className={`health ${health?.isDead ? 'dead' : ''}`}>
-                <div className="health__current" style={{ width: `${currentHealth}%` }}>{currentHealth}/{maxHealth}</div>
+                <div className="health__current" style={{ width: `${currentHealthProcentage}%` }}>{formatNumber(currentHealth)}/{formatNumber(maxHealth)}</div>
             </div>
             <CastBar
                 spell={currentNotImmediatlyCast?.spell}

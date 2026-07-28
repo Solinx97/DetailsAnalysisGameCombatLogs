@@ -2,5 +2,8 @@
     "Combats": "Combats",
     "SelectCombat": "Select combat",
     "Play": "Play",
-    "Pause": "Pause"
+    "Pause": "Pause",
+    "Players": "Players",
+    "PlayerCreatures": "Player creatures",
+    "Enemy": "Enemy"
 }

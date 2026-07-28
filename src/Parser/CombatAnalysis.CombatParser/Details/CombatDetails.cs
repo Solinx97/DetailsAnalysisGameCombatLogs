@@ -40,13 +40,6 @@ public class CombatDetails(ILogger logger)
     private readonly string[] _positions =
     [
         CombatLogKeyWords.SpellCastSuccess,
-        CombatLogKeyWords.SwingDamageLanded,
-        CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SpellPeriodicDamage,
-        CombatLogKeyWords.RangeDamage,
-        CombatLogKeyWords.SpellHeal,
-        CombatLogKeyWords.SpellEnergize,
-        CombatLogKeyWords.SpellPeriodicEnergize,
     ];
     private readonly string[] _healVariations =
     [
@@ -170,8 +163,8 @@ public class CombatDetails(ILogger logger)
         var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
         var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
-        if (!hasSummon && !hasCasts && !hasPositions && !hasDieds && !hasAuras 
-            && !hasHeal && !hasDamage && !hasAbsorb && !hasResources)
+        if (!hasSummon && !hasCasts && !hasPositions && !hasDieds 
+            && !hasAuras && !hasHeal && !hasDamage && !hasAbsorb && !hasResources)
         {
             return;
         }
@@ -238,11 +231,7 @@ public class CombatDetails(ILogger logger)
 
     private void CalculatePositions(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
-        var position = combatDetailsManager.GetPosition(splitCombatData, UnitPositions, Units);
-        if (position != null && UnitPositions.TryGetValue(position.GameId, out var collection))
-        {
-            collection.Add(position);
-        }
+        combatDetailsManager.GetPosition(splitCombatData, UnitPositions, Units);
     }
 
     private void CalculateDamageTaken(CombatDetailsManager combatDetailsManager, string[] splitCombatData)

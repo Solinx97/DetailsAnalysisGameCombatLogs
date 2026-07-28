@@ -117,16 +117,19 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         }
     }
 
-    public UnitPosition? GetPosition(string[] combatDataLine, ConcurrentDictionary<string, List<UnitPosition>> positions, ConcurrentDictionary<string, CombatUnit> units)
+    public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, List<UnitPosition>> positions, ConcurrentDictionary<string, CombatUnit> units)
     {
         if (combatDataLine.Length <= 25)
         {
-            return null;
+            return;
         }
 
-        if (!positions.TryGetValue(combatDataLine[2], out var _))
+        var positionOwnerId = combatDataLine[2];
+        var positionOwner = combatDataLine[3];
+        if (!positions.TryGetValue(positionOwnerId, out var collection))
         {
-            positions.TryAdd(combatDataLine[2], []);
+            collection = [];
+            positions.TryAdd(positionOwnerId, collection);
         }
 
         var pos1Index = 26;
@@ -142,27 +145,25 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         if (double.TryParse(combatDataLine[pos1Index], out var positionX)
             && double.TryParse(combatDataLine[pos2Index], out var positionY))
         {
-            if (!units.TryGetValue(combatDataLine[2], out var _))
+            if (!units.TryGetValue(positionOwnerId, out var _))
             {
-                units.TryAdd(combatDataLine[2], new CombatUnit
+                units.TryAdd(positionOwnerId, new CombatUnit
                 {
-                    GameId = combatDataLine[2],
-                    Username = combatDataLine[3],
+                    GameId = positionOwnerId,
+                    Username = positionOwner,
                 });
             }
 
             var position = new UnitPosition
             {
-                GameId = combatDataLine[2],
+                GameId = positionOwnerId,
                 X = positionX,
                 Y = positionY,
                 Time = GetTimeFromStart(combatDataLine[0])
             };
 
-            return position;
+            collection.Add(position);
         }
-
-        return null;
     }
 
     public (string, DamageDone?) GetPlayerDamageDone(string[] combatDataLine)

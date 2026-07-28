@@ -38,7 +38,7 @@ const CombatReply: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const lastFrameRef = useRef<number>(0);
 
-    const { view, currentTime, setCurrentTime } = useCombatReply(selectedGameId, canvasRef, unitPositions, colors);
+    const { view, currentTime, setCurrentTime, stop } = useCombatReply(selectedGameId, canvasRef, unitPositions, colors);
     const { formatSeconds, timeToMs } = useTime();
 
     const [getUnitPositions] = useLazyGetUnitPositionsByCombatIdQuery();
@@ -160,20 +160,17 @@ const CombatReply: React.FC = () => {
     }, [playing]);
 
     const sortByTime = (combatPlayerPositions: Map<string, UnitPositionModel[]>): Map<string, UnitPositionModel[]> => {
-        if (combatPlayerPositions.size === 0) {
-            return combatPlayerPositions;
-        }
-
-        combatPlayerPositions.forEach((positions, key) => {
-            combatPlayerPositions.set(
+        return new Map(
+            [...combatPlayerPositions.entries()].map(([key, positions]) => [
                 key,
-                [...positions].sort(
-                    (a, b) => timeToMs(a.time) - timeToMs(b.time)
-                )
-            );
-        });
-
-        return combatPlayerPositions;
+                positions
+                    .map(p => ({
+                        ...p,
+                        timeMs: timeToMs(p.time)
+                    }))
+                    .sort((a, b) => a.timeMs - b.timeMs)
+            ])
+        );
     }
 
     const getRandomColors = (positions: Map<string, UnitPositionModel[]>) => {
@@ -186,10 +183,18 @@ const CombatReply: React.FC = () => {
         return colors;
     }
 
+    const selectOtherCombat = () => {
+        setPlaying(false);
+        canvasRef.current = null;
+        stop();
+
+        navigate(`/general-analysis?id=${details.combatLogId}`);
+    }
+
     return (
         <div className="reply">
             <div className="reply__navigate">
-                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}`)}>
+                <div className="btn-shadow select-combat" onClick={selectOtherCombat}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />
@@ -238,6 +243,8 @@ const CombatReply: React.FC = () => {
                         </div>
                     </div>
                     <CombatReplyUnits
+                        t={t}
+                        unitPositions={unitPositions}
                         details={details}
                         selectedGameId={selectedGameId}
                         setSelectedGameId={setSelectedGameId}

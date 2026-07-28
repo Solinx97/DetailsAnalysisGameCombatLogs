@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { memo, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import type { CombatUnitModel } from '../../types/CombatUnitModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import type { UnitHealthModel } from '../../types/UnitHealthModel';
@@ -8,10 +8,13 @@ import {
     useLazyGetCombatUnitsByCombatIdQuery, useLazyGetCombatPlayersByCombatIdQuery,
     useLazyGetUnitsHealthByCombatIdQuery
 } from '../../api/GameLogs.api';
+import type { UnitPositionModel } from '../../types/UnitPositionModel';
 
 import './CombatReplyUnits.scss';
 
 interface CombatReplyUnitsProps {
+    t: (key: string) => string;
+    unitPositions: Map<string, UnitPositionModel[]>;
     details: CombatDetailsModel;
     selectedGameId: string;
     setSelectedGameId: Dispatch<SetStateAction<string>>;
@@ -19,7 +22,7 @@ interface CombatReplyUnitsProps {
     colors: Map<string, string>;
 }
 
-const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ details, selectedGameId, setSelectedGameId, currentTime, colors }) => {
+const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ t, unitPositions, details, selectedGameId, setSelectedGameId, currentTime, colors }) => {
     const [combatUnits, setCombatUnits] = useState<CombatUnitModel[]>([]);
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [unitsHealth, setUnitsHealth] = useState<UnitHealthModel[]>([]);
@@ -57,23 +60,24 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ details, selectedGa
     }, [combatUnits]);
 
     const playerCreatureUnits = useMemo(() => {
-        return combatUnits.filter(x => x.gameId.startsWith("Pet") || (x.gameId.startsWith("Creature"))
-            && x.creatorGameId && x.creatorGameId.startsWith("Player") && x.unitType && x.unitType.startsWith("0x20"));
+        return combatUnits.filter(x => (x.gameId.startsWith("Creature") || x.gameId.startsWith("Pet"))
+            && ((!x.creatorGameId && x.gameId.startsWith("Pet")) || x.creatorGameId && x.creatorGameId.startsWith("Player")));
     }, [combatUnits]);
 
     const enemyUnits = useMemo(() => {
-        return combatUnits.filter(x => (x.gameId.startsWith("Vehicle") || x.gameId.startsWith("Pet") || x.gameId.startsWith("Creature"))
-            && (x.creatorGameId && !x.creatorGameId.startsWith("Player") || !x.creatorGameId));
+        return combatUnits.filter(x => !x.gameId.startsWith("Player") && !x.gameId.startsWith("Pet")
+            && (!x.creatorGameId || (x.creatorGameId && !x.creatorGameId.startsWith("Player") && x.unitType && x.unitType.startsWith("0x20"))));
     }, [combatUnits]);
 
     return (
         <ul className="units">
             <li className="units__category">
-                <div className="title">Players</div>
+                <div className="title">{t("Players")}</div>
                 <ul className="content">
                     {playerUnits.map((item) => (
                         <li className="player" key={item.gameId}>
                             <CombatReplyItem
+                                unitPositions={unitPositions.get(item.gameId)}
                                 combatPlayerId={combatPlayers.find(x => x.player.gameId === item.gameId)?.id ?? 0}
                                 unit={item}
                                 unitsHealth={unitsHealth.filter(x => x.gameId === item.gameId)}
@@ -88,11 +92,12 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ details, selectedGa
                 </ul>
             </li>
             <li className="units__category">
-                <div className="title">Players creators</div>
+                <div className="title">{t("PlayerCreatures")}</div>
                 <ul className="content">
                     {playerCreatureUnits.map((item) => (
                         <li className="player" key={item.gameId}>
                             <CombatReplyItem
+                                unitPositions={unitPositions.get(item.gameId)}
                                 combatPlayerId={combatPlayers.find(x => x.player.gameId === item.gameId)?.id ?? 0}
                                 unit={item}
                                 unitsHealth={unitsHealth.filter(x => x.gameId === item.gameId)}
@@ -107,11 +112,12 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ details, selectedGa
                 </ul>
             </li>
             <li className="units__category">
-                <div className="title">Enemy</div>
+                <div className="title">{t("Enemy")}</div>
                 <ul className="content">
                     {enemyUnits.map((item) => (
                         <li className="player" key={item.gameId}>
                             <CombatReplyItem
+                                unitPositions={unitPositions.get(item.gameId)}
                                 combatPlayerId={combatPlayers.find(x => x.player.gameId === item.gameId)?.id ?? 0}
                                 unit={item}
                                 unitsHealth={unitsHealth.filter(x => x.gameId === item.gameId)}
@@ -129,4 +135,4 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ details, selectedGa
     );
 }
 
-export default CombatReplyUnits;
+export default memo(CombatReplyUnits);

@@ -5,4 +5,5 @@ export type UnitPositionModel = {
     y: number;
     time: string;
     combatId: number;
+    timeMs: number;
 }

@@ -1,3 +1,4 @@
+import useNumber from '@/shared/hooks/useNumber';
 import {
     ResponsiveContainer,
     BarChart,
@@ -21,27 +22,7 @@ interface CombatPlayerGenericChartProps {
 const CombatPlayerGenericChart: React.FC<CombatPlayerGenericChartProps> = ({ combatPlayerId, name, useGetChartQuery }) => {
     const { data, isLoading } = useGetChartQuery(combatPlayerId);
 
-    const formatNumber = (value: number | string | undefined): string => {
-        if (value == null) {
-            return "";
-        }
-
-        const num = Number(value);
-
-        if (num >= 1_000_000_000) {
-            return `${(num / 1_000_000_000).toFixed(1)}B`;
-        }
-
-        if (num >= 1_000_000) {
-            return `${(num / 1_000_000).toFixed(1)}M`;
-        }
-
-        if (num >= 1_000) {
-            return `${(num / 1_000).toFixed(1)}K`;
-        }
-
-        return num.toString();
-    }
+    const { formatNumber } = useNumber();
 
     if (isLoading) {
         return (<div>Loading...</div>);
