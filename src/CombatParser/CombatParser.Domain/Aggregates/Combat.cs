@@ -9,8 +9,9 @@ public class Combat
 {
     public const int DUNGEON_NAME_MAX_LENGTH = 128;
 
-    private readonly List<CombatUnit> _units = [];
     private readonly List<CombatPlayer> _players = [];
+    private readonly List<CombatUnit> _units = [];
+    private readonly List<UnitCast> _unitCasts = [];
     private readonly List<UnitHealth> _unitHealths = [];
     private readonly List<UnitPosition> _unitPositions = [];
 
@@ -67,9 +68,11 @@ public class Combat
 
     public int CombatLogId { get; private set; }
 
+    public IEnumerable<CombatPlayer> CombatPlayers => _players;
+
     public IEnumerable<CombatUnit> Units => _units;
 
-    public IEnumerable<CombatPlayer> CombatPlayers => _players;
+    public IEnumerable<UnitCast> UnitCasts => _unitCasts;
 
     public IEnumerable<UnitHealth> UnitHeaths => _unitHealths;
 
@@ -77,7 +80,8 @@ public class Combat
 
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatUnitData> units, IReadOnlyList<UnitHealthData> unitHeaths, IReadOnlyList<UnitPositionData> unitPositions)
+        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatUnitData> units, IReadOnlyList<UnitCastData> unitCasts, IReadOnlyList<UnitHealthData> unitHeaths, 
+        IReadOnlyList<UnitPositionData> unitPositions)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
@@ -103,6 +107,11 @@ public class Combat
             combat.AddUnit(unit);
         }
 
+        foreach (var unitCast in unitCasts)
+        {
+            combat.AddCast(unitCast);
+        }
+
         foreach (var unitHeath in unitHeaths)
         {
             combat.AddUnitHealth(unitHeath);
@@ -119,7 +128,7 @@ public class Combat
     private void AddCombatPlayer(CombatPlayerData player)
     {
         var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
-            player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.Casts, player.DamageDones,
+            player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.DamageDones,
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals, player.DamageTakens, player.DamageTakenGenerals,
             player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths);
         _players.Add(createdPlayer);
@@ -131,16 +140,23 @@ public class Combat
         _units.Add(createdUnit);
     }
 
+    private void AddCast(UnitCastData cast)
+    {
+        var createdCast = UnitCast.Create(cast.CreatorGameId, cast.GameSpellId, cast.Spell, cast.Time, cast.FinishTime,
+            cast.TargetGameId, cast.IsImmediatly, cast.IsSuccess, cast.CombatId);
+        _unitCasts.Add(createdCast);
+    }
+
     private void AddUnitHealth(UnitHealthData unitHealth)
     {
-        var createdUnitHeath = UnitHealth.Create(unitHealth.GameId, unitHealth.CurrentHealth, unitHealth.MaxHealth,
+        var createdUnitHeath = UnitHealth.Create(unitHealth.CreatorGameId, unitHealth.CurrentHealth, unitHealth.MaxHealth,
             unitHealth.Time, unitHealth.IsDead, unitHealth.CombatId);
         _unitHealths.Add(createdUnitHeath);
     }
 
     private void AddUnitPosition(UnitPositionData unitPosition)
     {
-        var createdUnitPosition = UnitPosition.Create(unitPosition.GameId, unitPosition.X, unitPosition.Y,
+        var createdUnitPosition = UnitPosition.Create(unitPosition.CreatorGameId, unitPosition.X, unitPosition.Y,
             unitPosition.Time, unitPosition.CombatId);
         _unitPositions.Add(createdUnitPosition);
     }

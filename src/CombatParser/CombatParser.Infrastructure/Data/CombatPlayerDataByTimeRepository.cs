@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CombatParser.Infrastructure.Data;
 
 internal class CombatPlayerDataByTimeRepository<TModel>(CombatParserContextOne context) : ICombatPlayerDataByTimeRepository<TModel>
-    where TModel : class, ICombatPlayerRefs, ICombatTime
+    where TModel : class, ICombatPlayerRefs, ITime
 {
     private readonly CombatParserContextOne _context = context;
 

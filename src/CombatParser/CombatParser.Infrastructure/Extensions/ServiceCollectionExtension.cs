@@ -39,7 +39,10 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISpecializationRepository, SpecializationRepository>();
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IBestSpecializationScoreRepository, BestSpecializationScoreRepository>();
-        services.AddScoped<IUnitPositionRepository, UnitPositionRepository>();
+
+        services.AddScoped<IUnitRepository<UnitCast>, UnitRepository<UnitCast>>();
+        services.AddScoped<IUnitRepository<UnitHealth>, UnitRepository<UnitHealth>>();
+        services.AddScoped<IUnitRepository<UnitPosition>, UnitRepository<UnitPosition>>();
 
         services.AddScoped<ICombatPlayerDataByTimeRepository<DamageDone>, CombatPlayerDataByTimeRepository<DamageDone>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<HealDone>, CombatPlayerDataByTimeRepository<HealDone>>();
@@ -49,7 +52,6 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<ICombatPlayerInfoRepository<SpecializationScore>, CombatPlayerInfoRepository<SpecializationScore>>();
         services.AddScoped<ICombatPlayerInfoRepository<CombatPlayerStats>, CombatPlayerInfoRepository<CombatPlayerStats>>();
-        services.AddScoped<ICombatPlayerInfoRepository<CombatPlayerCast>, CombatPlayerInfoRepository<CombatPlayerCast>>();
         services.AddScoped<ICombatPlayerInfoRepository<DamageDoneGeneral>, CombatPlayerInfoRepository<DamageDoneGeneral>>();
         services.AddScoped<ICombatPlayerInfoRepository<HealDoneGeneral>, CombatPlayerInfoRepository<HealDoneGeneral>>();
         services.AddScoped<ICombatPlayerInfoRepository<DamageTakenGeneral>, CombatPlayerInfoRepository<DamageTakenGeneral>>();
@@ -68,6 +70,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddScoped<ICombatDataRepository<UnitHealth>, CombatDataRepository<UnitHealth>>();
+        services.AddScoped<ICombatDataRepository<UnitCast>, CombatDataRepository<UnitCast>>();
         services.AddScoped<ICombatDataRepository<CombatUnit>, CombatDataRepository<CombatUnit>>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

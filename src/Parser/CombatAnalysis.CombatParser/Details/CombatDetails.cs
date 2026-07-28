@@ -74,13 +74,13 @@ public class CombatDetails(ILogger logger)
 
     public ConcurrentDictionary<string, CombatUnit> Units { get; private set; } = [];
 
+    public ConcurrentDictionary<string, List<UnitCast>> UnitCasts { get; private set; } = [];
+
     public ConcurrentDictionary<string, List<UnitHealth>> UnitHealths { get; private set; } = [];
 
     public ConcurrentDictionary<string, List<UnitPosition>> UnitPositions { get; private set; } = [];
 
     public ConcurrentDictionary<string, List<CombatPlayerAura>> Auras { get; private set; } = [];
-
-    public ConcurrentDictionary<string, List<CombatPlayerCast>> Casts { get; private set; } = [];
 
     public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> Deathes { get; private set; } = [];
 
@@ -141,7 +141,7 @@ public class CombatDetails(ILogger logger)
         UnitHealths.TryAdd(playersd, []);
         UnitPositions.TryAdd(playersd, []);
         Deathes.TryAdd(playersd, []);
-        Casts.TryAdd(playersd, []);
+        UnitCasts.TryAdd(playersd, []);
         Auras.TryAdd(playersd, []);
 
         DamageDones.TryAdd(playersd, []);
@@ -218,7 +218,7 @@ public class CombatDetails(ILogger logger)
         var unitHealth = isDied 
             ? combatDetailsManager.GetUnitDeathHealth(splitCombatData, UnitHealths) 
             : combatDetailsManager.GetUnitHealth(splitCombatData, UnitHealths);
-        if (unitHealth != null && UnitHealths.TryGetValue(unitHealth.GameId, out var collection))
+        if (unitHealth != null && UnitHealths.TryGetValue(unitHealth.CreatorGameId, out var collection))
         {
             collection.Add(unitHealth);
         }
@@ -226,7 +226,7 @@ public class CombatDetails(ILogger logger)
 
     private void CalculateCasts(CombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
-        combatDetailsManager.GetCast(splitCombatData, Casts);
+        combatDetailsManager.GetCasts(splitCombatData, UnitCasts);
     }
 
     private void CalculatePositions(CombatDetailsManager combatDetailsManager, string[] splitCombatData)

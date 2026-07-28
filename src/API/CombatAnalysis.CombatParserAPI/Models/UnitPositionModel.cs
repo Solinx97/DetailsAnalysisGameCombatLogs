@@ -6,7 +6,8 @@ public class UnitPositionModel
 {
     public string Id { get; set; } = string.Empty;
 
-    public string GameId { get; set; } = string.Empty;
+    [Required]
+    public string CreatorGameId { get; set; } = string.Empty;
 
     public double X { get; set; }
 

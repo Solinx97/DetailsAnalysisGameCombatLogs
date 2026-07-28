@@ -1,13 +1,13 @@
 ﻿namespace CombatParser.Domain.EntityData;
 
-public record CombatPlayerCastData(
+public record UnitCastData(
     int GameSpellId,
     string Spell,
-    TimeSpan StartTime,
+    TimeSpan Time,
     TimeSpan FinishTime,
-    string Creator,
-    string Target,
+    string CreatorGameId,
+    string? TargetGameId,
     bool IsImmediatly,
     bool IsSuccess,
-    int CombatPlayerId
+    int CombatId
     );

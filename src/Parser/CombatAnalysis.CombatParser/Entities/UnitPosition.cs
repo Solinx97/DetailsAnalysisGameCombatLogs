@@ -2,7 +2,7 @@
 
 public class UnitPosition
 {
-    public string GameId { get; set; } = string.Empty;
+    public string CreatorGameId { get; set; } = string.Empty;
 
     public double X { get; set; }
 

@@ -24,6 +24,7 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
         var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);
 
         await _context.BulkInsertCombatDataAsync(combat, c => c.Units, cancellationToken);
+        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitCasts, cancellationToken);
         await _context.BulkInsertCombatDataAsync(combat, c => c.UnitHeaths, cancellationToken);
         await _context.BulkInsertCombatDataAsync(combat, c => c.UnitPositions, cancellationToken);
 
@@ -32,7 +33,6 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
 
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.PreAuras, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.Auras, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.Casts, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDones, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDoneGenerals, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDones, cancellationToken);

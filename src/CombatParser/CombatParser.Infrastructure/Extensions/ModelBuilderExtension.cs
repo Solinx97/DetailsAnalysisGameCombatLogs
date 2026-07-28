@@ -56,9 +56,26 @@ internal static class ModelBuilderExtension
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<UnitCast>(uc =>
+        {
+            uc.Property(p => p.Spell)
+                .HasMaxLength(UnitCast.SPELL_MAX_LENGTH);
+
+            uc.Property(p => p.CreatorGameId)
+                .HasMaxLength(UnitCast.GAME_MAX_LENGTH);
+
+            uc.Property(p => p.TargetGameId)
+                .HasMaxLength(UnitCast.GAME_MAX_LENGTH);
+
+            uc.HasOne(uh => uh.Combat)
+                .WithMany(c => c.UnitCasts)
+                .HasForeignKey(uh => uh.CombatId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<UnitHealth>(uh =>
         {
-            uh.Property(uh => uh.GameId)
+            uh.Property(uh => uh.CreatorGameId)
                 .HasMaxLength(UnitHealth.GAMEID_MAX_LENGTH);
 
             uh.HasOne(uh => uh.Combat)
@@ -69,7 +86,7 @@ internal static class ModelBuilderExtension
 
         modelBuilder.Entity<UnitPosition>(uh =>
         {
-            uh.Property(uh => uh.GameId)
+            uh.Property(uh => uh.CreatorGameId)
                 .HasMaxLength(UnitPosition.GAMEID_MAX_LENGTH);
 
             uh.HasOne(uh => uh.Combat)
@@ -214,23 +231,6 @@ internal static class ModelBuilderExtension
             cpa.HasOne(a => a.CombatPlayer)
                 .WithMany(cp => cp.Auras)
                 .HasForeignKey(a => a.CombatPlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<CombatPlayerCast>(dd =>
-        {
-            dd.Property(p => p.Spell)
-                .HasMaxLength(CombatPlayerCast.SPELL_MAX_LENGTH);
-
-            dd.Property(p => p.Creator)
-                .HasMaxLength(CombatPlayerCast.CREATOR_MAX_LENGTH);
-
-            dd.Property(p => p.Target)
-                .HasMaxLength(CombatPlayerCast.TARGET_MAX_LENGTH);
-
-            dd.HasOne(cpc => cpc.CombatPlayer)
-                .WithMany(cp => cp.Casts)
-                .HasForeignKey(cpc => cpc.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

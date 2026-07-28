@@ -1,7 +1,7 @@
 ﻿namespace CombatParser.Domain.EntityData;
 
 public record UnitPositionData(
-    string GameId,
+    string CreatorGameId,
     int X, 
     int Y,
     TimeSpan Time,

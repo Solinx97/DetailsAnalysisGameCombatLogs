@@ -36,7 +36,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
         var health = new UnitHealth
         {
-            GameId = combatDataLine[6],
+            CreatorGameId = combatDataLine[6],
             CurrentHealth = 0,
             MaxHealth = 0,
             Time = GetTimeFromStart(combatDataLine[0]),
@@ -62,7 +62,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         var time = GetTimeFromStart(combatDataLine[0]);
         var health = new UnitHealth
         {
-            GameId = creatorId,
+            CreatorGameId = creatorId,
             CurrentHealth = currentHealth,
             MaxHealth = maxHealth,
             Time = time,
@@ -97,7 +97,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         }
     }
 
-    public void GetCast(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerCast>> casts)
+    public void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, List<UnitCast>> casts)
     {
         if (!casts.TryGetValue(combatDataLine[2], out var combatPlayerCasts))
         {
@@ -108,7 +108,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         var gameSpellId = int.Parse(combatDataLine[10]);
         if (combatDataLine[1].Equals(CombatLogKeyWords.SpellCastStart))
         {
-            var newCast = CreateCombatCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], false, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+            var newCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], false, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
             combatPlayerCasts.Add(newCast);
         }
         else
@@ -156,7 +156,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
             var position = new UnitPosition
             {
-                GameId = positionOwnerId,
+                CreatorGameId = positionOwnerId,
                 X = positionX,
                 Y = positionY,
                 Time = GetTimeFromStart(combatDataLine[0])
@@ -511,19 +511,19 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return aura;
     }
 
-    private CombatPlayerCast CreateCombatCast(int gameSpellId, string[] combatDataLine, string startTimeCast, string finishTimeCast, bool isImmediatly, bool isSuccess)
+    private UnitCast CreateUnitCast(int gameSpellId, string[] combatDataLine, string startTimeCast, string finishTimeCast, bool isImmediatly, bool isSuccess)
     {
         var startTime = GetTimeFromStart(startTimeCast);
         var finishTime = GetTimeFromStart(finishTimeCast);
 
-        var cast = new CombatPlayerCast
+        var cast = new UnitCast
         {
+            CreatorGameId = combatDataLine[2],
             GameSpellId = gameSpellId,
             Spell = combatDataLine[11].Trim('"'),
-            StartTime = startTime,
+            Time = startTime,
             FinishTime = finishTime,
-            Creator = combatDataLine[3].Trim('"'),
-            Target = combatDataLine[7].Trim('"'),
+            TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NullValue, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6],
             IsImmediatly = isImmediatly,
             IsSuccess = isSuccess,
         };
@@ -541,18 +541,19 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         }
     }
 
-    private void FinishCast(int gameSpellId, string[] combatDataLine, List<CombatPlayerCast> combatPlayerCasts, bool isSuccess)
+    private void FinishCast(int gameSpellId, string[] combatDataLine, List<UnitCast> combatPlayerCasts, bool isSuccess)
     {
         var lastStartedCast = combatPlayerCasts
             .LastOrDefault(x => x.GameSpellId == gameSpellId && !x.IsImmediatly);
         if (lastStartedCast != null)
         {
             lastStartedCast.FinishTime = GetTimeFromStart(combatDataLine[0]);
+            lastStartedCast.TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NullValue, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6];
             lastStartedCast.IsSuccess = isSuccess;
         }
         else
         {
-            var instaCast = CreateCombatCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], true, isSuccess);
+            var instaCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], true, isSuccess);
             combatPlayerCasts.Add(instaCast);
         }
     }

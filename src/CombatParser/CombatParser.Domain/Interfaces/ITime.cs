@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Domain.Interfaces;
 
-public interface ICombatTime
+public interface ITime
 {
     TimeSpan Time { get; }
 }

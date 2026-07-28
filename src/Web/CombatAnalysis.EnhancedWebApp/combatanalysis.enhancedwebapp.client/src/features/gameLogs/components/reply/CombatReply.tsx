@@ -81,15 +81,6 @@ const CombatReply: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (unitPositions.size === 0) {
-            return;
-        }
-
-        const randomColors = getRandomColors(unitPositions);
-        setColors(randomColors);
-    }, [unitPositions]);
-
-    useEffect(() => {
         if (details.id < 1) {
             return;
         }
@@ -101,8 +92,8 @@ const CombatReply: React.FC = () => {
                 ]);
 
                 const unitPositionsMap = new Map(Object.entries(unitPositions));
-                const positions = sortByTime(unitPositionsMap);
-                setUnitPositions(positions);
+                const unitPositionsUpdated = setTimeToms(unitPositionsMap);
+                setUnitPositions(unitPositionsUpdated);
             } catch (e) {
                 console.error(e);
             }
@@ -110,6 +101,15 @@ const CombatReply: React.FC = () => {
 
         loadData();
     }, [details]);
+
+    useEffect(() => {
+        if (unitPositions.size === 0) {
+            return;
+        }
+
+        const randomColors = getRandomColors(unitPositions);
+        setColors(randomColors);
+    }, [unitPositions]);
 
     useEffect(() => {
         if (!playing) {
@@ -159,7 +159,7 @@ const CombatReply: React.FC = () => {
         playingRef.current = playing;
     }, [playing]);
 
-    const sortByTime = (combatPlayerPositions: Map<string, UnitPositionModel[]>): Map<string, UnitPositionModel[]> => {
+    const setTimeToms = (combatPlayerPositions: Map<string, UnitPositionModel[]>): Map<string, UnitPositionModel[]> => {
         return new Map(
             [...combatPlayerPositions.entries()].map(([key, positions]) => [
                 key,
@@ -168,7 +168,6 @@ const CombatReply: React.FC = () => {
                         ...p,
                         timeMs: timeToMs(p.time)
                     }))
-                    .sort((a, b) => a.timeMs - b.timeMs)
             ])
         );
     }

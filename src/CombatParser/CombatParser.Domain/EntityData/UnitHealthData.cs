@@ -1,7 +1,7 @@
 ﻿namespace CombatParser.Domain.EntityData;
 
 public record UnitHealthData(
-    string GameId,
+    string CreatorGameId,
     int CurrentHealth,
     int MaxHealth,
     TimeSpan Time,

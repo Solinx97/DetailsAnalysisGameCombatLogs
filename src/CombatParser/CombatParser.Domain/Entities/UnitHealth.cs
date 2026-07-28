@@ -3,21 +3,21 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class UnitHealth : CombatDataBase, ICombatTime
+public class UnitHealth : CombatDataBase, ITime, IUnitRef
 {
     public const int GAMEID_MAX_LENGTH = 128;
 
     private UnitHealth() { }
 
-    private UnitHealth(string gameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
+    private UnitHealth(string creatorGameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
+        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(combatId, nameof(combatId));
 
         Id = Guid.NewGuid().ToString();
-        GameId = gameId;
+        CreatorGameId = creatorGameId;
         CurrentHealth = currentHealth;
         MaxHealth = maxHealth;
         Time = time;
@@ -27,7 +27,7 @@ public class UnitHealth : CombatDataBase, ICombatTime
 
     public string Id { get; private set; }
 
-    public string GameId { get; private set; }
+    public string CreatorGameId { get; private set; }
 
     public int CurrentHealth { get; private set; }
 
@@ -39,13 +39,13 @@ public class UnitHealth : CombatDataBase, ICombatTime
 
     public Combat Combat { get; private set; }
 
-    public static UnitHealth Create(string gameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
+    public static UnitHealth Create(string creatorGameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
+        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(combatId, nameof(combatId));
 
-        return new UnitHealth(gameId, currentHealth, maxHealth, time, isDead, combatId);
+        return new UnitHealth(creatorGameId, currentHealth, maxHealth, time, isDead, combatId);
     }
 }

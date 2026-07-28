@@ -26,8 +26,6 @@ public class CombatPlayer
 
     public List<CombatPlayerAura> Auras { get; set; } = [];
 
-    public List<CombatPlayerCast> Casts { get; set; } = [];
-
     public List<DamageDone> DamageDones { get; set; } = [];
 
     public List<DamageDoneGeneral> DamageDoneGenerals { get; set; } = [];

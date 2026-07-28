@@ -232,11 +232,37 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UnitCast",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatorGameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
+                    FinishTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    TargetGameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    IsImmediatly = table.Column<bool>(type: "bit", nullable: false),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false),
+                    CombatId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnitCast", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UnitCast_Combat_CombatId",
+                        column: x => x.CombatId,
+                        principalTable: "Combat",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UnitHealth",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    GameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    CreatorGameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     CurrentHealth = table.Column<int>(type: "int", nullable: false),
                     MaxHealth = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
@@ -259,7 +285,7 @@ namespace CombatParser.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    GameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    CreatorGameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     X = table.Column<double>(type: "float", nullable: false),
                     Y = table.Column<double>(type: "float", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
@@ -298,33 +324,6 @@ namespace CombatParser.Infrastructure.Migrations
                     table.PrimaryKey("PK_CombatPlayerAura", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CombatPlayerAura_CombatPlayer_CombatPlayerId",
-                        column: x => x.CombatPlayerId,
-                        principalTable: "CombatPlayer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CombatPlayerCast",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    FinishTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    IsImmediatly = table.Column<bool>(type: "bit", nullable: false),
-                    IsSuccess = table.Column<bool>(type: "bit", nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CombatPlayerCast", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CombatPlayerCast_CombatPlayer_CombatPlayerId",
                         column: x => x.CombatPlayerId,
                         principalTable: "CombatPlayer",
                         principalColumn: "Id",
@@ -2567,11 +2566,6 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "CombatPlayerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CombatPlayerCast_CombatPlayerId",
-                table: "CombatPlayerCast",
-                column: "CombatPlayerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CombatPlayerDeath_CombatPlayerId",
                 table: "CombatPlayerDeath",
                 column: "CombatPlayerId");
@@ -2644,6 +2638,11 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "SpecializationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UnitCast_CombatId",
+                table: "UnitCast",
+                column: "CombatId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UnitHealth_CombatId",
                 table: "UnitHealth",
                 column: "CombatId");
@@ -2665,9 +2664,6 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CombatPlayerAura");
-
-            migrationBuilder.DropTable(
-                name: "CombatPlayerCast");
 
             migrationBuilder.DropTable(
                 name: "CombatPlayerDeath");
@@ -2707,6 +2703,9 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "SpecializationScore");
+
+            migrationBuilder.DropTable(
+                name: "UnitCast");
 
             migrationBuilder.DropTable(
                 name: "UnitHealth");

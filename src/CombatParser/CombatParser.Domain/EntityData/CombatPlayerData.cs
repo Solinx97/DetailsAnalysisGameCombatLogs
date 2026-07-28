@@ -12,7 +12,7 @@ public record CombatPlayerData(
     SpecializationScoreData Score,
     IReadOnlyList<CombatPlayerPreAuraData> PreAuras,
     IReadOnlyList<CombatPlayerAuraData> Auras,
-    IReadOnlyList<CombatPlayerCastData> Casts,
+    IReadOnlyList<UnitCastData> Casts,
     IReadOnlyList<DamageDoneData> DamageDones,
     IReadOnlyList<DamageDoneGeneralData> DamageDoneGenerals,
     IReadOnlyList<HealDoneData> HealDones,

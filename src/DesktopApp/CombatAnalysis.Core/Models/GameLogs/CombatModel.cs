@@ -32,6 +32,8 @@ public class CombatModel
 
     public List<CombatUnitModel> Units { get; set; } = [];
 
+    public List<UnitCastModel> UnitCasts { get; set; } = [];
+
     public List<UnitHealthModel> UnitHealths { get; set; } = [];
 
     public List<UnitPositionModel> UnitPositions { get; set; } = [];

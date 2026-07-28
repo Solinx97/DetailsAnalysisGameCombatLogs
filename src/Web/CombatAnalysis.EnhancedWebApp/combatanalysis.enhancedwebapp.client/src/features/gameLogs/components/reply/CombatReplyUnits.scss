@@ -6,9 +6,16 @@
     gap: 20px;
     overflow-x: auto;
 
+    .selected-units {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
     &__category {
         display: flex;
         flex-direction: column;
+        width: 100%;
         gap: 20px;
 
         .title {
@@ -22,28 +29,30 @@
 
         .content {
             display: flex;
+            gap: 20px;
 
-            .player {
+        }
+
+        .player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.9em;
+            gap: 10px;
+
+            .username {
                 display: flex;
-                flex-direction: column;
+                justify-content: center;
                 align-items: center;
-                font-size: 0.9em;
                 gap: 10px;
+                width: 200px;
+                padding: 5px 15px;
+                cursor: pointer;
+            }
 
-                .username {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 10px;
-                    width: 200px;
-                    padding: 5px 15px;
-                    cursor: pointer;
-                }
-
-                .selected {
-                    box-shadow: 3px 3px orange;
-                    border-radius: 15px;
-                }
+            .selected {
+                box-shadow: 3px 3px orange;
+                border-radius: 15px;
             }
         }
 

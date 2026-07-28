@@ -30,7 +30,7 @@ internal class CombatParserApiMapper : Profile
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
         CreateMap<CombatPlayerPreAuraDto, CombatPlayerPreAuraModel>().ReverseMap();
         CreateMap<CombatPlayerAuraDto, CombatPlayerAuraModel>().ReverseMap();
-        CreateMap<CombatPlayerCastDto, CombatPlayerCastModel>().ReverseMap();
+        CreateMap<UnitCastDto, UnitCastModel>().ReverseMap();
         CreateMap<UnitPositionDto, UnitPositionModel>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDoneModel>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneralModel>().ReverseMap();
@@ -61,6 +61,6 @@ internal class CombatParserApiMapper : Profile
         CreateMap<SpecializationScoreData, SpecializationScoreModel>().ReverseMap();
         CreateMap<CombatPlayerPreAuraData, CombatPlayerPreAuraModel>().ReverseMap();
         CreateMap<CombatPlayerAuraData, CombatPlayerAuraModel>().ReverseMap();
-        CreateMap<CombatPlayerCastData, CombatPlayerCastModel>().ReverseMap();
+        CreateMap<UnitCastData, UnitCastModel>().ReverseMap();
     }
 }

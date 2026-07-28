@@ -3,95 +3,37 @@ import useTime from '@/shared/hooks/useTime';
 import { faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
-import type { CombatPlayerCastModel } from '../../types/CombatPlayerCastModel';
-import { useLazyGetCombatPlayerCastsByCombatPlayerIdQuery } from '../../api/GameLogs.api';
+import type { UnitCastModel } from '../../types/UnitCastModel';
 import CastBar from './CastBar';
 import InstantCast from './InstantCast';
 import type { UnitHealthModel } from '../../types/UnitHealthModel';
 import type { CombatUnitModel } from '../../types/CombatUnitModel';
-import type { UnitPositionModel } from '../../types/UnitPositionModel';
 
 interface CombatReplyItemProps {
-    unitPositions: UnitPositionModel[] | undefined;
-    combatPlayerId: number;
+    unitsHealth: UnitHealthModel[] | undefined;
     unit: CombatUnitModel;
-    unitsHealth: UnitHealthModel[];
-    selectedPlayerId: string;
-    setSelectedPlayerId: Dispatch<SetStateAction<string>>;
+    selectedGameId: string;
+    setSelectedGameId: Dispatch<SetStateAction<string>>;
     currentTime: number;
     color: string;
+    setSelectedTargetGameId?: Dispatch<SetStateAction<string>>;
+    unitCasts?: UnitCastModel[] | undefined;
 }
 
-const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitPositions, combatPlayerId, unit, unitsHealth, selectedPlayerId, setSelectedPlayerId, currentTime, color }) => {
+const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, selectedGameId, setSelectedGameId, setSelectedTargetGameId, currentTime, color, unitCasts }) => {
     const INSTANT_CAST_DURATION = 500;
 
-    const [combatPlayerCasts, setCombatPlayerCasts] = useState<CombatPlayerCastModel[]>([]);
     const [currentHealth, setCurrentHealth] = useState(100);
     const [maxHealth, setMaxHealth] = useState(100);
 
     const { timeToMs } = useTime();
     const { formatNumber } = useNumber();
-    
-    const [getCombatPlayerCasts] = useLazyGetCombatPlayerCastsByCombatPlayerIdQuery();
 
-    useEffect(() => {
-        if (unit.gameId !== selectedPlayerId) {
+    const health = useMemo(() => {
+        if (!unitsHealth) {
             return;
         }
 
-        const loadData = async () => {
-            try {
-                const [combatPlayerCasts] = await Promise.all([
-                    getCombatPlayerCasts(combatPlayerId).unwrap(),
-                ]);
-
-                setCombatPlayerCasts(combatPlayerCasts);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        loadData();
-    }, [selectedPlayerId]);
-
-    const notImmediatlyCasts = useMemo(
-        () => combatPlayerCasts.filter(x => !x.isImmediatly),
-        [combatPlayerCasts]
-    );
-
-    const currentNotImmediatlyCast = useMemo(() => {
-        return notImmediatlyCasts
-            .find(cast =>
-                currentTime >= timeToMs(cast.startTime) &&
-                currentTime <= timeToMs(cast.finishTime)
-            );
-    }, [currentTime, combatPlayerCasts]);
-
-    const progressNotImmediatly = useMemo(() => {
-        if (!currentNotImmediatlyCast) {
-            return 0;
-        }
-
-        return (
-            ((currentTime - timeToMs(currentNotImmediatlyCast.startTime)) /
-                (timeToMs(currentNotImmediatlyCast.finishTime) - timeToMs(currentNotImmediatlyCast.startTime))) * 100
-        );
-    }, [currentTime, currentNotImmediatlyCast]);
-
-    const immediatlyCasts = useMemo(
-        () => combatPlayerCasts.filter(x => x.isImmediatly && x.isSuccess),
-        [combatPlayerCasts]
-    );
-
-    const currentImmediatlyCast = useMemo(() => {
-        return immediatlyCasts
-            .find(cast =>
-                currentTime >= timeToMs(cast.startTime) &&
-                currentTime <= timeToMs(cast.startTime) + INSTANT_CAST_DURATION
-            );
-    }, [currentTime, combatPlayerCasts]);
-
-    const health = useMemo(() => {
         return unitsHealth
             .filter(health => timeToMs(health.time) <= currentTime).at(-1);
     }, [currentTime, unitsHealth]);
@@ -105,7 +47,7 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitPositions, combat
     }, [currentHealth, maxHealth]);
 
     useEffect(() => {
-        if (health === undefined) {
+        if (!health) {
             return;
         }
 
@@ -114,15 +56,18 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitPositions, combat
     }, [health]);
 
     const handleSelectPlayer = () => {
-        if (selectedPlayerId !== unit.gameId) {
-            setSelectedPlayerId("");
-            setSelectedPlayerId(unit.gameId);
+        if (selectedGameId !== unit.gameId) {
+            setSelectedGameId("");
+            setSelectedGameId(unit.gameId);
         }
-        else if (selectedPlayerId !== "" && selectedPlayerId === unit.gameId) {
-            setSelectedPlayerId("");
+        else if (selectedGameId !== "" && selectedGameId === unit.gameId) {
+            setSelectedGameId("");
+            if (setSelectedTargetGameId) {
+                setSelectedTargetGameId("");
+            }
         }
         else {
-            setSelectedPlayerId(unit.gameId);
+            setSelectedGameId(unit.gameId);
         }
     }
 
@@ -132,14 +77,65 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitPositions, combat
         return fullname;
     }
 
-    if (!unitPositions || unitPositions.length === 0 
-        || unitPositions[0].timeMs > currentTime || unitPositions.at(-1)!.timeMs < currentTime) {
-        return (<></>);
-    }
+    const notImmediatlyCasts = useMemo(() => {
+        if (!unitCasts) {
+            return [];
+        }
+
+        return unitCasts.filter(x => !x.isImmediatly);
+    }, [unitCasts]);
+
+    const currentNotImmediatlyCast = useMemo(() => {
+        const current = notImmediatlyCasts
+            .find(cast =>
+                currentTime >= timeToMs(cast.time) &&
+                currentTime <= timeToMs(cast.finishTime)
+            );
+
+        return current;
+    }, [currentTime]);
+
+    const progressNotImmediatly = useMemo(() => {
+        if (!currentNotImmediatlyCast) {
+            return 0;
+        }
+
+        return (
+            ((currentTime - timeToMs(currentNotImmediatlyCast.time)) /
+                (timeToMs(currentNotImmediatlyCast.finishTime) - timeToMs(currentNotImmediatlyCast.time))) * 100
+        );
+    }, [currentTime, currentNotImmediatlyCast]);
+
+    const immediatlyCasts = useMemo(() => {
+        if (!unitCasts) {
+            return [];
+        }
+
+        return unitCasts.filter(x => x.isImmediatly && x.isSuccess);
+    }, [unitCasts]);
+
+    const currentImmediatlyCast = useMemo(() => {
+        const current = immediatlyCasts
+            .find(cast =>
+                currentTime >= timeToMs(cast.time) &&
+                currentTime <= timeToMs(cast.time) + INSTANT_CAST_DURATION
+            );
+
+        return current;
+    }, [currentTime]);
+
+    useEffect(() => {
+        if (currentImmediatlyCast && setSelectedTargetGameId) {
+            setSelectedTargetGameId(currentImmediatlyCast.targetGameId ?? "");
+        }
+        else if (currentNotImmediatlyCast && setSelectedTargetGameId) {
+            setSelectedTargetGameId(currentNotImmediatlyCast.targetGameId ?? "");
+        }
+    }, [currentImmediatlyCast, currentNotImmediatlyCast]);
 
     return (
         <>
-            <div className={`username ${selectedPlayerId === unit.gameId ? "selected" : ""}`} style={{ color: color }}
+            <div className={`username ${selectedGameId === unit.gameId ? "selected" : ""}`} style={{ color: color }}
                 onClick={handleSelectPlayer}>
                 {health?.isDead &&
                     <FontAwesomeIcon
@@ -151,16 +147,20 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitPositions, combat
             <div className={`health ${health?.isDead ? 'dead' : ''}`}>
                 <div className="health__current" style={{ width: `${currentHealthProcentage}%` }}>{formatNumber(currentHealth)}/{formatNumber(maxHealth)}</div>
             </div>
-            <CastBar
-                spell={currentNotImmediatlyCast?.spell}
-                progress={progressNotImmediatly}
-                isSuccess={currentNotImmediatlyCast?.isSuccess}
-                isRunCast={selectedPlayerId === unit.gameId}
-            />
-            <InstantCast
-                spell={currentImmediatlyCast?.spell}
-                isRunCast={selectedPlayerId === unit.gameId}
-            />
+            {unitCasts &&
+                <>
+                    <CastBar
+                        spell={currentNotImmediatlyCast?.spell}
+                        progress={progressNotImmediatly}
+                        isSuccess={currentNotImmediatlyCast?.isSuccess}
+                        isRunCast={selectedGameId === unit.gameId}
+                    />
+                    <InstantCast
+                        spell={currentImmediatlyCast?.spell}
+                        isRunCast={selectedGameId === unit.gameId}
+                    />
+                </>
+            }
         </>
     );
 }

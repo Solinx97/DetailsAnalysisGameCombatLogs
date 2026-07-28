@@ -36,13 +36,12 @@ public class CombatModel
     [Required]
     public List<CombatPlayerModel> CombatPlayers { get; init; } = [];
 
-    [Required]
     public List<CombatUnitModel> Units { get; init; } = [];
 
-    [Required]
+    public List<UnitCastModel> UnitCasts { get; init; } = [];
+
     public List<UnitHealthModel> UnitHealths { get; init; } = [];
 
-    [Required]
     public List<UnitPositionModel> UnitPositions { get; init; } = [];
 
     [Required]

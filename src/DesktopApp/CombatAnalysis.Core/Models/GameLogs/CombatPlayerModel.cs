@@ -48,8 +48,6 @@ public class CombatPlayerModel
 
     public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
 
-    public IReadOnlyList<CombatPlayerCastModel> Casts { get; set; } = [];
-
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
 
     public IReadOnlyList<DamageDoneGeneralModel> DamageDoneGenerals { get; set; } = [];

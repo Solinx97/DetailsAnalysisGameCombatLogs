@@ -9,7 +9,7 @@ import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel
 import type { UnitPositionModel } from '../types/UnitPositionModel';
 import type { BossMapModel } from '../types/BossMapModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
-import type { CombatPlayerCastModel } from '../types/CombatPlayerCastModel';
+import type { UnitCastModel } from '../types/UnitCastModel';
 import type { UnitHealthModel } from '../types/UnitHealthModel';
 import type { CombatUnitModel } from '../types/CombatUnitModel';
 
@@ -140,28 +140,14 @@ export const GameLogsApi = createApi({
         getCombatUnitsByCombatId: builder.query<CombatUnitModel[], number>({
             query: combatId => `/CombatUnit/getByCombatId/${combatId}`,
         }),
+        getUnitCastsByCombatPlayerId: builder.query<Map<string, UnitCastModel[]>, number>({
+            query: combatId => `/UnitCast/getByCombatId/${combatId}`,
+        }),
         getUnitPositionsByCombatId: builder.query<Map<string, UnitPositionModel[]>, number>({
             query: combatId => `/UnitPosition/getByCombatId/${combatId}`,
         }),
-        getCombatPlayerCastsByCombatPlayerId: builder.query<CombatPlayerCastModel[], number>({
-            query: combatPlayerId => `/CombatPlayerCast/getByCombatPlayerId/${combatPlayerId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(combatPlayerCast => ({ type: 'CombatPlayerCast' as const, id: combatPlayerCast.id })),
-                        { type: 'CombatPlayerCast', id: 'LIST' },
-                    ]
-                    : [{ type: 'CombatPlayerCast', id: 'LIST' }]
-        }),
-        getUnitsHealthByCombatId: builder.query<UnitHealthModel[], number>({
+        getUnitsHealthByCombatId: builder.query<Map<string, UnitHealthModel[]>, number>({
             query: combatId => `/UnitHealth/getByCombatId/${combatId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(unitHealth => ({ type: 'UnitHealth' as const, id: unitHealth.id })),
-                        { type: 'UnitHealth', id: 'LIST' },
-                    ]
-                    : [{ type: 'UnitHealth', id: 'LIST' }]
         }),
     })
 })
@@ -182,7 +168,7 @@ export const {
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatByPreAuraQuery,
     useLazyGetCombatUnitsByCombatIdQuery,
+    useLazyGetUnitCastsByCombatPlayerIdQuery,
     useLazyGetUnitPositionsByCombatIdQuery,
-    useLazyGetCombatPlayerCastsByCombatPlayerIdQuery,
     useLazyGetUnitsHealthByCombatIdQuery,
 } = GameLogsApi;

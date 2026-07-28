@@ -1,8 +1,9 @@
 ﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class UnitPosition : CombatDataBase
+public class UnitPosition : CombatDataBase, ITime, IUnitRef
 {
     public const int GAMEID_MAX_LENGTH = 128;
 
@@ -11,7 +12,7 @@ public class UnitPosition : CombatDataBase
     private UnitPosition(string gameId, double x, double y, TimeSpan time, int combatId)
     {
         Id = Guid.NewGuid().ToString();
-        GameId = gameId;
+        CreatorGameId = gameId;
         X = x;
         Y = y;
         Time = time;
@@ -20,7 +21,7 @@ public class UnitPosition : CombatDataBase
 
     public string Id { get; private set; } = string.Empty;
 
-    public string GameId { get; private set; } = string.Empty;
+    public string CreatorGameId { get; private set; } = string.Empty;
 
     public double X { get; private set; }
 

@@ -86,11 +86,12 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             }
 
             var unitData = _mapper.Map<List<CombatUnitData>>(combat.Units);
+            var unitCastData = _mapper.Map<List<UnitCastData>>(combat.UnitCasts);
             var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
             var unitPositionData = _mapper.Map<List<UnitPositionData>>(combat.UnitPositions);
 
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitHealthData, unitPositionData);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitCastData, unitHealthData, unitPositionData);
 
             var combatId = await _mediator.Send(command, cancellationToken);
 
@@ -116,7 +117,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
 
         var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
         var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
-        var castMap = _mapper.Map<List<CombatPlayerCastData>>(combatPlayer.Casts);
+        var castMap = _mapper.Map<List<UnitCastData>>(combatPlayer.Casts);
         var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
         var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
         var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);

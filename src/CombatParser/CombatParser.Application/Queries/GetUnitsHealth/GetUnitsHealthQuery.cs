@@ -5,4 +5,4 @@ namespace CombatParser.Application.Queries.GetUnitsHealth;
 
 public record GetUnitsHealthQuery(
     int CombatId
-    ) : IRequest<IEnumerable<UnitHealthDto>>;
+    ) : IRequest<IDictionary<string, IEnumerable<UnitHealthDto>>>;

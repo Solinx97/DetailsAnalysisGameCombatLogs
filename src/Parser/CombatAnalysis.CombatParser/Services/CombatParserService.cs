@@ -224,6 +224,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         combat.CombatPlayers = [.. players];
 
         combat.Units = [.. combatDetails.Units.Values];
+        combat.UnitCasts = [.. combatDetails.UnitCasts.Values.SelectMany(x => x)];
         combat.UnitHealths = [.. combatDetails.UnitHealths.Values.SelectMany(x => x)];
         combat.UnitPositions = [.. combatDetails.UnitPositions.Values.SelectMany(x => x)];
 
@@ -400,7 +401,6 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
 
         combatPlayer.Auras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId]);
-        combatPlayer.Casts.AddRange(combatDetails.Casts[combatPlayer.Player.GameId]);
         combatPlayer.DamageDones.AddRange(combatDetails.DamageDones[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.DamageDoneGenerals.AddRange(combatDetails.DamageDoneGenerals[combatPlayer.Player.GameId]);
         combatPlayer.HealDones.AddRange(combatDetails.HealDones[combatPlayer.Player.GameId].Select(x => x.Value));
