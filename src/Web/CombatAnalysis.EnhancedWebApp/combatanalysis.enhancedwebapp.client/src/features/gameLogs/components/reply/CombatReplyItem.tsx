@@ -1,8 +1,10 @@
 import useNumber from '@/shared/hooks/useNumber';
 import useTime from '@/shared/hooks/useTime';
+import useCombatLogs from '@/shared/hooks/useCombatLogs';
 import { faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import CombatReplyContext from '@/context/CombatReplyContext';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import type { UnitCastModel } from '../../types/UnitCastModel';
 import CastBar from './CastBar';
 import InstantCast from './InstantCast';
@@ -12,22 +14,27 @@ import type { CombatUnitModel } from '../../types/CombatUnitModel';
 interface CombatReplyItemProps {
     unitsHealth: UnitHealthModel[] | undefined;
     unit: CombatUnitModel;
-    selectedGameId: string;
-    setSelectedGameId: Dispatch<SetStateAction<string>>;
-    currentTime: number;
     color: string;
-    setSelectedTargetGameId?: Dispatch<SetStateAction<string>>;
     unitCasts?: UnitCastModel[] | undefined;
 }
 
-const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, selectedGameId, setSelectedGameId, setSelectedTargetGameId, currentTime, color, unitCasts }) => {
+const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, color, unitCasts }) => {
     const INSTANT_CAST_DURATION = 500;
 
+    const context = useContext(CombatReplyContext);
+
+    if (!context) {
+        throw new Error("Child must be inside CombatReplyContext.Provider");
+    }
+
+    const { selectedGameId, setSelectedGameId, setSelectedTargetGameId, currentTime } = context;
+    
     const [currentHealth, setCurrentHealth] = useState(100);
     const [maxHealth, setMaxHealth] = useState(100);
 
     const { timeToMs } = useTime();
     const { formatNumber } = useNumber();
+    const { removeServerName } = useCombatLogs();
 
     const health = useMemo(() => {
         if (!unitsHealth) {
@@ -69,12 +76,6 @@ const CombatReplyItem: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, se
         else {
             setSelectedGameId(unit.gameId);
         }
-    }
-
-    const removeServerName = (username: string): string => {
-        const fullname = username.replaceAll('"', '').split('-')[0];
-
-        return fullname;
     }
 
     const notImmediatlyCasts = useMemo(() => {

@@ -1,5 +1,5 @@
+import DashboardContext from '@/context/DashboardContext';
 import { memo, useContext, useEffect, useState } from 'react';
-import { DashboardContext } from './DashboardItem';
 import type { DashboardModel } from '../../types/dashboard/DashboardModel';
 
 const DashboardDamageDoneItem = () => {

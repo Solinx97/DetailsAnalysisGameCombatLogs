@@ -1,5 +1,5 @@
-﻿import { useContext, useEffect, useState } from 'react';
-import { DashboardContext } from './DashboardItem';
+﻿import DashboardContext from '@/context/DashboardContext';
+import { useContext, useEffect, useState } from 'react';
 import type { DashboardModel } from '../../types/dashboard/DashboardModel';
 
 const DashboardDeathItem = () => {

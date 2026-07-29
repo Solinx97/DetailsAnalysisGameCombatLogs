@@ -2,6 +2,7 @@ import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 import useTime from '@/shared/hooks/useTime';
+import CombatReplyContext from '@/context/CombatReplyContext';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -33,6 +34,7 @@ const CombatReply: React.FC = () => {
 
     const [playing, setPlaying] = useState(false);
     const [selectedGameId, setSelectedGameId] = useState<string>("");
+    const [selectedTargetGameId, setSelectedTargetGameId] = useState<string>("");
 
     const playingRef = useRef(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -241,15 +243,22 @@ const CombatReply: React.FC = () => {
                             {formatSeconds(Math.floor(currentTime / 1000))}
                         </div>
                     </div>
-                    <CombatReplyUnits
-                        t={t}
-                        unitPositions={unitPositions}
-                        details={details}
-                        selectedGameId={selectedGameId}
-                        setSelectedGameId={setSelectedGameId}
-                        currentTime={currentTime}
-                        colors={colors}
-                    />
+                    <CombatReplyContext.Provider
+                        value={{
+                            t: t,
+                            selectedGameId: selectedGameId,
+                            setSelectedGameId: setSelectedGameId,
+                            selectedTargetGameId: selectedTargetGameId,
+                            setSelectedTargetGameId: setSelectedTargetGameId,
+                            currentTime: currentTime,
+                            colors: colors,
+                        }}
+                    >
+                        <CombatReplyUnits
+                            unitPositions={unitPositions}
+                            details={details}
+                        />
+                    </CombatReplyContext.Provider>
                 </>
             }
         </div>
