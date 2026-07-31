@@ -1,6 +1,5 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
-using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
@@ -27,19 +26,18 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkInsertCombatPlayerPositionsAsync(this CombatParserContextOne context, List<CombatPlayer> players, Func<CombatPlayer, IEnumerable<CombatPlayerPosition>> selector, CancellationToken cancelationToken)
+    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatRefs
     {
-        var combatPlayerData = players.SelectMany(p =>
-            selector(p).Select(dd =>
-            {
-                dd.SetCombatPlayerId(p.Id);
-                return dd;
-            }
-        )).ToList();
-
-        if (combatPlayerData.Count > 0)
+        var combatData = selector(combat).Select(cr =>
         {
-            await context.BulkInsertAsync(combatPlayerData, cancellationToken: cancelationToken);
+            cr.SetCombatId(combat.Id);
+            return cr;
+        }).ToList();
+
+        if (combatData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatData, cancellationToken: cancelationToken);
         }
     }
 

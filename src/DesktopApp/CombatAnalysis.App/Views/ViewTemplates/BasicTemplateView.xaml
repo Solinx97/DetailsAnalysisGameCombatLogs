@@ -88,9 +88,9 @@
                         </StackPanel>
                         <StackPanel Margin="25 0" Orientation="Horizontal" VerticalAlignment="Top">
                             <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Login}"
-                            mvx:Bi.nd="Command LoginCommand"/>
+                                mvx:Bi.nd="Command LoginCommand"/>
                             <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Registration}"
-                            IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
+                                IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
                         </StackPanel>
                     </StackPanel>
 

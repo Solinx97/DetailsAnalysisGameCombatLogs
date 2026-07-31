@@ -1,4 +1,6 @@
-﻿namespace CombatParser.Application.DTOs;
+﻿using CombatParser.Application.DTOs.CombatPlayerData;
+
+namespace CombatParser.Application.DTOs;
 
 public class CombatPlayerDto
 {

@@ -3,7 +3,7 @@
     display: flex;
     left: 1vw;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
     width: 97vw;
 
     &__navigate {
@@ -27,7 +27,9 @@
         gap: 25px;
 
         .play {
-            width: 100px;
+            display: flex;
+            justify-content: center;
+            min-width: 100px;
         }
 
         .range {
@@ -54,24 +56,6 @@
 
         to {
             width: 160px;
-        }
-    }
-
-    .players {
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        gap: 20px;
-        font-size: 0.85em;
-        cursor: pointer;
-
-        li div {
-            padding: 5px 10px;
-        }
-
-        .selected {
-            box-shadow: 2px 2px 2px 2px green;
-            border-radius: 20px;
         }
     }
 

@@ -1,6 +1,7 @@
+import Loading from '@/shared/components/Loading.tsx';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { CombatModel } from "../../types//CombatModel";
+import type { CombatModel } from '../../types//CombatModel';
 import DashboardDurationItem from './DashboardDurationItem';
 import DashboardItem from './DashboardItem';
 import React from 'react';
@@ -10,10 +11,9 @@ import DashboardDeathItem from './DashboardDeathItem';
 import { useGetCombatsDashboardQuery } from '../../api/GameLogs.api';
 import DashboardDamageSpellsItem from './DashboardDamageSpellsItem';
 import DashboardHealSpellsItem from './DashboardHealSpellsItem';
-import Loading from '@/shared/components/Loading.tsx';
+import DashboardPotionsItem from './DashboardPotionsItem';
 
 import './Dashboard.scss';
-import DashboardPotionsItem from './DashboardPotionsItem';
 
 interface DashboardProps {
     combatLogId: number;

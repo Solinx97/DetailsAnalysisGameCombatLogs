@@ -3,7 +3,7 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecovery : CombatPlayerDataBase, ICombatPlayerTime, IGeneralEntity
+public class ResourceRecovery : CombatPlayerDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_MAX_LENGTH = 128;

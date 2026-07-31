@@ -1,3 +1,4 @@
+import useNumber from '@/shared/hooks/useNumber';
 import { useEffect, useMemo, useState } from 'react';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import {
@@ -25,6 +26,8 @@ const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ comb
     const [combatPlayersData, setCombatPlayersData] = useState<Map<string, ChartModel[]>>(new Map());
     const [focusedPlayer, setFocusedPlayer] = useState<string | null>(null);
 
+    const { formatNumber } = useNumber();
+    
     const { data, isLoading } = useGetGenericChartQuery(combatId);
 
     useEffect(() => {
@@ -86,28 +89,6 @@ const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ comb
         setFocusedPlayer(prev =>
             prev === player ? null : player
         );
-    }
-
-    const formatNumber = (value: number | string | undefined): string => {
-        if (value == null) {
-            return "";
-        }
-
-        const num = Number(value);
-
-        if (num >= 1_000_000_000) {
-            return `${(num / 1_000_000_000).toFixed(1)}B`;
-        }
-
-        if (num >= 1_000_000) {
-            return `${(num / 1_000_000).toFixed(1)}M`;
-        }
-
-        if (num >= 1_000) {
-            return `${(num / 1_000).toFixed(1)}K`;
-        }
-
-        return num.toString();
     }
 
     if (isLoading || !combatPlayersData) {

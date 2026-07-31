@@ -34,7 +34,6 @@
     <ProjectReference Include="..\..\CombatParser\CombatParser.Application\CombatParser.Application.csproj" />
     <ProjectReference Include="..\..\CombatParser\CombatParser.Infrastructure\CombatParser.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj" />
-    <ProjectReference Include="..\..\Parser\CombatAnalysis.CombatParser\CombatAnalysis.CombatParser.csproj" />
   </ItemGroup>
 
   <ItemGroup>

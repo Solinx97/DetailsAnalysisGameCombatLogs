@@ -19,6 +19,7 @@
     <Grid>
         <Grid.Resources>
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
         </Grid.Resources>
         
         <Grid.ColumnDefinitions>
@@ -52,10 +53,13 @@
             <TabItem Header="{loc:Loc CreateLog}" Style="{StaticResource TabItemStyle1}">
                 <combatLogsViews:ParsingCombatLogsView DataContext="{Binding ParsingCombatLogsVM}" />
             </TabItem>
-            <TabItem Header="{loc:Loc PublicLogs}" Style="{StaticResource TabItemStyle1}">
+            <TabItem Header="{loc:Loc PublicLogs}" Style="{StaticResource TabItemStyle1}"
+                     IsEnabled="{Binding IsAllowSwitchTabs, Converter={StaticResource BoolToXAMLBool}}">
                 <combatLogsViews:PublicCombatLogsView DataContext="{Binding PublicCombatLogsVM}" />
             </TabItem>
-            <TabItem Header="{loc:Loc PersonalLogs}" Style="{StaticResource TabItemStyle1}" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
+            <TabItem Header="{loc:Loc PersonalLogs}" Style="{StaticResource TabItemStyle1}" 
+                     Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                     IsEnabled="{Binding IsAllowSwitchTabs, Converter={StaticResource BoolToXAMLBool}}">
                 <combatLogsViews:PrivateCombatLogsView DataContext="{Binding PrivateCombatLogsVM}" />
             </TabItem>
         </TabControl>

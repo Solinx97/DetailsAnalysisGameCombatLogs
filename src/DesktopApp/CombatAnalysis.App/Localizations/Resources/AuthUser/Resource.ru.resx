@@ -126,6 +126,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
   <data name="ContinueAuthInBrowser" xml:space="preserve">
     <value>Продолжите Авторизацию в вашем Браузере</value>
   </data>

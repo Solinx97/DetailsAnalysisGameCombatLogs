@@ -78,15 +78,20 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
     {
         try
         {
-            var combatPlayersData = new List<CombatPlayerData>();
+            var combatPlayersData = new List<CombatParser.Domain.EntityData.CombatPlayerData>();
             foreach (var player in combat.CombatPlayers)
             {
                 var playerData = await ExtractCombatPlayerDataAsync(player, cancellationToken);
                 combatPlayersData.Add(playerData);
             }
 
+            var unitData = _mapper.Map<List<CombatUnitData>>(combat.Units);
+            var unitCastData = _mapper.Map<List<UnitCastData>>(combat.UnitCasts);
+            var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
+            var unitPositionData = _mapper.Map<List<UnitPositionData>>(combat.UnitPositions);
+
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitCastData, unitHealthData, unitPositionData);
 
             var combatId = await _mediator.Send(command, cancellationToken);
 
@@ -106,12 +111,13 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         }
     }
 
-    private async Task<CombatPlayerData> ExtractCombatPlayerDataAsync(CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
+    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
     {
         var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
 
         var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
         var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
+        var castMap = _mapper.Map<List<UnitCastData>>(combatPlayer.Casts);
         var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
         var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
         var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
@@ -121,7 +127,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatPlayer.ResourceRecoveries);
         var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatPlayer.ResourceRecoveryGenerals);
         var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatPlayer.CombatPlayerDeathes);
-        var positionsMap = _mapper.Map<List<CombatPlayerPositionData>>(combatPlayer.CombatPlayerPositions);
+        var positionsMap = _mapper.Map<List<UnitPositionData>>(combatPlayer.CombatPlayerPositions);
 
         var spellIds = combatPlayer.DamageDone > combatPlayer.HealDone
             ? combatPlayer.DamageDones.Select(d => d.GameSpellId).ToArray()
@@ -130,7 +136,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, spellIds, cancellationToken);
         var scoreMap = _mapper.Map<SpecializationScoreData>(combatPlayer.Score);
 
-        var playerData = new CombatPlayerData(
+        var playerData = new CombatParser.Domain.EntityData.CombatPlayerData(
             combatPlayer.AverageItemLevel,
             combatPlayer.ResourcesRecovery,
             combatPlayer.DamageDone,
@@ -142,6 +148,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             scoreMap,
             preAurasMap,
             aurasMap,
+            castMap,
             damageDonesMap,
             damageDoneGeneralsMap,
             healDonesMap,

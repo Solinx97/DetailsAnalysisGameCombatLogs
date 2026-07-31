@@ -23,6 +23,11 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
 
         var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);
 
+        await _context.BulkInsertCombatDataAsync(combat, c => c.Units, cancellationToken);
+        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitCasts, cancellationToken);
+        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitHeaths, cancellationToken);
+        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitPositions, cancellationToken);
+
         await _context.BulkInsertCombatPlayerStatsAsync(players, cancellationToken);
         await _context.BulkInsertCombatPlayerScoresAsync(combat.BossId, players, cancellationToken);
 
@@ -37,9 +42,11 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveries, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveryGenerals, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.CombatPlayerDeathes, cancellationToken);
-        await _context.BulkInsertCombatPlayerPositionsAsync(players, p => p.CombatPlayerPositions, cancellationToken);
 
-        await _context.BulkUpdateBestSpecializationScoreAsync(combat.BossId, players, cancellationToken);
+        if (combat.IsWin)
+        {
+            await _context.BulkUpdateBestSpecializationScoreAsync(combat.BossId, players, cancellationToken);
+        }
 
         await transaction.CommitAsync(cancellationToken);
     }

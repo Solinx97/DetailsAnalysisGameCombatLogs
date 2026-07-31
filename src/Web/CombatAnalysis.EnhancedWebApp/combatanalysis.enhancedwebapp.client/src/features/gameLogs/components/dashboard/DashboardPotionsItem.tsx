@@ -1,5 +1,5 @@
+import DashboardContext from '@/context/DashboardContext';
 import { useContext, useEffect, useState } from 'react';
-import { DashboardContext } from './DashboardItem';
 import { useGetPotionsQuery } from '../../api/GameLogs.api';
 
 export interface DashboardPotionsItemProps {

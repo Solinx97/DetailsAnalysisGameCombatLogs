@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
 import type { CombatModel } from '../types/CombatModel';
 import { useLazyGetCombatByIdQuery, useLazyGetBossMapByIdQuery } from '../api/GameLogs.api';
 
@@ -21,11 +21,10 @@ interface WorldSize {
 }
 
 const useCombatReply = (
-    selectedPlayerId: number,
+    selectedGameId: string,
     canvasRef: RefObject<HTMLCanvasElement | null>,
-    combatPlayerPositions: CombatPlayerPositionModel[],
-    positions: Map<number, CombatPlayerPositionModel[]>,
-    colors: Map<number, string>
+    unitPositions: Map<string, UnitPositionModel[]>,
+    colors: Map<string, string>
 ) => {
     const zoom = 5;
     const otherElementsHeight = 250;
@@ -49,6 +48,7 @@ const useCombatReply = (
     });
 
     const currentTimeRef = useRef(currentTime);
+    const frameIdRef = useRef<number>(0);
 
     const [getCombat] = useLazyGetCombatByIdQuery();
     const [getBossMap] = useLazyGetBossMapByIdQuery();
@@ -134,7 +134,7 @@ const useCombatReply = (
     useEffect(() => {
         const canvas = canvasRef.current;
 
-        if (!combatPlayerPositions || !canvas) {
+        if (!unitPositions || !canvas) {
             return;
         }
 
@@ -144,7 +144,6 @@ const useCombatReply = (
             return;
         }
 
-        let frameId: number;
         const render = () => {
             ctx.clearRect(
                 0,
@@ -155,63 +154,86 @@ const useCombatReply = (
 
             ctx.save();
 
-            positions.forEach((position, key) => {
+            unitPositions.forEach((positions, unit) => {
                 const pos =
                     getPosition(
-                        position
+                        positions
                     );
 
-                const pixel =
-                    toPixel(
-                        pos.x,
-                        pos.y
-                    );
+                if (pos !== null) {
+                    const pixel =
+                        toPixel(
+                            pos.x,
+                            pos.y
+                        );
 
-                const zoomed =
-                    zoomPosition(
-                        pixel.x,
-                        pixel.y
-                    );
+                    const zoomed =
+                        zoomPosition(
+                            pixel.x,
+                            pixel.y
+                        );
 
-                drawPlayer(
-                    key,
-                    ctx,
-                    zoomed.x,
-                    zoomed.y,
-                    colors.get(key) ?? "#000000"
-                );
+                    drawUnit(
+                        unit,
+                        unit.startsWith("Player"),
+                        ctx,
+                        zoomed.x,
+                        zoomed.y,
+                        colors.get(unit) ?? "#000000"
+                    );
+                }
+
             });
 
-            frameId = requestAnimationFrame(render);
+            frameIdRef.current = requestAnimationFrame(render);
         }
 
-        frameId = requestAnimationFrame(render);
+        frameIdRef.current = requestAnimationFrame(render);
 
         return () => {
-            cancelAnimationFrame(frameId);
+            cancelAnimationFrame(frameIdRef.current);
         }
-    }, [combatPlayerPositions, selectedPlayerId, colors, view, instanceBounds]);
+    }, [unitPositions, selectedGameId, colors, view, instanceBounds]);
 
-    const getPosition = (positions: CombatPlayerPositionModel[]): Position => {
+    const getPosition = (positions: UnitPositionModel[]): Position | null => {
         if (positions.length === 0) {
-            return { x: 1, y: 1 };
+            return null;
         }
 
-        const time = currentTimeRef.current!;
+        const time = currentTimeRef.current;
+
+        const firstTime = positions[0].timeMs;
+        if (time < firstTime) {
+            return null;
+        }
 
         const last = positions[positions.length - 1];
+        const lastTime = last.timeMs;
 
-        for (let i = 0; i < positions.length - 1; i++) {
-            const before = positions[i];
-            const after = positions[i + 1];
+        if (time > lastTime) {
+            return null;
+        }
 
-            const beforeMs = timeToMs(before.time);
-            const afterMs = timeToMs(after.time);
+        let left = 0;
+        let right = positions.length - 2;
 
-            if (time >= beforeMs && time <= afterMs) {
-                const progress =
-                    (time - beforeMs) /
-                    (afterMs - beforeMs);
+        while (left <= right) {
+            const mid = (left + right) >> 1;
+
+            const before = positions[mid];
+            const after = positions[mid + 1];
+
+            const beforeMs = before.timeMs;
+            const afterMs = after.timeMs;
+
+            if (time < beforeMs) {
+                right = mid - 1;
+            }
+            else if (time > afterMs) {
+                left = mid + 1;
+            }
+            else {
+                const progress = (time - beforeMs) / (afterMs - beforeMs);
 
                 return {
                     x: before.x + (after.x - before.x) * progress,
@@ -220,7 +242,7 @@ const useCombatReply = (
             }
         }
 
-        return { x: last.x, y: last.y };
+        return null;
     }
 
     const toPixel = (worldX: number, worldY: number) => {
@@ -259,40 +281,44 @@ const useCombatReply = (
         };
     }
 
-    const drawPlayer = (playerId: number, ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
+    const drawUnit = (gameId: string, isPlayer: boolean, ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
         ctx.beginPath();
 
-        ctx.arc(
-            x,
-            y,
-            7,
-            0,
-            Math.PI * 2
-        );
+        if (isPlayer) {
+            ctx.arc(
+                x,
+                y,
+                7,
+                0,
+                Math.PI * 2
+            );
+        }
+        else {
+            ctx.rect(
+                x,
+                y,
+                15,
+                15
+            );
+        }
 
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
 
         ctx.stroke();
 
-        if (playerId === selectedPlayerId) {
+        if (gameId === selectedGameId) {
             ctx.fillStyle = color;
 
             ctx.fill();
         }
     }
 
-    const timeToMs = (time: string): number => {
-        const [hours, minutes, seconds] = time.split(":").map(Number);
-
-        return (
-            hours * 3600 * 1000 +
-            minutes * 60 * 1000 +
-            seconds * 1000
-        );
+    const stop = () => {
+        cancelAnimationFrame(frameIdRef.current);
     }
 
-    return { view, currentTime, setCurrentTime };
+    return { view, currentTime, setCurrentTime, stop };
 }
 
 export default useCombatReply;

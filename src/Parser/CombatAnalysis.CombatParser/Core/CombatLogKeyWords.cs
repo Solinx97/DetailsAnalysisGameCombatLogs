@@ -4,6 +4,10 @@ internal static class CombatLogKeyWords
 {
     #region Common
 
+    public static TimeSpan MinCombatDuration { get; } = TimeSpan.Parse("00:00:20");
+
+    public static string NullValue { get; } = "nil";
+
     public static string CombatLogVersion { get; } = "COMBAT_LOG_VERSION";
 
     public static string EncounterStart { get; } = "ENCOUNTER_START";
@@ -28,6 +32,18 @@ internal static class CombatLogKeyWords
 
     #endregion
 
+    #region Casts
+
+    public static string SpellCastStart { get; } = "SPELL_CAST_START";
+
+    public static string SpellCastSuccess { get; } = "SPELL_CAST_SUCCESS";
+
+    public static string SpellCastFailed { get; } = "SPELL_CAST_FAILED";
+
+    public static string SpellMissed { get; } = "SPELL_MISSED";
+
+    #endregion
+
     #region Auras
 
     public static string AuraApplied { get; } = "SPELL_AURA_APPLIED";
@@ -35,6 +51,8 @@ internal static class CombatLogKeyWords
     public static string AuraRemoved { get; } = "SPELL_AURA_REMOVED";
 
     public static string AuraAppliedDose { get; } = "SPELL_AURA_APPLIED_DOSE";
+
+    public static string AuraRemovedDose { get; } = "SPELL_AURA_REMOVED_DOSE";
 
     public static string Debuff { get; } = "DEBUFF";
 
@@ -53,12 +71,6 @@ internal static class CombatLogKeyWords
     public static string DamageShieldMissed { get; } = "DAMAGE_SHIELD_MISSED";
 
     public static string RangeDamage { get; } = "RANGE_DAMAGE";
-
-    public static string SpellCastSuccess { get; } = "SPELL_CAST_SUCCESS";
-
-    public static string SpellCastFailed { get; } = "SPELL_CAST_FAILED";
-
-    public static string SpellMissed { get; } = "SPELL_MISSED";
 
     public static string SwingDamageLanded { get; } = "SWING_DAMAGE_LANDED";
 

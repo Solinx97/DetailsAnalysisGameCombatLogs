@@ -22,16 +22,6 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
         return uniqueTargets;
     }
 
-    public async Task<int> GetValueToTargetAsync(int combatPlayerId, string target, CancellationToken cancellationToken)
-    {
-        var values = await _context.Set<TModel>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target))
-                     .OrderBy(x => x.Id)
-                     .SumAsync(x => x.Value, cancellationToken);
-
-        return values;
-    }
-
     public async Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
         var uniqueCreatorNames = await _context.Set<TModel>()

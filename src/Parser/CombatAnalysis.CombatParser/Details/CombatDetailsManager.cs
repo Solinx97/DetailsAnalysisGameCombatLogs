@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.CombatParser.Enums;
 using System.Collections.Concurrent;
 using System.Globalization;
@@ -12,32 +13,123 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
-    public (string, CombatPlayerAura?) GetAuras(string[] combatDataLine, ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerAura>> auras, List<string> petsId)
+    public void GetSummonUnit(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
     {
-        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraRemoved)
-            && auras.TryGetValue(combatDataLine[2], out var playerGameId))
+        if (!units.TryGetValue(combatDataLine[6], out var _))
         {
-            RemoveAura(combatDataLine, playerGameId, petsId);
-
-            return (string.Empty, null);
+            units.TryAdd(combatDataLine[6], new CombatUnit
+            {
+                GameId = combatDataLine[6],
+                Username = combatDataLine[7],
+                CreatorGameId = combatDataLine[2],
+                UnitType = combatDataLine[^1],
+            });
         }
-
-        var name = combatDataLine[11].Trim('"');
-        var aura = CreateCombatAura(combatDataLine, name, combatDataLine[0], _combatFinished.ToString(), petsId); 
-        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[14], out var stacks))
-        {
-            aura.Stacks = stacks;
-        }
-
-        return (combatDataLine[2], aura);
     }
 
-    public (string, CombatPlayerPosition?) GetPositions(string[] combatDataLine)
+    public UnitHealth? GetUnitDeathHealth(string[] combatDataLine, ConcurrentDictionary<string, List<UnitHealth>> units)
     {
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
-            || combatDataLine.Length <= 25)
+        if (!units.TryGetValue(combatDataLine[6], out var _))
         {
-            return (string.Empty, null);
+            units.TryAdd(combatDataLine[6], []);
+        }
+
+        var health = new UnitHealth
+        {
+            CreatorGameId = combatDataLine[6],
+            CurrentHealth = 0,
+            MaxHealth = 0,
+            Time = GetTimeFromStart(combatDataLine[0]),
+            IsDead = true,
+        };
+
+        return health;
+    }
+
+    public UnitHealth? GetUnitHealth(string[] combatDataLine, ConcurrentDictionary<string, List<UnitHealth>> units)
+    {
+        if (!int.TryParse(combatDataLine[15], out var currentHealth) || !int.TryParse(combatDataLine[16], out var maxHealth))
+        {
+            return null;
+        }
+
+        var creatorId = maxHealth > 100 ? combatDataLine[6] : combatDataLine[2];
+        if (!units.TryGetValue(creatorId, out var _))
+        {
+            units.TryAdd(creatorId, []);
+        }
+
+        var time = GetTimeFromStart(combatDataLine[0]);
+        var health = new UnitHealth
+        {
+            CreatorGameId = creatorId,
+            CurrentHealth = currentHealth,
+            MaxHealth = maxHealth,
+            Time = time,
+            IsDead = currentHealth == 0,
+        };
+
+        return health;
+    }
+
+    public void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<string> petsId)
+    {
+        if (!auras.TryGetValue(combatDataLine[2], out var combatPlayerAuras))
+        {
+            combatPlayerAuras = [];
+            auras.TryAdd(combatDataLine[2], combatPlayerAuras);
+        }
+
+        var gameSpellId = int.Parse(combatDataLine[10]);
+        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraApplied) || combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose))
+        {
+            var aura = CreateCombatAura(gameSpellId, combatDataLine, combatDataLine[0], string.Empty, petsId);
+            if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[^1], out var stacks))
+            {
+                aura.Stacks = stacks;
+            }
+
+            combatPlayerAuras.Add(aura);
+        }
+        else
+        {
+            RemoveAura(gameSpellId, combatDataLine, combatPlayerAuras, petsId);
+        }
+    }
+
+    public void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, List<UnitCast>> casts)
+    {
+        if (!casts.TryGetValue(combatDataLine[2], out var combatPlayerCasts))
+        {
+            combatPlayerCasts = [];
+            casts.TryAdd(combatDataLine[2], combatPlayerCasts);
+        }
+
+        var gameSpellId = int.Parse(combatDataLine[10]);
+        if (combatDataLine[1].Equals(CombatLogKeyWords.SpellCastStart))
+        {
+            var newCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], false, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+            combatPlayerCasts.Add(newCast);
+        }
+        else
+        {
+            FinishCast(gameSpellId, combatDataLine, combatPlayerCasts, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+        }
+    }
+
+    public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, List<UnitPosition>> positions, ConcurrentDictionary<string, CombatUnit> units)
+    {
+        if (combatDataLine.Length <= 25)
+        {
+            return;
+        }
+
+        var positionOwnerId = combatDataLine[2];
+        var positionOwner = combatDataLine[3];
+        if (!positions.TryGetValue(positionOwnerId, out var collection))
+        {
+            collection = [];
+            positions.TryAdd(positionOwnerId, collection);
         }
 
         var pos1Index = 26;
@@ -53,17 +145,25 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         if (double.TryParse(combatDataLine[pos1Index], out var positionX)
             && double.TryParse(combatDataLine[pos2Index], out var positionY))
         {
-            var position = new CombatPlayerPosition
+            if (!units.TryGetValue(positionOwnerId, out var _))
             {
+                units.TryAdd(positionOwnerId, new CombatUnit
+                {
+                    GameId = positionOwnerId,
+                    Username = positionOwner,
+                });
+            }
+
+            var position = new UnitPosition
+            {
+                CreatorGameId = positionOwnerId,
                 X = positionX,
                 Y = positionY,
                 Time = GetTimeFromStart(combatDataLine[0])
             };
 
-            return (combatDataLine[2], position);
+            collection.Add(position);
         }
-
-        return (string.Empty, null);
     }
 
     public (string, DamageDone?) GetPlayerDamageDone(string[] combatDataLine)
@@ -120,8 +220,10 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
             return (string.Empty, null);
         }
 
-        int.TryParse(combatDataLine[^4], out var value3);
-        int.TryParse(combatDataLine[^3], out var value4);
+        if (!int.TryParse(combatDataLine[^4], out var value) || !int.TryParse(combatDataLine[^3], out var overheal))
+        {
+            return (string.Empty, null);
+        }
 
         var isCrit = combatDataLine[^1].Contains(CombatLogKeyWords.IsCrit);
 
@@ -129,8 +231,8 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         {
             GameSpellId = int.Parse(combatDataLine[10]),
             Spell = combatDataLine[11].Trim('"'),
-            Value = value3,
-            Overheal = value4,
+            Value = value,
+            Overheal = overheal,
             Time = GetTimeFromStart(combatDataLine[0]),
             Creator = combatDataLine[3].Trim('"'),
             Target = combatDataLine[7].Trim('"'),
@@ -187,7 +289,10 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
             return (string.Empty, null);
         }
 
-        int.TryParse(combatDataLine[^10], out var value);
+        if (!int.TryParse(combatDataLine[^10], out var value))
+        {
+            return (string.Empty, null);
+        }
 
         var isAutoAttack = false;
         var spell = string.Empty;
@@ -384,7 +489,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return damageDone;
     }
 
-    private CombatPlayerAura CreateCombatAura(string[] combatDataLine, string name, string startTimeAura, string finishTimeAura, List<string> petsId)
+    private CombatPlayerAura CreateCombatAura(int gameSpellId, string[] combatDataLine, string startTimeAura, string finishTimeAura, List<string> petsId)
     {
         var startTime = GetTimeFromStart(startTimeAura);
         var finishTime = GetTimeFromStart(finishTimeAura);
@@ -394,7 +499,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         var aura = new CombatPlayerAura
         {
             GameAuraId = int.Parse(combatDataLine[10]),
-            Name = name,
+            Name = combatDataLine[11].Trim('"'),
             Creator = combatDataLine[3].Trim('"'),
             Target = combatDataLine[7].Trim('"'),
             StartTime = startTime,
@@ -406,17 +511,50 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return aura;
     }
 
-    private void RemoveAura(string[] combatDataLine, ConcurrentDictionary<string, CombatPlayerAura> auras, List<string> petsId)
+    private UnitCast CreateUnitCast(int gameSpellId, string[] combatDataLine, string startTimeCast, string finishTimeCast, bool isImmediatly, bool isSuccess)
     {
-        if (auras.TryGetValue(combatDataLine[11], out var aura))
+        var startTime = GetTimeFromStart(startTimeCast);
+        var finishTime = GetTimeFromStart(finishTimeCast);
+
+        var cast = new UnitCast
+        {
+            CreatorGameId = combatDataLine[2],
+            GameSpellId = gameSpellId,
+            Spell = combatDataLine[11].Trim('"'),
+            Time = startTime,
+            FinishTime = finishTime,
+            TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NullValue, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6],
+            IsImmediatly = isImmediatly,
+            IsSuccess = isSuccess,
+        };
+
+        return cast;
+    }
+
+    private void RemoveAura(int gameSpellId, string[] combatDataLine, List<CombatPlayerAura> combatPlayerAuras, List<string> petsId)
+    {
+        var aura = combatPlayerAuras
+            .FirstOrDefault(x => x.GameAuraId == gameSpellId);
+        if (aura != null)
         {
             aura.FinishTime = GetTimeFromStart(combatDataLine[0]);
         }
+    }
+
+    private void FinishCast(int gameSpellId, string[] combatDataLine, List<UnitCast> combatPlayerCasts, bool isSuccess)
+    {
+        var lastStartedCast = combatPlayerCasts
+            .LastOrDefault(x => x.GameSpellId == gameSpellId && !x.IsImmediatly);
+        if (lastStartedCast != null)
+        {
+            lastStartedCast.FinishTime = GetTimeFromStart(combatDataLine[0]);
+            lastStartedCast.TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NullValue, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6];
+            lastStartedCast.IsSuccess = isSuccess;
+        }
         else
         {
-            var name = combatDataLine[11].Trim('"');
-            var alreadyRunAura = CreateCombatAura(combatDataLine, name, _combatStarted.ToString(), combatDataLine[0], petsId);
-            auras.TryAdd(name, alreadyRunAura);
+            var instaCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], true, isSuccess);
+            combatPlayerCasts.Add(instaCast);
         }
     }
 

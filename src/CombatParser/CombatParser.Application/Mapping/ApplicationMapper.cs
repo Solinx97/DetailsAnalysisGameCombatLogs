@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatParser.Application.DTOs;
 using CombatParser.Application.DTOs.Chart;
+using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Application.DTOs.Dashboard;
 using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
@@ -24,7 +25,10 @@ public class ApplicationMapper : Profile
         CreateMap<CombatPlayerPreAuraDto, CombatPlayerPreAura>().ReverseMap();
         CreateMap<Domain.DTOs.CombatPlayerPreAuraDto, CombatPlayerPreAuraDto>().ReverseMap();
         CreateMap<CombatPlayerAuraDto, CombatPlayerAura>().ReverseMap();
-        CreateMap<CombatPlayerPositionDto, CombatPlayerPosition>().ReverseMap();
+        CreateMap<CombatUnitDto, CombatUnit>().ReverseMap();
+        CreateMap<UnitHealthDto, UnitHealth>().ReverseMap();
+        CreateMap<UnitPositionDto, UnitPosition>().ReverseMap();
+        CreateMap<UnitCastDto, UnitCast>().ReverseMap();
         CreateMap<SpecializationDto, Specialization>().ReverseMap();
         CreateMap<SpecializationScoreDto, SpecializationScore>().ReverseMap();
         CreateMap<BestSpecializationScoreDto, BestSpecializationScore>().ReverseMap();
@@ -38,7 +42,6 @@ public class ApplicationMapper : Profile
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
         CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
         CreateMap<CombatPlayerStatsDto, CombatPlayerStats>().ReverseMap();
-        CreateMap<CombatTargetDto, CombatTarget>().ReverseMap();
 
         CreateMap<ChartGenericDto, ChartGeneric>().ReverseMap();
         CreateMap<DashboardDto, Dashboard>().ReverseMap();

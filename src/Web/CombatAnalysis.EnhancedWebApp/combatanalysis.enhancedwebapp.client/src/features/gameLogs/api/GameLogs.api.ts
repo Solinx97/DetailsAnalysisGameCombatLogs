@@ -6,9 +6,12 @@ import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
 import type { CombatAbilityModel } from '../types/CombatAbilityModel';
 import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
-import type { CombatPlayerPositionModel } from '../types/CombatPlayerPositionModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
 import type { BossMapModel } from '../types/BossMapModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
+import type { UnitCastModel } from '../types/UnitCastModel';
+import type { UnitHealthModel } from '../types/UnitHealthModel';
+import type { CombatUnitModel } from '../types/CombatUnitModel';
 
 const apiURL = '/api/v1';
 
@@ -19,9 +22,13 @@ export const GameLogsApi = createApi({
         'CombatLog',
         'Combat',
         'BossMap',
+        'UnitHealth',
+        'UnitPosition',
+        'CombatUnit',
         'CombatPlayer',
         'CombatPlayerAura',
-        'CombatPlayerPosition',
+        'CombatPlayerDeath',
+        'CombatPlayerCast',
         'DamageDone',
         'DamageDoneGeneral',
         'DamageTaken',
@@ -30,7 +37,6 @@ export const GameLogsApi = createApi({
         'HealDoneGeneral',
         'ResourceRecovery',
         'ResourceRecoveryGeneral',
-        'PlayerDeath',
     ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
@@ -56,15 +62,15 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatLog', id: 'LIST' }]
         }),
-        getPlayersDeathByPlayerId: builder.query<CombatPlayerDeathModel[], number>({
-            query: combatPlayerId => `/PlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
+        getCombatPlayersDeathByCombatPlayerId: builder.query<CombatPlayerDeathModel[], number>({
+            query: combatPlayerId => `/CombatPlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [
-                        ...result.map(playerDeath => ({ type: 'PlayerDeath' as const, id: playerDeath.id })),
-                        { type: 'PlayerDeath', id: 'LIST' },
+                        ...result.map(playerDeath => ({ type: 'CombatPlayerDeath' as const, id: playerDeath.id })),
+                        { type: 'CombatPlayerDeath', id: 'LIST' },
                     ]
-                    : [{ type: 'PlayerDeath', id: 'LIST' }]
+                    : [{ type: 'CombatPlayerDeath', id: 'LIST' }]
         }),
         getCombatsByCombatLogId: builder.query<CombatModel[], number>({
             query: combatLogId => `/Combat/getByCombatLogId/${combatLogId}`,
@@ -131,15 +137,17 @@ export const GameLogsApi = createApi({
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }],
             keepUnusedDataFor: 0,
         }),
-        getCombatPlayerPositionsByCombatPlayerId: builder.query<CombatPlayerPositionModel[], number>({
-            query: combatPlayerId => `/CombatPlayerPosition/getByCombatPlayerId/${combatPlayerId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(combatPlayerPosition => ({ type: 'CombatPlayerPosition' as const, id: combatPlayerPosition.id })),
-                        { type: 'CombatPlayerPosition', id: 'LIST' },
-                    ]
-                    : [{ type: 'CombatPlayerPosition', id: 'LIST' }]
+        getCombatUnitsByCombatId: builder.query<CombatUnitModel[], number>({
+            query: combatId => `/CombatUnit/getByCombatId/${combatId}`,
+        }),
+        getUnitCastsByCombatPlayerId: builder.query<Map<string, UnitCastModel[]>, number>({
+            query: combatId => `/UnitCast/getByCombatId/${combatId}`,
+        }),
+        getUnitPositionsByCombatId: builder.query<Map<string, UnitPositionModel[]>, number>({
+            query: combatId => `/UnitPosition/getByCombatId/${combatId}`,
+        }),
+        getUnitsHealthByCombatId: builder.query<Map<string, UnitHealthModel[]>, number>({
+            query: combatId => `/UnitHealth/getByCombatId/${combatId}`,
         }),
     })
 })
@@ -147,7 +155,7 @@ export const GameLogsApi = createApi({
 export const {
     useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
-    useLazyGetPlayersDeathByPlayerIdQuery,
+    useLazyGetCombatPlayersDeathByCombatPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
     useGetCombatsDashboardQuery,
     useGetCombatsDamageSpellsQuery,
@@ -159,5 +167,8 @@ export const {
     useLazyGetCombatPlayerByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatByPreAuraQuery,
-    useLazyGetCombatPlayerPositionsByCombatPlayerIdQuery
+    useLazyGetCombatUnitsByCombatIdQuery,
+    useLazyGetUnitCastsByCombatPlayerIdQuery,
+    useLazyGetUnitPositionsByCombatIdQuery,
+    useLazyGetUnitsHealthByCombatIdQuery,
 } = GameLogsApi;

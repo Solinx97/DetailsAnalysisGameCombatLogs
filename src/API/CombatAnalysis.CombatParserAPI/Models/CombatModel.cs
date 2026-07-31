@@ -36,6 +36,14 @@ public class CombatModel
     [Required]
     public List<CombatPlayerModel> CombatPlayers { get; init; } = [];
 
+    public List<CombatUnitModel> Units { get; init; } = [];
+
+    public List<UnitCastModel> UnitCasts { get; init; } = [];
+
+    public List<UnitHealthModel> UnitHealths { get; init; } = [];
+
+    public List<UnitPositionModel> UnitPositions { get; init; } = [];
+
     [Required]
     public Dictionary<string, List<string>> PetsId { get; init; } = [];
 

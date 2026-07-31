@@ -27,13 +27,6 @@ public class PlayerController(IMediator mediator, ILogger<PlayerController> logg
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Player create received: {@Player}", player);
-
-                return ValidationProblem(ModelState);
-            }
-
             var createdItem = await _mediator.Send(new CreatePlayerCommand(player.GameId, player.Username, player.Faction), cancellationToken);
 
             return Ok(createdItem);

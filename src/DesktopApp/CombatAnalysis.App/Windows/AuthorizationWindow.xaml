@@ -54,10 +54,14 @@
                        Text="{loc:Loc Verification}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
             </StackPanel>
         </StackPanel>
-        
+
         <StackPanel Grid.Row="1" VerticalAlignment="Center">
             <Button Grid.Row="1" Style="{StaticResource showButton}" Content="{loc:Loc Cancel}" Width="100" FontSize="12"
-                Margin="10,10" Click="CloseWindowHandler" />
+                    Visibility="{Binding CheckIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}" 
+                    Margin="10,10" mvx:Bi.nd="Command AbortCommand" />
+            <Button Grid.Row="1" Style="{StaticResource showButton}" Content="{loc:Loc Close}" Width="100" FontSize="12"
+                    Visibility="{Binding CheckIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}" 
+                    Margin="10,10" Click="CloseWindowHandler" />
         </StackPanel>
     </Grid>
 </views:MvxWindow>

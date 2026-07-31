@@ -24,13 +24,17 @@ const gameLogsEnpoints = (target: string, apiVersion: string) => {
     return {
         [`^/api/${apiVersion}/Boss`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatAbility`]: { target, secure: false },
-        [`^/api/${apiVersion}/PreAura`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatLog`]: { target, secure: false },
         [`^/api/${apiVersion}/Combat`]: { target, secure: false },
         [`^/api/${apiVersion}/BossMap`]: { target, secure: false },
+        [`^/api/${apiVersion}/UnitCast`]: { target, secure: false },
+        [`^/api/${apiVersion}/UnitHealth`]: { target, secure: false },
+        [`^/api/${apiVersion}/UnitPosition`]: { target, secure: false },
+        [`^/api/${apiVersion}/CombatUnit`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayer`]: { target, secure: false },
         [`^/api/${apiVersion}/CombatPlayerAura`]: { target, secure: false },
-        [`^/api/${apiVersion}/CombatPlayerPosition`]: { target, secure: false },
+        [`^/api/${apiVersion}/CombatPlayerPreAura`]: { target, secure: false },
+        [`^/api/${apiVersion}/CombatPlayerDeath`]: { target, secure: false },
         [`^/api/${apiVersion}/DamageDone`]: { target, secure: false },
         [`^/api/${apiVersion}/DamageDoneGeneral`]: { target, secure: false },
         [`^/api/${apiVersion}/DamageTaken`]: { target, secure: false },
@@ -39,7 +43,6 @@ const gameLogsEnpoints = (target: string, apiVersion: string) => {
         [`^/api/${apiVersion}/HealDoneGeneral`]: { target, secure: false },
         [`^/api/${apiVersion}/ResourceRecovery`]: { target, secure: false },
         [`^/api/${apiVersion}/ResourceRecoveryGeneral`]: { target, secure: false },
-        [`^/api/${apiVersion}/PlayerDeath`]: { target, secure: false },
     }
 }
 

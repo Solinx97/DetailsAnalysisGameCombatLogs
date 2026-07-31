@@ -4,6 +4,8 @@ using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using MvvmCross.Commands;
 
 namespace CombatAnalysis.Core.ViewModels.User;
 
@@ -11,18 +13,26 @@ public class RegistrationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IIdentityService _identityService;
+    private readonly ILogger _logger;
+    private readonly CancellationTokenSource _cts = new();
 
     private bool _isVerification;
+    private bool _isCanceled;
 
-    public RegistrationViewModel(IMemoryCache memoryCache, IIdentityService identityService)
+    public event Action<bool>? RegistrationCompleted;
+
+    public RegistrationViewModel(IMemoryCache memoryCache, IIdentityService identityService, ILogger logger)
     {
         _memoryCache = memoryCache;
         _identityService = identityService;
+        _logger = logger;
+
+        AbortCommand = new MvxCommand(Abort);
 
         Basic.Parent = this;
     }
 
-    public event CloseRegistrationWindowEventHandler? CloseRegistrationWindow;
+    public IMvxCommand AbortCommand { get; set; }
 
     #region View model properties
 
@@ -35,33 +45,54 @@ public class RegistrationViewModel : ParentTemplate
         }
     }
 
+    public bool IsCanceled
+    {
+        get { return _isCanceled; }
+        set
+        {
+            SetProperty(ref _isCanceled, value);
+        }
+    }
+
     #endregion
 
-    public void SendRequest()
+    public override async Task Initialize()
     {
-        Task.Run(SendAuthorizationRequestAsync);
+        await SendAuthorizationRequestAsync();
     }
 
     private async Task SendAuthorizationRequestAsync()
     {
-        await _identityService.SendAuthorizationRequestAsync("Account/Registration");
-
-        IsVerification = true;
-
-        await _identityService.SendTokenRequestAsync();
-
-        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        if (user != null)
+        try
         {
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
+            await _identityService.SendAuthorizationRequestAsync("Account/Registration", _cts.Token);
+            _cts.Token.ThrowIfCancellationRequested();
+
+            IsVerification = true;
+
+            await _identityService.SendTokenRequestAsync(_cts.Token);
+            _cts.Token.ThrowIfCancellationRequested();
+
+            var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+            if (user != null)
+            {
+                Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
+                Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
+            }
+
+            RegistrationCompleted?.Invoke(true);
         }
-
-        await InvokeOnMainThreadAsync(() =>
+        catch (OperationCanceledException)
         {
-            CloseRegistrationWindow?.Invoke();
-        });
+            _logger.LogInformation("Listening cancelled");
+        }
     }
 
-    public delegate void CloseRegistrationWindowEventHandler();
+    private void Abort()
+    {
+        _cts.Cancel();
+
+        IsVerification = false;
+        IsCanceled = true;
+    }
 }

@@ -7,12 +7,8 @@ public class Player
 
     private Player() { }
 
-    public Player(string gameId, string username, int faction)
+    private Player(string gameId, string username, int faction)
     {
-        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
-        ArgumentException.ThrowIfNullOrEmpty(username, nameof(username));
-        ArgumentOutOfRangeException.ThrowIfNegative(faction, nameof(faction));
-
         Id = Guid.NewGuid().ToString();
         GameId = gameId;
         Username = username;

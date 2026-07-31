@@ -5,7 +5,7 @@ export const statusCode = {
 export const pageWithoutAuth = [
     "/", "/login", "/registration", 
     "/game-combat-logs","/general-analysis", "/general-analysis/auras", 
-    "/general-analysis/reply", "/selected-combat", "/combat-details",
+    "/general-analysis/watch", "/selected-combat", "/combat-details",
     "/callback", "/player-movements"
 ];
 

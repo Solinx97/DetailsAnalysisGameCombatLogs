@@ -17,6 +17,7 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
     private readonly IMemoryCache _memoryCache;
 
     private int _selectedTabIndex;
+    private bool _isAllowSwitchTabs = true;
     private bool _isAuth;
 
     public CombatLogsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, ICombatParserService parser,
@@ -46,6 +47,15 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
         set
         {
             SetProperty(ref _selectedTabIndex, value);
+        }
+    }
+
+    public bool IsAllowSwitchTabs
+    {
+        get { return _isAllowSwitchTabs; }
+        set
+        {
+            SetProperty(ref _isAllowSwitchTabs, value);
         }
     }
 

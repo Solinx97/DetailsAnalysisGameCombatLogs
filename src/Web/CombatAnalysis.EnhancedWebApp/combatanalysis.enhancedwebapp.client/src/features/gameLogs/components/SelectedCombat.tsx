@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetPlayersDeathByPlayerIdQuery } from '../api/GameLogs.api';
+import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayersDeathByCombatPlayerIdQuery } from '../api/GameLogs.api';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
 import type { CombatDetailsModel } from '../types/CombatDetailsModel';
@@ -45,7 +45,7 @@ const SelectedCombat: React.FC = () => {
     };
 
     const [getCombatPlayersByCombatIdAsync] = useLazyGetCombatPlayersByCombatIdQuery();
-    const [getPlayersDeathByCombatIdAsync] = useLazyGetPlayersDeathByPlayerIdQuery();
+    const [getPlayersDeathByCombatIdAsync] = useLazyGetCombatPlayersDeathByCombatPlayerIdQuery();
 
     const filterContent = useRef<HTMLInputElement>(null);
 

@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using CombatParser.Application.DTOs;
+using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using MediatR;
 
 namespace CombatParser.Application.Queries.GetPlayerDeaths;
 
-internal class GetCombatPlayerDeathsHandler(ICombatPlayerDataRepository<CombatPlayerDeath> repository, IMapper mapper) : IRequestHandler<GetPlayerDeathsQuery, IEnumerable<CombatPlayerDeathDto>>
+internal class GetCombatPlayerDeathsHandler(ICombatPlayerDataByTimeRepository<CombatPlayerDeath> repository, IMapper mapper) : IRequestHandler<GetPlayerDeathsQuery, IEnumerable<CombatPlayerDeathDto>>
 {
-    private readonly ICombatPlayerDataRepository<CombatPlayerDeath> _repository = repository;
+    private readonly ICombatPlayerDataByTimeRepository<CombatPlayerDeath> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<IEnumerable<CombatPlayerDeathDto>> Handle(GetPlayerDeathsQuery request, CancellationToken cancellationToken)

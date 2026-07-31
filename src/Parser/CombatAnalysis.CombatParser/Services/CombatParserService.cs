@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -15,8 +16,6 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
     private readonly IFileManager _fileManager = fileManager;
     private readonly ILogger _logger = logger;
     private readonly IHttpClientHelper _httpHelper = httpHelper;
-
-    private readonly TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
 
     public List<Combat> Combats { get; private set; } = [];
 
@@ -214,13 +213,20 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         };
 
         var duration = combat.FinishDate - combat.StartDate;
-        if (duration < _minCombatDuration)
+        if (duration < CombatLogKeyWords.MinCombatDuration)
         {
             return;
         }
 
-        var players = await GetCombatPlayers(combat);
+        var combatDetails = new CombatDetails(_logger, combat.PetsId);
+
+        var players = await GetCombatPlayers(combat, combatDetails);
         combat.CombatPlayers = [.. players];
+
+        combat.Units = [.. combatDetails.Units.Values];
+        combat.UnitCasts = [.. combatDetails.UnitCasts.Values.SelectMany(x => x)];
+        combat.UnitHealths = [.. combatDetails.UnitHealths.Values.SelectMany(x => x)];
+        combat.UnitPositions = [.. combatDetails.UnitPositions.Values.SelectMany(x => x)];
 
         CalculatingCommonCombatDetails(combat);
 
@@ -305,7 +311,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         Combats.Add(combat);
     }
 
-    private async Task<CombatPlayer[]> GetCombatPlayers(Combat combat)
+    private async Task<CombatPlayer[]> GetCombatPlayers(Combat combat, CombatDetails combatDetails)
     {
         var combatInformations = combat.Data
             .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
@@ -320,7 +326,6 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
         var playersId = combatPlayers.Select(x => x.Player.GameId).ToArray();
 
-        var combatDetails = new CombatDetails(_logger, combat.PetsId);
         combatDetails.Calculate(playersId, combat.Data, combat.StartDate, combat.FinishDate);
         combatDetails.CalculateGeneralData(playersId, combat.Duration);
 
@@ -362,18 +367,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
 
         if (player == null)
         {
-            var username = GetUsernameByPlayerGameId(combatData, combatInfoList[1]);
-            var faction = int.Parse(combatInfoList[2]);
-
-            combatPlayer.Player.Id = Guid.NewGuid().ToString();
-            combatPlayer.Player.Username = username;
-            combatPlayer.Player.Faction = faction;
-
-            var newPlayer = await combatPlayer.Player.CreateAsync(_httpHelper, _logger);
-            if (newPlayer != null)
-            {
-                combatPlayer.Player = newPlayer;
-            }
+            await CreatePlayer(combatData, combatInfoList, combatPlayer);
         }
         else
         {
@@ -383,26 +377,40 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         return combatPlayer;
     }
 
+    private async Task CreatePlayer(string[] combatData, string[] combatInfoList, CombatPlayer combatPlayer)
+    {
+        var username = GetUsernameByPlayerGameId(combatData, combatInfoList[1]);
+        var faction = int.Parse(combatInfoList[2]);
+
+        combatPlayer.Player.Username = username;
+        combatPlayer.Player.Faction = faction;
+
+        var unit = await combatPlayer.Player.CreateAsync(_httpHelper, _logger);
+        if (unit != null)
+        {
+            combatPlayer.Player = unit;
+        }
+    }
+
     private static void FillCombatPlayerData(CombatPlayer combatPlayer, CombatDetails combatDetails)
     {
-        combatPlayer.DamageDoneToBoss = combatDetails.DamageDone[combatPlayer.Player.GameId].Where(x => x.Value.IsTargetBoss).Sum(x => x.Value.Value);
-        combatPlayer.DamageDone = combatDetails.DamageDone[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
-        combatPlayer.HealDone = combatDetails.HealDone[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
-        combatPlayer.DamageTaken = combatDetails.DamageTaken[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
-        combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecovery[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+        combatPlayer.DamageDoneToBoss = combatDetails.DamageDones[combatPlayer.Player.GameId].Where(x => x.Value.IsTargetBoss).Sum(x => x.Value.Value);
+        combatPlayer.DamageDone = combatDetails.DamageDones[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+        combatPlayer.HealDone = combatDetails.HealDones[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+        combatPlayer.DamageTaken = combatDetails.DamageTakens[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+        combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
 
-        combatPlayer.Auras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.DamageDones.AddRange(combatDetails.DamageDone[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.DamageDoneGenerals.AddRange(combatDetails.DamageDoneGeneral[combatPlayer.Player.GameId]);
-        combatPlayer.HealDones.AddRange(combatDetails.HealDone[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.HealDoneGenerals.AddRange(combatDetails.HealDoneGeneral[combatPlayer.Player.GameId]);
-        combatPlayer.DamageTakens.AddRange(combatDetails.DamageTaken[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.DamageTakenGenerals.AddRange(combatDetails.DamageTakenGeneral[combatPlayer.Player.GameId]);
-        combatPlayer.ResourceRecoveries.AddRange(combatDetails.ResourcesRecovery[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.ResourceRecoveryGenerals.AddRange(combatDetails.ResourcesRecoveryGeneral[combatPlayer.Player.GameId]);
+        combatPlayer.Auras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId]);
+        combatPlayer.DamageDones.AddRange(combatDetails.DamageDones[combatPlayer.Player.GameId].Select(x => x.Value));
+        combatPlayer.DamageDoneGenerals.AddRange(combatDetails.DamageDoneGenerals[combatPlayer.Player.GameId]);
+        combatPlayer.HealDones.AddRange(combatDetails.HealDones[combatPlayer.Player.GameId].Select(x => x.Value));
+        combatPlayer.HealDoneGenerals.AddRange(combatDetails.HealDoneGenerals[combatPlayer.Player.GameId]);
+        combatPlayer.DamageTakens.AddRange(combatDetails.DamageTakens[combatPlayer.Player.GameId].Select(x => x.Value));
+        combatPlayer.DamageTakenGenerals.AddRange(combatDetails.DamageTakenGenerals[combatPlayer.Player.GameId]);
+        combatPlayer.ResourceRecoveries.AddRange(combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Select(x => x.Value));
+        combatPlayer.ResourceRecoveryGenerals.AddRange(combatDetails.ResourcesRecoveryGenerals[combatPlayer.Player.GameId]);
 
-        combatPlayer.CombatPlayerDeathes.AddRange(combatDetails.CombatPlayersDeath[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.CombatPlayerPositions.AddRange(combatDetails.CombatPlayerPositions[combatPlayer.Player.GameId].Select(x => x.Value));
+        combatPlayer.CombatPlayerDeathes.AddRange(combatDetails.Deathes[combatPlayer.Player.GameId].Select(x => x.Value));
     }
 
     private void ZoneName(string combatLog)
@@ -458,9 +466,9 @@ internal class CombatParserService(IFileManager fileManager, ILogger logger, IHt
         return averageILvl;
     }
 
-    private static PlayerStats GetStats(string[] combatInfo)
+    private static CombatPlayerStats GetStats(string[] combatInfo)
     {
-        var stats = new PlayerStats
+        var stats = new CombatPlayerStats
         {
             Strength = int.Parse(combatInfo[0]),
             Agility = int.Parse(combatInfo[1]),

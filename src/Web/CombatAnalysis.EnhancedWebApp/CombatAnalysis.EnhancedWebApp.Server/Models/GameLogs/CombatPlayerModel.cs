@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs.CombatPlayerData;
+
+namespace CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
 
 public class CombatPlayerModel
 {

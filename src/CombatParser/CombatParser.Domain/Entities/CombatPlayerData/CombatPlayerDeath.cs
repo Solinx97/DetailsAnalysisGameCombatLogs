@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class CombatPlayerDeath : CombatPlayerDataBase, ICombatPlayerTime
+public class CombatPlayerDeath : CombatPlayerDataBase, ITime
 {
     public const int USERNAME_MAX_LENGTH = 128;
     public const int SPELL_MAX_LENGTH = 128;

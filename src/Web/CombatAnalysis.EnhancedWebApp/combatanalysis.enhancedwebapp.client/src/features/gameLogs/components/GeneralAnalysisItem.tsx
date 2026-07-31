@@ -14,7 +14,7 @@ interface GeneralAnalysisItemProps {
 }
 
 const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats, combatLogId, getValueShortName }) => {
-    const { t } = useTranslation("combatDetails/generalAnalysis");
+    const { t } = useTranslation('combatDetails/generalAnalysis');
 
     const navigate = useNavigate();
 
@@ -51,11 +51,11 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                             </div>
                         </div>
                         <div className="see-reply btn-shadow" 
-                            onClick={() => navigate(`/general-analysis/reply?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
+                            onClick={() => navigate(`/general-analysis/watch?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
                             <FontAwesomeIcon
                                 icon={faLocationCrosshairs}
                             />
-                            <div>{t("Reply")}</div>
+                            <div>{t("Watch")}</div>
                         </div>
                     </div>
                     <div className="combat-time">

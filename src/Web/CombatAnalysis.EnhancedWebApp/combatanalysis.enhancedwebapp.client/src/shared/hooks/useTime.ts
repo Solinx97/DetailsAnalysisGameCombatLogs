@@ -1,4 +1,4 @@
-﻿type Time = {
+﻿type TimeResult = {
     getTimeWithoutMs: (time: string) => string;
     getTotalSeconds: (time: string) => number;
     getDuration: (time1: string, time2: string) => string;
@@ -7,7 +7,7 @@
     timeToMs: (time: string) => number;
 }
 
-const useTime = (): Time => {
+const useTime = (): TimeResult => {
     const getTimeWithoutMs = (time: string): string => {
         const ms = time.indexOf('.');
         const timeWithoutMs = time.substring(0, ms);

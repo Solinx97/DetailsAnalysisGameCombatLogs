@@ -5,8 +5,6 @@ public interface IGeneralRepository<TModel>
 {
     Task<IEnumerable<string>> GetUniqueTargetsAsync(int combatPlayerId, CancellationToken cancellationToken);
 
-    Task<int> GetValueToTargetAsync(int combatPlayerId, string target, CancellationToken cancellationToken);
-
     Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken);
 
     Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken);

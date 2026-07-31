@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.CombatParser.Details;
-using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.CombatParser.Enums;
 using Microsoft.Extensions.Logging;
 
@@ -17,10 +17,10 @@ public static class CombatDetailsExtension
 
             foreach (var playerId in playersId)
             {
-                combatDetails.DamageDoneGeneral.TryAdd(playerId, GetDamageDoneGeneral([.. combatDetails.DamageDone[playerId].Select(x => x.Value)], duration));
-                combatDetails.HealDoneGeneral.TryAdd(playerId, GetHealDoneGeneral([.. combatDetails.HealDone[playerId].Select(x => x.Value)], duration));
-                combatDetails.DamageTakenGeneral.TryAdd(playerId, GetDamageTakenGeneral([.. combatDetails.DamageTaken[playerId].Select(x => x.Value)], duration));
-                combatDetails.ResourcesRecoveryGeneral.TryAdd(playerId, GetResourceRecoveryGeneral([.. combatDetails.ResourcesRecovery[playerId].Select(x => x.Value)], duration));
+                combatDetails.DamageDoneGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. combatDetails.DamageDones[playerId].Select(x => x.Value)], duration));
+                combatDetails.HealDoneGenerals.TryAdd(playerId, GetHealDoneGeneral([.. combatDetails.HealDones[playerId].Select(x => x.Value)], duration));
+                combatDetails.DamageTakenGenerals.TryAdd(playerId, GetDamageTakenGeneral([.. combatDetails.DamageTakens[playerId].Select(x => x.Value)], duration));
+                combatDetails.ResourcesRecoveryGenerals.TryAdd(playerId, GetResourceRecoveryGeneral([.. combatDetails.ResourcesRecoveries[playerId].Select(x => x.Value)], duration));
             }
         }
         catch (ArgumentNullException ex)

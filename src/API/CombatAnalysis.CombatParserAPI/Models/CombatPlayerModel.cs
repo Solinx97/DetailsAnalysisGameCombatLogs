@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models;
 
@@ -26,7 +27,6 @@ public class CombatPlayerModel
 
     public SpecializationScoreModel? Score { get; set; }
 
-    [Required]
     public PlayerModel Player { get; set; } = new();
 
     [Required]
@@ -40,6 +40,9 @@ public class CombatPlayerModel
 
     [Required]
     public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<UnitCastModel> Casts { get; set; } = [];
 
     [Required]
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
@@ -69,5 +72,5 @@ public class CombatPlayerModel
     public IReadOnlyList<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 
     [Required]
-    public IReadOnlyList<CombatPlayerPositionModel> CombatPlayerPositions { get; set; } = [];
+    public IReadOnlyList<UnitPositionModel> CombatPlayerPositions { get; set; } = [];
 }

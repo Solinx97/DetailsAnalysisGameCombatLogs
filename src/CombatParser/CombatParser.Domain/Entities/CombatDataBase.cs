@@ -1,6 +1,8 @@
-﻿namespace CombatParser.Domain.Entities;
+﻿using CombatParser.Domain.Interfaces;
 
-public class CombatDataBase
+namespace CombatParser.Domain.Entities;
+
+public class CombatDataBase : ICombatRefs
 {
     public int CombatId { get; protected set; }
 

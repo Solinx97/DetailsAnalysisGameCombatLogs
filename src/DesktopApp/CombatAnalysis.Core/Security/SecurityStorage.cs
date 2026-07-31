@@ -85,13 +85,13 @@ internal class SecurityStorage
         }
     }
 
-    public async Task<AppUserModel?> GetUserAsync()
+    public async Task<AppUserModel?> GetUserAsync(CancellationToken cancellationToken)
     {
         try
         {
             GetAccessToken();
 
-            var user = await GetUserByAccessTokenAsync();
+            var user = await GetUserByAccessTokenAsync(cancellationToken);
             _memoryCache.Set(nameof(MemoryCacheValue.User), user, TimeSpan.FromDays(3));
 
             return user;
@@ -127,7 +127,7 @@ internal class SecurityStorage
         }
     }
 
-    private async Task<AppUserModel?> GetUserByAccessTokenAsync()
+    private async Task<AppUserModel?> GetUserByAccessTokenAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -140,7 +140,7 @@ internal class SecurityStorage
             ArgumentException.ThrowIfNullOrEmpty(identityUserId, nameof(identityUserId));
 
             _httpClient.BaseAddressApi = "api/v1/";
-            var response = await _httpClient.GetAsync($"User/find/{identityUserId}", API.UserApi, true);
+            var response = await _httpClient.GetAsync($"User/find/{identityUserId}", API.UserApi, cancellationToken, true);
             response.EnsureSuccessStatusCode();
 
             var user = await response.Content.ReadFromJsonAsync<AppUserModel>();

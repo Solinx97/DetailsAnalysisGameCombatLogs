@@ -35,10 +35,6 @@ public class PublicCombatLogsViewModel : ParentTemplate
         LoadSelectedCombatLogCommand = new MvxAsyncCommand(() => LoadSelectedCombatLogAsync(CombatLogs));
         ReloadCombatLogsCommand = new MvxAsyncCommand(LoadCombatLogsAsync);
         DeleteCombatCommand = new MvxAsyncCommand(DeleteAsync);
-
-        Basic.Parent = this;
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 0);
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.LogPanelStatusIsVisibly), true);
     }
 
     #region Commands

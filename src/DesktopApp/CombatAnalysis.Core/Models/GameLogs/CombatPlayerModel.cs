@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models.GameLogs;
+﻿using CombatAnalysis.Core.Models.GameLogs.CombatPlayerData;
+
+namespace CombatAnalysis.Core.Models.GameLogs;
 
 public class CombatPlayerModel
 {
@@ -64,5 +66,5 @@ public class CombatPlayerModel
 
     public IReadOnlyCollection<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 
-    public IReadOnlyCollection<CombatPlayerPositionModel> CombatPlayerPositions { get; set; } = [];
+    public IReadOnlyCollection<UnitPositionModel> CombatPlayerPositions { get; set; } = [];
 }

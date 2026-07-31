@@ -1,7 +1,7 @@
 import useTime from '@/shared/hooks/useTime';
+import DashboardContext from '@/context/DashboardContext';
 import { useContext, useEffect, useState } from 'react';
 import type { CombatModel } from '../../types/CombatModel';
-import { DashboardContext } from './DashboardItem';
 
 export interface DashboardDurationItemProps {
     allUniqueCombats: Map<string, CombatModel[]>;

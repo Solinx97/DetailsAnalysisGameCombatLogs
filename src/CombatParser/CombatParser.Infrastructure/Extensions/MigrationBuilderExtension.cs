@@ -160,7 +160,7 @@ internal static class MigrationBuilderExtension
             Specialization.Create(7, "ProtectionWarrior", "6572,23922,20243"),
             Specialization.Create(8, "Brewmaster", "121253,124335,100787"),
             Specialization.Create(9, "Discipline", "47750,81751,585"),
-            Specialization.Create(10, "Restoration", "61295,52752,51945"),
+            Specialization.Create(10, "RestorationShaman", "61295,52752,51945"),
             Specialization.Create(11, "Combat", "57841,84617,1752"),
             Specialization.Create(12, "Subtlety", "53,2098,8676"),
             Specialization.Create(13, "Destruction", "29722,116858,348"),
@@ -168,6 +168,9 @@ internal static class MigrationBuilderExtension
             Specialization.Create(15, "ProtectionPaladin", "31935,53600,20271"),
             Specialization.Create(16, "Elemental", "51505,403,8050"),
             Specialization.Create(17, "Frost", "116,44614,30455"),
+            Specialization.Create(18, "BeastMastery", "83381,121818,17253"),
+            Specialization.Create(19, "RestorationDruid", "774,48438,81269"),
+            Specialization.Create(20, "HolyPriest", "596,77489,139"),
         ];
 
         return collection;

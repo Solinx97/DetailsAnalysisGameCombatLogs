@@ -78,8 +78,8 @@
 
             <StackPanel Grid.Row="1">
                 <Button VerticalAlignment="Top" Content="{loc:Loc Communication}" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
-                        Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenLognCommand"
-                        Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                        Style="{StaticResource disabledHomeButton}" mvx:Bi.nd="Command OpenLognCommand"
+                        IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                     <Button.BorderBrush>
                         <LinearGradientBrush>
                             <GradientStop Color="#c7486f" Offset="0.7" />
@@ -87,20 +87,9 @@
                         </LinearGradientBrush>
                     </Button.BorderBrush>
                 </Button>
-
-                <Button VerticalAlignment="Top" Content="{loc:Loc Communication}" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
-                        Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenChatCommand"
-                        Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                    <Button.BorderBrush>
-                        <LinearGradientBrush>
-                            <GradientStop Color="#c7486f" Offset="0.7" />
-                            <GradientStop Color="#94bbe9" Offset="0.35" />
-                        </LinearGradientBrush>
-                    </Button.BorderBrush>
-                </Button>
-
+                
                 <TextBlock Text="{loc:Loc LoginRequired}" Opacity="0.7" HorizontalAlignment="Center" Margin="5" Foreground="White"
-                           Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                           Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
             </StackPanel>
 
             <Border Grid.Column="1" Margin="40" CornerRadius="25" Padding="10" BorderThickness="2">
