@@ -1,0 +1,67 @@
+﻿using CombatAnalysis.UploadingLogsApp.Interfaces;
+using System;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace CombatAnalysis.UploadingLogsApp.Helpers;
+
+internal class HttpClientHelper : IHttpClientHelper
+{
+    public HttpClientHelper()
+    {
+        Client = new HttpClient
+        {
+            Timeout = TimeSpan.FromMinutes(10),
+        };
+    }
+
+    public string BaseAddress { get; set; } = string.Empty;
+
+    public string BaseAddressApi { get; set; } = "api/v1/";
+
+    public HttpClient Client { get; set; }
+
+    public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content, CancellationToken cancellationToken)
+    {
+        var result = await Client.PostAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content, cancellationToken);
+
+        return result;
+    }
+
+    public async Task<HttpResponseMessage> PostAsync(string requestUri, StringContent content, CancellationToken cancellationToken)
+    {
+        var result = await Client.PostAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content, cancellationToken);
+
+        return result;
+    }
+
+    public async Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
+    {
+        var result = await Client.GetAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", cancellationToken);
+
+        return result;
+    }
+
+    public async Task<HttpResponseMessage> PutAsync(string requestUri, JsonContent content, CancellationToken cancellationToken)
+    {
+        var result = await Client.PutAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content, cancellationToken);
+
+        return result;
+    }
+
+    public async Task<HttpResponseMessage> PatchAsync(string requestUri, JsonContent content, CancellationToken cancellationToken)
+    {
+        var result = await Client.PatchAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content, cancellationToken);
+
+        return result;
+    }
+
+    public async Task<HttpResponseMessage> DeletAsync(string requestUri, CancellationToken cancellationToken)
+    {
+        var result = await Client.DeleteAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", cancellationToken);
+
+        return result;
+    }
+}

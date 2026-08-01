@@ -1,0 +1,47 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CombatAnalysis.UploadingLogsApp.ViewModels.User"
+             x:Class="CombatAnalysis.UploadingLogsApp.Views.User.LoginView"
+             x:DataType="vm:LoginViewModel">
+    <Design.DataContext>
+        <vm:LoginViewModel />
+    </Design.DataContext>
+
+      <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock IsVisible="{Binding CheckAuthInProgress}"
+                       Text="Authorization..." HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+            <StackPanel IsVisible="{Binding !CheckAuthInProgress}" HorizontalAlignment="Center">
+                <StackPanel IsVisible="{Binding AuthIsFailed}" HorizontalAlignment="Center">
+                    <TextBlock Text="AuthorizationFailed" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+
+                </StackPanel>
+                <StackPanel IsVisible="{Binding AuthInProgress}">
+                    <TextBlock IsVisible="{Binding !VerificationInProgress}"
+                        Text="ContinueAuthInBrowser" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                </StackPanel>
+                <TextBlock IsVisible="{Binding VerificationInProgress}"
+                       Text="Verification..." HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button IsVisible="{Binding AuthIsFailed}" Foreground="Green" HorizontalContentAlignment="Center"
+                    Content="Login" Width="100" FontSize="12"
+                    Command="{Binding SendAuthorizationRequestCommand}" />
+            <Button IsVisible="{Binding AbortAvailable}" HorizontalContentAlignment="Center"
+                    Content="Cancel" Width="100" FontSize="12"
+                    Command="{Binding AbortCommand}" />
+        </StackPanel>
+    </Grid>
+</ContentPage>

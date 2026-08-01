@@ -10,11 +10,11 @@ using System.Text;
 
 namespace CombatAnalysis.CombatParser.Services;
 
-internal class CombatParserService(IFileManager fileManager, ILogger logger, IHttpClientHelper httpHelper) : ICombatParserService
+internal class CombatParserService(IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) : ICombatParserService
 {
     private readonly IList<PlaceInformation> _zones = [];
     private readonly IFileManager _fileManager = fileManager;
-    private readonly ILogger _logger = logger;
+    private readonly ILogger<CombatParserService> _logger = logger;
     private readonly IHttpClientHelper _httpHelper = httpHelper;
 
     public List<Combat> Combats { get; private set; } = [];

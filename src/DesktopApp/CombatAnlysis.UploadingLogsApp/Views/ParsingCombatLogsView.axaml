@@ -1,0 +1,135 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="using:Material.Icons.Avalonia"
+             xmlns:vm="using:CombatAnalysis.UploadingLogsApp.ViewModels"
+             x:Class="CombatAnalysis.UploadingLogsApp.Views.ParsingCombatLogsView"
+             x:DataType="vm:ParsingCombatLogsViewModel">
+    <Design.DataContext>
+        <vm:ParsingCombatLogsViewModel />
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 10">
+            <TextBlock IsVisible="{Binding UploadingStatusShow}" Text="{Binding ResponseStatus}" FontSize="12" TextAlignment="Center" Foreground="White" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="2"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" IsEnabled="{Binding !IsParsing}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="375">
+                <TextBlock HorizontalAlignment="Center" Text="UploadFile" Margin="0 20" FontSize="16" Foreground="White" />
+                <Button Command="{Binding SelectFilesCommand}" Content="SelectFile" HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Center" Width="125" FontSize="16" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
+                    <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <ListBox ItemsSource="{Binding CombatLogNames}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" FontWeight="Bold" Margin="0 5" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                            IsEnabled="{Binding !IsParsing}"
+                            IsVisible="{Binding ShowConnectMore}">
+                    <Button Command="{Binding SelectMoreFilesCommand}" HorizontalContentAlignment="Center">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <materialIcons:MaterialIcon Kind="Plus" Foreground="Green"
+                                           Height="15" Width="15" />
+                                <TextBlock Text="Connect more" FontSize="12" Foreground="White" Margin="10 0" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="1" MaxWidth="500" HorizontalAlignment="Center">
+                <TextBlock Text="TypeOfLogs" Margin="0 10" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
+                            IsEnabled="{Binding !IsParsing}">
+                    <RadioButton Content="Public" Width="140" Command="{Binding GetLogTypeCommand}" CommandParameter="0"
+                                 Foreground="White" IsChecked="{Binding IsPublic}" Margin="20" IsDefault="True"/>
+                    <RadioButton Content="Private" Width="140" Command="{Binding GetLogTypeCommand}" CommandParameter="1"
+                                 Foreground="White" IsChecked="{Binding IsPrivate}" Margin="20" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2" 
+              IsVisible="{Binding !UploadingInProgress}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Width="175" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button IsEnabled="{Binding HasCombatLogs}" Content="Processing" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    FontSize="16" Command="{Binding OpenPlayerAnalysisCommand}" />
+            </StackPanel>
+            
+            <StackPanel Grid.Row="1" Margin="0 10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"
+                        IsVisible="{Binding IsParsing}">
+                <TextBlock Width="175" Text="Processing" FontSize="16" Margin="0 5" TextAlignment="Center" Foreground="White" />
+                <Button Command="{Binding CancelParsingCommand}" Width="25" Height="25">
+                    <materialIcons:MaterialIcon Kind="Close" Width="25" Height="25" Foreground="White"/>
+                </Button>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="2" Margin="0 10" IsVisible="{Binding !FileIsCorrect}">
+                <TextBlock TextWrapping="Wrap" Text="ProcessingFailed" IsVisible="{Binding !FileIsCorrect}"
+                       FontSize="16" TextAlignment="Center" Foreground="Orange" />
+                <StackPanel Margin="0 10" Orientation="Horizontal" HorizontalAlignment="Center" IsVisible="{Binding CombatLogUploadingFailed}">
+                    <TextBlock Text="CombatLogUploadingFailed" FontSize="14" TextWrapping="Wrap"
+                       MaxWidth="650" Foreground="Red" Margin="20 0" />
+                    <Button Command="{Binding OpenPlayerAnalysisCommand}">
+                        <materialIcons:MaterialIcon Kind="Reload" Width="25" Height="25" Foreground="White"/>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+              IsVisible="{Binding UploadingInProgress}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="{Binding DungeonName}" FontSize="15" Margin="0 5" Foreground="White"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <ProgressBar Minimum="0" Maximum="{Binding CombatsNumber}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"/>
+                <StackPanel Orientation="Horizontal" Margin="10 0">
+                    <TextBlock Text="{Binding CurrentCombatNumber}" Foreground="White" />
+                    <TextBlock Text=" / " Foreground="White"/>
+                    <TextBlock Text="{Binding CombatsNumber}" Foreground="White"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0 5" HorizontalAlignment="Center">
+                <TextBlock HorizontalAlignment="Center" Text="Uploaded" FontSize="14" FontWeight="Bold" Foreground="White"/>
+                <TextBlock HorizontalAlignment="Center" Margin="20 0" Text="{Binding Name}" FontSize="15" Foreground="White"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ContentPage>
