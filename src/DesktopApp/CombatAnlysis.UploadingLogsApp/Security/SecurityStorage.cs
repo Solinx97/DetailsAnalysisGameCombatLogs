@@ -71,26 +71,6 @@ internal class SecurityStorage : ISecurityStorage
         }
     }
 
-    public void RemoveAccessToken()
-    {
-        try
-        {
-            if (File.Exists(_refreshTokenFilePath))
-            {
-                File.Delete(_refreshTokenFilePath);
-            }
-
-            if (File.Exists(_accessTokenFilePath))
-            {
-                File.Delete(_accessTokenFilePath);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-    }
-
     public async Task<AppUserModel?> GetUserAsync(CancellationToken cancellationToken)
     {
         try
@@ -126,6 +106,26 @@ internal class SecurityStorage : ISecurityStorage
             var encryptedRefreshToken = File.ReadAllText(_refreshTokenFilePath);
             var decryptedRefresahToken = _refreshTokenProtector.Unprotect(encryptedRefreshToken);
             _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), decryptedRefresahToken, DateTimeOffset.Now.AddDays(3));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    public void RemoveAccessToken()
+    {
+        try
+        {
+            if (File.Exists(_refreshTokenFilePath))
+            {
+                File.Delete(_refreshTokenFilePath);
+            }
+
+            if (File.Exists(_accessTokenFilePath))
+            {
+                File.Delete(_accessTokenFilePath);
+            }
         }
         catch (Exception ex)
         {

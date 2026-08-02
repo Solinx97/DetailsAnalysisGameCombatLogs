@@ -44,12 +44,13 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
             foreach (var path in combatLogPaths)
             {
                 var lines = await _fileManager.ReadAllLinesAsync(path, cancellationToken);
-                await ProcessCombatLogLinesAsync(lines, petsId, bossCombatStarted, newCombatFromLogs);
+                await ProcessCombatLogLinesAsync(lines, petsId, bossCombatStarted, newCombatFromLogs, cancellationToken);
             }
         }
         catch (OperationCanceledException ex)
         {
             logger.LogError(ex, "Request was canceled by client: {Message}", ex.Message);
+            Clear();
         }
     }
 
@@ -59,11 +60,12 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
         _zones.Clear();
     }
 
-    private async Task ProcessCombatLogLinesAsync(string[] lines, Dictionary<string, List<string>> petsId, bool combatStarted, StringBuilder newCombatFromLogs)
+    private async Task ProcessCombatLogLinesAsync(string[] lines, Dictionary<string, List<string>> petsId, bool combatStarted, StringBuilder newCombatFromLogs, CancellationToken cancellationToken)
     {
         foreach (var line in lines)
         {
             combatStarted = await ProcessLine(line, newCombatFromLogs, combatStarted, petsId);
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 

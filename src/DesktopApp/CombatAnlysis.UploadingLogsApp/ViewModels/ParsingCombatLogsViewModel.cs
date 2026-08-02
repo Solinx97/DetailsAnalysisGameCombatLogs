@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Consts;
+using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Models;
@@ -18,6 +19,7 @@ namespace CombatAnalysis.UploadingLogsApp.ViewModels;
 public partial class ParsingCombatLogsViewModel : ViewModelBase
 {
     private readonly IMapper _mapper;
+    private readonly AppState _appState;
     private readonly IFileDialogService _fileDialogService;
     private readonly ICombatParserService _parser;
     private readonly ICombatParserAPIService _combatParserAPIService;
@@ -30,10 +32,11 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
     {
     }
 
-    public ParsingCombatLogsViewModel(IMapper mapper, IFileDialogService fileDialogService, ICombatParserService parser, 
-        ICombatParserAPIService combatParserAPIService)
+    public ParsingCombatLogsViewModel(IMapper mapper, AppState appState, IFileDialogService fileDialogService,
+        ICombatParserService parser, ICombatParserAPIService combatParserAPIService)
     {
         _mapper = mapper;
+        _appState = appState;
         _fileDialogService = fileDialogService;
         _parser = parser;
         _combatParserAPIService = combatParserAPIService;
@@ -147,8 +150,11 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
     public async Task OpenPlayerAnalysis()
     {
         CombatLogUploadingFailed = false;
+        _appState.AllowLogout = false;
 
         await CombatLogFileValidateAsync(CombatLogPaths.ToList() ?? []);
+
+        _appState.AllowLogout = true;
 
         _ = Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith((task) => UploadingStatusShow = false);
     }
@@ -231,7 +237,6 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
         if (_processAborted)
         {
             _processAborted = false;
-
             return [];
         }
 

@@ -14,7 +14,7 @@ public class CombatParserServiceTests
         // Arrange
         var fakeFileContent = "6/8 20:42:39.739  COMBAT_LOG_VERSION,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(fakeFileContent));
@@ -36,7 +36,7 @@ public class CombatParserServiceTests
         // Arrange
         var fakeFileContent = string.Empty;
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(fakeFileContent));
@@ -57,7 +57,7 @@ public class CombatParserServiceTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var fakeLines1 = new[] 
@@ -89,7 +89,7 @@ public class CombatParserServiceTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var fakeLines1 = new[]
@@ -121,7 +121,7 @@ public class CombatParserServiceTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var file1Path = "file1.txt";
@@ -169,7 +169,7 @@ public class CombatParserServiceTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var file1Path = "file1.txt";
@@ -215,7 +215,7 @@ public class CombatParserServiceTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var file1Path = "file1.txt";
@@ -263,7 +263,7 @@ public class CombatParserServiceTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var fakeLines1 = new[]
@@ -300,7 +300,7 @@ public class CombatParserServiceTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var file1Path = "file1.txt";

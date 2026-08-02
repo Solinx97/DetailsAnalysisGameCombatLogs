@@ -9,9 +9,9 @@ public interface ISecurityStorage
 {
     void SaveAccessToken(TokenResponseModel token);
 
-    void RemoveAccessToken();
-
     Task<AppUserModel?> GetUserAsync(CancellationToken cancellationToken);
 
     void GetAccessToken();
+
+    void RemoveAccessToken();
 }

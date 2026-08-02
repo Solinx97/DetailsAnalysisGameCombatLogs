@@ -75,18 +75,21 @@ public partial class LoginViewModel : ViewModelBase, IAsyncInitializable
             await _identityService.SendTokenRequestAsync(_cts.Token);
             _cts.Token.ThrowIfCancellationRequested();
 
+            VerificationInProgress = false;
+            AbortAvailable = false;
+            AuthInProgress = false;
+
             var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
             if (user != null)
             {
                 _appState.IsAuth = true;
+                _appState.User = user;
+
                 await  _navigationService.NavigateTo<ParsingCombatLogsViewModel>();
             }
             else
             {
                 AuthIsFailed = true;
-                VerificationInProgress = false;
-                AbortAvailable = false;
-                AuthInProgress = false;
             }
         }
         catch (OperationCanceledException ex)
@@ -141,6 +144,8 @@ public partial class LoginViewModel : ViewModelBase, IAsyncInitializable
             _securityStorage.GetAccessToken();
 
             _appState.IsAuth = true;
+            _appState.User = user;
+
             await _navigationService.NavigateTo<ParsingCombatLogsViewModel>();
         }
         catch (OperationCanceledException)

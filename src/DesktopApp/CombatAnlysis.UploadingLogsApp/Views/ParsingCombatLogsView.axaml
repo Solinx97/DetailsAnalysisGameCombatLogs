@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:materialIcons="using:Material.Icons.Avalonia"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:vm="using:CombatAnalysis.UploadingLogsApp.ViewModels"
              x:Class="CombatAnalysis.UploadingLogsApp.Views.ParsingCombatLogsView"
              x:DataType="vm:ParsingCombatLogsViewModel">
@@ -54,8 +54,8 @@
                     <Button Command="{Binding SelectMoreFilesCommand}" HorizontalContentAlignment="Center">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
-                                <materialIcons:MaterialIcon Kind="Plus" Foreground="Green"
-                                           Height="15" Width="15" />
+                                <ui:FASymbolIcon Symbol="Add" Foreground="Green"
+                                              Height="15" Width="15" />
                                 <TextBlock Text="Connect more" FontSize="12" Foreground="White" Margin="10 0" />
                             </StackPanel>
                         </Button.Content>
@@ -92,7 +92,8 @@
                         IsVisible="{Binding IsParsing}">
                 <TextBlock Width="175" Text="Processing" FontSize="16" Margin="0 5" TextAlignment="Center" Foreground="White" />
                 <Button Command="{Binding CancelParsingCommand}" Width="25" Height="25">
-                    <materialIcons:MaterialIcon Kind="Close" Width="25" Height="25" Foreground="White"/>
+                    <ui:FASymbolIcon Symbol="Remove" Foreground="Red"
+                                Height="25" Width="25" />
                 </Button>
             </StackPanel>
             
@@ -103,7 +104,8 @@
                     <TextBlock Text="CombatLogUploadingFailed" FontSize="14" TextWrapping="Wrap"
                        MaxWidth="650" Foreground="Red" Margin="20 0" />
                     <Button Command="{Binding OpenPlayerAnalysisCommand}">
-                        <materialIcons:MaterialIcon Kind="Reload" Width="25" Height="25" Foreground="White"/>
+                        <ui:FASymbolIcon Symbol="Home"
+                                  Height="15" Width="15" />
                     </Button>
                 </StackPanel>
             </StackPanel>

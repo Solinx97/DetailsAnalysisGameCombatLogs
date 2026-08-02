@@ -12,7 +12,7 @@ public class CombatDetailsExtensionTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var fakeLines1 = new[]
@@ -49,7 +49,7 @@ public class CombatDetailsExtensionTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
-        var mockLogger = new Mock<ILogger>();
+        var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
         var fakeLines1 = new[]

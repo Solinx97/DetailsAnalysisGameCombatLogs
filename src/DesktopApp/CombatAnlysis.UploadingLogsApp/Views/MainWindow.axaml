@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="using:FluentAvalonia.UI.Controls"
         xmlns:vm="using:CombatAnalysis.UploadingLogsApp.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CombatAnalysis.UploadingLogsApp.Views.MainWindow"
@@ -12,5 +13,43 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <ContentControl Content="{Binding NavigationStore.CurrentViewModel}" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AppState.AppName}"
+                   Height="30" Foreground="White" HorizontalAlignment="Center" Margin="0 20" />
+        
+        <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Background="#2C5784">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            
+            <StackPanel Grid.Row="0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <ui:FASymbolIcon Symbol="Account" Foreground="White"
+                                  Height="25" Width="25" />
+                    <TextBlock IsVisible="{Binding !AppState.IsAuth}" Text="User" Foreground="White" HorizontalAlignment="Center" Margin="0 20" />
+                    <TextBlock IsVisible="{Binding AppState.IsAuth}" Text="{Binding AppState.User.Username}" HorizontalAlignment="Center" Margin="0 20" />
+                </StackPanel>
+                <Button IsVisible="{Binding AppState.IsAuth}" IsEnabled="{Binding AppState.AllowLogout}"
+                        Foreground="White" Background="Green" HorizontalContentAlignment="Center"
+                        Content="Logout" Width="100" FontSize="12"
+                        Command="{Binding LogoutCommand}" />
+            </StackPanel>
+
+            <TextBlock Grid.Row="2" Text="{Binding AppState.AppVersion}"
+                   Foreground="White" HorizontalAlignment="Center" Margin="0 10" />
+        </Grid>
+
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding NavigationStore.CurrentViewModel}" />
+    </Grid>
 </Window>
