@@ -44,6 +44,8 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
         CombatLogPaths.CollectionChanged += CombatLogPathsCollectionChanged;
     }
 
+    public bool HasCombatLogs => CombatLogPaths.Count > 0;
+
     #region View model properties
 
     [ObservableProperty]
@@ -113,7 +115,7 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
 
     #endregion
 
-    public bool HasCombatLogs => CombatLogPaths.Count > 0;
+    #region Commands
 
     [RelayCommand]
     public async Task SelectFiles()
@@ -167,6 +169,8 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
 
         IsParsing = false;
     }
+
+    #endregion
 
     private static CancellationToken RequestCancelationToken()
     {
@@ -229,8 +233,6 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
 
         var combats = _mapper.Map<List<CombatModel>>(_parser.Combats);
         await _combatParserAPIService.GetBossAsync(combats, _cts.Token);
-
-        AppStaticData.PreparedCombatsCount = _parser.Combats.Count;
 
         _parser.Clear();
 

@@ -64,7 +64,6 @@ public partial class App : Application
 
         API.CombatParserApi = Configuration["API:CombatParser"] ?? string.Empty;
         API.UserApi = Configuration["API:User"] ?? string.Empty;
-        API.ChatApi = Configuration["API:Chat"] ?? string.Empty;
         API.Identity = Configuration["API:Identity"] ?? string.Empty;
 
         Authentication.ClientId = Configuration["App:Auth:ClientId"] ?? string.Empty;
@@ -74,8 +73,6 @@ public partial class App : Application
         Authentication.Listener = Configuration["App:Auth:Listener"] ?? string.Empty;
 
         AuthenticationGrantType.Code = Configuration["App:Auth:GrantType:Code"] ?? string.Empty;
-        AuthenticationGrantType.Authorization = Configuration["App:Auth:GrantType:Authorization"] ?? string.Empty;
-        AuthenticationGrantType.RefreshToken = Configuration["App:Auth:GrantType:RefreshToken"] ?? string.Empty;
 
         AppInformation.Name = Configuration["App:Name"] ?? string.Empty;
         AppInformation.Version = Configuration["App:Version"] ?? string.Empty;

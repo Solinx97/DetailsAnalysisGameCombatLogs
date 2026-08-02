@@ -104,7 +104,7 @@
                     <TextBlock Text="CombatLogUploadingFailed" FontSize="14" TextWrapping="Wrap"
                        MaxWidth="650" Foreground="Red" Margin="20 0" />
                     <Button Command="{Binding OpenPlayerAnalysisCommand}">
-                        <ui:FASymbolIcon Symbol="Home"
+                        <ui:FASymbolIcon Symbol="MailReply"
                                   Height="15" Width="15" />
                     </Button>
                 </StackPanel>

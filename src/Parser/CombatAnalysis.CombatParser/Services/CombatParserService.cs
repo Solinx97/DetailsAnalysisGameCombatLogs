@@ -12,10 +12,11 @@ namespace CombatAnalysis.CombatParser.Services;
 
 internal class CombatParserService(IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) : ICombatParserService
 {
-    private readonly IList<PlaceInformation> _zones = [];
     private readonly IFileManager _fileManager = fileManager;
     private readonly ILogger<CombatParserService> _logger = logger;
     private readonly IHttpClientHelper _httpHelper = httpHelper;
+
+    private List<PlaceInformation> _zones = [];
 
     public List<Combat> Combats { get; private set; } = [];
 
@@ -56,8 +57,9 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
 
     public void Clear()
     {
-        Combats.Clear();
-        _zones.Clear();
+        Combats = [];
+        CombatDetails = [];
+        _zones = [];
     }
 
     private async Task ProcessCombatLogLinesAsync(string[] lines, Dictionary<string, List<string>> petsId, bool combatStarted, StringBuilder newCombatFromLogs, CancellationToken cancellationToken)
