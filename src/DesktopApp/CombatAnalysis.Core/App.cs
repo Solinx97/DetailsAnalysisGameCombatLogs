@@ -1,15 +1,10 @@
-﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Core;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Services;
-using CombatAnalysis.Core.Mapping;
 using CombatAnalysis.Core.Security;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.Services.Chat;
@@ -79,13 +74,6 @@ public class App : MvxApplication
             AppInformation.VersionType = appVersionType;
         }
 
-        var loggerFactory = LoggerFactory.Create(builder => { });
-
-        var mappingConfig = new MapperConfiguration(mc =>
-        {
-            mc.AddProfile(new CombatAnalysisMapper());
-        }, loggerFactory);
-
         var memoryCacheOptions = new MemoryCacheOptions();
         var memoryCache = new MemoryCache(memoryCacheOptions);
 
@@ -102,9 +90,7 @@ public class App : MvxApplication
         Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
         Mvx.IoCProvider.RegisterSingleton<ICacheService>(new CacheService(Mvx.IoCProvider.Resolve<IMemoryCache>()));
 
-        Mvx.IoCProvider.RegisterType<IFileManager, FileManager>();
         Mvx.IoCProvider.RegisterType<ICombatParserAPIService, CombatParserAPIService>();
-        Mvx.IoCProvider.RegisterType(() => mappingConfig.CreateMapper());
         Mvx.IoCProvider.RegisterType<ILogger>(() =>
         {
             var loggerFactory = new LoggerFactory();
@@ -118,8 +104,6 @@ public class App : MvxApplication
         Mvx.IoCProvider.RegisterType<IUserService, UserService>();
 
         Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
-
-        Mvx.IoCProvider.CombatParserDependencies();
 
         var logger = Mvx.IoCProvider.Resolve<IMemoryCache>();
         HttpClientHelperExtensions.Initialize(logger);

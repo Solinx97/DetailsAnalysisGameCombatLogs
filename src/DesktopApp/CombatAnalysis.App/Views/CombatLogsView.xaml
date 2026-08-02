@@ -50,9 +50,6 @@
                 </Style>
             </TabControl.Resources>
 
-            <TabItem Header="{loc:Loc CreateLog}" Style="{StaticResource TabItemStyle1}">
-                <combatLogsViews:ParsingCombatLogsView DataContext="{Binding ParsingCombatLogsVM}" />
-            </TabItem>
             <TabItem Header="{loc:Loc PublicLogs}" Style="{StaticResource TabItemStyle1}"
                      IsEnabled="{Binding IsAllowSwitchTabs, Converter={StaticResource BoolToXAMLBool}}">
                 <combatLogsViews:PublicCombatLogsView DataContext="{Binding PublicCombatLogsVM}" />

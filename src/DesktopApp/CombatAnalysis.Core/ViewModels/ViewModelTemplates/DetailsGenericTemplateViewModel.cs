@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
@@ -21,7 +20,6 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
 {
     protected readonly IHttpClientHelper _httpClient;
     protected readonly ILogger _logger;
-    protected readonly IMapper _mapper;
     protected readonly ICacheService? _cacheService;
     protected readonly ICombatParserAPIService _combatParserAPIService;
 
@@ -53,12 +51,10 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
     private ObservableCollection<IGeneralDetailsEntity>? _generalInformations;
     private ObservableCollection<IDetailsEntity>? _detailsInformations;
 
-    public DetailsGenericTemplateViewModel(IHttpClientHelper httpClient, ILogger logger, IMapper mapper,
-        ICombatParserAPIService combatParserAPIService)
+    public DetailsGenericTemplateViewModel(IHttpClientHelper httpClient, ILogger logger, ICombatParserAPIService combatParserAPIService)
     {
         _httpClient = httpClient;
         _logger = logger;
-        _mapper = mapper;
         _combatParserAPIService = combatParserAPIService;
 
         FirstPageCommand = new MvxAsyncCommand(LoadFirstPageAsync);
@@ -71,8 +67,8 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         Basic.Parent = this;
     }
 
-    public DetailsGenericTemplateViewModel(IHttpClientHelper httpClient, ILogger logger, IMapper mapper,
-        ICacheService cacheService, ICombatParserAPIService combatParserAPIService) : this(httpClient, logger, mapper, combatParserAPIService)
+    public DetailsGenericTemplateViewModel(IHttpClientHelper httpClient, ILogger logger, ICacheService cacheService, 
+        ICombatParserAPIService combatParserAPIService) : this(httpClient, logger, combatParserAPIService)
     {
         _cacheService = cacheService;
     }

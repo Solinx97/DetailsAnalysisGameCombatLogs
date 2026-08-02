@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.Core.Enums;
+﻿using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models.User;
@@ -20,12 +18,11 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
     private bool _isAllowSwitchTabs = true;
     private bool _isAuth;
 
-    public CombatLogsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, ICombatParserService parser,
-        IMemoryCache memoryCache, ICombatParserAPIService combatParserAPIService)
+    public CombatLogsViewModel(IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, 
+        ICombatParserAPIService combatParserAPIService)
     {
         _memoryCache = memoryCache;
 
-        ParsingCombatLogsVM = new ParsingCombatLogsViewModel(mapper, mvvmNavigation, parser, combatParserAPIService);
         PublicCombatLogsVM = new PublicCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
         PrivateCombatLogsVM = new PrivateCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
 
@@ -65,13 +62,10 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
         set
         {
             SetProperty(ref _isAuth, value);
-            ParsingCombatLogsVM.IsAuth = value;
         }
     }
 
     #endregion
-
-    public ParsingCombatLogsViewModel ParsingCombatLogsVM { get; }
 
     public PublicCombatLogsViewModel PublicCombatLogsVM { get; }
 
@@ -83,13 +77,6 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
     }
 
     #region Ovveride methods
-
-    public override void Prepare()
-    {
-        base.Prepare();
-
-        ParsingCombatLogsVM.Prepare();
-    }
 
     public override async Task Initialize()
     {
