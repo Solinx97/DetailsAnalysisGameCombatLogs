@@ -165,8 +165,8 @@
   <data name="RefreshLogs" xml:space="preserve">
     <value>Обновление списка загруженных логов.</value>
   </data>
-  <data name="RemovePrivateLog" xml:space="preserve">
-    <value>Удалить выбранный лог без возможности восстановить.</value>
+  <data name="Remove" xml:space="preserve">
+    <value>Удалить</value>
   </data>
   <data name="RemovingInProgress" xml:space="preserve">
     <value>Удаление...</value>

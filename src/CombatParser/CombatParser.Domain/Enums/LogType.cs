@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.Core.Enums;
+﻿namespace CombatParser.Domain.Enums;
 
 public enum LogType
 {

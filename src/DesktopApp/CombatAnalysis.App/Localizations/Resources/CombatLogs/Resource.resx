@@ -165,8 +165,8 @@
   <data name="RefreshLogs" xml:space="preserve">
     <value>Refresh loaded list with logs</value>
   </data>
-  <data name="RemovePrivateLog" xml:space="preserve">
-    <value>Remove the selected log without the posibl of recovering of removed data.</value>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
   </data>
   <data name="RemovingInProgress" xml:space="preserve">
     <value>Removing...</value>

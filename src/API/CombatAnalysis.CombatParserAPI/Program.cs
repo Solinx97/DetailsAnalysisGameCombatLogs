@@ -9,6 +9,7 @@ using CombatParser.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
@@ -34,6 +35,39 @@ var mappingConfig = new MapperConfiguration(mc =>
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+
+var authenticationOptions = new Authentication();
+builder.Configuration.Bind("Authentication", authenticationOptions);
+var authenticationClientOptions = new AuthenticationClient();
+builder.Configuration.Bind("Authentication:Client", authenticationClientOptions);
+
+var audiences = authenticationClientOptions.Audiences.Split(',');
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        var keySet = JwtBearerOptionsHelper.GetJWKSAsync(authenticationOptions.Authority).GetAwaiter().GetResult();
+
+        options.Authority = authenticationOptions.Authority;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = authenticationOptions.Issuer,
+            ValidateAudience = true,
+            ValidAudiences = audiences,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKeys = keySet.Keys,
+            ClockSkew = TimeSpan.Zero,
+        };
+        // Skip checking HTTPS (should be HTTPS in production)
+        options.RequireHttpsMetadata = false;
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("ApiScope", builder =>
+    {
+        builder.RequireAuthenticatedUser();
+        builder.RequireClaim("scope", authenticationClientOptions.Scopes.Split(','));
+    });
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 

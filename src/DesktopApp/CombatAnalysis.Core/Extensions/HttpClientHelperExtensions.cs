@@ -15,6 +15,18 @@ internal static class HttpClientHelperExtensions
         _memoryCache = cache;
     }
 
+    public static async Task<HttpResponseMessage> PostAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, CancellationToken cancellationToken, bool isAuth = false)
+    {
+        if (isAuth)
+        {
+            GetAccessToken(clientHelper);
+        }
+
+        var result = await clientHelper.Client.PostAsync($"{clientHelper.BaseAddress}{clientHelper.BaseAddressApi}{requestUri}", content, cancellationToken);
+
+        return result;
+    }
+
     public static async Task<HttpResponseMessage> PostAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, string baseAddress, bool isAuth = false)
     {
         if (isAuth)
@@ -83,6 +95,18 @@ internal static class HttpClientHelperExtensions
         }
 
         var result = await clientHelper.Client.DeleteAsync($"{baseAddress}{clientHelper.BaseAddressApi}{requestUri}");
+
+        return result;
+    }
+
+    public static async Task<HttpResponseMessage> DeletAsync(this IHttpClientHelper clientHelper, string requestUri, CancellationToken cancellationToken, bool isAuth = false)
+    {
+        if (isAuth)
+        {
+            GetAccessToken(clientHelper);
+        }
+
+        var result = await clientHelper.Client.DeleteAsync($"{clientHelper.BaseAddress}{clientHelper.BaseAddressApi}{requestUri}", cancellationToken);
 
         return result;
     }

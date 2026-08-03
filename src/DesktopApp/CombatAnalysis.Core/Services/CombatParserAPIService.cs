@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.GameLogs;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
     {
         try
         {
-            var response = await _httpClient.DeletAsync($"CombatLog/{id}", cancellationToken);
+            var response = await _httpClient.DeletAsync($"CombatLog/{id}", cancellationToken, true);
             response.EnsureSuccessStatusCode();
         }
         catch (HttpRequestException ex)
@@ -36,11 +37,11 @@ internal class CombatParserAPIService : ICombatParserAPIService
         }
     }
 
-    public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync(int logType, string? appUserId, CancellationToken cancellationToken)
     {
         try
         {
-            var response = await _httpClient.GetAsync("CombatLog", cancellationToken);
+            var response = await _httpClient.GetAsync($"CombatLog/getByLogType?logType={logType}&appUserId={appUserId}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var combatLogs = await response.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();

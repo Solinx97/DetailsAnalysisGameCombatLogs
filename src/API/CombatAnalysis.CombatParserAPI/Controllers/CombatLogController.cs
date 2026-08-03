@@ -2,9 +2,10 @@
 using CombatParser.Application.Commands.CreateCombatLog;
 using CombatParser.Application.Commands.DeleteCombatLog;
 using CombatParser.Application.Commands.UpdateCombatLog;
-using CombatParser.Application.Queries.GetAllCombatLogs;
 using CombatParser.Application.Queries.GetByIdCombatLog;
+using CombatParser.Application.Queries.GetCombatLogsByLogType;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
@@ -15,12 +16,12 @@ public class CombatLogController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    [HttpGet("getByLogType")]
+    public async Task<IActionResult> GetByLogType(int logType, string? appUserId, CancellationToken cancellationToken)
     {
-        var allCombatLogs = await _mediator.Send(new GetAllCombatLogsQuery(), cancellationToken);
+        var combatLogs = await _mediator.Send(new GetCombatLogsByLogTypeQuery(logType, appUserId), cancellationToken);
 
-        return Ok(allCombatLogs);
+        return Ok(combatLogs);
     }
 
     [HttpGet("{id:int:min(1)}")]
@@ -32,6 +33,7 @@ public class CombatLogController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateCombatLogCommand command, CancellationToken cancellationToken)
     {
         var combatLog = await _mediator.Send(command, cancellationToken);
@@ -40,6 +42,7 @@ public class CombatLogController(IMediator mediator) : ControllerBase
     }
 
     [HttpPatch("{id:int:min(1)}")]
+    [Authorize]
     public async Task<IActionResult> PartialUpdate(int id, [FromBody] CombatLogPatch combatLog, CancellationToken cancellationToken)
     {
         if (id != combatLog.Id)
@@ -54,6 +57,7 @@ public class CombatLogController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{id:int:min(1)}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         await _mediator.Send(new DeleteCombatLogCommand(id), cancellationToken);

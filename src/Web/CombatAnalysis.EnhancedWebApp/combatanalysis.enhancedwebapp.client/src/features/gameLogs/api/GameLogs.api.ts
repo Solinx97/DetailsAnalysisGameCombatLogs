@@ -52,8 +52,8 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatAbility', id: 'LIST' }]
         }),
-        getCombatLogs: builder.query<CombatLogModel[], void>({
-            query: () => '/CombatLog',
+        getCombatLogs: builder.query<CombatLogModel[], { logType: number, appUserId: string | null }>({
+            query: ({ logType, appUserId }) => `/CombatLog/getByLogType?logType=${logType}&appUserId=${appUserId}`,
             providesTags: result =>
                 result
                     ? [
@@ -61,6 +61,13 @@ export const GameLogsApi = createApi({
                         { type: 'CombatLog', id: 'LIST' },
                     ]
                     : [{ type: 'CombatLog', id: 'LIST' }]
+        }),
+        removeCombatLog: builder.mutation<void, number>({
+            query: id => ({
+                url: `/CombatLog/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: (_result, _error, id) => [{ type: 'CombatLog', id }]
         }),
         getCombatPlayersDeathByCombatPlayerId: builder.query<CombatPlayerDeathModel[], number>({
             query: combatPlayerId => `/CombatPlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
@@ -155,6 +162,7 @@ export const GameLogsApi = createApi({
 export const {
     useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
+    useRemoveCombatLogMutation,
     useLazyGetCombatPlayersDeathByCombatPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
     useGetCombatsDashboardQuery,

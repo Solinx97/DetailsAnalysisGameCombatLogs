@@ -47,7 +47,7 @@ public class PublicCombatLogsViewModel : ParentTemplate
 
     #endregion
 
-    public AppUserModel User { get; private set; }
+    public AppUserModel? User { get; private set; }
 
     #region View model properties
 
@@ -121,6 +121,8 @@ public class PublicCombatLogsViewModel : ParentTemplate
 
     public override async Task Initialize()
     {
+        GetUser();
+
         var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
         await LoadCombatLogsAsync(token);
 
@@ -152,8 +154,8 @@ public class PublicCombatLogsViewModel : ParentTemplate
     {
         CombatLogLoadingStatus = LoadingStatus.Pending;
 
-        var combatLogsData = await _combatParserAPIService.LoadCombatLogsAsync(cancellationToken);
-        if (combatLogsData == null)
+        var combatLogs = await _combatParserAPIService.LoadCombatLogsAsync((int)LogType.Public, User?.Id, cancellationToken);
+        if (combatLogs == null)
         {
             CombatLogLoadingStatus = LoadingStatus.Failed;
             CombatLogs = [];
@@ -161,12 +163,10 @@ public class PublicCombatLogsViewModel : ParentTemplate
             return;
         }
 
-        var publicLogs = combatLogsData.Where(x => x.LogType == (int)LogType.Public).ToList();
-        CombatLogs = new ObservableCollection<CombatLogModel>(publicLogs);
+        CombatLogs = new ObservableCollection<CombatLogModel>(combatLogs);
 
         CombatLogLoadingStatus = LoadingStatus.Successful;
 
-        GetUser();
         CheckUserOwner();
     }
 

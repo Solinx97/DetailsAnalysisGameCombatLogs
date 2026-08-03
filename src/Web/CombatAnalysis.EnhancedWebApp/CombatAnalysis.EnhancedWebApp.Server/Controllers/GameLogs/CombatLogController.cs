@@ -1,8 +1,10 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
+using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Net;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.GameLogs;
 
@@ -20,18 +22,18 @@ public class CombatLogController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("getByLogType")]
+    public async Task<IActionResult> GetByLogType(int logType, string? appUserId)
     {
         var content = string.Empty;
         try
         {
-            var responseMessage = await _httpClient.GetAsync("CombatLog");
-            if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent)
+            var responseMessage = await _httpClient.GetAsync($"CombatLog/getByLogType?logType={logType}&appUserId={appUserId}");
+            if (responseMessage.StatusCode == HttpStatusCode.NoContent)
             {
                 return NoContent();
             }
-            if (responseMessage.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (responseMessage.StatusCode == HttpStatusCode.BadRequest)
             {
                 return BadRequest();
             }
@@ -43,15 +45,40 @@ public class CombatLogController : ControllerBase
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, $"Error get all Combats Logs. Content: {content}, Error: {ex.Message}");
+            _logger.LogError(ex, $"Error get Combats Logs. Content: {content}, Error: {ex.Message}");
 
             return BadRequest(ex.Message);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error get all Combats Logs. Error: {ex.Message}");
+    }
 
-            return BadRequest(ex.Message);
+    [HttpDelete("{id:int:min(1)}")]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            var responseMessage = await _httpClient.DeletAsync($"CombatLog/{id}");
+            responseMessage.EnsureSuccessStatusCode();
+
+            return NoContent();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            _logger.LogError(ex, "Delete combat log {Id} failed. User should be authorize to delete combat log", id);
+
+            return Unauthorized();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            _logger.LogError(ex, "Delete combat log {Id} failed. Combat log not found.", id);
+
+            return NotFound();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Delete combat log {Id} failed. Something wrong during deleting combat log.", id);
+
+            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
         }
     }
 }

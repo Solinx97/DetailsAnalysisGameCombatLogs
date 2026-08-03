@@ -13,5 +13,7 @@
   "HideChats": "Hide chats",
   "ShowChats": "Show chats",
   "SendToChat": "Send link to chat",
-  "Sent": "Sent"
+  "Sent": "Sent",
+  "Remove": "Remove",
+  "Removing": "Removing..."
 }

@@ -46,6 +46,8 @@ public class PrivateCombatLogsViewModel : ParentTemplate
 
     #endregion
 
+    public AppUserModel? User { get; private set; }
+
     #region View model properties
 
     public bool UploadingLogs
@@ -108,6 +110,8 @@ public class PrivateCombatLogsViewModel : ParentTemplate
 
     public override async Task Initialize()
     {
+        GetUser();
+
         var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
         await LoadCombatLogsAsync(token);
 
@@ -115,21 +119,27 @@ public class PrivateCombatLogsViewModel : ParentTemplate
     }
 
     #endregion
+    
+    private void GetUser()
+    {
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        User = user;
+    }
 
     private async Task LoadCombatLogsAsync(CancellationToken cancellationToken)
     {
         CombatLogLoadingStatus = LoadingStatus.Pending;
 
-        var combatLogsData = await _combatParserAPIService.LoadCombatLogsAsync(cancellationToken);
-        if (combatLogsData == null)
+        var combatLogs = await _combatParserAPIService.LoadCombatLogsAsync((int)LogType.Private, User?.Id, cancellationToken);
+        if (combatLogs == null)
         {
             CombatLogLoadingStatus = LoadingStatus.Failed;
 
             return;
         }
 
-        var privateLogs = combatLogsData.Where(x => x.LogType == (int)LogType.Private).ToList();
-        LoadCombatLogsForTargetUser(privateLogs);
+        var privateLogs = combatLogs.Where(x => x.LogType == (int)LogType.Private).ToList();
+        CombatLogsForTargetUser = new ObservableCollection<CombatLogModel>(combatLogs);
 
         CombatLogLoadingStatus = LoadingStatus.Successful;
     }
@@ -155,20 +165,6 @@ public class PrivateCombatLogsViewModel : ParentTemplate
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Combats), loadedCombats.ToList());
 
         UploadingLogs = false;
-    }
-
-    private void LoadCombatLogsForTargetUser(List<CombatLogModel> combatLogs)
-    {
-        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        if (user == null)
-        {
-            CombatLogsForTargetUser = [];
-
-            return;
-        }
-
-        var combatLogsForTargetUser = combatLogs.Where(x => x.AppUserId == user.Id).ToList();
-        CombatLogsForTargetUser = new ObservableCollection<CombatLogModel>(combatLogsForTargetUser);
     }
 
     private async Task DeleteAsync()

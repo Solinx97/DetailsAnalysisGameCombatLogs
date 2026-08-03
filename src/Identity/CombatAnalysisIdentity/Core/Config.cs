@@ -94,6 +94,11 @@ internal class Config
                 Scopes = { "api.read", "api.write" },
                 UserClaims = { "aud" }
             },
+            new ApiResource("combat-parser-api", "Protected Combat parser API")
+            {
+                Scopes = { "api.read", "api.write" },
+                UserClaims = { "aud" }
+            },
             new ApiResource("notification-api", "Protected Notification API")
             {
                 Scopes = { "api.read", "api.write" },

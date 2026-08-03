@@ -2,19 +2,19 @@ import { faArrowDown, faArrowUp, faCircleXmark, faMagnifyingGlassChart, faTriang
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { CombatLogModel } from '../types/CombatLogModel';
 import CombatLogItemDiscussion from './CombatLogItemDiscussion';
+import CombatLogItemActions from './CombatLogItemActions';
 
 interface CombatLogItemProps {
+    t: (key: string) => string;
+    appUserId: string;
     log: CombatLogModel;
     isAuth: boolean;
 }
 
-const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ log, isAuth }) => {
-    const { t } = useTranslation("combatDetails/mainInformation");
-
+const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, log, isAuth }) => {
     const navigate = useNavigate();
 
     const [showChats, setShowChats] = useState(false);
@@ -29,14 +29,24 @@ const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ log, isAuth }) => {
                         <div>{log.name}</div>
                     </div>
                     <div className="actions">
-                        {!isAuth &&
-                            <FontAwesomeIcon
-                                icon={faTriangleExclamation}
-                                className="authorization"
-                                title={t("ShouldAuthorize")}
+                        <div className="actions__communication">
+                            {!isAuth &&
+                                <FontAwesomeIcon
+                                    icon={faTriangleExclamation}
+                                    className="authorization"
+                                    title={t("ShouldAuthorize")}
+                                />
+                            }
+                            <CombatLogItemDiscussion
+                                t={t}
+                            />
+                        </div>
+                        {(appUserId === log.appUserId) &&
+                            <CombatLogItemActions
+                                t={t}
+                                combatLogId={log.id}
                             />
                         }
-                        <CombatLogItemDiscussion />
                     </div>
                 </li>
                 <li className="list-group-item">{format(new Date(log.date), 'MM/dd/yyyy HH:mm')}</li>

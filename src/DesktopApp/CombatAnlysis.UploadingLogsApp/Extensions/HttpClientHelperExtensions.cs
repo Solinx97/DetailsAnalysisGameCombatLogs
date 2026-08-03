@@ -18,14 +18,14 @@ internal static class HttpClientHelperExtensions
         _memoryCache = cache;
     }
 
-    public static async Task<HttpResponseMessage> PostAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, string baseAddress, bool isAuth = false)
+    public static async Task<HttpResponseMessage> PostAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, CancellationToken cancellationToken, bool isAuth = false)
     {
         if (isAuth)
         {
             GetAccessToken(clientHelper);
         }
 
-        var result = await clientHelper.Client.PostAsync($"{baseAddress}{clientHelper.BaseAddressApi}{requestUri}", content);
+        var result = await clientHelper.Client.PostAsync($"{clientHelper.BaseAddress}{clientHelper.BaseAddressApi}{requestUri}", content, cancellationToken);
 
         return result;
     }

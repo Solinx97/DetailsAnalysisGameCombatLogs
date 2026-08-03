@@ -40,22 +40,18 @@
                 <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PersonalLogs}" Margin="0" FontSize="16" Foreground="White" />
                 <Icon:PackIconMaterial Kind="Reload" Foreground="White" Cursor="Hand" Margin="15 5" Background="Transparent" ToolTip="{loc:Loc Repeat}">
                     <Icon:PackIconMaterial.InputBindings>
-                        <MouseBinding Command="{Binding ReloadCombatsCommand}" Gesture="LeftClick"/>
+                        <MouseBinding Command="{Binding ReloadCombatLogsCommand}" Gesture="LeftClick"/>
                     </Icon:PackIconMaterial.InputBindings>
                 </Icon:PackIconMaterial>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Width="250" IsEnabled="{Binding RemovingInProgress, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10"
+                        IsEnabled="{Binding RemovingInProgress, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
                 <Button mvx:Bi.nd="Command LoadSelectedCombatLogCommand" Content="{loc:Loc Upload}" Width="100" FontSize="16"
                         Visibility="{Binding CombatLogsForTargetUser.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
-                        IsEnabled="{Binding CombatListSelectedIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"
-                        Margin="10,10" Style="{StaticResource showButton}" HorizontalAlignment="Center"/>
-                <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Cursor="Hand" Style="{StaticResource menuButtonIcon}"
-                                       Visibility="{Binding CombatLogsForTargetUser.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
-                                       HorizontalAlignment="Center" ToolTip="{loc:Loc RemovePrivateLog}">
-                    <Icon:PackIconMaterial.InputBindings>
-                        <MouseBinding Command="{Binding DeleteCombatCommand}" Gesture="LeftClick"/>
-                    </Icon:PackIconMaterial.InputBindings>
-                </Icon:PackIconMaterial>
+                        Margin="50,10" Style="{StaticResource showButton}" HorizontalAlignment="Center"/>
+                <Button mvx:Bi.nd="Command DeleteCombatCommand" Content="{loc:Loc Remove}" Width="90" FontSize="11"
+                        Visibility="{Binding CombatListSelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:-1:>'}" Height="30" Foreground="Orange"
+                        Margin="50,10" Style="{StaticResource showButton}" HorizontalAlignment="Center"/>
             </StackPanel>
             <ScrollViewer MaxHeight="600" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <ListBox ItemsSource="{Binding CombatLogsForTargetUser}" SelectedIndex="{Binding CombatListSelectedIndex}">

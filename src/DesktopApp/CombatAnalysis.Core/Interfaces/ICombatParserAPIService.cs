@@ -6,7 +6,7 @@ public interface ICombatParserAPIService
 {
     Task DeleteCombatLogByUserAsync(int id, CancellationToken cancellationToken);
 
-    Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync(int logType, string? appUserId, CancellationToken cancellationToken);
 
     Task<IEnumerable<CombatModel>> LoadCombatsAsync(int combatLogId, CancellationToken cancellationToken);
 

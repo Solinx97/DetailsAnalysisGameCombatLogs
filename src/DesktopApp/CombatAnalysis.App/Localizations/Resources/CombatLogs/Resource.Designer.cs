@@ -232,11 +232,11 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove the selected log without the posibl of recovering of removed data..
+        ///   Looks up a localized string similar to Remove.
         /// </summary>
-        public static string RemovePrivateLog {
+        public static string Remove {
             get {
-                return ResourceManager.GetString("RemovePrivateLog", resourceCulture);
+                return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         

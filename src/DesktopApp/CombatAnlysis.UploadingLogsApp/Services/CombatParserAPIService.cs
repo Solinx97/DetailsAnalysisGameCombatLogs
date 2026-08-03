@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.UploadingLogsApp.Consts;
 using CombatAnalysis.UploadingLogsApp.Enums;
+using CombatAnalysis.UploadingLogsApp.Extensions;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Models;
 using CombatAnalysis.UploadingLogsApp.Models.User;
@@ -48,7 +49,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 combat.CombatLogId = combatLog.Id;
 
                 using var content = JsonContent.Create(combat);
-                using var response = await _httpClient.PostAsync("Combat", content, cancellationToken);
+                using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
                 response.EnsureSuccessStatusCode();
 
                 var combatId = int.Parse(await response.Content.ReadAsStringAsync());
@@ -114,7 +115,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 AppUserId = user.Id,
             };
 
-            var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken);
+            var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken, true);
             response.EnsureSuccessStatusCode();
 
             var createdCombatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>(cancellationToken);
