@@ -41,8 +41,8 @@ export const CommunityApi = createApi({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'Community', id }]
         }),
-        getCommunities: builder.query<CommunityModel[], void>({
-            query: () => '/Community',
+        getCommunities: builder.query<CommunityModel[], { page: number, pageSize: number }>({
+            query: ({ page, pageSize }) => `/Community?page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -57,16 +57,6 @@ export const CommunityApi = createApi({
         }),
         getCommunitiesCount: builder.query<number, void>({
             query: () => '/Community/count',
-        }),
-        getCommunitiesWithPagination: builder.query<CommunityModel[], number>({
-            query: pageSize => `/Community/getWithPagination?pageSize=${pageSize}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(community => ({ type: 'Community' as const, id: community.id })),
-                        { type: 'Community', id: 'LIST' },
-                    ]
-                    : [{ type: 'Community', id: 'LIST' }]
         }),
         getMoreCommunitiesWithPagination: builder.query<CommunityModel[], { offset: number, pageSize: number }>({
             query: ({ offset, pageSize }) => `/Community/getMoreWithPagination?offset=${offset}&pageSize=${pageSize}`,
@@ -95,8 +85,6 @@ export const {
     useLazyGetCommunityByIdQuery,
     useGetCommunitiesCountQuery,
     useLazyGetCommunitiesCountQuery,
-    useGetCommunitiesWithPaginationQuery,
-    useLazyGetCommunitiesWithPaginationQuery,
     useGetMoreCommunitiesWithPaginationQuery,
     useLazyGetMoreCommunitiesWithPaginationQuery,
     useGetInviteToCommunityByIdQuery,

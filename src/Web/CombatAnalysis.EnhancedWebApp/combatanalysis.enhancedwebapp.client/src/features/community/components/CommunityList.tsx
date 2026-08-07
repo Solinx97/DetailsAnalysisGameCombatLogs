@@ -3,7 +3,7 @@ import { APP_CONFIG } from '@/config/appConfig';
 import logger from '@/utils/Logger';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetCommunitiesCountQuery, useLazyGetCommunitiesWithPaginationQuery, useLazyGetMoreCommunitiesWithPaginationQuery } from '../api/Community.api';
+import { useGetCommunitiesCountQuery, useLazyGetCommunitiesQuery, useLazyGetMoreCommunitiesWithPaginationQuery } from '../api/Community.api';
 import { useCommunityUserFindByUserIdQuery } from '../api/CommunityUser.api';
 import type { CommunityModel } from '../types/CommunityModel';
 import CommunityItem from './CommunityItem';
@@ -19,7 +19,7 @@ const CommunityList: React.FC<{ filterContent: string }> = ({ filterContent }) =
     const { data: count, isLoading: countIsLoading } = useGetCommunitiesCountQuery();
     const { data: userCommunities, isLoading } = useCommunityUserFindByUserIdQuery(user?.id ?? "");
 
-    const [getCommunities] = useLazyGetCommunitiesWithPaginationQuery();
+    const [getCommunities] = useLazyGetCommunitiesQuery();
     const [getMoreCommunities] = useLazyGetMoreCommunitiesWithPaginationQuery();
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const CommunityList: React.FC<{ filterContent: string }> = ({ filterContent }) =
 
         const getCommunitiesAsync = async () => {
             try {
-                const communities = await getCommunities(pageSizeRef.current).unwrap();
+                const communities = await getCommunities({ page: 1, pageSize: pageSizeRef.current }).unwrap();
 
                 setCommunities(communities);
             } catch (e) {

@@ -1,10 +1,10 @@
 using AutoMapper;
-using AutoMapper.Extensions.ExpressionMapping;
 using CombatAnalysis.CommunicationAPI.Consts;
 using CombatAnalysis.CommunicationAPI.Helpers;
 using CombatAnalysis.CommunicationAPI.Mapping;
-using CombatAnalysis.CommunicationBL.Extensions;
-using CombatAnalysis.CommunicationBL.Mapping;
+using Communication.Application.Extensions;
+using Communication.Application.Mapping;
+using Communication.Infrastruction.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -16,15 +16,15 @@ var builder = WebApplication.CreateBuilder(args);
 var databasePropsOptions = new DatabaseProps();
 builder.Configuration.Bind("Database", databasePropsOptions);
 
-builder.Services.CommunicationBLDependencies(databasePropsOptions.DefaultConnection);
+builder.Services.AddInfrastructure(databasePropsOptions.DefaultConnection);
+builder.Services.AddMediatorSource();
 
 var loggerFactory = LoggerFactory.Create(builder => { });
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
-    mc.AddExpressionMapping();
-    mc.AddProfile(new CommunicationMapper());
-    mc.AddProfile(new BLMapper());
+    mc.AddProfile(new CommunicationApiMapper());
+    mc.AddProfile(new ApplicationMapper());
 }, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();

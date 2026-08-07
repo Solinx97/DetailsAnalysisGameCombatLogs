@@ -21,9 +21,9 @@ public class CommunityController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Get(int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync("Community");
+        var responseMessage = await _httpClient.GetAsync($"Community?page={page}&pageSize={pageSize}");
         if (responseMessage.IsSuccessStatusCode)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
@@ -43,20 +43,6 @@ public class CommunityController : ControllerBase
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
 
             return Ok(community);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("getWithPagination")]
-    public async Task<IActionResult> GetWithPaginationAsync(int pageSize)
-    {
-        var responseMessage = await _httpClient.GetAsync($"Community/getWithPagination?&pageSize={pageSize}");
-        if (responseMessage.IsSuccessStatusCode)
-        {
-            var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
-
-            return Ok(communities);
         }
 
         return BadRequest();

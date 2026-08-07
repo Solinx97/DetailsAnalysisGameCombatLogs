@@ -60,7 +60,4 @@
   <ItemGroup>
     <None Include="CombatAnalysis.Communication.publish.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="InitialCreate.sql" />
-  </ItemGroup>
 </Project>

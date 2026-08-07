@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CommunicationAPI.Models.Community;
 using CombatAnalysis.CommunicationAPI.Models.Post;
-using CombatAnalysis.CommunicationBL.DTO.Community;
-using CombatAnalysis.CommunicationBL.DTO.Post;
+using Communication.Application.DTOs.Community;
+using Communication.Application.DTOs.Post;
 
 namespace CombatAnalysis.CommunicationAPI.Mapping;
 
-internal class CommunicationMapper : Profile
+internal class CommunicationApiMapper : Profile
 {
-    public CommunicationMapper()
+    public CommunicationApiMapper()
     {
         CreateMap<CommunityDto, CommunityModel>().ReverseMap();
         CreateMap<CommunityDiscussionDto, CommunityDiscussionModel>().ReverseMap();
