@@ -47,7 +47,18 @@ public class Community
         ArgumentException.ThrowIfNullOrEmpty(description, nameof(description));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        return new Community(name, description, policyType, appUserId);
+        var community = new Community(name, description, policyType, appUserId);
+        community.AddMember(appUserId);
+
+        return community;
+    }
+
+    public void AddMember(string appUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+
+        var communityUser = CommunityUser.Create(appUserId);
+        _communityUsers.Add(communityUser);
     }
 
     public void EditName(string name)

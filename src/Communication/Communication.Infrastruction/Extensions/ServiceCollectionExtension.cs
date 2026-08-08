@@ -18,6 +18,9 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IGenericRepository<Community, int>, GenericRepository<Community, int>>();
 
+        services.AddScoped<ICommunityRepository, CommunityRepository>();
+        services.AddScoped<ICommunityUserRepository, CommunityUserRepository>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

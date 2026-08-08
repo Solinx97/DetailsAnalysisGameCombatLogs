@@ -228,12 +228,7 @@ namespace Communication.Infrastruction.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CommunityId")
-                        .HasMaxLength(128)
                         .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -29,9 +29,9 @@ const CommunityList: React.FC<{ filterContent: string }> = ({ filterContent }) =
 
         const getCommunitiesAsync = async () => {
             try {
-                const communities = await getCommunities({ page: 1, pageSize: pageSizeRef.current }).unwrap();
+                const response = await getCommunities({ page: 1, pageSize: pageSizeRef.current }).unwrap();
 
-                setCommunities(communities);
+                setCommunities(response);
             } catch (e) {
                 logger.error("Failed to receive communities", e);
             }
@@ -45,12 +45,12 @@ const CommunityList: React.FC<{ filterContent: string }> = ({ filterContent }) =
     }, [count]);
 
     const anotherCommunity = (community: CommunityModel) => {
-        if (user == null) {
+        if (!userCommunities) {
             return true;
         }
 
-        return userCommunities?.filter(userCommunity => userCommunity.communityId === community.id).length === 0
-            || userCommunities?.length === 0;
+        return userCommunities.filter(userCommunity => userCommunity.communityId === community.id).length === 0
+            || userCommunities.length === 0;
     }
 
     const getMoreCommunitiesAsync = async () => {
@@ -71,7 +71,7 @@ const CommunityList: React.FC<{ filterContent: string }> = ({ filterContent }) =
         <>
             <ul>
                 {communities?.filter(community => community.policyType === 0).map((item) => (
-                    (anotherCommunity(item) && item.name.toLowerCase().startsWith(filterContent.toLowerCase())) &&
+                    (anotherCommunity(item)) &&
                         <li key={item.id} className="community">
                             <CommunityItem
                                 id={item.id}

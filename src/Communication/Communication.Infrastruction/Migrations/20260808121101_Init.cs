@@ -107,8 +107,7 @@ namespace Communication.Infrastruction.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CommunityId = table.Column<int>(type: "int", maxLength: 128, nullable: false),
+                    CommunityId = table.Column<int>(type: "int", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

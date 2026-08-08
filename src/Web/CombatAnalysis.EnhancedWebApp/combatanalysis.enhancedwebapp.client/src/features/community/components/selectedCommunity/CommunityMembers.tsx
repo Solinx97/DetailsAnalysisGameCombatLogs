@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useCommunityUserFindByCommunityIdQuery, useLazyCommunityUserFindByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
+import { useGetUsersByCommunityIdQuery, useLazyGetUsersByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../api/InviteToCommunity.api';
 import type { CommunityModel } from '../../types/CommunityModel';
 import type { CommunityUserModel } from '../../types/CommunityUserModel';
@@ -33,7 +33,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const { communityUsers, isLoading } = useCommunityUserFindByCommunityIdQuery(community.id, {
+    const { communityUsers, isLoading } = useGetUsersByCommunityIdQuery(community.id, {
         selectFromResult: ({ data, isLoading }) => {
             if (!data) {
                 return {
@@ -52,7 +52,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
             }
         }
     });
-    const [getAllCommunityUsersAsync] = useLazyCommunityUserFindByCommunityIdQuery();
+    const [getAllCommunityUsersAsync] = useLazyGetUsersByCommunityIdQuery();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
 

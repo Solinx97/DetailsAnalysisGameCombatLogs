@@ -52,9 +52,6 @@ internal static class ModelBuilderExtension
 
         modelBuilder.Entity<CommunityUser>(uh =>
         {
-            uh.Property(uh => uh.CommunityId)
-                .HasMaxLength(CommunityUser.USERNAME_MAX_LENGTH);
-
             uh.HasOne(uh => uh.Community)
                 .WithMany(c => c.CommunityUsers)
                 .HasForeignKey(uh => uh.CommunityId)

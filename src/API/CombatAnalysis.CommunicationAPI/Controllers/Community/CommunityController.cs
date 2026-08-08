@@ -1,6 +1,8 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Community;
 using Communication.Application.Commands.CreateCommunity;
+using Communication.Application.Commands.DeleteCommunity;
 using Communication.Application.Commands.UpdateCommunityName;
+using Communication.Application.Queries.CountCommunity;
 using Communication.Application.Queries.GetCommunity;
 using Communication.Application.Queries.GetCommunityById;
 using MediatR;
@@ -55,28 +57,19 @@ public class CommunityController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    //[HttpDelete("{id:int:min(1)}")]
-    //public async Task<IActionResult> Delete(int id)
-    //{
-    //    try
-    //    {
-    //        await _service.DeleteAsync(id);
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteCommunityCommand(id), cancellationToken);
 
-    //        return NoContent();
-    //    }
-    //    catch (DbUpdateConcurrencyException ex)
-    //    {
-    //        _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
+        return NoContent();
+    }
 
-    //        return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-    //    }
-    //}
+    [HttpGet("count")]
+    public async Task<IActionResult> Count(CancellationToken cancellationToken)
+    {
+        var count = await _mediator.Send(new CountCommunityQuery(), cancellationToken);
 
-    //[HttpGet("count")]
-    //public async Task<IActionResult> Count()
-    //{
-    //    var count = await _service.CountAsync();
-
-    //    return Ok(count);
-    //}
+        return Ok(count);
+    }
 }
