@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Entities.Community;
+using Communication.Domain.Exceptions;
 
 namespace Communication.Domain.Aggregates;
 
@@ -59,6 +60,38 @@ public class Community
 
         var communityUser = CommunityUser.Create(appUserId);
         _communityUsers.Add(communityUser);
+    }
+
+    public void RemoveMember(string communityUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(communityUserId, nameof(communityUserId));
+
+        var member = _communityUsers
+            .FirstOrDefault(x => x.Id == communityUserId)
+                ?? throw new DomainException($"Community user not found with id {communityUserId}");
+
+        _communityUsers.Remove(member);
+    }
+
+    public void CreateInvite(string appUserId, string toAppUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+        ArgumentException.ThrowIfNullOrEmpty(toAppUserId, nameof(toAppUserId));
+
+        var createdAt = DateTimeOffset.UtcNow;
+        var invite = InviteToCommunity.Create(toAppUserId, createdAt, appUserId);
+        _invitesToCommunity.Add(invite);
+    }
+
+    public void RemoveInvite(int inviteId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(inviteId, nameof(inviteId));
+
+        var invite = _invitesToCommunity
+            .FirstOrDefault(x => x.Id == inviteId)
+                ?? throw new DomainException($"Invite to community not found with id {inviteId}");
+
+        _invitesToCommunity.Remove(invite);
     }
 
     public void EditName(string name)

@@ -1,4 +1,4 @@
-﻿using Communication.Domain.Aggregates;
+﻿using Communication.Application.DTOs.Community;
 using MediatR;
 
 namespace Communication.Application.Commands.CreateCommunity;
@@ -8,4 +8,4 @@ public record CreateCommunityCommand(
     string Description,
     int PolicyType,
     string AppUserId
-    ) : IRequest<Community>;
+    ) : IRequest<CommunityDto>;

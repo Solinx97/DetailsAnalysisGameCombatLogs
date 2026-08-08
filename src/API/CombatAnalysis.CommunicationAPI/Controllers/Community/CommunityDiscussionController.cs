@@ -1,116 +1,58 @@
-﻿//using AutoMapper;
-//using CombatAnalysis.CommunicationAPI.Models.Community;
-//using CombatAnalysis.CommunicationBL.DTO.Community;
-//using CombatAnalysis.CommunicationBL.Interfaces;
-//using CombatAnalysis.CommunicationDAL.Entities.Community;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using CombatAnalysis.CommunicationAPI.Models.Community;
+using CombatAnalysis.CommunicationAPI.Partials;
+using Communication.Application.Commands.CreateCommunityDescussion;
+using Communication.Application.Commands.DeleteCommunityDiscussion;
+using Communication.Application.Commands.UpdateCommunityDiscussionTitle;
+using Communication.Application.Queries.GetCommunityDiscussions;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
+namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
 
-//[Route("api/v1/[controller]")]
-//[ApiController]
-//[Authorize]
-//public class CommunityDiscussionController(IService<CommunityDiscussionDto, int> service, IMapper mapper, ILogger<CommunityDiscussionController> logger) : ControllerBase
-//{
-//    private readonly IService<CommunityDiscussionDto, int> _service = service;
-//    private readonly IMapper _mapper = mapper;
-//    private readonly ILogger<CommunityDiscussionController> _logger = logger;
+[Route("api/v1/[controller]")]
+[ApiController]
+[Authorize]
+public class CommunityDiscussionController(IMediator mediator) : ControllerBase
+{
+    private readonly IMediator _mediator = mediator;
 
-//    [HttpGet]
-//    public async Task<IActionResult> GetAll()
-//    {
-//        var result = await _service.GetAllAsync();
+    [HttpGet("getByCommunityId")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var communitityDiscussions = await _mediator.Send(new GetCommunityDiscussionsQuery(communityId, page, pageSize), cancellationToken);
 
-//        return Ok(result);
-//    }
+        return Ok(communitityDiscussions);
+    }
 
-//    [HttpGet("{id:int:min(1)}")]
-//    public async Task<IActionResult> GetById(int id)
-//    {
-//        var result = await _service.GetByIdAsync(id);
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CommunityDiscussionModel request, CancellationToken cancellationToken)
+    {
+        var command = new CreateCommunityDescussionCommand(request.Title, request.Content, request.CommunityId, request.AppUserId);
+        await _mediator.Send(command, cancellationToken);
 
-//        return Ok(result);
-//    }
+        return NoContent();
+    }
 
-//    [HttpGet("findByCommunityId/{communityId:int:min(1)}")]
-//    public async Task<IActionResult> FindByCommunityId(int communityId)
-//    {
-//        var result = await _service.GetByParamAsync(c => c.CommunityId, communityId);
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CommunityDiscussionPartial request, CancellationToken cancellationToken)
+    {
+        if (id != request.Id)
+        {
+            return BadRequest("Route ID and body ID do not match.");
+        }
 
-//        return Ok(result);
-//    }
+        var command = new UpdateCommunityDiscussionTitleCommand(request.Id, request.Title);
+        await _mediator.Send(command, cancellationToken);
 
-//    [HttpPost]
-//    public async Task<IActionResult> Create([FromBody] CommunityDiscussionModel communityDiscussion)
-//    {
-//        try
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                _logger.LogWarning("Invalid CommunityDiscussion create request received: {@CommunityDiscussion}", communityDiscussion);
+        return NoContent();
+    }
 
-//                return ValidationProblem(ModelState);
-//            }
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteCommunityDiscussionComand(id), cancellationToken);
 
-//            var map = _mapper.Map<CommunityDiscussionDto>(communityDiscussion);
-//            var result = await _service.CreateAsync(map);
-
-//            return Ok(result);
-//        }
-//        catch (DbUpdateException ex)
-//        {
-//            _logger.LogError(ex, "Failed to create community discussion.");
-
-//            return StatusCode(500, "Internal server error.");
-//        }
-//    }
-
-//    [HttpPut("{id:int:min(1)}")]
-//    public async Task<IActionResult> Update(int id, [FromBody] CommunityDiscussionModel communityDiscussion)
-//    {
-//        try
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                _logger.LogWarning("Invalid CommunityDiscussion update request received: {@CommunityDiscussion}", communityDiscussion);
-
-//                return ValidationProblem(ModelState);
-//            }
-
-//            if (id != communityDiscussion.Id)
-//            {
-//                return BadRequest("Route ID and body ID do not match.");
-//            }
-
-//            var map = _mapper.Map<CommunityDiscussionDto>(communityDiscussion);
-//            await _service.UpdateAsync(id, map);
-
-//            return NoContent();
-//        }
-//        catch (DbUpdateException ex)
-//        {
-//            _logger.LogError(ex, "Failed to update community discussion.");
-
-//            return StatusCode(500, "Internal server error.");
-//        }
-//    }
-
-//    [HttpDelete("{id:int:min(1)}")]
-//    public async Task<IActionResult> Delete(int id)
-//    {
-//        try
-//        {
-//            await _service.DeleteAsync(id);
-
-//            return NoContent();
-//        }
-//        catch (DbUpdateConcurrencyException ex)
-//        {
-//            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-//            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-//        }
-//    }
-//}
+        return NoContent();
+    }
+}

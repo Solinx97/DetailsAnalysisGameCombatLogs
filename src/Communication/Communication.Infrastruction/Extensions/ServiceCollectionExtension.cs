@@ -17,9 +17,11 @@ public static class ServiceCollectionExtension
         });
 
         services.AddScoped<IGenericRepository<Community, int>, GenericRepository<Community, int>>();
+        services.AddScoped<IGenericRepository<CommunityDiscussion, int>, GenericRepository<CommunityDiscussion, int>>();
 
         services.AddScoped<ICommunityRepository, CommunityRepository>();
-        services.AddScoped<ICommunityUserRepository, CommunityUserRepository>();
+        services.AddScoped<IInviteToCommunityRepository, InviteToCommunityRepository>();
+        services.AddScoped<ICommunityDiscussionRepository, CommunityDiscussionRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
