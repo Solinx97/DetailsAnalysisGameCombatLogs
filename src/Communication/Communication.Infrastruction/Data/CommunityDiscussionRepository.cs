@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
+using Communication.Infrastruction.Exceptions;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,17 @@ internal class CommunityDiscussionRepository(CommunicationContext context) : ICo
             .Take(pageSize)
             .ToListAsync(cancelationToken);
         return result.Count != 0 ? result : [];
+    }
+
+    public async Task<CommunityDiscussion> GetWithCommentsAsync(int id, CancellationToken cancellationToken)
+    {
+        var communityDiscussions = await _context.Set<CommunityDiscussion>()
+            .Where(x => x.Id == id)
+            .Include(x => x.CommunityDiscussionComments)
+            .FirstOrDefaultAsync(cancellationToken)
+                ?? throw new EntityNotFoundException(typeof(CommunityDiscussion), id);
+
+        return communityDiscussions;
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancelationToken)

@@ -12,7 +12,6 @@ internal class UpdateCommunityNameHandler(IGenericRepository<Community, int> rep
     public async Task Handle(UpdateCommunityNameCommand request, CancellationToken cancellationToken)
     {
         var community = await _repository.GetByIdAsync(request.Id, cancellationToken);
-
         community.EditName(request.Name);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);

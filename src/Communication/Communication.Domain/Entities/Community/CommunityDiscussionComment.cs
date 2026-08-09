@@ -8,13 +8,10 @@ public class CommunityDiscussionComment
     {
     }
 
-    private CommunityDiscussionComment(int id, string content, DateTimeOffset createdAt,
-        int communityDiscussionId, string appUserId)
+    private CommunityDiscussionComment(string content, DateTimeOffset createdAt, string appUserId)
     {
-        Id = id;
         Content = content;
         CreatedAt = createdAt;
-        CommunityDiscussionId = communityDiscussionId;
         AppUserId = appUserId;
     }
 
@@ -30,14 +27,22 @@ public class CommunityDiscussionComment
 
     public CommunityDiscussion CommunityDiscussion { get; private set; }
 
-    public static CommunityDiscussionComment Create(int id, string content, DateTimeOffset createdAt,
-        int communityDiscussionId, string appUserId)
+    public static CommunityDiscussionComment Create(string content, string appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityDiscussionId, nameof(communityDiscussionId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        return new CommunityDiscussionComment(id, content, createdAt, communityDiscussionId, appUserId);
+        var createdAt = DateTimeOffset.UtcNow;
+        return new CommunityDiscussionComment(content, createdAt, appUserId);
+    }
+
+    public void EditContent(string content)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+
+        if (!string.Equals(Content, content, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Content = content;
+        }
     }
 }

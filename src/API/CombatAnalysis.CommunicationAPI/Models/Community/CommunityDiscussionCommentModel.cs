@@ -5,7 +5,7 @@ namespace CombatAnalysis.CommunicationAPI.Models.Community;
 public record CommunityDiscussionCommentModel(
     [Range(0, int.MaxValue)] int Id,
     [Required] string Content,
-    [Required] DateTimeOffset When,
+    [Required] DateTimeOffset CreatedAt,
     [Required] string AppUserId,
     [Range(0, int.MaxValue)] int CommunityDiscussionId
     );

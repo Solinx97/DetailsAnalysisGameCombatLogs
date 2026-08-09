@@ -1,116 +1,58 @@
-﻿//using AutoMapper;
-//using CombatAnalysis.CommunicationAPI.Models.Community;
-//using CombatAnalysis.CommunicationBL.DTO.Community;
-//using CombatAnalysis.CommunicationBL.Interfaces;
-//using CombatAnalysis.CommunicationDAL.Entities.Community;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using CombatAnalysis.CommunicationAPI.Models.Community;
+using CombatAnalysis.CommunicationAPI.Partials;
+using Communication.Application.Commands.CreateDiscussionComment;
+using Communication.Application.Commands.DeleteDiscussionComment;
+using Communication.Application.Commands.UpdateDiscussionCommentContent;
+using Communication.Application.Queries.GetCommunityDiscussionComments;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
+namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
 
-//[Route("api/v1/[controller]")]
-//[ApiController]
-//[Authorize]
-//public class CommunityDiscussionCommentController(IService<CommunityDiscussionCommentDto, int> service, IMapper mapper, ILogger<CommunityDiscussionCommentController> logger) : ControllerBase
-//{
-//    private readonly IService<CommunityDiscussionCommentDto, int> _service = service;
-//    private readonly IMapper _mapper = mapper;
-//    private readonly ILogger<CommunityDiscussionCommentController> _logger = logger;
+[Route("api/v1/[controller]")]
+[ApiController]
+[Authorize]
+public class CommunityDiscussionCommentController(IMediator mediator) : ControllerBase
+{
+    private readonly IMediator _mediator = mediator;
 
-//    [HttpGet]
-//    public async Task<IActionResult> GetAll()
-//    {
-//        var result = await _service.GetAllAsync();
+    [HttpGet("getByDiscussionId/{id:int:min(1)}")]
+    public async Task<IActionResult> GetByDiscussionId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var comments = await _mediator.Send(new GetCommunityDiscussionCommentsQuery(communityId, page, pageSize), cancellationToken);
 
-//        return Ok(result);
-//    }
+        return Ok(comments);
+    }
 
-//    [HttpGet("{id:int:min(1)}")]
-//    public async Task<IActionResult> GetById(int id)
-//    {
-//        var result = await _service.GetByIdAsync(id);
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CommunityDiscussionCommentModel request, CancellationToken cancellationToken)
+    {
+        var command = new CreateDiscussionCommentCommand(request.CommunityDiscussionId, request.Content, request.AppUserId);
+        await _mediator.Send(command, cancellationToken);
 
-//        return Ok(result);
-//    }
+        return NoContent();
+    }
 
-//    [HttpGet("findByDiscussionId/{id:int:min(1)}")]
-//    public async Task<IActionResult> FindByDiscussionId(int id)
-//    {
-//        var result = await _service.GetByParamAsync(c => c.CommunityDiscussionId, id);
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CommunityDiscussionCommentPartial request, CancellationToken cancellationToken)
+    {
+        if (id != request.Id)
+        {
+            return BadRequest("Route ID and body ID do not match.");
+        }
 
-//        return Ok(result);
-//    }
+        var command = new UpdateDiscussionCommentContentCommand(request.Id, request.DiscussionId, request.Content);
+        await _mediator.Send(command, cancellationToken);
 
-//    [HttpPost]
-//    public async Task<IActionResult> Create([FromBody] CommunityDiscussionCommentModel communityDiscussionComment)
-//    {
-//        try
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                _logger.LogWarning("Invalid CommunityDiscussionComment create request received: {@CommunityDiscussionComment}", communityDiscussionComment);
+        return NoContent();
+    }
 
-//                return ValidationProblem(ModelState);
-//            }
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id, int discussionId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteDiscussionCommentCommand(id, discussionId), cancellationToken);
 
-//            var map = _mapper.Map<CommunityDiscussionCommentDto>(communityDiscussionComment);
-//            var result = await _service.CreateAsync(map);
-
-//            return Ok(result);
-//        }
-//        catch (DbUpdateException ex)
-//        {
-//            _logger.LogError(ex, "Failed to create community discussion comment.");
-
-//            return StatusCode(500, "Internal server error.");
-//        }
-//    }
-
-//    [HttpPut("{id:int:min(1)}")]
-//    public async Task<IActionResult> Update(int id, [FromBody] CommunityDiscussionCommentModel communityDiscussionComment)
-//    {
-//        try
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                _logger.LogWarning("Invalid CommunityDiscussionComment update request received: {@CommunityDiscussionComment}", communityDiscussionComment);
-
-//                return ValidationProblem(ModelState);
-//            }
-
-//            if (id != communityDiscussionComment.Id)
-//            {
-//                return BadRequest("Route ID and body ID do not match.");
-//            }
-
-//            var map = _mapper.Map<CommunityDiscussionCommentDto>(communityDiscussionComment);
-//            await _service.UpdateAsync(id, map);
-
-//            return NoContent();
-//        }
-//        catch (DbUpdateException ex)
-//        {
-//            _logger.LogError(ex, "Failed to update community discussion comment.");
-
-//            return StatusCode(500, "Internal server error.");
-//        }
-//    }
-
-//    [HttpDelete("{id:int:min(1)}")]
-//    public async Task<IActionResult> Delete(int id)
-//    {
-//        try
-//        {
-//            await _service.DeleteAsync(id);
-
-//            return NoContent();
-//        }
-//        catch (DbUpdateConcurrencyException ex)
-//        {
-//            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-//            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-//        }
-//    }
-//}
+        return NoContent();
+    }
+}

@@ -14,4 +14,3 @@ internal class DeleteCommunityHandler(ICommunityRepository repository, IUnitOfWo
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
-

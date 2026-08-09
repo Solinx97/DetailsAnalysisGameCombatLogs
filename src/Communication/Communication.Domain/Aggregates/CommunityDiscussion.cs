@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Entities.Community;
+using Communication.Domain.Exceptions;
 
 namespace Communication.Domain.Aggregates;
 
@@ -57,5 +58,37 @@ public class CommunityDiscussion
         {
             Title = title;
         }
+    }
+
+    public void AddComment(string content, string appUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+
+        var comment = CommunityDiscussionComment.Create(content, appUserId);
+        _communityDiscussionComments.Add(comment);
+    }
+
+    public void RemoveComment(int commentId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(commentId, nameof(commentId));
+
+        var comment = _communityDiscussionComments
+            .FirstOrDefault(x => x.Id == commentId)
+                ?? throw new DomainException($"Community discussion comment not found with id {commentId}");
+
+        _communityDiscussionComments.Remove(comment);
+    }
+
+    public void EditCommentContent(int discussionCommentId, string content)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(discussionCommentId, nameof(discussionCommentId));
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+
+        var comment = _communityDiscussionComments
+            .FirstOrDefault(x => x.Id == discussionCommentId)
+                ?? throw new DomainException($"Community discussion comment not found with id {discussionCommentId}");
+
+        comment.EditContent(content);
     }
 }

@@ -12,11 +12,10 @@ public class UserPost
     {
     }
 
-    private UserPost(int id, string owner, string content, int publicType,
+    private UserPost(string owner, string content, int publicType,
         string tags, DateTimeOffset createdAt, int likeCount, int dislikeCount, 
         int commentCount, string appUserId)
     {
-        Id = id;
         Owner = owner;
         Content = content;
         PublicType = publicType;
@@ -54,11 +53,9 @@ public class UserPost
 
     public IReadOnlyList<UserPostLike> UserPostLikes => _userPostLikes;
 
-    public static UserPost Create(int id, string owner, string content, int publicType,
-        string tags, DateTimeOffset createdAt, int likeCount, int dislikeCount,
-        int commentCount, string appUserId)
+    public static UserPost Create(string owner, string content, int publicType, string tags, 
+        int likeCount, int dislikeCount, int commentCount, string appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
         ArgumentException.ThrowIfNullOrEmpty(owner, nameof(owner));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
@@ -67,6 +64,17 @@ public class UserPost
         ArgumentOutOfRangeException.ThrowIfNegative(commentCount, nameof(commentCount));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        return new UserPost(id, owner, content, publicType, tags, createdAt, likeCount, dislikeCount, commentCount, appUserId);
+        var createdAt = DateTimeOffset.UtcNow;
+        return new UserPost(owner, content, publicType, tags, createdAt, likeCount, dislikeCount, commentCount, appUserId);
+    }
+
+    public void EditContent(string content)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+
+        if (!string.Equals(Content, content, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Content = content;
+        }
     }
 }
