@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Communication.Infrastruction.Migrations
 {
     [DbContext(typeof(CommunicationContext))]
-    [Migration("20260808121101_Init")]
+    [Migration("20260809194248_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -284,9 +284,6 @@ namespace Communication.Infrastruction.Migrations
                     b.Property<int>("CommentType")
                         .HasColumnType("int");
 
-                    b.Property<int>("CommunityId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CommunityPostId")
                         .HasColumnType("int");
 
@@ -316,9 +313,6 @@ namespace Communication.Infrastruction.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CommunityId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CommunityPostId")
                         .HasColumnType("int");
 
@@ -343,9 +337,6 @@ namespace Communication.Infrastruction.Migrations
                     b.Property<string>("AppUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CommunityId")
-                        .HasColumnType("int");
 
                     b.Property<int>("CommunityPostId")
                         .HasColumnType("int");

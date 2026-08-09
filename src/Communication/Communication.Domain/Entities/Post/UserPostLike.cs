@@ -8,10 +8,8 @@ public class UserPostLike
     {
     }
 
-    private UserPostLike(int id, int userPostId, string appUserId)
+    private UserPostLike(string appUserId)
     {
-        Id = id;
-        UserPostId = userPostId;
         AppUserId = appUserId;
     }
 
@@ -23,12 +21,10 @@ public class UserPostLike
 
     public UserPost UserPost { get; private set; }
 
-    public static UserPostLike Create(int id, int userPostId, string appUserId)
+    public static UserPostLike Create(string appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userPostId, nameof(userPostId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        return new UserPostLike(id, userPostId, appUserId);
+        return new UserPostLike(appUserId);
     }
 }

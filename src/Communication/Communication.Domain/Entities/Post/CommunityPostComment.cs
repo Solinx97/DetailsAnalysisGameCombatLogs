@@ -8,15 +8,11 @@ public class CommunityPostComment
     {
     }
 
-    private CommunityPostComment(int id, string content, int commentType, DateTimeOffset createdAt,
-       int communityPostId, int communityId, string appUserId)
+    private CommunityPostComment(string content, int commentType, DateTimeOffset createdAt, string appUserId)
     {
-        Id = id;
         Content = content;
         CommentType = commentType;
         CreatedAt = createdAt;
-        CommunityPostId = communityPostId;
-        CommunityId = communityId;
         AppUserId = appUserId;
     }
 
@@ -30,21 +26,26 @@ public class CommunityPostComment
 
     public int CommunityPostId { get; private set; }
 
-    public int CommunityId { get; private set; }
-
     public string AppUserId { get; private set; }
 
     public CommunityPost CommunityPost { get; private set; }
 
-    public static CommunityPostComment Create(int id, string content, int commentType, DateTimeOffset createdAt,
-       int communityPostId, int communityId, string appUserId)
+    public static CommunityPostComment Create(string content, int commentType, string appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityPostId, nameof(communityPostId));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        return new CommunityPostComment(id, content, commentType, createdAt, communityPostId, communityId, appUserId);
+        var createdAt = DateTimeOffset.UtcNow;
+        return new CommunityPostComment(content, commentType, createdAt, appUserId);
+    }
+
+    public void EditContent(string content)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+
+        if (!string.Equals(Content, content, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Content = content;
+        }
     }
 }

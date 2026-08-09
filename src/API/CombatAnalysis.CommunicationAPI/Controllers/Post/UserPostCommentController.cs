@@ -1,115 +1,58 @@
-﻿//using AutoMapper;
-//using CombatAnalysis.CommunicationAPI.Models.Post;
-//using CombatAnalysis.CommunicationBL.DTO.Post;
-//using CombatAnalysis.CommunicationBL.Interfaces;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using CombatAnalysis.CommunicationAPI.Models.Post;
+using CombatAnalysis.CommunicationAPI.Partials;
+using Communication.Application.Commands.CreateUserPostLike;
+using Communication.Application.Commands.DeleteUserPostComment;
+using Communication.Application.Commands.UpdateUserPostCommentContent;
+using Communication.Application.Queries.GetUserPostComments;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
+namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
 
-//[Route("api/v1/[controller]")]
-//[ApiController]
-//[Authorize]
-//public class UserPostCommentController(IService<UserPostCommentDto, int> service, IMapper mapper, ILogger<UserPostCommentController> logger) : ControllerBase
-//{
-//    private readonly IService<UserPostCommentDto, int> _service = service;
-//    private readonly IMapper _mapper = mapper;
-//    private readonly ILogger<UserPostCommentController> _logger = logger;
+[Route("api/v1/[controller]")]
+[ApiController]
+[Authorize]
+public class UserPostCommentController(IMediator mediator) : ControllerBase
+{
+    private readonly IMediator _mediator = mediator;
 
-//    [HttpGet]
-//    public async Task<IActionResult> GetAll()
-//    {
-//        var result = await _service.GetAllAsync();
+    [HttpGet("getByUserPostId")]
+    public async Task<IActionResult> GetByUserPostId(int userPostId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var comments = await _mediator.Send(new GetUserPostCommentsQuery(userPostId, page, pageSize), cancellationToken);
 
-//        return Ok(result);
-//    }
+        return Ok(comments);
+    }
 
-//    [HttpGet("{id:int:min(1)}")]
-//    public async Task<IActionResult> GetById(int id)
-//    {
-//        var result = await _service.GetByIdAsync(id);
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] UserPostCommentModel request, CancellationToken cancellationToken)
+    {
+        var command = new CreateUserPostLikeCommand(request.UserPostId, request.AppUserId);
+        await _mediator.Send(command, cancellationToken);
 
-//        return Ok(result);
-//    }
+        return NoContent();
+    }
 
-//    [HttpGet("searchByPostId/{id}")]
-//    public async Task<IActionResult> SearchByPostId(int id)
-//    {
-//        var result = await _service.GetByParamAsync(c => c.UserPostId, id);
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UserPostCommentPartial request, CancellationToken cancellationToken)
+    {
+        if (id != request.Id)
+        {
+            return BadRequest("Route ID and body ID do not match.");
+        }
 
-//        return Ok(result);
-//    }
+        var command = new UpdateUserPostCommentContentCommand(request.Id, request.UserPostId, request.Content);
+        await _mediator.Send(command, cancellationToken);
 
-//    [HttpPost]
-//    public async Task<IActionResult> Create([FromBody] UserPostCommentModel userPostComment)
-//    {
-//        try
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                _logger.LogWarning("Invalid UserPostComment cretae request received: {@UserPostComment}", userPostComment);
+        return NoContent();
+    }
 
-//                return ValidationProblem(ModelState);
-//            }
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id, int userPostId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteUserPostCommentCommand(id, userPostId), cancellationToken);
 
-//            var map = _mapper.Map<UserPostCommentDto>(userPostComment);
-//            var result = await _service.CreateAsync(map);
-
-//            return Ok(result);
-//        }
-//        catch (DbUpdateException ex)
-//        {
-//            _logger.LogError(ex, "Failed to create user post comment.");
-
-//            return StatusCode(500, "Internal server error.");
-//        }
-//    }
-
-//    [HttpPut("{id:int:min(1)}")]
-//    public async Task<IActionResult> Update(int id, [FromBody] UserPostCommentModel userPostComment)
-//    {
-//        try
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                _logger.LogWarning("Invalid UserPostComment update request received: {@UserPostComment}", userPostComment);
-
-//                return ValidationProblem(ModelState);
-//            }
-
-//            if (id != userPostComment.Id)
-//            {
-//                return BadRequest("Route ID and body ID do not match.");
-//            }
-
-//            var map = _mapper.Map<UserPostCommentDto>(userPostComment);
-//            await _service.UpdateAsync(id, map);
-
-//            return NoContent();
-//        }
-//        catch (DbUpdateException ex)
-//        {
-//            _logger.LogError(ex, "Failed to update user post comment.");
-
-//            return StatusCode(500, "Internal server error.");
-//        }
-//    }
-
-//    [HttpDelete("{id:int:min(1)}")]
-//    public async Task<IActionResult> Delete(int id)
-//    {
-//        try
-//        {
-//            await _service.DeleteAsync(id);
-
-//            return NoContent();
-//        }
-//        catch (DbUpdateConcurrencyException ex)
-//        {
-//            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-//            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-//        }
-//    }
-//}
+        return NoContent();
+    }
+}

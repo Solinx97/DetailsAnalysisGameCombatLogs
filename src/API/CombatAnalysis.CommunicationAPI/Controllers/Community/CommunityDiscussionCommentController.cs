@@ -17,7 +17,7 @@ public class CommunityDiscussionCommentController(IMediator mediator) : Controll
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByDiscussionId/{id:int:min(1)}")]
+    [HttpGet("getByDiscussionId")]
     public async Task<IActionResult> GetByDiscussionId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var comments = await _mediator.Send(new GetCommunityDiscussionCommentsQuery(communityId, page, pageSize), cancellationToken);

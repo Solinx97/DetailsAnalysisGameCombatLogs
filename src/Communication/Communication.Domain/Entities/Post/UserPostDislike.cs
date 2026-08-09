@@ -8,10 +8,8 @@ public class UserPostDislike
     {
     }
 
-    private UserPostDislike(int id, int userPostId, string appUserId)
+    private UserPostDislike(string appUserId)
     {
-        Id = id;
-        UserPostId = userPostId;
         AppUserId = appUserId;
     }
 
@@ -23,12 +21,10 @@ public class UserPostDislike
 
     public UserPost UserPost { get; private set; }
 
-    public static UserPostDislike Create(int id, int userPostId, string appUserId)
+    public static UserPostDislike Create(string appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userPostId, nameof(userPostId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        return new UserPostDislike(id, userPostId, appUserId);
+        return new UserPostDislike(appUserId);
     }
 }

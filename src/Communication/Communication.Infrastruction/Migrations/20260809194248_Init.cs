@@ -237,7 +237,6 @@ namespace Communication.Infrastruction.Migrations
                     CommentType = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CommunityPostId = table.Column<int>(type: "int", nullable: false),
-                    CommunityId = table.Column<int>(type: "int", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -259,7 +258,6 @@ namespace Communication.Infrastruction.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CommunityPostId = table.Column<int>(type: "int", nullable: false),
-                    CommunityId = table.Column<int>(type: "int", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -281,7 +279,6 @@ namespace Communication.Infrastruction.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CommunityPostId = table.Column<int>(type: "int", nullable: false),
-                    CommunityId = table.Column<int>(type: "int", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

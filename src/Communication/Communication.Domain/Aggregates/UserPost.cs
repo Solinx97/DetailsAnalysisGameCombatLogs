@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Entities.Post;
+using Communication.Domain.Exceptions;
 
 namespace Communication.Domain.Aggregates;
 
@@ -68,6 +69,64 @@ public class UserPost
         return new UserPost(owner, content, publicType, tags, createdAt, likeCount, dislikeCount, commentCount, appUserId);
     }
 
+    public void AddLike(string appUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+
+        var like = UserPostLike.Create(appUserId);
+        _userPostLikes.Add(like);
+    }
+
+    public void RemoveLike(int likeId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(likeId, nameof(likeId));
+
+        var like = _userPostLikes
+            .FirstOrDefault(x => x.Id == likeId)
+                ?? throw new DomainException($"User post like not found with id {likeId}");
+
+        _userPostLikes.Remove(like);
+    }
+
+    public void AddDislike(string appUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+
+        var dislike = UserPostDislike.Create(appUserId);
+        _userPostDislikes.Add(dislike);
+    }
+
+    public void RemoveDislike(int dislikeId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(dislikeId, nameof(dislikeId));
+
+        var dislike = _userPostDislikes
+            .FirstOrDefault(x => x.Id == dislikeId)
+                ?? throw new DomainException($"User post like not found with id {dislikeId}");
+
+        _userPostDislikes.Remove(dislike);
+    }
+
+    public void AddComment(string content, string appUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+
+        var comment = UserPostComment.Create(content, appUserId);
+        _userPostComments.Add(comment);
+    }
+
+    public void RemoveComment(int userPostCommentId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userPostCommentId, nameof(userPostCommentId));
+
+        var comment = _userPostComments
+            .FirstOrDefault(x => x.Id == userPostCommentId)
+                ?? throw new DomainException($"User post comment not found with id {userPostCommentId}");
+
+        _userPostComments.Remove(comment);
+    }
+
     public void EditContent(string content)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
@@ -76,5 +135,17 @@ public class UserPost
         {
             Content = content;
         }
+    }
+
+    public void EditCommentContent(int userPostId, string content)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userPostId, nameof(userPostId));
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+
+        var comment = _userPostComments
+            .FirstOrDefault(x => x.Id == userPostId)
+                ?? throw new DomainException($"User post comment not not found with id {userPostId}");
+
+        comment.EditContent(content);
     }
 }

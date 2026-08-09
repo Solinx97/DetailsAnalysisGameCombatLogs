@@ -8,13 +8,10 @@ public class UserPostComment
     {
     }
 
-    private UserPostComment(int id, string content, DateTimeOffset createdAt, int userPostId,
-        string appUserId)
+    private UserPostComment(string content, DateTimeOffset createdAt, string appUserId)
     {
-        Id = id;
         Content = content;
         CreatedAt = createdAt;
-        UserPostId = userPostId;
         AppUserId = appUserId;
     }
 
@@ -30,14 +27,22 @@ public class UserPostComment
 
     public UserPost UserPost { get; private set; }
 
-    public static UserPostComment Create(int id, string content, DateTimeOffset createdAt, int userPostId,
-        string appUserId)
+    public static UserPostComment Create(string content, string appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userPostId, nameof(userPostId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        return new UserPostComment(id, content, createdAt, userPostId, appUserId);
+        var createdAt = DateTimeOffset.UtcNow;
+        return new UserPostComment(content, createdAt, appUserId);
+    }
+
+    public void EditContent(string content)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+
+        if (!string.Equals(Content, content, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Content = content;
+        }
     }
 }
