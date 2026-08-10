@@ -20,10 +20,10 @@ public class InviteToCommunityController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("getByUserId/{id}")]
-    public async Task<IActionResult> GetByUserId(string id)
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId)
     {
-        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/findByUserId/{id}");
+        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/getByUserId/{appUserId}");
         var invites = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
 
         return Ok(invites);

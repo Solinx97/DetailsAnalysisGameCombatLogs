@@ -2,22 +2,19 @@ import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useGetCommunityByIdQuery } from '../../api/Community.api';
-import type { CommunityUserModel } from '../../types/CommunityUserModel';
+import type { CommunityModel } from '../../types/CommunityModel';
 
 interface UserCommunitiesItemProps {
-    userCommunity: CommunityUserModel;
+    myCommunity: CommunityModel;
     filterContent: string;
 }
 
-const UserCommunitiesItem: React.FC<UserCommunitiesItemProps> = ({ userCommunity, filterContent }) => {
+const UserCommunitiesItem: React.FC<UserCommunitiesItemProps> = ({ myCommunity, filterContent }) => {
     const { t } = useTranslation('communication/myEnvironment/myCommunitiesItem');
 
     const navigate = useNavigate();
 
-    const { data: myCommunity, isLoading } = useGetCommunityByIdQuery(userCommunity?.communityId);
-
-    if (isLoading || !myCommunity || !myCommunity.name.toLowerCase().startsWith(filterContent.toLowerCase())) {
+    if (!myCommunity.name.toLowerCase().startsWith(filterContent.toLowerCase())) {
         return <></>;
     }
 

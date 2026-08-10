@@ -20,13 +20,22 @@ public class CommunityDiscussionController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("getByCommunityId")]
-    public async Task<IActionResult> GetByCommunityId(int id)
+    [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/getByCommunityId?communityId={{communityId}}&page={{page}}&pageSize={{pageSize");
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
         var discussions = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionModel>>();
 
         return Ok(discussions);
+    }
+
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/{id}");
+        var discussion = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionModel>();
+
+        return Ok(discussion);
     }
 
     [HttpPost]

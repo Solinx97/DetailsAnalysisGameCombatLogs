@@ -33,7 +33,7 @@ const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, 
     const [showAllDiscussions, setShowAllDiscussions] = useState(false);
     const [allDiscussions, setAllDiscussions] = useState<CommunityDiscussionModel[]>([]);
 
-    const { discussions, isLoading } = useGetCommunityDiscussionByCommunityIdQuery(community?.id, {
+    const { discussions, isLoading } = useGetCommunityDiscussionByCommunityIdQuery({ communityId: community?.id, page: 1, pageSize: 5 }, {
         selectFromResult: ({ data, isLoading }) => ({
             discussions: data?.slice(0, defaultMaxDiscussions),
             isLoading
@@ -48,7 +48,7 @@ const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, 
 
     const handleShowAllDiscussionsAsync = async () => {
         try {
-            const discussions = await getAllDiscussionsAsync(community?.id).unwrap();
+            const discussions = await getAllDiscussionsAsync({ communityId: community?.id, page: 1, pageSize: 5 }).unwrap();
             setAllDiscussions(discussions);
             setShowAllDiscussions((item) => !item);
         } catch (e) {

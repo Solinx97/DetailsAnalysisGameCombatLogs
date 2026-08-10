@@ -68,6 +68,16 @@ export const CommunityApi = createApi({
                     ]
                     : [{ type: 'Community', id: 'LIST' }]
         }),
+        getCommunityByUserId: builder.query<CommunityModel[], string>({
+            query: appUserId => `/Community/getByUserId/${appUserId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(community => ({ type: 'Community' as const, id: community.id })),
+                        { type: 'Community', id: 'LIST' },
+                    ]
+                    : [{ type: 'Community', id: 'LIST' }]
+        }),
         getInviteToCommunityById: builder.query<InviteToCommunityModel, number>({
             query: id => `/InviteToCommunity/${id}`,
             providesTags: result => result ? [{ type: 'InviteToCommunity', id: result.id }] : [],
@@ -87,6 +97,7 @@ export const {
     useLazyGetCommunitiesCountQuery,
     useGetMoreCommunitiesWithPaginationQuery,
     useLazyGetMoreCommunitiesWithPaginationQuery,
+    useGetCommunityByUserIdQuery,
     useGetInviteToCommunityByIdQuery,
     useLazyGetInviteToCommunityByIdQuery,
 } = CommunityApi;

@@ -15,10 +15,10 @@ public class InviteToCommunityController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByUserId/{userId}")]
-    public async Task<IActionResult> GetByUserId(string userId, CancellationToken cancellationToken)
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId, CancellationToken cancellationToken)
     {
-        var invites = await _mediator.Send(new GetInvitesToCommunityQuery(userId), cancellationToken);
+        var invites = await _mediator.Send(new GetInvitesToCommunityQuery(appUserId), cancellationToken);
 
         return Ok(invites);
     }

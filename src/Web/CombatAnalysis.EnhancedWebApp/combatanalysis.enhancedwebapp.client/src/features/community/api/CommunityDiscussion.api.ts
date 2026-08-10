@@ -30,8 +30,8 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
             query: id => `/CommunityDiscussion/${id}`,
             providesTags: result => result ? [{ type: 'CommunityDiscussion', id: result.id }] : [],
         }),
-        getCommunityDiscussionByCommunityId: builder.query<CommunityDiscussionModel[], number>({
-            query: id => `/CommunityDiscussion/findByCommunityId/${id}`,
+        getCommunityDiscussionByCommunityId: builder.query<CommunityDiscussionModel[], { communityId: number, page: number, pageSize: number }>({
+            query: ({ communityId, page, pageSize }) => `/CommunityDiscussion/getByCommunityId/${communityId}?page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [

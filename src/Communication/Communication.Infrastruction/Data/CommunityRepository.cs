@@ -11,6 +11,16 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
 {
     private readonly CommunicationContext _context = context;
 
+    public async Task<IEnumerable<Community>> GetByUserIdAsync(string appUserId, CancellationToken cancellationToken)
+    {
+        var communities = await _context.Set<CommunityUser>()
+            .Where(x => x.AppUserId == appUserId)
+            .Select(x => x.Community)
+            .ToListAsync(cancellationToken);
+
+        return communities;
+    }
+
     public async Task<IEnumerable<CommunityUser>> GetCommunityUsersAsync(int id, CancellationToken cancellationToken)
     {
         var community = await _context.Set<Community>()

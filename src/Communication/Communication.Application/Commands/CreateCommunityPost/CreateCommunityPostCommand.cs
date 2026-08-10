@@ -11,5 +11,6 @@ public record CreateCommunityPostCommand(
     int PublicType,
     int Restrictions,
     string Tags,
+    int CommunityId,
     string AppUserId
     ) : IRequest<CommunityPostDto>;

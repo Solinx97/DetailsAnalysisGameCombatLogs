@@ -3,6 +3,7 @@ using CombatAnalysis.CommunicationAPI.Partials;
 using Communication.Application.Commands.CreateCommunityDescussion;
 using Communication.Application.Commands.DeleteCommunityDiscussion;
 using Communication.Application.Commands.UpdateCommunityDiscussionTitle;
+using Communication.Application.Queries.GetCommunityDiscussionById;
 using Communication.Application.Queries.GetCommunityDiscussions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,12 +18,20 @@ public class CommunityDiscussionController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCommunityId")]
+    [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
     public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var communitityDiscussions = await _mediator.Send(new GetCommunityDiscussionsQuery(communityId, page, pageSize), cancellationToken);
+        var discussions = await _mediator.Send(new GetCommunityDiscussionsQuery(communityId, page, pageSize), cancellationToken);
 
-        return Ok(communitityDiscussions);
+        return Ok(discussions);
+    }
+
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    {
+        var discussion = await _mediator.Send(new GetCommunityDiscussionByIdQuery(id), cancellationToken);
+
+        return Ok(discussion);
     }
 
     [HttpPost]

@@ -5,9 +5,7 @@ import { useRef, useState, type SetStateAction } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useCreateCommunityMutation } from '../../api/Community.api';
-import { useCreateCommunityUserMutation } from '../../api/CommunityUser.api';
 import type { CommunityModel } from '../../types/CommunityModel';
-import type { CommunityUserModel } from '../../types/CommunityUserModel';
 import CommunityRulesItem from './CommunityRulesItem';
 
 import './Create.scss';
@@ -25,7 +23,6 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
     const [isCreating, setIsCreating] = useState(false);
 
     const [createCommunity] = useCreateCommunityMutation();
-    const [createCommunityUser] = useCreateCommunityUserMutation();
 
     const createCommunityAsync = async () => {
         try {
@@ -37,25 +34,9 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
                 appUserId: myself?.id ?? ""
             };
 
-            const createdCommunity = await createCommunity(newCommunity).unwrap();
-            await createCommunityUserAsync(createdCommunity.id);
+            await createCommunity(newCommunity).unwrap();
         } catch (e) {
             logger.error("Failed to create community", e);
-        }
-    }
-
-    const createCommunityUserAsync = async (communityId: number) => {
-        try {
-            const newCommunityUser: CommunityUserModel = {
-                id: crypto.randomUUID(),
-                username: myself?.username ?? "",
-                appUserId: myself?.id ?? "",
-                communityId: communityId
-            };
-
-            await createCommunityUser(newCommunityUser).unwrap();
-        } catch (e) {
-            logger.error(`Failed to create community user for community: ${communityId}`, e);
         }
     }
 

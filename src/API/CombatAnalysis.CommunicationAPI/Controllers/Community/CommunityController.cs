@@ -3,6 +3,7 @@ using Communication.Application.Commands.CreateCommunity;
 using Communication.Application.Commands.DeleteCommunity;
 using Communication.Application.Commands.UpdateCommunityName;
 using Communication.Application.Queries.CountCommunity;
+using Communication.Application.Queries.GetCommunitiesByUserId;
 using Communication.Application.Queries.GetCommunity;
 using Communication.Application.Queries.GetCommunityById;
 using MediatR;
@@ -32,6 +33,14 @@ public class CommunityController(IMediator mediator) : ControllerBase
         var community = await _mediator.Send(new GetCommunityByIdQuery(id), cancellationToken);
 
         return Ok(community);
+    }
+
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId, CancellationToken cancellationToken)
+    {
+        var communitityUsers = await _mediator.Send(new GetCommunitiesByUserIdQuery(appUserId), cancellationToken);
+
+        return Ok(communitityUsers);
     }
 
     [HttpPost]

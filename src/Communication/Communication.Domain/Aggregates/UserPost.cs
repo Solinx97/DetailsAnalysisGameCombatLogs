@@ -13,18 +13,14 @@ public class UserPost
     {
     }
 
-    private UserPost(string owner, string content, int publicType,
-        string tags, DateTimeOffset createdAt, int likeCount, int dislikeCount, 
-        int commentCount, string appUserId)
+    private UserPost(string owner, string content, int publicType, string tags, 
+        DateTimeOffset createdAt, string appUserId)
     {
         Owner = owner;
         Content = content;
         PublicType = publicType;
         Tags = tags;
         CreatedAt = createdAt;
-        LikeCount = likeCount;
-        DislikeCount = dislikeCount;
-        CommentCount = commentCount;
         AppUserId = appUserId;
     }
 
@@ -40,12 +36,6 @@ public class UserPost
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public int LikeCount { get; private set; }
-
-    public int DislikeCount { get; private set; }
-
-    public int CommentCount { get; private set; }
-
     public string AppUserId { get; private set; }
 
     public IReadOnlyList<UserPostComment> UserPostComments => _userPostComments;
@@ -55,18 +45,15 @@ public class UserPost
     public IReadOnlyList<UserPostLike> UserPostLikes => _userPostLikes;
 
     public static UserPost Create(string owner, string content, int publicType, string tags, 
-        int likeCount, int dislikeCount, int commentCount, string appUserId)
+        string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(owner, nameof(owner));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-        ArgumentOutOfRangeException.ThrowIfNegative(likeCount, nameof(likeCount));
-        ArgumentOutOfRangeException.ThrowIfNegative(dislikeCount, nameof(dislikeCount));
-        ArgumentOutOfRangeException.ThrowIfNegative(commentCount, nameof(commentCount));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new UserPost(owner, content, publicType, tags, createdAt, likeCount, dislikeCount, commentCount, appUserId);
+        return new UserPost(owner, content, publicType, tags, createdAt, appUserId);
     }
 
     public void AddLike(string appUserId)

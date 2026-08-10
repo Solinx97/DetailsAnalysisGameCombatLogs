@@ -38,6 +38,15 @@ public class CommunityController : ControllerBase
         return Ok(community);
     }
 
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Community/getByUserId/{appUserId}");
+        var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
+
+        return Ok(communities);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CommunityModel request)
     {

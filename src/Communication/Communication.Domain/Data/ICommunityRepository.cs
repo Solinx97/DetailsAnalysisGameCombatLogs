@@ -5,6 +5,8 @@ namespace Communication.Domain.Data;
 
 public interface ICommunityRepository
 {
+    Task<IEnumerable<Community>> GetByUserIdAsync(string appUserId, CancellationToken cancellationToken);
+
     Task<IEnumerable<CommunityUser>> GetCommunityUsersAsync(int id, CancellationToken cancellationToken);
 
     Task<IEnumerable<InviteToCommunity>> GetInvitesToCommunityAsync(int id, CancellationToken cancellationToken);

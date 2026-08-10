@@ -28,7 +28,7 @@ interface UseFetchUsersPostsResult {
     currentDateRef: RefObject<string>;
 }
 
-const useFetchPosts = (myselfId: string): UseFetchUsersPostsResult => {
+const useFetchPosts = (myselfId?: string, communityId?: number): UseFetchUsersPostsResult => {
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityPostPageSize ?? 5);
     const currentDateRef = useRef<string>((new Date()).toISOString());
     const appUserIdsRef = useRef<string>(myselfId);
@@ -39,11 +39,11 @@ const useFetchPosts = (myselfId: string): UseFetchUsersPostsResult => {
 
     // const { data: myFriends } = useFindFriendByUserIdQuery(myselfId);
     // const { data: myCommunitiesUsers } = useCommunityUserFindByUserIdQuery(myselfId);
-    const { data: userPosts } = useGetUserPostsByUserIdQuery({ appUserId: myselfId, page: 1, pageSize: pageSizeRef.current });
+    const { data: userPosts } = useGetUserPostsByUserIdQuery({ appUserId: myselfId ?? "", page: 1, pageSize: pageSizeRef.current });
     // const { data: newPosts } = useGetNewUserPostByListOfUserIdQuery({ collectionUserId: appUserIdsRef.current, checkFrom: currentDateRef.current }, {
     //     pollingInterval: getUserPostsInterval,
     // });
-    const { data: communityPosts } = useGetCommunityPostsByCommunityIdQuery({ communityId: 0, page: 1, pageSize: pageSizeRef.current });
+    const { data: communityPosts } = useGetCommunityPostsByCommunityIdQuery({ communityId: communityId ?? 0, page: 1, pageSize: pageSizeRef.current });
     // const { data: newCommunityPosts } = useGetNewCommunityPostByListOfCommunityIdQuery({ collectionCommunityId: communityIdsRef.current, checkFrom: currentDateRef.current }, {
     //     pollingInterval: getUserPostsInterval,
     // });
@@ -58,7 +58,7 @@ const useFetchPosts = (myselfId: string): UseFetchUsersPostsResult => {
             try {
                 appUserIdsRef.current = myselfId;
 
-                const count = await getUserPostCountByUserId(myselfId).unwrap();
+                const count = await getUserPostCountByUserId(myselfId ?? "").unwrap();
                 setCount(count);
             } catch (e) {
                 logger.error("Failed to receive user post count", e);

@@ -27,32 +27,27 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
     const [createNewCommunityPostAsync] = useCreateCommunityPostMutation();
 
     const createCommunityPostAsync = async () => {
-        const newPost: CommunityPostModel = {
-            id: 0,
-            communityName: communityName,
-            owner: communityName,
-            content: postContent,
-            postType: 0,
-            publicType: 0,
-            restrictions: 0,
-            tags: postTags.join(';'),
-            createdAt: new Date(),
-            likeCount: 0,
-            dislikeCount: 0,
-            commentCount: 0,
-            communityId: communityId,
-            appUserId: user?.id ?? ""
-        }
+        try {
+            const newPost: CommunityPostModel = {
+                id: 0,
+                communityName: communityName,
+                owner: communityName,
+                content: postContent,
+                postType: 0,
+                publicType: 0,
+                restrictions: 0,
+                tags: postTags.join(';'),
+                createdAt: new Date(),
+                communityId: communityId,
+                appUserId: user?.id ?? ""
+            }
 
-        const response = await createNewCommunityPostAsync(newPost);
-        if (response.data) {
+            await createNewCommunityPostAsync(newPost).unwrap();
             setShowCreatePost(false);
             setPostContent("");
-
-            return true;
+        } catch (error) {
+            console.error("Failed to create community post");
         }
-
-        return false;
     }
 
     const postContentHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -85,7 +80,7 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
                 {showCreatePost &&
                     <div className="finish-create-post">
                         <div className={`btn-shadow${postContent === "" ? "_disabled" : ""}`} title={t("Save")}
-                            onClick={postContent === "" ? () => {} : createCommunityPostAsync}>
+                            onClick={postContent === "" ? () => { } : createCommunityPostAsync}>
                             <FontAwesomeIcon
                                 icon={faCheck}
                             />

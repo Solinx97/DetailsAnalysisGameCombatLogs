@@ -14,7 +14,7 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
     const [currentPosts, setCurrentPosts] = useState<CommunityPostModel[]>([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const { communityPosts, newCommunityPosts, communityCount, getMoreCommunityPostsAsync, currentDateRef } = useFetchPosts(myselfId);
+    const { communityPosts, communityCount, currentDateRef } = useFetchPosts(myselfId, communityId);
 
     useEffect(() => {
         if (!communityPosts) {
@@ -24,52 +24,52 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
         setCurrentPosts(communityPosts);
     }, [communityPosts]);
 
-    useEffect(() => {
-        if (!newCommunityPosts || newCommunityPosts.length === 0) {
-            return;
-        }
+    // useEffect(() => {
+    //     if (!newCommunityPosts || newCommunityPosts.length === 0) {
+    //         return;
+    //     }
 
-        const uniqNewPosts = getUniqueElements(currentPosts, newCommunityPosts);
-        setHaveNewPosts(uniqNewPosts.length > 0);
-    }, [newCommunityPosts]);
+    //     const uniqNewPosts = getUniqueElements(currentPosts, newCommunityPosts);
+    //     setHaveNewPosts(uniqNewPosts.length > 0);
+    // }, [newCommunityPosts]);
 
-    const loadingMoreCommunityPostsAsync = async () => {
-        const newPosts = await getMoreCommunityPostsAsync(currentPosts.length);
+    // const loadingMoreCommunityPostsAsync = async () => {
+    //     const newPosts = await getMoreCommunityPostsAsync(currentPosts.length);
 
-        setCurrentPosts(prevPosts => [...prevPosts, ...newPosts]);
-    }
+    //     setCurrentPosts(prevPosts => [...prevPosts, ...newPosts]);
+    // }
 
-    const loadingNewCommunityPostsAsync = async () => {
-        if (!newCommunityPosts) {
-            return;
-        }
+    // const loadingNewCommunityPostsAsync = async () => {
+    //     if (!newCommunityPosts) {
+    //         return;
+    //     }
 
-        currentDateRef.current = (new Date()).toISOString();
+    //     currentDateRef.current = (new Date()).toISOString();
 
-        const uniqNewPosts = getUniqueElements(currentPosts, newCommunityPosts);
-        setCurrentPosts(prevPosts => [...uniqNewPosts, ...prevPosts]);
+    //     const uniqNewPosts = getUniqueElements(currentPosts, newCommunityPosts);
+    //     setCurrentPosts(prevPosts => [...uniqNewPosts, ...prevPosts]);
 
-        setHaveNewPosts(false);
-    }
+    //     setHaveNewPosts(false);
+    // }
 
-    const getUniqueElements = (oldArray: CommunityPostModel[], newArray: CommunityPostModel[]) => {
-        const oldSet = new Set(oldArray.map(item => item.id));
-        const uniqueNewElements = newArray.filter(item => !oldSet.has(item.id));
+    // const getUniqueElements = (oldArray: CommunityPostModel[], newArray: CommunityPostModel[]) => {
+    //     const oldSet = new Set(oldArray.map(item => item.id));
+    //     const uniqueNewElements = newArray.filter(item => !oldSet.has(item.id));
 
-        return uniqueNewElements;
-    }
+    //     return uniqueNewElements;
+    // }
 
-    if (communityPosts === undefined) {
+    if (!communityPosts) {
         return (<Loading />);
     }
 
     return (
         <>
-            {haveNewPosts &&
+            {/* {haveNewPosts &&
                 <div className="new-posts" onClick={loadingNewCommunityPostsAsync}>
                     <div className="new-posts__content">{t("NewPosts")}</div>
                 </div>
-            }
+            } */}
             <ul className="posts">
                 {communityPosts.map((post) => (
                     <li key={post?.id}>
@@ -81,11 +81,11 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
                     </li>
                     ))
                 }
-                {currentPosts.length < communityCount &&
+                {/* {currentPosts.length < communityCount &&
                     <li className="load-more" onClick={loadingMoreCommunityPostsAsync}>
                         <div className="load-more__content">Load more</div>
                     </li>
-                }
+                } */}
             </ul>
         </>
     );

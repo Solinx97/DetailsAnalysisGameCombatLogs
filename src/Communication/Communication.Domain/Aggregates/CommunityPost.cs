@@ -17,7 +17,7 @@ public class CommunityPost
 
     private CommunityPost(string communityName, string owner, string content, int postType,
         int publicType, int restrictions, string tags,  DateTimeOffset createdAt,
-        int likeCount, int dislikeCount, int commentCount, string appUserId)
+        int communityId, string appUserId)
     {
         CommunityName = communityName;
         Owner = owner;
@@ -27,9 +27,7 @@ public class CommunityPost
         Restrictions = restrictions;
         Tags = tags;
         CreatedAt = createdAt;
-        LikeCount = likeCount;
-        DislikeCount = dislikeCount;
-        CommentCount = commentCount;
+        CommunityId = communityId;
         AppUserId = appUserId;
     }
 
@@ -51,12 +49,6 @@ public class CommunityPost
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public int LikeCount { get; private set; }
-
-    public int DislikeCount { get; private set; }
-
-    public int CommentCount { get; private set; }
-
     public int CommunityId { get; private set; }
 
     public string AppUserId { get; private set; }
@@ -70,19 +62,16 @@ public class CommunityPost
     public IReadOnlyList<CommunityPostLike> CommunityPostLikes => _communityPostLikes;
 
     public static CommunityPost Create(string communityName, string owner, string content, int postType, 
-        int publicType, int restrictions, string tags, int likeCount,
-        int dislikeCount, int commentCount, string appUserId)
+        int publicType, int restrictions, string tags, int communityId,
+        string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(owner, nameof(owner));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-        ArgumentOutOfRangeException.ThrowIfNegative(likeCount, nameof(likeCount));
-        ArgumentOutOfRangeException.ThrowIfNegative(dislikeCount, nameof(dislikeCount));
-        ArgumentOutOfRangeException.ThrowIfNegative(commentCount, nameof(commentCount));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityPost(communityName, owner, content, postType, publicType, restrictions, tags, createdAt, likeCount, dislikeCount, commentCount, appUserId);
+        return new CommunityPost(communityName, owner, content, postType, publicType, restrictions, tags, createdAt, communityId, appUserId);
     }
 
     public void AddLike(string appUserId)
