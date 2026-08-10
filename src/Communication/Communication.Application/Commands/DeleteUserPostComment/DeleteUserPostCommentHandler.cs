@@ -10,7 +10,7 @@ internal class DeleteUserPostCommentHandler(IUserPostRepository repository, IUni
 
     public async Task Handle(DeleteUserPostCommentCommand request, CancellationToken cancellationToken)
     {
-        var userPost = await _repository.GetWithDislikeAsync(request.UserPostId, cancellationToken);
+        var userPost = await _repository.GetWithCommentsAsync(request.UserPostId, cancellationToken);
         userPost.RemoveComment(request.Id);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);

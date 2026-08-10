@@ -20,10 +20,10 @@ public class CommunityPostCommentController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("getByCommunityPostId")]
+    [HttpGet("getByCommunityPostId/{communityPostId:int:min(1)}")]
     public async Task<IActionResult> GetByCommunityPostId(int communityPostId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/getByCommunityPostId?communityPostId={communityPostId}&page={page}&pageSize={pageSize}");
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/getByCommunityPostId/{communityPostId}?page={page}&pageSize={pageSize}");
         var comments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostCommentModel>>();
 
         return Ok(comments);
@@ -41,6 +41,15 @@ public class CommunityPostCommentController : ControllerBase
     {
         var responseMessage = await _httpClient.PutAsync("CommunityPostComment", JsonContent.Create(request));
         return NoContent();
+    }
+
+    [HttpGet("count/{communityPostId:int:min(1)}")]
+    public async Task<IActionResult> Count(int communityPostId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/count/{communityPostId}");
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+      
+        return Ok(count);
     }
 
     [HttpDelete("{id:int:min(1)}")]

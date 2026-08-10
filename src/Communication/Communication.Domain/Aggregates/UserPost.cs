@@ -60,38 +60,50 @@ public class UserPost
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        var like = UserPostLike.Create(appUserId);
-        _userPostLikes.Add(like);
-    }
+        var existLike = _userPostLikes
+            .FirstOrDefault(x => x.AppUserId == appUserId);
+        if (existLike != null)
+        {
+            RemoveLike(existLike.Id);
+        }
+        else
+        {
+            var existDislike = _userPostDislikes
+                .FirstOrDefault(x => x.AppUserId == appUserId);
 
-    public void RemoveLike(int likeId)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(likeId, nameof(likeId));
+            if (existDislike != null)
+            {
+                RemoveDislike(existDislike.Id);
+            }
 
-        var like = _userPostLikes
-            .FirstOrDefault(x => x.Id == likeId)
-                ?? throw new DomainException($"User post like not found with id {likeId}");
-
-        _userPostLikes.Remove(like);
+            var like = UserPostLike.Create(appUserId);
+            _userPostLikes.Add(like);
+        }
     }
 
     public void AddDislike(string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        var dislike = UserPostDislike.Create(appUserId);
-        _userPostDislikes.Add(dislike);
-    }
+        var existDislike = _userPostDislikes
+            .FirstOrDefault(x => x.AppUserId == appUserId);
+        if (existDislike != null)
+        {
+            RemoveDislike(existDislike.Id);
+        }
+        else
+        {
+            var existLike = _userPostLikes
+                .FirstOrDefault(x => x.AppUserId == appUserId);
 
-    public void RemoveDislike(int dislikeId)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(dislikeId, nameof(dislikeId));
+            if (existLike != null)
+            {
+                RemoveLike(existLike.Id);
+            }
 
-        var dislike = _userPostDislikes
-            .FirstOrDefault(x => x.Id == dislikeId)
-                ?? throw new DomainException($"User post like not found with id {dislikeId}");
-
-        _userPostDislikes.Remove(dislike);
+            var dislike = UserPostDislike.Create(appUserId);
+            _userPostDislikes.Add(dislike);
+        }
     }
 
     public void AddComment(string content, string appUserId)
@@ -134,5 +146,27 @@ public class UserPost
                 ?? throw new DomainException($"User post comment not not found with id {userPostId}");
 
         comment.EditContent(content);
+    }
+
+    private void RemoveLike(int likeId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(likeId, nameof(likeId));
+
+        var like = _userPostLikes
+            .FirstOrDefault(x => x.Id == likeId)
+                ?? throw new DomainException($"User post like not found with id {likeId}");
+
+        _userPostLikes.Remove(like);
+    }
+
+    private void RemoveDislike(int dislikeId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(dislikeId, nameof(dislikeId));
+
+        var dislike = _userPostDislikes
+            .FirstOrDefault(x => x.Id == dislikeId)
+                ?? throw new DomainException($"User post like not found with id {dislikeId}");
+
+        _userPostDislikes.Remove(dislike);
     }
 }

@@ -17,13 +17,13 @@ const UserPostComments: React.FC<UserPostCommentsProps> = ({ userId, postId, dat
         return (<div>Loading...</div>);
     }
 
-    if (postComments?.length === 0) {
+    if (!postComments || postComments.length === 0) {
         return (<></>);
     }
 
     return (
         <ul className="post-comments">
-            {postComments?.map((comment) => (
+            {postComments.map((comment) => (
                     <li key={comment.id} className="post-comments__card">
                         <UserPostCommentTitle
                             userId={userId}

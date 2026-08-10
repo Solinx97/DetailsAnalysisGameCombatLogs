@@ -78,38 +78,50 @@ public class CommunityPost
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        var like = CommunityPostLike.Create(appUserId);
-        _communityPostLikes.Add(like);
-    }
+        var existLike = _communityPostLikes
+            .FirstOrDefault(x => x.AppUserId == appUserId);
+        if (existLike != null)
+        {
+            RemoveLike(existLike.Id);
+        }
+        else
+        {
+            var existDislike = _communityPostDislikes
+                .FirstOrDefault(x => x.AppUserId == appUserId);
 
-    public void RemoveLike(int likeId)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(likeId, nameof(likeId));
+            if (existDislike != null)
+            {
+                RemoveDislike(existDislike.Id);
+            }
 
-        var like = _communityPostLikes
-            .FirstOrDefault(x => x.Id == likeId)
-                ?? throw new DomainException($"Community post like not found with id {likeId}");
-
-        _communityPostLikes.Remove(like);
+            var like = CommunityPostLike.Create(appUserId);
+            _communityPostLikes.Add(like);
+        }
     }
 
     public void AddDislike(string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-        var dislike = CommunityPostDislike.Create(appUserId);
-        _communityPostDislikes.Add(dislike);
-    }
+        var existDislike = _communityPostDislikes
+            .FirstOrDefault(x => x.AppUserId == appUserId);
+        if (existDislike != null)
+        {
+            RemoveDislike(existDislike.Id);
+        }
+        else
+        {
+            var existLike = _communityPostLikes
+                .FirstOrDefault(x => x.AppUserId == appUserId);
 
-    public void RemoveDislike(int dislikeId)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(dislikeId, nameof(dislikeId));
+            if (existLike != null)
+            {
+                RemoveLike(existLike.Id);
+            }
 
-        var dislike = _communityPostDislikes
-            .FirstOrDefault(x => x.Id == dislikeId)
-                ?? throw new DomainException($"Community post like not found with id {dislikeId}");
-
-        _communityPostDislikes.Remove(dislike);
+            var dislike = CommunityPostDislike.Create(appUserId);
+            _communityPostDislikes.Add(dislike);
+        }
     }
 
     public void AddComment(string content, int commentType, string appUserId)
@@ -152,5 +164,27 @@ public class CommunityPost
                 ?? throw new DomainException($"Community post comment not not found with id {userPostId}");
 
         comment.EditContent(content);
+    }
+
+    private void RemoveLike(int likeId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(likeId, nameof(likeId));
+
+        var like = _communityPostLikes
+            .FirstOrDefault(x => x.Id == likeId)
+                ?? throw new DomainException($"Community post like not found with id {likeId}");
+
+        _communityPostLikes.Remove(like);
+    }
+
+    private void RemoveDislike(int dislikeId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(dislikeId, nameof(dislikeId));
+
+        var dislike = _communityPostDislikes
+            .FirstOrDefault(x => x.Id == dislikeId)
+                ?? throw new DomainException($"Community post like not found with id {dislikeId}");
+
+        _communityPostDislikes.Remove(dislike);
     }
 }

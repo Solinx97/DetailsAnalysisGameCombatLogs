@@ -4,6 +4,8 @@ namespace Communication.Domain.Data;
 
 public interface ICommunityPostRepository
 {
+    Task<CommunityPost> GetWithReactionsAsync(int id, CancellationToken cancellationToken);
+
     Task<CommunityPost> GetWithLikeAsync(int id, CancellationToken cancellationToken);
 
     Task<CommunityPost> GetWithDislikeAsync(int id, CancellationToken cancellationToken);
@@ -17,6 +19,8 @@ public interface ICommunityPostRepository
     Task<int> CountLikeAsync(int userPostId, CancellationToken cancellationToken);
 
     Task<int> CountDislikeAsync(int userPostId, CancellationToken cancellationToken);
+
+    Task<int> CountCommentAsync(int communityPostId, CancellationToken cancellationToken);
 
     Task DeleteAsync(int id, CancellationToken cancelationToken);
 }

@@ -11,49 +11,39 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
 {
     private readonly CommunicationContext _context = context;
 
+    public async Task<UserPost> GetWithReactionsAsync(int id, CancellationToken cancellationToken)
+    {
+        var post = await _context.Set<UserPost>()
+            .Where(x => x.Id == id)
+            .Include(x => x.UserPostLikes)
+            .Include(x => x.UserPostDislikes)
+            .FirstOrDefaultAsync(cancellationToken)
+                ?? throw new EntityNotFoundException(typeof(UserPost), id);
+
+        return post;
+    }
+
     public async Task<IEnumerable<UserPost>> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var userPosts = await _context.Set<UserPost>()
+        var post = await _context.Set<UserPost>()
             .AsNoTracking()
             .Where(x => x.AppUserId == appUserId)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return userPosts;
-    }
-
-    public async Task<UserPost> GetWithLikeAsync(int id, CancellationToken cancellationToken)
-    {
-        var userPost = await _context.Set<UserPost>()
-            .Where(x => x.Id == id)
-            .Include(x => x.UserPostLikes)
-            .FirstOrDefaultAsync(cancellationToken)
-                ?? throw new EntityNotFoundException(typeof(UserPost), id);
-
-        return userPost;
-    }
-
-    public async Task<UserPost> GetWithDislikeAsync(int id, CancellationToken cancellationToken)
-    {
-        var userPost = await _context.Set<UserPost>()
-            .Where(x => x.Id == id)
-            .Include(x => x.UserPostDislikes)
-            .FirstOrDefaultAsync(cancellationToken)
-                ?? throw new EntityNotFoundException(typeof(UserPost), id);
-
-        return userPost;
+        return post;
     }
 
     public async Task<UserPost> GetWithCommentsAsync(int id, CancellationToken cancellationToken)
     {
-        var userPost = await _context.Set<UserPost>()
+        var post = await _context.Set<UserPost>()
             .Where(x => x.Id == id)
             .Include(x => x.UserPostComments)
             .FirstOrDefaultAsync(cancellationToken)
                 ?? throw new EntityNotFoundException(typeof(UserPost), id);
 
-        return userPost;
+        return post;
     }
 
     public async Task<int> CountAsync(string appUserId, CancellationToken cancellationToken)

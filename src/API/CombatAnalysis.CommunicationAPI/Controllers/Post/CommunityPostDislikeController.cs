@@ -1,6 +1,5 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Post;
 using Communication.Application.Commands.CreateCommunityPostDislike;
-using Communication.Application.Commands.DeleteCommunityPostDislike;
 using Communication.Application.Queries.CountCommunityPostDislike;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,14 +27,6 @@ public class CommunityPostDislikeController(IMediator mediator) : ControllerBase
     {
         var command = new CreateCommunityPostDislikeCommand(request.CommunityPostId, request.AppUserId);
         await _mediator.Send(command, cancellationToken);
-
-        return NoContent();
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, int communityPostId, CancellationToken cancellationToken)
-    {
-        await _mediator.Send(new DeleteCommunityPostDislikeCommand(id, communityPostId), cancellationToken);
 
         return NoContent();
     }

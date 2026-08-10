@@ -1,6 +1,5 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Post;
 using Communication.Application.Commands.CreateCommunityPostLike;
-using Communication.Application.Commands.DeleteCommunityPostLike;
 using Communication.Application.Queries.CountCommunityPostLike;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,14 +27,6 @@ public class CommunityPostLikeController(IMediator mediator) : ControllerBase
     {
         var command = new CreateCommunityPostLikeCommand(request.CommunityPostId, request.AppUserId);
         await _mediator.Send(command, cancellationToken);
-
-        return NoContent();
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, int communityPostId, CancellationToken cancellationToken)
-    {
-        await _mediator.Send(new DeleteCommunityPostLikeCommand(id, communityPostId), cancellationToken);
 
         return NoContent();
     }

@@ -1,4 +1,4 @@
-﻿import { useSearchCommunityPostCommentByPostIdQuery } from '../../api/CommunityPostComment.api';
+﻿import { useGetCommunityPostCommentByPostIdQuery } from '../../api/CommunityPostComment.api';
 import CommunityPostCommentContent from './CommunityPostCommentContent';
 import CommunityPostCommentTitle from './CommunityPostCommentTitle';
 
@@ -7,29 +7,27 @@ import './PostComments.scss';
 interface CommunityPostCommentsProps {
     userId: string;
     postId: number;
-    updatePostAsync: (postId: number, likesCount: number, dislikesCount: number, commentsCount: number) => Promise<void>;
 }
 
-const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, postId, updatePostAsync }) => {
-    const { data: postComments, isLoading } = useSearchCommunityPostCommentByPostIdQuery(postId);
+const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, postId }) => {
+    const { data: postComments, isLoading } = useGetCommunityPostCommentByPostIdQuery({ communityPostId: postId, page: 1, pageSize: 5 });
 
     if (isLoading) {
         return (<div>Loading...</div>);
     }
 
-    if (postComments?.length === 0) {
+    if (!postComments || postComments.length === 0) {
         return (<></>);
     }
 
     return (
         <ul className="post-comments">
-            {postComments?.map((comment) => (
+            {postComments.map((comment) => (
                 <li key={comment.id} className="post-comments__card">
                     <CommunityPostCommentTitle
                         userId={userId}
                         comment={comment}
                         postId={postId}
-                        updatePostAsync={updatePostAsync}
                     />
                     <CommunityPostCommentContent
                         userId={userId}

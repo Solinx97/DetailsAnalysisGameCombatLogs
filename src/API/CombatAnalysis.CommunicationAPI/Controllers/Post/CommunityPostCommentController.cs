@@ -3,6 +3,7 @@ using CombatAnalysis.CommunicationAPI.Partials;
 using Communication.Application.Commands.CreateCommunityPostComment;
 using Communication.Application.Commands.DeleteCommunityPostComment;
 using Communication.Application.Commands.UpdateCommunityPostCommentContent;
+using Communication.Application.Queries.CountCommunityPostComment;
 using Communication.Application.Queries.GetCommunityPostComments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ public class CommunityPostCommentController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCommunityPostId")]
+    [HttpGet("getByCommunityPostId/{communityPostId:int:min(1)}")]
     public async Task<IActionResult> GetByCommunityPostId(int communityPostId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var comments = await _mediator.Send(new GetCommunityPostCommentsQuery(communityPostId, page, pageSize), cancellationToken);
@@ -46,6 +47,14 @@ public class CommunityPostCommentController(IMediator mediator) : ControllerBase
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();
+    }
+
+    [HttpGet("count/{communityPostId:int:min(1)}")]
+    public async Task<IActionResult> Count(int communityPostId, CancellationToken cancellationToken)
+    {
+        var count = await _mediator.Send(new CountCommunityPostCommentQuery(communityPostId), cancellationToken);
+
+        return Ok(count);
     }
 
     [HttpDelete("{id:int:min(1)}")]

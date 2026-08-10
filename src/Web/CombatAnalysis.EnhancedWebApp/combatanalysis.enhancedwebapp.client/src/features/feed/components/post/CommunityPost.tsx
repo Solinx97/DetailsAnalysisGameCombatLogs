@@ -1,7 +1,6 @@
 ﻿import logger from '@/utils/Logger';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyGetCommunityPostByIdQuery, useUpdateCommunityPostMutation } from '../../api/CommunityPost.api';
 import { useCreateCommunityPostCommentMutation } from '../../api/CommunityPostComment.api';
 import type { CommunityPostCommentModel } from '../../types/CommunityPostCommentModel';
 import type { CommunityPostModel } from '../../types/CommunityPostModel';
@@ -20,10 +19,7 @@ interface CommunityPostProps {
 const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post }) => {
     const { t } = useTranslation("communication/post");
 
-    const [updatePost] = useUpdateCommunityPostMutation();
-
     const [createPostComment] = useCreateCommunityPostCommentMutation();
-    const [getPostByIdAsync] = useLazyGetCommunityPostByIdQuery();
 
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
@@ -33,23 +29,6 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
     useEffect(() => {
         setIsMyPost(post?.appUserId === userId);
     }, [post]);
-
-    const updatePostAsync = async (postId: number, likesCount: number, dislikesCount: number, commentsCount: number): Promise<void> => {
-        try {
-            const communityPost = await getPostByIdAsync(postId).unwrap();
-
-            const postForUpdate = {
-                ...communityPost,
-                likeCount: communityPost.likeCount + likesCount,
-                dislikeCount: communityPost.dislikeCount + dislikesCount,
-                commentCount: communityPost.commentCount + commentsCount
-            };
-
-            await updatePost(postForUpdate).unwrap();
-        } catch (e) {
-            logger.error("Failed to update community post", e);
-        }
-    }
 
     const createPostCommentAsync = async () => {
         if (!post) {
@@ -67,10 +46,8 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
                 appUserId: userId
             }
 
-            const createdPost = await createPostComment(newPostComment).unwrap();
+            await createPostComment(newPostComment).unwrap();
             setPostCommentContent("");
-
-            await updatePostAsync(createdPost.id, 0, 0, 1);
         } catch (e) {
             logger.error("Failed to create community post comment", e);
         }
@@ -92,7 +69,6 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
                     userId={userId}
                     communityId={communityId}
                     post={post}
-                    updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
                     showComments={showComments}
                     t={t}
@@ -103,7 +79,6 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
                     <CommunityPostComments
                         userId={userId}
                         postId={post.id}
-                        updatePostAsync={updatePostAsync}
                     />
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">

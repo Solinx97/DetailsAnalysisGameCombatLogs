@@ -11,10 +11,9 @@ interface CommunityPostCommentTitleProps {
     userId: string;
     comment: CommunityPostCommentModel;
     postId: number;
-    updatePostAsync: (postId: number, likesCount: number, dislikesCount: number, commentsCount: number) => Promise<void>;
 }
 
-const CommunityPostCommentTitle: React.FC<CommunityPostCommentTitleProps> = ({ userId, comment, postId, updatePostAsync }) => {
+const CommunityPostCommentTitle: React.FC<CommunityPostCommentTitleProps> = ({ userId, comment, postId }) => {
     const { t } = useTranslation('communication/postCommentTitle');
 
     const { dateFormatting } = useFormatting();
@@ -26,7 +25,6 @@ const CommunityPostCommentTitle: React.FC<CommunityPostCommentTitleProps> = ({ u
     const deletePostCommentAsync = async (postCommentId: number) => {
         try {
             await removePostCommentAsyncMut(postCommentId).unwrap();
-            await updatePostAsync(postId, 0, 0, -1);
         } catch (e) {
             logger.error("Failed to remove community post comment", e);
         }

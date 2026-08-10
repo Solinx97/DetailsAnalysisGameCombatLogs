@@ -23,7 +23,7 @@ public class CommunityPostLikeController : ControllerBase
     [HttpGet("count/{communityPostId:int:min(1)}")]
     public async Task<IActionResult> Count(int communityPostId)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/{communityPostId}");
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/count/{communityPostId}");
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 
         return Ok(count);
@@ -33,13 +33,6 @@ public class CommunityPostLikeController : ControllerBase
     public async Task<IActionResult> Create(CommunityPostLikeModel request)
     {
         await _httpClient.PostAsync("CommunityPostLike", JsonContent.Create(request));
-        return NoContent();
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, int communityPostId)
-    {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityPostLike/{id}?communityPostId={communityPostId}");
         return NoContent();
     }
 }

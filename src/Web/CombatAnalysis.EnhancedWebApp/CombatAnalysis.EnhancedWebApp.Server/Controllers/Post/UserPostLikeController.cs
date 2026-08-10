@@ -35,11 +35,4 @@ public class UserPostLikeController : ControllerBase
         await _httpClient.PostAsync("UserPostLike", JsonContent.Create(request));
         return NoContent();
     }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, int userPostId)
-    {
-        var responseMessage = await _httpClient.DeletAsync($"UserPostLike/{id}?userPostId={userPostId}");
-        return NoContent();
-    }
 }

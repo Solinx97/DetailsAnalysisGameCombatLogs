@@ -11,6 +11,18 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
 {
     private readonly CommunicationContext _context = context;
 
+    public async Task<CommunityPost> GetWithReactionsAsync(int id, CancellationToken cancellationToken)
+    {
+        var post = await _context.Set<CommunityPost>()
+            .Where(x => x.Id == id)
+            .Include(x => x.CommunityPostLikes)
+            .Include(x => x.CommunityPostDislikes)
+            .FirstOrDefaultAsync(cancellationToken)
+                ?? throw new EntityNotFoundException(typeof(CommunityPost), id);
+
+        return post;
+    }
+
     public async Task<CommunityPost> GetWithLikeAsync(int id, CancellationToken cancellationToken)
     {
         var post = await _context.Set<CommunityPost>()
@@ -76,6 +88,15 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
     public async Task<int> CountDislikeAsync(int communityPostId, CancellationToken cancellationToken)
     {
         var count = await _context.Set<CommunityPostDislike>()
+            .Where(x => x.CommunityPostId == communityPostId)
+            .CountAsync(cancellationToken);
+
+        return count;
+    }
+
+    public async Task<int> CountCommentAsync(int communityPostId, CancellationToken cancellationToken)
+    {
+        var count = await _context.Set<CommunityPostComment>()
             .Where(x => x.CommunityPostId == communityPostId)
             .CountAsync(cancellationToken);
 

@@ -9,30 +9,22 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                 url: '/CommunityPostLike',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'CommunityPostLike', id: result.id }] : [],
+            invalidatesTags: () => [
+                { type: 'CommunityPostDislike', id: 'LIST' },
+                { type: 'CommunityPostLike', id: 'LIST' }
+            ]
         }),
-        removeCommunityPostLike: builder.mutation<void, number>({
-            query: id => ({
-                url: `/CommunityPostLike/${id}`,
-                method: 'DELETE'
-            }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'CommunityPostDislike', id }],
-        }),
-        searchCommunityPostLikeByPostId: builder.query<CommunityPostReactionModel[], number>({
-            query: id => `/CommunityPostLike/searchByPostId/${id}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(communityPostLike => ({ type: 'CommunityPostLike' as const, id: communityPostLike.id })),
-                        { type: 'CommunityPostLike', id: 'LIST' },
-                    ]
-                    : [{ type: 'CommunityPostLike', id: 'LIST' }]
+        countCommunityPostLikeByPostId: builder.query<number, number>({
+            query: communityPostId => `/CommunityPostLike/count/${communityPostId}`,
+            providesTags: () => [
+                { type: 'CommunityPostDislike', id: 'LIST' },
+                { type: 'CommunityPostLike', id: 'LIST' }
+            ]
         }),
     })
 })
 
 export const {
     useCreateCommunityPostLikeMutation,
-    useRemoveCommunityPostLikeMutation,
-    useLazySearchCommunityPostLikeByPostIdQuery,
+    useCountCommunityPostLikeByPostIdQuery,
 } = CommunityPostLikeApi;

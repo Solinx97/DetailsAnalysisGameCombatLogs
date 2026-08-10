@@ -26,8 +26,8 @@ export const CommunityPostCommentApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'CommunityPostComment', id }],
         }),
-        searchCommunityPostCommentByPostId: builder.query<CommunityPostCommentModel[], number>({
-            query: id => `/CommunityPostComment/searchByPostId/${id}`,
+        getCommunityPostCommentByPostId: builder.query<CommunityPostCommentModel[], { communityPostId: number, page: number, pageSize: number }>({
+            query: ({ communityPostId, page, pageSize }) => `/CommunityPostComment/getByCommunityPostId/${communityPostId}?page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -36,6 +36,10 @@ export const CommunityPostCommentApi = PostApi.injectEndpoints({
                     ]
                     : [{ type: 'CommunityPostComment', id: 'LIST' }]
         }),
+        countCommunityPostCommentByPostId: builder.query<number, number>({
+            query: id => `/CommunityPostComment/count/${id}`,
+            providesTags: () => [{ type: 'CommunityPostComment', id: 'LIST' }]
+        }),
     })
 });
 
@@ -43,5 +47,6 @@ export const {
     useCreateCommunityPostCommentMutation,
     useUpdateCommunityPostCommentMutation,
     useRemoveCommunityPostCommentMutation,
-    useSearchCommunityPostCommentByPostIdQuery,
+    useGetCommunityPostCommentByPostIdQuery,
+    useCountCommunityPostCommentByPostIdQuery,
 } = CommunityPostCommentApi;
