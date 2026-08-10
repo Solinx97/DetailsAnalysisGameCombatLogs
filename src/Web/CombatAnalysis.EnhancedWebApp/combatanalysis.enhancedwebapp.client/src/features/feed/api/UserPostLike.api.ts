@@ -18,15 +18,9 @@ export const UserPostLikeApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'UserPostLike', id }],
         }),
-        searchUserPostLikeByPostId: builder.query<UserPostReactionModel[], number>({
-            query: id => `/UserPostLike/searchByPostId/${id}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(userPostLike => ({ type: 'UserPostLike' as const, id: userPostLike.id })),
-                        { type: 'UserPostLike', id: 'LIST' },
-                    ]
-                    : [{ type: 'UserPostLike', id: 'LIST' }]
+        countUserPostLikeByPostId: builder.query<number, number>({
+            query: id => `/UserPostLike/count/${id}`,
+            providesTags: () => [{ type: 'UserPostLike', id: 'LIST' }]
         }),
     })
 })
@@ -34,5 +28,5 @@ export const UserPostLikeApi = PostApi.injectEndpoints({
 export const {
     useCreateUserPostLikeMutation,
     useRemoveUserPostLikeMutation,
-    useLazySearchUserPostLikeByPostIdQuery,
+    useCountUserPostLikeByPostIdQuery,
 } = UserPostLikeApi;

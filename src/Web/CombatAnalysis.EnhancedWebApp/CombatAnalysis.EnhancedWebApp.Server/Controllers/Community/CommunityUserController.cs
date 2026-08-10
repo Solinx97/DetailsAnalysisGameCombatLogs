@@ -20,107 +20,33 @@ public class CommunityUserController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUser = await responseMessage.Content.ReadFromJsonAsync<CommunityUserModel>();
-
-            return Ok(communityUser);
-        }
-
-        return BadRequest();
-    }
-
     [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
     public async Task<IActionResult> GetByCommunityId(int communityId)
     {
         var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
+        var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
 
-            return Ok(communityUsers);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("findByUserId/{userId}")]
-    public async Task<IActionResult> SearchByUserId(string userId)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByUserId/{userId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
-
-            return Ok(communityUsers);
-        }
-
-        return BadRequest();
+        return Ok(users);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityUserModel model)
+    public async Task<IActionResult> Create(CommunityUserModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUser = await responseMessage.Content.ReadFromJsonAsync<CommunityUserModel>();
-
-            return Ok(communityUser);
-        }
-
-        return BadRequest();
+        await _httpClient.PostAsync("CommunityUser", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(CommunityUserModel model)
+    public async Task<IActionResult> Update(CommunityUserModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityUser", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.PutAsync("CommunityUser", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
         var responseMessage = await _httpClient.DeletAsync($"CommunityUser/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        return NoContent();
     }
 }

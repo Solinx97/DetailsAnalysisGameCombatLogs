@@ -19,7 +19,7 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, t }) => {
     const [currentPosts, setCurrentPosts] = useState<UserPostModel[] | CommunityPostModel[]>([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const { userPosts, communityPosts, newPosts, newCommunityPosts, count, communityCount, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchPosts(myself.id);
+    const { userPosts, communityPosts, count, communityCount, currentDateRef } = useFetchPosts(myself.id);
 
     useEffect(() => {
         if (!userPosts) {
@@ -53,57 +53,57 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, t }) => {
         setCurrentPosts([...currentPosts, ...totalCommunityPosts]);
     }, [communityPosts]);
 
-    useEffect(() => {
-        if (!newPosts || newPosts.length === 0) {
-            return;
-        }
+    // useEffect(() => {
+    //     if (!newPosts || newPosts.length === 0) {
+    //         return;
+    //     }
 
-        setHaveNewPosts(newPosts.length > 0);
-    }, [newPosts]);
+    //     setHaveNewPosts(newPosts.length > 0);
+    // }, [newPosts]);
 
-    useEffect(() => {
-        if (!newCommunityPosts || newCommunityPosts.length === 0) {
-            return;
-        }
+    // useEffect(() => {
+    //     if (!newCommunityPosts || newCommunityPosts.length === 0) {
+    //         return;
+    //     }
 
-        setHaveNewPosts(newCommunityPosts.length > 0);
-    }, [newCommunityPosts]);
+    //     setHaveNewPosts(newCommunityPosts.length > 0);
+    // }, [newCommunityPosts]);
 
-    const loadingMoreUserPostsAsync = async () => {
-        const newUserPosts = await getMoreUserPostsAsync(userPostsSizeRef.current);
-        const newCommunityPosts = await getMoreCommunityPostsAsync(communityPostsSizeRef.current);
+    // const loadingMoreUserPostsAsync = async () => {
+    //     const newUserPosts = await getMoreUserPostsAsync(userPostsSizeRef.current);
+    //     const newCommunityPosts = await getMoreCommunityPostsAsync(communityPostsSizeRef.current);
 
-        const newPosts = newUserPosts.concat(newCommunityPosts);
+    //     const newPosts = newUserPosts.concat(newCommunityPosts);
 
-        const totalPosts = [...currentPosts, ...newPosts];
-        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    //     const totalPosts = [...currentPosts, ...newPosts];
+    //     totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-        setCurrentPosts(totalPosts);
-    }
+    //     setCurrentPosts(totalPosts);
+    // }
 
-    const loadingNewUserPostsAsync = async () => {
-        currentDateRef.current = (new Date()).toISOString();
+    // const loadingNewUserPostsAsync = async () => {
+    //     currentDateRef.current = (new Date()).toISOString();
 
-        newPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setCurrentPosts(prevPosts => [...(newPosts || []), ...prevPosts]);
+    //     newPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    //     setCurrentPosts(prevPosts => [...(newPosts || []), ...prevPosts]);
 
-        newCommunityPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setCurrentPosts(prevPosts => [...(newCommunityPosts || []), ...prevPosts]);
+    //     newCommunityPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    //     setCurrentPosts(prevPosts => [...(newCommunityPosts || []), ...prevPosts]);
 
-        setHaveNewPosts(false);
-    }
+    //     setHaveNewPosts(false);
+    // }
 
     return (
         <>
-            {haveNewPosts &&
+            {/* {haveNewPosts &&
                 <div onClick={loadingNewUserPostsAsync} className="new-posts">
                     <div className="new-posts__content">{t("NewPosts")}</div>
                 </div>
-            }
+            } */}
             <ul className="posts">
                 {!currentPosts
                     ? <Loading />
-                    : currentPosts?.map(post => (
+                    : currentPosts.map(post => (
                     <li key={post.id}>
                         {"communityId" in post
                             ? <CommunityPost
@@ -118,11 +118,11 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, t }) => {
                         }
                     </li>
                 ))}
-                {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
+                {/* {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
                     <li className="load-more" onClick={loadingMoreUserPostsAsync}>
                         <div className="load-more__content">{t("LoadMore")}</div>
                     </li>
-                }
+                } */}
             </ul>
         </>
     );

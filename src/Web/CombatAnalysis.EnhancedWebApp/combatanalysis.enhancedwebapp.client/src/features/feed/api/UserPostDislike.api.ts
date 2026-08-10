@@ -18,15 +18,9 @@ export const UserPostDislikeApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'UserPostDislike', id }],
         }),
-        searchUserPostDislikeByPostId: builder.query<UserPostReactionModel[], number>({
-            query: id => `/UserPostDislike/searchByPostId/${id}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(userPostDislike => ({ type: 'UserPostDislike' as const, id: userPostDislike.id })),
-                        { type: 'UserPostDislike', id: 'LIST' },
-                    ]
-                    : [{ type: 'UserPostDislike', id: 'LIST' }]
+        countUserPostDislikeByPostId: builder.query<number, number>({
+            query: id => `/UserPostDislike/count/${id}`,
+            providesTags: () => [{ type: 'UserPostLike', id: 'LIST' }]
         }),
     })
 })
@@ -34,5 +28,5 @@ export const UserPostDislikeApi = PostApi.injectEndpoints({
 export const {
     useCreateUserPostDislikeMutation,
     useRemoveUserPostDislikeMutation,
-    useLazySearchUserPostDislikeByPostIdQuery,
+    useCountUserPostDislikeByPostIdQuery,
 } = UserPostDislikeApi;

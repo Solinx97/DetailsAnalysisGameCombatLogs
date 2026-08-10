@@ -11,6 +11,18 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
 {
     private readonly CommunicationContext _context = context;
 
+    public async Task<IEnumerable<UserPost>> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var userPosts = await _context.Set<UserPost>()
+            .AsNoTracking()
+            .Where(x => x.AppUserId == appUserId)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return userPosts;
+    }
+
     public async Task<UserPost> GetWithLikeAsync(int id, CancellationToken cancellationToken)
     {
         var userPost = await _context.Set<UserPost>()
@@ -44,11 +56,13 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
         return userPost;
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
+    public async Task<int> CountAsync(string appUserId, CancellationToken cancellationToken)
     {
-        await _context.Set<UserPost>()
-            .Where(cl => cl.Id == id)
-            .ExecuteDeleteAsync(cancelationToken);
+        var count = await _context.Set<UserPost>()
+            .Where(x => x.AppUserId == appUserId)
+            .CountAsync(cancellationToken);
+
+        return count;
     }
 
     public async Task<int> CountLikeAsync(int userPostId, CancellationToken cancellationToken)
@@ -67,5 +81,21 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
             .CountAsync(cancellationToken);
 
         return count;
+    }
+
+    public async Task<int> CountCommentAsync(int userPostId, CancellationToken cancellationToken)
+    {
+        var count = await _context.Set<UserPostComment>()
+            .Where(x => x.UserPostId == userPostId)
+            .CountAsync(cancellationToken);
+
+        return count;
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
+    {
+        await _context.Set<UserPost>()
+            .Where(cl => cl.Id == id)
+            .ExecuteDeleteAsync(cancelationToken);
     }
 }

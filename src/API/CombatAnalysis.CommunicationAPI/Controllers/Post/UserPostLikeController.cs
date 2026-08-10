@@ -32,7 +32,7 @@ public class UserPostLikeController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int userPostId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new DeleteUserPostLikeCommand(id, userPostId), cancellationToken);

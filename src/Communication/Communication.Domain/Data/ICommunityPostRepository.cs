@@ -12,9 +12,11 @@ public interface ICommunityPostRepository
 
     Task<IEnumerable<CommunityPost>> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken);
 
-    Task DeleteAsync(int id, CancellationToken cancelationToken);
+    Task<int> CountAsync(int communityId, CancellationToken cancellationToken);
 
     Task<int> CountLikeAsync(int userPostId, CancellationToken cancellationToken);
 
     Task<int> CountDislikeAsync(int userPostId, CancellationToken cancellationToken);
+
+    Task DeleteAsync(int id, CancellationToken cancelationToken);
 }

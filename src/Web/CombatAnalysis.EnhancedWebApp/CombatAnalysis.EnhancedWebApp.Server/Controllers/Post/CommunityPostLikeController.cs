@@ -20,89 +20,26 @@ public class CommunityPostLikeController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("count/{communityPostId:int:min(1)}")]
+    public async Task<IActionResult> Count(int communityPostId)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postLike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostLikeModel>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/{communityPostId}");
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 
-            return Ok(postLike);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByPostId(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/searchByPostId/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postLikes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostLikeModel>>();
-
-            return Ok(postLikes);
-        }
-
-        return BadRequest();
+        return Ok(count);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityPostLikeModel model)
+    public async Task<IActionResult> Create(CommunityPostLikeModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPostLike", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postLike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostLikeModel>();
-
-            return Ok(postLike);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityPostLikeModel model)
-    {
-        var responseMessage = await _httpClient.PutAsync("CommunityPostLike", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        await _httpClient.PostAsync("CommunityPostLike", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, int communityPostId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityPostLike/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.DeletAsync($"CommunityPostLike/{id}?communityPostId={communityPostId}");
+        return NoContent();
     }
 }

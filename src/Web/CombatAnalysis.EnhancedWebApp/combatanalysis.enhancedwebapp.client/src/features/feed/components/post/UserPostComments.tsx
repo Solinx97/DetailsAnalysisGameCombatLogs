@@ -1,4 +1,4 @@
-import { useSearchUserPostCommentByPostIdQuery } from '../../api/UserPostComment.api';
+import { useGetUserPostCommentByUserPostIdQuery } from '../../api/UserPostComment.api';
 import UserPostCommentContent from './UserPostCommentContent';
 import UserPostCommentTitle from './UserPostCommentTitle';
 
@@ -8,11 +8,10 @@ interface UserPostCommentsProps {
     userId: string;
     postId: number;
     dateFormatting: (stringOfDate: string) => string;
-    updatePostAsync: (postId: number, likesCount: number, dislikesCount: number, commentsCount: number) => Promise<void>;
 }
 
-const UserPostComments: React.FC<UserPostCommentsProps> = ({ userId, postId, dateFormatting, updatePostAsync }) => {
-    const { data: postComments, isLoading } = useSearchUserPostCommentByPostIdQuery(postId);
+const UserPostComments: React.FC<UserPostCommentsProps> = ({ userId, postId, dateFormatting }) => {
+    const { data: postComments, isLoading } = useGetUserPostCommentByUserPostIdQuery({ userPostId: postId, page: 1, pageSize: 5 });
 
     if (isLoading) {
         return (<div>Loading...</div>);
@@ -30,8 +29,6 @@ const UserPostComments: React.FC<UserPostCommentsProps> = ({ userId, postId, dat
                             userId={userId}
                             comment={comment}
                             dateFormatting={dateFormatting}
-                            postId={postId}
-                            updatePostAsync={updatePostAsync}
                         />
                         <UserPostCommentContent
                             userId={userId}

@@ -8,12 +8,10 @@ import type { UserPostCommentModel } from '../../types/UserPostCommentModel';
 interface UserPostCommentTitleProps {
     userId: string;
     comment: UserPostCommentModel;
-    postId: number;
     dateFormatting: (stringOfDate: string) => string;
-    updatePostAsync: (postId: number, likesCount: number, dislikesCount: number, commentsCount: number) => Promise<void>;
 }
 
-const UserPostCommentTitle: React.FC<UserPostCommentTitleProps> = ({ userId, comment, postId, dateFormatting, updatePostAsync }) => {
+const UserPostCommentTitle: React.FC<UserPostCommentTitleProps> = ({ userId, comment, dateFormatting }) => {
     const { t } = useTranslation('communication/postCommentTitle');
 
     const { data: targetUser, isLoading } = useGetUserByIdQuery(comment?.appUserId);
@@ -21,9 +19,10 @@ const UserPostCommentTitle: React.FC<UserPostCommentTitleProps> = ({ userId, com
     const [removePostCommentAsyncMut] = useRemoveUserPostCommentMutation();
 
     const deletePostCommentAsync = async (postCommentId: number) => {
-        const response = await removePostCommentAsyncMut(postCommentId);
-        if (!response.error) {
-            await updatePostAsync(postId, 0, 0, -1);
+        try {
+            await removePostCommentAsyncMut(postCommentId).unwrap();
+        } catch (error) {
+            console.error("Failed to delete post comment");
         }
     }
 

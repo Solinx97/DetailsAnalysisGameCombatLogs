@@ -26,8 +26,8 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'UserPostComment', id }],
         }),
-        searchUserPostCommentByPostId: builder.query<UserPostCommentModel[], number>({
-            query: id => `/UserPostComment/searchByPostId/${id}`,
+        getUserPostCommentByUserPostId: builder.query<UserPostCommentModel[], { userPostId: number, page: number, pageSize: number }>({
+            query: ({ userPostId, page, pageSize }) => `/UserPostComment/getByUserPostId/${userPostId}?page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -36,6 +36,10 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
                     ]
                     : [{ type: 'UserPostComment', id: 'LIST' }]
         }),
+        countUserPostCommentByUserPostId: builder.query<number, number>({
+            query: id => `/UserPostComment/count/${id}`,
+            providesTags: () => [{ type: 'UserPostComment', id: 'LIST' }]
+        }),
     })
 });
 
@@ -43,5 +47,6 @@ export const {
     useCreateUserPostCommentMutation,
     useUpdateUserPostCommentMutation,
     useRemoveUserPostCommentMutation,
-    useSearchUserPostCommentByPostIdQuery,
+    useGetUserPostCommentByUserPostIdQuery,
+    useCountUserPostCommentByUserPostIdQuery,
 } = UserPostCommentApi;

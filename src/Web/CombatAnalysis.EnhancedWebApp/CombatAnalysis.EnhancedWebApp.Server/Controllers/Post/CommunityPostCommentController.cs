@@ -20,107 +20,33 @@ public class CommunityPostCommentController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("getByCommunityPostId")]
+    public async Task<IActionResult> GetByCommunityPostId(int communityPostId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync("CommunityPostComment");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComment = await responseMessage.Content.ReadFromJsonAsync<CommunityPostCommentModel>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/getByCommunityPostId?communityPostId={communityPostId}&page={page}&pageSize={pageSize}");
+        var comments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostCommentModel>>();
 
-            return Ok(postComment);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComment = await responseMessage.Content.ReadFromJsonAsync<CommunityPostCommentModel>();
-
-            return Ok(postComment);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByPostId(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/searchByPostId/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostCommentModel>>();
-
-            return Ok(postComments);
-        }
-
-        return BadRequest();
+        return Ok(comments);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityPostCommentModel model)
+    public async Task<IActionResult> Create(CommunityPostCommentModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPostComment", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComment = await responseMessage.Content.ReadFromJsonAsync<CommunityPostCommentModel>();
-
-            return Ok(postComment);
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.PostAsync("CommunityPostComment", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(CommunityPostCommentModel model)
+    public async Task<IActionResult> Update(CommunityPostCommentModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityPostComment", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.PutAsync("CommunityPostComment", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, int communityPostId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityPostComment/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.DeletAsync($"CommunityPostComment/{id}?communityPostId={communityPostId}");
+        return NoContent();
     }
 }

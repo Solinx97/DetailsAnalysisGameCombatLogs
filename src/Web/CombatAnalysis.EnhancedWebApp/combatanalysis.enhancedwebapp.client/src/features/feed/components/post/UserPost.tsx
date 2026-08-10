@@ -3,7 +3,6 @@ import logger from '@/utils/Logger';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../api/UserPost.api';
 import { useCreateUserPostCommentMutation } from '../../api/UserPostComment.api';
 import type { UserPostCommentModel } from '../../types/UserPostCommentModel';
 import type { UserPostModel } from '../../types/UserPostModel';
@@ -21,10 +20,7 @@ interface UserPostProps {
 const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
     const { t } = useTranslation('communication/post');
 
-    const [updatePost] = useUpdateUserPostMutation();
-
     const [createPostComment] = useCreateUserPostCommentMutation();
-    const [getUserPostById] = useLazyGetUserPostByIdQuery();
 
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
@@ -37,37 +33,20 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
         setIsMyPost(post?.appUserId === myself.id);
     }, [post]);
 
-    const updatePostAsync = async (postId: number, likesCount: number, dislikesCount: number, commentsCount: number): Promise<void> => {
-        try {
-            const userPost = await getUserPostById(postId).unwrap();
-
-            const postForUpdate = {
-                ...userPost,
-                likeCount: userPost.likeCount + likesCount,
-                dislikeCount: userPost.dislikeCount + dislikesCount,
-                commentCount: userPost.commentCount + commentsCount
-            };
-
-            await updatePost(postForUpdate).unwrap();
-        } catch (e) {
-            logger.error("Failed to update post", e);
-        }
-    }
-
     const createUserPostCommentAsync = async () => {
-        const userPostComment: UserPostCommentModel = {
-            id: 0,
-            content: postCommentContent,
-            createdAt: new Date(),
-            userPostId: post.id,
-            appUserId: myself.id
-        }
+        try {
+            const userPostComment: UserPostCommentModel = {
+                id: 0,
+                content: postCommentContent,
+                createdAt: new Date(),
+                userPostId: post.id,
+                appUserId: myself.id
+            }
 
-        const response = await createPostComment(userPostComment);
-        if (response.data) {
+            await createPostComment(userPostComment).unwrap();
             setPostCommentContent("");
-
-            await updatePostAsync(post.id, 0, 0, 1);
+        } catch (error) {
+            logger.error("Failed to create user post comment");
         }
     }
 
@@ -83,7 +62,6 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
                 <UserPostReactions
                     userId={myself.id}
                     post={post}
-                    updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
                     showComments={showComments}
                     t={t}
@@ -95,7 +73,6 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
                         dateFormatting={dateFormatting}
                         userId={myself.id}
                         postId={post.id}
-                        updatePostAsync={updatePostAsync}
                     />
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">
@@ -106,9 +83,9 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
                         </div>
                         {showAddComment &&
                             <div className="add-new-comment__content">
-                            <textarea className="form-control" rows={3} cols={60} onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
-                            <div className="actions">
-                                <div className="add-comment" onClick={createUserPostCommentAsync}>{t("Add")}</div>
+                                <textarea className="form-control" rows={3} cols={60} onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                                <div className="actions">
+                                    <div className="add-comment" onClick={createUserPostCommentAsync}>{t("Add")}</div>
                                     <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</div>
                                 </div>
                             </div>

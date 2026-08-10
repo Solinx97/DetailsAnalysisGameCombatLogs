@@ -20,107 +20,33 @@ public class CommunityDiscussionController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("getByCommunityId")]
+    public async Task<IActionResult> GetByCommunityId(int id)
     {
-        var responseMessage = await _httpClient.GetAsync("CommunityDiscussion");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionModel>>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/getByCommunityId?communityId={{communityId}}&page={{page}}&pageSize={{pageSize");
+        var discussions = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionModel>>();
 
-            return Ok(communities);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var community = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionModel>();
-
-            return Ok(community);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("findByCommunityId/{id:int:min(1)}")]
-    public async Task<IActionResult> FindByCommunityId(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/findByCommunityId/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityDiscussions = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionModel>>();
-
-            return Ok(communityDiscussions);
-        }
-
-        return BadRequest();
+        return Ok(discussions);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityDiscussionModel newCommunity)
+    public async Task<IActionResult> Create(CommunityDiscussionModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(newCommunity));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var community = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionModel>();
-
-            return Ok(community);
-        }
-
-        return BadRequest();
+        await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(CommunityDiscussionModel chat)
+    public async Task<IActionResult> Update(CommunityDiscussionModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityDiscussion", JsonContent.Create(chat));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.PutAsync("CommunityDiscussion", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityDiscussion/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        await _httpClient.DeletAsync($"CommunityDiscussion/{id}");
+        return NoContent();
     }
 }

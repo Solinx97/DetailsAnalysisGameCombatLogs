@@ -20,16 +20,17 @@ const UserPostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId,
     const commentContent = useRef<HTMLTextAreaElement | null>(null);
 
     const updatePostCommentAsync = async () => {
-        if (!commentContent.current) {
-            return;
-        }
+        try {
+            if (!commentContent.current) {
+                return;
+            }
 
-        const postCommentForUpdate = Object.assign({}, comment);
-        postCommentForUpdate.content = commentContent.current?.value;
+            const postCommentForUpdate = Object.assign({}, comment);
+            postCommentForUpdate.content = commentContent.current?.value;
 
-        const response = await updatePostComment(postCommentForUpdate);
-        if (!response.error) {
-            setEditModeOne(false);
+            await updatePostComment(postCommentForUpdate).unwrap();
+        } catch (error) {
+            console.error("Failed update post comment");
         }
     }
 

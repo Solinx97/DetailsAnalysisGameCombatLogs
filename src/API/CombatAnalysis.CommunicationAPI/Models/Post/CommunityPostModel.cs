@@ -20,12 +20,6 @@ public class CommunityPostModel
 
     public DateTimeOffset CreatedAt { get; set; }
 
-    public int LikeCount { get; set; }
-
-    public int DislikeCount { get; set; }
-
-    public int CommentCount { get; set; }
-
     public int CommunityId { get; set; }
 
     public string AppUserId { get; set; }

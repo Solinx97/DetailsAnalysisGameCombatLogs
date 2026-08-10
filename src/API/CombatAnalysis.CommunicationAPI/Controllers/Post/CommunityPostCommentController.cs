@@ -48,7 +48,7 @@ public class CommunityPostCommentController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int communityPostId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new DeleteCommunityPostCommentCommand(id, communityPostId), cancellationToken);

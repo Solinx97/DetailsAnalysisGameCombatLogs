@@ -20,89 +20,26 @@ public class CommunityPostDislikeController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("count/{communityPostId:int:min(1)}")]
+    public async Task<IActionResult> Count(int communityPostId)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostDislike/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postDislike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostDislikeModel>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostDislike/count/{communityPostId}");
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 
-            return Ok(postDislike);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByPostId(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostDislike/searchByPostId/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postDislikes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostDislikeModel>>();
-
-            return Ok(postDislikes);
-        }
-
-        return BadRequest();
+        return Ok(count);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityPostDislikeModel model)
+    public async Task<IActionResult> Create(CommunityPostDislikeModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPostDislike", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postDislike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostDislikeModel>();
-
-            return Ok(postDislike);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityPostDislikeModel model)
-    {
-        var responseMessage = await _httpClient.PutAsync("CommunityPostDislike", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        await _httpClient.PostAsync("CommunityPostDislike", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, int communityPostId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityPostDislike/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.DeletAsync($"CommunityPostDislike/{id}?communityPostId={communityPostId}");
+        return NoContent();
     }
 }

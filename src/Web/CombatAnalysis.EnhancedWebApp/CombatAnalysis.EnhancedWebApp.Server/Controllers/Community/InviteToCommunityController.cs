@@ -20,122 +20,33 @@ public class InviteToCommunityController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(InviteToCommunityModel invite)
-    {
-        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(invite));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var inviteToCommunity = await responseMessage.Content.ReadFromJsonAsync<InviteToCommunityModel>();
-
-            return Ok(inviteToCommunity);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var responseMessage = await _httpClient.GetAsync("InviteToCommunity");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var invitesToCommunity = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
-
-            return Ok(invitesToCommunity);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var inviteToCommunity = await responseMessage.Content.ReadFromJsonAsync<InviteToCommunityModel>();
-
-            return Ok(inviteToCommunity);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("findByUserId/{id}")]
-    public async Task<IActionResult> SearchByUserId(string id)
+    [HttpGet("getByUserId/{id}")]
+    public async Task<IActionResult> GetByUserId(string id)
     {
         var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/findByUserId/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var invitesToCommunity = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
+        var invites = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
 
-            return Ok(invitesToCommunity);
-        }
-
-        return BadRequest();
+        return Ok(invites);
     }
 
-    [HttpGet("isExist")]
-    public async Task<IActionResult> IsExist(string appUserId, int communityId)
+    [HttpPost]
+    public async Task<IActionResult> Create(InviteToCommunityModel request)
     {
-        var responseMessage = await _httpClient.GetAsync("InviteToCommunity");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (!responseMessage.IsSuccessStatusCode)
-        {
-            return BadRequest();
-        }
-
-        var allInvites = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
-        var existedInvites = allInvites.Where(x => x.ToAppUserId == appUserId && x.CommunityId == communityId).ToList();
-
-        return Ok(existedInvites.Count != 0);
+        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(request));
+        return NoContent();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(InviteToCommunityModel invite)
+    public async Task<IActionResult> Update(InviteToCommunityModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(invite));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(request));
+        return NoContent(); ;
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, int communityId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}?communityId={communityId}");
+        return NoContent();
     }
 }

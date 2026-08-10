@@ -32,7 +32,7 @@ public class InviteToCommunityController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int communityId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new DeleteInviteToCommunityCommand(id, communityId), cancellationToken);

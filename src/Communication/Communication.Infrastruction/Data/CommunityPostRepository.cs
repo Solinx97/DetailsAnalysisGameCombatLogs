@@ -55,11 +55,13 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
         return result.Count != 0 ? result : [];
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
+    public async Task<int> CountAsync(int communityId, CancellationToken cancellationToken)
     {
-        await _context.Set<CommunityPost>()
-            .Where(cl => cl.Id == id)
-            .ExecuteDeleteAsync(cancelationToken);
+        var count = await _context.Set<CommunityPost>()
+            .Where(x => x.CommunityId == communityId)
+            .CountAsync(cancellationToken);
+
+        return count;
     }
 
     public async Task<int> CountLikeAsync(int communityPostId, CancellationToken cancellationToken)
@@ -78,5 +80,12 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
             .CountAsync(cancellationToken);
 
         return count;
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
+    {
+        await _context.Set<CommunityPost>()
+            .Where(cl => cl.Id == id)
+            .ExecuteDeleteAsync(cancelationToken);
     }
 }
