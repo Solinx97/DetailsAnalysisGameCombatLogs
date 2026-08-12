@@ -28,6 +28,7 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
         var post = await _context.Set<UserPost>()
             .AsNoTracking()
             .Where(x => x.AppUserId == appUserId)
+            .OrderByDescending(x => x.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

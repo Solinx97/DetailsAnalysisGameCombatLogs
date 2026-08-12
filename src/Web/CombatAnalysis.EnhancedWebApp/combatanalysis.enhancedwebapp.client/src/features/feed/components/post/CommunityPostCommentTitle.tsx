@@ -10,10 +10,9 @@ import type { CommunityPostCommentModel } from '../../types/CommunityPostComment
 interface CommunityPostCommentTitleProps {
     userId: string;
     comment: CommunityPostCommentModel;
-    postId: number;
 }
 
-const CommunityPostCommentTitle: React.FC<CommunityPostCommentTitleProps> = ({ userId, comment, postId }) => {
+const CommunityPostCommentTitle: React.FC<CommunityPostCommentTitleProps> = ({ userId, comment }) => {
     const { t } = useTranslation('communication/postCommentTitle');
 
     const { dateFormatting } = useFormatting();

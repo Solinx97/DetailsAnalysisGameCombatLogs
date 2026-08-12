@@ -46,7 +46,6 @@ export const {
     useGetCommunityPostByIdQuery,
     useLazyGetCommunityPostByIdQuery,
     useGetCommunityPostCountByCommunityIdQuery,
-    useLazyGetCommunityPostCountByCommunityIdQuery,
     useGetCommunityPostCountByListOfCommunityIdQuery,
     useLazyGetCommunityPostCountByListOfCommunityIdQuery,
 } = CommunityPostApi;

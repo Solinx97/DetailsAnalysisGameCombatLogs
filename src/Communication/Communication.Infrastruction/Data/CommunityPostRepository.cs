@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
+using Communication.Domain.Entities.Community;
 using Communication.Domain.Entities.Post;
 using Communication.Infrastruction.Exceptions;
 using Communication.Infrastruction.Persistent;
@@ -61,10 +62,26 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
         var result = await _context.Set<CommunityPost>()
             .AsNoTracking()
             .Where(x => x.CommunityId == communityId)
+            .OrderByDescending(x => x.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancelationToken);
         return result.Count != 0 ? result : [];
+    }
+
+    public async Task<IEnumerable<CommunityPost>> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken)
+    {
+        var communityPosts = await (
+            from post in _context.Set<CommunityPost>().AsNoTracking()
+            join member in _context.Set<CommunityUser>().AsNoTracking()
+                on post.CommunityId equals member.CommunityId
+            where member.AppUserId == appUserId
+            select post)
+           .OrderBy(x => x.CreatedAt)
+           .Skip((page - 1) * pageSize)
+           .Take(pageSize)
+           .ToListAsync(cancelationToken);
+        return communityPosts;
     }
 
     public async Task<int> CountAsync(int communityId, CancellationToken cancellationToken)

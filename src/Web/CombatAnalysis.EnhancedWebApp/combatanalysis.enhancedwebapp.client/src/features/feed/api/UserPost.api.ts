@@ -44,7 +44,6 @@ export const {
     useUpdateUserPostMutation,
     useRemoveUserPostMutation,
     useGetUserPostCountByUserIdQuery,
-    useLazyGetUserPostCountByUserIdQuery,
     useGetUserPostCountByListOfUserIdQuery,
     useLazyGetUserPostCountByListOfUserIdQuery,
     useGetUserPostByIdQuery,

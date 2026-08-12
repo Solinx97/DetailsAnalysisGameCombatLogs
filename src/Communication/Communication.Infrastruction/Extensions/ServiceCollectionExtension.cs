@@ -29,6 +29,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IUserPostCommentRepository, UserPostCommentRepository>();
         services.AddScoped<ICommunityPostRepository, CommunityPostRepository>();
         services.AddScoped<ICommunityPostCommentRepository, CommunityPostCommentRepository>();
+        services.AddScoped<IUserFeedRepository, UserFeedRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

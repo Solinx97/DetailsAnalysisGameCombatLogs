@@ -203,7 +203,6 @@ const SelectedCommunity = () => {
                         <SelectedCommunityItem
                             myselfId={myself.id}
                             communityId={communityId}
-                            t={t}
                         />
                     </div>
                 </div>

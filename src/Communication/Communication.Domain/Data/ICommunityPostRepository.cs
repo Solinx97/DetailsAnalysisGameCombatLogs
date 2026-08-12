@@ -14,6 +14,8 @@ public interface ICommunityPostRepository
 
     Task<IEnumerable<CommunityPost>> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken);
 
+    Task<IEnumerable<CommunityPost>> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken);
+
     Task<int> CountAsync(int communityId, CancellationToken cancellationToken);
 
     Task<int> CountLikeAsync(int userPostId, CancellationToken cancellationToken);

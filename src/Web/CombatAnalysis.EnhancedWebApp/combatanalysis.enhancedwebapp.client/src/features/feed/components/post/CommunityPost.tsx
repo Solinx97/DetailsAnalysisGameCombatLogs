@@ -7,13 +7,14 @@ import type { CommunityPostModel } from '../../types/CommunityPostModel';
 import CommunityPostComments from './CommunityPostComments';
 import CommunityPostReactions from './CommunityPostReactions';
 import CommunityPostTitle from './CommunityPostTitle';
+import type { UserFeedModel } from '../../types/UserFeedModel';
 
 import './Post.scss';
 
 interface CommunityPostProps {
     userId: string;
     communityId: number;
-    post: CommunityPostModel | undefined;
+    post: CommunityPostModel | UserFeedModel | undefined;
 }
 
 const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post }) => {

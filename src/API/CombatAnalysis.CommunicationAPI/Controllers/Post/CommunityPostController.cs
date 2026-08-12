@@ -18,7 +18,7 @@ public class CommunityPostController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCommunityId")]
+    [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
     public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var communityPosts = await _mediator.Send(new GetCommunityPostQuery(communityId, page, pageSize), cancellationToken);
@@ -49,7 +49,7 @@ public class CommunityPostController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("count/{communityId:int:min(1)}")]
+    [HttpGet("count/{communityId:int:min(0)}")]
     public async Task<IActionResult> Count(int communityId, CancellationToken cancellationToken)
     {
         var count = await _mediator.Send(new CountCommunityPostQuery(communityId), cancellationToken);

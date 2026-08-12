@@ -69,6 +69,7 @@ const userEndpoints = (target: string, apiVersion: string) => {
 
 const feedEndpoints = (target: string, apiVersion: string) => {
     return {
+        [`^/api/${apiVersion}/UserFeed`]: { target, secure: false },
         [`^/api/${apiVersion}/UserPost`]: { target, secure: false },
         [`^/api/${apiVersion}/UserPostLike`]: { target, secure: false },
         [`^/api/${apiVersion}/UserPostDislike`]: { target, secure: false },

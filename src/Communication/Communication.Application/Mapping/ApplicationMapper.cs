@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Communication.Application.DTOs.Community;
 using Communication.Application.DTOs.Post;
+using Communication.Application.DTOs.Post.General;
 using Communication.Domain.Aggregates;
 using Communication.Domain.Entities.Community;
 using Communication.Domain.Entities.Post;
+using Communication.Domain.ReadModel;
 
 namespace Communication.Application.Mapping;
 
@@ -17,6 +19,7 @@ public class ApplicationMapper : Profile
         CreateMap<CommunityPostDto, CommunityPost>().ReverseMap();
         CreateMap<CommunityUserDto, CommunityUser>().ReverseMap();
         CreateMap<InviteToCommunityDto, InviteToCommunity>().ReverseMap();
+        CreateMap<UserFeedDto, UserFeed>().ReverseMap();
         CreateMap<UserPostDto, UserPost>().ReverseMap();
         CreateMap<UserPostLikeDto, UserPostLike>().ReverseMap();
         CreateMap<UserPostDislikeDto, UserPostDislike>().ReverseMap();

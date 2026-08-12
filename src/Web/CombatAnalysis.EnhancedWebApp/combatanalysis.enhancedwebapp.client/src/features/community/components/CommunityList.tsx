@@ -8,7 +8,7 @@ import { useCommunityUserFindByUserIdQuery } from '../api/CommunityUser.api';
 import type { CommunityModel } from '../types/CommunityModel';
 import CommunityItem from './CommunityItem';
 
-const CommunityList: React.FC<{ filterContent: string }> = ({ filterContent }) => {
+const CommunityList: React.FC = () => {
     const user = useSelector((state: RootState) => state.user.value);
 
     const pageSizeRef = useRef<number>(5);

@@ -20,10 +20,10 @@ public class CommunityPostController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("getByCommunityId")]
+    [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
     public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId?communityId={communityId}&page={page}&pageSize={pageSize}");
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
         var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
 
         return Ok(posts);
@@ -45,7 +45,7 @@ public class CommunityPostController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("count/{communityId:int:min(1)}")]
+    [HttpGet("count/{communityId:int:min(0)}")]
     public async Task<IActionResult> Count(int communityId, CancellationToken cancellationToken)
     {
         var responseMessage = await _httpClient.GetAsync($"CommunityPost/count/{communityId}");

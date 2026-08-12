@@ -10,11 +10,12 @@ import { useCreateCommunityPostLikeMutation, useCountCommunityPostLikeByPostIdQu
 import { useCountCommunityPostCommentByPostIdQuery } from '../../api/CommunityPostComment.api';
 import type { CommunityPostModel } from '../../types/CommunityPostModel';
 import type { CommunityPostReactionModel } from '../../types/CommunityPostReactionModel';
+import type { UserFeedModel } from '../../types/UserFeedModel';
 
 interface CommunityPostReactionsProps {
     userId: string;
     communityId: number;
-    post: CommunityPostModel;
+    post: CommunityPostModel | UserFeedModel;
     setShowComments: (value: SetStateAction<boolean>) => void;
     showComments: boolean;
     t: (key: string) => string;

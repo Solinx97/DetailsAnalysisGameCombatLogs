@@ -10,11 +10,11 @@ const Communities: React.FC<{ showCommunitiesAtStart?: boolean }> = ({ showCommu
     const { t } = useTranslation('communication/community/communities');
 
     const [showCommunities, setShowCommunities] = useState(showCommunitiesAtStart);
-    const [filterContent, setFilterContent] = useState("");
+    // const [filterContent, setFilterContent] = useState("");
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
 
     const searchHandler = (e: ChangeEvent<HTMLInputElement> | undefined) => {
-        setFilterContent(e?.target.value ?? "");
+        // setFilterContent(e?.target.value ?? "");
     }
 
     return (
@@ -43,9 +43,7 @@ const Communities: React.FC<{ showCommunitiesAtStart?: boolean }> = ({ showCommu
                             onChange={searchHandler} />
                         </div>
                     }
-                    <CommunityList
-                        filterContent={filterContent}
-                    />
+                    <CommunityList />
                 </>
             }
         </div>

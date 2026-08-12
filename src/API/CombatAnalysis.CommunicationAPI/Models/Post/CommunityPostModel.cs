@@ -1,26 +1,17 @@
-﻿namespace CombatAnalysis.CommunicationAPI.Models.Post;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class CommunityPostModel
-{
-    public int Id { get; set; }
+namespace CombatAnalysis.CommunicationAPI.Models.Post;
 
-    public string CommunityName { get; set; }
-
-    public string Owner { get; set; }
-
-    public string Content { get; set; }
-
-    public int PostType { get; set; }
-
-    public int PublicType { get; set; }
-
-    public int Restrictions { get; set; }
-
-    public string Tags { get; set; }
-
-    public DateTimeOffset CreatedAt { get; set; }
-
-    public int CommunityId { get; set; }
-
-    public string AppUserId { get; set; }
-}
+public record CommunityPostModel(
+    [Range(0, int.MaxValue)] int Id,
+    [Required] string CommunityName,
+    [Required] string Owner,
+    [Required] string Content,
+    int PostType,
+    int PublicType,
+    int Restrictions,
+    string Tags,
+    [Required] DateTimeOffset CreatedAt,
+    [Range(0, int.MaxValue)] int CommunityId,
+    [Required] string AppUserId
+    );

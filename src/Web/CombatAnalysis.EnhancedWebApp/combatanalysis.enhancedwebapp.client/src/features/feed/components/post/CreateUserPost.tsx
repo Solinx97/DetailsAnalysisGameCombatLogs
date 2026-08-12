@@ -34,9 +34,6 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
                 publicType: 0,
                 tags: postTags.join(';'),
                 createdAt: new Date(),
-                likeCount: 0,
-                dislikeCount: 0,
-                commentCount: 0,
                 appUserId: user.id
             }
 

@@ -5,9 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useRemoveCommunityPostMutation } from '../../api/CommunityPost.api';
 import type { CommunityPostModel } from '../../types/CommunityPostModel';
+import type { UserFeedModel } from '../../types/UserFeedModel';
 
 interface CommunityPostTitleProps {
-    post: CommunityPostModel;
+    post: CommunityPostModel | UserFeedModel;
     isMyPost: boolean;
 }
 

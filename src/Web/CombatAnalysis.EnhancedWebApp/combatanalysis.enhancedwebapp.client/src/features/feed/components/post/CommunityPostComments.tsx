@@ -27,7 +27,6 @@ const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, p
                     <CommunityPostCommentTitle
                         userId={userId}
                         comment={comment}
-                        postId={postId}
                     />
                     <CommunityPostCommentContent
                         userId={userId}

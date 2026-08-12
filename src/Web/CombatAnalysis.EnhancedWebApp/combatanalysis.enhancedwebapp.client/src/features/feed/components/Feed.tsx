@@ -24,7 +24,6 @@ const Feed: React.FC = () => {
                         />
                         <FeedParticipants
                             myself={myself}
-                            t={t}
                         />
                     </>
                 }
