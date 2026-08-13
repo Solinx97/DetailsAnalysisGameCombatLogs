@@ -32,7 +32,9 @@ public class CommunityPostLikeController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityPostLikeModel request)
     {
-        await _httpClient.PostAsync("CommunityPostLike", JsonContent.Create(request));
-        return NoContent();
+        var responseMessage = await _httpClient.PostAsync("CommunityPostLike", JsonContent.Create(request));
+        var like = await responseMessage.Content.ReadFromJsonAsync<CommunityPostLikeModel>();
+
+        return Ok(like);
     }
 }

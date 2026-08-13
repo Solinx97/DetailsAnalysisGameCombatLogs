@@ -32,7 +32,9 @@ public class UserPostDislikeController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(UserPostLikeModel request)
     {
-        await _httpClient.PostAsync("UserPostDislike", JsonContent.Create(request));
-        return NoContent();
+        var responseMessage = await _httpClient.PostAsync("UserPostDislike", JsonContent.Create(request));
+        var dislike = await responseMessage.Content.ReadFromJsonAsync<UserPostDislikeModel>();
+
+        return Ok(dislike);
     }
 }

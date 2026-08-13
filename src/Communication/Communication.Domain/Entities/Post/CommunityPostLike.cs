@@ -8,9 +8,10 @@ public class CommunityPostLike
     {
     }
 
-    private CommunityPostLike(DateTimeOffset createdAt, string appUserId)
+    private CommunityPostLike(DateTimeOffset createdAt, int communityId, string appUserId)
     {
         CreatedAt = createdAt;
+        CommunityId = communityId;
         AppUserId = appUserId;
     }
 
@@ -18,17 +19,20 @@ public class CommunityPostLike
 
     public DateTimeOffset CreatedAt { get; private set; }
 
+    public int CommunityId { get; private set; }
+
     public int CommunityPostId { get; private set; }
 
     public string AppUserId { get; private set; }
 
     public CommunityPost CommunityPost { get; private set; }
 
-    public static CommunityPostLike Create(string appUserId)
+    public static CommunityPostLike Create(int communityId, string appUserId)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityPostLike(createdAt, appUserId);
+        return new CommunityPostLike(createdAt, communityId, appUserId);
     }
 }

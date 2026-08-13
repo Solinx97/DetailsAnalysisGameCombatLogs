@@ -1,9 +1,8 @@
 ﻿import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type SetStateAction } from 'react';
-import { useCreateUserPostDislikeMutation, useCountUserPostDislikeByPostIdQuery } from '../../api/UserPostDislike.api';
-import { useCreateUserPostLikeMutation, useCountUserPostLikeByPostIdQuery } from '../../api/UserPostLike.api';
-import { useCountUserPostCommentByUserPostIdQuery } from '../../api/UserPostComment.api';
+import { useCreateUserPostDislikeMutation } from '../../api/UserPostDislike.api';
+import { useCreateUserPostLikeMutation } from '../../api/UserPostLike.api';
 import type { UserPostModel } from '../../types/UserPostModel';
 import type { UserPostReactionModel } from '../../types/UserPostReactionModel';
 
@@ -17,10 +16,7 @@ interface UserPostReactionsProps {
 
 const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, setShowComments, showComments, t }) => {
     const [createPostLike] = useCreateUserPostLikeMutation();
-    const { data: likes, isLoading: likesIsLoading } = useCountUserPostLikeByPostIdQuery(post.id);
     const [createPostDislike] = useCreateUserPostDislikeMutation();
-    const { data: dislikes, isLoading: dislikesIsLoading } = useCountUserPostDislikeByPostIdQuery(post.id);
-    const { data: comments, isLoading: commentsIsLoading } = useCountUserPostCommentByUserPostIdQuery(post.id);
 
     const createPostLikeAsync = async () => {
         try {
@@ -28,7 +24,8 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                 id: 0,
                 createdAt: new Date(),
                 userPostId: post?.id,
-                appUserId: userId
+                appUserId: userId,
+                status: 0
             }
 
             await createPostLike(newPostLike).unwrap();
@@ -43,7 +40,8 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                 id: 0,
                 createdAt: new Date(),
                 userPostId: post?.id,
-                appUserId: userId
+                appUserId: userId,
+                status: 0
             }
 
             await createPostDislike(newPostDislike).unwrap();
@@ -56,10 +54,6 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
         setShowComments((item) => !item);
     }
 
-    if (likesIsLoading || dislikesIsLoading || commentsIsLoading) {
-        return (<div>Loading...</div>);
-    }
-
     return (
         <div className="posts__reactions">
             <div className="container">
@@ -70,7 +64,7 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                         title={t("Like")}
                         onClick={createPostLikeAsync}
                     />
-                    <div className="count">{likes}</div>
+                    <div className="count">{post.likeCount}</div>
                 </div>
                 <div className="item">
                     <FontAwesomeIcon
@@ -79,7 +73,7 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                         title={t("Dislike")}
                         onClick={createPostDislikeAsync}
                     />
-                    <div className="count">{dislikes}</div>
+                    <div className="count">{post.dislikeCount}</div>
                 </div>
                 <div className="item">
                     <FontAwesomeIcon
@@ -88,7 +82,7 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                         title={t("Comment")}
                         onClick={postCommentsHandler}
                     />
-                    <div className="count">{comments}</div>
+                    <div className="count">{post.commentCount}</div>
                 </div>
             </div>
         </div>

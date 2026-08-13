@@ -13,8 +13,8 @@ internal class GetUserPostByUserIdHandler(IUserPostRepository repository, IMappe
 
     public async Task<AllUserPostsDto> Handle(GetUserPostByUserIdQuery request, CancellationToken cancellationToken)
     {
-        var (communities, count) = await _repository.GetByUserIdAsync(request.AppUserId, request.Page, request.PageSize, cancellationToken);
-        var map = _mapper.Map<IEnumerable<UserPostDto>>(communities);
+        var (posts, count) = await _repository.GetByUserIdAsync(request.AppUserId, request.Page, request.PageSize, cancellationToken);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(posts);
 
         return new AllUserPostsDto(map, count);
     }

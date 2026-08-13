@@ -4,6 +4,16 @@ import type { AllUserPostsModel } from '../types/AllUserPostsModel';
 
 const apiURL = '/api/v1';
 
+export const ReactionType = {
+    None: 1,
+    AddLike: 2,
+    RemoveLike: 3,
+    AddDislike: 4,
+    RemoveDislike: 5,
+    Like: 6,
+    Dislike: 7
+} as const;
+
 export const PostApi = createApi({
     reducerPath: 'postApi',
     tagTypes: [

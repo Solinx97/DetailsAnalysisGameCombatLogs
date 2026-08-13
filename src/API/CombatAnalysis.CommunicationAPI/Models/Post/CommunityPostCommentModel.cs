@@ -10,6 +10,8 @@ public class CommunityPostCommentModel
 
     public DateTimeOffset CreatedAt { get; set; }
 
+    public int CommunityId { get; set; }
+
     public int CommunityPostId { get; set; }
 
     public string AppUserId { get; set; }

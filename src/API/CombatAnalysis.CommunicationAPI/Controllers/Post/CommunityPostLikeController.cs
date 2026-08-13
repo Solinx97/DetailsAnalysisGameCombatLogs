@@ -25,10 +25,10 @@ public class CommunityPostLikeController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CommunityPostLikeModel request, CancellationToken cancellationToken)
     {
-        var command = new CreateCommunityPostLikeCommand(request.CommunityPostId, request.AppUserId);
-        await _mediator.Send(command, cancellationToken);
+        var command = new CreateCommunityPostLikeCommand(request.CommunityId, request.CommunityPostId, request.AppUserId);
+        var like = await _mediator.Send(command, cancellationToken);
 
-        return NoContent();
+        return Ok(like);
     }
 }
 

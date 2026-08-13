@@ -11,7 +11,7 @@ internal class CreateCommunityPostCommentHandler(ICommunityPostRepository reposi
     public async Task Handle(CreateCommunityPostCommentCommand request, CancellationToken cancelationToken)
     {
         var post = await _repository.GetWithCommentsAsync(request.CommunityPostId, cancelationToken);
-        post.AddComment(request.Content, request.CommentType, request.AppUserId);
+        post.AddComment(request.Content, request.CommentType, request.CommunityId, request.AppUserId);
 
         await _unitOfWork.SaveChangesAsync(cancelationToken);
     }

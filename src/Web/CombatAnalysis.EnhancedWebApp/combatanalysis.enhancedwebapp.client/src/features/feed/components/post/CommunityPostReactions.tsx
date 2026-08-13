@@ -3,11 +3,10 @@ import VerificationRestriction from '@/shared/components/VerificationRestriction
 import logger from '@/utils/Logger';
 import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, type SetStateAction } from 'react';
+import { type SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
-import { useCreateCommunityPostDislikeMutation, useCountCommunityPostDislikeByPostIdQuery } from '../../api/CommunityPostDislike.api';
-import { useCreateCommunityPostLikeMutation, useCountCommunityPostLikeByPostIdQuery } from '../../api/CommunityPostLike.api';
-import { useCountCommunityPostCommentByPostIdQuery } from '../../api/CommunityPostComment.api';
+import { useCreateCommunityPostDislikeMutation } from '../../api/CommunityPostDislike.api';
+import { useCreateCommunityPostLikeMutation } from '../../api/CommunityPostLike.api';
 import type { CommunityPostModel } from '../../types/CommunityPostModel';
 import type { CommunityPostReactionModel } from '../../types/CommunityPostReactionModel';
 import type { UserFeedModel } from '../../types/UserFeedModel';
@@ -25,49 +24,44 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
     const userPrivacy = useSelector((state: RootState) => state.userPrivacy.value);
 
     const [createPostLike] = useCreateCommunityPostLikeMutation();
-    const { data: likes, isLoading: likesIsLoading } = useCountCommunityPostLikeByPostIdQuery(post.id);
     const [createPostDislike] = useCreateCommunityPostDislikeMutation();
-    const { data: dislikes, isLoading: dislikesIsLoading } = useCountCommunityPostDislikeByPostIdQuery(post.id);
-    const { data: comments, isLoading: commentsIsLoading } = useCountCommunityPostCommentByPostIdQuery(post.id);
 
-    const createPostLikeAsync = useCallback(async () => {
+    const createPostLikeAsync = async () => {
         try {
             const newPostLike: CommunityPostReactionModel = {
                 id: 0,
                 createdAt: new Date(),
-                communityPostId: post?.id,
                 communityId: communityId,
-                appUserId: userId
+                communityPostId: post.id,
+                appUserId: userId,
+                status: 0
             }
 
-            await createPostLike(newPostLike);
+            await createPostLike(newPostLike).unwrap();
         } catch (error) {
             logger.error("Failed to create community post like");
         }
-    }, [post]);
+    }
 
-    const createPostDislikeAsync = useCallback(async () => {
+    const createPostDislikeAsync = async () => {
         try {
             const newPostDislike: CommunityPostReactionModel = {
                 id: 0,
                 createdAt: new Date(),
-                communityPostId: post?.id,
                 communityId: communityId,
-                appUserId: userId
+                communityPostId: post.id,
+                appUserId: userId,
+                status: 0
             }
 
-            await createPostDislike(newPostDislike);
+            await createPostDislike(newPostDislike).unwrap();
         } catch (error) {
             logger.error("Failed to create community post dislike");
         }
-    }, [post]);
+    };
 
     const postCommentsHandler = () => {
         setShowComments((item) => !item);
-    }
-
-    if (likesIsLoading || dislikesIsLoading || commentsIsLoading) {
-        return (<div>Loading...</div>);
     }
 
     return (
@@ -82,7 +76,7 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
                                 title={t("Like")}
                                 onClick={createPostLikeAsync}
                             />
-                            <div className="count">{likes}</div>
+                            <div className="count">{post.likeCount}</div>
                         </div>
                         <div className="item">
                             <FontAwesomeIcon
@@ -91,7 +85,7 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
                                 title={t("Dislike")}
                                 onClick={createPostDislikeAsync}
                             />
-                            <div className="count">{dislikes}</div>
+                            <div className="count">{post.dislikeCount}</div>
                         </div>
                         <div className="item">
                             <FontAwesomeIcon
@@ -100,7 +94,7 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
                                 title={t("Comment")}
                                 onClick={postCommentsHandler}
                             />
-                            <div className="count">{comments}</div>
+                            <div className="count">{post.commentCount}</div>
                         </div>
                     </>
                     : <VerificationRestriction

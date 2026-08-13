@@ -11,7 +11,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<(IEnumerable<UserFeed>, int)> GetUserFeedAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserFeedReadModel>, int)> GetUserFeedAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var userPosts = _context.Set<UserPost>()
             .AsNoTracking()
@@ -25,6 +25,10 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 x.Tags,
                 x.CreatedAt,
                 x.AppUserId,
+
+                LikeCount = x.UserPostLikes.Count(),
+                DislikeCount = x.UserPostDislikes.Count(),
+                CommentCount = x.UserPostComments.Count(),
 
                 CommunityName = (string)null,
                 PostType = 0,
@@ -47,6 +51,10 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 post.CreatedAt,
                 post.AppUserId,
 
+                LikeCount = post.CommunityPostLikes.Count(),
+                DislikeCount = post.CommunityPostDislikes.Count(),
+                CommentCount = post.CommunityPostComments.Count(),
+
                 post.CommunityName,
                 post.PostType,
                 post.Restrictions,
@@ -58,7 +66,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
             .OrderByDescending(x => x.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(x => new UserFeed(
+            .Select(x => new UserFeedReadModel(
                 x.Id,
                 x.Owner,
                 x.Content,
@@ -66,6 +74,9 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 x.Tags,
                 x.CreatedAt,
                 x.AppUserId,
+                x.LikeCount,
+                x.DislikeCount,
+                x.CommentCount,
                 x.CommunityName,
                 x.PostType,
                 x.Restrictions,
@@ -74,7 +85,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
 
         var count = await userPosts
             .Concat(communityPosts)
-            .Select(x => new UserFeed(
+            .Select(x => new UserFeedReadModel(
                 x.Id,
                 x.Owner,
                 x.Content,
@@ -82,6 +93,9 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 x.Tags,
                 x.CreatedAt,
                 x.AppUserId,
+                x.LikeCount,
+                x.DislikeCount,
+                x.CommentCount,
                 x.CommunityName,
                 x.PostType,
                 x.Restrictions,

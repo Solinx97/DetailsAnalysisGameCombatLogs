@@ -26,8 +26,8 @@ public class UserPostDislikeController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] UserPostDislikeModel request, CancellationToken cancellationToken)
     {
         var command = new CreateUserPostDislikeCommand(request.UserPostId, request.AppUserId);
-        await _mediator.Send(command, cancellationToken);
+        var dislike = await _mediator.Send(command, cancellationToken);
 
-        return NoContent();
+        return Ok(dislike);
     }
 }

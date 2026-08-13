@@ -38,8 +38,11 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
                 restrictions: 0,
                 tags: postTags.join(';'),
                 createdAt: new Date(),
+                appUserId: user?.id ?? "",
                 communityId: communityId,
-                appUserId: user?.id ?? ""
+                likeCount: 0,
+                dislikeCount: 0,
+                commentCount: 0
             }
 
             await createNewCommunityPostAsync(newPost).unwrap();

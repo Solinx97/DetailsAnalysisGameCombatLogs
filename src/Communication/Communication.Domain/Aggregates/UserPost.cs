@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Entities.Post;
+using Communication.Domain.Enums;
 using Communication.Domain.Exceptions;
 
 namespace Communication.Domain.Aggregates;
@@ -56,7 +57,7 @@ public class UserPost
         return new UserPost(owner, content, publicType, tags, createdAt, appUserId);
     }
 
-    public void AddLike(string appUserId)
+    public (UserPostLike, PostReactionStatus) AddLike(string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
@@ -64,7 +65,9 @@ public class UserPost
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existLike != null)
         {
-            RemoveLike(existLike.Id);
+            var removedLike = RemoveLike(existLike.Id);
+
+            return (removedLike, PostReactionStatus.RemoveLike);
         }
         else
         {
@@ -74,14 +77,23 @@ public class UserPost
             if (existDislike != null)
             {
                 RemoveDislike(existDislike.Id);
-            }
 
-            var like = UserPostLike.Create(appUserId);
-            _userPostLikes.Add(like);
+                var like = UserPostLike.Create(appUserId);
+                _userPostLikes.Add(like);
+
+                return (like, PostReactionStatus.Like);
+            }
+            else
+            {
+                var like = UserPostLike.Create(appUserId);
+                _userPostLikes.Add(like);
+
+                return (like, PostReactionStatus.AddLike);
+            }
         }
     }
 
-    public void AddDislike(string appUserId)
+    public (UserPostDislike, PostReactionStatus) AddDislike(string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
@@ -89,7 +101,9 @@ public class UserPost
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existDislike != null)
         {
-            RemoveDislike(existDislike.Id);
+            var removedDislike = RemoveDislike(existDislike.Id);
+
+            return (removedDislike, PostReactionStatus.RemoveDislike);
         }
         else
         {
@@ -99,10 +113,19 @@ public class UserPost
             if (existLike != null)
             {
                 RemoveLike(existLike.Id);
-            }
 
-            var dislike = UserPostDislike.Create(appUserId);
-            _userPostDislikes.Add(dislike);
+                var dislike = UserPostDislike.Create(appUserId);
+                _userPostDislikes.Add(dislike);
+
+                return (dislike, PostReactionStatus.Dislike);
+            }
+            else
+            {
+                var dislike = UserPostDislike.Create(appUserId);
+                _userPostDislikes.Add(dislike);
+
+                return (dislike, PostReactionStatus.AddDislike);
+            }
         }
     }
 
@@ -148,7 +171,7 @@ public class UserPost
         comment.EditContent(content);
     }
 
-    private void RemoveLike(int likeId)
+    private UserPostLike RemoveLike(int likeId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(likeId, nameof(likeId));
 
@@ -157,9 +180,11 @@ public class UserPost
                 ?? throw new DomainException($"User post like not found with id {likeId}");
 
         _userPostLikes.Remove(like);
+
+        return like;
     }
 
-    private void RemoveDislike(int dislikeId)
+    private UserPostDislike RemoveDislike(int dislikeId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(dislikeId, nameof(dislikeId));
 
@@ -168,5 +193,7 @@ public class UserPost
                 ?? throw new DomainException($"User post like not found with id {dislikeId}");
 
         _userPostDislikes.Remove(dislike);
+
+        return dislike;
     }
 }

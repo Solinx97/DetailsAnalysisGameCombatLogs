@@ -8,11 +8,12 @@ public class CommunityPostComment
     {
     }
 
-    private CommunityPostComment(string content, int commentType, DateTimeOffset createdAt, string appUserId)
+    private CommunityPostComment(string content, int commentType, DateTimeOffset createdAt, int communityId, string appUserId)
     {
         Content = content;
         CommentType = commentType;
         CreatedAt = createdAt;
+        CommunityId = communityId;
         AppUserId = appUserId;
     }
 
@@ -24,19 +25,22 @@ public class CommunityPostComment
 
     public DateTimeOffset CreatedAt { get; private set; }
 
+    public int CommunityId { get; private set; }
+
     public int CommunityPostId { get; private set; }
 
     public string AppUserId { get; private set; }
 
     public CommunityPost CommunityPost { get; private set; }
 
-    public static CommunityPostComment Create(string content, int commentType, string appUserId)
+    public static CommunityPostComment Create(string content, int commentType, int communityId, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityPostComment(content, commentType, createdAt, appUserId);
+        return new CommunityPostComment(content, commentType, createdAt, communityId, appUserId);
     }
 
     public void EditContent(string content)

@@ -32,7 +32,9 @@ public class CommunityPostDislikeController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityPostDislikeModel request)
     {
-        await _httpClient.PostAsync("CommunityPostDislike", JsonContent.Create(request));
-        return NoContent();
+        var responseMessage = await _httpClient.PostAsync("CommunityPostDislike", JsonContent.Create(request));
+        var dislike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostDislikeModel>();
+
+        return Ok(dislike);
     }
 }

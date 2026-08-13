@@ -1,6 +1,7 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
 using Communication.Domain.Entities.Post;
+using Communication.Domain.ReadModel;
 using Communication.Infrastruction.Exceptions;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -23,17 +24,31 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
         return post;
     }
 
-    public async Task<(IEnumerable<UserPost>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserPostReadModel>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var posts = await _context.Set<UserPost>()
+        var query = _context.Set<UserPost>()
             .AsNoTracking()
-            .Where(x => x.AppUserId == appUserId)
+            .Where(x => x.AppUserId == appUserId);
+
+        var posts = await query
             .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Select(x => new UserPostReadModel(
+                x.Id,
+                x.Owner,
+                x.Content,
+                x.PublicType,
+                x.Tags,
+                x.CreatedAt,
+                x.AppUserId,
+                x.UserPostLikes.Count(),
+                x.UserPostDislikes.Count(),
+                x.UserPostComments.Count()))
             .ToListAsync(cancellationToken);
 
-        var count = await _context.Set<UserPost>()
+        var count = await query
             .CountAsync(cancellationToken);
 
         return (posts, count);
@@ -48,6 +63,15 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
                 ?? throw new EntityNotFoundException(typeof(UserPost), id);
 
         return post;
+    }
+
+    public async Task<UserPostLike> GetLikeByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var like = await _context.Set<UserPostLike>()
+            .FirstAsync(x => x.Id == id, cancellationToken)
+                ?? throw new EntityNotFoundException(typeof(UserPostLike), id);
+
+        return like;
     }
 
     public async Task<int> CountAsync(string appUserId, CancellationToken cancellationToken)

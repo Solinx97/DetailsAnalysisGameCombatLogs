@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Entities.Post;
+using Communication.Domain.Enums;
 using Communication.Domain.Exceptions;
 
 namespace Communication.Domain.Aggregates;
@@ -74,15 +75,18 @@ public class CommunityPost
         return new CommunityPost(communityName, owner, content, postType, publicType, restrictions, tags, createdAt, communityId, appUserId);
     }
 
-    public void AddLike(string appUserId)
+    public (CommunityPostLike, PostReactionStatus) AddLike(int communityId, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
 
         var existLike = _communityPostLikes
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existLike != null)
         {
-            RemoveLike(existLike.Id);
+            var removedLike = RemoveLike(existLike.Id);
+
+            return (removedLike, PostReactionStatus.RemoveLike);
         }
         else
         {
@@ -92,22 +96,34 @@ public class CommunityPost
             if (existDislike != null)
             {
                 RemoveDislike(existDislike.Id);
-            }
 
-            var like = CommunityPostLike.Create(appUserId);
-            _communityPostLikes.Add(like);
+                var like = CommunityPostLike.Create(communityId, appUserId);
+                _communityPostLikes.Add(like);
+
+                return (like, PostReactionStatus.Like);
+            }
+            else
+            {
+                var like = CommunityPostLike.Create(communityId, appUserId);
+                _communityPostLikes.Add(like);
+
+                return (like, PostReactionStatus.AddLike);
+            }
         }
     }
 
-    public void AddDislike(string appUserId)
+    public (CommunityPostDislike, PostReactionStatus) AddDislike(int communityId, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
 
         var existDislike = _communityPostDislikes
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existDislike != null)
         {
-            RemoveDislike(existDislike.Id);
+            var removedDislike = RemoveDislike(existDislike.Id);
+
+            return (removedDislike, PostReactionStatus.RemoveDislike);
         }
         else
         {
@@ -117,19 +133,29 @@ public class CommunityPost
             if (existLike != null)
             {
                 RemoveLike(existLike.Id);
-            }
 
-            var dislike = CommunityPostDislike.Create(appUserId);
-            _communityPostDislikes.Add(dislike);
+                var dislike = CommunityPostDislike.Create(communityId, appUserId);
+                _communityPostDislikes.Add(dislike);
+
+                return (dislike, PostReactionStatus.Dislike);
+            }
+            else
+            {
+                var dislike = CommunityPostDislike.Create(communityId, appUserId);
+                _communityPostDislikes.Add(dislike);
+
+                return (dislike, PostReactionStatus.AddDislike);
+            }
         }
     }
 
-    public void AddComment(string content, int commentType, string appUserId)
+    public void AddComment(string content, int commentType, int communityId, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
 
-        var comment = CommunityPostComment.Create(content, commentType, appUserId);
+        var comment = CommunityPostComment.Create(content, commentType, communityId, appUserId);
         _communityPostComments.Add(comment);
     }
 
@@ -166,7 +192,7 @@ public class CommunityPost
         comment.EditContent(content);
     }
 
-    private void RemoveLike(int likeId)
+    private CommunityPostLike RemoveLike(int likeId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(likeId, nameof(likeId));
 
@@ -175,9 +201,11 @@ public class CommunityPost
                 ?? throw new DomainException($"Community post like not found with id {likeId}");
 
         _communityPostLikes.Remove(like);
+
+        return like;
     }
 
-    private void RemoveDislike(int dislikeId)
+    private CommunityPostDislike RemoveDislike(int dislikeId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(dislikeId, nameof(dislikeId));
 
@@ -186,5 +214,7 @@ public class CommunityPost
                 ?? throw new DomainException($"Community post like not found with id {dislikeId}");
 
         _communityPostDislikes.Remove(dislike);
+
+        return dislike;
     }
 }

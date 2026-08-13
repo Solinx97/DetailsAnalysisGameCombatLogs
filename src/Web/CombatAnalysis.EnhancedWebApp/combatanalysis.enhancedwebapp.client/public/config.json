@@ -6,7 +6,7 @@
   },
   "communication": {
     "chatPageSize": 10,
-    "communityPageSize": 5,
+    "communityPageSize": 10,
     "communityPostPageSize": 10,
     "userPostSize": 10
   },

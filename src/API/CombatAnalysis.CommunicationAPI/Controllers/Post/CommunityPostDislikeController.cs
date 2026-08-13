@@ -25,9 +25,9 @@ public class CommunityPostDislikeController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CommunityPostDislikeModel request, CancellationToken cancellationToken)
     {
-        var command = new CreateCommunityPostDislikeCommand(request.CommunityPostId, request.AppUserId);
-        await _mediator.Send(command, cancellationToken);
+        var command = new CreateCommunityPostDislikeCommand(request.CommunityId, request.CommunityPostId, request.AppUserId);
+        var dislike = await _mediator.Send(command, cancellationToken);
 
-        return NoContent();
+        return Ok(dislike);
     }
 }

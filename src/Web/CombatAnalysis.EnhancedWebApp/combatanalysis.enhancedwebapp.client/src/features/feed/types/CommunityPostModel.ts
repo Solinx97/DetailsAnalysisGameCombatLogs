@@ -1,4 +1,4 @@
-import type { PostModel } from "./PostModel";
+import type { PostModel } from './PostModel';
 
 export interface CommunityPostModel extends PostModel {
     communityName: string;

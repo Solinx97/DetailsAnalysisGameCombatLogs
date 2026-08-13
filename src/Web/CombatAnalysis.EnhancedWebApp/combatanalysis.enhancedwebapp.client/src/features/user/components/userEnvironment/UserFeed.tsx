@@ -18,7 +18,7 @@ const UserFeed: React.FC = () => {
     const [page, setPage] = useState(1);;
     const [hasMore, setHasMore] = useState(false);
 
-    const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 10);
 
     const { data: posts, isLoading, isFetching } = useGetUserPostsByUserIdQuery({ appUserId: myself?.id ?? "", page, pageSize: pageSizeRef.current });
 

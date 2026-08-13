@@ -1,9 +1,9 @@
 import { APP_CONFIG } from '@/config/appConfig';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import Loading from '@/shared/components/Loading';
-import useFetchCommunityPosts from '@/features/feed/hooks/useFetchCommunityPosts';
 import { memo, useEffect, useRef, useState } from 'react';
 import CommunityPost from '../../../feed/components/post/CommunityPost';
+import { useGetCommunityPostsByCommunityIdQuery } from '@/features/feed/api/Post.api';
 
 interface SelectedCommunityItemProps {
     myselfId: string;
@@ -16,14 +16,14 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityPostPageSize ?? 10);
 
-    const { posts, isLoading, isFetching, count } = useFetchCommunityPosts(page, pageSizeRef.current, communityId);
+    const { data: posts, isLoading, isFetching } = useGetCommunityPostsByCommunityIdQuery({ communityId, page, pageSize: pageSizeRef.current });
 
     useEffect(() => {
         if (!posts) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < count);
+        setHasMore(((page - 1) * pageSizeRef.current) < posts.count);
     }, [page, posts]);
 
     if (!posts || isLoading) {
@@ -33,15 +33,17 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
     return (
         <>
             <ul className="posts">
-                {posts?.map((post) => (
-                    <li key={post?.id} className="posts__item">
-                        <CommunityPost
-                            userId={myselfId}
-                            communityId={communityId}
-                            post={post}
-                        />
-                    </li>
-                ))
+                {!posts.posts
+                    ? <Loading />
+                    : posts.posts.map((post) => (
+                        <li key={post?.id} className="posts__item">
+                            <CommunityPost
+                                userId={myselfId}
+                                communityId={communityId}
+                                post={post}
+                            />
+                        </li>
+                    ))
                 }
                 <li className="posts__item">
                     <InfiniteScrollTrigger

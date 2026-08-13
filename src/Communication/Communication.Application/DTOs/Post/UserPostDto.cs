@@ -15,4 +15,10 @@ public class UserPostDto
     public DateTimeOffset CreatedAt { get; set; }
 
     public string AppUserId { get; set; } = string.Empty;
+
+    public int LikeCount { get; set; }
+
+    public int DislikeCount { get; set; }
+
+    public int CommentCount { get; set; }
 }

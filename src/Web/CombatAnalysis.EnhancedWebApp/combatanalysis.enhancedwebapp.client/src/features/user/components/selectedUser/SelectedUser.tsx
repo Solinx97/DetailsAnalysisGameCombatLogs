@@ -32,7 +32,7 @@ const SelectedUser: React.FC = () => {
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
 
-    const { userFeed, userFeedIsLoading } = useFetchUserPosts(page, pageSizeRef.current, personId);
+    const { posts, isLoading, isFetching } = useFetchUserPosts(page, pageSizeRef.current, personId);
     const { data: person, isLoading: personIsLoading } = useGetUserByIdQuery(personId);
 
     useEffect(() => {
@@ -43,14 +43,14 @@ const SelectedUser: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (!userFeed) {
+        if (!posts) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < userFeed.length);
-    }, [page, userFeed]);
+        setHasMore(((page - 1) * pageSizeRef.current) < posts.length);
+    }, [page, posts]);
 
-    if (!myself || !userFeed || userFeedIsLoading || !person || personIsLoading) {
+    if (!myself || !posts || isLoading || !person || personIsLoading) {
         return (<></>);
     }
 
@@ -105,9 +105,9 @@ const SelectedUser: React.FC = () => {
                         }
                         {currentMenuItem === 1 &&
                             <ul className="posts">
-                                {userFeed.length === 0
+                                {posts.length === 0
                                     ? <div>{t("Empty")}</div>
-                                    : userFeed?.map(post => (
+                                    : posts.map(post => (
                                         <li key={post.id}>
                                             <UserPost
                                                 myself={myself}
@@ -116,12 +116,12 @@ const SelectedUser: React.FC = () => {
                                         </li>
                                     ))
                                 }
-                                {userFeed.length > 0 &&
+                                {posts.length > 0 &&
                                     < li className="posts__item">
                                         <InfiniteScrollTrigger
                                             onLoadMore={() => setPage(p => p + 1)}
                                             hasMore={hasMore}
-                                            isLoading={userFeedIsLoading}
+                                            isLoading={isFetching}
                                         />
                                     </li>
                                 }

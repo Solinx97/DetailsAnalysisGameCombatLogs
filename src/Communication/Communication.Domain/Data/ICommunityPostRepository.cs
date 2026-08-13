@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Aggregates;
+using Communication.Domain.ReadModel;
 
 namespace Communication.Domain.Data;
 
@@ -12,9 +13,9 @@ public interface ICommunityPostRepository
 
     Task<CommunityPost> GetWithCommentsAsync(int id, CancellationToken cancellationToken);
 
-    Task<(IEnumerable<CommunityPost>, int)> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken);
+    Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken);
 
-    Task<(IEnumerable<CommunityPost>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken);
+    Task<(IEnumerable<CommunityPostReadModel>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken);
 
     Task<int> CountAsync(int communityId, CancellationToken cancellationToken);
 

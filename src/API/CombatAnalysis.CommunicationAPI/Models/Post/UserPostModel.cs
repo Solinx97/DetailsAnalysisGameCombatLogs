@@ -9,5 +9,8 @@ public record UserPostModel(
     int PublicType,
     string Tags,
     [Required] DateTimeOffset CreatedAt,
-    [Required] string AppUserId
+    [Required] string AppUserId,
+    [Range(0, int.MaxValue)] int LikeCount,
+    [Range(0, int.MaxValue)] int DislikeCount,
+    [Range(0, int.MaxValue)] int CommentCount
     );
