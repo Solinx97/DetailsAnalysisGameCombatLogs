@@ -1,29 +1,41 @@
-import type { UserFeedModel } from '../types/UserFeedModel';
+import type { AllUserFeedModel } from '../types/AllUserFeedModel';
 import { PostApi } from './Post.api';
 
 export const UserFeedApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        getFeed: builder.query<UserFeedModel[], { appUserId: string, page: number, pageSize: number }>({
+        getFeed: builder.query<AllUserFeedModel, { appUserId: string, page: number, pageSize: number }>({
             query: ({ appUserId, page, pageSize }) => `/UserFeed/${appUserId}?page=${page}&pageSize=${pageSize}`,
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.appUserId}`,
             merge: (currentCache, newItems) => {
-                newItems.forEach(item => {
-                    const index = currentCache.findIndex(d => d.id === item.id);
+                newItems.posts.forEach(item => {
+                    const index = currentCache.posts.findIndex(x => x.id === item.id);
                     if (index === -1) {
-                        currentCache.push(item);
+                        currentCache.posts.push(item);
                     } else {
-                        currentCache[index] = item;
+                        currentCache.posts[index] = item;
                     }
                 });
+
+                currentCache.posts.sort(
+                    (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                );
             },
-            forceRefetch: ({ currentArg, previousArg }) => currentArg?.page !== previousArg?.page,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(feed => ({ type: 'UserFeed' as const, id: feed.id })),
-                        { type: 'UserFeed', id: 'LIST' },
-                    ]
-                    : [{ type: 'UserFeed', id: 'LIST' }]
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.appUserId !== previousArg?.appUserId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'UserFeed', id: 'LIST' },
+                ...(result?.posts.map(post => ({
+                    type: 'UserFeed' as const,
+                    id: post.id
+                })) ?? [])
+            ]
         }),
     })
 })

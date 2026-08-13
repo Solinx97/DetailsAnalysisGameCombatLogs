@@ -6,12 +6,9 @@ import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import CommunityPost from '../../../feed/components/post/CommunityPost';
 import CreateUserPost from '../../../feed/components/post/CreateUserPost';
 import UserPost from '../../../feed/components/post/UserPost';
-import useFetchUserPosts from '../../../feed/hooks/useFetchUserPosts';
-import type { CommunityPostModel } from '../../../feed/types/CommunityPostModel';
-import type { UserPostModel } from '../../../feed/types/UserPostModel';
+import { useGetUserPostsByUserIdQuery } from '@/features/feed/api/Post.api';
 
 const UserFeed: React.FC = () => {
     const { t } = useTranslation("communication/feed");
@@ -23,17 +20,21 @@ const UserFeed: React.FC = () => {
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
 
-    const { userFeed, userFeedIsLoading } = useFetchUserPosts(page, pageSizeRef.current, myself?.id ?? "");
+    const { data: posts, isLoading, isFetching } = useGetUserPostsByUserIdQuery({ appUserId: myself?.id ?? "", page, pageSize: pageSizeRef.current });
 
     useEffect(() => {
-        if (!userFeed) {
+        if (!posts) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < userFeed.length);
-    }, [page, userFeed]);
+        setHasMore(((page - 1) * pageSizeRef.current) < posts.count);
+    }, [page, posts]);
 
-    if (!myself || !userFeed) {
+    if (!posts || isLoading) {
+        return (<Loading />);
+    }
+
+    if (!myself) {
         return (
             <>
                 <CommunicationMenu
@@ -54,26 +55,22 @@ const UserFeed: React.FC = () => {
                     t={t}
                 />
                 <ul className="posts">
-                    {userFeed?.map(post => (
-                        <li className="posts__item" key={post.id}>
-                            {(post as CommunityPostModel).communityId !== undefined
-                                ? <CommunityPost
-                                    userId={myself.id}
-                                    communityId={(post as CommunityPostModel).communityId}
-                                    post={(post as CommunityPostModel)}
-                                />
-                                : <UserPost
+                    {!posts.posts
+                        ? <Loading />
+                        : posts.posts.map(post => (
+                            <li key={`${post.id}`}>
+                                <UserPost
                                     myself={myself}
-                                    post={(post as UserPostModel)}
+                                    post={post}
                                 />
-                            }
-                        </li>
-                    ))}
+                            </li>
+
+                        ))}
                     <li className="posts__item">
                         <InfiniteScrollTrigger
                             onLoadMore={() => setPage(p => p + 1)}
                             hasMore={hasMore}
-                            isLoading={userFeedIsLoading}
+                            isLoading={isFetching}
                         />
                     </li>
                 </ul>

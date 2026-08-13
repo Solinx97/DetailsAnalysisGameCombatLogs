@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,7 +25,7 @@ public class UserPostController : ControllerBase
     public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"UserPost/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
-        var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+        var posts = await responseMessage.Content.ReadFromJsonAsync<UserPostsResponse>();
 
         return Ok(posts);
     }

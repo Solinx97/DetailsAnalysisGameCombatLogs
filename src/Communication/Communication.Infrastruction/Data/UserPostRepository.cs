@@ -23,9 +23,9 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
         return post;
     }
 
-    public async Task<IEnumerable<UserPost>> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserPost>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var post = await _context.Set<UserPost>()
+        var posts = await _context.Set<UserPost>()
             .AsNoTracking()
             .Where(x => x.AppUserId == appUserId)
             .OrderByDescending(x => x.CreatedAt)
@@ -33,7 +33,10 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return post;
+        var count = await _context.Set<UserPost>()
+            .CountAsync(cancellationToken);
+
+        return (posts, count);
     }
 
     public async Task<UserPost> GetWithCommentsAsync(int id, CancellationToken cancellationToken)

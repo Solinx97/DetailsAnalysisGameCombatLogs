@@ -1,6 +1,6 @@
 ﻿import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { CommunityPostModel } from '../types/CommunityPostModel';
-import type { UserPostModel } from '../types/UserPostModel';
+import type { AllCimmunityPostsModel } from '../types/AllCimmunityPostsModel';
+import type { AllUserPostsModel } from '../types/AllUserPostsModel';
 
 const apiURL = '/api/v1';
 
@@ -21,46 +21,73 @@ export const PostApi = createApi({
         baseUrl: apiURL
     }),
     endpoints: builder => ({
-        getUserPostsByUserId: builder.query<UserPostModel[], { appUserId: string, page: number, pageSize: number }>({
+        getUserPostsByUserId: builder.query<AllUserPostsModel, { appUserId: string, page: number, pageSize: number }>({
             query: ({ appUserId, page, pageSize }) => `/UserPost/getByUserId/${appUserId}?page=${page}&pageSize=${pageSize}`,
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.appUserId}`,
             merge: (currentCache, newItems) => {
-                newItems.forEach(item => {
-                    const index = currentCache.findIndex(d => d.id === item.id);
+                newItems.posts.forEach(item => {
+                    const index = currentCache.posts.findIndex(x => x.id === item.id);
                     if (index === -1) {
-                        currentCache.push(item);
+                        currentCache.posts.push(item);
                     } else {
-                        currentCache[index] = item;
+                        currentCache.posts[index] = item;
                     }
                 });
+
+                currentCache.posts.sort(
+                    (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                );
             },
-            forceRefetch: ({ currentArg, previousArg }) => currentArg?.page !== previousArg?.page,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(userPost => ({ type: 'UserPost' as const, id: userPost.id })),
-                        { type: 'UserPost', id: 'LIST' },
-                    ]
-                    : [{ type: 'UserPost', id: 'LIST' }]
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.appUserId !== previousArg?.appUserId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'UserPost', id: 'LIST' },
+                ...(result?.posts.map(post => ({
+                    type: 'UserPost' as const,
+                    id: post.id
+                })) ?? [])
+            ]
         }),
-        getCommunityPostsByCommunityId: builder.query<CommunityPostModel[], { communityId: number, page: number, pageSize: number }>({
+        getCommunityPostsByCommunityId: builder.query<AllCimmunityPostsModel, { communityId: number, page: number, pageSize: number }>({
             query: ({ communityId, page, pageSize }) => `/CommunityPost/getByCommunityId/${communityId}?page=${page}&pageSize=${pageSize}`,
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.communityId}`,
             merge: (currentCache, newItems) => {
-                newItems.forEach(item => {
-                    const index = currentCache.findIndex(d => d.id === item.id);
+                newItems.posts.forEach(item => {
+                    const index = currentCache.posts.findIndex(x => x.id === item.id);
                     if (index === -1) {
-                        currentCache.push(item);
+                        currentCache.posts.push(item);
                     } else {
-                        currentCache[index] = item;
+                        currentCache.posts[index] = item;
                     }
                 });
+
+                currentCache.posts.sort(
+                    (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                );
             },
-            forceRefetch: ({ currentArg, previousArg }) => currentArg?.page !== previousArg?.page,
-            providesTags: result =>
-                result
-                    ? [...result.map(({ id }) => ({ type: 'CommunityPost' as const, id })), { type: 'CommunityPost' }]
-                    : [{ type: 'CommunityPost' }]
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.communityId !== previousArg?.communityId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'CommunityPost', id: 'LIST' },
+                ...(result?.posts.map(post => ({
+                    type: 'CommunityPost' as const,
+                    id: post.id
+                })) ?? [])
+            ]
         }),
     })
 })

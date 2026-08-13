@@ -57,7 +57,7 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
         return post;
     }
 
-    public async Task<IEnumerable<CommunityPost>> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken)
+    public async Task<(IEnumerable<CommunityPost>, int)> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken)
     {
         var result = await _context.Set<CommunityPost>()
             .AsNoTracking()
@@ -66,10 +66,13 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancelationToken);
-        return result.Count != 0 ? result : [];
+
+        var count = await _context.Set<CommunityPost>()
+            .CountAsync(cancelationToken);
+        return (result, count);
     }
 
-    public async Task<IEnumerable<CommunityPost>> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken)
+    public async Task<(IEnumerable<CommunityPost>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken)
     {
         var communityPosts = await (
             from post in _context.Set<CommunityPost>().AsNoTracking()
@@ -77,11 +80,19 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
                 on post.CommunityId equals member.CommunityId
             where member.AppUserId == appUserId
             select post)
-           .OrderBy(x => x.CreatedAt)
-           .Skip((page - 1) * pageSize)
-           .Take(pageSize)
-           .ToListAsync(cancelationToken);
-        return communityPosts;
+               .OrderBy(x => x.CreatedAt)
+               .Skip((page - 1) * pageSize)
+               .Take(pageSize)
+               .ToListAsync(cancelationToken);
+
+        var count = await (
+            from post in _context.Set<CommunityPost>().AsNoTracking()
+            join member in _context.Set<CommunityUser>().AsNoTracking()
+                on post.CommunityId equals member.CommunityId
+            where member.AppUserId == appUserId
+            select post)
+                .CountAsync(cancelationToken);
+        return (communityPosts, count);
     }
 
     public async Task<int> CountAsync(int communityId, CancellationToken cancellationToken)

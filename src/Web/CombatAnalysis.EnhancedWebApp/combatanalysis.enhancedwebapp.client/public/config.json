@@ -7,8 +7,8 @@
   "communication": {
     "chatPageSize": 10,
     "communityPageSize": 5,
-    "communityPostPageSize": 5,
-    "userPostSize": 5
+    "communityPostPageSize": 10,
+    "userPostSize": 10
   },
   "hubs": {
     "url": "https://localhost:7026/",

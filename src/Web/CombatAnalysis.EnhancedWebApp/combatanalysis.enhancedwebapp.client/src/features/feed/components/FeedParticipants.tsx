@@ -17,41 +17,47 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself }) => {
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
 
-    const { userFeed, userFeedIsLoading } = useFetchUserPosts(page, pageSizeRef.current, myself.id);
-    
+    const { posts, isLoading, isFetching, count } = useFetchUserPosts(page, pageSizeRef.current, myself.id);
+
     useEffect(() => {
-        if (!userFeed) {
+        if (!posts) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < userFeed.length);
-    }, [page, userFeed]);
+        setHasMore(((page - 1) * pageSizeRef.current) < count);
+    }, [page, posts]);
+
+    if (!posts || isLoading) {
+        return (<Loading />);
+    }
 
     return (
         <>
             <ul className="posts">
-                {!userFeed
+                {!posts
                     ? <Loading />
-                    : userFeed.map(post => (
-                        <li key={post.id}>
-                            {post.communityId
-                                ? <CommunityPost
+                    : posts.map(post => (
+                        post.communityId
+                            ? <li key={`${post.id} c`}>
+                                <CommunityPost
                                     userId={myself.id}
                                     communityId={post.communityId ?? 0}
                                     post={post}
                                 />
-                                : <UserPost
+                            </li>
+                            : <li key={`${post.id} u`}>
+                                <UserPost
                                     myself={myself}
                                     post={post}
                                 />
-                            }
-                        </li>
+                            </li>
+
                     ))}
                 <li className="posts__item">
                     <InfiniteScrollTrigger
                         onLoadMore={() => setPage(p => p + 1)}
                         hasMore={hasMore}
-                        isLoading={userFeedIsLoading}
+                        isLoading={isFetching}
                     />
                 </li>
             </ul>

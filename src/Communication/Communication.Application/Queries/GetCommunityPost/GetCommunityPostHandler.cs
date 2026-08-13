@@ -1,20 +1,21 @@
 ﻿using AutoMapper;
 using Communication.Application.DTOs.Post;
+using Communication.Application.DTOs.Post.General;
 using Communication.Domain.Data;
 using MediatR;
 
 namespace Communication.Application.Queries.GetCommunityPost;
 
-internal class GetCommunityPostHandler(ICommunityPostRepository repository, IMapper mapper) : IRequestHandler<GetCommunityPostQuery, IEnumerable<CommunityPostDto>>
+internal class GetCommunityPostHandler(ICommunityPostRepository repository, IMapper mapper) : IRequestHandler<GetCommunityPostQuery, AllCommunityPostsDto>
 {
     private readonly ICommunityPostRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IEnumerable<CommunityPostDto>> Handle(GetCommunityPostQuery request, CancellationToken cancellationToken)
+    public async Task<AllCommunityPostsDto> Handle(GetCommunityPostQuery request, CancellationToken cancellationToken)
     {
-        var communityPosts = await _repository.GetByCommunityIdAsync(request.CommunityId, request.Page, request.PageSize, cancellationToken);
+        var (communityPosts, count) = await _repository.GetByCommunityIdAsync(request.CommunityId, request.Page, request.PageSize, cancellationToken);
         var map = _mapper.Map<IEnumerable<CommunityPostDto>>(communityPosts);
 
-        return map;
+        return new AllCommunityPostsDto(map, count);
     }
 }

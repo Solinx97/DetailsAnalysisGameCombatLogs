@@ -11,7 +11,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<IEnumerable<UserFeed>> GetUserFeedAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserFeed>, int)> GetUserFeedAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var userPosts = _context.Set<UserPost>()
             .AsNoTracking()
@@ -72,6 +72,22 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 x.CommunityId))
             .ToListAsync(cancellationToken);
 
-        return feed;
+        var count = await userPosts
+            .Concat(communityPosts)
+            .Select(x => new UserFeed(
+                x.Id,
+                x.Owner,
+                x.Content,
+                x.PublicType,
+                x.Tags,
+                x.CreatedAt,
+                x.AppUserId,
+                x.CommunityName,
+                x.PostType,
+                x.Restrictions,
+                x.CommunityId))
+            .CountAsync(cancellationToken);
+
+        return (feed, count);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
-using CombatAnalysis.EnhancedWebApp.Server.Models.Post.General;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,8 +24,8 @@ public class UserFeedController : ControllerBase
     public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"UserFeed/{appUserId}?page={page}&pageSize={pageSize}");
-        var feed = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserFeedModel>>();
+        var userFeed = await responseMessage.Content.ReadFromJsonAsync<UserFeedResponse>();
 
-        return Ok(feed);
+        return Ok(userFeed);
     }
 }

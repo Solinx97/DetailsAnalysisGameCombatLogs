@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,9 +25,9 @@ public class CommunityPostController : ControllerBase
     public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
-        var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
+        var comunityPosts = await responseMessage.Content.ReadFromJsonAsync<ComunityPostsResponse>();
 
-        return Ok(posts);
+        return Ok(comunityPosts);
     }
 
     [HttpPost]

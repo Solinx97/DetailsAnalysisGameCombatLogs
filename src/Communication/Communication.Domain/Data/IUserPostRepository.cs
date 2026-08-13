@@ -4,7 +4,7 @@ namespace Communication.Domain.Data;
 
 public interface IUserPostRepository
 {
-    Task<IEnumerable<UserPost>> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<(IEnumerable<UserPost>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken);
 
     Task<UserPost> GetWithReactionsAsync(int id, CancellationToken cancellationToken);
 

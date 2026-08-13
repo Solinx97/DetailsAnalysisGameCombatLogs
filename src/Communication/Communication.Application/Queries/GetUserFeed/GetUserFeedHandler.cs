@@ -5,17 +5,17 @@ using MediatR;
 
 namespace Communication.Application.Queries.GetUserFeed;
 
-internal class GetUserFeedHandler(IUserFeedRepository repository, IMapper mapper) : IRequestHandler<GetUserFeedQuery, IEnumerable<UserFeedDto>>
+internal class GetUserFeedHandler(IUserFeedRepository repository, IMapper mapper) : IRequestHandler<GetUserFeedQuery, AllUserFeedDto>
 {
     private readonly IUserFeedRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IEnumerable<UserFeedDto>> Handle(GetUserFeedQuery request, CancellationToken cancellationToken)
+    public async Task<AllUserFeedDto> Handle(GetUserFeedQuery request, CancellationToken cancellationToken)
     {
-        var feed = await _repository.GetUserFeedAsync(request.AppUserId, request.Page, request.PageSize, cancellationToken);
+        var (feed, count) = await _repository.GetUserFeedAsync(request.AppUserId, request.Page, request.PageSize, cancellationToken);
         var map = _mapper.Map<IEnumerable<UserFeedDto>>(feed);
 
-        return map;
+        return new AllUserFeedDto(map, count);
     }
 }
 

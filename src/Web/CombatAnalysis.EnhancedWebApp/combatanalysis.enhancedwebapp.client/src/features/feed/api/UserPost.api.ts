@@ -1,5 +1,6 @@
 import type { UserPostModel } from '../types/UserPostModel';
 import { PostApi } from './Post.api';
+import { UserFeedApi } from './UserFeed.api';
 
 export const UserPostApi = PostApi.injectEndpoints({
     endpoints: builder => ({
@@ -9,7 +10,53 @@ export const UserPostApi = PostApi.injectEndpoints({
                 url: '/UserPost',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'UserPost', id: result.id }] : [],
+            async onQueryStarted(_post, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdPost } = await queryFulfilled;
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getUserPostsByUserId',
+                            {
+                                appUserId: createdPost.appUserId!,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const exists = draft.posts.some(
+                                    x => x.id === createdPost.id
+                                );
+
+                                if (!exists) {
+                                    draft.posts.unshift(createdPost);
+                                }
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId: createdPost.appUserId!,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const exists = draft.posts.some(
+                                    x => x.id === createdPost.id
+                                );
+
+                                if (!exists) {
+                                    draft.posts.unshift(createdPost);
+                                }
+                            }
+                        )
+                    );
+                } catch {
+                    // creation failed
+                }
+            }
         }),
         updateUserPost: builder.mutation<void, UserPostModel>({
             query: post => ({

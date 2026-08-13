@@ -15,8 +15,8 @@ public class UserFeedController(IMediator mediator) : ControllerBase
     [HttpGet("{appUserId}")]
     public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var feed = await _mediator.Send(new GetUserFeedQuery(appUserId, page, pageSize), cancellationToken);
+        var userFeed = await _mediator.Send(new GetUserFeedQuery(appUserId, page, pageSize), cancellationToken);
 
-        return Ok(feed);
+        return Ok(userFeed);
     }
 }

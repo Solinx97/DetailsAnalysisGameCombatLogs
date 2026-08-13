@@ -9,7 +9,34 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                 url: '/CommunityPost',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'CommunityPost', id: result.id }] : [],
+
+            async onQueryStarted(_post, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdPost } = await queryFulfilled;
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getCommunityPostsByCommunityId',
+                            {
+                                communityId: createdPost.communityId!,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const exists = draft.posts.some(
+                                    x => x.id === createdPost.id
+                                );
+
+                                if (!exists) {
+                                    draft.posts.unshift(createdPost);
+                                }
+                            }
+                        )
+                    );
+                } catch {
+                    // creation failed
+                }
+            }
         }),
         updateCommunityPost: builder.mutation<void, CommunityPostModel>({
             query: post => ({

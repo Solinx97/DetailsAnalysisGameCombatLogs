@@ -6,4 +6,4 @@ namespace Communication.Application.Queries.GetUserFeed;
 public record GetUserFeedQuery(
     string AppUserId,
     int Page, int PageSize
-    ) : IRequest<IEnumerable<UserFeedDto>>;
+    ) : IRequest<AllUserFeedDto>;

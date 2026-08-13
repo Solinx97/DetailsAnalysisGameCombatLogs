@@ -1,22 +1,21 @@
 ﻿import { useRef, type RefObject } from 'react';
 import { useGetFeedQuery } from '../api/UserFeed.api';
-import { useGetUserPostCountByUserIdQuery } from '../api/UserPost.api';
 import type { UserFeedModel } from '../types/UserFeedModel';
 
 interface useFetchUserPostsResult {
-    userFeed: UserFeedModel[] | undefined;
-    userFeedIsLoading: boolean;
-    userPostCount: number;
+    posts: UserFeedModel[] | undefined;
+    isLoading: boolean;
+    isFetching: boolean;
+    count: number;
     currentDateRef: RefObject<string>;
 }
 
 const useFetchUserPosts = (page: number, pageSize: number, appUserId: string): useFetchUserPostsResult => {
     const currentDateRef = useRef<string>((new Date()).toISOString());
 
-    const { data: userFeed, isLoading: userFeedIsLoading } = useGetFeedQuery({ appUserId, page, pageSize });
-    const { data: userPostCount } = useGetUserPostCountByUserIdQuery(appUserId);
+    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId, page, pageSize });
 
-    return { userFeed, userFeedIsLoading, userPostCount: userPostCount ?? 0, currentDateRef };
+    return { posts: userFeed?.posts, isLoading, isFetching, count: userFeed?.count ?? 0, currentDateRef };
 }
 
 export default useFetchUserPosts;

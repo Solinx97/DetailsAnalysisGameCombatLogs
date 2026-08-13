@@ -11,30 +11,30 @@ interface SelectedCommunityItemProps {
 }
 
 const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId, communityId }) => {
-    const [page, setPage] = useState(1);;
+    const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
 
-    const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityPostPageSize ?? 5);
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityPostPageSize ?? 10);
 
-    const { communityPosts, communityPostIsLoading } = useFetchCommunityPosts(page, pageSizeRef.current, communityId);
+    const { posts, isLoading, isFetching, count } = useFetchCommunityPosts(page, pageSizeRef.current, communityId);
 
     useEffect(() => {
-        if (!communityPosts) {
+        if (!posts) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < communityPosts.length);
-    }, [page, communityPosts]);
+        setHasMore(((page - 1) * pageSizeRef.current) < count);
+    }, [page, posts]);
 
-    if (!communityPosts) {
+    if (!posts || isLoading) {
         return (<Loading />);
     }
 
     return (
         <>
             <ul className="posts">
-                {communityPosts.map((post) => (
-                    <li key={post?.id}>
+                {posts?.map((post) => (
+                    <li key={post?.id} className="posts__item">
                         <CommunityPost
                             userId={myselfId}
                             communityId={communityId}
@@ -47,7 +47,7 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
                     <InfiniteScrollTrigger
                         onLoadMore={() => setPage(p => p + 1)}
                         hasMore={hasMore}
-                        isLoading={communityPostIsLoading}
+                        isLoading={isFetching}
                     />
                 </li>
             </ul>
