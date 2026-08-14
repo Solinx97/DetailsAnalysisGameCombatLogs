@@ -19,9 +19,9 @@ public class CommunityPostController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByCommunityId(int communityId, string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var allCommunityPosts = await _mediator.Send(new GetCommunityPostQuery(communityId, page, pageSize), cancellationToken);
+        var allCommunityPosts = await _mediator.Send(new GetCommunityPostQuery(communityId, appUserId, page, pageSize), cancellationToken);
 
         return Ok(allCommunityPosts);
     }

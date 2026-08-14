@@ -3,7 +3,7 @@ import { CommunityApi } from './Community.api';
 
 export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
     endpoints: builder => ({
-        createCommunityDiscussionAsync: builder.mutation<CommunityDiscussionModel, CommunityDiscussionModel>({
+        createCommunityDiscussion: builder.mutation<CommunityDiscussionModel, CommunityDiscussionModel>({
             query: discussion => ({
                 body: discussion,
                 url: '/CommunityDiscussion',
@@ -11,15 +11,15 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
             }),
             invalidatesTags: result => result ? [{ type: 'CommunityDiscussion', id: result.id }] : [],
         }),
-        updateCommunityDiscussionAsync: builder.mutation<void, CommunityDiscussionModel>({
-            query: discussion => ({
+        updateCommunityDiscussion: builder.mutation<void, { id: number, discussion: CommunityDiscussionModel }>({
+            query: ({ id, discussion }) => ({
                 body: discussion,
-                url: '/CommunityDiscussion',
+                url: `/CommunityDiscussion/${id}`,
                 method: 'PUT'
             }),
             invalidatesTags: (_result, _error, discussion) => [{ type: 'CommunityDiscussion', id: discussion.id }]
         }),
-        removeCommunityDiscussionAsync: builder.mutation<void, number>({
+        removeCommunityDiscussion: builder.mutation<void, number>({
             query: id => ({
                 url: `/CommunityDiscussion/${id}`,
                 method: 'DELETE'
@@ -44,9 +44,9 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
 })
 
 export const {
-    useCreateCommunityDiscussionAsyncMutation,
-    useUpdateCommunityDiscussionAsyncMutation,
-    useRemoveCommunityDiscussionAsyncMutation,
+    useCreateCommunityDiscussionMutation,
+    useUpdateCommunityDiscussionMutation,
+    useRemoveCommunityDiscussionMutation,
     useGetCommunityDiscussionByIdQuery,
     useGetCommunityDiscussionByCommunityIdQuery,
     useLazyGetCommunityDiscussionByCommunityIdQuery,

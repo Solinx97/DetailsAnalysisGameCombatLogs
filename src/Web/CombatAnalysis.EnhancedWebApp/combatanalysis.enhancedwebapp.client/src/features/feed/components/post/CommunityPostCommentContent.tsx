@@ -25,7 +25,7 @@ const CommunityPostCommentContent: React.FC<CommunityPostCommentContentProps> = 
             const postCommentForUpdate = Object.assign({}, comment);
             postCommentForUpdate.content = commentContent.current?.value ?? "";
 
-            await updatePostComment(postCommentForUpdate).unwrap();
+            await updatePostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
             setEditModeOne(false);
         } catch (e) {
             logger.error("Failed to update community post comment", e);

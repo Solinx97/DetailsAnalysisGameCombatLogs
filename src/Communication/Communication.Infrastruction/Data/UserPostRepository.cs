@@ -1,6 +1,7 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
 using Communication.Domain.Entities.Post;
+using Communication.Domain.Enums;
 using Communication.Domain.ReadModel;
 using Communication.Infrastruction.Exceptions;
 using Communication.Infrastruction.Persistent;
@@ -43,9 +44,17 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
                 x.Tags,
                 x.CreatedAt,
                 x.AppUserId,
+
                 x.UserPostLikes.Count(),
                 x.UserPostDislikes.Count(),
-                x.UserPostComments.Count()))
+                x.UserPostComments.Count(),
+
+                x.UserPostLikes.Any(l => l.AppUserId == appUserId)
+                    ? (int)PostReaction.Like
+                    : x.UserPostDislikes.Any(d => d.AppUserId == appUserId)
+                        ? (int)PostReaction.Dislike
+                        : (int)PostReaction.None)
+            )
             .ToListAsync(cancellationToken);
 
         var count = await query

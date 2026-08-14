@@ -13,7 +13,7 @@ internal class GetCommunityPostHandler(ICommunityPostRepository repository, IMap
 
     public async Task<AllCommunityPostsDto> Handle(GetCommunityPostQuery request, CancellationToken cancellationToken)
     {
-        var (posts, count) = await _repository.GetByCommunityIdAsync(request.CommunityId, request.Page, request.PageSize, cancellationToken);
+        var (posts, count) = await _repository.GetByCommunityIdAsync(request.CommunityId, request.AppUserId, request.Page, request.PageSize, cancellationToken);
         var map = _mapper.Map<IEnumerable<CommunityPostDto>>(posts);
 
         return new AllCommunityPostsDto(map, count);

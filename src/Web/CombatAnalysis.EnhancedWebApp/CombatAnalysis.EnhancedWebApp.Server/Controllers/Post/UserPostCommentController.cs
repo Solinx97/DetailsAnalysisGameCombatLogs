@@ -36,10 +36,10 @@ public class UserPostCommentController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(UserPostCommentModel request)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, UserPostCommentModel request)
     {
-        await _httpClient.PutAsync("UserPostComment", JsonContent.Create(request));
+        await _httpClient.PutAsync($"UserPostComment/{id}", JsonContent.Create(request));
         return NoContent();
     }
 

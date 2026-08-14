@@ -26,10 +26,10 @@ export const CommunityApi = createApi({
             }),
             invalidatesTags: result => result ? [{ type: 'Community', id: result.id }] : [],
         }),
-        updateCommunityAsync: builder.mutation<void, CommunityModel>({
-            query: community => ({
+        updateCommunityAsync: builder.mutation<void, { id: number, community: CommunityModel }>({
+            query: ({id, community }) => ({
                 body: community,
-                url: '/Community',
+                url: `/Community/${id}`,
                 method: 'PUT'
             }),
             invalidatesTags: (_result, _error, community) => [{ type: 'Community', id: community.id }]

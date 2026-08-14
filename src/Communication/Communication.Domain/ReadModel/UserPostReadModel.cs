@@ -10,5 +10,6 @@ public sealed record UserPostReadModel(
     string AppUserId,
     int LikeCount,
     int DislikeCount,
-    int CommentCount
+    int CommentCount,
+    int Reaction
     );

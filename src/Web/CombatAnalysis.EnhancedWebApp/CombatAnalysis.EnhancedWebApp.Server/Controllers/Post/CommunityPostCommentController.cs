@@ -36,10 +36,10 @@ public class CommunityPostCommentController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityPostCommentModel request)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, CommunityPostCommentModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityPostComment", JsonContent.Create(request));
+        var responseMessage = await _httpClient.PutAsync($"CommunityPostComment/{id}", JsonContent.Create(request));
         return NoContent();
     }
 

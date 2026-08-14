@@ -1,9 +1,9 @@
+import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type SetStateAction } from "react";
 import { useTranslation } from 'react-i18next';
-import type { AppUserModel } from '../../../user/types/AppUserModel';
-import type { CommunityModel } from '../../types/CommunityModel';
+import type { CommunityModel } from '../../../types/CommunityModel';
 
 interface CommunityMenuRestrictionItemsProps {
     itemIndex: number;

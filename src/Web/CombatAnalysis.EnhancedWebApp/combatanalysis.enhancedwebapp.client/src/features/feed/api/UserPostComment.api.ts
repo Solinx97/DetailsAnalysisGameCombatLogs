@@ -11,10 +11,10 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: result => result ? [{ type: 'UserPostComment', id: result.id }] : [],
         }),
-        updateUserPostComment: builder.mutation<void, UserPostCommentModel>({
-            query: userPostComment => ({
-                body: userPostComment,
-                url: '/UserPostComment',
+        updateUserPostComment: builder.mutation<void, { id: number, comment: UserPostCommentModel }>({
+            query: ({ id, comment }) => ({
+                body: comment,
+                url: `/UserPostComment/${id}`,
                 method: 'PUT'
             }),
             invalidatesTags: (_result, _error, userPostComment) => [{ type: 'UserPostComment', id: userPostComment.id }],

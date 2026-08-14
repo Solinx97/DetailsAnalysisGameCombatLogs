@@ -1,7 +1,6 @@
-import type { UserFeedModel } from '../types/UserFeedModel';
-import type { UserPostModel } from '../types/UserPostModel';
+import { checkStatus } from '@/shared/helpers/ApiHelper';
 import type { UserPostReactionModel } from '../types/UserPostReactionModel';
-import { PostApi, ReactionType } from './Post.api';
+import { PostApi } from './Post.api';
 import { UserFeedApi } from './UserFeed.api';
 
 export const UserPostLikeApi = PostApi.injectEndpoints({
@@ -15,39 +14,6 @@ export const UserPostLikeApi = PostApi.injectEndpoints({
             async onQueryStarted(_like, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdLike } = await queryFulfilled;
-
-                    const checkStatus = (post: UserPostModel | UserFeedModel) => {
-                        switch (createdLike.status) {
-                            case ReactionType.Like:
-                                post.likeCount++;
-                                post.dislikeCount = Math.max(
-                                    0,
-                                    post.dislikeCount - 1
-                                );
-                                break;
-                            case ReactionType.Dislike:
-                                post.dislikeCount++;
-                                post.likeCount = Math.max(
-                                    0,
-                                    post.likeCount - 1
-                                );
-                                break;
-                            case ReactionType.AddLike:
-                                post.likeCount++;
-                                break;
-                            case ReactionType.RemoveLike:
-                                post.likeCount--;
-                                break;
-                            case ReactionType.AddDislike:
-                                post.dislikeCount++;
-                                break;
-                            case ReactionType.RemoveDislike:
-                                post.dislikeCount--;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
 
                     dispatch(
                         PostApi.util.updateQueryData(
@@ -66,7 +32,7 @@ export const UserPostLikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(post);
+                                checkStatus(createdLike, post);
                             }
                         )
                     );
@@ -88,7 +54,7 @@ export const UserPostLikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(post);
+                                checkStatus(createdLike, post);
                             }
                         )
                     );

@@ -16,7 +16,7 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityPostPageSize ?? 10);
 
-    const { data: posts, isLoading, isFetching } = useGetCommunityPostsByCommunityIdQuery({ communityId, page, pageSize: pageSizeRef.current });
+    const { data: posts, isLoading, isFetching } = useGetCommunityPostsByCommunityIdQuery({ communityId, appUserId: myselfId, page, pageSize: pageSizeRef.current });
 
     useEffect(() => {
         if (!posts) {

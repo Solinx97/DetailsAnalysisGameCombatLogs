@@ -20,6 +20,7 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                             'getCommunityPostsByCommunityId',
                             {
                                 communityId: createdPost.communityId!,
+                                appUserId: createdPost.appUserId!,
                                 page: 1,
                                 pageSize: 10
                             },
@@ -61,6 +62,7 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                             'getCommunityPostsByCommunityId',
                             {
                                 communityId,
+                                appUserId: appUserId!,
                                 page: 1,
                                 pageSize: 10
                             },

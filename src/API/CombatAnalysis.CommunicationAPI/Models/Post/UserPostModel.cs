@@ -12,5 +12,6 @@ public record UserPostModel(
     [Required] string AppUserId,
     [Range(0, int.MaxValue)] int LikeCount,
     [Range(0, int.MaxValue)] int DislikeCount,
-    [Range(0, int.MaxValue)] int CommentCount
+    [Range(0, int.MaxValue)] int CommentCount,
+    int Reaction
     );

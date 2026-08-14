@@ -20,10 +20,10 @@ public class CommunityDiscussionCommentController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("getByDiscussionId")]
+    [HttpGet("getByDiscussionId/{communityId:int:min(1)}")]
     public async Task<IActionResult> GetByDiscussionId(int communityId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/getByDiscussionId?communityId={communityId}&page={page}&pageSize={pageSize}");
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/getByDiscussionId/{communityId}?page={page}&pageSize={pageSize}");
         var comments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionCommentModel>>();
 
         return Ok(comments);
@@ -32,23 +32,21 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityDiscussionCommentModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityDiscussionComment", JsonContent.Create(request));
-        await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionCommentModel>();
-
+        await _httpClient.PostAsync("CommunityDiscussionComment", JsonContent.Create(request));
         return NoContent();
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityDiscussionCommentModel request)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, CommunityDiscussionCommentModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityDiscussionComment", JsonContent.Create(request));
+        await _httpClient.PutAsync($"CommunityDiscussionComment/{id}", JsonContent.Create(request));
         return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int discussionId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityDiscussionComment/{id}?discussionId={discussionId}");
+        await _httpClient.DeletAsync($"CommunityDiscussionComment/{id}?discussionId={discussionId}");
         return NoContent();
     }
 }

@@ -1,4 +1,5 @@
 ﻿import type { RootState } from '@/app/Store';
+import { Reaction } from '@/shared/helpers/EnumHelper';
 import VerificationRestriction from '@/shared/components/VerificationRestriction';
 import logger from '@/utils/Logger';
 import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
@@ -73,7 +74,7 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
                             <FontAwesomeIcon
                                 className="item__like"
                                 icon={faHeart}
-                                title={t("Like")}
+                                color={`${post.reaction === Reaction.Like ? 'green' : ''}`}
                                 onClick={createPostLikeAsync}
                             />
                             <div className="count">{post.likeCount}</div>
@@ -82,7 +83,7 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
                             <FontAwesomeIcon
                                 className="item__dislike"
                                 icon={faThumbsDown}
-                                title={t("Dislike")}
+                                color={`${post.reaction === Reaction.Dislike ? 'green' : ''}`}
                                 onClick={createPostDislikeAsync}
                             />
                             <div className="count">{post.dislikeCount}</div>

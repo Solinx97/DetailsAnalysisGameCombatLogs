@@ -17,7 +17,7 @@ public class CommunityDiscussionCommentController(IMediator mediator) : Controll
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByDiscussionId")]
+    [HttpGet("getByDiscussionId/{communityId:int:min(1)}")]
     public async Task<IActionResult> GetByDiscussionId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var comments = await _mediator.Send(new GetCommunityDiscussionCommentsQuery(communityId, page, pageSize), cancellationToken);
@@ -42,13 +42,13 @@ public class CommunityDiscussionCommentController(IMediator mediator) : Controll
             return BadRequest("Route ID and body ID do not match.");
         }
 
-        var command = new UpdateDiscussionCommentContentCommand(request.Id, request.DiscussionId, request.Content);
+        var command = new UpdateDiscussionCommentContentCommand(request.Id, request.CommunityDiscussionId, request.Content);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int discussionId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new DeleteDiscussionCommentCommand(id, discussionId), cancellationToken);

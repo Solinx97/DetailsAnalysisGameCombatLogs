@@ -1,16 +1,16 @@
 import AddPeople from '@/shared/components/AddPeople';
 import logger from '@/utils/Logger';
+import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import { useState, type SetStateAction } from "react";
 import { useTranslation } from 'react-i18next';
-import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useUpdateCommunityAsyncMutation } from '../../api/Community.api';
-import { useCreateInviteAsyncMutation } from '../../api/InviteToCommunity.api';
-import type { CommunityModel } from '../../types/CommunityModel';
-import type { InviteToCommunityModel } from '../../types/InviteToCommunityModel';
-import CommonItem from '../create/CommonItem';
-import CommunityRulesItem from '../create/CommunityRulesItem';
-import ItemConnector from '../create/ItemConnector';
-import CommunityMembers from './CommunityMembers';
+import { useUpdateCommunityAsyncMutation } from '../../../api/Community.api';
+import { useCreateInviteAsyncMutation } from '../../../api/InviteToCommunity.api';
+import type { CommunityModel } from '../../../types/CommunityModel';
+import type { InviteToCommunityModel } from '../../../types/InviteToCommunityModel';
+import CommonItem from '../../create/CommonItem';
+import CommunityRulesItem from '../../create/CommunityRulesItem';
+import ItemConnector from '../../create/ItemConnector';
+import CommunityMembers from '../CommunityMembers';
 
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
@@ -40,7 +40,7 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
             communityForUpdate.name = communityName;
             communityForUpdate.description = communityDescription;
 
-            await updateCommunityAsyncMut(communityForUpdate).unwrap();
+            await updateCommunityAsyncMut({ id: communityForUpdate.id, community: communityForUpdate }).unwrap();
             setCommunity(communityForUpdate);
         } catch (e) {
             logger.error("Failed to update commuity", e);

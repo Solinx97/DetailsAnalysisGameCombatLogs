@@ -1,6 +1,7 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
 using Communication.Domain.Entities.Community;
+using Communication.Domain.Enums;
 using Communication.Domain.ReadModel;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,12 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 DislikeCount = x.UserPostDislikes.Count(),
                 CommentCount = x.UserPostComments.Count(),
 
+                Reaction = x.UserPostLikes.Any(l => l.AppUserId == appUserId)
+                    ? (int)PostReaction.Like
+                    : x.UserPostDislikes.Any(d => d.AppUserId == appUserId)
+                        ? (int)PostReaction.Dislike
+
+                        : (int)PostReaction.None,
                 CommunityName = (string)null,
                 PostType = 0,
                 Restrictions = 0,
@@ -55,6 +62,12 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 DislikeCount = post.CommunityPostDislikes.Count(),
                 CommentCount = post.CommunityPostComments.Count(),
 
+                Reaction = post.CommunityPostLikes.Any(l => l.AppUserId == appUserId)
+                    ? (int)PostReaction.Like
+                    : post.CommunityPostDislikes.Any(d => d.AppUserId == appUserId)
+                        ? (int)PostReaction.Dislike
+                        : (int)PostReaction.None,
+
                 post.CommunityName,
                 post.PostType,
                 post.Restrictions,
@@ -74,9 +87,12 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 x.Tags,
                 x.CreatedAt,
                 x.AppUserId,
+
                 x.LikeCount,
                 x.DislikeCount,
                 x.CommentCount,
+                x.Reaction,
+
                 x.CommunityName,
                 x.PostType,
                 x.Restrictions,
@@ -93,9 +109,12 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 x.Tags,
                 x.CreatedAt,
                 x.AppUserId,
+
                 x.LikeCount,
                 x.DislikeCount,
                 x.CommentCount,
+                x.Reaction,
+
                 x.CommunityName,
                 x.PostType,
                 x.Restrictions,

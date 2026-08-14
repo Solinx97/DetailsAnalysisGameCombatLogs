@@ -45,10 +45,10 @@ public class CommunityDiscussionController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityDiscussionModel request)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, CommunityDiscussionModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityDiscussion", JsonContent.Create(request));
+        await _httpClient.PutAsync($"CommunityDiscussion/{id}", JsonContent.Create(request));
         return NoContent();
     }
 

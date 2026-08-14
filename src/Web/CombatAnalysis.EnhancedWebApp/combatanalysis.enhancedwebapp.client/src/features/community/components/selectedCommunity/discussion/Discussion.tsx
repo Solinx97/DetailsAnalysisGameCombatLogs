@@ -1,3 +1,4 @@
+import logger from '@/utils/Logger';
 import { faCircleXmark, faPen, faSquarePlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type ChangeEvent, type FormEvent, type SetStateAction } from 'react';
@@ -5,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../../user/types/AppUserModel';
 import {
     useGetCommunityDiscussionByIdQuery,
-    useRemoveCommunityDiscussionAsyncMutation,
-    useUpdateCommunityDiscussionAsyncMutation
+    useRemoveCommunityDiscussionMutation,
+    useUpdateCommunityDiscussionMutation
 } from '../../../api/CommunityDiscussion.api';
 import { useCreateCommunityDiscussionCommentAsyncMutation } from '../../../api/CommunityDiscussionComment.api';
 import type { CommunityDiscussionCommentModel } from '../../../types/CommunityDiscussionCommentModel';
@@ -31,10 +32,10 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
     const [showAddComment, setAddShowComment] = useState(false);
     const [discussionCommentContent, setDiscussionCommentContent] = useState("");
 
-    const [updateCommunityAsyncMut] = useUpdateCommunityDiscussionAsyncMutation();
-    const [removeCommunityDiscussionAsyncMut] = useRemoveCommunityDiscussionAsyncMutation();
+    const [updateCommunityDiscussionAsync] = useUpdateCommunityDiscussionMutation();
+    const [removeCommunityDiscussionAsyncMut] = useRemoveCommunityDiscussionMutation();
     const [createCommunityDiscussionCommentAsyncMut] = useCreateCommunityDiscussionCommentAsyncMutation();
-    const { data: discussion, isLoading} = useGetCommunityDiscussionByIdQuery(discussionId);
+    const { data: discussion, isLoading } = useGetCommunityDiscussionByIdQuery(discussionId);
 
     useEffect(() => {
         if (discussion === undefined) {
@@ -46,24 +47,26 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
     }, [discussion])
 
     const updateDiscussionAsync = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+        try {
+            event.preventDefault();
 
-        if (!discussion) {
-            return;
-        }
+            if (!discussion) {
+                return;
+            }
 
-        const newDiscussion: CommunityDiscussionModel = {
-            id: discussion.id,
-            title: title,
-            content: content,
-            when: discussion.when,
-            appUserId: discussion.appUserId,
-            communityId: discussion.communityId
-        }
+            const updateDiscussion: CommunityDiscussionModel = {
+                id: discussion.id,
+                title: title,
+                content: content,
+                when: discussion.when,
+                appUserId: discussion.appUserId,
+                communityId: discussion.communityId
+            }
 
-        const updated = await updateCommunityAsyncMut(newDiscussion);
-        if (updated.data !== undefined) {
+            await updateCommunityDiscussionAsync({ id: updateDiscussion.id, discussion: updateDiscussion }).unwrap();
             setEditModeOne(false);
+        } catch (error) {
+            logger.error("Failed to update community descussion", error);
         }
     }
 
@@ -74,17 +77,19 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
     }
 
     const createDiscussionCommentAsync = async () => {
-        const newDiscussionComment: CommunityDiscussionCommentModel = {
-            id: 0,
-            content: discussionCommentContent,
-            when: new Date(),
-            communityDiscussionId: discussionId,
-            appUserId: user?.id ?? "",
-        }
+        try {
+            const newDiscussionComment: CommunityDiscussionCommentModel = {
+                id: 0,
+                content: discussionCommentContent,
+                when: new Date(),
+                communityDiscussionId: discussionId,
+                appUserId: user?.id ?? "",
+            }
 
-        const created = await createCommunityDiscussionCommentAsyncMut(newDiscussionComment);
-        if (created.data !== undefined) {
+            await createCommunityDiscussionCommentAsyncMut(newDiscussionComment).unwrap();
             setDiscussionCommentContent("");
+        } catch (error) {
+            logger.error("Failed to create community descussion comment", error);
         }
     }
 
@@ -151,20 +156,20 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                         />
                         <div className="add-new-discussion-comment">
                             <div className="add-new-discussion-comment__title">
-                            {showAddComment
-                                ? <div>{t("AddComment")}</div>
-                                : <div className="btn-shadow add-comment" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</div>
-                            }
-                        </div>
-                        {showAddComment &&
-                            <div className="add-new-discussion-comment__content">
-                                <textarea className="form-control" rows={3} cols={60} onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
-                                <div className="actions">
-                                    <div className="btn-shadow create" onClick={createDiscussionCommentAsync}>{t("Add")}</div>
-                                    <div className="btn-shadow hide" onClick={() => setAddShowComment((item) => !item)}>{t("Hide")}</div>
-                                </div>
+                                {showAddComment
+                                    ? <div>{t("AddComment")}</div>
+                                    : <div className="btn-shadow add-comment" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</div>
+                                }
                             </div>
-                        }
+                            {showAddComment &&
+                                <div className="add-new-discussion-comment__content">
+                                    <textarea className="form-control" rows={3} cols={60} onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
+                                    <div className="actions">
+                                        <div className="btn-shadow create" onClick={createDiscussionCommentAsync}>{t("Add")}</div>
+                                        <div className="btn-shadow hide" onClick={() => setAddShowComment((item) => !item)}>{t("Hide")}</div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </>
                 }
@@ -190,7 +195,7 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                 </div>
                 <div className="actions">
                     <input type="submit" className="btn btn-primary" value={t("Save")} />
-                    <input type="button" className="btn btn-light" value={t("Cancel")} onClick={() => setEditModeOne(false)} />
+                    <input type="button" className="btn btn-secondary" value={t("Cancel")} onClick={() => setEditModeOne(false)} />
                 </div>
             </form>
         );

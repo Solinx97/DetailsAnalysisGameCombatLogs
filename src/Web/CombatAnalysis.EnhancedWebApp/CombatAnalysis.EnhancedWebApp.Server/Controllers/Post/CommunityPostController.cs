@@ -22,9 +22,9 @@ public class CommunityPostController : ControllerBase
     }
 
     [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
+    public async Task<IActionResult> GetByCommunityId(int communityId, string appUserId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId/{communityId}?appUserId={appUserId}&page={page}&pageSize={pageSize}");
         var comunityPosts = await responseMessage.Content.ReadFromJsonAsync<ComunityPostsResponse>();
 
         return Ok(comunityPosts);

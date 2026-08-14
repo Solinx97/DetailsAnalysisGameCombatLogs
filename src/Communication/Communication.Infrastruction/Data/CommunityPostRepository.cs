@@ -1,7 +1,7 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
-using Communication.Domain.Entities.Community;
 using Communication.Domain.Entities.Post;
+using Communication.Domain.Enums;
 using Communication.Domain.ReadModel;
 using Communication.Infrastruction.Exceptions;
 using Communication.Infrastruction.Persistent;
@@ -58,7 +58,7 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
         return post;
     }
 
-    public async Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken)
+    public async Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, string appUserId, int page, int pageSize, CancellationToken cancelationToken)
     {
         var query = _context.Set<CommunityPost>()
             .AsNoTracking()
@@ -81,51 +81,22 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
                 x.CreatedAt, 
                 x.CommunityId, 
                 x.AppUserId,
+
                 x.CommunityPostLikes.Count(),
                 x.CommunityPostDislikes.Count(),
-                x.CommunityPostComments.Count()))
+                x.CommunityPostComments.Count(),
+
+                x.CommunityPostLikes.Any(l => l.AppUserId == appUserId)
+                    ? (int)PostReaction.Like
+                    : x.CommunityPostDislikes.Any(d => d.AppUserId == appUserId)
+                        ? (int)PostReaction.Dislike
+                        : (int)PostReaction.None)
+            )
             .ToListAsync(cancelationToken);
 
         var count = await query
             .CountAsync(cancelationToken);
         return (result, count);
-    }
-
-    public async Task<(IEnumerable<CommunityPostReadModel>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken)
-    {
-        var query =
-            from post in _context.Set<CommunityPost>().AsNoTracking()
-            join member in _context.Set<CommunityUser>().AsNoTracking()
-                on post.CommunityId equals member.CommunityId
-            where member.AppUserId == appUserId
-            select post;
-
-        var communityPosts = await query
-               .OrderByDescending(x => x.CreatedAt)
-               .ThenByDescending(x => x.Id)
-               .Skip((page - 1) * pageSize)
-               .Take(pageSize)
-               .Select(x => new CommunityPostReadModel(
-                    x.Id,
-                    x.CommunityName,
-                    x.Owner,
-                    x.Content,
-                    x.PostType,
-                    x.PublicType,
-                    x.Restrictions,
-                    x.Tags,
-                    x.CreatedAt,
-                    x.CommunityId,
-                    x.AppUserId,
-                    x.CommunityPostLikes.Count(),
-                    x.CommunityPostDislikes.Count(),
-                    x.CommunityPostComments.Count()))
-               .ToListAsync(cancelationToken);
-
-        var count = await query
-                .CountAsync(cancelationToken);
-
-        return (communityPosts, count);
     }
 
     public async Task<int> CountAsync(int communityId, CancellationToken cancellationToken)

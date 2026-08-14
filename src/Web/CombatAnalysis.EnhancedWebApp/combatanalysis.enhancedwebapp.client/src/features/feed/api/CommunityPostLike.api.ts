@@ -1,7 +1,6 @@
-﻿import type { CommunityPostModel } from '../types/CommunityPostModel';
+﻿import { checkStatus } from '@/shared/helpers/ApiHelper';
 import type { CommunityPostReactionModel } from '../types/CommunityPostReactionModel';
-import type { UserFeedModel } from '../types/UserFeedModel';
-import { PostApi, ReactionType } from './Post.api';
+import { PostApi } from './Post.api';
 import { UserFeedApi } from './UserFeed.api';
 
 export const CommunityPostLikeApi = PostApi.injectEndpoints({
@@ -16,44 +15,12 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                 try {
                     const { data: createdLike } = await queryFulfilled;
 
-                    const checkStatus = (post: CommunityPostModel | UserFeedModel) => {
-                        switch (createdLike.status) {
-                            case ReactionType.Like:
-                                post.likeCount++;
-                                post.dislikeCount = Math.max(
-                                    0,
-                                    post.dislikeCount - 1
-                                );
-                                break;
-                            case ReactionType.Dislike:
-                                post.dislikeCount++;
-                                post.likeCount = Math.max(
-                                    0,
-                                    post.likeCount - 1
-                                );
-                                break;
-                            case ReactionType.AddLike:
-                                post.likeCount++;
-                                break;
-                            case ReactionType.RemoveLike:
-                                post.likeCount--;
-                                break;
-                            case ReactionType.AddDislike:
-                                post.dislikeCount++;
-                                break;
-                            case ReactionType.RemoveDislike:
-                                post.dislikeCount--;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
                     dispatch(
                         PostApi.util.updateQueryData(
                             'getCommunityPostsByCommunityId',
                             {
                                 communityId: createdLike.communityId!,
+                                appUserId: createdLike.appUserId!,
                                 page: 1,
                                 pageSize: 10
                             },
@@ -66,7 +33,7 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(post);
+                                checkStatus(createdLike, post);
                             }
                         )
                     );
@@ -88,7 +55,7 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(post);
+                                checkStatus(createdLike, post);
                             }
                         )
                     );

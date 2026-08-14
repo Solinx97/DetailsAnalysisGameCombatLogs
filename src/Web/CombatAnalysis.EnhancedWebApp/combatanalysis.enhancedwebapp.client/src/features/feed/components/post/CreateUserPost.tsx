@@ -37,7 +37,8 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
                 appUserId: user.id,
                 likeCount: 0,
                 dislikeCount: 0,
-                commentCount: 0
+                commentCount: 0,
+                reaction: 0
             }
 
             await createNewUserPostAsync(newPost).unwrap();

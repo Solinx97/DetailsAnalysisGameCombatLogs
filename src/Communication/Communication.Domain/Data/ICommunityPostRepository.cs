@@ -13,9 +13,7 @@ public interface ICommunityPostRepository
 
     Task<CommunityPost> GetWithCommentsAsync(int id, CancellationToken cancellationToken);
 
-    Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken);
-
-    Task<(IEnumerable<CommunityPostReadModel>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancelationToken);
+    Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, string appUserId, int page, int pageSize, CancellationToken cancelationToken);
 
     Task<int> CountAsync(int communityId, CancellationToken cancellationToken);
 

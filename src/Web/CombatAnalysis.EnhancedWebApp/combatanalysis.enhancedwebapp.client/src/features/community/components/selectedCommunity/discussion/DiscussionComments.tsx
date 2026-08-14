@@ -9,7 +9,7 @@ interface DiscussionCommentsProps {
 }
 
 const DiscussionComments: React.FC<DiscussionCommentsProps> = ({ userId, discussionId }) => {
-    const { data: discussionComments, isLoading } = useGetCommunityDiscussionCommentByDiscussionIdQuery(discussionId);
+    const { data: discussionComments, isLoading } = useGetCommunityDiscussionCommentByDiscussionIdQuery({ discussionId, page: 1, pageSize: 5 });
 
     if (isLoading) {
         return (<Loading />);
@@ -21,6 +21,7 @@ const DiscussionComments: React.FC<DiscussionCommentsProps> = ({ userId, discuss
                 <li key={item.id} className="post-comments__card">
                     <DiscussionCommentTitle
                         myselfId={userId}
+                        discussionId={discussionId}
                         comment={item}
                     />
                     <DiscussionCommentContent

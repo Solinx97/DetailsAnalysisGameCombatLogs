@@ -119,24 +119,10 @@ public class Community
         _invitesToCommunity.Remove(invite);
     }
 
-    public void EditName(string name)
+    public void Edit(string name, string description)
     {
-        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-
-        if (!string.Equals(Name, name, StringComparison.CurrentCultureIgnoreCase))
-        {
-            Name = name;
-        }
-    }
-
-    public void EditDescription(string description)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(description, nameof(description));
-
-        if (!string.Equals(Description, description, StringComparison.CurrentCultureIgnoreCase))
-        {
-            Description = description;
-        }
+        EditName(name);
+        EditDescription(description);
     }
 
     public void SetPolicyType(int policyType)
@@ -159,5 +145,25 @@ public class Community
         var invite = _invitesToCommunity
             .FirstOrDefault(x => x.ToAppUserId == toAppUserId);
         return invite != null;
+    }
+
+    private void EditName(string name)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+
+        if (!string.Equals(Name, name, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Name = name;
+        }
+    }
+
+    private void EditDescription(string description)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(description, nameof(description));
+
+        if (!string.Equals(Description, description, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Description = description;
+        }
     }
 }

@@ -21,4 +21,6 @@ public class UserPostDto
     public int DislikeCount { get; set; }
 
     public int CommentCount { get; set; }
+
+    public int Reaction { get; set; }
 }

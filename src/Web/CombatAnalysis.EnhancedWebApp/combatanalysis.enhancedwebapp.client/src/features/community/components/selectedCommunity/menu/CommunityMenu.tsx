@@ -1,12 +1,12 @@
 import logger from '@/utils/Logger';
+import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, type SetStateAction } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useLeaveCommunityUserMutation } from '../../api/CommunityUser.api';
-import type { CommunityModel } from '../../types/CommunityModel';
+import { useLeaveCommunityUserMutation } from '../../../api/CommunityUser.api';
+import type { CommunityModel } from '../../../types/CommunityModel';
 import CommunityMenuRestrictionItems from './CommunityMenuRestrictionItems';
 import CommunityMenuRestrictionContent from './CommunityMenuRestrictionContent';
 
@@ -85,7 +85,7 @@ const CommunityMenu: React.FC<CommunityMenuProps> = ({ setShowMenu, user, commun
                 }
             </div>
             <div className="finish-create">
-                <div className="btn-shadow" onClick={() => setShowMenu(false)}>{t("Cancel")}</div>
+                <div className="btn-shadow" onClick={() => setShowMenu(false)}>{t("Close")}</div>
             </div>
         </div>
     );

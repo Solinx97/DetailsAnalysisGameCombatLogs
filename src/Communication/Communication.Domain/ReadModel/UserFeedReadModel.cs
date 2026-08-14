@@ -11,6 +11,7 @@ public sealed record UserFeedReadModel(
     int LikeCount,
     int DislikeCount,
     int CommentCount,
+    int Reaction,
     string? CommunityName,
     int? PostType,
     int? Restrictions,

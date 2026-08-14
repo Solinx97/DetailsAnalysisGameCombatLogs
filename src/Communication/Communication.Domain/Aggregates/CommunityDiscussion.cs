@@ -50,14 +50,10 @@ public class CommunityDiscussion
         return new CommunityDiscussion(title, content, createdAt, communityId, appUserId);
     }
 
-    public void EditTile(string title)
+    public void Edit(string title, string content)
     {
-        ArgumentException.ThrowIfNullOrEmpty(title, nameof(title));
-
-        if (!string.Equals(Title, title, StringComparison.CurrentCultureIgnoreCase))
-        {
-            Title = title;
-        }
+        EditTile(title);
+        EditContent(content);
     }
 
     public void AddComment(string content, string appUserId)
@@ -90,5 +86,25 @@ public class CommunityDiscussion
                 ?? throw new DomainException($"Community discussion comment not found with id {discussionCommentId}");
 
         comment.EditContent(content);
+    }
+
+    private void EditTile(string title)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(title, nameof(title));
+
+        if (!string.Equals(Title, title, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Title = title;
+        }
+    }
+
+    private void EditContent(string content)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
+
+        if (!string.Equals(Content, content, StringComparison.CurrentCultureIgnoreCase))
+        {
+            Content = content;
+        }
     }
 }

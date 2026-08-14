@@ -56,10 +56,10 @@ public class CommunityController : ControllerBase
         return Ok(community);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityModel request)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, CommunityModel request)
     {
-        await _httpClient.PutAsync("Community", JsonContent.Create(request));
+        await _httpClient.PutAsync($"Community/{id}", JsonContent.Create(request));
         return NoContent();
     }
 

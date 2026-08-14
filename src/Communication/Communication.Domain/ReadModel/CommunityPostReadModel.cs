@@ -14,5 +14,6 @@ public sealed record CommunityPostReadModel(
     string AppUserId,
     int LikeCount,
     int DislikeCount,
-    int CommentCount
+    int CommentCount,
+    int Reaction
     );

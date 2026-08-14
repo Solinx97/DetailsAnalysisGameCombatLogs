@@ -28,7 +28,8 @@ const UserPostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId,
             const postCommentForUpdate = Object.assign({}, comment);
             postCommentForUpdate.content = commentContent.current?.value;
 
-            await updatePostComment(postCommentForUpdate).unwrap();
+            await updatePostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
+            setEditModeOne(false);
         } catch (error) {
             console.error("Failed update post comment");
         }

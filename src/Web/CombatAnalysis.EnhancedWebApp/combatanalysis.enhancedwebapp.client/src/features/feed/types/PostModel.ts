@@ -7,4 +7,5 @@ export type PostModel = {
     likeCount: number;
     dislikeCount: number;
     commentCount: number;
+    reaction: number;
 }

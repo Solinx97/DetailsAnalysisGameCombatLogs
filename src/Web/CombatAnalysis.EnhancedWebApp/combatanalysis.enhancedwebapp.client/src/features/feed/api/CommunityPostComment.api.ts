@@ -11,10 +11,10 @@ export const CommunityPostCommentApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: result => result ? [{ type: 'CommunityPostComment', id: result.id }] : [],
         }),
-        updateCommunityPostComment: builder.mutation<void, CommunityPostCommentModel>({
-            query: communityPostComment => ({
-                body: communityPostComment,
-                url: '/CommunityPostComment',
+        updateCommunityPostComment: builder.mutation<void, { id: number, comment: CommunityPostCommentModel }>({
+            query: ({ id, comment }) => ({
+                body: comment,
+                url: `/CommunityPostComment/${id}`,
                 method: 'PUT'
             }),
             invalidatesTags: (_result, _error, communityPostComment) => [{ type: 'CommunityPostComment', id: communityPostComment.id }],

@@ -58,13 +58,12 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
                     dateFormatting={dateFormatting}
                     isMyPost={isMyPost}
                 />
-                <div className="posts__content">{post?.content}</div>
+                <div className="posts__content">{post.content}</div>
                 <UserPostReactions
                     userId={myself.id}
                     post={post}
                     setShowComments={setShowComments}
                     showComments={showComments}
-                    t={t}
                 />
             </div>
             {showComments &&

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../../user/types/AppUserModel';
-import { useCreateCommunityDiscussionAsyncMutation } from '../../../api/CommunityDiscussion.api';
+import { useCreateCommunityDiscussionMutation } from '../../../api/CommunityDiscussion.api';
 import type { CommunityDiscussionModel } from '../../../types/CommunityDiscussionModel';
 import type { CommunityModel } from '../../../types/CommunityModel';
 
@@ -19,7 +19,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({ community, myself, 
     const title = useRef<HTMLInputElement | null>(null);
     const content = useRef<HTMLTextAreaElement | null>(null);
 
-    const [createCommunityAsyncMut] = useCreateCommunityDiscussionAsyncMutation();
+    const [createCommunityAsync] = useCreateCommunityDiscussionMutation();
 
     const createDiscussionAsync = async () => {
         const newDiscussion: CommunityDiscussionModel = {
@@ -31,7 +31,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({ community, myself, 
             communityId: community?.id
         }
 
-        const created = await createCommunityAsyncMut(newDiscussion);
+        const created = await createCommunityAsync(newDiscussion);
         if (created.data !== undefined) {
             setShowDiscussion(false);
         }

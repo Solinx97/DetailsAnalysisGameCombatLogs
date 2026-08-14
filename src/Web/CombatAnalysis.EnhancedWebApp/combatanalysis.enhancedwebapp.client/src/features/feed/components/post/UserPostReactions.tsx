@@ -1,6 +1,7 @@
-﻿import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+﻿import { Reaction } from '@/shared/helpers/EnumHelper';
+import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { type SetStateAction } from 'react';
+import React, { type SetStateAction } from 'react';
 import { useCreateUserPostDislikeMutation } from '../../api/UserPostDislike.api';
 import { useCreateUserPostLikeMutation } from '../../api/UserPostLike.api';
 import type { UserPostModel } from '../../types/UserPostModel';
@@ -11,10 +12,9 @@ interface UserPostReactionsProps {
     post: UserPostModel;
     setShowComments: (value: SetStateAction<boolean>) => void;
     showComments: boolean;
-    t: (key: string) => string;
 }
 
-const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, setShowComments, showComments, t }) => {
+const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, setShowComments, showComments }) => {
     const [createPostLike] = useCreateUserPostLikeMutation();
     const [createPostDislike] = useCreateUserPostDislikeMutation();
 
@@ -61,7 +61,7 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                     <FontAwesomeIcon
                         className="item__like"
                         icon={faHeart}
-                        title={t("Like")}
+                        color={`${post.reaction === Reaction.Like ? 'green' : ''}`}
                         onClick={createPostLikeAsync}
                     />
                     <div className="count">{post.likeCount}</div>
@@ -70,7 +70,7 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                     <FontAwesomeIcon
                         className="item__dislike"
                         icon={faThumbsDown}
-                        title={t("Dislike")}
+                        color={`${post.reaction === Reaction.Dislike ? 'green' : ''}`}
                         onClick={createPostDislikeAsync}
                     />
                     <div className="count">{post.dislikeCount}</div>
@@ -79,7 +79,6 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                     <FontAwesomeIcon
                         className={`item__comment${showComments ? '_active' : ''}`}
                         icon={faMessage}
-                        title={t("Comment")}
                         onClick={postCommentsHandler}
                     />
                     <div className="count">{post.commentCount}</div>

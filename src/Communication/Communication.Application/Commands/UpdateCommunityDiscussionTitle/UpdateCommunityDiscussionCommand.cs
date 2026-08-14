@@ -2,7 +2,8 @@
 
 namespace Communication.Application.Commands.UpdateCommunityDiscussionTitle;
 
-public record UpdateCommunityDiscussionTitleCommand(
+public record UpdateCommunityDiscussionCommand(
     int Id,
-    string Title
+    string Title,
+    string Content
     ) : IRequest;

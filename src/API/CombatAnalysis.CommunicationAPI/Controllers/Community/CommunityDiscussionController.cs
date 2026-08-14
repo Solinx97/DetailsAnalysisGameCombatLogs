@@ -51,7 +51,7 @@ public class CommunityDiscussionController(IMediator mediator) : ControllerBase
             return BadRequest("Route ID and body ID do not match.");
         }
 
-        var command = new UpdateCommunityDiscussionTitleCommand(request.Id, request.Title);
+        var command = new UpdateCommunityDiscussionCommand(request.Id, request.Title, request.Content);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

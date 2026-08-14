@@ -1,3 +1,4 @@
+import logger from '@/utils/Logger';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
@@ -20,16 +21,18 @@ const DiscussionCommentContent: React.FC<DiscussionCommentContentProps> = ({ use
     const commentContent = useRef<HTMLTextAreaElement | null>(null);
 
     const updateDiscussionCommentAsync = async () => {
-        if (!commentContent.current) {
-            return;
-        }
+        try {
+            if (!commentContent.current) {
+                return;
+            }
 
-        const postCommentForUpdate = Object.assign({}, comment);
-        postCommentForUpdate.content = commentContent.current.value;
+            const postCommentForUpdate = Object.assign({}, comment);
+            postCommentForUpdate.content = commentContent.current.value;
 
-        const updatedItem = await updateDiscussionCommentAsyncMut(postCommentForUpdate);
-        if (updatedItem.data !== undefined) {
+            await updateDiscussionCommentAsyncMut({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
             setEditModeOne(false);
+        } catch (error) {
+            logger.error("Failed to update community discussion comment", error);
         }
     }
 
@@ -40,7 +43,7 @@ const DiscussionCommentContent: React.FC<DiscussionCommentContentProps> = ({ use
                     <textarea className="form-control" rows={3} cols={50} ref={commentContent} defaultValue={comment.content} />
                     <div className="actions">
                         <button type="button" className="btn btn-outline-info" onClick={async () => await updateDiscussionCommentAsync()}>{t("Save")}</button>
-                        <button type="button" className="btn btn-light" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
+                        <button type="button" className="btn btn-secondary" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
                     </div>
                 </div>
                 : <div className="card-text">{comment.content}</div>
