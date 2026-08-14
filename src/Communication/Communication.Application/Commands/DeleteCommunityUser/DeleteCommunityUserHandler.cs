@@ -10,7 +10,7 @@ internal class DeleteCommunityUserHandler(ICommunityRepository repository, IUnit
 
     public async Task Handle(DeleteCommunityUserCommand request, CancellationToken cancellationToken)
     {
-        var community = await _repository.GetWithCommunityUsersAsync(request.CommunityId, cancellationToken);
+        var community = await _repository.GetWithUsersAsync(request.CommunityId, cancellationToken);
         community.RemoveMember(request.Id);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);

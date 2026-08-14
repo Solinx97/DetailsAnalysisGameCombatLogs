@@ -62,6 +62,7 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
         <>
             <div className="posts__card">
                 <CommunityPostTitle
+                    userId={userId}
                     post={post}
                     isMyPost={isMyPost}
                 />

@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Community;
 using Communication.Application.Commands.CreateCommunityUser;
 using Communication.Application.Commands.DeleteCommunityUser;
+using Communication.Application.Commands.LeaveCommunityUser;
 using Communication.Application.Queries.GetCommunityUsers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +33,15 @@ public class CommunityUserController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("leave")]
+    public async Task<IActionResult> Leave(string appUserId, int communityId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new LeaveCommunityUserCommand(appUserId, communityId), cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id, int communityId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new DeleteCommunityUserCommand(id, communityId), cancellationToken);

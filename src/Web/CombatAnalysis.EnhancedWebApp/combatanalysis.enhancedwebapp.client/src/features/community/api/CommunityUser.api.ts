@@ -11,12 +11,18 @@ export const CommunityUserApi = CommunityApi.injectEndpoints({
             }),
             invalidatesTags: result => result ? [{ type: 'CommunityUser', id: result.id }] : [],
         }),
-        removeCommunityUser: builder.mutation<void, string>({
-            query: id => ({
-                url: `/CommunityUser/${id}`,
+        removeCommunityUser: builder.mutation<void, { id: string, communityId: number }>({
+            query: ({ id, communityId }) => ({
+                url: `/CommunityUser/${id}?communityId=${communityId}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'CommunityUser', id }]
+            invalidatesTags: (_result, _error, args) => [{ type: 'CommunityUser', id: args.id }]
+        }),
+        leaveCommunityUser: builder.mutation<void, { appUserId: string, communityId: number }>({
+            query: ({ appUserId, communityId }) => ({
+                url: `/CommunityUser/leave?appUserId=${appUserId}&communityId=${communityId}`,
+                method: 'DELETE'
+            }),
         }),
         getUsersByCommunityId: builder.query<CommunityUserModel[], number>({
             query: communityId => `/CommunityUser/getByCommunityId/${communityId}`,
@@ -47,5 +53,6 @@ export const {
     useCommunityUserFindByUserIdQuery,
     useLazyCommunityUserFindByUserIdQuery,
     useCreateCommunityUserMutation,
-    useRemoveCommunityUserMutation
+    useRemoveCommunityUserMutation,
+    useLeaveCommunityUserMutation
 } = CommunityUserApi;

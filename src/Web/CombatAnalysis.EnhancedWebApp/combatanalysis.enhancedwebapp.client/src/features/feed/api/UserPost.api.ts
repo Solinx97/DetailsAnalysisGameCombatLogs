@@ -66,12 +66,58 @@ export const UserPostApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, post) => [{ type: 'UserPost', id: post.id }],
         }),
-        removeUserPost: builder.mutation<void, number>({
-            query: id => ({
+        removeUserPost: builder.mutation<void, { id: number, appUserId: string }>({
+            query: ({ id }) => ({
                 url: `/UserPost/${id}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'UserPost', id }]
+            async onQueryStarted({ id, appUserId }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getUserPostsByUserId',
+                            {
+                                appUserId,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const index = draft.posts.findIndex(
+                                    post => post.id === id
+                                );
+
+                                if (index !== -1) {
+                                    draft.posts.splice(index, 1);
+                                }
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const index = draft.posts.findIndex(
+                                    post => post.id === id
+                                );
+
+                                if (index !== -1) {
+                                    draft.posts.splice(index, 1);
+                                }
+                            }
+                        )
+                    );
+                } catch {
+                    // DELETE failed
+                }
+            }
         }),
         getUserPostById: builder.query<UserPostModel, number>({
             query: id => `/UserPost/${id}`,

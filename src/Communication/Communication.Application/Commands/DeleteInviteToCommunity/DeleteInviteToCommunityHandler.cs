@@ -10,7 +10,7 @@ internal class DeleteInviteToCommunityHandler(ICommunityRepository repository, I
 
     public async Task Handle(DeleteInviteToCommunityCommand request, CancellationToken cancellationToken)
     {
-        var community = await _repository.GetWithInvitesToCommunityAsync(request.CommunityId, cancellationToken);
+        var community = await _repository.GetWithInvitesAsync(request.CommunityId, cancellationToken);
         community.RemoveInvite(request.Id);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);

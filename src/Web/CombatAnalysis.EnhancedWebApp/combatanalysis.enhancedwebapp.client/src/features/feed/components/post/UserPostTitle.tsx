@@ -22,7 +22,7 @@ const UserPostTitle: React.FC<UserPostTitleProps> = ({ post, isMyPost, dateForma
     const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
 
     const removeUserPostAsync = async () => {
-        await removeUserPost(post.id);
+        await removeUserPost({ id: post.id, appUserId: targetUser?.id ?? "" });
     }
 
     if (isLoading) {

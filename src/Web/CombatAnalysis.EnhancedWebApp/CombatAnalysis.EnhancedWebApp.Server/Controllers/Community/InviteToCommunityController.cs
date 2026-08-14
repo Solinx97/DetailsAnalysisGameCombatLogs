@@ -32,21 +32,28 @@ public class InviteToCommunityController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(InviteToCommunityModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(request));
+        await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(request));
         return NoContent();
     }
 
     [HttpPut]
     public async Task<IActionResult> Update(InviteToCommunityModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(request));
-        return NoContent(); ;
+        await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(request));
+        return NoContent();
+    }
+
+    [HttpDelete("accept/{id:int:min(1)}")]
+    public async Task<IActionResult> AcceptRequest(int id, int communityId, string appUserId)
+    {
+        await _httpClient.DeletAsync($"InviteToCommunity/accept/{id}?communityId={communityId}&appUserId={appUserId}");
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int communityId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}?communityId={communityId}");
+        await _httpClient.DeletAsync($"InviteToCommunity/{id}?communityId={communityId}");
         return NoContent();
     }
 }

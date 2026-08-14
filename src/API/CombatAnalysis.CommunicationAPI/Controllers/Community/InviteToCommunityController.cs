@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Community;
+using Communication.Application.Commands.AcceptInviteToCommunity;
 using Communication.Application.Commands.CreateInviteToCommunity;
 using Communication.Application.Commands.DeleteInviteToCommunity;
 using Communication.Application.Queries.GetInvitesToCommunity;
@@ -28,6 +29,14 @@ public class InviteToCommunityController(IMediator mediator) : ControllerBase
     {
         var command = new CreateInviteToCommunityCommand(request.CommunityId, request.AppUserId, request.ToAppUserId);
         await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete("accept/{id:int:min(1)}")]
+    public async Task<IActionResult> AcceptRequest(int id, int communityId, string appUserId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new AcceptInviteToCommunityCommand(id, communityId, appUserId), cancellationToken);
 
         return NoContent();
     }

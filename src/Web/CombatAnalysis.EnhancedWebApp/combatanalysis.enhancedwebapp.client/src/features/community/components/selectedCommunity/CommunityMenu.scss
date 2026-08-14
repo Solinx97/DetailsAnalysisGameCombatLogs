@@ -7,7 +7,7 @@ $mobile-max-width: 425px;
     justify-content: space-around;
     border-radius: 25px;
     top: 15vh;
-    left: 25vw;
+    left: 30vw;
     width: 40vw;
     padding: 10px;
     z-index: 2;
@@ -136,6 +136,7 @@ $mobile-max-width: 425px;
             &__content {
                 display: flex;
                 flex-direction: column;
+                align-items: center;
                 gap: 20px;
 
                 .member {
@@ -148,6 +149,12 @@ $mobile-max-width: 425px;
                         margin: 0 25px;
                         cursor: pointer;
                     }
+                }
+
+                .special-user__another {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
                 }
 
                 .remove-people {
@@ -219,7 +226,7 @@ $mobile-max-width: 425px;
     width: 44%;
     border: 2px solid gray;
     border-radius: 25px;
-    background: white;
+    background: #0c192c;
     z-index: 5;
 
     &__title {

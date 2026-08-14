@@ -43,7 +43,7 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return community.InvitesToCommunity;
     }
 
-    public async Task<Community> GetWithCommunityUsersAsync(int id, CancellationToken cancellationToken)
+    public async Task<Community> GetWithUsersAsync(int id, CancellationToken cancellationToken)
     {
         var community = await _context.Set<Community>()
             .Where(x => x.Id == id)
@@ -54,11 +54,23 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return community;
     }
 
-    public async Task<Community> GetWithInvitesToCommunityAsync(int id, CancellationToken cancellationToken)
+    public async Task<Community> GetWithInvitesAsync(int id, CancellationToken cancellationToken)
     {
         var community = await _context.Set<Community>()
             .Where(x => x.Id == id)
             .Include(x => x.InvitesToCommunity)
+            .FirstOrDefaultAsync(cancellationToken)
+                ?? throw new EntityNotFoundException(typeof(Community), id);
+
+        return community;
+    }
+
+    public async Task<Community> GetWithInvitesAndUsersAsync(int id, CancellationToken cancellationToken)
+    {
+        var community = await _context.Set<Community>()
+            .Where(x => x.Id == id)
+            .Include(x => x.InvitesToCommunity)
+            .Include(x => x.CommunityUsers)
             .FirstOrDefaultAsync(cancellationToken)
                 ?? throw new EntityNotFoundException(typeof(Community), id);
 

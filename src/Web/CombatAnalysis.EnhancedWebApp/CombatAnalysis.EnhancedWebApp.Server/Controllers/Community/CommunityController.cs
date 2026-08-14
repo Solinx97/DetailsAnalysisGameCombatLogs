@@ -66,7 +66,7 @@ public class CommunityController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"Community/{id}");
+        await _httpClient.DeletAsync($"Community/{id}");
         return NoContent();
     }
 

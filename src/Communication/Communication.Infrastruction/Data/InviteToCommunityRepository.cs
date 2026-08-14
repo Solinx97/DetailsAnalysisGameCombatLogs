@@ -12,7 +12,7 @@ internal class InviteToCommunityRepository(CommunicationContext context) : IInvi
     public async Task<IEnumerable<InviteToCommunity>> GetByUserIdAsync(string appUserId, CancellationToken cancellationToken)
     {
         var invitesToCommunity = await _context.Set<InviteToCommunity>()
-            .Where(x => x.AppUserId == appUserId)
+            .Where(x => x.ToAppUserId == appUserId)
             .ToListAsync(cancellationToken);
 
         return invitesToCommunity;

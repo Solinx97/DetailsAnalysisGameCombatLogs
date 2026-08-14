@@ -11,9 +11,11 @@ public interface ICommunityRepository
 
     Task<IEnumerable<InviteToCommunity>> GetInvitesToCommunityAsync(int id, CancellationToken cancellationToken);
 
-    Task<Community> GetWithCommunityUsersAsync(int id, CancellationToken cancellationToken);
+    Task<Community> GetWithUsersAsync(int id, CancellationToken cancellationToken);
 
-    Task<Community> GetWithInvitesToCommunityAsync(int id, CancellationToken cancellationToken);
+    Task<Community> GetWithInvitesAsync(int id, CancellationToken cancellationToken);
+
+    Task<Community> GetWithInvitesAndUsersAsync(int id, CancellationToken cancellationToken);
 
     Task DeleteAsync(int id, CancellationToken cancelationToken);
 

@@ -62,6 +62,17 @@ public class Community
         _communityUsers.Add(communityUser);
     }
 
+    public void LeaveCommunity(string appUserId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+
+        var member = _communityUsers
+            .FirstOrDefault(x => x.AppUserId == appUserId)
+                ?? throw new DomainException($"Community user not found with id {appUserId}");
+
+        _communityUsers.Remove(member);
+    }
+
     public void RemoveMember(string communityUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(communityUserId, nameof(communityUserId));
@@ -78,9 +89,23 @@ public class Community
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
         ArgumentException.ThrowIfNullOrEmpty(toAppUserId, nameof(toAppUserId));
 
+        if (IsExist(toAppUserId) || InviteAlreadySent(toAppUserId))
+        {
+            return;
+        }
+
         var createdAt = DateTimeOffset.UtcNow;
         var invite = InviteToCommunity.Create(toAppUserId, createdAt, appUserId);
         _invitesToCommunity.Add(invite);
+    }
+
+    public void AcceptInvite(int inviteId, string appUserId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(inviteId, nameof(inviteId));
+        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
+
+        AddMember(appUserId);
+        RemoveInvite(inviteId);
     }
 
     public void RemoveInvite(int inviteId)
@@ -120,5 +145,19 @@ public class Community
         {
             PolicyType = policyType;
         }
+    }
+
+    private bool IsExist(string appUserId)
+    {
+        var user = _communityUsers
+            .FirstOrDefault(x => x.AppUserId == appUserId);
+        return user != null;
+    }
+
+    private bool InviteAlreadySent(string toAppUserId)
+    {
+        var invite = _invitesToCommunity
+            .FirstOrDefault(x => x.ToAppUserId == toAppUserId);
+        return invite != null;
     }
 }

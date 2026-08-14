@@ -64,34 +64,38 @@ const SelectedCommunity = () => {
     }, [communityId]);
 
     const updateCommunityNameAsync = async () => {
-        if (!communityNameInput.current) {
-            return;
-        }
+        try {
+            if (!communityNameInput.current) {
+                return;
+            }
 
-        setEditNameOn(false);
+            setEditNameOn(false);
 
-        const communityForUpdate = Object.assign({}, community);
-        communityForUpdate.name = communityNameInput.current.value;
+            const communityForUpdate = Object.assign({}, community);
+            communityForUpdate.name = communityNameInput.current.value;
 
-        const updated = await updateCommunityAsync(communityForUpdate);
-        if (updated.data) {
+            await updateCommunityAsync(communityForUpdate).unwrap();
             setCommunity(communityForUpdate);
+        } catch (error) {
+            logger.error("Faile to update community name", error);
         }
     }
 
     const updateCommunityDescriptionAsync = async () => {
-        if (!communityDescriptionInput.current) {
-            return;
-        }
+        try {
+            if (!communityDescriptionInput.current) {
+                return;
+            }
 
-        setEditDescriptionOn(false);
+            setEditDescriptionOn(false);
 
-        const communityForUpdate = Object.assign({}, community);
-        communityForUpdate.description = communityDescriptionInput.current.value;
+            const communityForUpdate = Object.assign({}, community);
+            communityForUpdate.description = communityDescriptionInput.current.value;
 
-        const updated = await updateCommunityAsync(communityForUpdate);
-        if (updated.data) {
+            await updateCommunityAsync(communityForUpdate).unwrap();
             setCommunity(communityForUpdate);
+        } catch (error) {
+            logger.error("Faile to update community name", error);
         }
     }
 
@@ -142,7 +146,7 @@ const SelectedCommunity = () => {
                                     </div>
                                 }
                             </div>
-                            {(isCommunityMember && community.appUserId === myself?.id) &&
+                            {isCommunityMember &&
                                 <FontAwesomeIcon
                                     icon={faBars}
                                     title={t("Menu")}

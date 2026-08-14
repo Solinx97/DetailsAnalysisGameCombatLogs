@@ -42,7 +42,7 @@ public class CommunityPostController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(CommunityPostModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityPost", JsonContent.Create(request));
+        await _httpClient.PutAsync("CommunityPost", JsonContent.Create(request));
         return NoContent();
     }
 
@@ -58,7 +58,7 @@ public class CommunityPostController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityPost/{id}");
+        await _httpClient.DeletAsync($"CommunityPost/{id}");
         return NoContent();
     }
 }

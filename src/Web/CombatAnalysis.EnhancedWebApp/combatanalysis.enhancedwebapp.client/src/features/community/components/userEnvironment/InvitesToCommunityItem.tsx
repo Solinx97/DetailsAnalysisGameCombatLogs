@@ -7,42 +7,31 @@ import { useGetUserByIdQuery } from '../../../user/api/Account.api';
 import User from '../../../user/components/User';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import { useGetCommunityByIdQuery } from '../../api/Community.api';
-import { useCreateCommunityUserMutation } from '../../api/CommunityUser.api';
-import { useRemoveCommunityInviteMutation } from '../../api/InviteToCommunity.api';
-import type { CommunityUserModel } from '../../types/CommunityUserModel';
+import { useAcceptCommunityInviteMutation, useRemoveCommunityInviteMutation } from '../../api/InviteToCommunity.api';
 import type { InviteToCommunityModel } from '../../types/InviteToCommunityModel';
 
 interface InvitesToCommunityItemProps {
-    user: AppUserModel | null;
+    user: AppUserModel;
     inviteToCommunity: InviteToCommunityModel;
 }
 
 const InvitesToCommunityItem: React.FC<InvitesToCommunityItemProps> = ({ user, inviteToCommunity }) => {
     const { t } = useTranslation('communication/myEnvironment/invitesToCommunityItem');
 
-    const { data: community, isLoading: communityIsLoading } = useGetCommunityByIdQuery(inviteToCommunity?.communityId);
-    const { data: inviteOwner, isLoading: targetUserIsLoading } = useGetUserByIdQuery(inviteToCommunity?.appUserId);
-    const [createCommunityUser] = useCreateCommunityUserMutation();
+    const { data: community, isLoading: communityIsLoading } = useGetCommunityByIdQuery(inviteToCommunity.communityId);
+    const { data: inviteOwner, isLoading: targetUserIsLoading } = useGetUserByIdQuery(inviteToCommunity.appUserId);
+    const [acceptInviteAsync] = useAcceptCommunityInviteMutation();
     const [removeInviteAsync] = useRemoveCommunityInviteMutation();
 
     const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
 
     const acceptRequestAsync = async () => {
         try {
-            if (!user || !community) {
+            if (!community) {
                 return;
             }
 
-            const newCommunityUser: CommunityUserModel = {
-                id: crypto.randomUUID(),
-                username: user.username,
-                communityId: community.id,
-                appUserId: user.id
-            };
-
-            await createCommunityUser(newCommunityUser).unwrap();
-
-            await removeInviteAsync(inviteToCommunity.id).unwrap();
+            await acceptInviteAsync({ id: inviteToCommunity.id, communityId: community.id, appUserId: user.id }).unwrap();
         } catch (e) {
             logger.error(`Failed to send accept request to community: ${community?.id}`, e);
         }
@@ -50,13 +39,17 @@ const InvitesToCommunityItem: React.FC<InvitesToCommunityItemProps> = ({ user, i
 
     const rejectRequestAsync = async () => {
         try {
-            await removeInviteAsync(inviteToCommunity.id).unwrap();
+            if (!community) {
+                return;
+            }
+
+            await removeInviteAsync({ id: inviteToCommunity.id, communityId: community.id }).unwrap();
         } catch (e) {
             logger.error(`Failed to send reject request to community: ${community?.id}`, e);
         }
     }
 
-    if (communityIsLoading || targetUserIsLoading || !inviteOwner) {
+    if (communityIsLoading || targetUserIsLoading || !inviteOwner || !community) {
         return (<></>);
     }
 

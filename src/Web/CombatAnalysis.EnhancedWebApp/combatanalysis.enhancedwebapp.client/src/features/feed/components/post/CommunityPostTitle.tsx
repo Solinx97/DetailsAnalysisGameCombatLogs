@@ -1,4 +1,5 @@
 ﻿import useFormatting from '@/shared/hooks/useFormatting';
+import logger from '@/utils/Logger';
 import { faCircleXmark, faComments } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
@@ -8,11 +9,12 @@ import type { CommunityPostModel } from '../../types/CommunityPostModel';
 import type { UserFeedModel } from '../../types/UserFeedModel';
 
 interface CommunityPostTitleProps {
+    userId: string;
     post: CommunityPostModel | UserFeedModel;
     isMyPost: boolean;
 }
 
-const CommunityPostTitle: React.FC<CommunityPostTitleProps> = ({ post, isMyPost }) => {
+const CommunityPostTitle: React.FC<CommunityPostTitleProps> = ({ userId, post, isMyPost }) => {
     const { t } = useTranslation('communication/postTitle');
 
     const navigate = useNavigate();
@@ -22,7 +24,11 @@ const CommunityPostTitle: React.FC<CommunityPostTitleProps> = ({ post, isMyPost 
     const [removeCommunityPost] = useRemoveCommunityPostMutation();
 
     const removeCommunityPostAsync = async () => {
-        await removeCommunityPost(post.id);
+        try {
+            await removeCommunityPost({ id: post.id, communityId: post.communityId ?? 0, appUserId: userId }).unwrap();
+        } catch (error) {
+            logger.error("Failed to remove community post comment", error);
+        }
     }
 
     const goToCommunityAsync = async () => {

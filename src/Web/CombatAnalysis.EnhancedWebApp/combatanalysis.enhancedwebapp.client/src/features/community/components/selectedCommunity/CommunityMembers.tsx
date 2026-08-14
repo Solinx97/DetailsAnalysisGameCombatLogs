@@ -6,7 +6,7 @@ import { memo, useEffect, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import { useGetUsersByCommunityIdQuery, useLazyGetUsersByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../api/InviteToCommunity.api';
+import { useCreateInviteAsyncMutation } from '../../api/InviteToCommunity.api';
 import type { CommunityModel } from '../../types/CommunityModel';
 import type { CommunityUserModel } from '../../types/CommunityUserModel';
 import type { InviteToCommunityModel } from '../../types/InviteToCommunityModel';
@@ -18,7 +18,7 @@ const defaultMaxPeople = 5;
 interface CommunityMembersProps {
     community: CommunityModel;
     myself: AppUserModel;
-    setIsCommunityMember(value: SetStateAction<boolean>): void;
+    setIsCommunityMember?(value: SetStateAction<boolean>): void;
 }
 
 const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, setIsCommunityMember }) => {
@@ -53,56 +53,46 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
         }
     });
     const [getAllCommunityUsersAsync] = useLazyGetUsersByCommunityIdQuery();
-    const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
 
     useEffect(() => {
-        if (communityUsersId.length === 0) {
+        if (!setIsCommunityMember || communityUsersId.length === 0) {
             return;
         }
 
         setIsCommunityMember(communityUsersId.includes(myself.id));
     }, [communityUsersId]);
 
-    const checkIfRequestExistAsync = async (appUserId: string, communityId: number): Promise<boolean> => {
-        try {
-            const isExist = await isInviteExistAsync({ appUserId, communityId }).unwrap();
-
-            return isExist;
-        } catch (e) {
-            logger.error("Failed to check if request to the community already exist", e);
-
-            return true;
-        }
-    }
-
     const createInviteAsync = async () => {
-        for (let i = 0; i < peopleToJoin.length; i++) {
-            const isExist = await checkIfRequestExistAsync(peopleToJoin[i].id, community.id);
-            if (isExist) {
-                continue;
+        try {
+            for (let i = 0; i < peopleToJoin.length; i++) {
+                const newInviteToCommunity: InviteToCommunityModel = {
+                    id: 0,
+                    communityId: community.id,
+                    toAppUserId: peopleToJoin[i].id,
+                    when: new Date(),
+                    appUserId: myself.id
+                }
+
+                await createInviteAsyncMut(newInviteToCommunity).unwrap();
             }
 
-            const newInviteToCommunity: InviteToCommunityModel = {
-                id: 0,
-                communityId: community.id,
-                toAppUserId: peopleToJoin[i].id,
-                when: new Date(),
-                appUserId: myself.id
-            }
-
-            await createInviteAsyncMut(newInviteToCommunity);
+            handleShowAddPeople();
+        } catch (error) {
+            logger.error("Failed create invite to community", error);
         }
-
-        handleShowAddPeople();
     }
 
     const removeUsersAsync = async (communityUsersToRemove: CommunityUserModel[]) => {
-        for (let i = 0; i < communityUsersToRemove.length; i++) {
-            await removeCommunityUserAsync(communityUsersToRemove[i].id);
-        }
+        try {
+            for (let i = 0; i < communityUsersToRemove.length; i++) {
+                await removeCommunityUserAsync({ id: communityUsersToRemove[i].id, communityId: community.id }).unwrap();
+            }
 
-        setShowAllPeople(false);
+            setShowAllPeople(false);
+        } catch (error) {
+            logger.error("Failed remove invite to community", error);
+        }
     }
 
     const clearListOfInvites = () => {
@@ -119,8 +109,8 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
             const communityUsers = await getAllCommunityUsersAsync(community?.id).unwrap();
             setAllCommunityUsers(communityUsers);
             setShowAllPeople(prev => !prev);
-        } catch (e) {
-            console.error('API call failed:', e);
+        } catch (error) {
+            logger.error('API call failed:', error);
         }
     }
 
@@ -129,7 +119,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
     }
 
     return (
-        <span className="members">
+        <div className="members">
             <div className="members__title">
                 <div className="actions">
                     <div>{t("Members")}</div>
@@ -153,12 +143,12 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
             </div>
             <ul className="members__content">
                 {communityUsers?.map((user: CommunityUserModel) => (
-                        <li key={user.id}>
-                            <CommunityMemberItem
-                                comunityUser={user}
-                            />
-                        </li>
-                    ))
+                    <li key={user.id}>
+                        <CommunityMemberItem
+                            comunityUser={user}
+                        />
+                    </li>
+                ))
                 }
             </ul>
             {communityUsers?.length >= defaultMaxPeople &&
@@ -166,7 +156,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
             }
             {showAddPeople &&
                 <div className="add-people-to-community box-shadow">
-                    <div className="add-people-to-community__menu"> 
+                    <div className="add-people-to-community__menu">
                         <FontAwesomeIcon
                             icon={faCircleXmark}
                             title={t("Close") || ""}
@@ -194,7 +184,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
                     canRemovePeople={() => myself?.id === community?.appUserId}
                 />
             }
-        </span>
+        </div>
     );
 }
 

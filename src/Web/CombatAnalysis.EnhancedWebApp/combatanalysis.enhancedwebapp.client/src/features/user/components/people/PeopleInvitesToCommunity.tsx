@@ -3,7 +3,7 @@ import logger from '@/utils/Logger';
 import { useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommunityUserFindByUserIdQuery } from '../../../community/api/CommunityUser.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../community/api/InviteToCommunity.api';
+import { useCreateInviteAsyncMutation } from '../../../community/api/InviteToCommunity.api';
 import type { InviteToCommunityModel } from '../../../community/types/InviteToCommunityModel';
 import type { AppUserModel } from '../../types/AppUserModel';
 import TargetCommunity from '../TargetCommunity';
@@ -24,36 +24,25 @@ const PeopleInvitesToCommunity: React.FC<PeopleInvitesToCommunityProps> = ({ mys
     const [communityIdToInvite, setCommunityIdToInvite] = useState<number[]>([]);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
-    const [isInviteExistAsync] = useLazyInviteIsExistQuery();
-
-    const checkIfRequestExistAsync = async (appUserId: string, communityId: number) => {
-        try {
-            const isExist = await isInviteExistAsync({ appUserId, communityId }).unwrap();
-            return isExist;
-        } catch (e) {
-            logger.error("Failed to check if a request to join to community already exist", e);
-        }
-    }
 
     const createInviteAsync = async () => {
-        for (let i = 0; i < communityIdToInvite.length; i++) {
-            const isExist = await checkIfRequestExistAsync(targetUser.id, communityIdToInvite[i]);
-            if (isExist) {
-                continue;
+        try {
+            for (let i = 0; i < communityIdToInvite.length; i++) {
+                const newInviteToCommunity: InviteToCommunityModel = {
+                    id: 0,
+                    communityId: communityIdToInvite[i],
+                    toAppUserId: targetUser.id,
+                    when: new Date(),
+                    appUserId: myself?.id ?? "",
+                }
+
+                await createInviteAsyncMut(newInviteToCommunity).unwrap();
             }
 
-            const newInviteToCommunity: InviteToCommunityModel = {
-                id: 0,
-                communityId: communityIdToInvite[i],
-                toAppUserId: targetUser.id,
-                when: new Date(),
-                appUserId: myself?.id ?? "",
-            }
-
-            await createInviteAsyncMut(newInviteToCommunity);
+            setOpenInviteToCommunity(false);
+        } catch (error) {
+            logger.error("Failed create invite to community", error);
         }
-
-        setOpenInviteToCommunity(false);
     }
 
     if (isLoading) {
