@@ -39,13 +39,6 @@ public class UserPostController : ControllerBase
         return Ok(post);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(UserPostModel request)
-    {
-        await _httpClient.PutAsync("UserPost", JsonContent.Create(request));
-        return NoContent();
-    }
-
     [HttpGet("count/{appUserId}")]
     public async Task<IActionResult> Count(string appUserId, CancellationToken cancellationToken)
     {

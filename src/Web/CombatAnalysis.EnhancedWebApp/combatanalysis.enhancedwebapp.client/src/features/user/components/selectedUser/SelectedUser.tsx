@@ -1,10 +1,10 @@
 import { APP_CONFIG } from '@/config/appConfig';
 import type { RootState } from '@/app/Store';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
+import { useGetFeedQuery } from '@/features/feed/api/UserFeed.api';
 import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import useFetchUserPosts from '@/features/feed/hooks/useFetchUserPosts';
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -18,6 +18,8 @@ import { useGetUserByIdQuery } from '../../api/Account.api';
 import './SelectedUser.scss';
 
 const SelectedUser: React.FC = () => {
+    const feedVersion = 1;
+
     const { t } = useTranslation('communication/people/user');
 
     const myself = useSelector((state: RootState) => state.user.value);
@@ -32,7 +34,7 @@ const SelectedUser: React.FC = () => {
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
 
-    const { posts, isLoading, isFetching } = useFetchUserPosts(page, pageSizeRef.current, personId);
+    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId: myself?.id ?? "", page, pageSize: pageSizeRef.current, feedVersion });
     const { data: person, isLoading: personIsLoading } = useGetUserByIdQuery(personId);
 
     useEffect(() => {
@@ -43,14 +45,14 @@ const SelectedUser: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (!posts) {
+        if (!userFeed) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < posts.length);
-    }, [page, posts]);
+        setHasMore(((page - 1) * pageSizeRef.current) < userFeed?.count);
+    }, [page, userFeed]);
 
-    if (!myself || !posts || isLoading || !person || personIsLoading) {
+    if (!myself || !userFeed || isLoading || !person || personIsLoading) {
         return (<></>);
     }
 
@@ -105,18 +107,19 @@ const SelectedUser: React.FC = () => {
                         }
                         {currentMenuItem === 1 &&
                             <ul className="posts">
-                                {posts.length === 0
+                                {userFeed.posts.length === 0
                                     ? <div>{t("Empty")}</div>
-                                    : posts.map(post => (
+                                    : userFeed.posts.map(post => (
                                         <li key={post.id}>
                                             <UserPost
                                                 myself={myself}
                                                 post={post}
+                                                feedVersion={feedVersion}
                                             />
                                         </li>
                                     ))
                                 }
-                                {posts.length > 0 &&
+                                {userFeed.posts.length > 0 &&
                                     < li className="posts__item">
                                         <InfiniteScrollTrigger
                                             onLoadMore={() => setPage(p => p + 1)}

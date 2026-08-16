@@ -4,13 +4,13 @@ import { UserFeedApi } from './UserFeed.api';
 
 export const UserPostApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createUserPost: builder.mutation<UserPostModel, UserPostModel>({
-            query: post => ({
+        createUserPost: builder.mutation<UserPostModel, { feedVersion: number, post: UserPostModel }>({
+            query: ({ post }) => ({
                 body: post,
                 url: '/UserPost',
                 method: 'POST'
             }),
-            async onQueryStarted(_post, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdPost } = await queryFulfilled;
 
@@ -40,7 +40,8 @@ export const UserPostApi = PostApi.injectEndpoints({
                             {
                                 appUserId: createdPost.appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const exists = draft.posts.some(
@@ -66,12 +67,12 @@ export const UserPostApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, post) => [{ type: 'UserPost', id: post.id }],
         }),
-        removeUserPost: builder.mutation<void, { id: number, appUserId: string }>({
+        removeUserPost: builder.mutation<void, { id: number, appUserId: string, feedVersion: number }>({
             query: ({ id }) => ({
                 url: `/UserPost/${id}`,
                 method: 'DELETE'
             }),
-            async onQueryStarted({ id, appUserId }, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ id, appUserId, feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
 
@@ -101,7 +102,8 @@ export const UserPostApi = PostApi.injectEndpoints({
                             {
                                 appUserId,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const index = draft.posts.findIndex(

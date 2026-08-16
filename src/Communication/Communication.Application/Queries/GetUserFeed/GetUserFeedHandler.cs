@@ -12,7 +12,7 @@ internal class GetUserFeedHandler(IUserFeedRepository repository, IMapper mapper
 
     public async Task<AllUserFeedDto> Handle(GetUserFeedQuery request, CancellationToken cancellationToken)
     {
-        var (feed, count) = await _repository.GetUserFeedAsync(request.AppUserId, request.Page, request.PageSize, cancellationToken);
+        var (feed, count) = await _repository.GetUserFeedAsync(request.AppUserId, request.FriendsId, request.Page, request.PageSize, cancellationToken);
         var map = _mapper.Map<IEnumerable<UserFeedDto>>(feed);
 
         return new AllUserFeedDto(map, count);

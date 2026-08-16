@@ -11,9 +11,10 @@ interface UserPostTitleProps {
     post: UserPostModel;
     isMyPost: boolean;
     dateFormatting: (stringOfDate: string) => string;
+    feedVersion: number;
 }
 
-const UserPostTitle: React.FC<UserPostTitleProps> = ({ post, isMyPost, dateFormatting }) => {
+const UserPostTitle: React.FC<UserPostTitleProps> = ({ post, isMyPost, dateFormatting, feedVersion }) => {
     const { t } = useTranslation("communication/postTitle");
 
     const { data: targetUser , isLoading} = useGetUserByIdQuery(post.appUserId);
@@ -22,7 +23,7 @@ const UserPostTitle: React.FC<UserPostTitleProps> = ({ post, isMyPost, dateForma
     const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
 
     const removeUserPostAsync = async () => {
-        await removeUserPost({ id: post.id, appUserId: targetUser?.id ?? "" });
+        await removeUserPost({ id: post.id, appUserId: targetUser?.id ?? "", feedVersion });
     }
 
     if (isLoading) {

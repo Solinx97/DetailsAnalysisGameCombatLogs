@@ -58,6 +58,16 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
         return post;
     }
 
+    public async Task<int> CountNewPostsAsync(int communityId, DateTimeOffset lastCheck, CancellationToken cancelationToken)
+    {
+        var count = await _context.Set<CommunityPost>()
+            .AsNoTracking()
+            .Where(x => x.CommunityId == communityId && x.CreatedAt > lastCheck)
+            .CountAsync(cancelationToken);
+
+        return count;
+    }
+
     public async Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, string appUserId, int page, int pageSize, CancellationToken cancelationToken)
     {
         var query = _context.Set<CommunityPost>()

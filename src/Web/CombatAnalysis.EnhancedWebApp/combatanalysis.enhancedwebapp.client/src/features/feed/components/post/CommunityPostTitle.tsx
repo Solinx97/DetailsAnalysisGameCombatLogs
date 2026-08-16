@@ -12,9 +12,10 @@ interface CommunityPostTitleProps {
     userId: string;
     post: CommunityPostModel | UserFeedModel;
     isMyPost: boolean;
+    feedVersion: number;
 }
 
-const CommunityPostTitle: React.FC<CommunityPostTitleProps> = ({ userId, post, isMyPost }) => {
+const CommunityPostTitle: React.FC<CommunityPostTitleProps> = ({ userId, post, isMyPost, feedVersion }) => {
     const { t } = useTranslation('communication/postTitle');
 
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ const CommunityPostTitle: React.FC<CommunityPostTitleProps> = ({ userId, post, i
 
     const removeCommunityPostAsync = async () => {
         try {
-            await removeCommunityPost({ id: post.id, communityId: post.communityId ?? 0, appUserId: userId }).unwrap();
+            await removeCommunityPost({ id: post.id, communityId: post.communityId ?? 0, appUserId: userId, feedVersion}).unwrap();
         } catch (error) {
             logger.error("Failed to remove community post comment", error);
         }

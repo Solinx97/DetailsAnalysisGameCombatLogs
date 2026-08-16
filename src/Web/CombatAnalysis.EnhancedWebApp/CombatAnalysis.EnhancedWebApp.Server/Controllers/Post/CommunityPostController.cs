@@ -21,6 +21,17 @@ public class CommunityPostController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
+    [HttpGet("countNewPosts/{communityId:int:min(0)}")]
+    public async Task<IActionResult> CountNewPosts(int communityId, [FromQuery] DateTimeOffset lastCheck)
+    {
+        var lastCheckValue = Uri.EscapeDataString(lastCheck.ToString("O"));
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/countNewPosts/{communityId}?lastCheck={lastCheckValue}");
+
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+
+        return Ok(count);
+    }
+
     [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
     public async Task<IActionResult> GetByCommunityId(int communityId, string appUserId, int page, int pageSize)
     {
@@ -37,13 +48,6 @@ public class CommunityPostController : ControllerBase
         var communityPost = await responseMessage.Content.ReadFromJsonAsync<CommunityPostModel>();
 
         return Ok(communityPost);
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityPostModel request)
-    {
-        await _httpClient.PutAsync("CommunityPost", JsonContent.Create(request));
-        return NoContent();
     }
 
     [HttpGet("count/{communityId:int:min(0)}")]

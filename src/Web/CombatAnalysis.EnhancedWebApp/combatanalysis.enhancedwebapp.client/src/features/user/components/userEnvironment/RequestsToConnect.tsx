@@ -1,4 +1,5 @@
 import type { RootState } from '@/app/Store';
+import logger from '@/utils/Logger';
 import Loading from '@/shared/components/Loading';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -22,36 +23,37 @@ const RequestToConnect = () => {
     const [removeRequestAsync] = useRemoveRequestAsyncMutation();
 
     const acceptRequestAsync = async (request: RequestToConnectModel) => {
-        const newFriend: FriendModel = {
-            id: 0,
-            whoFriendId: request.toAppUserId,
-            whoFriendUsername: "",
-            forWhomId: request.appUserId,
-            forWhomUsername: "",
-        };
+        try {
+            const newFriend: FriendModel = {
+                id: 0,
+                whoFriendId: request.toAppUserId,
+                whoFriendUsername: "",
+                forWhomId: request.appUserId,
+                forWhomUsername: "",
+            };
 
-        const creadetFriend = await createFriendAsync(newFriend);
-        if (creadetFriend.error !== undefined) {
-            return;
+            await createFriendAsync(newFriend).unwrap();
+            await removeRequestAsync(request.id).unwrap();
+        } catch (error) {
+            logger.error("Failed to accept request", error);
         }
 
-        const deletedItem = await removeRequestAsync(request.id);
-        if (deletedItem.error !== undefined) {
-            return;
-        }
     }
 
     const rejectRequestAsync = async (requestId: number) => {
-        const deletedItem = await removeRequestAsync(requestId);
-        if (deletedItem.error !== undefined) {
-            return;
+        try {
+            await removeRequestAsync(requestId).unwrap();
+        } catch (error) {
+            logger.error("Failed to reject request", error);
         }
+
     }
 
     const cancelMyRequestAsync = async (requestId: number) => {
-        const deletedItem = await removeRequestAsync(requestId);
-        if (deletedItem.error !== undefined) {
-            return;
+        try {
+            await removeRequestAsync(requestId).unwrap();
+        } catch (error) {
+            logger.error("Failed to cancel request", error);
         }
     }
 
@@ -66,14 +68,14 @@ const RequestToConnect = () => {
                     <div>{t("Requests")}</div>
                     <ul>
                         {allRequests?.map((item) => (
-                                <li key={item.id}>
-                                    <RequestItem
-                                        request={item}
-                                        acceptRequestAsync={acceptRequestAsync}
-                                        rejectRequestAsync={rejectRequestAsync}
-                                    />
-                                </li>
-                            ))
+                            <li key={item.id}>
+                                <RequestItem
+                                    request={item}
+                                    acceptRequestAsync={acceptRequestAsync}
+                                    rejectRequestAsync={rejectRequestAsync}
+                                />
+                            </li>
+                        ))
                         }
                     </ul>
                 </div>
@@ -83,13 +85,13 @@ const RequestToConnect = () => {
                     <div>{t("MyRequests")}</div>
                     <ul>
                         {allMyRequests?.map((item) => (
-                                <li key={item.id}>
-                                    <MyRequestItem
-                                        request={item}
-                                        cancelMyRequestAsync={cancelMyRequestAsync}
-                                    />
-                                </li>
-                            ))
+                            <li key={item.id}>
+                                <MyRequestItem
+                                    request={item}
+                                    cancelMyRequestAsync={cancelMyRequestAsync}
+                                />
+                            </li>
+                        ))
                         }
                     </ul>
                 </div>

@@ -12,9 +12,10 @@ interface UserPostReactionsProps {
     post: UserPostModel;
     setShowComments: (value: SetStateAction<boolean>) => void;
     showComments: boolean;
+    feedVersion: number;
 }
 
-const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, setShowComments, showComments }) => {
+const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, setShowComments, showComments, feedVersion }) => {
     const [createPostLike] = useCreateUserPostLikeMutation();
     const [createPostDislike] = useCreateUserPostDislikeMutation();
 
@@ -28,7 +29,7 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                 status: 0
             }
 
-            await createPostLike(newPostLike).unwrap();
+            await createPostLike({ feedVersion, reaction: newPostLike }).unwrap();
         } catch (error) {
             console.error("Failed to create post like");
         }
@@ -44,7 +45,7 @@ const UserPostReactions: React.FC<UserPostReactionsProps> = ({ userId, post, set
                 status: 0
             }
 
-            await createPostDislike(newPostDislike).unwrap();
+            await createPostDislike({ feedVersion, reaction: newPostDislike }).unwrap();
         } catch (error) {
             console.error("Failed to create post dislike");
         }

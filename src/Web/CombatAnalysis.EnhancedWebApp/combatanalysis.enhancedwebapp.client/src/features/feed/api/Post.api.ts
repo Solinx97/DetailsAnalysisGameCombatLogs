@@ -55,10 +55,16 @@ export const PostApi = createApi({
                 })) ?? [])
             ]
         }),
-        getCommunityPostsByCommunityId: builder.query<AllCimmunityPostsModel, { communityId: number, appUserId: string, page: number, pageSize: number }>({
+        getCommunityPostsByCommunityId: builder.query<AllCimmunityPostsModel, { communityId: number, appUserId: string, page: number, pageSize: number, feedVersion: number }>({
             query: ({ communityId, appUserId, page, pageSize }) => `/CommunityPost/getByCommunityId/${communityId}?appUserId=${appUserId}&page=${page}&pageSize=${pageSize}`,
-            serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.communityId}`,
-            merge: (currentCache, newItems) => {
+            serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.communityId}-${queryArgs.feedVersion}`,
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.posts.length = 0;
+                    currentCache.posts.push(...newItems.posts);
+                    return;
+                }
+
                 newItems.posts.forEach(item => {
                     const index = currentCache.posts.findIndex(x => x.id === item.id);
                     if (index === -1) {
@@ -78,7 +84,8 @@ export const PostApi = createApi({
                 return (
                     currentArg?.communityId !== previousArg?.communityId ||
                     currentArg?.page !== previousArg?.page ||
-                    currentArg?.pageSize !== previousArg?.pageSize
+                    currentArg?.pageSize !== previousArg?.pageSize ||
+                    currentArg?.feedVersion !== previousArg?.feedVersion
                 );
             },
             providesTags: result => [

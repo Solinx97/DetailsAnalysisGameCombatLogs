@@ -18,10 +18,11 @@ interface CommunityPostReactionsProps {
     post: CommunityPostModel | UserFeedModel;
     setShowComments: (value: SetStateAction<boolean>) => void;
     showComments: boolean;
+    feedVersion: number;
     t: (key: string) => string;
 }
 
-const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId, communityId, post, setShowComments, showComments, t }) => {
+const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId, communityId, post, setShowComments, showComments, feedVersion, t }) => {
     const userPrivacy = useSelector((state: RootState) => state.userPrivacy.value);
 
     const [createPostLike] = useCreateCommunityPostLikeMutation();
@@ -38,7 +39,7 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
                 status: 0
             }
 
-            await createPostLike(newPostLike).unwrap();
+            await createPostLike({ feedVersion, reaction: newPostLike }).unwrap();
         } catch (error) {
             logger.error("Failed to create community post like");
         }
@@ -55,7 +56,7 @@ const CommunityPostReactions: React.FC<CommunityPostReactionsProps> = ({ userId,
                 status: 0
             }
 
-            await createPostDislike(newPostDislike).unwrap();
+            await createPostDislike({ feedVersion, reaction: newPostDislike }).unwrap();
         } catch (error) {
             logger.error("Failed to create community post dislike");
         }

@@ -15,9 +15,10 @@ interface CommunityPostProps {
     userId: string;
     communityId: number;
     post: CommunityPostModel | UserFeedModel | undefined;
+    feedVersion: number;
 }
 
-const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post }) => {
+const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post, feedVersion }) => {
     const { t } = useTranslation("communication/post");
 
     const [createPostComment] = useCreateCommunityPostCommentMutation();
@@ -65,6 +66,7 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
                     userId={userId}
                     post={post}
                     isMyPost={isMyPost}
+                    feedVersion={feedVersion}
                 />
                 <div className="posts__content">{post?.content}</div>
                 <CommunityPostReactions
@@ -73,6 +75,7 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
                     post={post}
                     setShowComments={setShowComments}
                     showComments={showComments}
+                    feedVersion={feedVersion}
                     t={t}
                 />
             </div>

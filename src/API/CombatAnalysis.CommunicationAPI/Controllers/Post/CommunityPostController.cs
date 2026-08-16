@@ -1,8 +1,7 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Post;
-using CombatAnalysis.CommunicationAPI.Partials;
 using Communication.Application.Commands.CreateCommunityPost;
 using Communication.Application.Commands.DeleteCommunityPost;
-using Communication.Application.Commands.UpdateCommunityPostContent;
+using Communication.Application.Queries.CountCommunityNewPosts;
 using Communication.Application.Queries.CountCommunityPost;
 using Communication.Application.Queries.GetCommunityPost;
 using MediatR;
@@ -17,6 +16,14 @@ namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
 public class CommunityPostController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
+
+    [HttpGet("countNewPosts/{communityId:int:min(0)}")]
+    public async Task<IActionResult> CountNewPosts(int communityId, [FromQuery] DateTimeOffset lastCheck, CancellationToken cancellationToken)
+    {
+        var count = await _mediator.Send(new CountCommunityNewPostsQuery(communityId, lastCheck), cancellationToken);
+
+        return Ok(count);
+    }
 
     [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
     public async Task<IActionResult> GetByCommunityId(int communityId, string appUserId, int page, int pageSize, CancellationToken cancellationToken)
@@ -33,20 +40,6 @@ public class CommunityPostController(IMediator mediator) : ControllerBase
         var post = await _mediator.Send(command, cancellationToken);
 
         return Ok(post);
-    }
-
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CommunityPostPartial request, CancellationToken cancellationToken)
-    {
-        if (id != request.Id)
-        {
-            return BadRequest("Route ID and body ID do not match.");
-        }
-
-        var command = new UpdateCommunityPostContentCommand(request.Id, request.Content);
-        await _mediator.Send(command, cancellationToken);
-
-        return NoContent();
     }
 
     [HttpGet("count/{communityId:int:min(0)}")]

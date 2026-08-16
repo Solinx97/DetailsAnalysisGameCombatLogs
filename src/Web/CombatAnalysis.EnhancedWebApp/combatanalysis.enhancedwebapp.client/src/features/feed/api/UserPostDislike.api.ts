@@ -5,13 +5,13 @@ import { checkStatus } from '@/shared/helpers/ApiHelper';
 
 export const UserPostDislikeApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createUserPostDislike: builder.mutation<UserPostReactionModel, UserPostReactionModel>({
-            query: userPostDislike => ({
-                body: userPostDislike,
+        createUserPostDislike: builder.mutation<UserPostReactionModel, { feedVersion: number, reaction: UserPostReactionModel }>({
+            query: ({ reaction }) => ({
+                body: reaction,
                 url: '/UserPostDislike',
                 method: 'POST'
             }),
-            async onQueryStarted(_like, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdDislike } = await queryFulfilled;
 
@@ -43,7 +43,8 @@ export const UserPostDislikeApi = PostApi.injectEndpoints({
                             {
                                 appUserId: createdDislike.appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const post = draft.posts.find(

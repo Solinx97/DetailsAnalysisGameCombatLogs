@@ -24,6 +24,9 @@ const SelectedCommunity = () => {
 
     const myself = useSelector((state: RootState) => state.user.value);
 
+    const [lastCheck, setLastCheck] = useState((new Date()).toISOString());
+    const [feedVersion, setFeedVersion] = useState(1);
+
     const [isCommunityMember, setIsCommunityMember] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showMenu, setShowMenu] = useState(false);
@@ -123,12 +126,18 @@ const SelectedCommunity = () => {
                                 user={myself}
                                 communityName={community.name}
                                 communityId={community.id}
+                                feedVersion={feedVersion}
                                 t={t}
                             />
                         }
                         <SelectedCommunityItem
                             myselfId={myself.id}
                             communityId={communityId}
+                            lastCheck={lastCheck}
+                            setLastCheck={setLastCheck}
+                            feedVersion={feedVersion}
+                            setFeedVersion={setFeedVersion}
+                            t={t}
                         />
                     </div>
                 </div>

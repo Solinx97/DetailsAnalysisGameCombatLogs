@@ -4,14 +4,14 @@ import { UserFeedApi } from './UserFeed.api';
 
 export const CommunityPostApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createCommunityPost: builder.mutation<CommunityPostModel, CommunityPostModel>({
-            query: post => ({
+        createCommunityPost: builder.mutation<CommunityPostModel, { feedVersion: number, post: CommunityPostModel }>({
+            query: ({ post }) => ({
                 body: post,
                 url: '/CommunityPost',
                 method: 'POST'
             }),
 
-            async onQueryStarted(_post, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdPost } = await queryFulfilled;
 
@@ -22,7 +22,8 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                                 communityId: createdPost.communityId!,
                                 appUserId: createdPost.appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const exists = draft.posts.some(
@@ -48,12 +49,12 @@ export const CommunityPostApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, post) => [{ type: 'CommunityPost', id: post.id }],
         }),
-        removeCommunityPost: builder.mutation<void, { id: number, communityId: number, appUserId: string }>({
+        removeCommunityPost: builder.mutation<void, { id: number, communityId: number, appUserId: string, feedVersion: number }>({
             query: ({ id }) => ({
                 url: `/CommunityPost/${id}`,
                 method: 'DELETE'
             }),
-            async onQueryStarted({ id, communityId, appUserId }, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ id, communityId, appUserId, feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
 
@@ -64,7 +65,8 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                                 communityId,
                                 appUserId: appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const index = draft.posts.findIndex(
@@ -78,13 +80,14 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                         )
                     );
 
-                   dispatch(
+                    dispatch(
                         UserFeedApi.util.updateQueryData(
                             'getFeed',
                             {
                                 appUserId,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const index = draft.posts.findIndex(
@@ -101,6 +104,9 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                     // DELETE failed
                 }
             }
+        }),
+        countCommunityNewPosts: builder.query<number, { communityId: number, lastCheck: string }>({
+            query: ({ communityId, lastCheck }) => `/CommunityPost/countNewPosts/${communityId}?lastCheck=${lastCheck}`,
         }),
         getCommunityPostById: builder.query<CommunityPostModel, number>({
             query: id => `/CommunityPost/${id}`,
@@ -119,6 +125,7 @@ export const {
     useCreateCommunityPostMutation,
     useUpdateCommunityPostMutation,
     useRemoveCommunityPostMutation,
+    useCountCommunityNewPostsQuery,
     useGetCommunityPostByIdQuery,
     useLazyGetCommunityPostByIdQuery,
     useGetCommunityPostCountByCommunityIdQuery,

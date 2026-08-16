@@ -14,10 +14,11 @@ interface CreateCommunityPostProps {
     user: AppUserModel | null;
     communityName: string;
     communityId: number;
+    feedVersion: number;
     t: (key: string) => string;
 }
 
-const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communityName, communityId, t }) => {
+const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communityName, communityId, feedVersion, t }) => {
     const userPrivacy = useSelector((state: RootState) => state.userPrivacy.value);
 
     const [showCreatePost, setShowCreatePost] = useState(false);
@@ -46,7 +47,7 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
                 reaction: 0
             }
 
-            await createNewCommunityPostAsync(newPost).unwrap();
+            await createNewCommunityPostAsync({ feedVersion, post: newPost }).unwrap();
             setShowCreatePost(false);
             setPostContent("");
         } catch (error) {

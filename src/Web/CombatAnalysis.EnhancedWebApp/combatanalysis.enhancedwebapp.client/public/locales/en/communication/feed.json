@@ -1,5 +1,4 @@
 {
-  "NewPosts": "New posts",
   "Refresh": "Refresh",
   "Cancel": "Cancel",
   "Create": "Create",
@@ -7,5 +6,6 @@
   "RecomendationsByTags": "Recomendations by tags",
   "UseRecomendations": "Use recomendations",
   "RemoveTag": "Remove tag",
-  "LoadMore": "Load more"
+  "LoadMore": "Load more",
+  "ShowNewPosts": "Show new posts from your friends or community"
 }

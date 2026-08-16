@@ -5,13 +5,13 @@ import { UserFeedApi } from './UserFeed.api';
 
 export const CommunityPostLikeApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createCommunityPostLike: builder.mutation<CommunityPostReactionModel, CommunityPostReactionModel>({
-            query: communityPostLike => ({
-                body: communityPostLike,
+        createCommunityPostLike: builder.mutation<CommunityPostReactionModel, { feedVersion: number, reaction: CommunityPostReactionModel }>({
+            query: ({ reaction }) => ({
+                body: reaction,
                 url: '/CommunityPostLike',
                 method: 'POST'
             }),
-            async onQueryStarted(_like, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdLike } = await queryFulfilled;
 
@@ -22,7 +22,8 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                                 communityId: createdLike.communityId!,
                                 appUserId: createdLike.appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const post = draft.posts.find(
@@ -44,7 +45,8 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                             {
                                 appUserId: createdLike.appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const post = draft.posts.find(

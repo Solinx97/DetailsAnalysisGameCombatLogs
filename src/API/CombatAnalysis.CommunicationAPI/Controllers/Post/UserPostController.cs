@@ -1,8 +1,6 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Post;
-using CombatAnalysis.CommunicationAPI.Partials;
 using Communication.Application.Commands.CreateUserPost;
 using Communication.Application.Commands.DeleteUserPost;
-using Communication.Application.Commands.UpdateUserPostContent;
 using Communication.Application.Queries.CountUserPost;
 using Communication.Application.Queries.GetUserPostByUserId;
 using MediatR;
@@ -33,20 +31,6 @@ public class UserPostController(IMediator mediator) : ControllerBase
         var post = await _mediator.Send(command, cancellationToken);
 
         return Ok(post);
-    }
-
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UserPostPartial request, CancellationToken cancellationToken)
-    {
-        if (id != request.Id)
-        {
-            return BadRequest("Route ID and body ID do not match.");
-        }
-
-        var command = new UpdateUserPostContentCommand(request.Id, request.Content);
-        await _mediator.Send(command, cancellationToken);
-
-        return NoContent();
     }
 
     [HttpGet("count/{appUserId}")]

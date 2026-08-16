@@ -11,6 +11,8 @@ import UserPost from '../../../feed/components/post/UserPost';
 import { useGetUserPostsByUserIdQuery } from '@/features/feed/api/Post.api';
 
 const UserFeed: React.FC = () => {
+    const feedVersion = 1;
+
     const { t } = useTranslation("communication/feed");
 
     const myself = useSelector((state: RootState) => state.user.value);
@@ -52,6 +54,7 @@ const UserFeed: React.FC = () => {
                 <CreateUserPost
                     user={myself}
                     owner={myself.username}
+                    feedVersion={feedVersion}
                     t={t}
                 />
                 <ul className="posts">
@@ -62,6 +65,7 @@ const UserFeed: React.FC = () => {
                                 <UserPost
                                     myself={myself}
                                     post={post}
+                                    feedVersion={feedVersion}
                                 />
                             </li>
 

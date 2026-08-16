@@ -11,10 +11,11 @@ import AddTagsToPost from './AddTagsToPost';
 interface CreateUserPostProps {
     user: AppUserModel | null;
     owner: string;
+    feedVersion: number;
     t: (key: string) => string;
 }
 
-const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
+const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, feedVersion, t }) => {
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState<string[]>([]);
@@ -41,7 +42,7 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
                 reaction: 0
             }
 
-            await createNewUserPostAsync(newPost).unwrap();
+            await createNewUserPostAsync({ feedVersion, post: newPost }).unwrap();
 
             setShowCreatePost(false);
             setPostContent("");
@@ -63,7 +64,7 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
             <div className="create-post__tool">
                 {!showCreatePost &&
                     <div className="open-create-post container">
-                        <div className="btn-shadow" title={t("NewPost")} onClick={() => setShowCreatePost((item) => !item)}>
+                        <div className="btn-shadow" onClick={() => setShowCreatePost((item) => !item)}>
                             <FontAwesomeIcon
                                 icon={faPlus}
                             />

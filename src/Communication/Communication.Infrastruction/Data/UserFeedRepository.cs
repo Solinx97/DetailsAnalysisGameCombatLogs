@@ -12,11 +12,37 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<(IEnumerable<UserFeedReadModel>, int)> GetUserFeedAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<int> CountNewPostsAsync(string appUserIds, List<string> friendsId, DateTimeOffset lastCheck, CancellationToken cancellationToken)
     {
         var userPosts = _context.Set<UserPost>()
             .AsNoTracking()
-            .Where(x => x.AppUserId == appUserId)
+            .Where(x => (x.AppUserId == appUserIds || friendsId.Contains(x.AppUserId)) 
+                            && x.CreatedAt > lastCheck)
+            .Select(x => new { x.Id });
+
+        var communityPosts =
+            from post in _context.Set<CommunityPost>().AsNoTracking()
+            join member in _context.Set<CommunityUser>().AsNoTracking()
+                on post.CommunityId equals member.CommunityId
+            where member.AppUserId == appUserIds 
+                    && post.CreatedAt > lastCheck
+            select new
+            {
+                post.Id
+            };
+
+        var count = await userPosts
+            .Concat(communityPosts)
+            .CountAsync(cancellationToken);
+
+        return count;
+    }
+
+    public async Task<(IEnumerable<UserFeedReadModel>, int)> GetUserFeedAsync(string appUserIds, List<string> friendsId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var userPosts = _context.Set<UserPost>()
+            .AsNoTracking()
+            .Where(x => x.AppUserId == appUserIds || friendsId.Contains(x.AppUserId))
             .Select(x => new
             {
                 x.Id,
@@ -31,9 +57,9 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 DislikeCount = x.UserPostDislikes.Count(),
                 CommentCount = x.UserPostComments.Count(),
 
-                Reaction = x.UserPostLikes.Any(l => l.AppUserId == appUserId)
+                Reaction = x.UserPostLikes.Any(l => l.AppUserId == appUserIds)
                     ? (int)PostReaction.Like
-                    : x.UserPostDislikes.Any(d => d.AppUserId == appUserId)
+                    : x.UserPostDislikes.Any(d => d.AppUserId == appUserIds)
                         ? (int)PostReaction.Dislike
 
                         : (int)PostReaction.None,
@@ -47,7 +73,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
             from post in _context.Set<CommunityPost>().AsNoTracking()
             join member in _context.Set<CommunityUser>().AsNoTracking()
                 on post.CommunityId equals member.CommunityId
-            where member.AppUserId == appUserId
+            where member.AppUserId == appUserIds
             select new
             {
                 post.Id,
@@ -62,9 +88,9 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                 DislikeCount = post.CommunityPostDislikes.Count(),
                 CommentCount = post.CommunityPostComments.Count(),
 
-                Reaction = post.CommunityPostLikes.Any(l => l.AppUserId == appUserId)
+                Reaction = post.CommunityPostLikes.Any(l => l.AppUserId == appUserIds)
                     ? (int)PostReaction.Like
-                    : post.CommunityPostDislikes.Any(d => d.AppUserId == appUserId)
+                    : post.CommunityPostDislikes.Any(d => d.AppUserId == appUserIds)
                         ? (int)PostReaction.Dislike
                         : (int)PostReaction.None,
 

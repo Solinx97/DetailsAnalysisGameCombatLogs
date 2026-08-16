@@ -15,9 +15,10 @@ import './Post.scss';
 interface UserPostProps {
     myself: AppUserModel;
     post: UserPostModel;
+    feedVersion: number;
 }
 
-const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
+const UserPost: React.FC<UserPostProps> = ({ myself, post, feedVersion }) => {
     const { t } = useTranslation('communication/post');
 
     const [createPostComment] = useCreateUserPostCommentMutation();
@@ -57,6 +58,7 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
                     post={post}
                     dateFormatting={dateFormatting}
                     isMyPost={isMyPost}
+                    feedVersion={feedVersion}
                 />
                 <div className="posts__content">{post.content}</div>
                 <UserPostReactions
@@ -64,6 +66,7 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
                     post={post}
                     setShowComments={setShowComments}
                     showComments={showComments}
+                    feedVersion={feedVersion}
                 />
             </div>
             {showComments &&

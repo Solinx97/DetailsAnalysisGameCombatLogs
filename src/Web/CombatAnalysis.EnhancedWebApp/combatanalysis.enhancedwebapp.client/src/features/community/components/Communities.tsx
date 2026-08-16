@@ -1,6 +1,6 @@
 import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, type ChangeEvent } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CommunityList from './CommunityList';
 
@@ -10,12 +10,8 @@ const Communities: React.FC<{ showCommunitiesAtStart?: boolean }> = ({ showCommu
     const { t } = useTranslation('communication/community/communities');
 
     const [showCommunities, setShowCommunities] = useState(showCommunitiesAtStart);
-    // const [filterContent, setFilterContent] = useState("");
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
 
-    const searchHandler = (e: ChangeEvent<HTMLInputElement> | undefined) => {
-        // setFilterContent(e?.target.value ?? "");
-    }
 
     return (
         <div className="communities__list">
@@ -39,8 +35,7 @@ const Communities: React.FC<{ showCommunitiesAtStart?: boolean }> = ({ showCommu
                     {showSearchCommunity &&
                         <div className="communities__search mb-3">
                             <label htmlFor="inputSearchCommunity" className="form-label">{t("Search")}</label>
-                        <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName") || ""}
-                            onChange={searchHandler} />
+                        <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName") || ""}/>
                         </div>
                     }
                     <CommunityList />

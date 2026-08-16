@@ -5,13 +5,13 @@ import { UserFeedApi } from './UserFeed.api';
 
 export const CommunityPostDislikeApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createCommunityPostDislike: builder.mutation<CommunityPostReactionModel, CommunityPostReactionModel>({
-            query: communityPostDislike => ({
-                body: communityPostDislike,
+        createCommunityPostDislike: builder.mutation<CommunityPostReactionModel, { feedVersion: number, reaction: CommunityPostReactionModel }>({
+            query: ({ reaction }) => ({
+                body: reaction,
                 url: '/CommunityPostDislike',
                 method: 'POST'
             }),
-            async onQueryStarted(_like, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdDislike } = await queryFulfilled;
 
@@ -22,7 +22,8 @@ export const CommunityPostDislikeApi = PostApi.injectEndpoints({
                                 communityId: createdDislike.communityId!,
                                 appUserId: createdDislike.appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const post = draft.posts.find(
@@ -44,7 +45,8 @@ export const CommunityPostDislikeApi = PostApi.injectEndpoints({
                             {
                                 appUserId: createdDislike.appUserId!,
                                 page: 1,
-                                pageSize: 10
+                                pageSize: 10,
+                                feedVersion
                             },
                             draft => {
                                 const post = draft.posts.find(
