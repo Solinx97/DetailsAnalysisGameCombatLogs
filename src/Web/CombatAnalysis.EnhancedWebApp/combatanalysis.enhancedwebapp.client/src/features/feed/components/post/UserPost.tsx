@@ -46,6 +46,7 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post, feedVersion }) => {
 
             await createPostComment(userPostComment).unwrap();
             setPostCommentContent("");
+            setShowAddComment(false);
         } catch (error) {
             logger.error("Failed to create user post comment");
         }
@@ -71,11 +72,6 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post, feedVersion }) => {
             </div>
             {showComments &&
                 <>
-                    <UserPostComments
-                        dateFormatting={dateFormatting}
-                        userId={myself.id}
-                        postId={post.id}
-                    />
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">
                             {showAddComment
@@ -93,6 +89,11 @@ const UserPost: React.FC<UserPostProps> = ({ myself, post, feedVersion }) => {
                             </div>
                         }
                     </div>
+                    <UserPostComments
+                        dateFormatting={dateFormatting}
+                        userId={myself.id}
+                        postId={post.id}
+                    />
                 </>
             }
         </>

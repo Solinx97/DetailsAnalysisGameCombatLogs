@@ -4,10 +4,9 @@ $mobile-max-width: 425px;
     display: flex;
     flex-direction: row !important;
     align-items: flex-start !important;
-    gap: 20px;
 
     &__content {
-        width: 100%;
+        width: 95%;
 
         .header {
             display: flex;
@@ -132,12 +131,18 @@ $mobile-max-width: 425px;
         background: #0c192c;
         box-shadow: 1px 1px 1px 1px yellow;
         border-radius: 10px;
+        width: 250px;
         z-index: 1000;
 
         .members {
             display: flex;
             flex-direction: column;
-            align-items: stretch;
+            justify-content: center;
+            align-items: center;
+
+            .btn-shadow {
+                font-size: 0.8em;
+            }
 
             &__title {
                 display: flex;
@@ -192,43 +197,6 @@ $mobile-max-width: 425px;
                 font-size: 12px;
             }
 
-            .add-people-to-community {
-                position: fixed;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                border-radius: 25px;
-                top: 10vh;
-                right: 30vw;
-                padding: 10px;
-                width: 35vw;
-
-                &__menu {
-                    display: flex;
-                    justify-content: flex-end;
-                    width: 100%;
-
-                    svg {
-                        padding: 0 5px;
-                    }
-                }
-
-                .form-label {
-                    display: flex;
-                    justify-content: center;
-                }
-
-                .item-result {
-                    display: flex;
-                    gap: 10px;
-
-                    .invite {
-                        box-shadow: 2px 2px 2px 2px green;
-                    }
-                }
-            }
-
             .member {
                 display: flex;
                 align-items: center;
@@ -270,6 +238,43 @@ $mobile-max-width: 425px;
         right: 10vw;
         margin-top: 10px;
         z-index: 100;
+    }
+}
+
+.add-people-to-community {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+    top: 10vh;
+    right: 30vw;
+    padding: 10px;
+    width: 35vw;
+
+    &__menu {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+
+        svg {
+            padding: 0 5px;
+        }
+    }
+
+    .form-label {
+        display: flex;
+        justify-content: center;
+    }
+
+    .item-result {
+        display: flex;
+        gap: 10px;
+
+        .invite {
+            box-shadow: 2px 2px 2px 2px green;
+        }
     }
 }
 

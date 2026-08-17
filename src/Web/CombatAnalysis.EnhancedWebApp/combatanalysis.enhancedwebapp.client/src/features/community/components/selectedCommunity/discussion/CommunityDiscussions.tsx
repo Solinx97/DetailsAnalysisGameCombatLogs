@@ -1,20 +1,18 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import type { RootState } from '@/app/Store';
-import logger from '@/utils/Logger';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, type SetStateAction } from 'react';
+import { useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { AppUserModel } from '../../../../user/types/AppUserModel';
-import { useGetCommunityDiscussionByCommunityIdQuery, useLazyGetCommunityDiscussionByCommunityIdQuery } from '../../../api/CommunityDiscussion.api';
+import { useGetShortListCommunityDiscussionByCommunityIdQuery } from '../../../api/CommunityDiscussion.api';
 import type { CommunityDiscussionModel } from '../../../types/CommunityDiscussionModel';
 import type { CommunityModel } from '../../../types/CommunityModel';
 import CreateDiscussion from './CreateDiscussion';
 import DiscussionList from './DiscussionList';
 
 import './Discussion.scss';
-
-const defaultMaxDiscussions = 5;
 
 interface CommunityDiscussionsProps {
     community: CommunityModel;
@@ -25,38 +23,25 @@ interface CommunityDiscussionsProps {
 }
 
 const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, myself, setShowDiscussion, setDiscussion, isCommunityMember }) => {
-    const { t } = useTranslation("communication/community/discussion");
+    const { t } = useTranslation('communication/community/discussion');
+
+    const defaultMaxDiscussions = 6;
 
     const userPrivacy = useSelector((state: RootState) => state.userPrivacy.value);
 
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityDiscussionSize ?? defaultMaxDiscussions);
+
     const [showCreateDiscussion, setShowCreateDiscussion] = useState(false);
     const [showAllDiscussions, setShowAllDiscussions] = useState(false);
-    const [allDiscussions, setAllDiscussions] = useState<CommunityDiscussionModel[]>([]);
 
-    const { discussions, isLoading } = useGetCommunityDiscussionByCommunityIdQuery({ communityId: community?.id, page: 1, pageSize: 5 }, {
-        selectFromResult: ({ data, isLoading }) => ({
-            discussions: data?.slice(0, defaultMaxDiscussions),
-            isLoading
-        }),
-    });
-    const [getAllDiscussionsAsync] = useLazyGetCommunityDiscussionByCommunityIdQuery();
+    const { data: discussions, isLoading } = useGetShortListCommunityDiscussionByCommunityIdQuery({ communityId: community.id, pageSize: pageSizeRef.current });
 
     const handleDiscussion = (discussion: CommunityDiscussionModel) => {
         setDiscussion(discussion);
         setShowDiscussion((item) => !item);
     }
 
-    const handleShowAllDiscussionsAsync = async () => {
-        try {
-            const discussions = await getAllDiscussionsAsync({ communityId: community?.id, page: 1, pageSize: 5 }).unwrap();
-            setAllDiscussions(discussions);
-            setShowAllDiscussions((item) => !item);
-        } catch (e) {
-            logger.error("Failed to load all discussions", e);
-        }
-    }
-
-    if (isLoading || !discussions) {
+    if (!discussions || isLoading) {
         return (<></>);
     }
 
@@ -77,13 +62,18 @@ const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, 
                 </div>
             </div>
             <ul className="discussion__content">
-                {discussions.map((item) => (
-                        <li key={item.id} title={item.title} onClick={() => handleDiscussion(item)}>{item.title}</li>
-                    ))
+                {discussions.discussions.map((item) => (
+                    <li key={item.id} title={item.title} onClick={() => handleDiscussion(item)}>{item.title}</li>
+                ))
                 }
             </ul>
-            {discussions.length >= defaultMaxDiscussions &&
-                <input type="button" value={t("AllDiscussions")} className="btn btn-outline-success all-discussion" onClick={handleShowAllDiscussionsAsync} />
+            {discussions.count >= defaultMaxDiscussions &&
+                <div className="btn-shadow" onClick={() => setShowAllDiscussions((item) => !item)}>
+                    <FontAwesomeIcon
+                        icon={faBars}
+                    />
+                    <div>{t("AllDiscussions")}</div>
+                </div>
             }
             {showCreateDiscussion &&
                 <CreateDiscussion
@@ -94,9 +84,12 @@ const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, 
             }
             {showAllDiscussions &&
                 <DiscussionList
-                    discussions={allDiscussions}
                     setShowDiscussion={setShowAllDiscussions}
                     handleDiscussion={handleDiscussion}
+                    communityId={community.id}
+                    isCommunityMember={isCommunityMember}
+                    emailVerified={userPrivacy ? userPrivacy.emailVerified : false}
+                    setShowCreateDiscussion={setShowCreateDiscussion}
                 />
             }
         </span>

@@ -103,6 +103,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
         var feed = await userPosts
             .Concat(communityPosts)
             .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(x => new UserFeedReadModel(

@@ -1,22 +1,43 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import { faMagnifyingGlassMinus, faMagnifyingGlassPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, type ChangeEvent, type SetStateAction } from 'react';
+import { useGetCommunityDiscussionByCommunityIdQuery } from '@/features/community/api/CommunityDiscussion.api';
+import { useEffect, useRef, useState, type ChangeEvent, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CommunityDiscussionModel } from '../../../types/CommunityDiscussionModel';
 
 import './DiscussionList.scss';
 
 interface DiscussionListProps {
-    discussions: CommunityDiscussionModel[];
     setShowDiscussion: (value: SetStateAction<boolean>) => void;
     handleDiscussion: (discussion: CommunityDiscussionModel) => void;
+    communityId: number;
+    isCommunityMember: boolean;
+    emailVerified: boolean;
+    setShowCreateDiscussion: (value: SetStateAction<boolean>) => void;
 }
 
-const DiscussionList: React.FC<DiscussionListProps> = ({ discussions, setShowDiscussion, handleDiscussion }) => {
+const DiscussionList: React.FC<DiscussionListProps> = ({ setShowDiscussion, handleDiscussion, communityId, isCommunityMember, emailVerified, setShowCreateDiscussion }) => {
     const { t } = useTranslation("communication/community/discussion");
+
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityDiscussionSize ?? 5);
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
 
     const [showSearchPeople, setShowSearchPeople] = useState(false);
     const [filteredContent, setFilteredContent] = useState("");
+
+    const { data: discussions, isLoading } = useGetCommunityDiscussionByCommunityIdQuery({ communityId, page, pageSize: pageSizeRef.current });
+
+    useEffect(() => {
+        if (!discussions) {
+            return;
+        }
+
+        setHasMore((page * pageSizeRef.current) < discussions.count);
+    }, [page, discussions]);
 
     const hidePeopleInspectionMode = () => {
         setShowDiscussion(false);
@@ -38,22 +59,30 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ discussions, setShowDis
         setFilteredContent("");
     }
 
+    if (!discussions || isLoading) {
+        return (<div>Loading...</div>);
+    }
+
     return (
         <div className="discussion-inspection">
             <div className="title">
-                {showSearchPeople
-                    ? <FontAwesomeIcon
-                        icon={faMagnifyingGlassMinus}
-                        title={t("HideSearchDiscussion")}
-                        onClick={() => setShowSearchPeople(false)}
-                    />
-                    : <FontAwesomeIcon
-                        icon={faMagnifyingGlassPlus}
-                        title={t("ShowSearchDiscussion")}
-                        onClick={() => setShowSearchPeople(true)}
-                    />
-                }
+                <FontAwesomeIcon
+                    icon={showSearchPeople ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
+                    title={showSearchPeople ? t("HideSearchDiscussion") : t("ShowSearchDiscussion")}
+                    onClick={() => setShowSearchPeople(prev => !prev)}
+                />
                 <div>{t("Discussion")}</div>
+                <div className="actions">
+                    {(isCommunityMember && emailVerified) &&
+                        <div className="tool">
+                            <FontAwesomeIcon
+                                icon={faPlus}
+                                title={t("CreateDiscussion")}
+                                onClick={() => setShowCreateDiscussion((item) => !item)}
+                            />
+                        </div>
+                    }
+                </div>
             </div>
             <div className={`mb-3 discussion-inspection__search${showSearchPeople ? "_active" : ""}`}>
                 <label htmlFor="inputDiscussion" className="form-label">{t("SearchDiscussion")}</label>
@@ -70,20 +99,28 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ discussions, setShowDis
             <div className="divide"></div>
             <ul className="discussion-inspection__content">
                 {filteredContent !== ""
-                    ? discussions?.filter(x => x.title.toLowerCase().startsWith(filteredContent.toLowerCase())).map((item) => (
+                    ? discussions?.discussions.filter(x => x.title.toLowerCase().startsWith(filteredContent.toLowerCase())).map((item) => (
                         <li key={item.id} title={item.title} onClick={() => openDiscussion(item)}>
                             {item.title}
                         </li>
                     ))
-                    : discussions?.map((item) => (
+                    : discussions?.discussions.map((item) => (
                         <li key={item.id} title={item.title} onClick={() => openDiscussion(item)}>
                             {item.title}
                         </li>
                     ))
                 }
             </ul>
+            {hasMore &&
+                <div onClick={() => setPage(prev => prev + 1)} className="post-comments__load-more">Load more</div>
+            }
             <div className="item-result">
-                <input type="button" value={t("Close")} className="btn btn-secondary" onClick={hidePeopleInspectionMode} />
+                <div className="btn-shadow" onClick={hidePeopleInspectionMode}>
+                    <FontAwesomeIcon
+                        icon={faClose}
+                    />
+                    <div>{t("Close")}</div>
+                </div>
             </div>
         </div>
     );

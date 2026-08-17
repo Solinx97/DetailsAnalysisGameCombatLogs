@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,7 +25,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     public async Task<IActionResult> GetByDiscussionId(int communityId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/getByDiscussionId/{communityId}?page={page}&pageSize={pageSize}");
-        var comments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionCommentModel>>();
+        var comments = await responseMessage.Content.ReadFromJsonAsync<DiscussionCommentResponse>();
 
         return Ok(comments);
     }
@@ -32,8 +33,10 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityDiscussionCommentModel request)
     {
-        await _httpClient.PostAsync("CommunityDiscussionComment", JsonContent.Create(request));
-        return NoContent();
+        var responseMessage = await _httpClient.PostAsync("CommunityDiscussionComment", JsonContent.Create(request));
+        var comment = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionCommentModel>();
+
+        return Ok(comment);
     }
 
     [HttpPut("{id:int:min(1)}")]

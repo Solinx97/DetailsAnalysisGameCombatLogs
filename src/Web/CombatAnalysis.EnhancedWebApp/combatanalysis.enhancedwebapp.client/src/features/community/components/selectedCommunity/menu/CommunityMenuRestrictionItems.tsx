@@ -10,13 +10,39 @@ interface CommunityMenuRestrictionItemsProps {
     seItemIndex: (value: SetStateAction<number>) => void;
     user: AppUserModel;
     community: CommunityModel;
+    isCommunityOwner: boolean;
 }
 
-const CommunityMenuRestrictionItems: React.FC<CommunityMenuRestrictionItemsProps> = ({ itemIndex, seItemIndex, user, community, }) => {
+const CommunityMenuRestrictionItems: React.FC<CommunityMenuRestrictionItemsProps> = ({ itemIndex, seItemIndex, user, community, isCommunityOwner }) => {
     const { t } = useTranslation('communication/community/communityMenu');
 
     const changeMenuItem = (index: number) => {
         seItemIndex(index);
+    }
+
+    if (!isCommunityOwner) {
+        return (
+            <>
+                <li className="menu-item" onClick={() => changeMenuItem(0)}>
+                    {itemIndex === 0 &&
+                        <FontAwesomeIcon
+                            className="menu-item__passed"
+                            icon={faCircleCheck}
+                        />
+                    }
+                    <div>{t("Main")}</div>
+                </li>
+                <li className="menu-item" onClick={() => changeMenuItem(1)}>
+                    {itemIndex === 1 &&
+                        <FontAwesomeIcon
+                            className="menu-item__passed"
+                            icon={faCircleCheck}
+                        />
+                    }
+                    <div>{t("Members")}</div>
+                </li>
+            </>
+        );
     }
 
     return (

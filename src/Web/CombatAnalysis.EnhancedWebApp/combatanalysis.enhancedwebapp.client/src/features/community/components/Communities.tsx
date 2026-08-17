@@ -12,7 +12,6 @@ const Communities: React.FC<{ showCommunitiesAtStart?: boolean }> = ({ showCommu
     const [showCommunities, setShowCommunities] = useState(showCommunitiesAtStart);
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
 
-
     return (
         <div className="communities__list">
             <div className="title">

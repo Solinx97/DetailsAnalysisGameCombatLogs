@@ -10,15 +10,36 @@ internal class CommunityDiscussionRepository(CommunicationContext context) : ICo
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<IEnumerable<CommunityDiscussion>> GetAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken)
+    public async Task<IEnumerable<CommunityDiscussion>> GetShortListAsync(int communityId, int pageSize, CancellationToken cancellationToken)
     {
-        var result = await _context.Set<CommunityDiscussion>()
+        var discussions = await _context.Set<CommunityDiscussion>()
             .AsNoTracking()
             .Where(x => x.CommunityId == communityId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return discussions;
+    }
+
+    public async Task<(IEnumerable<CommunityDiscussion>, int)> GetAsync(int communityId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _context.Set<CommunityDiscussion>()
+            .AsNoTracking()
+            .Where(x => x.CommunityId == communityId);
+
+        var discussions = await query
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync(cancelationToken);
-        return result.Count != 0 ? result : [];
+            .ToListAsync(cancellationToken);
+
+        var count = await query
+            .CountAsync(cancellationToken);
+
+        return (discussions, count);
     }
 
     public async Task<CommunityDiscussion> GetWithCommentsAsync(int id, CancellationToken cancellationToken)

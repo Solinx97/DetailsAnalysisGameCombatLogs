@@ -1,63 +1,44 @@
 import logger from '@/utils/Logger';
-import { faCirclePlus, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import User from '../../user/components/User';
 import type { AppUserModel } from '../../user/types/AppUserModel';
-import { useGetCommunityByIdQuery } from '../api/Community.api';
-import { useCommunityUserFindByUserIdQuery, useCreateCommunityUserMutation } from '../api/CommunityUser.api';
+import { useCreateCommunityUserMutation } from '../api/CommunityUser.api';
 import type { CommunityUserModel } from '../types/CommunityUserModel';
+import type { CommunityModel } from '../types/CommunityModel';
 
 interface CommunityItemProps {
-    id: number;
-    myself: AppUserModel | null;
+    community: CommunityModel;
+    targetUser: AppUserModel | null;
 }
 
-const CommunityItem: React.FC<CommunityItemProps> = ({ id, myself }) => {
+const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser }) => {
     const { t } = useTranslation('communication/community/Communities');
-
+    
     const navigate = useNavigate();
-
-    const { data: community, isLoading } = useGetCommunityByIdQuery(id);
-    const { data: myCommunities, isLoading: myCommutiesIsLoading } = useCommunityUserFindByUserIdQuery(myself?.id ?? "");
 
     const [canJoin, setCanJoin] = useState(true);
     const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
 
-    const [createCommunityUserAsyncMut] = useCreateCommunityUserMutation();
-
-    useEffect(() => {
-        if (myCommunities?.length === 0) {
-            return;
-        }
-
-        checkIfAlreadyJoined();
-    }, [myCommunities]);
-
-    const checkIfAlreadyJoined = () => {
-        setCanJoin(myCommunities?.filter(x => x.communityId === id).length === 0)
-    }
+    const [createCommunityUser] = useCreateCommunityUserMutation();
 
     const createCommunityUserAsync = async () => {
         try {
             const newCommunityUser: CommunityUserModel = {
                 id: crypto.randomUUID(),
-                username: myself?.username ?? "",
-                appUserId: myself?.id ?? "",
-                communityId: id
+                username: targetUser?.username ?? "",
+                appUserId: targetUser?.id ?? "",
+                communityId: community.id
             };
 
-            await createCommunityUserAsyncMut(newCommunityUser).unwrap();
-            navigate(`/community?id=${id}`);
+            await createCommunityUser(newCommunityUser).unwrap();
+            navigate(`/community?id=${community.id}`);
         } catch (e) {
-            logger.error(`Failed to create community user to community: ${id}`, e);
+            logger.error(`Failed to create community user to community: ${community.id}`, e);
         }
-    }
-
-    if (isLoading || myCommutiesIsLoading) {
-        return (<></>);
     }
 
     return (
@@ -82,7 +63,7 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ id, myself }) => {
                                         <div>{t("Open")}</div>
                                     </div>
                                 </div>
-                                {canJoin &&
+                                {/* {canJoin &&
                                     <div className="join-to-community">
                                         <div className="btn-shadow" onClick={async () => await createCommunityUserAsync()}>
                                             <FontAwesomeIcon
@@ -91,7 +72,7 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ id, myself }) => {
                                             <div>{t("Join")}</div>
                                         </div>
                                     </div>
-                                }
+                                } */}
                             </div>
                         </>
                     }

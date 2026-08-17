@@ -9,6 +9,10 @@
     "communityPageSize": 10,
     "communityPostPageSize": 10,
     "userPostSize": 10,
+    "posCommentSize": 5,
+    "communityDiscussionSize": 5,
+    "communityUserSize": 5,
+    "communitySize": 10,
     "intervalCheckNewPosts": 60000
   },
   "hubs": {

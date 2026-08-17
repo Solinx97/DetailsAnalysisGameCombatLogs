@@ -39,7 +39,7 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, lastCheck, 
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < userFeed?.count);
+        setHasMore(((page - 1) * pageSizeRef.current) < userFeed.count);
     }, [page, userFeed]);
 
     useEffect(() => {

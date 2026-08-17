@@ -33,11 +33,11 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
     }, [post]);
 
     const createPostCommentAsync = async () => {
-        if (!post) {
-            return;
-        }
-
         try {
+            if (!post) {
+                return;
+            }
+
             const newPostComment: CommunityPostCommentModel = {
                 id: 0,
                 content: postCommentContent,
@@ -81,10 +81,6 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
             </div>
             {showComments &&
                 <>
-                    <CommunityPostComments
-                        userId={userId}
-                        postId={post.id}
-                    />
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">
                             {showAddComment
@@ -94,7 +90,7 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
                         </div>
                         {showAddComment &&
                             <div className="add-new-comment__content">
-                            <textarea className="form-control" rows={3} cols={60} onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                                <textarea className="form-control" rows={3} cols={60} onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
                                 <div className="actions">
                                     <div className="add-comment" onClick={createPostCommentAsync}>{t("Add")}</div>
                                     <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</div>
@@ -102,6 +98,10 @@ const CommunityPost: React.FC<CommunityPostProps> = ({ userId, communityId, post
                             </div>
                         }
                     </div>
+                    <CommunityPostComments
+                        userId={userId}
+                        postId={post.id}
+                    />
                 </>
             }
         </>

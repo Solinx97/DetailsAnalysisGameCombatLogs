@@ -1,7 +1,7 @@
 export type CommunityDiscussionCommentModel = {
     id: number;
     content: string;
-    when: Date;
+    createdAt: Date;
     appUserId: string;
     communityDiscussionId: number;
 }

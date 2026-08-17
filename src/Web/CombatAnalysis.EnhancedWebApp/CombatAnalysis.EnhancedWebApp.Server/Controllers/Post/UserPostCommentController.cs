@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,7 +25,7 @@ public class UserPostCommentController : ControllerBase
     public async Task<IActionResult> GetByUserPostId(int userPostId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"UserPostComment/getByUserPostId/{userPostId}?page={page}&pageSize={pageSize}");
-        var comments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostCommentModel>>();
+        var comments = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentResponse>();
 
         return Ok(comments);
     }
@@ -32,8 +33,10 @@ public class UserPostCommentController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(UserPostCommentModel request)
     {
-        await _httpClient.PostAsync("UserPostComment", JsonContent.Create(request));
-        return NoContent();
+        var responseMessage =  await _httpClient.PostAsync("UserPostComment", JsonContent.Create(request));
+        var comment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
+
+        return Ok(comment);
     }
 
     [HttpPut("{id:int:min(1)}")]

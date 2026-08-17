@@ -1,19 +1,17 @@
-import { useState, type ChangeEvent, type JSX, type SetStateAction } from 'react';
-import User from '../../../user/components/User';
+import { type ChangeEvent, type SetStateAction } from 'react';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import type { CommunityUserModel } from '../../types/CommunityUserModel';
+import CommunityMemberItem from './CommunityMemberItem';
 
 interface CommunityUsersItemProps {
-    me: AppUserModel;
+    myself: AppUserModel;
     communityUser: CommunityUserModel;
     usersToRemove: CommunityUserModel[];
     setUsersToRemove(value: SetStateAction<CommunityUserModel[]>): void;
     showRemoveUser: boolean;
 }
 
-const CommunityUsersItem: React.FC<CommunityUsersItemProps> = ({ me, communityUser, usersToRemove, setUsersToRemove, showRemoveUser }) => {
-    const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
-
+const CommunityUsersItem: React.FC<CommunityUsersItemProps> = ({ myself, communityUser, usersToRemove, setUsersToRemove, showRemoveUser }) => {
     const addUserToUsersToRemove = (communityUser: CommunityUserModel) => {
         const users = usersToRemove;
         users.push(communityUser);
@@ -41,19 +39,14 @@ const CommunityUsersItem: React.FC<CommunityUsersItemProps> = ({ me, communityUs
     return (
         <>
             <div className="user-target-community__information">
-                <User
-                    targetUserId={communityUser.appUserId}
-                    targetUsername={communityUser.appUserId}
-                    setUserInformation={setUserInformation}
+                <CommunityMemberItem
+                    comunityUser={communityUser}
                 />
-                {(me.id !== communityUser.appUserId && showRemoveUser) &&
+                {(myself.id !== communityUser.appUserId && showRemoveUser) &&
                     <input className="form-check-input" type="checkbox"
                         onChange={(e) => removeUserHandle(e, communityUser)} />
                 }
             </div>
-            {userInformation !== null &&
-                <div className="community-user-information">{userInformation}</div>
-            }
         </>
     );
 }

@@ -12,8 +12,6 @@ import AddFriendItem from './AddFriendItem';
 
 import './AddPeople.scss';
 
-const defaultMaxItems = 3;
-
 interface AddPeopleProps {
     usersId: string[];
     peopleToJoin: AppUserModel[];
@@ -21,6 +19,8 @@ interface AddPeopleProps {
 }
 
 const AddPeople: React.FC<AddPeopleProps> = ({ usersId, peopleToJoin, setPeopleToJoin }) => {
+    const defaultMaxItems = 3;
+
     const { t } = useTranslation('addPeople');
 
     const myself = useSelector((state: RootState) => state.user.value);

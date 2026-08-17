@@ -149,7 +149,7 @@ public class CommunityPost
         }
     }
 
-    public void AddComment(string content, int commentType, int communityId, string appUserId)
+    public CommunityPostComment AddComment(string content, int commentType, int communityId, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
@@ -157,6 +157,8 @@ public class CommunityPost
 
         var comment = CommunityPostComment.Create(content, commentType, communityId, appUserId);
         _communityPostComments.Add(comment);
+
+        return comment;
     }
 
     public void RemoveComment(int userPostCommentId)

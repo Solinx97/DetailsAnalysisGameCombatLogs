@@ -54,35 +54,31 @@ const CommunityMenu: React.FC<CommunityMenuProps> = ({ setShowMenu, user, commun
             }
             <div className="community-menu__content">
                 <ul className="community-menu__menu">
-                    {user.id === community.appUserId &&
-                        <CommunityMenuRestrictionItems
-                            itemIndex={itemIndex}
-                            seItemIndex={setItemIndex}
-                            user={user}
-                            community={community}
-                        />
-                    }
+                    <CommunityMenuRestrictionItems
+                        itemIndex={itemIndex}
+                        seItemIndex={setItemIndex}
+                        user={user}
+                        community={community}
+                        isCommunityOwner={user.id === community.appUserId}
+                    />
                     <li className="menu-item__leave">
                         <div className="btn-shadow" onClick={() => setShowLeave((item) => !item)}>{t("Leave")}</div>
                     </li>
                 </ul>
-                {user.id === community.appUserId &&
-                    <>
-                        <CommunityMenuRestrictionContent
-                            itemIndex={itemIndex}
-                            user={user}
-                            community={community}
-                            setCommunity={setCommunity}
-                        />
-                        <div className="close">
-                            <FontAwesomeIcon
-                                icon={faCircleXmark}
-                                title={t("Close") || ""}
-                                onClick={() => setShowMenu(false)}
-                            />
-                        </div>
-                    </>
-                }
+                <CommunityMenuRestrictionContent
+                    itemIndex={itemIndex}
+                    user={user}
+                    community={community}
+                    setCommunity={setCommunity}
+                    isCommunityOwner={user.id === community.appUserId}
+                />
+                <div className="close">
+                    <FontAwesomeIcon
+                        icon={faCircleXmark}
+                        title={t("Close") || ""}
+                        onClick={() => setShowMenu(false)}
+                    />
+                </div>
             </div>
             <div className="finish-create">
                 <div className="btn-shadow" onClick={() => setShowMenu(false)}>{t("Close")}</div>

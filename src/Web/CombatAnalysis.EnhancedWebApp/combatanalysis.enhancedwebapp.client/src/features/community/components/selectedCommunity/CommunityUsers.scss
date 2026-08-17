@@ -9,15 +9,21 @@ $mobile-max-width: 425px;
         align-items: center;
         gap: 20px;
         border-radius: 25px;
-        top: 15vh;
+        top: 10vh;
         left: 35vw;
         padding: 15px 10px;
         width: 30vw;
+        max-height: 700px;
+        overflow-y: auto;
 
         .search {
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        .community-user-information {
+            top: 0;
         }
     }
 
@@ -32,7 +38,8 @@ $mobile-max-width: 425px;
         max-height: 350px;
     }
 
-    &__popup, &__window {
+    &__popup,
+    &__window {
         .divide {
             width: 100%;
             height: 5px;
@@ -42,7 +49,8 @@ $mobile-max-width: 425px;
     }
 }
 
-.people-inspection__popup, .people-inspection__window {
+.people-inspection__popup,
+.people-inspection__window {
     .title {
         display: flex;
         justify-content: space-around;
@@ -86,8 +94,10 @@ $mobile-max-width: 425px;
     .list {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        width: 90%;
         gap: 10px;
-        margin-top: -15px;
+        margin: 10px 0;
         padding: 5px;
         overflow-y: auto;
 
@@ -105,7 +115,7 @@ $mobile-max-width: 425px;
     }
 }
 
-@media (max-width: $mobile-max-width)  {
+@media (max-width: $mobile-max-width) {
     .people-inspection {
         &__popup {
             box-shadow: none !important;

@@ -3,12 +3,14 @@ $mobile-max-width: 425px;
 .post-comments {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     margin-top: 10px;
     padding: 0;
     gap: 15px;
     width: 90%;
+    max-height: 500px;
+    overflow-y: auto;
 
     &__card {
         gap: 10px;
@@ -93,6 +95,10 @@ $mobile-max-width: 425px;
             margin: 0 10px;
             font-size: 12px;
         }
+    }
+
+    &__load-more {
+        cursor: pointer;
     }
 }
 

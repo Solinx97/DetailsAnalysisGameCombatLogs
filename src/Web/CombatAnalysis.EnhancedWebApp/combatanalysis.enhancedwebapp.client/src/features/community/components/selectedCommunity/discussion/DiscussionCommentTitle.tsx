@@ -39,7 +39,7 @@ const DiscussionCommentTitle: React.FC<DiscussionCommentTitleProps> = ({ myselfI
         <div className="post-comments__title">
             <div className="user">
                 <div className="username">{user.username}</div>
-                <div className="when">{dateFormatting(comment.when.toString())}</div>
+                <div className="when">{dateFormatting(comment.createdAt.toString())}</div>
             </div>
             {comment?.appUserId === myselfId &&
                 <div className="post-comments__menu">

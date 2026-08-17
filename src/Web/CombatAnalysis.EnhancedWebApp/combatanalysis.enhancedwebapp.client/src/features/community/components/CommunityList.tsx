@@ -1,91 +1,53 @@
-import type { RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
-import logger from '@/utils/Logger';
+import type { RootState } from '@/app/Store';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetCommunitiesCountQuery, useLazyGetCommunitiesQuery, useLazyGetMoreCommunitiesWithPaginationQuery } from '../api/Community.api';
-import { useCommunityUserFindByUserIdQuery } from '../api/CommunityUser.api';
-import type { CommunityModel } from '../types/CommunityModel';
+import { useGetCommunityByUserIdQuery } from '../api/Community.api';
 import CommunityItem from './CommunityItem';
 
 const CommunityList: React.FC = () => {
-    const user = useSelector((state: RootState) => state.user.value);
+    const myself = useSelector((state: RootState) => state.user.value);
 
-    const pageSizeRef = useRef<number>(5);
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.communitySize ?? 10);
 
-    const [communities, setCommunities] = useState<CommunityModel[]>([]);
-    const [actualCount, setActualCount] = useState(0);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
 
-    const { data: count, isLoading: countIsLoading } = useGetCommunitiesCountQuery();
-    const { data: userCommunities, isLoading } = useCommunityUserFindByUserIdQuery(user?.id ?? "");
-
-    const [getCommunities] = useLazyGetCommunitiesQuery();
-    const [getMoreCommunities] = useLazyGetMoreCommunitiesWithPaginationQuery();
+    const { data: userCommunities, isLoading, isFetching } = useGetCommunityByUserIdQuery({ appUserId: myself?.id ?? "", page, pageSize: pageSizeRef.current });
 
     useEffect(() => {
-        if (pageSizeRef.current !== null) {
-            pageSizeRef.current = APP_CONFIG.communication.communityPageSize || 5;
-        }
-
-        const getCommunitiesAsync = async () => {
-            try {
-                const response = await getCommunities({ page: 1, pageSize: pageSizeRef.current }).unwrap();
-
-                setCommunities(response);
-            } catch (e) {
-                logger.error("Failed to receive communities", e);
-            }
-        }
-
-        getCommunitiesAsync();
-    }, []);
-
-    useEffect(() => {
-        setActualCount(count === undefined ? 0 : count);
-    }, [count]);
-
-    const anotherCommunity = (community: CommunityModel) => {
         if (!userCommunities) {
-            return true;
+            return;
         }
 
-        return userCommunities.filter(userCommunity => userCommunity.communityId === community.id).length === 0
-            || userCommunities.length === 0;
-    }
+        setHasMore(((page - 1) * pageSizeRef.current) < userCommunities.count);
+    }, [page, userCommunities]);
 
-    const getMoreCommunitiesAsync = async () => {
-        const arg = {
-            offset: +communities.length,
-            pageSize: +pageSizeRef.current 
-        };
-
-        const response = await getMoreCommunities(arg).unwrap();
-        setCommunities(prevCom => [...prevCom, ...response]);
-    }
-
-    if (countIsLoading || isLoading) {
+    if (!userCommunities || isLoading) {
         return (<div>Loading...</div>);
     }
 
     return (
         <>
             <ul>
-                {communities?.filter(community => community.policyType === 0).map((item) => (
-                    (anotherCommunity(item)) &&
-                        <li key={item.id} className="community">
-                            <CommunityItem
-                                id={item.id}
-                                myself={user}
-                            />
-                        </li>
-                    ))
+                {userCommunities.communities.filter(community => community.policyType === 0).map((item) => (
+                    <li key={item.id} className="community">
+                        <CommunityItem
+                            community={item}
+                            targetUser={myself}
+                        />
+                    </li>
+                ))
                 }
+                <li className="community">
+                    <InfiniteScrollTrigger
+                        onLoadMore={() => setPage(p => p + 1)}
+                        hasMore={hasMore}
+                        isLoading={isFetching}
+                    />
+                </li>
             </ul>
-            {communities?.length < actualCount &&
-                <div className="load-more" onClick={getMoreCommunitiesAsync}>
-                    <div className="load-more__content">Load more</div>
-                </div>
-            }
         </>
     );
 }

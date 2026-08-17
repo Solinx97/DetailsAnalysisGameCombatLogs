@@ -31,5 +31,6 @@
   "PrevioslyStep": "Предыдущий шаг",
   "CreateCommunity": "Создать сообщество",
   "NameRequired": "Название обязательно",
-  "DescriptionRequired": "Описание обязательно"
+  "DescriptionRequired": "Описание обязательно",
+  "CommunityInformation": "Информация об сообществе"
 }

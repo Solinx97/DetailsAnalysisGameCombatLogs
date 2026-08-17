@@ -9,14 +9,22 @@ internal class CommunityPostCommentRepository(CommunicationContext context) : IC
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<IEnumerable<CommunityPostComment>> GetByCommunityPostIdAsync(int communityPostId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<CommunityPostComment>, int)> GetByCommunityPostIdAsync(int communityPostId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var comments = await _context.Set<CommunityPostComment>()
-            .Where(x => x.CommunityPostId == communityPostId)
+        var query = _context.Set<CommunityPostComment>()
+            .AsNoTracking()
+            .Where(x => x.CommunityPostId == communityPostId);
+
+        var comments = await query
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return comments;
+        var count = await query
+            .CountAsync(cancellationToken);
+
+        return (comments, count);
     }
 }

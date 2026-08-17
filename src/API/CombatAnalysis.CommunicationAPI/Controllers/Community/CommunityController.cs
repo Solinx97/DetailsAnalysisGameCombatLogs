@@ -37,11 +37,11 @@ public class CommunityController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var communitityUsers = await _mediator.Send(new GetCommunitiesByUserIdQuery(appUserId), cancellationToken);
+        var communities = await _mediator.Send(new GetCommunitiesByUserIdQuery(appUserId, page, pageSize), cancellationToken);
 
-        return Ok(communitityUsers);
+        return Ok(communities);
     }
 
     [HttpPost]

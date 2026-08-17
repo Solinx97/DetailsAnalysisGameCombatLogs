@@ -1,29 +1,46 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import { faMagnifyingGlassMinus, faMagnifyingGlassPlus, faUserXmark, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, type ChangeEvent, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import type { CommunityUserModel } from '../../types/CommunityUserModel';
 import CommunityUsersItem from './CommunityUsersItem';
+import { useGetUsersByCommunityIdQuery } from '../../api/CommunityUser.api';
 
 import './CommunityUsers.scss';
 
 interface CommunityUsersProps {
     myself: AppUserModel;
-    communityUsers: CommunityUserModel[];
     removeUsersAsync(peopleToRemove: CommunityUserModel[]): Promise<void>;
     setShowMembers(value: SetStateAction<boolean>): void;
     isPopup: boolean;
     canRemovePeople(): boolean;
+    communityId: number;
 }
 
-const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, communityUsers, removeUsersAsync, setShowMembers, isPopup, canRemovePeople }) => {
+const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, removeUsersAsync, setShowMembers, isPopup, canRemovePeople, communityId }) => {
     const { t } = useTranslation('communication/members');
+
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityUserSize ?? 5);
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
 
     const [showRemoveUser, setShowRemoveUser] = useState(false);
     const [showSearchPeople, setShowSearchPeople] = useState(false);
     const [usersToRemove, setUsersToRemove] = useState<CommunityUserModel[]>([]);
     const [searchUsername, setSearchUsername] = useState("");
+
+    const { data: communityUsers, isLoading } = useGetUsersByCommunityIdQuery({ communityId, page, pageSize: pageSizeRef.current });
+
+    useEffect(() => {
+        if (!communityUsers) {
+            return;
+        }
+
+        setHasMore((page * pageSizeRef.current) < communityUsers.count);
+    }, [page, communityUsers]);
 
     const handleShowRemoveUsers = () => {
         setUsersToRemove([]);
@@ -46,6 +63,10 @@ const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, communityUsers,
 
     const clear = () => {
         setSearchUsername("");
+    }
+
+    if (!communityUsers || isLoading) {
+        return (<div>Loading...</div>);
     }
 
     return (
@@ -81,10 +102,10 @@ const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, communityUsers,
             <div className="divide"></div>
             <ul className="list">
                 {searchUsername === ""
-                    ? communityUsers?.map((communityUser: CommunityUserModel) => (
+                    ? communityUsers.users.map((communityUser: CommunityUserModel) => (
                         <li className="user-target-community" key={communityUser.id}>
                             <CommunityUsersItem
-                                me={myself}
+                                myself={myself}
                                 communityUser={communityUser}
                                 usersToRemove={usersToRemove}
                                 setUsersToRemove={setUsersToRemove}
@@ -92,10 +113,10 @@ const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, communityUsers,
                             />
                         </li>
                     ))
-                    : communityUsers?.filter((communityUser: CommunityUserModel) => communityUser.username.toLowerCase().startsWith(searchUsername.toLowerCase())).map((communityUser: CommunityUserModel) => (
+                    : communityUsers.users.filter((communityUser: CommunityUserModel) => communityUser.username.toLowerCase().startsWith(searchUsername.toLowerCase())).map((communityUser: CommunityUserModel) => (
                         <li className="user-target-community" key={communityUser.id}>
                             <CommunityUsersItem
-                                me={myself}
+                                myself={myself}
                                 communityUser={communityUser}
                                 usersToRemove={usersToRemove}
                                 setUsersToRemove={setUsersToRemove}
@@ -104,6 +125,9 @@ const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, communityUsers,
                         </li>
                     ))}
             </ul>
+            {hasMore &&
+                <div onClick={() => setPage(prev => prev + 1)} className="post-comments__load-more">Load more</div>
+            }
             <div className="item-result">
                 {(canRemovePeople() && showRemoveUser) &&
                     <div className="btn-border-shadow" onClick={async () => await removeUsersAsync(usersToRemove)}>{t("Accept")}</div>

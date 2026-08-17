@@ -56,13 +56,15 @@ public class CommunityDiscussion
         EditContent(content);
     }
 
-    public void AddComment(string content, string appUserId)
+    public CommunityDiscussionComment AddComment(string content, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var comment = CommunityDiscussionComment.Create(content, appUserId);
         _communityDiscussionComments.Add(comment);
+
+        return comment;
     }
 
     public void RemoveComment(int commentId)

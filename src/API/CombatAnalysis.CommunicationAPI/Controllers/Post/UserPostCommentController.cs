@@ -30,9 +30,9 @@ public class UserPostCommentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] UserPostCommentModel request, CancellationToken cancellationToken)
     {
         var command = new CreateUserPostCommentCommand(request.UserPostId, request.Content, request.AppUserId);
-        await _mediator.Send(command, cancellationToken);
+        var comment = await _mediator.Send(command, cancellationToken);
 
-        return NoContent();
+        return Ok(comment);
     }
 
     [HttpPut("{id:int:min(1)}")]

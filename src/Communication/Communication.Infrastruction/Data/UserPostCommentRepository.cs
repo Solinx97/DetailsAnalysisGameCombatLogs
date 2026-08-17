@@ -9,14 +9,22 @@ internal class UserPostCommentRepository(CommunicationContext context) : IUserPo
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<IEnumerable<UserPostComment>> GetByUserPostIdAsync(int userPostId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserPostComment>, int)> GetByUserPostIdAsync(int userPostId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var comments = await _context.Set<UserPostComment>()
-            .Where(x => x.UserPostId == userPostId)
+        var query = _context.Set<UserPostComment>()
+            .AsNoTracking()
+            .Where(x => x.UserPostId == userPostId);
+
+        var comments = await query
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        return comments;
+        var count = await query
+            .CountAsync(cancellationToken);
+
+        return (comments, count);
     }
 }

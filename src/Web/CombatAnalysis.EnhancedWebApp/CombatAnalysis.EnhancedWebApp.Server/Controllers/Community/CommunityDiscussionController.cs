@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,7 +25,16 @@ public class CommunityDiscussionController : ControllerBase
     public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
-        var discussions = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionModel>>();
+        var discussions = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionResponse>();
+
+        return Ok(discussions);
+    }
+
+    [HttpGet("getShortListByDiscussionId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetShortListByDiscussionId(int communityId, int pageSize)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/getByCommunityId/{communityId}?page=1&pageSize={pageSize}");
+        var discussions = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionResponse>();
 
         return Ok(discussions);
     }
@@ -41,8 +51,10 @@ public class CommunityDiscussionController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityDiscussionModel request)
     {
-        await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(request));
-        return NoContent();
+        var responseMessage = await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(request));
+        var discussion = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionCommentModel>();
+
+        return Ok(discussion);
     }
 
     [HttpPut("{id:int:min(1)}")]

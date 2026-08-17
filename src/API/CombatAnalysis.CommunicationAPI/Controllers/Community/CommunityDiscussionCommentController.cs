@@ -7,6 +7,7 @@ using Communication.Application.Queries.GetCommunityDiscussionComments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
 
@@ -29,9 +30,9 @@ public class CommunityDiscussionCommentController(IMediator mediator) : Controll
     public async Task<IActionResult> Create([FromBody] CommunityDiscussionCommentModel request, CancellationToken cancellationToken)
     {
         var command = new CreateDiscussionCommentCommand(request.CommunityDiscussionId, request.Content, request.AppUserId);
-        await _mediator.Send(command, cancellationToken);
+        var comment = await _mediator.Send(command, cancellationToken);
 
-        return NoContent();
+        return Ok(comment);
     }
 
     [HttpPut("{id:int:min(1)}")]

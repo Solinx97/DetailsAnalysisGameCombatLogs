@@ -129,13 +129,15 @@ public class UserPost
         }
     }
 
-    public void AddComment(string content, string appUserId)
+    public UserPostComment AddComment(string content, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var comment = UserPostComment.Create(content, appUserId);
         _userPostComments.Add(comment);
+
+        return comment;
     }
 
     public void RemoveComment(int userPostCommentId)

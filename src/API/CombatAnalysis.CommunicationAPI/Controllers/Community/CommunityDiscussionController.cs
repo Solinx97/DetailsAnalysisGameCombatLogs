@@ -38,9 +38,9 @@ public class CommunityDiscussionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] CommunityDiscussionModel request, CancellationToken cancellationToken)
     {
         var command = new CreateCommunityDescussionCommand(request.Title, request.Content, request.CommunityId, request.AppUserId);
-        await _mediator.Send(command, cancellationToken);
+        var discussion = await _mediator.Send(command, cancellationToken);
 
-        return NoContent();
+        return Ok(discussion);
     }
 
     [HttpPut("{id:int:min(1)}")]

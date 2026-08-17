@@ -2,7 +2,7 @@ import Loading from '@/shared/components/Loading';
 import logger from '@/utils/Logger';
 import { useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCommunityUserFindByUserIdQuery } from '../../../community/api/CommunityUser.api';
+import { useGetCommunityUsersByUserIdQuery } from '../../../community/api/CommunityUser.api';
 import { useCreateInviteAsyncMutation } from '../../../community/api/InviteToCommunity.api';
 import type { InviteToCommunityModel } from '../../../community/types/InviteToCommunityModel';
 import type { AppUserModel } from '../../types/AppUserModel';
@@ -19,7 +19,7 @@ interface PeopleInvitesToCommunityProps {
 const PeopleInvitesToCommunity: React.FC<PeopleInvitesToCommunityProps> = ({ myself, targetUser, setOpenInviteToCommunity }) => {
     const { t } = useTranslation('communication/people/people');
 
-    const { data: communityUsers, isLoading } = useCommunityUserFindByUserIdQuery(myself?.id ?? "");
+    const { data: communityUsers, isLoading } = useGetCommunityUsersByUserIdQuery({ appUserId: myself?.id ?? "", page: 1, pageSize: 5 });
 
     const [communityIdToInvite, setCommunityIdToInvite] = useState<number[]>([]);
 
@@ -45,7 +45,7 @@ const PeopleInvitesToCommunity: React.FC<PeopleInvitesToCommunityProps> = ({ mys
         }
     }
 
-    if (isLoading) {
+    if (!communityUsers || isLoading) {
         return (<Loading />);
     }
 
@@ -54,7 +54,7 @@ const PeopleInvitesToCommunity: React.FC<PeopleInvitesToCommunityProps> = ({ mys
             <div className="title">{t("InviteToCommunity")}</div>
             <ul>
                 {
-                    communityUsers?.map(item => (
+                    communityUsers.users.map(item => (
                         <li key={item.id} className="community">
                             <TargetCommunity
                                 communityId={item.communityId}

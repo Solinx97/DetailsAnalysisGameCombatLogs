@@ -20,9 +20,10 @@ interface CommunityMenuRestrictionContentProps {
     user: AppUserModel;
     community: CommunityModel;
     setCommunity: (value: SetStateAction<CommunityModel | null>) => void;
+    isCommunityOwner: boolean;
 }
 
-const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentProps> = ({ itemIndex, user, community, setCommunity }) => {
+const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentProps> = ({ itemIndex, user, community, setCommunity, isCommunityOwner }) => {
     const { t } = useTranslation('communication/community/communityMenu');
 
     const [communityName, setCommunityName] = useState(community?.name);
@@ -76,6 +77,38 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
         }
     }
 
+    if (!isCommunityOwner) {
+        return (
+            <div className="community-menu__items">
+                {itemIndex === 0 &&
+                    <>
+                        <CommonItem
+                            name={communityName}
+                            setName={setCommunityName}
+                            description={communityDescription}
+                            setDescription={setCommunityDescription}
+                            useDescription={true}
+                            allowEdit={false}
+                            connector={
+                                <ItemConnector
+                                    connectorType={0}
+                                />
+                            }
+                        />
+                    </>
+                }
+                {itemIndex === 1 &&
+                    <div className="members">
+                        <CommunityMembers
+                            community={community}
+                            myself={user}
+                        />
+                    </div>
+                }
+            </div>
+        );
+    }
+
     return (
         <div className="community-menu__items">
             {itemIndex === 0 &&
@@ -86,6 +119,7 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
                         description={communityDescription}
                         setDescription={setCommunityDescription}
                         useDescription={true}
+                        allowEdit={true}
                         connector={
                             <ItemConnector
                                 connectorType={0}

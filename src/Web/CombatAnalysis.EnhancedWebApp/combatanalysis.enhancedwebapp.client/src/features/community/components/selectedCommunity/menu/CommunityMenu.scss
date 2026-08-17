@@ -63,26 +63,26 @@ $mobile-max-width: 425px;
         }
     }
 
-    .close {
-        display: flex;
-        align-items: flex-start;
-        padding: 5px;
-
-        svg {
-            &:hover {
-                cursor: pointer;
-                transform: scale(1.25);
-            }
-        }
-    }
-
     &__items {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
         margin: 5px;
-        width: 55%;
+        width: 100%;
+
+        .restricted .form-group {
+            display: flex;
+            gap: 50px;
+        }
+
+        .create-community__item {
+            width: 70%;
+
+            .title {
+                margin: 10px 0;
+            }
+        }
 
         .form-group {
             margin: 5px;
@@ -100,7 +100,8 @@ $mobile-max-width: 425px;
                 display: flex;
                 flex-direction: column;
 
-                .tool, .tool_active {
+                .tool,
+                .tool_active {
                     display: flex;
                     align-items: center;
                     gap: 25px;
@@ -165,12 +166,14 @@ $mobile-max-width: 425px;
             }
         }
 
-        .alert-success, .alert-warning {
+        .alert-success,
+        .alert-warning {
             font-size: 0.7em;
             padding: 5px 10px;
         }
 
-        .alert-success.active, .alert-warning.active {
+        .alert-success.active,
+        .alert-warning.active {
             display: flex;
             justify-content: center;
             font-size: 13px;
@@ -199,6 +202,19 @@ $mobile-max-width: 425px;
         }
     }
 
+    .close {
+        display: flex;
+        align-items: flex-start;
+        padding: 5px;
+
+        svg {
+            &:hover {
+                cursor: pointer;
+                transform: scale(1.25);
+            }
+        }
+    }
+
     .chat-rules {
         display: flex;
         flex-direction: column;
@@ -216,7 +232,8 @@ $mobile-max-width: 425px;
     }
 }
 
-.remove-people, .leave-from-community {
+.remove-people,
+.leave-from-community {
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -251,7 +268,7 @@ $mobile-max-width: 425px;
     }
 }
 
-@media (max-width: $mobile-max-width)  {
+@media (max-width: $mobile-max-width) {
     .community-menu {
         position: fixed;
         display: flex;

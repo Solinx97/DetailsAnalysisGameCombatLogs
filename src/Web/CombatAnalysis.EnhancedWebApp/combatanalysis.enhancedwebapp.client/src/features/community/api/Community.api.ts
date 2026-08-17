@@ -1,6 +1,7 @@
 ﻿import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { CommunityModel } from '../types/CommunityModel';
 import type { InviteToCommunityModel } from '../types/InviteToCommunityModel';
+import type { AllCommunityModel } from '../types/AllCommunityModel';
 
 const apiURL = '/api/v1';
 
@@ -58,25 +59,39 @@ export const CommunityApi = createApi({
         getCommunitiesCount: builder.query<number, void>({
             query: () => '/Community/count',
         }),
-        getMoreCommunitiesWithPagination: builder.query<CommunityModel[], { offset: number, pageSize: number }>({
-            query: ({ offset, pageSize }) => `/Community/getMoreWithPagination?offset=${offset}&pageSize=${pageSize}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(community => ({ type: 'Community' as const, id: community.id })),
-                        { type: 'Community', id: 'LIST' },
-                    ]
-                    : [{ type: 'Community', id: 'LIST' }]
-        }),
-        getCommunityByUserId: builder.query<CommunityModel[], string>({
-            query: appUserId => `/Community/getByUserId/${appUserId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(community => ({ type: 'Community' as const, id: community.id })),
-                        { type: 'Community', id: 'LIST' },
-                    ]
-                    : [{ type: 'Community', id: 'LIST' }]
+        getCommunityByUserId: builder.query<AllCommunityModel, { appUserId: string, page: number, pageSize: number }>({
+            query: ({ appUserId, page, pageSize }) => `/Community/getByUserId/${appUserId}?page=${page}&pageSize=${pageSize}`,
+            serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.appUserId}`,
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.communities.length = 0;
+                    currentCache.communities.push(...newItems.communities);
+                    return;
+                }
+
+                newItems.communities.forEach(item => {
+                    const index = currentCache.communities.findIndex(x => x.id === item.id);
+                    if (index === -1) {
+                        currentCache.communities.push(item);
+                    } else {
+                        currentCache.communities[index] = item;
+                    }
+                });
+            },
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.appUserId !== previousArg?.appUserId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'CommunityDiscussion', id: 'LIST' },
+                ...(result?.communities.map(post => ({
+                    type: 'CommunityDiscussion' as const,
+                    id: post.id
+                })) ?? [])
+            ]
         }),
         getInviteToCommunityById: builder.query<InviteToCommunityModel, number>({
             query: id => `/InviteToCommunity/${id}`,
@@ -95,8 +110,6 @@ export const {
     useLazyGetCommunityByIdQuery,
     useGetCommunitiesCountQuery,
     useLazyGetCommunitiesCountQuery,
-    useGetMoreCommunitiesWithPaginationQuery,
-    useLazyGetMoreCommunitiesWithPaginationQuery,
     useGetCommunityByUserIdQuery,
     useGetInviteToCommunityByIdQuery,
     useLazyGetInviteToCommunityByIdQuery,

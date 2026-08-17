@@ -1,19 +1,18 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import AddPeople from '@/shared/components/AddPeople';
 import logger from '@/utils/Logger';
-import { faCircleXmark, faPlus, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faPlus, faRectangleXmark, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useState, type SetStateAction } from 'react';
+import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useGetUsersByCommunityIdQuery, useLazyGetUsersByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
+import { useGetShortListUsersByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
 import { useCreateInviteAsyncMutation } from '../../api/InviteToCommunity.api';
 import type { CommunityModel } from '../../types/CommunityModel';
 import type { CommunityUserModel } from '../../types/CommunityUserModel';
 import type { InviteToCommunityModel } from '../../types/InviteToCommunityModel';
 import CommunityMemberItem from './CommunityMemberItem';
 import CommunityUsers from './CommunityUsers';
-
-const defaultMaxPeople = 5;
 
 interface CommunityMembersProps {
     community: CommunityModel;
@@ -22,37 +21,21 @@ interface CommunityMembersProps {
 }
 
 const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, setIsCommunityMember }) => {
-    const { t } = useTranslation("communication/community/communityMembers");
+    const defaultMaxPeople = 5;
+
+    const { t } = useTranslation('communication/community/communityMembers');
 
     const communityUsersId: string[] = [];
 
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityUserSize ?? defaultMaxPeople);
+
     const [showAllPeople, setShowAllPeople] = useState(false);
     const [peopleToJoin, setPeopleToJoin] = useState<AppUserModel[]>([]);
-    const [allCommunityUsers, setAllCommunityUsers] = useState<CommunityUserModel[]>([]);
     const [showAddPeople, setShowAddPeople] = useState(false);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const { communityUsers, isLoading } = useGetUsersByCommunityIdQuery(community.id, {
-        selectFromResult: ({ data, isLoading }) => {
-            if (!data) {
-                return {
-                    communityUsers: [],
-                    isLoading
-                }
-            }
-
-            for (let i = 0; i < data.length; i++) {
-                communityUsersId.push(data[i].appUserId);
-            }
-
-            return {
-                communityUsers: data?.slice(0, defaultMaxPeople),
-                isLoading
-            }
-        }
-    });
-    const [getAllCommunityUsersAsync] = useLazyGetUsersByCommunityIdQuery();
+    const { data: communityUsers, isLoading } = useGetShortListUsersByCommunityIdQuery({ communityId: community.id, pageSize: pageSizeRef.current });
     const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
 
     useEffect(() => {
@@ -104,18 +87,8 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
         setShowAddPeople((item) => !item);
     }
 
-    const handleShowAllPeopleAsync = async () => {
-        try {
-            const communityUsers = await getAllCommunityUsersAsync(community?.id).unwrap();
-            setAllCommunityUsers(communityUsers);
-            setShowAllPeople(prev => !prev);
-        } catch (error) {
-            logger.error('API call failed:', error);
-        }
-    }
-
-    if (isLoading) {
-        return <div>Loading...</div>;
+    if (!communityUsers || isLoading) {
+        return (<div>Loading...</div>);
     }
 
     return (
@@ -124,11 +97,11 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
                 <div className="actions">
                     <div>{t("Members")}</div>
                     <div className="tool">
-                        {community.appUserId === myself?.id &&
+                        {community.appUserId === myself.id &&
                             <FontAwesomeIcon
                                 icon={faRectangleXmark}
                                 title={t("RemovePeople") || ""}
-                                onClick={handleShowAllPeopleAsync}
+                                onClick={() => setShowAllPeople(prev => !prev)}
                             />
                         }
                         {communityUsersId.includes(myself?.id) &&
@@ -142,7 +115,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
                 </div>
             </div>
             <ul className="members__content">
-                {communityUsers?.map((user: CommunityUserModel) => (
+                {communityUsers.users.map((user: CommunityUserModel) => (
                     <li key={user.id}>
                         <CommunityMemberItem
                             comunityUser={user}
@@ -151,8 +124,13 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
                 ))
                 }
             </ul>
-            {communityUsers?.length >= defaultMaxPeople &&
-                <input type="button" value={t("AllMembers") || ""} className="btn btn-outline-success all-people" onClick={handleShowAllPeopleAsync} />
+            {communityUsers.count >= defaultMaxPeople &&
+                <div className="btn-shadow" onClick={() => setShowAllPeople(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faBars}
+                    />
+                    <div>{t("AllMembers")}</div>
+                </div>
             }
             {showAddPeople &&
                 <div className="add-people-to-community box-shadow">
@@ -177,11 +155,11 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
             {showAllPeople &&
                 <CommunityUsers
                     myself={myself}
-                    communityUsers={allCommunityUsers}
                     removeUsersAsync={removeUsersAsync}
                     setShowMembers={setShowAllPeople}
                     isPopup={true}
-                    canRemovePeople={() => myself?.id === community?.appUserId}
+                    canRemovePeople={() => myself.id === community.appUserId}
+                    communityId={community.id}
                 />
             }
         </div>

@@ -4,5 +4,5 @@ namespace Communication.Domain.Data;
 
 public interface ICommunityPostCommentRepository
 {
-    Task<IEnumerable<CommunityPostComment>> GetByCommunityPostIdAsync(int communityPostId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<(IEnumerable<CommunityPostComment>, int)> GetByCommunityPostIdAsync(int communityPostId, int page, int pageSize, CancellationToken cancellationToken);
 }

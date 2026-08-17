@@ -3,6 +3,7 @@ using Communication.Application.Commands.CreateCommunityUser;
 using Communication.Application.Commands.DeleteCommunityUser;
 using Communication.Application.Commands.LeaveCommunityUser;
 using Communication.Application.Queries.GetCommunityUsers;
+using Communication.Application.Queries.GetCommunityUsersByUserId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,18 @@ public class CommunityUserController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId, CancellationToken cancellationToken)
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var communitityUsers = await _mediator.Send(new GetCommunityUsersQuery(communityId), cancellationToken);
+        var communitityUsers = await _mediator.Send(new GetCommunityUsersByUserIdQuery(appUserId, page, pageSize), cancellationToken);
+
+        return Ok(communitityUsers);
+    }
+
+    [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var communitityUsers = await _mediator.Send(new GetCommunityUsersQuery(communityId, page, pageSize), cancellationToken);
 
         return Ok(communitityUsers);
     }

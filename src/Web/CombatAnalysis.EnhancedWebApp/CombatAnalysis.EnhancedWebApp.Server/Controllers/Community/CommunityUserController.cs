@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -20,11 +21,29 @@ public class CommunityUserController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId)
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}");
-        var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
+        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
+
+        return Ok(users);
+    }
+
+    [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
+        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
+
+        return Ok(users);
+    }
+
+    [HttpGet("getShortListByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetShortListByCommunityId(int communityId, int pageSize)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}?page=1&pageSize={pageSize}");
+        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
 
         return Ok(users);
     }

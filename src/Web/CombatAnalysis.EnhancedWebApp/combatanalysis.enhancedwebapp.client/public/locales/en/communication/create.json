@@ -31,5 +31,6 @@
   "PrevioslyStep": "Previosly step",
   "CreateCommunity": "Create community",
   "NameRequired": "Name required",
-  "DescriptionRequired": "Description required"
+  "DescriptionRequired": "Description required",
+  "CommunityInformation": "Community information"
 }

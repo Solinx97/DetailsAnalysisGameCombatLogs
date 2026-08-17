@@ -26,7 +26,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({ community, myself, 
             id: 0,
             title: title.current?.value ?? "",
             content: content.current?.value ?? "",
-            when: new Date(),
+            createdAt: new Date(),
             appUserId: myself?.id ?? "",
             communityId: community?.id
         }

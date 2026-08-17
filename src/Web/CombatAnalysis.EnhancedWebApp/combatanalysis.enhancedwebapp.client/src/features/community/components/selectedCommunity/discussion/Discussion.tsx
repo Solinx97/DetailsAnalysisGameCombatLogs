@@ -58,7 +58,7 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                 id: discussion.id,
                 title: title,
                 content: content,
-                when: discussion.when,
+                createdAt: discussion.createdAt,
                 appUserId: discussion.appUserId,
                 communityId: discussion.communityId
             }
@@ -81,7 +81,7 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
             const newDiscussionComment: CommunityDiscussionCommentModel = {
                 id: 0,
                 content: discussionCommentContent,
-                when: new Date(),
+                createdAt: new Date(),
                 communityDiscussionId: discussionId,
                 appUserId: user?.id ?? "",
             }
@@ -150,10 +150,6 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                 </div>
                 {showComments &&
                     <>
-                        <DiscussionComments
-                            userId={user.id}
-                            discussionId={discussionId}
-                        />
                         <div className="add-new-discussion-comment">
                             <div className="add-new-discussion-comment__title">
                                 {showAddComment
@@ -171,6 +167,10 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                                 </div>
                             }
                         </div>
+                        <DiscussionComments
+                            userId={user.id}
+                            discussionId={discussionId}
+                        />
                     </>
                 }
                 <div className="actions">

@@ -1,3 +1,4 @@
+import type { AllDiscussionModel } from '../types/AllDiscussionModel';
 import type { CommunityDiscussionModel } from '../types/CommunityDiscussionModel';
 import { CommunityApi } from './Community.api';
 
@@ -9,7 +10,33 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
                 url: '/CommunityDiscussion',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'CommunityDiscussion', id: result.id }] : [],
+            async onQueryStarted({ }, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdComment } = await queryFulfilled;
+
+                    dispatch(
+                        CommunityDiscussionApi.util.updateQueryData(
+                            'getCommunityDiscussionByCommunityId',
+                            {
+                                communityId: createdComment.communityId,
+                                page: 1,
+                                pageSize: 5
+                            },
+                            draft => {
+                                const exists = draft.discussions.some(
+                                    x => x.id === createdComment.id
+                                );
+
+                                if (!exists) {
+                                    draft.discussions.unshift(createdComment);
+                                }
+                            }
+                        )
+                    );
+                } catch {
+                    // DELETE failed
+                }
+            }
         }),
         updateCommunityDiscussion: builder.mutation<void, { id: number, discussion: CommunityDiscussionModel }>({
             query: ({ id, discussion }) => ({
@@ -30,15 +57,49 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
             query: id => `/CommunityDiscussion/${id}`,
             providesTags: result => result ? [{ type: 'CommunityDiscussion', id: result.id }] : [],
         }),
-        getCommunityDiscussionByCommunityId: builder.query<CommunityDiscussionModel[], { communityId: number, page: number, pageSize: number }>({
+        getShortListCommunityDiscussionByCommunityId: builder.query<AllDiscussionModel, { communityId: number, pageSize: number }>({
+            query: ({ communityId, pageSize }) => `/CommunityDiscussion/getShortListByDiscussionId/${communityId}?pageSize=${pageSize}`,
+            providesTags: () => [{ type: 'CommunityDiscussion', id: 'LIST'}],
+        }),
+        getCommunityDiscussionByCommunityId: builder.query<AllDiscussionModel, { communityId: number, page: number, pageSize: number }>({
             query: ({ communityId, page, pageSize }) => `/CommunityDiscussion/getByCommunityId/${communityId}?page=${page}&pageSize=${pageSize}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(communityDiscussion => ({ type: 'CommunityDiscussion' as const, id: communityDiscussion.id })),
-                        { type: 'CommunityDiscussion', id: 'LIST' },
-                    ]
-                    : [{ type: 'CommunityDiscussion', id: 'LIST' }]
+            serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.communityId}`,
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.discussions.length = 0;
+                    currentCache.discussions.push(...newItems.discussions);
+                    return;
+                }
+
+                newItems.discussions.forEach(item => {
+                    const index = currentCache.discussions.findIndex(x => x.id === item.id);
+                    if (index === -1) {
+                        currentCache.discussions.push(item);
+                    } else {
+                        currentCache.discussions[index] = item;
+                    }
+                });
+
+                currentCache.discussions.sort(
+                    (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                );
+            },
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.communityId !== previousArg?.communityId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'CommunityDiscussion', id: 'LIST' },
+                ...(result?.discussions.map(post => ({
+                    type: 'CommunityDiscussion' as const,
+                    id: post.id
+                })) ?? [])
+            ]
         }),
     })
 })
@@ -48,6 +109,6 @@ export const {
     useUpdateCommunityDiscussionMutation,
     useRemoveCommunityDiscussionMutation,
     useGetCommunityDiscussionByIdQuery,
+    useGetShortListCommunityDiscussionByCommunityIdQuery,
     useGetCommunityDiscussionByCommunityIdQuery,
-    useLazyGetCommunityDiscussionByCommunityIdQuery,
 } = CommunityDiscussionApi;

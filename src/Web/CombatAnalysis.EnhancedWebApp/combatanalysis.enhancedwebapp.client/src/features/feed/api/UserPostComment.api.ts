@@ -1,3 +1,4 @@
+import type { AllUserPostCommentsModel } from '../types/AllUserPostCommentsModel';
 import type { UserPostCommentModel } from '../types/UserPostCommentModel';
 import { PostApi } from './Post.api';
 
@@ -9,7 +10,33 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
                 url: '/UserPostComment',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'UserPostComment', id: result.id }] : [],
+            async onQueryStarted({}, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdComment } = await queryFulfilled;
+
+                    dispatch(
+                        UserPostCommentApi.util.updateQueryData(
+                            'getUserPostCommentByUserPostId',
+                            {
+                                userPostId: createdComment.userPostId,
+                                page: 1,
+                                pageSize: 5
+                            },
+                            draft => {
+                                const exists = draft.comments.some(
+                                    x => x.id === createdComment.id
+                                );
+
+                                if (!exists) {
+                                    draft.comments.unshift(createdComment);
+                                }
+                            }
+                        )
+                    );
+                } catch {
+                    // DELETE failed
+                }
+            }
         }),
         updateUserPostComment: builder.mutation<void, { id: number, comment: UserPostCommentModel }>({
             query: ({ id, comment }) => ({
@@ -26,15 +53,45 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'UserPostComment', id }],
         }),
-        getUserPostCommentByUserPostId: builder.query<UserPostCommentModel[], { userPostId: number, page: number, pageSize: number }>({
+        getUserPostCommentByUserPostId: builder.query<AllUserPostCommentsModel, { userPostId: number, page: number, pageSize: number }>({
             query: ({ userPostId, page, pageSize }) => `/UserPostComment/getByUserPostId/${userPostId}?page=${page}&pageSize=${pageSize}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(userPostComment => ({ type: 'UserPostComment' as const, id: userPostComment.id })),
-                        { type: 'UserPostComment', id: 'LIST' },
-                    ]
-                    : [{ type: 'UserPostComment', id: 'LIST' }]
+            serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.userPostId}`,
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.comments.length = 0;
+                    currentCache.comments.push(...newItems.comments);
+                    return;
+                }
+
+                newItems.comments.forEach(item => {
+                    const index = currentCache.comments.findIndex(x => x.id === item.id);
+                    if (index === -1) {
+                        currentCache.comments.push(item);
+                    } else {
+                        currentCache.comments[index] = item;
+                    }
+                });
+
+                currentCache.comments.sort(
+                    (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                );
+            },
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.userPostId !== previousArg?.userPostId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'UserPostComment', id: 'LIST' },
+                ...(result?.comments.map(post => ({
+                    type: 'UserPostComment' as const,
+                    id: post.id
+                })) ?? [])
+            ]
         }),
         countUserPostCommentByUserPostId: builder.query<number, number>({
             query: id => `/UserPostComment/count/${id}`,

@@ -4,7 +4,9 @@ namespace Communication.Domain.Data;
 
 public interface ICommunityDiscussionRepository
 {
-    Task<IEnumerable<CommunityDiscussion>> GetAsync(int communityId, int page, int pageSize, CancellationToken cancelationToken);
+    Task<IEnumerable<CommunityDiscussion>> GetShortListAsync(int communityId, int pageSize, CancellationToken cancellationToken);
+
+    Task<(IEnumerable<CommunityDiscussion>, int)> GetAsync(int communityId, int page, int pageSize, CancellationToken cancellationToken);
 
     Task<CommunityDiscussion> GetWithCommentsAsync(int id, CancellationToken cancellationToken);
 

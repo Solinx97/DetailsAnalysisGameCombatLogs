@@ -1,3 +1,4 @@
+import type { AllDiscussionCommentModel } from '../types/AllDiscussionCommentModel';
 import type { CommunityDiscussionCommentModel } from '../types/CommunityDiscussionCommentModel';
 import { CommunityApi } from './Community.api';
 
@@ -9,7 +10,33 @@ export const CommunityDiscussionCommentApi = CommunityApi.injectEndpoints({
                 url: '/CommunityDiscussionComment',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'CommunityDiscussionComment', id: result.id }] : [],
+            async onQueryStarted({ }, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdComment } = await queryFulfilled;
+
+                    dispatch(
+                        CommunityDiscussionCommentApi.util.updateQueryData(
+                            'getCommunityDiscussionCommentByDiscussionId',
+                            {
+                                discussionId: createdComment.communityDiscussionId,
+                                page: 1,
+                                pageSize: 5
+                            },
+                            draft => {
+                                const exists = draft.comments.some(
+                                    x => x.id === createdComment.id
+                                );
+
+                                if (!exists) {
+                                    draft.comments.unshift(createdComment);
+                                }
+                            }
+                        )
+                    );
+                } catch {
+                    // DELETE failed
+                }
+            }
         }),
         updateCommunityDiscussionCommentAsync: builder.mutation<void, { id: number, comment: CommunityDiscussionCommentModel }>({
             query: ({ id, comment }) => ({
@@ -30,18 +57,30 @@ export const CommunityDiscussionCommentApi = CommunityApi.injectEndpoints({
             query: id => `/CommunityDiscussionComment/${id}`,
             providesTags: result => result ? [{ type: 'CommunityDiscussionComment', id: result.id }] : [],
         }),
-        getCommunityDiscussionCommentByDiscussionId: builder.query<CommunityDiscussionCommentModel[], { discussionId: number, page: number, pageSize: number }>({
+        getCommunityDiscussionCommentByDiscussionId: builder.query<AllDiscussionCommentModel, { discussionId: number, page: number, pageSize: number }>({
             query: ({ discussionId, page, pageSize }) => `/CommunityDiscussionComment/getByDiscussionId/${discussionId}?page=${page}&pageSize=${pageSize}`,
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.discussionId}`,
-            merge: (currentCache, newItems) => {
-                newItems.forEach(item => {
-                    const index = currentCache.findIndex(x => x.id === item.id);
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.comments.length = 0;
+                    currentCache.comments.push(...newItems.comments);
+                    return;
+                }
+
+                newItems.comments.forEach(item => {
+                    const index = currentCache.comments.findIndex(x => x.id === item.id);
                     if (index === -1) {
-                        currentCache.push(item);
+                        currentCache.comments.push(item);
                     } else {
-                        currentCache[index] = item;
+                        currentCache.comments[index] = item;
                     }
                 });
+
+                currentCache.comments.sort(
+                    (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                );
             },
             forceRefetch: ({ currentArg, previousArg }) => {
                 return (
@@ -52,9 +91,9 @@ export const CommunityDiscussionCommentApi = CommunityApi.injectEndpoints({
             },
             providesTags: result => [
                 { type: 'CommunityDiscussionComment', id: 'LIST' },
-                ...(result?.map(comment => ({
+                ...(result?.comments.map(post => ({
                     type: 'CommunityDiscussionComment' as const,
-                    id: comment.id
+                    id: post.id
                 })) ?? [])
             ]
         }),

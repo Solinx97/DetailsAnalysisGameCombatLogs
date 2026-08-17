@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -39,10 +40,10 @@ public class CommunityController : ControllerBase
     }
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId)
+    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/getByUserId/{appUserId}");
-        var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
+        var responseMessage = await _httpClient.GetAsync($"Community/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
+        var communities = await responseMessage.Content.ReadFromJsonAsync<CommunityResponse>();
 
         return Ok(communities);
     }
