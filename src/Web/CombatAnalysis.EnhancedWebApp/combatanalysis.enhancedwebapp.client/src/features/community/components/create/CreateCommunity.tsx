@@ -7,13 +7,14 @@ import { useSelector } from 'react-redux';
 import { useCreateCommunityMutation } from '../../api/Community.api';
 import type { CommunityModel } from '../../types/CommunityModel';
 import CommunityRulesItem from './CommunityRulesItem';
+import type { RulesModel } from '../../types/community/RulesModel';
 
 import './Create.scss';
 
 const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction<boolean>) => void }> = ({ setShowCreateCommunity }) => {
-    const myself = useSelector((state: RootState) => state.user.value);
-
     const { t } = useTranslation('communication/create');
+
+    const myself = useSelector((state: RootState) => state.user.value);
 
     const communityNameRef = useRef<HTMLInputElement | null>(null);
     const communityDescriptionRef = useRef<HTMLTextAreaElement | null>(null);
@@ -21,17 +22,26 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [isCreating, setIsCreating] = useState(false);
+    const [rules, setRules] = useState<RulesModel>({
+        policy: 0,
+        invite: 0,
+        remove: 0
+    });
 
     const [createCommunity] = useCreateCommunityMutation();
 
     const createCommunityAsync = async () => {
         try {
+            if (!myself) {
+                return;
+            }
+
             const newCommunity: CommunityModel = {
                 id: 0,
                 name: name,
                 description: description,
-                policyType: 0,
-                appUserId: myself?.id ?? ""
+                policyType: rules.policy,
+                appUserId: myself.id
             };
 
             await createCommunity(newCommunity).unwrap();
@@ -90,17 +100,19 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
                     </div>
                     <CommunityRulesItem
                         t={t}
+                        rules={rules}
+                        setRules={setRules}
                     />
                 </div>
                 <div className="actions">
                     <div className={`btn-shadow create ${(name.length > 0 && description.length > 0) ? '' : 'can-not-finish'}`}
-                        onClick={(name.length > 0 && description.length > 0) ? handleCreateNewCommunityAsync : () => { } }>{t("Create")}</div>
+                        onClick={(name.length > 0 && description.length > 0) ? handleCreateNewCommunityAsync : () => { }}>{t("Create")}</div>
                     <div className="btn-shadow" onClick={() => setShowCreateCommunity(false)}>{t("Cancel")}</div>
                 </div>
                 {isCreating &&
                     <>
                         <span className="creating"></span>
-                        <div className="notify">Creating...</div>
+                        <div className="notify">{t("Creating")}</div>
                     </>
                 }
             </div>

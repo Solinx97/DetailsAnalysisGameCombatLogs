@@ -58,10 +58,10 @@ export const CommunityUserApi = CommunityApi.injectEndpoints({
                     id: post.id
                 })) ?? [])
             ]
-        }),        
+        }),
         getShortListUsersByCommunityId: builder.query<AllCommunityUserModel, { communityId: number, pageSize: number }>({
             query: ({ communityId, pageSize }) => `/CommunityUser/getShortListByCommunityId/${communityId}?pageSize=${pageSize}`,
-            providesTags: () => [{ type: 'CommunityUser', id: 'LIST'}],
+            providesTags: () => [{ type: 'CommunityUser', id: 'LIST' }],
         }),
         getCommunityUsersByUserId: builder.query<AllCommunityUserModel, { appUserId: string, page: number, pageSize: number }>({
             query: ({ appUserId, page, pageSize }) => `/CommunityUser/getByUserId/${appUserId}?page=${page}&pageSize=${pageSize}`,
@@ -97,6 +97,9 @@ export const CommunityUserApi = CommunityApi.injectEndpoints({
                 })) ?? [])
             ]
         }),
+        getCanJoinByUserId: builder.query<boolean, { appUserId: string, communityId: number }>({
+            query: ({ appUserId, communityId }) => `/CommunityUser/canJoin/${appUserId}?communityId=${communityId}`,
+        }),
     })
 })
 
@@ -106,5 +109,6 @@ export const {
     useGetCommunityUsersByUserIdQuery,
     useCreateCommunityUserMutation,
     useRemoveCommunityUserMutation,
-    useLeaveCommunityUserMutation
+    useLeaveCommunityUserMutation,
+    useGetCanJoinByUserIdQuery,
 } = CommunityUserApi;

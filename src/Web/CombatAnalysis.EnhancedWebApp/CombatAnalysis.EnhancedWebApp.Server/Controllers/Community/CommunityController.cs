@@ -25,7 +25,7 @@ public class CommunityController : ControllerBase
     public async Task<IActionResult> Get(int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"Community?page={page}&pageSize={pageSize}");
-        var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
+        var communities = await responseMessage.Content.ReadFromJsonAsync<CommunityResponse>();
 
         return Ok(communities);
     }
@@ -61,6 +61,13 @@ public class CommunityController : ControllerBase
     public async Task<IActionResult> Update(int id, CommunityModel request)
     {
         await _httpClient.PutAsync($"Community/{id}", JsonContent.Create(request));
+        return NoContent();
+    }
+
+    [HttpPut("updateRules/{id:int:min(1)}")]
+    public async Task<IActionResult> UpdateRules(int id, CommunityModel request)
+    {
+        await _httpClient.PutAsync($"Community/updateRules/{id}", JsonContent.Create(request));
         return NoContent();
     }
 

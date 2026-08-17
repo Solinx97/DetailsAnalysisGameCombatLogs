@@ -17,15 +17,15 @@ import CommunityUsers from './CommunityUsers';
 interface CommunityMembersProps {
     community: CommunityModel;
     myself: AppUserModel;
+    isCommunityMember?: boolean;
     setIsCommunityMember?(value: SetStateAction<boolean>): void;
 }
 
-const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, setIsCommunityMember }) => {
+const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, isCommunityMember, setIsCommunityMember }) => {
     const defaultMaxPeople = 5;
+    const communityUsersId: string[] = [];
 
     const { t } = useTranslation('communication/community/communityMembers');
-
-    const communityUsersId: string[] = [];
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.communityUserSize ?? defaultMaxPeople);
 
@@ -39,12 +39,12 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
     const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
 
     useEffect(() => {
-        if (!setIsCommunityMember || communityUsersId.length === 0) {
+        if (!setIsCommunityMember || !communityUsers) {
             return;
         }
 
-        setIsCommunityMember(communityUsersId.includes(myself.id));
-    }, [communityUsersId]);
+        setIsCommunityMember(communityUsers.users.find(x => x.appUserId === myself.id) !== null);
+    }, [communityUsers]);
 
     const createInviteAsync = async () => {
         try {
@@ -104,7 +104,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
                                 onClick={() => setShowAllPeople(prev => !prev)}
                             />
                         }
-                        {communityUsersId.includes(myself?.id) &&
+                        {isCommunityMember &&
                             <FontAwesomeIcon
                                 icon={faPlus}
                                 title={t("AddNewPeople") || ""}

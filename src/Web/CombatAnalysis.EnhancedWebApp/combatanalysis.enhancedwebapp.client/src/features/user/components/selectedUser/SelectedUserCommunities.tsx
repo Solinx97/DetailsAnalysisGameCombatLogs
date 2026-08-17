@@ -6,17 +6,18 @@ import type { AppUserModel } from '../../types/AppUserModel';
 import { useGetCommunityByUserIdQuery } from '../../../community/api/Community.api';
 
 interface SelectedUserCommunitiesProps {
-    user: AppUserModel | null;
+    user: AppUserModel;
+    myself: AppUserModel;
     t: (key: string) => string;
 }
 
-const SelectedUserCommunities: React.FC<SelectedUserCommunitiesProps> = ({ user, t }) => {
+const SelectedUserCommunities: React.FC<SelectedUserCommunitiesProps> = ({ user, myself, t }) => {
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.communitySize ?? 10);
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
 
-    const { data: userCommunities, isLoading, isFetching } = useGetCommunityByUserIdQuery({ appUserId: user?.id ?? "NONE", page, pageSize: pageSizeRef.current });
+    const { data: userCommunities, isLoading, isFetching } = useGetCommunityByUserIdQuery({ appUserId: user.id, page, pageSize: pageSizeRef.current });
 
     useEffect(() => {
         if (!userCommunities) {
@@ -40,6 +41,7 @@ const SelectedUserCommunities: React.FC<SelectedUserCommunitiesProps> = ({ user,
                             <CommunityItem
                                 community={community}
                                 targetUser={user}
+                                myself={myself}
                             />
                         </li>
                     ))}

@@ -3,6 +3,7 @@ using CombatAnalysis.CommunicationAPI.Partials;
 using Communication.Application.Commands.CreateCommunity;
 using Communication.Application.Commands.DeleteCommunity;
 using Communication.Application.Commands.UpdateCommunity;
+using Communication.Application.Commands.UpdateCommunityRules;
 using Communication.Application.Queries.CountCommunity;
 using Communication.Application.Queries.GetCommunitiesByUserId;
 using Communication.Application.Queries.GetCommunity;
@@ -62,6 +63,20 @@ public class CommunityController(IMediator mediator) : ControllerBase
         }
 
         var command = new UpdateCommunityCommand(request.Id, request.Name, request.Description);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPut("updateRules/{id:int:min(1)}")]
+    public async Task<IActionResult> UpdateRules(int id, [FromBody] CommunityRulesPartial request, CancellationToken cancellationToken)
+    {
+        if (id != request.Id)
+        {
+            return BadRequest("Route ID and body ID do not match.");
+        }
+
+        var command = new UpdateCommunityRulesCommand(request.Id, request.PolicyType);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

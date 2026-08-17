@@ -3,7 +3,7 @@ import type { RootState } from '@/app/Store';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetCommunityByUserIdQuery } from '../api/Community.api';
+import { useGetCommunitiesQuery } from '../api/Community.api';
 import CommunityItem from './CommunityItem';
 
 const CommunityList: React.FC = () => {
@@ -14,28 +14,29 @@ const CommunityList: React.FC = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
 
-    const { data: userCommunities, isLoading, isFetching } = useGetCommunityByUserIdQuery({ appUserId: myself?.id ?? "", page, pageSize: pageSizeRef.current });
+    const { data: communities, isLoading, isFetching } = useGetCommunitiesQuery({ page, pageSize: pageSizeRef.current });
 
     useEffect(() => {
-        if (!userCommunities) {
+        if (!communities) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < userCommunities.count);
-    }, [page, userCommunities]);
+        setHasMore(((page - 1) * pageSizeRef.current) < communities.count);
+    }, [page, communities]);
 
-    if (!userCommunities || isLoading) {
+    if (!communities || !myself || isLoading) {
         return (<div>Loading...</div>);
     }
 
     return (
         <>
             <ul>
-                {userCommunities.communities.filter(community => community.policyType === 0).map((item) => (
+                {communities.communities.filter(community => community.policyType === 0).map((item) => (
                     <li key={item.id} className="community">
                         <CommunityItem
                             community={item}
                             targetUser={myself}
+                            myself={myself}
                         />
                     </li>
                 ))

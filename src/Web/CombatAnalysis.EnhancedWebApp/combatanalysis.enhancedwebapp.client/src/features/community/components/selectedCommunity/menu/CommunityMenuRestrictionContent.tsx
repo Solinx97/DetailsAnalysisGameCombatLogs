@@ -1,9 +1,10 @@
 import AddPeople from '@/shared/components/AddPeople';
 import logger from '@/utils/Logger';
 import type { AppUserModel } from '@/features/user/types/AppUserModel';
-import { useState, type SetStateAction } from "react";
+import type { RulesModel } from '@/features/community/types/community/RulesModel';
+import { useEffect, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdateCommunityAsyncMutation } from '../../../api/Community.api';
+import { useUpdateCommunityMutation, useUpdateCommunityRulesMutation } from '../../../api/Community.api';
 import { useCreateInviteAsyncMutation } from '../../../api/InviteToCommunity.api';
 import type { CommunityModel } from '../../../types/CommunityModel';
 import type { InviteToCommunityModel } from '../../../types/InviteToCommunityModel';
@@ -31,9 +32,27 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
     const [peopleIdToJoin, setPeopleIdToJoin] = useState<AppUserModel[]>([]);
     const [showInvitesSuccess, setShowInvitesSuccess] = useState(false);
     const [showInvitesFailed, setShowInvitesFailed] = useState(false);
+    const [rules, setRules] = useState<RulesModel>({
+        policy: 0,
+        invite: 0,
+        remove: 0
+    });
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
-    const [updateCommunityAsyncMut] = useUpdateCommunityAsyncMutation();
+    const [updateCommunity] = useUpdateCommunityMutation();
+    const [updateCommunityRules] = useUpdateCommunityRulesMutation();
+
+    useEffect(() => {
+        if (!community) {
+            return;
+        }
+        
+        setRules({
+            policy: community.policyType,
+            invite: 0,
+            remove: 0
+        });
+    }, [community]);
 
     const updateCommunityAsync = async () => {
         try {
@@ -41,7 +60,19 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
             communityForUpdate.name = communityName;
             communityForUpdate.description = communityDescription;
 
-            await updateCommunityAsyncMut({ id: communityForUpdate.id, community: communityForUpdate }).unwrap();
+            await updateCommunity({ id: communityForUpdate.id, community: communityForUpdate }).unwrap();
+            setCommunity(communityForUpdate);
+        } catch (e) {
+            logger.error("Failed to update commuity", e);
+        }
+    }
+
+    const updateCommunityRulesAsync = async () => {
+        try {
+            const communityForUpdate = Object.assign({}, community);
+            communityForUpdate.policyType = rules.policy;
+
+            await updateCommunityRules({ id: communityForUpdate.id, community: communityForUpdate }).unwrap();
             setCommunity(communityForUpdate);
         } catch (e) {
             logger.error("Failed to update commuity", e);
@@ -56,7 +87,7 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
                     communityId: community.id,
                     toAppUserId: peopleIdToJoin[i].id,
                     when: new Date(),
-                    appUserId: user?.id
+                    appUserId: user.id
                 }
 
                 await createInviteAsyncMut(newInviteToCommunity).unwrap();
@@ -170,9 +201,11 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
                 <>
                     <CommunityRulesItem
                         t={t}
+                        rules={rules}
+                        setRules={setRules}
                     />
                     <div className="actions">
-                        <div className="btn-shadow">{t("Update")}</div>
+                        <div className="btn-shadow" onClick={updateCommunityRulesAsync}>{t("Update")}</div>
                     </div>
                 </>
             }

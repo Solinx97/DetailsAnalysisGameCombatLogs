@@ -1,36 +1,37 @@
 import logger from '@/utils/Logger';
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { type JSX, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import User from '../../user/components/User';
 import type { AppUserModel } from '../../user/types/AppUserModel';
-import { useCreateCommunityUserMutation } from '../api/CommunityUser.api';
+import { useCreateCommunityUserMutation, useGetCanJoinByUserIdQuery } from '../api/CommunityUser.api';
 import type { CommunityUserModel } from '../types/CommunityUserModel';
 import type { CommunityModel } from '../types/CommunityModel';
 
 interface CommunityItemProps {
     community: CommunityModel;
-    targetUser: AppUserModel | null;
+    targetUser: AppUserModel;
+    myself: AppUserModel;
 }
 
-const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser }) => {
+const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser, myself }) => {
     const { t } = useTranslation('communication/community/Communities');
     
     const navigate = useNavigate();
 
-    const [canJoin, setCanJoin] = useState(true);
     const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
 
     const [createCommunityUser] = useCreateCommunityUserMutation();
+    const { data: canJoin, isLoading } = useGetCanJoinByUserIdQuery({ appUserId: myself.id, communityId: community.id });
 
     const createCommunityUserAsync = async () => {
         try {
             const newCommunityUser: CommunityUserModel = {
                 id: crypto.randomUUID(),
-                username: targetUser?.username ?? "",
-                appUserId: targetUser?.id ?? "",
+                username: targetUser.username,
+                appUserId: targetUser.id,
                 communityId: community.id
             };
 
@@ -39,6 +40,10 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser }) 
         } catch (e) {
             logger.error(`Failed to create community user to community: ${community.id}`, e);
         }
+    }
+
+    if (canJoin === undefined || isLoading) {
+        return (<></>);
     }
 
     return (
@@ -63,7 +68,7 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser }) 
                                         <div>{t("Open")}</div>
                                     </div>
                                 </div>
-                                {/* {canJoin &&
+                                {canJoin &&
                                     <div className="join-to-community">
                                         <div className="btn-shadow" onClick={async () => await createCommunityUserAsync()}>
                                             <FontAwesomeIcon
@@ -72,7 +77,7 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser }) 
                                             <div>{t("Join")}</div>
                                         </div>
                                     </div>
-                                } */}
+                                }
                             </div>
                         </>
                     }

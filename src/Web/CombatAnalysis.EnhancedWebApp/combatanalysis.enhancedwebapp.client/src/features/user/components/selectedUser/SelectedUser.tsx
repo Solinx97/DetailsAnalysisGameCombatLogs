@@ -136,6 +136,7 @@ const SelectedUser: React.FC = () => {
                         {currentMenuItem === 3 &&
                             <SelectedUserCommunities
                                 user={person}
+                                myself={myself}
                                 t={t}
                             />
                         }

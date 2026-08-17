@@ -25,12 +25,46 @@ export const CommunityApi = createApi({
                 url: '/Community',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'Community', id: result.id }] : [],
+            async onQueryStarted({ }, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdCommunity } = await queryFulfilled;
+
+                    dispatch(
+                        CommunityApi.util.updateQueryData(
+                            'getCommunityByUserId',
+                            {
+                                appUserId: createdCommunity.appUserId,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const exists = draft.communities.some(
+                                    x => x.id === createdCommunity.id
+                                );
+
+                                if (!exists) {
+                                    draft.communities.unshift(createdCommunity);
+                                }
+                            }
+                        )
+                    );
+                } catch {
+                    // DELETE failed
+                }
+            }
         }),
-        updateCommunityAsync: builder.mutation<void, { id: number, community: CommunityModel }>({
-            query: ({id, community }) => ({
+        updateCommunity: builder.mutation<void, { id: number, community: CommunityModel }>({
+            query: ({ id, community }) => ({
                 body: community,
                 url: `/Community/${id}`,
+                method: 'PUT'
+            }),
+            invalidatesTags: (_result, _error, community) => [{ type: 'Community', id: community.id }]
+        }),
+        updateCommunityRules: builder.mutation<void, { id: number, community: CommunityModel }>({
+            query: ({ id, community }) => ({
+                body: community,
+                url: `/Community/updateRules/${id}`,
                 method: 'PUT'
             }),
             invalidatesTags: (_result, _error, community) => [{ type: 'Community', id: community.id }]
@@ -42,15 +76,38 @@ export const CommunityApi = createApi({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'Community', id }]
         }),
-        getCommunities: builder.query<CommunityModel[], { page: number, pageSize: number }>({
+        getCommunities: builder.query<AllCommunityModel, { page: number, pageSize: number }>({
             query: ({ page, pageSize }) => `/Community?page=${page}&pageSize=${pageSize}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(community => ({ type: 'Community' as const, id: community.id })),
-                        { type: 'Community', id: 'LIST' },
-                    ]
-                    : [{ type: 'Community', id: 'LIST' }]
+            serializeQueryArgs: ({ endpointName }) => `${endpointName}`,
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.communities.length = 0;
+                    currentCache.communities.push(...newItems.communities);
+                    return;
+                }
+
+                newItems.communities.forEach(item => {
+                    const index = currentCache.communities.findIndex(x => x.id === item.id);
+                    if (index === -1) {
+                        currentCache.communities.push(item);
+                    } else {
+                        currentCache.communities[index] = item;
+                    }
+                });
+            },
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'CommunityDiscussion', id: 'LIST' },
+                ...(result?.communities.map(post => ({
+                    type: 'CommunityDiscussion' as const,
+                    id: post.id
+                })) ?? [])
+            ]
         }),
         getCommunityById: builder.query<CommunityModel, number>({
             query: id => `/Community/${id}`,
@@ -102,7 +159,8 @@ export const CommunityApi = createApi({
 
 export const {
     useCreateCommunityMutation,
-    useUpdateCommunityAsyncMutation,
+    useUpdateCommunityMutation,
+    useUpdateCommunityRulesMutation,
     useRemoveCommunityAsyncMutation,
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,

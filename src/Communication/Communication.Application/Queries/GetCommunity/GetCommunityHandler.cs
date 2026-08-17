@@ -1,21 +1,21 @@
 ﻿using AutoMapper;
 using Communication.Application.DTOs.Community;
-using Communication.Domain.Aggregates;
+using Communication.Application.DTOs.Community.General;
 using Communication.Domain.Data;
 using MediatR;
 
 namespace Communication.Application.Queries.GetCommunity;
 
-internal class GetCommunityHandler(IGenericRepository<Community, int> repository, IMapper mapper) : IRequestHandler<GetCommunityQuery, IEnumerable<CommunityDto>>
+internal class GetCommunityHandler(ICommunityRepository repository, IMapper mapper) : IRequestHandler<GetCommunityQuery, AllCommunityDto>
 {
-    private readonly IGenericRepository<Community, int> _repository = repository;
+    private readonly ICommunityRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IEnumerable<CommunityDto>> Handle(GetCommunityQuery request, CancellationToken cancellationToken)
+    public async Task<AllCommunityDto> Handle(GetCommunityQuery request, CancellationToken cancellationToken)
     {
-        var communities = await _repository.GetAsync(request.Page, request.PageSize, cancellationToken);
+        var (communities, count) = await _repository.GetAsync(request.Page, request.PageSize, cancellationToken);
         var map = _mapper.Map<IEnumerable<CommunityDto>>(communities);
 
-        return map;
+        return new AllCommunityDto(map, count);
     }
 }

@@ -48,6 +48,15 @@ public class CommunityUserController : ControllerBase
         return Ok(users);
     }
 
+    [HttpGet("canJoin/{appUserId}")]
+    public async Task<IActionResult> CanJoin(string appUserId, int communityId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/canJoin/{appUserId}?communityId={communityId}");
+        var canJoin = await responseMessage.Content.ReadFromJsonAsync<bool>();
+
+        return Ok(canJoin);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CommunityUserModel request)
     {

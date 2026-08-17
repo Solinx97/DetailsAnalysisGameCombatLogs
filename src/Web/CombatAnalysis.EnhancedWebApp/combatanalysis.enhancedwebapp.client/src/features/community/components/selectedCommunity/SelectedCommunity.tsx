@@ -81,12 +81,12 @@ const SelectedCommunity = () => {
                     <div className="header">
                         <div className="title">
                             <div className="title__content">
-                                <div className="name" title={community?.name}>
+                                <div className="name" title={community.name}>
                                     <FontAwesomeIcon
-                                        icon={community?.policyType ? faEarthEurope : faShieldHalved}
-                                        title={community?.policyType ? t("Open") : t("Private")}
+                                        icon={community.policyType === 0 ? faEarthEurope : faShieldHalved}
+                                        title={community.policyType ? t("Open") : t("Private")}
                                     />
-                                    <div>{community?.name}</div>
+                                    <div>{community.name}</div>
                                 </div>
                             </div>
                             {isCommunityMember &&
@@ -111,7 +111,7 @@ const SelectedCommunity = () => {
                         </div>
                     </div>
                     {showDescription &&
-                        <div className="description__content">{community?.description}</div>
+                        <div className="description__content">{community.description}</div>
                     }
                     {(discussion && showDiscussion) &&
                         <Discussion
@@ -153,6 +153,7 @@ const SelectedCommunity = () => {
                                 <CommunityMembers
                                     community={community}
                                     myself={myself}
+                                    isCommunityMember={isCommunityMember}
                                     setIsCommunityMember={setIsCommunityMember}
                                 />
                             </div>

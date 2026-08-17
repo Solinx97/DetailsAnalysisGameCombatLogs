@@ -2,6 +2,7 @@
 using Communication.Application.Commands.CreateCommunityUser;
 using Communication.Application.Commands.DeleteCommunityUser;
 using Communication.Application.Commands.LeaveCommunityUser;
+using Communication.Application.Queries.CanJoinToCommunity;
 using Communication.Application.Queries.GetCommunityUsers;
 using Communication.Application.Queries.GetCommunityUsersByUserId;
 using MediatR;
@@ -31,6 +32,14 @@ public class CommunityUserController(IMediator mediator) : ControllerBase
         var communitityUsers = await _mediator.Send(new GetCommunityUsersQuery(communityId, page, pageSize), cancellationToken);
 
         return Ok(communitityUsers);
+    }
+
+    [HttpGet("canJoin/{appUserId}")]
+    public async Task<IActionResult> CanJoin(string appUserId, int communityId, CancellationToken cancellationToken)
+    {
+        var canJoin = await _mediator.Send(new CanJoinToCommunityQuery(appUserId, communityId), cancellationToken);
+
+        return Ok(canJoin);
     }
 
     [HttpPost]

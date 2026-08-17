@@ -11,6 +11,24 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
 {
     private readonly CommunicationContext _context = context;
 
+    public async Task<(IEnumerable<Community>, int)> GetAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _context.Set<CommunityUser>()
+            .AsNoTracking();
+
+        var communities = await query
+            .Select(x => x.Community)
+            .Distinct()
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var count = await query
+            .CountAsync(cancellationToken);
+
+        return (communities, count);
+    }
+
     public async Task<(IEnumerable<Community>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var query = _context.Set<CommunityUser>()
@@ -63,6 +81,15 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return (communityUsers, count);
     }
 
+    public async Task<bool> CanJoinAsync(string appUserId, int communityId, CancellationToken cancellationToken)
+    {
+        var count = await _context.Set<CommunityUser>()
+            .AsNoTracking()
+            .Where(x => x.AppUserId == appUserId && x.CommunityId == communityId)
+            .CountAsync(cancellationToken);
+
+        return count == 0;
+    }
 
     public async Task<IEnumerable<InviteToCommunity>> GetInvitesToCommunityAsync(int id, CancellationToken cancellationToken)
     {

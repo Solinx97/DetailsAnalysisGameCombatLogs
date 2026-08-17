@@ -127,6 +127,11 @@ $mobile-max-width: 425px;
                             box-shadow: 3px 3px 3px 3px green;
                         }
                     }
+
+                    .title {
+                        display: flex;
+                        justify-content: flex-start;
+                    }
                 }
 
                 .box-shadow {
