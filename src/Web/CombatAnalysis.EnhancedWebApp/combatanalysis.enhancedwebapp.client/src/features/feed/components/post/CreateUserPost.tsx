@@ -56,10 +56,6 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, feedVersion, t })
     }
 
     const contentHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (e.target.value.length > maxLengthRef.current) {
-            return;
-        }
-
         setPostContent(e.target.value);
         setCurrentContentLength(e.target.value.length);
     }
@@ -111,7 +107,7 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, feedVersion, t })
                         t={t}
                     />
                     <div className={`content-length ${postContent.length === maxLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxLengthRef.current}</div>
-                    <textarea className="form-control" rows={5} title={t("PostContent") || ""} value={postContent}
+                    <textarea className="form-control" rows={5} title={t("PostContent") || ""} value={postContent} maxLength={maxLengthRef.current}
                         onChange={contentHandle} />
                 </div>
             }

@@ -25,7 +25,7 @@ interface CommunityDiscussionsProps {
 const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, myself, setShowDiscussion, setDiscussion, isCommunityMember }) => {
     const { t } = useTranslation('communication/community/discussion');
 
-    const defaultMaxDiscussions = 6;
+    const defaultMaxDiscussions = 5;
 
     const userPrivacy = useSelector((state: RootState) => state.userPrivacy.value);
 
@@ -67,7 +67,7 @@ const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, 
                 ))
                 }
             </ul>
-            {discussions.count >= defaultMaxDiscussions &&
+            {discussions.count > pageSizeRef.current &&
                 <div className="btn-shadow" onClick={() => setShowAllDiscussions((item) => !item)}>
                     <FontAwesomeIcon
                         icon={faBars}

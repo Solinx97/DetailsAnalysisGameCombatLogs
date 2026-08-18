@@ -13,10 +13,14 @@ interface UserPostCommentsProps {
 }
 
 const UserPostComments: React.FC<UserPostCommentsProps> = ({ userId, postId, feedVersion }) => {
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const maxContentLength = 256;
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.posCommentSize ?? 5);
+    const maxContentLengthRef = useRef<number>(APP_CONFIG.communication.length.userPostCommentContentMaxLength ?? maxContentLength);
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
 
     const { data: postComments, isLoading } = useGetUserPostCommentByUserPostIdQuery({ userPostId: postId, page, pageSize: pageSizeRef.current });
 
@@ -49,6 +53,9 @@ const UserPostComments: React.FC<UserPostCommentsProps> = ({ userId, postId, fee
                         <PostCommentContent
                             userId={userId}
                             comment={comment}
+                            currentContentLength={currentContentLength}
+                            setCurrentContentLength={setCurrentContentLength}
+                            maxContentLength={maxContentLengthRef.current}
                             updateUserPostComment={updatePostComment}
                         />
                     </li>

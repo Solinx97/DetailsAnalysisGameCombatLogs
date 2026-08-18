@@ -1,4 +1,5 @@
 import type { RootState } from '@/app/Store';
+import { APP_CONFIG } from '@/config/appConfig';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import logger from '@/utils/Logger';
 import { useRef, useState, type SetStateAction } from "react";
@@ -12,15 +13,21 @@ import type { RulesModel } from '../../types/community/RulesModel';
 import './Create.scss';
 
 const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction<boolean>) => void }> = ({ setShowCreateCommunity }) => {
+    const maxNameLength = 128;
+    const maxDescriptionLength = 512;
+
     const { t } = useTranslation('communication/create');
 
     const myself = useSelector((state: RootState) => state.user.value);
 
+    const maxNameLengthRef = useRef<number>(APP_CONFIG.communication.length.communityNameMaxLength ?? maxNameLength);
+    const maxDescriptionLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDescriptionMaxLength ?? maxDescriptionLength);
+    
     const communityNameRef = useRef<HTMLInputElement | null>(null);
     const communityDescriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [currentNameLength, setCurrentNameLength] = useState(0);
+    const [currentDescriptionLength, setCurrentDescriptionLength] = useState(0);
     const [isCreating, setIsCreating] = useState(false);
     const [rules, setRules] = useState<RulesModel>({
         policy: 0,
@@ -38,8 +45,8 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
 
             const newCommunity: CommunityModel = {
                 id: 0,
-                name: name,
-                description: description,
+                name: communityNameRef.current?.value ?? "",
+                description: communityDescriptionRef.current?.value ?? "",
                 policyType: rules.policy,
                 appUserId: myself.id
             };
@@ -60,16 +67,12 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
         setShowCreateCommunity(false);
     }
 
-    const communityNameChangeHandler = () => {
-        if (communityNameRef.current) {
-            setName(communityNameRef.current?.value);
+    const canBeCreated = () => {
+        if (!communityNameRef.current || !communityDescriptionRef.current) {
+            return false;
         }
-    }
 
-    const communityDescriptionChangeHandler = () => {
-        if (communityDescriptionRef.current) {
-            setDescription(communityDescriptionRef.current.value);
-        }
+        return communityNameRef.current.value.length > 0 && communityDescriptionRef.current.value.length > 0;
     }
 
     return (
@@ -83,18 +86,20 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
                     <div className="create-communication-object__item">
                         <div className="form-group">
                             <label htmlFor="name">{t("Name")}</label>
-                            <input type="text" className="form-control" name="name" id="name"
-                                onChange={communityNameChangeHandler} ref={communityNameRef} required />
+                            <div className={`content-length ${communityNameRef.current?.value.length === maxNameLengthRef.current ? 'limit' : ''}`}>{currentNameLength}/{maxNameLengthRef.current}</div>
+                            <input type="text" className="form-control" name="name" id="name" maxLength={maxNameLengthRef.current}
+                                onChange={e => setCurrentNameLength(e.target.value.length)} ref={communityNameRef} required />
                         </div>
-                        {name.length === 0 &&
+                        {communityNameRef.current?.value.length === 0 &&
                             <div className="community-name-required">{t("NameRequired")}</div>
                         }
                         <div className="form-group">
                             <label htmlFor="description">{t("Description")}</label>
-                            <textarea className="form-control" name="description" id="description"
-                                onChange={communityDescriptionChangeHandler} ref={communityDescriptionRef} required />
+                            <div className={`content-length ${communityDescriptionRef.current?.value.length === maxDescriptionLengthRef.current ? 'limit' : ''}`}>{currentDescriptionLength}/{maxDescriptionLengthRef.current}</div>
+                            <textarea className="form-control" name="description" id="description" maxLength={maxDescriptionLengthRef.current}
+                                onChange={e => setCurrentDescriptionLength(e.target.value.length)} ref={communityDescriptionRef} required />
                         </div>
-                        {description.length === 0 &&
+                        {communityDescriptionRef.current?.value.length === 0 &&
                             <div className="community-description-required">{t("DescriptionRequired")}</div>
                         }
                     </div>
@@ -105,8 +110,8 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
                     />
                 </div>
                 <div className="actions">
-                    <div className={`btn-shadow create ${(name.length > 0 && description.length > 0) ? '' : 'can-not-finish'}`}
-                        onClick={(name.length > 0 && description.length > 0) ? handleCreateNewCommunityAsync : () => { }}>{t("Create")}</div>
+                    <div className={`btn-shadow create ${canBeCreated() ? '' : 'can-not-finish'}`}
+                        onClick={canBeCreated() ? handleCreateNewCommunityAsync : () => { }}>{t("Create")}</div>
                     <div className="btn-shadow" onClick={() => setShowCreateCommunity(false)}>{t("Cancel")}</div>
                 </div>
                 {isCreating &&

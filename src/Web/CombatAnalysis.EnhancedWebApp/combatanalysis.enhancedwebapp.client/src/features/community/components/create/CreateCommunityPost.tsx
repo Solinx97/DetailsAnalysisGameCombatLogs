@@ -1,4 +1,5 @@
-﻿import type { RootState } from '@/app/Store';
+﻿import { APP_CONFIG } from '@/config/appConfig';
+import type { RootState } from '@/app/Store';
 import Loading from '@/shared/components/Loading';
 import VerificationRestriction from '@/shared/components/VerificationRestriction';
 import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -9,7 +10,6 @@ import { useCreateCommunityPostMutation } from '../../../feed/api/CommunityPost.
 import type { CommunityPostModel } from '../../../feed/types/CommunityPostModel';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import AddTagsToPost from './AddTagsToPost';
-import { APP_CONFIG } from '@/config/appConfig';
 
 interface CreateCommunityPostProps {
     user: AppUserModel;
@@ -63,10 +63,6 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
     }
 
     const contentHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (e.target.value.length > maxLengthRef.current) {
-            return;
-        }
-
         setPostContent(e.target.value);
         setCurrentContentLength(e.target.value.length);
     }
@@ -125,7 +121,7 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
                         t={t}
                     />
                     <div className={`content-length ${postContent.length === maxLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxLengthRef.current}</div>
-                    <textarea className="form-control" rows={5} title={t("PostContent")} value={postContent}
+                    <textarea className="form-control" rows={5} title={t("PostContent")} value={postContent} maxLength={maxLengthRef.current}
                         onChange={contentHandle} />
                 </div>
             }

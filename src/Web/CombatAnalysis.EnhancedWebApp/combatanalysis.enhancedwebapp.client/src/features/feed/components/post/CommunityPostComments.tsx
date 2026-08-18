@@ -2,9 +2,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGetCommunityPostCommentByPostIdQuery, useRemoveCommunityPostCommentMutation, useUpdateCommunityPostCommentMutation } from '../../api/CommunityPostComment.api';
 import PostCommentTitle from './PostCommentTitle';
+import PostCommentContent from './PostCommentContent';
 
 import './PostComments.scss';
-import PostCommentContent from './PostCommentContent';
 
 interface CommunityPostCommentsProps {
     userId: string;
@@ -13,13 +13,17 @@ interface CommunityPostCommentsProps {
 }
 
 const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, postId, feedVersion }) => {
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const maxContentLength = 256;
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.posCommentSize ?? 5);
+    const maxContentLengthRef = useRef<number>(APP_CONFIG.communication.length.communityPostCommentContentMaxLength ?? maxContentLength);
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
 
     const { data: postComments, isLoading } = useGetCommunityPostCommentByPostIdQuery({ communityPostId: postId, page, pageSize: pageSizeRef.current });
-    
+
     const [removePostCommentAsyncMut] = useRemoveCommunityPostCommentMutation();
     const [updatePostComment] = useUpdateCommunityPostCommentMutation();
 
@@ -49,6 +53,9 @@ const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, p
                         <PostCommentContent
                             userId={userId}
                             comment={comment}
+                            setCurrentContentLength={setCurrentContentLength}
+                            currentContentLength={currentContentLength}
+                            maxContentLength={maxContentLengthRef.current}
                             updateCommunityPostComment={updatePostComment}
                         />
                     </li>

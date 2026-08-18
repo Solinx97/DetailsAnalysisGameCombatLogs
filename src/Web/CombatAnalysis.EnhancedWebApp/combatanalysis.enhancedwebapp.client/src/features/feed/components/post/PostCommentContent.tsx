@@ -1,6 +1,6 @@
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateUserPostCommentMutation } from '../../api/UserPostComment.api';
 import type { useUpdateCommunityPostCommentMutation } from '../../api/CommunityPostComment.api';
@@ -11,6 +11,9 @@ import type { UserPostCommentModel } from '../../types/UserPostCommentModel';
 interface UserPostCommentContentProps {
     userId: string;
     comment: CommentModel;
+    currentContentLength: number;
+    setCurrentContentLength: (value: SetStateAction<number>) => void;
+    maxContentLength: number;
     updateUserPostComment?: ReturnType<
         typeof useUpdateUserPostCommentMutation
     >[0];
@@ -19,12 +22,16 @@ interface UserPostCommentContentProps {
     >[0];
 }
 
-const PostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId, comment, updateUserPostComment, updateCommunityPostComment }) => {
+const PostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId, comment, setCurrentContentLength, currentContentLength, maxContentLength, updateUserPostComment, updateCommunityPostComment }) => {
     const { t } = useTranslation('communication/postCommentContent');
 
     const [editModeOn, setEditModeOne] = useState(false);
 
-    const commentContent = useRef<HTMLTextAreaElement | null>(null);
+    const commentContentRef = useRef<HTMLTextAreaElement | null>(null);
+    
+    useEffect(() => {
+        setCurrentContentLength(comment.content.length);
+    }, [comment, editModeOn]);
 
     const isCommunityPostComment = (comment: CommentModel): comment is CommunityPostCommentModel => {
         return "communityId" in comment;
@@ -36,19 +43,19 @@ const PostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId, com
 
     const updatePostCommentAsync = async () => {
         try {
-            if (!commentContent.current) {
+            if (!commentContentRef.current) {
                 return;
             }
 
             if (isCommunityPostComment(comment) && updateCommunityPostComment) {
                 const postCommentForUpdate = Object.assign({}, comment);
-                postCommentForUpdate.content = commentContent.current?.value;
+                postCommentForUpdate.content = commentContentRef.current?.value;
 
                 await updateCommunityPostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
             }
             else if (isUserPostComment(comment) && updateUserPostComment) {
                 const postCommentForUpdate = Object.assign({}, comment);
-                postCommentForUpdate.content = commentContent.current?.value;
+                postCommentForUpdate.content = commentContentRef.current?.value;
 
                 await updateUserPostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
             }
@@ -63,7 +70,9 @@ const PostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId, com
         <div className="post-comments__content">
             {editModeOn
                 ? <div>
-                    <textarea className="form-control" rows={2} cols={65} ref={commentContent} defaultValue={comment.content} />
+                    <div className={`content-length ${commentContentRef.current?.value.length === maxContentLength ? 'limit' : ''}`}>{currentContentLength}/{maxContentLength}</div>
+                    <textarea className="form-control" rows={2} cols={65} ref={commentContentRef} maxLength={maxContentLength}
+                        onChange={e => setCurrentContentLength(e.target.value.length)} defaultValue={comment.content} />
                     <div className="actions">
                         <div className="save" onClick={updatePostCommentAsync}>{t("Save")}</div>
                         <div className="cancel" onClick={() => setEditModeOne(false)}>{t("Cancel")}</div>

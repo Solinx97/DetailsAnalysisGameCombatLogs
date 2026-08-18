@@ -20,10 +20,11 @@ import './Discussion.scss';
 interface DiscussionProps {
     user: AppUserModel;
     discussionId: number;
+    communityId: number;
     setShowDiscussion: (value: SetStateAction<boolean>) => void;
 }
 
-const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDiscussion }) => {
+const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, communityId, setShowDiscussion }) => {
     const maxTitleLength = 128;
     const maxContentLength = 512;
     const maxCommentContentLength = 256;
@@ -84,9 +85,13 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
     }
 
     const removeDiscussionAsync = async () => {
-        setShowDiscussion(false);
+        try {
+            setShowDiscussion(false);
 
-        await removeCommunityDiscussionAsyncMut(discussionId);
+            await removeCommunityDiscussionAsyncMut({ id: discussionId, communityId }).unwrap();
+        } catch (error) {
+            logger.error("Failed to remove community descussion", error);
+        }
     }
 
     const createDiscussionCommentAsync = async () => {

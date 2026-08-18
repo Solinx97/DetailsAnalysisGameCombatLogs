@@ -52,7 +52,7 @@ public class CommunityDiscussionController : ControllerBase
     public async Task<IActionResult> Create(CommunityDiscussionModel request)
     {
         var responseMessage = await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(request));
-        var discussion = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionCommentModel>();
+        var discussion = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionModel>();
 
         return Ok(discussion);
     }

@@ -1,4 +1,5 @@
-import type { ReactElement, SetStateAction } from 'react';
+import { APP_CONFIG } from '@/config/appConfig';
+import { useEffect, useRef, useState, type ChangeEvent, type ReactElement, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface CommonItemProps {
@@ -12,7 +13,34 @@ interface CommonItemProps {
 }
 
 const CommonItem: React.FC<CommonItemProps> = ({ connector, name, setName, description, setDescription, useDescription = false, allowEdit }) => {
+    const maxNameLength = 128;
+    const maxDescriptionLength = 512;
+
     const { t } = useTranslation('communication/create');
+    
+    const maxNameLengthRef = useRef<number>(APP_CONFIG.communication.length.communityNameMaxLength ?? maxNameLength);
+    const maxDescriptionLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDescriptionMaxLength ?? maxDescriptionLength);
+    
+    const [currentNameLength, setCurrentNameLength] = useState(0);
+    const [currentDescriptionLength, setCurrentDescriptionLength] = useState(0);
+    
+    useEffect(() => {
+        setCurrentNameLength(name.length);
+    }, [name]);
+
+    useEffect(() => {
+        setCurrentDescriptionLength(description.length);
+    }, [description]);
+
+    const nameHandle = (e: ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
+        setCurrentNameLength(e.target.value.length);
+    }
+
+    const descriptionHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setDescription(e.target.value);
+        setCurrentDescriptionLength(e.target.value.length);
+    }
 
     if (!allowEdit) {
         return (
@@ -42,13 +70,15 @@ const CommonItem: React.FC<CommonItemProps> = ({ connector, name, setName, descr
                 <>
                     <div className="form-group">
                         <label htmlFor="name">{t("Name")}</label>
-                        <input type="text" className="form-control" name="name" id="name"
-                            onChange={(e) => setName(e.target.value)} value={name} required />
+                        <div className={`content-length ${name.length === maxNameLengthRef.current ? 'limit' : ''}`}>{currentNameLength}/{maxNameLengthRef.current}</div>
+                        <input type="text" className="form-control" name="name" id="name" maxLength={maxNameLengthRef.current}
+                            onChange={nameHandle} value={name} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="description">{t("Description")}</label>
-                        <textarea className="form-control" name="description" id="description"
-                            onChange={(e) => setDescription(e.target.value)} value={description} required />
+                        <div className={`content-length ${description.length === maxDescriptionLengthRef.current ? 'limit' : ''}`}>{currentDescriptionLength}/{maxDescriptionLengthRef.current}</div>
+                        <textarea className="form-control" name="description" id="description" maxLength={maxDescriptionLengthRef.current}
+                            onChange={descriptionHandle} value={description} required />
                     </div>
                 </>
                 {connector}

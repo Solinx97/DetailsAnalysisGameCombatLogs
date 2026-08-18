@@ -10,33 +10,7 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
                 url: '/CommunityDiscussion',
                 method: 'POST'
             }),
-            async onQueryStarted({ }, { dispatch, queryFulfilled }) {
-                try {
-                    const { data: createdComment } = await queryFulfilled;
-
-                    dispatch(
-                        CommunityDiscussionApi.util.updateQueryData(
-                            'getCommunityDiscussionByCommunityId',
-                            {
-                                communityId: createdComment.communityId,
-                                page: 1,
-                                pageSize: 5
-                            },
-                            draft => {
-                                const exists = draft.discussions.some(
-                                    x => x.id === createdComment.id
-                                );
-
-                                if (!exists) {
-                                    draft.discussions.unshift(createdComment);
-                                }
-                            }
-                        )
-                    );
-                } catch {
-                    // DELETE failed
-                }
-            }
+            invalidatesTags: () => [{ type: 'CommunityDiscussion', id: 'LIST' }]
         }),
         updateCommunityDiscussion: builder.mutation<void, { id: number, discussion: CommunityDiscussionModel }>({
             query: ({ id, discussion }) => ({
@@ -46,12 +20,12 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, discussion) => [{ type: 'CommunityDiscussion', id: discussion.id }]
         }),
-        removeCommunityDiscussion: builder.mutation<void, number>({
-            query: id => ({
+        removeCommunityDiscussion: builder.mutation<void, { id: number, communityId: number }>({
+            query: ({ id }) => ({
                 url: `/CommunityDiscussion/${id}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'CommunityDiscussion', id }]
+            invalidatesTags: () => [{ type: 'CommunityDiscussion', id: 'LIST' }]
         }),
         getCommunityDiscussionById: builder.query<CommunityDiscussionModel, number>({
             query: id => `/CommunityDiscussion/${id}`,
@@ -59,7 +33,7 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
         }),
         getShortListCommunityDiscussionByCommunityId: builder.query<AllDiscussionModel, { communityId: number, pageSize: number }>({
             query: ({ communityId, pageSize }) => `/CommunityDiscussion/getShortListByDiscussionId/${communityId}?pageSize=${pageSize}`,
-            providesTags: () => [{ type: 'CommunityDiscussion', id: 'LIST'}],
+            providesTags: () => [{ type: 'CommunityDiscussion', id: 'LIST' }],
         }),
         getCommunityDiscussionByCommunityId: builder.query<AllDiscussionModel, { communityId: number, page: number, pageSize: number }>({
             query: ({ communityId, page, pageSize }) => `/CommunityDiscussion/getByCommunityId/${communityId}?page=${page}&pageSize=${pageSize}`,

@@ -116,6 +116,7 @@ const SelectedCommunity = () => {
                     {(discussion && showDiscussion) &&
                         <Discussion
                             discussionId={discussion.id}
+                            communityId={communityId}
                             setShowDiscussion={setShowDiscussion}
                             user={myself}
                         />
