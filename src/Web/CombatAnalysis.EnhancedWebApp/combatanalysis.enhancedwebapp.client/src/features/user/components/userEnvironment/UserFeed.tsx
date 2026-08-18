@@ -1,14 +1,14 @@
-import type { RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
+import type { RootState } from '@/app/Store';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import Loading from '@/shared/components/Loading';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
+import { useGetUserPostsByUserIdQuery } from '@/features/feed/api/Post.api';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import CreateUserPost from '../../../feed/components/post/CreateUserPost';
 import UserPost from '../../../feed/components/post/UserPost';
-import { useGetUserPostsByUserIdQuery } from '@/features/feed/api/Post.api';
 
 const UserFeed: React.FC = () => {
     const feedVersion = 1;
@@ -53,7 +53,6 @@ const UserFeed: React.FC = () => {
             <div>
                 <CreateUserPost
                     user={myself}
-                    owner={myself.username}
                     feedVersion={feedVersion}
                     t={t}
                 />
@@ -63,7 +62,7 @@ const UserFeed: React.FC = () => {
                         : posts.posts.map(post => (
                             <li key={`${post.id}`}>
                                 <UserPost
-                                    myself={myself}
+                                    user={myself}
                                     post={post}
                                     feedVersion={feedVersion}
                                 />

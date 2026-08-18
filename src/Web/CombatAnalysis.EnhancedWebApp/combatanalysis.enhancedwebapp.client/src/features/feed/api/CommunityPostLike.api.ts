@@ -1,4 +1,4 @@
-﻿import { checkStatus } from '@/shared/helpers/ApiHelper';
+﻿import { updateReactionsStatus } from '@/shared/helpers/ApiHelper';
 import type { CommunityPostReactionModel } from '../types/CommunityPostReactionModel';
 import { PostApi } from './Post.api';
 import { UserFeedApi } from './UserFeed.api';
@@ -34,7 +34,7 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(createdLike, post);
+                                updateReactionsStatus(createdLike, post);
                             }
                         )
                     );
@@ -57,7 +57,7 @@ export const CommunityPostLikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(createdLike, post);
+                                updateReactionsStatus(createdLike, post);
                             }
                         )
                     );

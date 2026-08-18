@@ -4,7 +4,6 @@ namespace CombatAnalysis.CommunicationAPI.Models.Post;
 
 public record UserPostModel(
     [Range(0, int.MaxValue)] int Id,
-    [Required] string Owner,
     [Required] string Content,
     int PublicType,
     string Tags,

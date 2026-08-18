@@ -82,7 +82,7 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, lastCheck, 
                         post.communityId
                             ? <li key={`${post.id} c`}>
                                 <CommunityPost
-                                    userId={myself.id}
+                                    user={myself}
                                     communityId={post.communityId ?? 0}
                                     post={post}
                                     feedVersion={feedVersion}
@@ -90,7 +90,7 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, lastCheck, 
                             </li>
                             : <li key={`${post.id} u`}>
                                 <UserPost
-                                    myself={myself}
+                                    user={myself}
                                     post={post}
                                     feedVersion={feedVersion}
                                 />

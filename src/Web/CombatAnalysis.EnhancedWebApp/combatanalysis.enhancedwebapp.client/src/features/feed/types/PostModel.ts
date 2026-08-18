@@ -1,8 +1,9 @@
 export type PostModel = {
     id: number;
-    owner: string;
     content: string;
+    tags: string;
     createdAt: Date;
+    publicType: number;
     appUserId: string;
     likeCount: number;
     dislikeCount: number;

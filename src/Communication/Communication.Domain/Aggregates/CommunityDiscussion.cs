@@ -6,6 +6,7 @@ namespace Communication.Domain.Aggregates;
 public class CommunityDiscussion
 {
     public const int TITLE_MAX_LENGTH = 128;
+    public const int CONTENT_MAX_LENGTH = 512;
 
     private readonly List<CommunityDiscussionComment> _communityDiscussionComments = [];
 

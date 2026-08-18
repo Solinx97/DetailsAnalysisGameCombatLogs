@@ -124,14 +124,13 @@ const SelectedCommunity = () => {
                         {isCommunityMember &&
                             <CreateCommunityPost
                                 user={myself}
-                                communityName={community.name}
                                 communityId={community.id}
                                 feedVersion={feedVersion}
                                 t={t}
                             />
                         }
                         <SelectedCommunityItem
-                            myselfId={myself.id}
+                            user={myself}
                             communityId={communityId}
                             lastCheck={lastCheck}
                             setLastCheck={setLastCheck}

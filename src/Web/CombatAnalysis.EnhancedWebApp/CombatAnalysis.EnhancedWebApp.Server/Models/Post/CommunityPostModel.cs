@@ -4,11 +4,9 @@ public class CommunityPostModel
 {
     public int Id { get; set; }
 
-    public string CommunityName { get; set; } = string.Empty;
-
-    public string Owner { get; set; } = string.Empty;
-
     public string Content { get; set; } = string.Empty;
+
+    public string? CommunityName { get; set; }
 
     public int PostType { get; set; }
 

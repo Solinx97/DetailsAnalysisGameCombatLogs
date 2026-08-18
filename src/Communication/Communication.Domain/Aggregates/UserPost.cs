@@ -6,6 +6,8 @@ namespace Communication.Domain.Aggregates;
 
 public class UserPost
 {
+    public const int CONTENT_MAX_LENGTH = 512;
+
     private readonly List<UserPostComment> _userPostComments = [];
     private readonly List<UserPostDislike> _userPostDislikes = [];
     private readonly List<UserPostLike> _userPostLikes = [];
@@ -14,10 +16,9 @@ public class UserPost
     {
     }
 
-    private UserPost(string owner, string content, int publicType, string tags, 
-        DateTimeOffset createdAt, string appUserId)
+    private UserPost(string content, int publicType, string tags, DateTimeOffset createdAt,
+        string appUserId)
     {
-        Owner = owner;
         Content = content;
         PublicType = publicType;
         Tags = tags;
@@ -26,8 +27,6 @@ public class UserPost
     }
 
     public int Id { get; private set; }
-
-    public string Owner { get; private set; }
 
     public string Content { get; private set; }
 
@@ -45,16 +44,14 @@ public class UserPost
 
     public IReadOnlyList<UserPostLike> UserPostLikes => _userPostLikes;
 
-    public static UserPost Create(string owner, string content, int publicType, string tags, 
-        string appUserId)
+    public static UserPost Create(string content, int publicType, string tags, string appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(owner, nameof(owner));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new UserPost(owner, content, publicType, tags, createdAt, appUserId);
+        return new UserPost(content, publicType, tags, createdAt, appUserId);
     }
 
     public (UserPostLike, PostReactionStatus) AddLike(string appUserId)

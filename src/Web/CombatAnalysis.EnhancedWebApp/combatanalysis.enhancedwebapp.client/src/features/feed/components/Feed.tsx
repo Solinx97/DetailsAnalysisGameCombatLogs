@@ -17,6 +17,10 @@ const Feed: React.FC = () => {
 
     const myself = useSelector((state: RootState) => state.user.value);
 
+    if (!myself) {
+        return (<div>Loading...</div>);
+    }
+    
     return (
         <>
             <div className="communication-content">
@@ -25,7 +29,6 @@ const Feed: React.FC = () => {
                     : <>
                         <CreateUserPost
                             user={myself}
-                            owner={myself.username}
                             feedVersion={feedVersion}
                             t={t}
                         />

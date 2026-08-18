@@ -4,8 +4,6 @@ public class UserPostDto
 {
     public int Id { get; set; }
 
-    public string Owner { get; set; } = string.Empty;
-
     public string Content { get; set; } = string.Empty;
 
     public int PublicType { get; set; }

@@ -4,6 +4,8 @@ namespace Communication.Domain.Entities.Community;
 
 public class CommunityDiscussionComment
 {
+    public const int CONTENT_MAX_LENGTH = 256;
+
     private CommunityDiscussionComment()
     {
     }

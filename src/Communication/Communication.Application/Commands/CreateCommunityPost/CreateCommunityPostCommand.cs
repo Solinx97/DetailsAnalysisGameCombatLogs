@@ -4,8 +4,6 @@ using MediatR;
 namespace Communication.Application.Commands.CreateCommunityPost;
 
 public record CreateCommunityPostCommand(
-    string CommunityName,
-    string Owner,
     string Content,
     int PostType,
     int PublicType,

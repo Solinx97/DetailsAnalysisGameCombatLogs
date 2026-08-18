@@ -4,6 +4,8 @@ namespace Communication.Domain.Entities.Post;
 
 public class UserPostComment
 {
+    public const int CONTENT_MAX_LENGTH = 256;
+
     private UserPostComment()
     {
     }

@@ -2,9 +2,8 @@
 
 public sealed record CommunityPostReadModel(
     int Id,
-    string CommunityName,
-    string Owner,
     string Content,
+    string? CommunityName,
     int PostType,
     int PublicType,
     int Restrictions,

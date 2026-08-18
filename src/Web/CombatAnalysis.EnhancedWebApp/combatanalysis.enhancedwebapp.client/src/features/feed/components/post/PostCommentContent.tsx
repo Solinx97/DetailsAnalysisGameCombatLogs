@@ -3,21 +3,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateUserPostCommentMutation } from '../../api/UserPostComment.api';
+import type { useUpdateCommunityPostCommentMutation } from '../../api/CommunityPostComment.api';
+import type { CommentModel } from '../../types/CommentModel';
+import type { CommunityPostCommentModel } from '../../types/CommunityPostCommentModel';
 import type { UserPostCommentModel } from '../../types/UserPostCommentModel';
 
 interface UserPostCommentContentProps {
     userId: string;
-    comment: UserPostCommentModel;
+    comment: CommentModel;
+    updateUserPostComment?: ReturnType<
+        typeof useUpdateUserPostCommentMutation
+    >[0];
+    updateCommunityPostComment?: ReturnType<
+        typeof useUpdateCommunityPostCommentMutation
+    >[0];
 }
 
-const UserPostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId, comment }) => {
+const PostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId, comment, updateUserPostComment, updateCommunityPostComment }) => {
     const { t } = useTranslation('communication/postCommentContent');
-
-    const [updatePostComment] = useUpdateUserPostCommentMutation();
 
     const [editModeOn, setEditModeOne] = useState(false);
 
     const commentContent = useRef<HTMLTextAreaElement | null>(null);
+
+    const isCommunityPostComment = (comment: CommentModel): comment is CommunityPostCommentModel => {
+        return "communityId" in comment;
+    }
+
+    const isUserPostComment = (comment: CommentModel): comment is UserPostCommentModel => {
+        return "userPostId" in comment;
+    }
 
     const updatePostCommentAsync = async () => {
         try {
@@ -25,10 +40,19 @@ const UserPostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId,
                 return;
             }
 
-            const postCommentForUpdate = Object.assign({}, comment);
-            postCommentForUpdate.content = commentContent.current?.value;
+            if (isCommunityPostComment(comment) && updateCommunityPostComment) {
+                const postCommentForUpdate = Object.assign({}, comment);
+                postCommentForUpdate.content = commentContent.current?.value;
 
-            await updatePostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
+                await updateCommunityPostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
+            }
+            else if (isUserPostComment(comment) && updateUserPostComment) {
+                const postCommentForUpdate = Object.assign({}, comment);
+                postCommentForUpdate.content = commentContent.current?.value;
+
+                await updateUserPostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
+            }
+
             setEditModeOne(false);
         } catch (error) {
             console.error("Failed update post comment");
@@ -61,4 +85,4 @@ const UserPostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId,
     );
 }
 
-export default UserPostCommentContent;
+export default PostCommentContent;

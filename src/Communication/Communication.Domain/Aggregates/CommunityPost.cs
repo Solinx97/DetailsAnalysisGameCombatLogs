@@ -6,7 +6,7 @@ namespace Communication.Domain.Aggregates;
 
 public class CommunityPost
 {
-    public const int COMMUNITY_NAME_MAX_LENGTH = 128;
+    public const int CONTENT_MAX_LENGTH = 512;
 
     private readonly List<CommunityPostComment> _communityPostComments = [];
     private readonly List<CommunityPostDislike> _communityPostDislikes = [];
@@ -16,12 +16,9 @@ public class CommunityPost
     {
     }
 
-    private CommunityPost(string communityName, string owner, string content, int postType,
-        int publicType, int restrictions, string tags,  DateTimeOffset createdAt,
-        int communityId, string appUserId)
+    private CommunityPost(string content, int postType, int publicType, int restrictions, 
+        string tags,  DateTimeOffset createdAt, int communityId, string appUserId)
     {
-        CommunityName = communityName;
-        Owner = owner;
         Content = content;
         PostType = postType;
         PublicType = publicType;
@@ -33,10 +30,6 @@ public class CommunityPost
     }
 
     public int Id { get; private set; }
-
-    public string CommunityName { get; private set; }
-
-    public string Owner { get; private set; }
 
     public string Content { get; private set; }
 
@@ -62,17 +55,15 @@ public class CommunityPost
 
     public IReadOnlyList<CommunityPostLike> CommunityPostLikes => _communityPostLikes;
 
-    public static CommunityPost Create(string communityName, string owner, string content, int postType, 
-        int publicType, int restrictions, string tags, int communityId,
-        string appUserId)
+    public static CommunityPost Create(string content, int postType, int publicType, int restrictions,
+        string tags, int communityId, string appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(owner, nameof(owner));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityPost(communityName, owner, content, postType, publicType, restrictions, tags, createdAt, communityId, appUserId);
+        return new CommunityPost(content, postType, publicType, restrictions, tags, createdAt, communityId, appUserId);
     }
 
     public (CommunityPostLike, PostReactionStatus) AddLike(int communityId, string appUserId)

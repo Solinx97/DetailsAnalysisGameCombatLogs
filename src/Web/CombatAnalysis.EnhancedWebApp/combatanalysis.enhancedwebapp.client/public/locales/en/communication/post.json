@@ -4,7 +4,9 @@
   "Dislike": "Dislike",
   "Comment": "Comment",
   "AddComment": "Add comment",
-  "Hide": "Hide",
+  "Cancel": "Cancel",
   "ReactionsForbidden": "Reactions forbidden",
-  "VerificationReactions": "To use Reactions, you should verify your email in Profile"
+  "VerificationReactions": "To use Reactions, you should verify your email in Profile",
+  "ShowUserDetails": "Show user details",
+  "RemovePost": "Remove post"
 }

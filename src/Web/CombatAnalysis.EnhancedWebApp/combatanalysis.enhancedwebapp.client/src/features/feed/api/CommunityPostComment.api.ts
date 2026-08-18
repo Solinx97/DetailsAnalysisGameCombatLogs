@@ -1,16 +1,17 @@
 ﻿import type { AllCommunityPostCommentsModel } from '../types/AllCommunityPostCommentsModel';
 import type { CommunityPostCommentModel } from '../types/CommunityPostCommentModel';
 import { PostApi } from './Post.api';
+import { UserFeedApi } from './UserFeed.api';
 
 export const CommunityPostCommentApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createCommunityPostComment: builder.mutation<CommunityPostCommentModel, CommunityPostCommentModel>({
-            query: communityPostComment => ({
-                body: communityPostComment,
+        createCommunityPostComment: builder.mutation<CommunityPostCommentModel, { feedVersion: number, comment: CommunityPostCommentModel }>({
+            query: ({ comment }) => ({
+                body: comment,
                 url: '/CommunityPostComment',
                 method: 'POST'
             }),
-            async onQueryStarted({ }, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdComment } = await queryFulfilled;
 
@@ -33,6 +34,53 @@ export const CommunityPostCommentApi = PostApi.injectEndpoints({
                             }
                         )
                     );
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getCommunityPostsByCommunityId',
+                            {
+                                communityId: createdComment.communityId!,
+                                appUserId: createdComment.appUserId,
+                                feedVersion,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdComment.communityPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount++;
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId: createdComment.appUserId!,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdComment.communityPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount++;
+                            }
+                        )
+                    );
                 } catch {
                     // DELETE failed
                 }
@@ -46,12 +94,85 @@ export const CommunityPostCommentApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, communityPostComment) => [{ type: 'CommunityPostComment', id: communityPostComment.id }],
         }),
-        removeCommunityPostComment: builder.mutation<void, number>({
-            query: id => ({
-                url: `/CommunityPostComment/${id}`,
+        removeCommunityPostComment: builder.mutation<void, { id: number, communityPostId: number, communityId: number, appUserId: string, feedVersion: number }>({
+            query: ({ id, communityPostId }) => ({
+                url: `/CommunityPostComment/${id}?communityPostId=${communityPostId}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'CommunityPostComment', id }],
+            async onQueryStarted({ id, communityPostId, communityId, appUserId, feedVersion }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+
+                    dispatch(
+                        CommunityPostCommentApi.util.updateQueryData(
+                            'getCommunityPostCommentByPostId',
+                            {
+                                communityPostId,
+                                page: 1,
+                                pageSize: 5
+                            },
+                            draft => {
+                                const index = draft.comments.findIndex(
+                                    post => post.id === id
+                                );
+
+                                if (index !== -1) {
+                                    draft.comments.splice(index, 1);
+                                }
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getCommunityPostsByCommunityId',
+                            {
+                                communityId,
+                                appUserId,
+                                feedVersion,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === communityPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount--;
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === communityPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount--;
+                            }
+                        )
+                    );
+                } catch {
+                    // DELETE failed
+                }
+            }
         }),
         getCommunityPostCommentByPostId: builder.query<AllCommunityPostCommentsModel, { communityPostId: number, page: number, pageSize: number }>({
             query: ({ communityPostId, page, pageSize }) => `/CommunityPostComment/getByCommunityPostId/${communityPostId}?page=${page}&pageSize=${pageSize}`,

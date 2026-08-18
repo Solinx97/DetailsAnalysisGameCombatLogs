@@ -1,23 +1,27 @@
 ﻿import { APP_CONFIG } from '@/config/appConfig';
 import { useEffect, useRef, useState } from 'react';
-import { useGetCommunityPostCommentByPostIdQuery } from '../../api/CommunityPostComment.api';
-import CommunityPostCommentContent from './CommunityPostCommentContent';
-import CommunityPostCommentTitle from './CommunityPostCommentTitle';
+import { useGetCommunityPostCommentByPostIdQuery, useRemoveCommunityPostCommentMutation, useUpdateCommunityPostCommentMutation } from '../../api/CommunityPostComment.api';
+import PostCommentTitle from './PostCommentTitle';
 
 import './PostComments.scss';
+import PostCommentContent from './PostCommentContent';
 
 interface CommunityPostCommentsProps {
     userId: string;
     postId: number;
+    feedVersion: number;
 }
 
-const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, postId }) => {
+const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, postId, feedVersion }) => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.posCommentSize ?? 5);
 
     const { data: postComments, isLoading } = useGetCommunityPostCommentByPostIdQuery({ communityPostId: postId, page, pageSize: pageSizeRef.current });
+    
+    const [removePostCommentAsyncMut] = useRemoveCommunityPostCommentMutation();
+    const [updatePostComment] = useUpdateCommunityPostCommentMutation();
 
     useEffect(() => {
         if (!postComments) {
@@ -36,13 +40,16 @@ const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, p
             <ul className="post-comments">
                 {postComments.comments.map((comment) => (
                     <li key={comment.id} className="post-comments__card">
-                        <CommunityPostCommentTitle
+                        <PostCommentTitle
                             userId={userId}
                             comment={comment}
+                            feedVersion={feedVersion}
+                            removeCommunityPostComment={removePostCommentAsyncMut}
                         />
-                        <CommunityPostCommentContent
+                        <PostCommentContent
                             userId={userId}
                             comment={comment}
+                            updateCommunityPostComment={updatePostComment}
                         />
                     </li>
                 ))

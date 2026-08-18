@@ -1,7 +1,7 @@
 import type { UserPostReactionModel } from '../types/UserPostReactionModel';
 import { PostApi } from './Post.api';
 import { UserFeedApi } from './UserFeed.api';
-import { checkStatus } from '@/shared/helpers/ApiHelper';
+import { updateReactionsStatus } from '@/shared/helpers/ApiHelper';
 
 export const UserPostDislikeApi = PostApi.injectEndpoints({
     endpoints: builder => ({
@@ -32,7 +32,7 @@ export const UserPostDislikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(createdDislike, post);
+                                updateReactionsStatus(createdDislike, post);
                             }
                         )
                     );
@@ -55,7 +55,7 @@ export const UserPostDislikeApi = PostApi.injectEndpoints({
                                     return;
                                 }
 
-                                checkStatus(createdDislike, post);
+                                updateReactionsStatus(createdDislike, post);
                             }
                         )
                     );

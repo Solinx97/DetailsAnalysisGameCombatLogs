@@ -4,9 +4,8 @@ namespace CombatAnalysis.CommunicationAPI.Models.Post;
 
 public record CommunityPostModel(
     [Range(0, int.MaxValue)] int Id,
-    [Required] string CommunityName,
-    [Required] string Owner,
     [Required] string Content,
+    string? CommunityName,
     int PostType,
     int PublicType,
     int Restrictions,

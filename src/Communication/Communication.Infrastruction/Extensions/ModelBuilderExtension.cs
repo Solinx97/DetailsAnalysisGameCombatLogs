@@ -9,101 +9,122 @@ internal static class ModelBuilderExtension
 {
     public static void Creating(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Community>(cl =>
+        modelBuilder.Entity<Community>(c =>
         {
-            cl.Property(p => p.Name)
+            c.Property(c => c.Name)
                 .HasMaxLength(Community.NAME_MAX_LENGTH);
+
+            c.Property(c => c.Description)
+                .HasMaxLength(Community.DESCRIPTION_MAX_LENGTH);
         });
 
-        modelBuilder.Entity<CommunityPost>(uh =>
+        modelBuilder.Entity<CommunityPost>(cp =>
         {
-            uh.Property(uh => uh.CommunityName)
-                .HasMaxLength(CommunityPost.COMMUNITY_NAME_MAX_LENGTH);
+            cp.Property(cp => cp.Content)
+                .HasMaxLength(CommunityPost.CONTENT_MAX_LENGTH);
 
-            uh.HasOne(uh => uh.Community)
+            cp.HasOne(cp => cp.Community)
                 .WithMany(c => c.CommunityPosts)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityPostComment>(uh =>
+        modelBuilder.Entity<CommunityPostComment>(cpc =>
         {
-            uh.HasOne(uh => uh.CommunityPost)
+            cpc.Property(cp => cp.Content)
+                .HasMaxLength(CommunityPostComment.CONTENT_MAX_LENGTH);
+
+            cpc.HasOne(cpc => cpc.CommunityPost)
                 .WithMany(c => c.CommunityPostComments)
                 .HasForeignKey(uh => uh.CommunityPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityPostDislike>(uh =>
+        modelBuilder.Entity<CommunityPostDislike>(cpd =>
         {
-            uh.HasOne(uh => uh.CommunityPost)
+            cpd.HasOne(cpd => cpd.CommunityPost)
                 .WithMany(c => c.CommunityPostDislikes)
                 .HasForeignKey(uh => uh.CommunityPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityPostLike>(uh =>
+        modelBuilder.Entity<CommunityPostLike>(cpl =>
         {
-            uh.HasOne(uh => uh.CommunityPost)
+            cpl.HasOne(cpl => cpl.CommunityPost)
                 .WithMany(c => c.CommunityPostLikes)
                 .HasForeignKey(uh => uh.CommunityPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityUser>(uh =>
+        modelBuilder.Entity<CommunityUser>(cu =>
         {
-            uh.HasOne(uh => uh.Community)
+            cu.HasOne(uh => uh.Community)
                 .WithMany(c => c.CommunityUsers)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<InviteToCommunity>(uh =>
+        modelBuilder.Entity<InviteToCommunity>(itc =>
         {
-            uh.HasOne(uh => uh.Community)
+            itc.HasOne(itc => itc.Community)
                 .WithMany(c => c.InvitesToCommunity)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityDiscussion>(uc =>
+        modelBuilder.Entity<CommunityDiscussion>(cd =>
         {
-            uc.Property(p => p.Title)
+            cd.Property(cd => cd.Title)
                 .HasMaxLength(CommunityDiscussion.TITLE_MAX_LENGTH);
 
-            uc.HasOne(uh => uh.Community)
+            cd.Property(cd => cd.Content)
+                .HasMaxLength(CommunityDiscussion.CONTENT_MAX_LENGTH);
+
+            cd.HasOne(cd => cd.Community)
                 .WithMany(c => c.CommunityDiscussions)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityDiscussionComment>(uh =>
+        modelBuilder.Entity<CommunityDiscussionComment>(cdm =>
         {
-            uh.HasOne(uh => uh.CommunityDiscussion)
+            cdm.Property(cdm => cdm.Content)
+                .HasMaxLength(CommunityDiscussionComment.CONTENT_MAX_LENGTH);
+
+            cdm.HasOne(cdm => cdm.CommunityDiscussion)
                 .WithMany(c => c.CommunityDiscussionComments)
                 .HasForeignKey(uh => uh.CommunityDiscussionId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<UserPostComment>(uh =>
+        modelBuilder.Entity<UserPost>(up =>
         {
-            uh.HasOne(uh => uh.UserPost)
+            up.Property(up => up.Content)
+                .HasMaxLength(UserPost.CONTENT_MAX_LENGTH);
+        });
+
+        modelBuilder.Entity<UserPostComment>(upc =>
+        {
+            upc.Property(upc => upc.Content)
+                .HasMaxLength(UserPostComment.CONTENT_MAX_LENGTH);
+
+            upc.HasOne(upc => upc.UserPost)
                 .WithMany(c => c.UserPostComments)
                 .HasForeignKey(uh => uh.UserPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<UserPostDislike>(uh =>
+        modelBuilder.Entity<UserPostDislike>(upd =>
         {
-            uh.HasOne(uh => uh.UserPost)
+            upd.HasOne(upd => upd.UserPost)
                 .WithMany(c => c.UserPostDislikes)
                 .HasForeignKey(uh => uh.UserPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<UserPostLike>(uh =>
+        modelBuilder.Entity<UserPostLike>(upl =>
         {
-            uh.HasOne(uh => uh.UserPost)
+            upl.HasOne(upl => upl.UserPost)
                 .WithMany(c => c.UserPostLikes)
                 .HasForeignKey(uh => uh.UserPostId)
                 .OnDelete(DeleteBehavior.Cascade);

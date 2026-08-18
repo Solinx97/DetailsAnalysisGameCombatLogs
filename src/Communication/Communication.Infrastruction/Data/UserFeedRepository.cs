@@ -46,7 +46,6 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
             .Select(x => new
             {
                 x.Id,
-                x.Owner,
                 x.Content,
                 x.PublicType,
                 x.Tags,
@@ -63,6 +62,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                         ? (int)PostReaction.Dislike
 
                         : (int)PostReaction.None,
+
                 CommunityName = (string)null,
                 PostType = 0,
                 Restrictions = 0,
@@ -71,13 +71,14 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
 
         var communityPosts =
             from post in _context.Set<CommunityPost>().AsNoTracking()
+            join community in _context.Set<Community>().AsNoTracking()
+                on post.CommunityId equals community.Id
             join member in _context.Set<CommunityUser>().AsNoTracking()
                 on post.CommunityId equals member.CommunityId
             where member.AppUserId == appUserIds
             select new
             {
                 post.Id,
-                post.Owner,
                 post.Content,
                 post.PublicType,
                 post.Tags,
@@ -94,7 +95,7 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
                         ? (int)PostReaction.Dislike
                         : (int)PostReaction.None,
 
-                post.CommunityName,
+                CommunityName = community.Name,
                 post.PostType,
                 post.Restrictions,
                 post.CommunityId
@@ -108,7 +109,6 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
             .Take(pageSize)
             .Select(x => new UserFeedReadModel(
                 x.Id,
-                x.Owner,
                 x.Content,
                 x.PublicType,
                 x.Tags,
@@ -128,24 +128,10 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
 
         var count = await userPosts
             .Concat(communityPosts)
-            .Select(x => new UserFeedReadModel(
-                x.Id,
-                x.Owner,
-                x.Content,
-                x.PublicType,
-                x.Tags,
-                x.CreatedAt,
-                x.AppUserId,
-
-                x.LikeCount,
-                x.DislikeCount,
-                x.CommentCount,
-                x.Reaction,
-
-                x.CommunityName,
-                x.PostType,
-                x.Restrictions,
-                x.CommunityId))
+            .Select(x => new
+            {
+                x.Id
+            })
             .CountAsync(cancellationToken);
 
         return (feed, count);

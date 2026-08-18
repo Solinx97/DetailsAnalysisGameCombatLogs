@@ -58,16 +58,6 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
         return post;
     }
 
-    public async Task<int> CountNewPostsAsync(int communityId, DateTimeOffset lastCheck, CancellationToken cancelationToken)
-    {
-        var count = await _context.Set<CommunityPost>()
-            .AsNoTracking()
-            .Where(x => x.CommunityId == communityId && x.CreatedAt > lastCheck)
-            .CountAsync(cancelationToken);
-
-        return count;
-    }
-
     public async Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, string appUserId, int page, int pageSize, CancellationToken cancelationToken)
     {
         var query = _context.Set<CommunityPost>()
@@ -79,11 +69,11 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
             .ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Include(x => x.Community)
             .Select(x => new CommunityPostReadModel(
-                x.Id, 
-                x.CommunityName,
-                x.Owner,
+                x.Id,
                 x.Content,
+                x.Community.Name,
                 x.PostType,
                 x.PublicType, 
                 x.Restrictions,
@@ -107,6 +97,16 @@ internal class CommunityPostRepository(CommunicationContext context) : ICommunit
         var count = await query
             .CountAsync(cancelationToken);
         return (result, count);
+    }
+
+    public async Task<int> CountNewPostsAsync(int communityId, DateTimeOffset lastCheck, CancellationToken cancelationToken)
+    {
+        var count = await _context.Set<CommunityPost>()
+            .AsNoTracking()
+            .Where(x => x.CommunityId == communityId && x.CreatedAt > lastCheck)
+            .CountAsync(cancelationToken);
+
+        return count;
     }
 
     public async Task<int> CountAsync(int communityId, CancellationToken cancellationToken)

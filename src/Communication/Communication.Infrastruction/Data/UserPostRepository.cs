@@ -38,7 +38,6 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
             .Take(pageSize)
             .Select(x => new UserPostReadModel(
                 x.Id,
-                x.Owner,
                 x.Content,
                 x.PublicType,
                 x.Tags,

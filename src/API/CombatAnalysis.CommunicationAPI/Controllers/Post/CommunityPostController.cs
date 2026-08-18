@@ -36,7 +36,7 @@ public class CommunityPostController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CommunityPostModel request, CancellationToken cancellationToken)
     {
-        var command = new CreateCommunityPostCommand(request.CommunityName, request.Owner, request.Content, request.PostType, request.PublicType, request.Restrictions, request.Tags, request.CommunityId, request.AppUserId);
+        var command = new CreateCommunityPostCommand(request.Content, request.PostType, request.PublicType, request.Restrictions, request.Tags, request.CommunityId, request.AppUserId);
         var post = await _mediator.Send(command, cancellationToken);
 
         return Ok(post);

@@ -1,16 +1,17 @@
 import type { AllUserPostCommentsModel } from '../types/AllUserPostCommentsModel';
 import type { UserPostCommentModel } from '../types/UserPostCommentModel';
 import { PostApi } from './Post.api';
+import { UserFeedApi } from './UserFeed.api';
 
 export const UserPostCommentApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createUserPostComment: builder.mutation<UserPostCommentModel, UserPostCommentModel>({
-            query: userPostComment => ({
-                body: userPostComment,
+        createUserPostComment: builder.mutation<UserPostCommentModel, { feedVersion: number, comment: UserPostCommentModel }>({
+            query: ({ comment }) => ({
+                body: comment,
                 url: '/UserPostComment',
                 method: 'POST'
             }),
-            async onQueryStarted({}, { dispatch, queryFulfilled }) {
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
                 try {
                     const { data: createdComment } = await queryFulfilled;
 
@@ -33,6 +34,51 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
                             }
                         )
                     );
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getUserPostsByUserId',
+                            {
+                                appUserId: createdComment.appUserId!,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdComment.userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount++;
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId: createdComment.appUserId!,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdComment.userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount++;
+                            }
+                        )
+                    );
                 } catch {
                     // DELETE failed
                 }
@@ -46,12 +92,83 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, userPostComment) => [{ type: 'UserPostComment', id: userPostComment.id }],
         }),
-        removeUserPostComment: builder.mutation<void, number>({
-            query: id => ({
-                url: `/UserPostComment/${id}`,
+        removeUserPostComment: builder.mutation<void, { id: number, userPostId: number, appUserId: string, feedVersion: number }>({
+            query: ({ id, userPostId }) => ({
+                url: `/UserPostComment/${id}?userPostId=${userPostId}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'UserPostComment', id }],
+            async onQueryStarted({ id, userPostId, appUserId, feedVersion }, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+
+                    dispatch(
+                        UserPostCommentApi.util.updateQueryData(
+                            'getUserPostCommentByUserPostId',
+                            {
+                                userPostId,
+                                page: 1,
+                                pageSize: 5
+                            },
+                            draft => {
+                                const index = draft.comments.findIndex(
+                                    post => post.id === id
+                                );
+
+                                if (index !== -1) {
+                                    draft.comments.splice(index, 1);
+                                }
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getUserPostsByUserId',
+                            {
+                                appUserId,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount--;
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                post.commentCount--;
+                            }
+                        )
+                    );
+                } catch {
+                    // DELETE failed
+                }
+            }
         }),
         getUserPostCommentByUserPostId: builder.query<AllUserPostCommentsModel, { userPostId: number, page: number, pageSize: number }>({
             query: ({ userPostId, page, pageSize }) => `/UserPostComment/getByUserPostId/${userPostId}?page=${page}&pageSize=${pageSize}`,

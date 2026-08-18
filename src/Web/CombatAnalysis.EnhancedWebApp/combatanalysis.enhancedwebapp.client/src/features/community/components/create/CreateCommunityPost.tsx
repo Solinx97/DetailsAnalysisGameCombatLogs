@@ -3,25 +3,30 @@ import Loading from '@/shared/components/Loading';
 import VerificationRestriction from '@/shared/components/VerificationRestriction';
 import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, type ChangeEvent } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import { useSelector } from 'react-redux';
 import { useCreateCommunityPostMutation } from '../../../feed/api/CommunityPost.api';
 import type { CommunityPostModel } from '../../../feed/types/CommunityPostModel';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import AddTagsToPost from './AddTagsToPost';
+import { APP_CONFIG } from '@/config/appConfig';
 
 interface CreateCommunityPostProps {
-    user: AppUserModel | null;
-    communityName: string;
+    user: AppUserModel;
     communityId: number;
     feedVersion: number;
     t: (key: string) => string;
 }
 
-const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communityName, communityId, feedVersion, t }) => {
+const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communityId, feedVersion, t }) => {
+    const maxLength = 512;
+
     const userPrivacy = useSelector((state: RootState) => state.userPrivacy.value);
+    
+    const maxLengthRef = useRef<number>(APP_CONFIG.communication.length.communityPostContentMaxLength ?? maxLength);
 
     const [showCreatePost, setShowCreatePost] = useState(false);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState<string[]>([]);
 
@@ -29,17 +34,19 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
 
     const createCommunityPostAsync = async () => {
         try {
+            if (postContent === "") {
+                return;
+            }
+
             const newPost: CommunityPostModel = {
                 id: 0,
-                communityName: communityName,
-                owner: communityName,
                 content: postContent,
                 postType: 0,
                 publicType: 0,
                 restrictions: 0,
                 tags: postTags.join(';'),
                 createdAt: new Date(),
-                appUserId: user?.id ?? "",
+                appUserId: user.id,
                 communityId: communityId,
                 likeCount: 0,
                 dislikeCount: 0,
@@ -55,8 +62,18 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
         }
     }
 
-    const postContentHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const contentHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        if (e.target.value.length > maxLengthRef.current) {
+            return;
+        }
+
         setPostContent(e.target.value);
+        setCurrentContentLength(e.target.value.length);
+    }
+
+    const createPostCancel = () => {
+        setPostTags([]);
+        setShowCreatePost((item) => !item);
     }
 
     if (!user) {
@@ -91,7 +108,7 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
                             />
                             <div>{t("Save")}</div>
                         </div>
-                        <div className="btn-shadow" title={t("Cancel")} onClick={() => setShowCreatePost((item) => !item)}>
+                        <div className="btn-shadow" title={t("Cancel")} onClick={createPostCancel}>
                             <FontAwesomeIcon
                                 icon={faBan}
                             />
@@ -107,8 +124,9 @@ const CreateCommunityPost: React.FC<CreateCommunityPostProps> = ({ user, communi
                         setPostTags={setPostTags}
                         t={t}
                     />
-                    <textarea className="form-control" rows={5} title={t("PostContent")}
-                        onChange={postContentHandle} />
+                    <div className={`content-length ${postContent.length === maxLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxLengthRef.current}</div>
+                    <textarea className="form-control" rows={5} title={t("PostContent")} value={postContent}
+                        onChange={contentHandle} />
                 </div>
             }
         </div>

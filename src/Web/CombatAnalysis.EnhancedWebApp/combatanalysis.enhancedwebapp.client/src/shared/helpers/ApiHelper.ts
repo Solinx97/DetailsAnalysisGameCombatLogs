@@ -1,10 +1,9 @@
 import type { CommunityPostReactionModel } from '@/features/feed/types/CommunityPostReactionModel';
-import type { UserFeedModel } from '@/features/feed/types/UserFeedModel';
-import type { UserPostModel } from '@/features/feed/types/UserPostModel';
 import type { UserPostReactionModel } from '@/features/feed/types/UserPostReactionModel';
+import type { PostModel } from '@/features/feed/types/PostModel';
 import { Reaction, ReactionType } from './EnumHelper';
 
-export const checkStatus = (createdReaction: UserPostReactionModel | CommunityPostReactionModel, post: UserPostModel | UserFeedModel) => {
+export const updateReactionsStatus = (createdReaction: UserPostReactionModel | CommunityPostReactionModel, post: PostModel) => {
     switch (createdReaction.status) {
         case ReactionType.Like:
             post.likeCount++;

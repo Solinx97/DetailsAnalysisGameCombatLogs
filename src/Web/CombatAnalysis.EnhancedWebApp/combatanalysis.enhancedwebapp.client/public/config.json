@@ -13,7 +13,18 @@
     "communityDiscussionSize": 5,
     "communityUserSize": 5,
     "communitySize": 10,
-    "intervalCheckNewPosts": 60000
+    "intervalCheckNewPosts": 60000,
+    "length": {
+      "communityNameMaxLength": 128,
+      "communityDescriptionMaxLength": 512,
+      "communityPostContentMaxLength": 512,
+      "userPostContentMaxLength": 512,
+      "userPostCommentContentMaxLength": 256,
+      "communityPostCommentContentMaxLength": 256,
+      "communityDiscussionTitleMaxLength": 128,
+      "communityDiscussionContentMaxLength": 512,
+      "communityDiscussionCommentContentMaxLength": 256
+    }
   },
   "hubs": {
     "url": "https://localhost:7026/",

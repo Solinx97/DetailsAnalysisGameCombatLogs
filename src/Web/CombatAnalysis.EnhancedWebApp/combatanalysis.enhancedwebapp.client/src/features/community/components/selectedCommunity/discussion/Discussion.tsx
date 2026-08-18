@@ -1,7 +1,8 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import logger from '@/utils/Logger';
 import { faCircleXmark, faPen, faSquarePlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState, type ChangeEvent, type FormEvent, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../../user/types/AppUserModel';
 import {
@@ -17,13 +18,25 @@ import DiscussionComments from './DiscussionComments';
 import './Discussion.scss';
 
 interface DiscussionProps {
-    user: AppUserModel | null;
+    user: AppUserModel;
     discussionId: number;
     setShowDiscussion: (value: SetStateAction<boolean>) => void;
 }
 
 const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDiscussion }) => {
+    const maxTitleLength = 128;
+    const maxContentLength = 512;
+    const maxCommentContentLength = 256;
+
     const { t } = useTranslation('communication/community/discussion');
+
+    const maxTitleLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDiscussionTitleMaxLength ?? maxTitleLength);
+    const maxContentLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDiscussionContentMaxLength ?? maxContentLength);
+    const maxCommentContentLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDiscussionCommentContentMaxLength ?? maxCommentContentLength);
+
+    const [currentTitleLength, setCurrentTileLength] = useState(0);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
+    const [currentCommentContentLength, setCurrentCommentContentLength] = useState(0);
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -43,13 +56,13 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
         }
 
         setTitle(discussion.title);
+        setCurrentTileLength(discussion.title.length);
         setContent(discussion.content);
+        setCurrentContentLength(discussion.content.length);
     }, [discussion])
 
-    const updateDiscussionAsync = async (event: FormEvent<HTMLFormElement>) => {
+    const updateDiscussionAsync = async () => {
         try {
-            event.preventDefault();
-
             if (!discussion) {
                 return;
             }
@@ -83,11 +96,13 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                 content: discussionCommentContent,
                 createdAt: new Date(),
                 communityDiscussionId: discussionId,
-                appUserId: user?.id ?? "",
+                appUserId: user.id,
             }
 
             await createCommunityDiscussionCommentAsyncMut(newDiscussionComment).unwrap();
             setDiscussionCommentContent("");
+            setAddShowComment(false);
+            setCurrentCommentContentLength(0);
         } catch (error) {
             logger.error("Failed to create community descussion comment", error);
         }
@@ -95,13 +110,20 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
 
     const titleHandle = (event: ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
+        setCurrentTileLength(event.target.value.length);
     }
 
     const contentHandle = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setContent(event.target.value);
+        setCurrentContentLength(event.target.value.length);
     }
 
-    if (!discussion || !user) {
+    const commentContentHandle = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setDiscussionCommentContent(event.target.value);
+        setCurrentCommentContentLength(event.target.value.length);
+    }
+
+    if (!discussion) {
         return (<></>);
     }
 
@@ -153,16 +175,20 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                         <div className="add-new-discussion-comment">
                             <div className="add-new-discussion-comment__title">
                                 {showAddComment
-                                    ? <div>{t("AddComment")}</div>
+                                    ? <div className="info">
+                                        <div>{t("AddComment")}</div>
+                                        <div className={`content-length ${discussionCommentContent.length === maxCommentContentLengthRef.current ? 'limit' : ''}`}>{currentCommentContentLength}/{maxCommentContentLengthRef.current}</div>
+                                    </div>
                                     : <div className="btn-shadow add-comment" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</div>
                                 }
                             </div>
                             {showAddComment &&
                                 <div className="add-new-discussion-comment__content">
-                                    <textarea className="form-control" rows={3} cols={60} onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
+                                    <textarea className="form-control" rows={3} cols={60} value={discussionCommentContent} maxLength={maxCommentContentLengthRef.current}
+                                        onChange={commentContentHandle} />
                                     <div className="actions">
                                         <div className="btn-shadow create" onClick={createDiscussionCommentAsync}>{t("Add")}</div>
-                                        <div className="btn-shadow hide" onClick={() => setAddShowComment((item) => !item)}>{t("Hide")}</div>
+                                        <div className="btn-shadow hide" onClick={() => setAddShowComment((item) => !item)}>{t("Cancel")}</div>
                                     </div>
                                 </div>
                             }
@@ -182,22 +208,24 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
 
     const edit = () => {
         return (
-            <form className="edit" onSubmit={updateDiscussionAsync}>
+            <div className="edit">
                 <div className="form-group">
                     <label htmlFor="title">{t("Title")}</label>
-                    <input type="text" className="form-control" id="title" defaultValue={discussion.title}
+                    <div className={`content-length ${discussion.title.length === maxTitleLengthRef.current ? 'limit' : ''}`}>{currentTitleLength}/{maxTitleLengthRef.current}</div>
+                    <input type="text" className="form-control" id="title" value={title} maxLength={maxTitleLengthRef.current}
                         onChange={titleHandle} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="Content">{t("Content")}</label>
-                    <textarea className="form-control" id="Content" rows={8} defaultValue={discussion.content}
+                    <div className={`content-length ${discussion.content.length === maxContentLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxContentLengthRef.current}</div>
+                    <textarea className="form-control" id="Content" rows={8} value={content} maxLength={maxContentLengthRef.current}
                         onChange={contentHandle} />
                 </div>
                 <div className="actions">
-                    <input type="submit" className="btn btn-primary" value={t("Save")} />
-                    <input type="button" className="btn btn-secondary" value={t("Cancel")} onClick={() => setEditModeOne(false)} />
+                    <div className="btn-shadow create" onClick={updateDiscussionAsync}>{t("Save")}</div>
+                    <div className="btn-shadow secondary" onClick={() => setEditModeOne(false)}>{t("Cancel")}</div>
                 </div>
-            </form>
+            </div>
         );
     }
 

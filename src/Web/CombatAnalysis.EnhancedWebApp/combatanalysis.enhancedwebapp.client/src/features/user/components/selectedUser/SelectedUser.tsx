@@ -112,7 +112,7 @@ const SelectedUser: React.FC = () => {
                                     : userFeed.posts.map(post => (
                                         <li key={post.id}>
                                             <UserPost
-                                                myself={myself}
+                                                user={myself}
                                                 post={post}
                                                 feedVersion={feedVersion}
                                             />

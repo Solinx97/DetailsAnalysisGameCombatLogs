@@ -5,11 +5,12 @@ import { useGetCommunityPostsByCommunityIdQuery } from '@/features/feed/api/Post
 import { useCountCommunityNewPostsQuery } from '@/features/feed/api/CommunityPost.api';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
 import CommunityPost from '../../../feed/components/post/CommunityPost';
 
 interface SelectedCommunityItemProps {
-    myselfId: string;
+    user: AppUserModel;
     communityId: number;
     lastCheck: string;
     setLastCheck: (value: SetStateAction<string>) => void;
@@ -18,7 +19,7 @@ interface SelectedCommunityItemProps {
     t: (key: string) => string;
 }
 
-const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId, communityId, lastCheck, setLastCheck, feedVersion, setFeedVersion, t }) => {
+const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ user, communityId, lastCheck, setLastCheck, feedVersion, setFeedVersion, t }) => {
     const [page, setPage] = useState(1);
     const [countNew, setCountNew] = useState(0);
 
@@ -33,7 +34,7 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
             pollingInterval: intervalCheckNewPostsRef.current
         }
     );
-    const { data: posts, isLoading, isFetching } = useGetCommunityPostsByCommunityIdQuery({ communityId, appUserId: myselfId, page, pageSize: pageSizeRef.current, feedVersion });
+    const { data: posts, isLoading, isFetching } = useGetCommunityPostsByCommunityIdQuery({ communityId, appUserId: user.id, page, pageSize: pageSizeRef.current, feedVersion });
 
     useEffect(() => {
         if (!posts) {
@@ -82,7 +83,7 @@ const SelectedCommunityItem: React.FC<SelectedCommunityItemProps> = ({ myselfId,
                     : posts.posts.map((post) => (
                         <li key={post?.id} className="posts__item">
                             <CommunityPost
-                                userId={myselfId}
+                                user={user}
                                 communityId={communityId}
                                 post={post}
                                 feedVersion={feedVersion}

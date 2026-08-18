@@ -4,7 +4,6 @@ using MediatR;
 namespace Communication.Application.Commands.CreateUserPost;
 
 public record CreateUserPostCommand(
-    string Owner,
     string Content,
     int PublicType,
     string Tags,

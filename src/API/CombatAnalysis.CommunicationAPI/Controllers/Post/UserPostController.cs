@@ -27,7 +27,7 @@ public class UserPostController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] UserPostModel request, CancellationToken cancellationToken)
     {
-        var command = new CreateUserPostCommand(request.Owner, request.Content, request.PublicType, request.Tags, request.AppUserId);
+        var command = new CreateUserPostCommand(request.Content, request.PublicType, request.Tags, request.AppUserId);
         var post = await _mediator.Send(command, cancellationToken);
 
         return Ok(post);

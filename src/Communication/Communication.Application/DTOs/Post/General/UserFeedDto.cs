@@ -4,7 +4,6 @@ namespace Communication.Application.DTOs.Post.General;
 
 public record UserFeedDto(
     [Range(0, int.MaxValue)] int Id,
-    [Required] string Owner,
     [Required] string Content,
     int PublicType,
     string Tags,

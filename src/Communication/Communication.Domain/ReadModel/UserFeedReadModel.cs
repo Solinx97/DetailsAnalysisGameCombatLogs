@@ -2,7 +2,6 @@
 
 public sealed record UserFeedReadModel(
     int Id,
-    string Owner,
     string Content,
     int PublicType,
     string Tags,

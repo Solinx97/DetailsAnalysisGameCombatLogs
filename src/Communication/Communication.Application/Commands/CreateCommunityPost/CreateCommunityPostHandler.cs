@@ -14,7 +14,7 @@ internal class CreateCommunityPostHandler(IGenericRepository<CommunityPost, int>
 
     public async Task<CommunityPostDto> Handle(CreateCommunityPostCommand request, CancellationToken cancelationToken)
     {
-        var post = CommunityPost.Create(request.CommunityName, request.Owner, request.Content, request.PostType, request.PublicType, request.Restrictions, request.Tags, request.CommunityId, request.AppUserId);
+        var post = CommunityPost.Create(request.Content, request.PostType, request.PublicType, request.Restrictions, request.Tags, request.CommunityId, request.AppUserId);
         await _repository.AddAsync(post, cancelationToken);
 
         await _unitOfWork.SaveChangesAsync(cancelationToken);
