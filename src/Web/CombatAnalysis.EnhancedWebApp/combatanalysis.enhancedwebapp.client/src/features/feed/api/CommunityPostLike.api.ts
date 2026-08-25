@@ -1,38 +1,82 @@
-﻿import type { CommunityPostReactionModel } from '../types/CommunityPostReactionModel';
+﻿import { updateReactionsStatus } from '@/shared/helpers/ApiHelper';
+import type { CommunityPostReactionModel } from '../types/CommunityPostReactionModel';
 import { PostApi } from './Post.api';
+import { UserFeedApi } from './UserFeed.api';
 
 export const CommunityPostLikeApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createCommunityPostLike: builder.mutation<CommunityPostReactionModel, CommunityPostReactionModel>({
-            query: communityPostLike => ({
-                body: communityPostLike,
+        createCommunityPostLike: builder.mutation<CommunityPostReactionModel, { feedVersion: number, reaction: CommunityPostReactionModel }>({
+            query: ({ reaction }) => ({
+                body: reaction,
                 url: '/CommunityPostLike',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'CommunityPostLike', id: result.id }] : [],
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdLike } = await queryFulfilled;
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getCommunityPostsByCommunityId',
+                            {
+                                communityId: createdLike.communityId!,
+                                appUserId: createdLike.appUserId!,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdLike.communityPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                updateReactionsStatus(createdLike, post);
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId: createdLike.appUserId!,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdLike.communityPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                updateReactionsStatus(createdLike, post);
+                            }
+                        )
+                    );
+                } catch {
+                    // creation failed
+                }
+            },
         }),
-        removeCommunityPostLike: builder.mutation<void, number>({
-            query: id => ({
-                url: `/CommunityPostLike/${id}`,
-                method: 'DELETE'
-            }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'CommunityPostDislike', id }],
-        }),
-        searchCommunityPostLikeByPostId: builder.query<CommunityPostReactionModel[], number>({
-            query: id => `/CommunityPostLike/searchByPostId/${id}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(communityPostLike => ({ type: 'CommunityPostLike' as const, id: communityPostLike.id })),
-                        { type: 'CommunityPostLike', id: 'LIST' },
-                    ]
-                    : [{ type: 'CommunityPostLike', id: 'LIST' }]
+        countCommunityPostLikeByPostId: builder.query<number, number>({
+            query: communityPostId => `/CommunityPostLike/count/${communityPostId}`,
+            providesTags: () => [
+                { type: 'CommunityPostDislike', id: 'LIST' },
+                { type: 'CommunityPostLike', id: 'LIST' }
+            ]
         }),
     })
 })
 
 export const {
     useCreateCommunityPostLikeMutation,
-    useRemoveCommunityPostLikeMutation,
-    useLazySearchCommunityPostLikeByPostIdQuery,
+    useCountCommunityPostLikeByPostIdQuery,
 } = CommunityPostLikeApi;

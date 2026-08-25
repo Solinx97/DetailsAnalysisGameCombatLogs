@@ -1,119 +1,124 @@
-import useFormatting from '@/shared/hooks/useFormatting';
+import { APP_CONFIG } from '@/config/appConfig';
 import logger from '@/utils/Logger';
-import { memo, useEffect, useState } from 'react';
+import type { AppUserModel } from '@/features/user/types/AppUserModel';
+import { memo, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../api/UserPost.api';
 import { useCreateUserPostCommentMutation } from '../../api/UserPostComment.api';
 import type { UserPostCommentModel } from '../../types/UserPostCommentModel';
 import type { UserPostModel } from '../../types/UserPostModel';
 import UserPostComments from './UserPostComments';
-import UserPostReactions from './UserPostReactions';
-import UserPostTitle from './UserPostTitle';
+import PostReactions from './PostReactions';
+import PostTitle from './PostTitle';
+import { useRemoveUserPostMutation } from '../../api/UserPost.api';
+import { useCreateUserPostLikeMutation } from '../../api/UserPostLike.api';
+import { useCreateUserPostDislikeMutation } from '../../api/UserPostDislike.api';
 
 import './Post.scss';
 
 interface UserPostProps {
-    myself: AppUserModel;
+    user: AppUserModel;
     post: UserPostModel;
+    feedVersion: number;
 }
 
-const UserPost: React.FC<UserPostProps> = ({ myself, post }) => {
+const UserPost: React.FC<UserPostProps> = ({ user, post, feedVersion }) => {
+    const maxLength = 256;
+
     const { t } = useTranslation('communication/post');
 
-    const [updatePost] = useUpdateUserPostMutation();
-
-    const [createPostComment] = useCreateUserPostCommentMutation();
-    const [getUserPostById] = useLazyGetUserPostByIdQuery();
+    const maxLengthRef = useRef<number>(APP_CONFIG.communication.length.userPostCommentContentMaxLength ?? maxLength);
 
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
+    const [currentContentLength, setCurrentContentLength] = useState(0);
     const [showAddComment, setShowAddComment] = useState(false);
     const [isMyPost, setIsMyPost] = useState(false);
 
-    const { dateFormatting } = useFormatting();
+    const [createPostComment] = useCreateUserPostCommentMutation();
+    const [removeUserPost] = useRemoveUserPostMutation();
+    const [createPostLike] = useCreateUserPostLikeMutation();
+    const [createPostDislike] = useCreateUserPostDislikeMutation();
 
     useEffect(() => {
-        setIsMyPost(post?.appUserId === myself.id);
+        setIsMyPost(post.appUserId === user.id);
     }, [post]);
 
-    const updatePostAsync = async (postId: number, likesCount: number, dislikesCount: number, commentsCount: number): Promise<void> => {
+    const createUserPostCommentAsync = async () => {
         try {
-            const userPost = await getUserPostById(postId).unwrap();
+            const userPostComment: UserPostCommentModel = {
+                id: 0,
+                content: postCommentContent,
+                createdAt: new Date(),
+                userPostId: post.id,
+                appUserId: user.id
+            }
 
-            const postForUpdate = {
-                ...userPost,
-                likeCount: userPost.likeCount + likesCount,
-                dislikeCount: userPost.dislikeCount + dislikesCount,
-                commentCount: userPost.commentCount + commentsCount
-            };
-
-            await updatePost(postForUpdate).unwrap();
+            await createPostComment({ feedVersion, comment: userPostComment }).unwrap();
+            setPostCommentContent("");
+            setShowAddComment(false);
+            setCurrentContentLength(0);
         } catch (e) {
-            logger.error("Failed to update post", e);
+            logger.error("Failed to create post comment", e);
         }
     }
 
-    const createUserPostCommentAsync = async () => {
-        const userPostComment: UserPostCommentModel = {
-            id: 0,
-            content: postCommentContent,
-            createdAt: new Date(),
-            userPostId: post.id,
-            appUserId: myself.id
-        }
-
-        const response = await createPostComment(userPostComment);
-        if (response.data) {
-            setPostCommentContent("");
-
-            await updatePostAsync(post.id, 0, 0, 1);
-        }
+    const contentHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setPostCommentContent(e.target.value);
+        setCurrentContentLength(e.target.value.length);
     }
 
     return (
         <>
             <div className="posts__card">
-                <UserPostTitle
+                <PostTitle
+                    user={user}
                     post={post}
-                    dateFormatting={dateFormatting}
                     isMyPost={isMyPost}
+                    removeUserPost={removeUserPost}
+                    feedVersion={feedVersion}
+                    t={t}
                 />
-                <div className="posts__content">{post?.content}</div>
-                <UserPostReactions
-                    userId={myself.id}
+                <div className="posts__content">{post.content}</div>
+                <PostReactions
+                    userId={user.id}
                     post={post}
-                    updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
                     showComments={showComments}
+                    feedVersion={feedVersion}
                     t={t}
+                    useEmailVerification={false}
+                    createUserPostLike={createPostLike}
+                    createUserPostDislike={createPostDislike}
                 />
             </div>
             {showComments &&
                 <>
-                    <UserPostComments
-                        dateFormatting={dateFormatting}
-                        userId={myself.id}
-                        postId={post.id}
-                        updatePostAsync={updatePostAsync}
-                    />
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">
                             {showAddComment
-                                ? <div>{t("AddComment")}</div>
+                                ? <div className="info">
+                                    <div>{t("AddComment")}</div>
+                                    <div className={`content-length ${postCommentContent.length === maxLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxLengthRef.current}</div>
+                                </div>
                                 : <div className="open-add-comment" onClick={() => setShowAddComment((item) => !item)}>{t("Add")}</div>
                             }
                         </div>
                         {showAddComment &&
                             <div className="add-new-comment__content">
-                            <textarea className="form-control" rows={3} cols={60} onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
-                            <div className="actions">
-                                <div className="add-comment" onClick={createUserPostCommentAsync}>{t("Add")}</div>
-                                    <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</div>
+                                <textarea className="form-control" rows={3} cols={60} value={postCommentContent} maxLength={maxLengthRef.current}
+                                    onChange={contentHandle} />
+                                <div className="actions">
+                                    <div className="add-comment" onClick={createUserPostCommentAsync}>{t("Add")}</div>
+                                    <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Cancel")}</div>
                                 </div>
                             </div>
                         }
                     </div>
+                    <UserPostComments
+                        userId={user.id}
+                        postId={post.id}
+                        feedVersion={feedVersion}
+                    />
                 </>
             }
         </>

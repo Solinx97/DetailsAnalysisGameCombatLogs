@@ -1,130 +1,99 @@
-﻿using AutoMapper;
-using CombatAnalysis.CommunicationAPI.Models.Community;
-using CombatAnalysis.CommunicationBL.DTO.Community;
-using CombatAnalysis.CommunicationBL.Interfaces;
+﻿using CombatAnalysis.CommunicationAPI.Models.Community;
+using CombatAnalysis.CommunicationAPI.Partials;
+using Communication.Application.Commands.CreateCommunity;
+using Communication.Application.Commands.DeleteCommunity;
+using Communication.Application.Commands.UpdateCommunity;
+using Communication.Application.Commands.UpdateCommunityRules;
+using Communication.Application.Queries.CountCommunity;
+using Communication.Application.Queries.GetCommunitiesByUserId;
+using Communication.Application.Queries.GetCommunity;
+using Communication.Application.Queries.GetCommunityById;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
 
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class CommunityController(ICommunityService service, IMapper mapper, ILogger<CommunityController> logger) : ControllerBase
+public class CommunityController(IMediator mediator) : ControllerBase
 {
-    private readonly ICommunityService _service = service;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<CommunityController> _logger = logger;
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Get(int page, int pageSize, CancellationToken cancellationToken)
     {
-        var result = await _service.GetAllAsync();
-
-        return Ok(result);
-    }
-
-    [HttpGet("getWithPagination")]
-    public async Task<IActionResult> GetWithPagination(int pageSize)
-    {
-        var communitites = await _service.GetAllWithPaginationAsync(pageSize);
-
-        return Ok(communitites);
-    }
-
-    [HttpGet("getMoreWithPagination")]
-    public async Task<IActionResult> GetMoreWithPagination(int offset, int pageSize)
-    {
-        var communitites = await _service.GetMoreWithPaginationAsync(offset, pageSize);
+        var communitites = await _mediator.Send(new GetCommunityQuery(page, pageSize), cancellationToken);
 
         return Ok(communitites);
     }
 
     [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var result = await _service.GetByIdAsync(id);
+        var community = await _mediator.Send(new GetCommunityByIdQuery(id), cancellationToken);
 
-        return Ok(result);
+        return Ok(community);
+    }
+
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var communities = await _mediator.Send(new GetCommunitiesByUserIdQuery(appUserId, page, pageSize), cancellationToken);
+
+        return Ok(communities);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CommunityModel community)
+    public async Task<IActionResult> Create([FromBody] CommunityModel request, CancellationToken cancellationToken)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Community create request received: {@Community}", community);
+        var command = new CreateCommunityCommand(request.Name, request.Description, request.PolicyType, request.AppUserId);
+        var community = await _mediator.Send(command, cancellationToken);
 
-                return ValidationProblem(ModelState);
-            }
-
-            var map = _mapper.Map<CommunityDto>(community);
-            var result = await _service.CreateAsync(map);
-
-            return Ok(result);
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to create community.");
-
-            return StatusCode(500, "Internal server error.");
-        }
+        return Ok(community);
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CommunityModel community)
+    public async Task<IActionResult> Update(int id, [FromBody] CommunityPartial request, CancellationToken cancellationToken)
     {
-        try
+        if (id != request.Id)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Community update request received: {@Community}", community);
-
-                return ValidationProblem(ModelState);
-            }
-
-            if (id != community.Id)
-            {
-                return BadRequest("Route ID and body ID do not match.");
-            }
-
-            var map = _mapper.Map<CommunityDto>(community);
-            await _service.UpdateAsync(id, map);
-
-            return NoContent();
+            return BadRequest("Route ID and body ID do not match.");
         }
-        catch (DbUpdateException ex)
+
+        var command = new UpdateCommunityCommand(request.Id, request.Name, request.Description);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPut("updateRules/{id:int:min(1)}")]
+    public async Task<IActionResult> UpdateRules(int id, [FromBody] CommunityRulesPartial request, CancellationToken cancellationToken)
+    {
+        if (id != request.Id)
         {
-            _logger.LogError(ex, "Failed to update community.");
-
-            return StatusCode(500, "Internal server error.");
+            return BadRequest("Route ID and body ID do not match.");
         }
+
+        var command = new UpdateCommunityRulesCommand(request.Id, request.PolicyType);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _service.DeleteAsync(id);
+        await _mediator.Send(new DeleteCommunityCommand(id), cancellationToken);
 
-            return NoContent();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-        }
+        return NoContent();
     }
 
     [HttpGet("count")]
-    public async Task<IActionResult> Count()
+    public async Task<IActionResult> Count(CancellationToken cancellationToken)
     {
-        var count = await _service.CountAsync();
+        var count = await _mediator.Send(new CountCommunityQuery(), cancellationToken);
 
         return Ok(count);
     }

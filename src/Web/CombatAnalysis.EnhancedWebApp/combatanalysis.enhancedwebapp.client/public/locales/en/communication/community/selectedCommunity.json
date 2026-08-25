@@ -24,5 +24,6 @@
   "Friends": "Friends",
   "Contacts": "Contacts",
   "Menu": "Menu",
-  "VerificationCreateCommunityPost": "To create new Community post, you should verify your email in Profile"
+  "VerificationCreateCommunityPost": "To create new Community post, you should verify your email in Profile",
+  "Back": "Back"
 }

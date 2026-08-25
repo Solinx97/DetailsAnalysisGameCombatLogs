@@ -1,15 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useInviteFindByUserIdQuery } from '../../api/InviteToCommunity.api';
-import type { InviteToCommunityModel } from '../../types/InviteToCommunityModel';
+import { useInviteGetByUserIdQuery } from '../../api/InviteToCommunity.api';
 import InvitesToCommunityItem from './InvitesToCommunityItem';
 
 const InvitesToCommunity: React.FC<{ user: AppUserModel | null }> = ({ user }) => {
     const { t } = useTranslation('communication/myEnvironment/invitesToCommunity');
 
-    const { data: invitesToCommunity, isLoading } = useInviteFindByUserIdQuery(user?.id ?? "");
+    const { data: invitesToCommunity, isLoading } = useInviteGetByUserIdQuery(user?.id ?? "");
 
-    if (isLoading || invitesToCommunity?.length === 0) {
+    if (isLoading || !invitesToCommunity || !user || invitesToCommunity.length === 0) {
         return (<></>);
     }
 
@@ -17,8 +16,7 @@ const InvitesToCommunity: React.FC<{ user: AppUserModel | null }> = ({ user }) =
         <div className="invite-to-community">
             <div>{t("InvitesToCommunity")}</div>
             <ul>
-                {
-                    invitesToCommunity?.map((invite: InviteToCommunityModel) => (
+                {invitesToCommunity.map((invite) => (
                         <li key={invite.id}>
                             <InvitesToCommunityItem
                                 user={user}

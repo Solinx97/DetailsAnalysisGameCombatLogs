@@ -6,7 +6,7 @@ public record CommunityDiscussionModel(
     [Range(0, int.MaxValue)] int Id,
     [Required] string Title,
     [Required] string Content,
-    [Required] DateTimeOffset When,
+    [Required] DateTimeOffset CreatedAt,
     [Required] string AppUserId,
     [Range(0, int.MaxValue)] int CommunityId
     );

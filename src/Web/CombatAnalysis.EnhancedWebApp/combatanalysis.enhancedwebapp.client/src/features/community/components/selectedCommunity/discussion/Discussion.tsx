@@ -1,12 +1,14 @@
+import { APP_CONFIG } from '@/config/appConfig';
+import logger from '@/utils/Logger';
 import { faCircleXmark, faPen, faSquarePlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState, type ChangeEvent, type FormEvent, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../../user/types/AppUserModel';
 import {
     useGetCommunityDiscussionByIdQuery,
-    useRemoveCommunityDiscussionAsyncMutation,
-    useUpdateCommunityDiscussionAsyncMutation
+    useRemoveCommunityDiscussionMutation,
+    useUpdateCommunityDiscussionMutation
 } from '../../../api/CommunityDiscussion.api';
 import { useCreateCommunityDiscussionCommentAsyncMutation } from '../../../api/CommunityDiscussionComment.api';
 import type { CommunityDiscussionCommentModel } from '../../../types/CommunityDiscussionCommentModel';
@@ -16,13 +18,26 @@ import DiscussionComments from './DiscussionComments';
 import './Discussion.scss';
 
 interface DiscussionProps {
-    user: AppUserModel | null;
+    user: AppUserModel;
     discussionId: number;
+    communityId: number;
     setShowDiscussion: (value: SetStateAction<boolean>) => void;
 }
 
-const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDiscussion }) => {
+const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, communityId, setShowDiscussion }) => {
+    const maxTitleLength = 128;
+    const maxContentLength = 512;
+    const maxCommentContentLength = 256;
+
     const { t } = useTranslation('communication/community/discussion');
+
+    const maxTitleLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDiscussionTitleMaxLength ?? maxTitleLength);
+    const maxContentLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDiscussionContentMaxLength ?? maxContentLength);
+    const maxCommentContentLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDiscussionCommentContentMaxLength ?? maxCommentContentLength);
+
+    const [currentTitleLength, setCurrentTileLength] = useState(0);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
+    const [currentCommentContentLength, setCurrentCommentContentLength] = useState(0);
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -31,10 +46,10 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
     const [showAddComment, setAddShowComment] = useState(false);
     const [discussionCommentContent, setDiscussionCommentContent] = useState("");
 
-    const [updateCommunityAsyncMut] = useUpdateCommunityDiscussionAsyncMutation();
-    const [removeCommunityDiscussionAsyncMut] = useRemoveCommunityDiscussionAsyncMutation();
+    const [updateCommunityDiscussionAsync] = useUpdateCommunityDiscussionMutation();
+    const [removeCommunityDiscussionAsyncMut] = useRemoveCommunityDiscussionMutation();
     const [createCommunityDiscussionCommentAsyncMut] = useCreateCommunityDiscussionCommentAsyncMutation();
-    const { data: discussion, isLoading} = useGetCommunityDiscussionByIdQuery(discussionId);
+    const { data: discussion, isLoading } = useGetCommunityDiscussionByIdQuery(discussionId);
 
     useEffect(() => {
         if (discussion === undefined) {
@@ -42,61 +57,78 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
         }
 
         setTitle(discussion.title);
+        setCurrentTileLength(discussion.title.length);
         setContent(discussion.content);
+        setCurrentContentLength(discussion.content.length);
     }, [discussion])
 
-    const updateDiscussionAsync = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const updateDiscussionAsync = async () => {
+        try {
+            if (!discussion) {
+                return;
+            }
 
-        if (!discussion) {
-            return;
-        }
+            const updateDiscussion: CommunityDiscussionModel = {
+                id: discussion.id,
+                title: title,
+                content: content,
+                createdAt: discussion.createdAt,
+                appUserId: discussion.appUserId,
+                communityId: discussion.communityId
+            }
 
-        const newDiscussion: CommunityDiscussionModel = {
-            id: discussion.id,
-            title: title,
-            content: content,
-            when: discussion.when,
-            appUserId: discussion.appUserId,
-            communityId: discussion.communityId
-        }
-
-        const updated = await updateCommunityAsyncMut(newDiscussion);
-        if (updated.data !== undefined) {
+            await updateCommunityDiscussionAsync({ id: updateDiscussion.id, discussion: updateDiscussion }).unwrap();
             setEditModeOne(false);
+        } catch (error) {
+            logger.error("Failed to update community descussion", error);
         }
     }
 
     const removeDiscussionAsync = async () => {
-        setShowDiscussion(false);
+        try {
+            setShowDiscussion(false);
 
-        await removeCommunityDiscussionAsyncMut(discussionId);
+            await removeCommunityDiscussionAsyncMut({ id: discussionId, communityId }).unwrap();
+        } catch (error) {
+            logger.error("Failed to remove community descussion", error);
+        }
     }
 
     const createDiscussionCommentAsync = async () => {
-        const newDiscussionComment: CommunityDiscussionCommentModel = {
-            id: 0,
-            content: discussionCommentContent,
-            when: new Date(),
-            communityDiscussionId: discussionId,
-            appUserId: user?.id ?? "",
-        }
+        try {
+            const newDiscussionComment: CommunityDiscussionCommentModel = {
+                id: 0,
+                content: discussionCommentContent,
+                createdAt: new Date(),
+                communityDiscussionId: discussionId,
+                appUserId: user.id,
+            }
 
-        const created = await createCommunityDiscussionCommentAsyncMut(newDiscussionComment);
-        if (created.data !== undefined) {
+            await createCommunityDiscussionCommentAsyncMut(newDiscussionComment).unwrap();
             setDiscussionCommentContent("");
+            setAddShowComment(false);
+            setCurrentCommentContentLength(0);
+        } catch (error) {
+            logger.error("Failed to create community descussion comment", error);
         }
     }
 
     const titleHandle = (event: ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
+        setCurrentTileLength(event.target.value.length);
     }
 
     const contentHandle = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setContent(event.target.value);
+        setCurrentContentLength(event.target.value.length);
     }
 
-    if (!discussion || !user) {
+    const commentContentHandle = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setDiscussionCommentContent(event.target.value);
+        setCurrentCommentContentLength(event.target.value.length);
+    }
+
+    if (!discussion) {
         return (<></>);
     }
 
@@ -145,27 +177,31 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
                 </div>
                 {showComments &&
                     <>
+                        <div className="add-new-discussion-comment">
+                            <div className="add-new-discussion-comment__title">
+                                {showAddComment
+                                    ? <div className="info">
+                                        <div>{t("AddComment")}</div>
+                                        <div className={`content-length ${discussionCommentContent.length === maxCommentContentLengthRef.current ? 'limit' : ''}`}>{currentCommentContentLength}/{maxCommentContentLengthRef.current}</div>
+                                    </div>
+                                    : <div className="btn-shadow add-comment" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</div>
+                                }
+                            </div>
+                            {showAddComment &&
+                                <div className="add-new-discussion-comment__content">
+                                    <textarea className="form-control" rows={3} cols={60} value={discussionCommentContent} maxLength={maxCommentContentLengthRef.current}
+                                        onChange={commentContentHandle} />
+                                    <div className="actions">
+                                        <div className="btn-shadow create" onClick={createDiscussionCommentAsync}>{t("Add")}</div>
+                                        <div className="btn-shadow hide" onClick={() => setAddShowComment((item) => !item)}>{t("Cancel")}</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                         <DiscussionComments
                             userId={user.id}
                             discussionId={discussionId}
                         />
-                        <div className="add-new-discussion-comment">
-                            <div className="add-new-discussion-comment__title">
-                            {showAddComment
-                                ? <div>{t("AddComment")}</div>
-                                : <div className="btn-shadow add-comment" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</div>
-                            }
-                        </div>
-                        {showAddComment &&
-                            <div className="add-new-discussion-comment__content">
-                                <textarea className="form-control" rows={3} cols={60} onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
-                                <div className="actions">
-                                    <div className="btn-shadow create" onClick={createDiscussionCommentAsync}>{t("Add")}</div>
-                                    <div className="btn-shadow hide" onClick={() => setAddShowComment((item) => !item)}>{t("Hide")}</div>
-                                </div>
-                            </div>
-                        }
-                        </div>
                     </>
                 }
                 <div className="actions">
@@ -177,22 +213,24 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, setShowDisc
 
     const edit = () => {
         return (
-            <form className="edit" onSubmit={updateDiscussionAsync}>
+            <div className="edit">
                 <div className="form-group">
                     <label htmlFor="title">{t("Title")}</label>
-                    <input type="text" className="form-control" id="title" defaultValue={discussion.title}
+                    <div className={`content-length ${discussion.title.length === maxTitleLengthRef.current ? 'limit' : ''}`}>{currentTitleLength}/{maxTitleLengthRef.current}</div>
+                    <input type="text" className="form-control" id="title" value={title} maxLength={maxTitleLengthRef.current}
                         onChange={titleHandle} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="Content">{t("Content")}</label>
-                    <textarea className="form-control" id="Content" rows={8} defaultValue={discussion.content}
+                    <div className={`content-length ${discussion.content.length === maxContentLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxContentLengthRef.current}</div>
+                    <textarea className="form-control" id="Content" rows={8} value={content} maxLength={maxContentLengthRef.current}
                         onChange={contentHandle} />
                 </div>
                 <div className="actions">
-                    <input type="submit" className="btn btn-primary" value={t("Save")} />
-                    <input type="button" className="btn btn-light" value={t("Cancel")} onClick={() => setEditModeOne(false)} />
+                    <div className="btn-shadow create" onClick={updateDiscussionAsync}>{t("Save")}</div>
+                    <div className="btn-shadow secondary" onClick={() => setEditModeOne(false)}>{t("Cancel")}</div>
                 </div>
-            </form>
+            </div>
         );
     }
 

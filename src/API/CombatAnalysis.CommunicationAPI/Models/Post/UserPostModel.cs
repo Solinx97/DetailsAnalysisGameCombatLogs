@@ -1,24 +1,16 @@
-﻿namespace CombatAnalysis.CommunicationAPI.Models.Post;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class UserPostModel
-{
-    public int Id { get; set; }
+namespace CombatAnalysis.CommunicationAPI.Models.Post;
 
-    public string Owner { get; set; }
-
-    public string Content { get; set; }
-
-    public int PublicType { get; set; }
-
-    public string Tags { get; set; }
-
-    public DateTimeOffset CreatedAt { get; set; }
-
-    public int LikeCount { get; set; }
-
-    public int DislikeCount { get; set; }
-
-    public int CommentCount { get; set; }
-
-    public string AppUserId { get; set; }
-}
+public record UserPostModel(
+    [Range(0, int.MaxValue)] int Id,
+    [Required] string Content,
+    int PublicType,
+    string Tags,
+    [Required] DateTimeOffset CreatedAt,
+    [Required] string AppUserId,
+    [Range(0, int.MaxValue)] int LikeCount,
+    [Range(0, int.MaxValue)] int DislikeCount,
+    [Range(0, int.MaxValue)] int CommentCount,
+    int Reaction
+    );

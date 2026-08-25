@@ -6,6 +6,6 @@ public record InviteToCommunityModel(
     [Range(0, int.MaxValue)] int Id,
     [Range(0, int.MaxValue)] int CommunityId,
     [Required] string ToAppUserId,
-    [Required] DateTimeOffset When,
+    [Required] DateTimeOffset CreatedAt,
     [Required] string AppUserId
     );

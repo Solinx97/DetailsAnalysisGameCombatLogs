@@ -1,16 +1,16 @@
 import type { RootState } from '@/app/Store';
+import { APP_CONFIG } from '@/config/appConfig';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
+import { useGetFeedQuery } from '@/features/feed/api/UserFeed.api';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { useLazyGetUserPostsByUserIdQuery } from '../../../feed/api/Post.api';
 import UserPost from '../../../feed/components/post/UserPost';
-import type { UserPostModel } from '../../../feed/types/UserPostModel';
-import { useLazyGetUserByIdQuery } from '../../api/Account.api';
-import type { AppUserModel } from '../../types/AppUserModel';
+import { useGetUserByIdQuery } from '../../api/Account.api';
 import Friends from '../userEnvironment/Friends';
 import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
@@ -18,58 +18,41 @@ import SelectedUserProfile from './SelectedUserProfile';
 import './SelectedUser.scss';
 
 const SelectedUser: React.FC = () => {
+    const feedVersion = 1;
+
     const { t } = useTranslation('communication/people/user');
 
     const myself = useSelector((state: RootState) => state.user.value);
 
     const location = useLocation();
 
-    const [getUserPosts] = useLazyGetUserPostsByUserIdQuery();
-    const [getUserById] = useLazyGetUserByIdQuery();
-
     const [personId, setPersonId] = useState<string>("0");
-    const [person, setPerson] = useState<AppUserModel | null>(null);
     const [currentMenuItem, setMenuItem] = useState(0);
-    const [allPosts, setAllPosts] = useState<UserPostModel[]>([]);
+
+    const [page, setPage] = useState(1);;
+    const [hasMore, setHasMore] = useState(false);
+
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
+
+    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId: myself?.id ?? "0", page, pageSize: pageSizeRef.current, feedVersion });
+    const { data: person, isLoading: personIsLoading } = useGetUserByIdQuery(personId);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const id: string = queryParams.get("id") || "0";
 
         setPersonId(id);
-    }, [])
+    }, []);
 
     useEffect(() => {
-        if (personId === "0") {
+        if (!userFeed) {
             return;
         }
 
-        const getUser = async () => {
-            await getUserByIdAsync();
-        }
+        setHasMore(((page - 1) * pageSizeRef.current) < userFeed?.count);
+    }, [page, userFeed]);
 
-        getUser();
-    }, [personId])
-
-    const getUserByIdAsync = async () => {
-        const user = await getUserById(personId);
-
-        if (user.data !== undefined) {
-            setPerson(user.data);
-
-            getAllPostsAsync(user.data.id);
-        }
-    }
-
-    const getAllPostsAsync = async (appUserId: string) => {
-        const userPosts = await getUserPosts({ appUserId, pageSize: 10 });
-
-        if (userPosts.data !== undefined) {
-            setAllPosts(userPosts.data);
-        }
-    }
-
-    if (!myself) {
+    if (!myself || !userFeed || isLoading || !person || personIsLoading) {
         return (<></>);
     }
 
@@ -81,7 +64,7 @@ const SelectedUser: React.FC = () => {
             />
             <div className="communication-content user">
                 <div className="user-information__username">
-                    {person?.username}
+                    {person.username}
                 </div>
                 <div className="user__container">
                     <div className="menu-container">
@@ -124,16 +107,26 @@ const SelectedUser: React.FC = () => {
                         }
                         {currentMenuItem === 1 &&
                             <ul className="posts">
-                                {allPosts.length === 0
+                                {userFeed.posts.length === 0
                                     ? <div>{t("Empty")}</div>
-                                    : allPosts?.map(post => (
+                                    : userFeed.posts.map(post => (
                                         <li key={post.id}>
                                             <UserPost
-                                                myself={myself}
+                                                user={myself}
                                                 post={post}
+                                                feedVersion={feedVersion}
                                             />
                                         </li>
                                     ))
+                                }
+                                {userFeed.posts.length > 0 &&
+                                    < li className="posts__item">
+                                        <InfiniteScrollTrigger
+                                            onLoadMore={() => setPage(p => p + 1)}
+                                            hasMore={hasMore}
+                                            isLoading={isFetching}
+                                        />
+                                    </li>
                                 }
                             </ul>
                         }
@@ -143,13 +136,14 @@ const SelectedUser: React.FC = () => {
                         {currentMenuItem === 3 &&
                             <SelectedUserCommunities
                                 user={person}
+                                myself={myself}
                                 t={t}
                             />
                         }
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

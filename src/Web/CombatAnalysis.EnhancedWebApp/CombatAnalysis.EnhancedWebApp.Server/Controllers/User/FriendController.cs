@@ -39,7 +39,7 @@ public class FriendController : ControllerBase
     }
 
     [HttpGet("findByUserId/{id}")]
-    public async Task<IActionResult> SearchMyFriends(string id)
+    public async Task<IActionResult> FindByUserId(string id)
     {
         var responseMessage = await _httpClient.GetAsync($"Friend/findByUserId/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)

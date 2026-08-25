@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -20,107 +21,44 @@ public class UserPostCommentController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("getByUserPostId/{userPostId:int:min(1)}")]
+    public async Task<IActionResult> GetByUserPostId(int userPostId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync("UserPostComment");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
+        var responseMessage = await _httpClient.GetAsync($"UserPostComment/getByUserPostId/{userPostId}?page={page}&pageSize={pageSize}");
+        var comments = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentResponse>();
 
-            return Ok(postComment);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"UserPostComment/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
-
-            return Ok(postComment);
-        }
-
-        return BadRequest();
-    }
-
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByPostId(int id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"UserPostComment/searchByPostId/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostCommentModel>>();
-
-            return Ok(postComments);
-        }
-
-        return BadRequest();
+        return Ok(comments);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserPostCommentModel model)
+    public async Task<IActionResult> Create(UserPostCommentModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("UserPostComment", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var postComment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
+        var responseMessage =  await _httpClient.PostAsync("UserPostComment", JsonContent.Create(request));
+        var comment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
 
-            return Ok(postComment);
-        }
-
-        return BadRequest();
+        return Ok(comment);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(UserPostCommentModel model)
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, UserPostCommentModel request)
     {
-        var responseMessage = await _httpClient.PutAsync("UserPostComment", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
+        await _httpClient.PutAsync($"UserPostComment/{id}", JsonContent.Create(request));
+        return NoContent();
+    }
 
-        return BadRequest();
+    [HttpGet("count/{userPostId:int:min(1)}")]
+    public async Task<IActionResult> Count(int userPostId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"UserPostComment/count/{userPostId}");
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+
+        return Ok(count);
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, int userPostId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"UserPostComment/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        var responseMessage = await _httpClient.DeletAsync($"UserPostComment/{id}?userPostId={userPostId}");
+        return NoContent();
     }
 }

@@ -11,19 +11,26 @@ export const InviteToCommunityApi = CommunityApi.injectEndpoints({
             }),
             invalidatesTags: result => result ? [{ type: 'InviteToCommunity', id: result.id }] : [],
         }),
-        removeCommunityInvite: builder.mutation<void, number>({
-            query: id => ({
-                url: `/InviteToCommunity/${id}`,
+        removeCommunityInvite: builder.mutation<void, { id: number, communityId: number }>({
+            query: ({ id, communityId }) => ({
+                url: `/InviteToCommunity/${id}?communityId=${communityId}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'InviteToCommunity', id }],
+            invalidatesTags: (_result, _error, args) => [{ type: 'InviteToCommunity', id: args.id }],
+        }),
+        acceptCommunityInvite: builder.mutation<void, { id: number, communityId: number, appUserId: string }>({
+            query: ({ id, communityId, appUserId }) => ({
+                url: `/InviteToCommunity/accept/${id}?communityId=${communityId}&appUserId=${appUserId}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: (_result, _error, args) => [{ type: 'InviteToCommunity', id: args.id }],
         }),
         getInviteToCommunityById: builder.query<InviteToCommunityModel, number>({
             query: id => `/InviteToCommunity/${id}`,
             providesTags: result => result ? [{ type: 'InviteToCommunity', id: result.id }] : [],
         }),
-        inviteFindByUserId: builder.query<InviteToCommunityModel[], string>({
-            query: id => `/InviteToCommunity/findByUserId/${id}`,
+        inviteGetByUserId: builder.query<InviteToCommunityModel[], string>({
+            query: appUserId => `/InviteToCommunity/getByUserId/${appUserId}`,
             providesTags: result =>
                 result
                     ? [
@@ -32,17 +39,13 @@ export const InviteToCommunityApi = CommunityApi.injectEndpoints({
                     ]
                     : [{ type: 'InviteToCommunity', id: 'LIST' }]
         }),
-        inviteIsExist: builder.query<boolean, { appUserId: string, communityId: number }>({
-            query: ({ appUserId, communityId }) => `/InviteToCommunity/isExist?appUserId=${appUserId}&communityId=${communityId}`,
-            providesTags: (_result, _error, { appUserId, communityId }) => [{ type: 'InviteToCommunity', id: `${appUserId}-${communityId}` }]
-        }),
     })
 })
 
 export const {
     useCreateInviteAsyncMutation,
     useRemoveCommunityInviteMutation,
+    useAcceptCommunityInviteMutation,
     useGetInviteToCommunityByIdQuery,
-    useInviteFindByUserIdQuery,
-    useLazyInviteIsExistQuery,
+    useInviteGetByUserIdQuery,
 } = InviteToCommunityApi;

@@ -1,6 +1,8 @@
+import logger from '@/utils/Logger';
+import { APP_CONFIG } from '@/config/appConfig';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateCommunityDiscussionCommentAsyncMutation } from '../../../api/CommunityDiscussionComment.api';
 import type { CommunityDiscussionCommentModel } from '../../../types/CommunityDiscussionCommentModel';
@@ -11,25 +13,36 @@ interface DiscussionCommentContentProps {
 }
 
 const DiscussionCommentContent: React.FC<DiscussionCommentContentProps> = ({ userId, comment }) => {
+    const maxContentLength = 256;
+
     const { t } = useTranslation("communication/postCommentContent");
+
+    const maxContentLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDiscussionCommentContentMaxLength ?? maxContentLength);
 
     const [updateDiscussionCommentAsyncMut] = useUpdateCommunityDiscussionCommentAsyncMutation();
 
     const [editModeOn, setEditModeOne] = useState(false);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
 
-    const commentContent = useRef<HTMLTextAreaElement | null>(null);
+    const commentContentRef = useRef<HTMLTextAreaElement | null>(null);
+
+    useEffect(() => {
+        setCurrentContentLength(comment.content.length);
+    }, [comment, editModeOn]);
 
     const updateDiscussionCommentAsync = async () => {
-        if (!commentContent.current) {
-            return;
-        }
+        try {
+            if (!commentContentRef.current) {
+                return;
+            }
 
-        const postCommentForUpdate = Object.assign({}, comment);
-        postCommentForUpdate.content = commentContent.current.value;
+            const postCommentForUpdate = Object.assign({}, comment);
+            postCommentForUpdate.content = commentContentRef.current.value;
 
-        const updatedItem = await updateDiscussionCommentAsyncMut(postCommentForUpdate);
-        if (updatedItem.data !== undefined) {
+            await updateDiscussionCommentAsyncMut({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
             setEditModeOne(false);
+        } catch (error) {
+            logger.error("Failed to update community discussion comment", error);
         }
     }
 
@@ -37,10 +50,12 @@ const DiscussionCommentContent: React.FC<DiscussionCommentContentProps> = ({ use
         <div className="post-comments__content">
             {editModeOn
                 ? <div>
-                    <textarea className="form-control" rows={3} cols={50} ref={commentContent} defaultValue={comment.content} />
+                    <div className={`content-length ${commentContentRef.current?.value.length === maxContentLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxContentLengthRef.current}</div>
+                    <textarea className="form-control" rows={3} cols={50} ref={commentContentRef} maxLength={maxContentLengthRef.current}
+                        onChange={e => setCurrentContentLength(e.target.value.length)} defaultValue={comment.content} />
                     <div className="actions">
-                        <button type="button" className="btn btn-outline-info" onClick={async () => await updateDiscussionCommentAsync()}>{t("Save")}</button>
-                        <button type="button" className="btn btn-light" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
+                        <div className="btn-shadow create" onClick={async () => await updateDiscussionCommentAsync()}>{t("Save")}</div>
+                        <div className="btn-shadow" onClick={() => setEditModeOne(false)}>{t("Cancel")}</div>
                     </div>
                 </div>
                 : <div className="card-text">{comment.content}</div>

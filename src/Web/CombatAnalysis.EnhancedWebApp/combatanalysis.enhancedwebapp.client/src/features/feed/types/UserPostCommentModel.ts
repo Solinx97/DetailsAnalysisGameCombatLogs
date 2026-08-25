@@ -1,7 +1,5 @@
-export type UserPostCommentModel = {
-    id: number;
-    content: string;
-    createdAt: Date;
+import type { CommentModel } from './CommentModel';
+
+export interface UserPostCommentModel extends CommentModel {
     userPostId: number;
-    appUserId: string;
 }

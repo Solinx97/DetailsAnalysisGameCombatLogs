@@ -1,21 +1,27 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import Loading from '@/shared/components/Loading';
 import logger from '@/utils/Logger';
 import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, type ChangeEvent } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import { useCreateUserPostMutation } from '../../api/UserPost.api';
 import type { UserPostModel } from '../../types/UserPostModel';
 import AddTagsToPost from './AddTagsToPost';
 
 interface CreateUserPostProps {
-    user: AppUserModel | null;
-    owner: string;
+    user: AppUserModel;
+    feedVersion: number;
     t: (key: string) => string;
 }
 
-const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
+const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, feedVersion, t }) => {
+    const maxLength = 512;
+
+    const maxLengthRef = useRef<number>(APP_CONFIG.communication.length.userPostContentMaxLength ?? maxLength);
+
     const [showCreatePost, setShowCreatePost] = useState(false);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState<string[]>([]);
 
@@ -23,24 +29,24 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
 
     const createUserPostAsync = async () => {
         try {
-            if (!user || postContent === "") {
+            if (postContent === "") {
                 return;
             }
 
             const newPost: UserPostModel = {
                 id: 0,
-                owner: owner,
                 content: postContent,
                 publicType: 0,
                 tags: postTags.join(';'),
                 createdAt: new Date(),
+                appUserId: user.id,
                 likeCount: 0,
                 dislikeCount: 0,
                 commentCount: 0,
-                appUserId: user.id
+                reaction: 0
             }
 
-            await createNewUserPostAsync(newPost).unwrap();
+            await createNewUserPostAsync({ feedVersion, post: newPost }).unwrap();
 
             setShowCreatePost(false);
             setPostContent("");
@@ -49,8 +55,14 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
         }
     }
 
-    const postContentHandle = (e: ChangeEvent<HTMLTextAreaElement> | undefined) => {
-        setPostContent(e?.target.value ?? "");
+    const contentHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setPostContent(e.target.value);
+        setCurrentContentLength(e.target.value.length);
+    }
+
+    const createPostCancel = () => {
+        setPostTags([]);
+        setShowCreatePost((item) => !item);
     }
 
     if (!user) {
@@ -62,7 +74,7 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
             <div className="create-post__tool">
                 {!showCreatePost &&
                     <div className="open-create-post container">
-                        <div className="btn-shadow" title={t("NewPost")} onClick={() => setShowCreatePost((item) => !item)}>
+                        <div className="btn-shadow" onClick={() => setShowCreatePost((item) => !item)}>
                             <FontAwesomeIcon
                                 icon={faPlus}
                             />
@@ -78,7 +90,7 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
                             />
                             <div>{t("Save")}</div>
                         </div>
-                        <div className="btn-shadow" title={t("Cancel")} onClick={() => setShowCreatePost((item) => !item)}>
+                        <div className="btn-shadow" title={t("Cancel")} onClick={createPostCancel}>
                             <FontAwesomeIcon
                                 icon={faBan}
                             />
@@ -94,7 +106,9 @@ const CreateUserPost: React.FC<CreateUserPostProps> = ({ user, owner, t }) => {
                         setPostTags={setPostTags}
                         t={t}
                     />
-                    <textarea className="form-control" rows={5} title={t("PostContent") || ""} onChange={postContentHandle} />
+                    <div className={`content-length ${postContent.length === maxLengthRef.current ? 'limit' : ''}`}>{currentContentLength}/{maxLengthRef.current}</div>
+                    <textarea className="form-control" rows={5} title={t("PostContent") || ""} value={postContent} maxLength={maxLengthRef.current}
+                        onChange={contentHandle} />
                 </div>
             }
         </div>

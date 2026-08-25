@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
+using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -20,107 +21,60 @@ public class CommunityUserController : ControllerBase
         _httpClient.APIUrl = cluster.Value.Communication;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id)
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUser = await responseMessage.Content.ReadFromJsonAsync<CommunityUserModel>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
+        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
 
-            return Ok(communityUser);
-        }
-
-        return BadRequest();
+        return Ok(users);
     }
 
-    [HttpGet("findByCommunityId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> SearchByCommunityId(int communityId)
+    [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByCommunityId/{communityId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
+        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
 
-            return Ok(communityUsers);
-        }
-
-        return BadRequest();
+        return Ok(users);
     }
 
-    [HttpGet("findByUserId/{userId}")]
-    public async Task<IActionResult> SearchByUserId(string userId)
+    [HttpGet("getShortListByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetShortListByCommunityId(int communityId, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByUserId/{userId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}?page=1&pageSize={pageSize}");
+        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
 
-            return Ok(communityUsers);
-        }
+        return Ok(users);
+    }
 
-        return BadRequest();
+    [HttpGet("canJoin/{appUserId}")]
+    public async Task<IActionResult> CanJoin(string appUserId, int communityId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/canJoin/{appUserId}?communityId={communityId}");
+        var canJoin = await responseMessage.Content.ReadFromJsonAsync<bool>();
+
+        return Ok(canJoin);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityUserModel model)
+    public async Task<IActionResult> Create(CommunityUserModel request)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var communityUser = await responseMessage.Content.ReadFromJsonAsync<CommunityUserModel>();
-
-            return Ok(communityUser);
-        }
-
-        return BadRequest();
+        await _httpClient.PostAsync("CommunityUser", JsonContent.Create(request));
+        return NoContent();
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(CommunityUserModel model)
+    [HttpDelete("leave")]
+    public async Task<IActionResult> Leave(string appUserId, int communityId)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityUser", JsonContent.Create(model));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        await _httpClient.DeletAsync($"CommunityUser/leave?appUserId={appUserId}&communityId={communityId}");
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(string id, int communityId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityUser/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
+        await _httpClient.DeletAsync($"CommunityUser/{id}?communityId={communityId}");
+        return NoContent();
     }
 }

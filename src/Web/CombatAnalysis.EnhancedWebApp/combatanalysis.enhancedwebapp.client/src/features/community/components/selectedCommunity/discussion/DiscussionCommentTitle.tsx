@@ -1,3 +1,4 @@
+import logger from '@/utils/Logger';
 import useFormatting from '@/shared/hooks/useFormatting';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,10 +9,11 @@ import type { CommunityDiscussionCommentModel } from '../../../types/CommunityDi
 
 interface DiscussionCommentTitleProps {
     myselfId: string;
+    discussionId: number;
     comment: CommunityDiscussionCommentModel;
 }
 
-const DiscussionCommentTitle: React.FC<DiscussionCommentTitleProps> = ({ myselfId, comment }) => {
+const DiscussionCommentTitle: React.FC<DiscussionCommentTitleProps> = ({ myselfId, discussionId, comment }) => {
     const { t } = useTranslation("communication/community/discussion");
 
     const { dateFormatting } = useFormatting();
@@ -21,7 +23,12 @@ const DiscussionCommentTitle: React.FC<DiscussionCommentTitleProps> = ({ myselfI
     const [removeDiscussionCommentAsyncMut] = useRemoveCommunityDiscussionCommentAsyncMutation();
 
     const deletePostCommentAsync = async (discussionCommentId: number) => {
-        await removeDiscussionCommentAsyncMut(discussionCommentId);
+        try {
+            await removeDiscussionCommentAsyncMut({ id: discussionCommentId, discussionId }).unwrap();
+        } catch (error) {
+            logger.error("Failed to remove community discussion comment", error);
+        }
+
     }
 
     if (isLoading || !user) {
@@ -32,7 +39,7 @@ const DiscussionCommentTitle: React.FC<DiscussionCommentTitleProps> = ({ myselfI
         <div className="post-comments__title">
             <div className="user">
                 <div className="username">{user.username}</div>
-                <div className="when">{dateFormatting(comment.when.toString())}</div>
+                <div className="when">{dateFormatting(comment.createdAt.toString())}</div>
             </div>
             {comment?.appUserId === myselfId &&
                 <div className="post-comments__menu">

@@ -1,65 +1,39 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import type { RootState } from '@/app/Store';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import Loading from '@/shared/components/Loading';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
+import { useGetUserPostsByUserIdQuery } from '@/features/feed/api/Post.api';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import CommunityPost from '../../../feed/components/post/CommunityPost';
 import CreateUserPost from '../../../feed/components/post/CreateUserPost';
 import UserPost from '../../../feed/components/post/UserPost';
-import useFetchPosts from '../../../feed/hooks/useFetchPosts';
-import type { CommunityPostModel } from '../../../feed/types/CommunityPostModel';
-import type { PostModel } from '../../../feed/types/PostModel';
-import type { UserPostModel } from '../../../feed/types/UserPostModel';
 
 const UserFeed: React.FC = () => {
+    const feedVersion = 1;
+
     const { t } = useTranslation("communication/feed");
 
     const myself = useSelector((state: RootState) => state.user.value);
 
-    const userPostsSizeRef = useRef(0);
-    const communityPostsSizeRef = useRef(0);
+    const [page, setPage] = useState(1);;
+    const [hasMore, setHasMore] = useState(false);
 
-    const [currentPosts, setCurrentPosts] = useState<PostModel[]>([]);
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 10);
 
-    const { userPosts, communityPosts, count, communityCount, getMoreUserPostsAsync, getMoreCommunityPostsAsync } = useFetchPosts(myself?.id ?? "");
+    const { data: posts, isLoading, isFetching } = useGetUserPostsByUserIdQuery({ appUserId: myself?.id ?? "", page, pageSize: pageSizeRef.current });
 
     useEffect(() => {
-        if (!userPosts) {
+        if (!posts) {
             return;
         }
 
-        userPostsSizeRef.current = userPosts.length;
+        setHasMore(((page - 1) * pageSizeRef.current) < posts.count);
+    }, [page, posts]);
 
-        const totalPosts = [...currentPosts, ...userPosts];
-        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        setCurrentPosts(totalPosts);
-    }, [userPosts]);
-
-    useEffect(() => {
-        if (!communityPosts) {
-            return;
-        }
-
-        communityPostsSizeRef.current = communityPosts.length;
-
-        const totalPosts = [...currentPosts, ...communityPosts];
-        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        setCurrentPosts(totalPosts);
-    }, [communityPosts]);
-
-    const loadingMoreUserPostsAsync = async () => {
-        const newUserPosts = await getMoreUserPostsAsync(userPostsSizeRef.current);
-        const newCommunityPosts = await getMoreCommunityPostsAsync(communityPostsSizeRef.current);
-
-        const newPosts = newUserPosts.concat(newCommunityPosts);
-
-        const totalPosts = [...currentPosts, ...newPosts];
-        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        setCurrentPosts(totalPosts);
+    if (!posts || isLoading) {
+        return (<Loading />);
     }
 
     if (!myself) {
@@ -79,30 +53,29 @@ const UserFeed: React.FC = () => {
             <div>
                 <CreateUserPost
                     user={myself}
-                    owner={myself.username}
+                    feedVersion={feedVersion}
                     t={t}
                 />
                 <ul className="posts">
-                    {currentPosts?.map(post => (
-                        <li className="posts__item" key={post.id}>
-                            {(post as CommunityPostModel).communityId !== undefined
-                                ? <CommunityPost
-                                    userId={myself.id}
-                                    communityId={(post as CommunityPostModel).communityId}
-                                    post={(post as CommunityPostModel)}
+                    {!posts.posts
+                        ? <Loading />
+                        : posts.posts.map(post => (
+                            <li key={`${post.id}`}>
+                                <UserPost
+                                    user={myself}
+                                    post={post}
+                                    feedVersion={feedVersion}
                                 />
-                                : <UserPost
-                                    myself={myself}
-                                    post={(post as UserPostModel)}
-                                />
-                            }
-                        </li>
-                    ))}
-                    {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
-                        <li className="load-more" onClick={loadingMoreUserPostsAsync}>
-                            <div className="load-more__content">Load more</div>
-                        </li>
-                    }
+                            </li>
+
+                        ))}
+                    <li className="posts__item">
+                        <InfiniteScrollTrigger
+                            onLoadMore={() => setPage(p => p + 1)}
+                            hasMore={hasMore}
+                            isLoading={isFetching}
+                        />
+                    </li>
                 </ul>
             </div>
             <CommunicationMenu

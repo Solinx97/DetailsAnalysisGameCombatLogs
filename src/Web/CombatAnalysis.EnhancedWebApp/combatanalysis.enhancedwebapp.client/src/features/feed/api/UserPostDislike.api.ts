@@ -1,38 +1,80 @@
 import type { UserPostReactionModel } from '../types/UserPostReactionModel';
 import { PostApi } from './Post.api';
+import { UserFeedApi } from './UserFeed.api';
+import { updateReactionsStatus } from '@/shared/helpers/ApiHelper';
 
 export const UserPostDislikeApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createUserPostDislike: builder.mutation<UserPostReactionModel, UserPostReactionModel>({
-            query: userPostDislike => ({
-                body: userPostDislike,
+        createUserPostDislike: builder.mutation<UserPostReactionModel, { feedVersion: number, reaction: UserPostReactionModel }>({
+            query: ({ reaction }) => ({
+                body: reaction,
                 url: '/UserPostDislike',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'UserPostDislike', id: result.id }] : [],
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdDislike } = await queryFulfilled;
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getUserPostsByUserId',
+                            {
+                                appUserId: createdDislike.appUserId!,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdDislike.userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                updateReactionsStatus(createdDislike, post);
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId: createdDislike.appUserId!,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdDislike.userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                updateReactionsStatus(createdDislike, post);
+                            }
+                        )
+                    );
+                } catch {
+                    // creation failed
+                }
+            },
         }),
-        removeUserPostDislike: builder.mutation<void, number>({
-            query: id => ({
-                url: `/UserPostDislike/${id}`,
-                method: 'DELETE'
-            }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'UserPostDislike', id }],
-        }),
-        searchUserPostDislikeByPostId: builder.query<UserPostReactionModel[], number>({
-            query: id => `/UserPostDislike/searchByPostId/${id}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(userPostDislike => ({ type: 'UserPostDislike' as const, id: userPostDislike.id })),
-                        { type: 'UserPostDislike', id: 'LIST' },
-                    ]
-                    : [{ type: 'UserPostDislike', id: 'LIST' }]
+        countUserPostDislikeByPostId: builder.query<number, number>({
+            query: id => `/UserPostDislike/count/${id}`,
+            providesTags: () => [
+                { type: 'UserPostDislike', id: 'LIST' },
+                { type: 'UserPostLike', id: 'LIST' }
+            ]
         }),
     })
 })
 
 export const {
     useCreateUserPostDislikeMutation,
-    useRemoveUserPostDislikeMutation,
-    useLazySearchUserPostDislikeByPostIdQuery,
+    useCountUserPostDislikeByPostIdQuery,
 } = UserPostDislikeApi;

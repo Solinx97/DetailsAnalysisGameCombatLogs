@@ -1,3 +1,4 @@
+import type { AllCommunityUserModel } from '../types/AllCommunityUserModel';
 import type { CommunityUserModel } from '../types/CommunityUserModel';
 import { CommunityApi } from './Community.api';
 
@@ -11,41 +12,103 @@ export const CommunityUserApi = CommunityApi.injectEndpoints({
             }),
             invalidatesTags: result => result ? [{ type: 'CommunityUser', id: result.id }] : [],
         }),
-        removeCommunityUser: builder.mutation<void, string>({
-            query: id => ({
-                url: `/CommunityUser/${id}`,
+        removeCommunityUser: builder.mutation<void, { id: string, communityId: number }>({
+            query: ({ id, communityId }) => ({
+                url: `/CommunityUser/${id}?communityId=${communityId}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'CommunityUser', id }]
+            invalidatesTags: (_result, _error, args) => [{ type: 'CommunityUser', id: args.id }]
         }),
-        communityUserFindByCommunityId: builder.query<CommunityUserModel[], number>({
-            query: communityId => `/CommunityUser/findByCommunityId/${communityId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(communityUser => ({ type: 'CommunityUser' as const, id: communityUser.id })),
-                        { type: 'CommunityUser', id: 'LIST' },
-                    ]
-                    : [{ type: 'CommunityUser', id: 'LIST' }]
+        leaveCommunityUser: builder.mutation<void, { appUserId: string, communityId: number }>({
+            query: ({ appUserId, communityId }) => ({
+                url: `/CommunityUser/leave?appUserId=${appUserId}&communityId=${communityId}`,
+                method: 'DELETE'
+            }),
         }),
-        communityUserFindByUserId: builder.query<CommunityUserModel[], string>({
-            query: userId => `/CommunityUser/findByUserId/${userId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(communityUser => ({ type: 'CommunityUser' as const, id: communityUser.id })),
-                        { type: 'CommunityUser', id: 'LIST' },
-                    ]
-                    : [{ type: 'CommunityUser', id: 'LIST' }]
+        getUsersByCommunityId: builder.query<AllCommunityUserModel, { communityId: number, page: number, pageSize: number }>({
+            query: ({ communityId, page, pageSize }) => `/CommunityUser/getByCommunityId/${communityId}?page=${page}&pageSize=${pageSize}`,
+            serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.communityId}`,
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.users.length = 0;
+                    currentCache.users.push(...newItems.users);
+                    return;
+                }
+
+                newItems.users.forEach(item => {
+                    const index = currentCache.users.findIndex(x => x.id === item.id);
+                    if (index === -1) {
+                        currentCache.users.push(item);
+                    } else {
+                        currentCache.users[index] = item;
+                    }
+                });
+            },
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.communityId !== previousArg?.communityId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'CommunityUser', id: 'LIST' },
+                ...(result?.users.map(post => ({
+                    type: 'CommunityUser' as const,
+                    id: post.id
+                })) ?? [])
+            ]
+        }),
+        getShortListUsersByCommunityId: builder.query<AllCommunityUserModel, { communityId: number, pageSize: number }>({
+            query: ({ communityId, pageSize }) => `/CommunityUser/getShortListByCommunityId/${communityId}?pageSize=${pageSize}`,
+            providesTags: () => [{ type: 'CommunityUser', id: 'LIST' }],
+        }),
+        getCommunityUsersByUserId: builder.query<AllCommunityUserModel, { appUserId: string, page: number, pageSize: number }>({
+            query: ({ appUserId, page, pageSize }) => `/CommunityUser/getByUserId/${appUserId}?page=${page}&pageSize=${pageSize}`,
+            serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.appUserId}`,
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.users.length = 0;
+                    currentCache.users.push(...newItems.users);
+                    return;
+                }
+
+                newItems.users.forEach(item => {
+                    const index = currentCache.users.findIndex(x => x.id === item.id);
+                    if (index === -1) {
+                        currentCache.users.push(item);
+                    } else {
+                        currentCache.users[index] = item;
+                    }
+                });
+            },
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.appUserId !== previousArg?.appUserId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
+            providesTags: result => [
+                { type: 'CommunityUser', id: 'LIST' },
+                ...(result?.users.map(post => ({
+                    type: 'CommunityUser' as const,
+                    id: post.id
+                })) ?? [])
+            ]
+        }),
+        getCanJoinByUserId: builder.query<boolean, { appUserId: string, communityId: number }>({
+            query: ({ appUserId, communityId }) => `/CommunityUser/canJoin/${appUserId}?communityId=${communityId}`,
         }),
     })
 })
 
 export const {
-    useCommunityUserFindByCommunityIdQuery,
-    useLazyCommunityUserFindByCommunityIdQuery,
-    useCommunityUserFindByUserIdQuery,
-    useLazyCommunityUserFindByUserIdQuery,
+    useGetUsersByCommunityIdQuery,
+    useGetShortListUsersByCommunityIdQuery,
+    useGetCommunityUsersByUserIdQuery,
     useCreateCommunityUserMutation,
-    useRemoveCommunityUserMutation
+    useRemoveCommunityUserMutation,
+    useLeaveCommunityUserMutation,
+    useGetCanJoinByUserIdQuery,
 } = CommunityUserApi;

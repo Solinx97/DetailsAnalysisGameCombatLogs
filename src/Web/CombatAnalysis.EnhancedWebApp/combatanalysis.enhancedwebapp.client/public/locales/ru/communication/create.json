@@ -21,7 +21,7 @@
   "PinMessage": "Кто может закреплять сообщения?",
   "Announcements": "Кто может делать анонсы?",
   "Anyone": "Любой участник",
-  "Owner": "Владелец чата",
+  "Owner": "Владелец",
   "Main": "Общее",
   "Members": "Участники",
   "Permisions": "Доступ",
@@ -31,5 +31,6 @@
   "PrevioslyStep": "Предыдущий шаг",
   "CreateCommunity": "Создать сообщество",
   "NameRequired": "Название обязательно",
-  "DescriptionRequired": "Описание обязательно"
+  "DescriptionRequired": "Описание обязательно",
+  "CommunityInformation": "Информация об сообществе"
 }

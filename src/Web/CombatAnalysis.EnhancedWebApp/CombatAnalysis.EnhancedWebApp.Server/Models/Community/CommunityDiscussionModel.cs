@@ -8,7 +8,7 @@ public class CommunityDiscussionModel
 
     public string Content { get; set; } = string.Empty;
 
-    public string When { get; set; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; set; }
 
     public string AppUserId { get; set; } = string.Empty;
 

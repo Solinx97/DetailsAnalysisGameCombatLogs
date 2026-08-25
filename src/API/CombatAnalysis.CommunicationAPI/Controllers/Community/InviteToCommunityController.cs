@@ -1,85 +1,51 @@
-﻿using AutoMapper;
-using CombatAnalysis.CommunicationAPI.Models.Community;
-using CombatAnalysis.CommunicationBL.DTO.Community;
-using CombatAnalysis.CommunicationBL.Interfaces;
+﻿using CombatAnalysis.CommunicationAPI.Models.Community;
+using Communication.Application.Commands.AcceptInviteToCommunity;
+using Communication.Application.Commands.CreateInviteToCommunity;
+using Communication.Application.Commands.DeleteInviteToCommunity;
+using Communication.Application.Queries.GetInvitesToCommunity;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
 
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class InviteToCommunityController(IService<InviteToCommunityDto, int> service, IMapper mapper, ILogger<InviteToCommunityController> logger) : ControllerBase
+public class InviteToCommunityController(IMediator mediator) : ControllerBase
 {
-    private readonly IService<InviteToCommunityDto, int> _service = service;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<InviteToCommunityController> _logger = logger;
+    private readonly IMediator _mediator = mediator;
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("getByUserId/{appUserId}")]
+    public async Task<IActionResult> GetByUserId(string appUserId, CancellationToken cancellationToken)
     {
-        var result = await _service.GetAllAsync();
+        var invites = await _mediator.Send(new GetInvitesToCommunityQuery(appUserId), cancellationToken);
 
-        return Ok(result);
-    }
-
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var result = await _service.GetByIdAsync(id);
-
-        return Ok(result);
-    }
-
-    [HttpGet("findByUserId/{userId}")]
-    public async Task<IActionResult> SearchByUserId(string userId)
-    {
-        var result = await _service.GetByParamAsync(c => c.ToAppUserId, userId);
-
-        return Ok(result);
+        return Ok(invites);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] InviteToCommunityModel inviteToCommunity)
+    public async Task<IActionResult> Create([FromBody] InviteToCommunityModel request, CancellationToken cancellationToken)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid InviteToCommunity create request received: {@InviteToCommunity}", inviteToCommunity);
+        var command = new CreateInviteToCommunityCommand(request.CommunityId, request.AppUserId, request.ToAppUserId);
+        await _mediator.Send(command, cancellationToken);
 
-                return ValidationProblem(ModelState);
-            }
+        return NoContent();
+    }
 
-            var map = _mapper.Map<InviteToCommunityDto>(inviteToCommunity);
-            var result = await _service.CreateAsync(map);
+    [HttpDelete("accept/{id:int:min(1)}")]
+    public async Task<IActionResult> AcceptRequest(int id, int communityId, string appUserId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new AcceptInviteToCommunityCommand(id, communityId, appUserId), cancellationToken);
 
-            return Ok(result);
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to create invite to community.");
-
-            return StatusCode(500, "Internal server error.");
-        }
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, int communityId, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _service.DeleteAsync(id);
+        await _mediator.Send(new DeleteInviteToCommunityCommand(id, communityId), cancellationToken);
 
-            return NoContent();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-        }
+        return NoContent();
     }
 }

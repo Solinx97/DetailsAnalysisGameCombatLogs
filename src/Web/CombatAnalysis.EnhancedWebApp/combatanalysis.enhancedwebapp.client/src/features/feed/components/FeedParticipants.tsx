@@ -1,128 +1,109 @@
+import { APP_CONFIG } from '@/config/appConfig';
 import Loading from '@/shared/components/Loading';
-import { memo, useEffect, useRef, useState } from 'react';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
 import type { AppUserModel } from '../../user/types/AppUserModel';
-import useFetchPosts from '../hooks/useFetchPosts';
-import type { CommunityPostModel } from '../types/CommunityPostModel';
-import type { UserPostModel } from '../types/UserPostModel';
 import CommunityPost from './post/CommunityPost';
 import UserPost from './post/UserPost';
+import { useCountFeedNewPostsQuery, useGetFeedQuery } from '../api/UserFeed.api';
 
 interface FeedParticipantsProps {
     myself: AppUserModel;
+    lastCheck: string;
+    setLastCheck: (value: SetStateAction<string>) => void;
+    feedVersion: number;
+    setFeedVersion: (value: SetStateAction<number>) => void;
     t: (key: string) => string;
 }
 
-const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, t }) => {
-    const userPostsSizeRef = useRef(0);
-    const communityPostsSizeRef = useRef(0);
+const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, lastCheck, setLastCheck, feedVersion, setFeedVersion, t }) => {
+    const [page, setPage] = useState(1);
+    const [countNew, setCountNew] = useState(0);
+    const [hasMore, setHasMore] = useState(false);
 
-    const [currentPosts, setCurrentPosts] = useState<UserPostModel[] | CommunityPostModel[]>([]);
-    const [haveNewPosts, setHaveNewPosts] = useState(false);
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
+    const intervalCheckNewPostsRef = useRef<number>(APP_CONFIG.communication.intervalCheckNewPosts ?? 100000);
 
-    const { userPosts, communityPosts, newPosts, newCommunityPosts, count, communityCount, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchPosts(myself.id);
+    const { data: countFeedNewPost } = useCountFeedNewPostsQuery(
+        { appUserId: myself.id, lastCheck },
+        {
+            pollingInterval: intervalCheckNewPostsRef.current
+        }
+    );
+    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId: myself.id, page, pageSize: pageSizeRef.current, feedVersion });
 
     useEffect(() => {
-        if (!userPosts) {
+        if (!userFeed) {
             return;
         }
 
-        userPostsSizeRef.current = userPosts.length;
-        if (userPosts.length === 0) {
-            return;
-        }
-
-        const totalUserPosts = Array.from(userPosts);
-        totalUserPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        setCurrentPosts(totalUserPosts);
-    }, [userPosts]);
+        setHasMore(((page - 1) * pageSizeRef.current) < userFeed.count);
+    }, [page, userFeed]);
 
     useEffect(() => {
-        if (!communityPosts) {
+        if (!countFeedNewPost) {
             return;
         }
 
-        communityPostsSizeRef.current = communityPosts.length;
-        if (communityPosts.length === 0) {
-            return;
-        }
+        setCountNew(countFeedNewPost);
+    }, [countFeedNewPost]);
 
-        const totalCommunityPosts = Array.from(communityPosts);
-        totalCommunityPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const refreshPosts = () => {
+        window.scrollTo(0, 0);
 
-        setCurrentPosts([...currentPosts, ...totalCommunityPosts]);
-    }, [communityPosts]);
-
-    useEffect(() => {
-        if (!newPosts || newPosts.length === 0) {
-            return;
-        }
-
-        setHaveNewPosts(newPosts.length > 0);
-    }, [newPosts]);
-
-    useEffect(() => {
-        if (!newCommunityPosts || newCommunityPosts.length === 0) {
-            return;
-        }
-
-        setHaveNewPosts(newCommunityPosts.length > 0);
-    }, [newCommunityPosts]);
-
-    const loadingMoreUserPostsAsync = async () => {
-        const newUserPosts = await getMoreUserPostsAsync(userPostsSizeRef.current);
-        const newCommunityPosts = await getMoreCommunityPostsAsync(communityPostsSizeRef.current);
-
-        const newPosts = newUserPosts.concat(newCommunityPosts);
-
-        const totalPosts = [...currentPosts, ...newPosts];
-        totalPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        setCurrentPosts(totalPosts);
+        setCountNew(0);
+        setLastCheck((new Date()).toISOString());
+        setPage(1);
+        setFeedVersion(prev => prev + 1);
     }
 
-    const loadingNewUserPostsAsync = async () => {
-        currentDateRef.current = (new Date()).toISOString();
-
-        newPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setCurrentPosts(prevPosts => [...(newPosts || []), ...prevPosts]);
-
-        newCommunityPosts?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setCurrentPosts(prevPosts => [...(newCommunityPosts || []), ...prevPosts]);
-
-        setHaveNewPosts(false);
+    if (!userFeed || isLoading) {
+        return (<Loading />);
     }
 
     return (
         <>
-            {haveNewPosts &&
-                <div onClick={loadingNewUserPostsAsync} className="new-posts">
-                    <div className="new-posts__content">{t("NewPosts")}</div>
+            {countNew > 0 &&
+                <div className="refresh-posts" onClick={refreshPosts}>
+                    <div className="btn-shadow" title={t("ShowNewPosts")} onClick={refreshPosts}>
+                        <FontAwesomeIcon
+                            icon={faPlus}
+                        />
+                        <div>{t("NewPost")}</div>
+                    </div>
                 </div>
             }
             <ul className="posts">
-                {!currentPosts
+                {!userFeed.posts
                     ? <Loading />
-                    : currentPosts?.map(post => (
-                    <li key={post.id}>
-                        {"communityId" in post
-                            ? <CommunityPost
-                                userId={myself.id}
-                                post={post}
-                                communityId={post.communityId}
-                            />
-                            : <UserPost
-                                myself={myself}
-                                post={post}
-                            />
-                        }
-                    </li>
-                ))}
-                {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
-                    <li className="load-more" onClick={loadingMoreUserPostsAsync}>
-                        <div className="load-more__content">{t("LoadMore")}</div>
-                    </li>
-                }
+                    : userFeed.posts.map(post => (
+                        post.communityId
+                            ? <li key={`${post.id} c`}>
+                                <CommunityPost
+                                    user={myself}
+                                    communityId={post.communityId ?? 0}
+                                    post={post}
+                                    feedVersion={feedVersion}
+                                />
+                            </li>
+                            : <li key={`${post.id} u`}>
+                                <UserPost
+                                    user={myself}
+                                    post={post}
+                                    feedVersion={feedVersion}
+                                />
+                            </li>
+
+                    ))}
+                <li className="posts__item">
+                    <InfiniteScrollTrigger
+                        onLoadMore={() => setPage(p => p + 1)}
+                        hasMore={hasMore}
+                        isLoading={isFetching}
+                    />
+                </li>
             </ul>
         </>
     );

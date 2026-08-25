@@ -1,0 +1,17 @@
+.refresh-posts {
+    position: fixed;
+    left: 45vw;
+    top: 11vh;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    opacity: 0.4;
+}
+
+.selected-community__content .refresh-posts {
+    top: 29vh;
+}
+
+.refresh-posts:hover {
+    opacity: 1;
+}

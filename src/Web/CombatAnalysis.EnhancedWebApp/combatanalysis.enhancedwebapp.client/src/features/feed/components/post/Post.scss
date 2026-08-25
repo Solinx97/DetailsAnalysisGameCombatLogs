@@ -38,7 +38,8 @@ $mobile-max-width: 425px;
         display: flex;
         width: 75%;
 
-        .open-create-post, .finish-create-post {
+        .open-create-post,
+        .finish-create-post {
             display: flex;
             gap: $gap-medium;
 
@@ -66,14 +67,6 @@ $mobile-max-width: 425px;
             align-items: center;
             margin: $padding-medium 0;
             gap: $gap-small;
-
-            input {
-                padding: $padding-small;
-                border-radius: 20px;
-                height: 20px;
-                width: $width-menu-item;
-                font-size: $font-size;
-            }
 
             &__add {
                 display: flex;
@@ -109,10 +102,27 @@ $mobile-max-width: 425px;
                 }
             }
 
+            input {
+                padding: $padding-small;
+                border-radius: 20px;
+                height: 20px;
+                width: $width-menu-item;
+                font-size: $font-size;
+            }
+
             svg {
                 color: red;
                 cursor: pointer;
             }
+        }
+
+        .content-length {
+            opacity: 0.6;
+            font-size: 0.9em;
+        }
+
+        .limit {
+            color: orange;
         }
     }
 }
@@ -123,15 +133,8 @@ $mobile-max-width: 425px;
     justify-content: center;
     align-items: center;
     gap: 25px;
-    padding: 0;
     margin: 10px 0;
     margin-bottom: 110px;
-
-    li {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
 
     &__card {
         display: flex;
@@ -295,6 +298,22 @@ $mobile-max-width: 425px;
         justify-content: center;
         width: 100%;
         margin: $padding-small -15px;
+
+        .info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 5px 0;
+
+            .content-length {
+                opacity: 0.6;
+                font-size: 0.9em;
+            }
+
+            .limit {
+                color: orange;
+            }
+        }
     }
 
     &__content {
@@ -310,7 +329,9 @@ $mobile-max-width: 425px;
         }
     }
 
-    .open-add-comment, .add-comment, .hide {
+    .open-add-comment,
+    .add-comment,
+    .hide {
         padding: 5px 15px;
         border-radius: $border-radius;
         font-size: $font-size;
@@ -343,7 +364,8 @@ $mobile-max-width: 425px;
             display: flex;
             width: 75%;
 
-            .open-create-post, .finish-create-post {
+            .open-create-post,
+            .finish-create-post {
                 display: flex;
                 gap: $gap-medium;
 

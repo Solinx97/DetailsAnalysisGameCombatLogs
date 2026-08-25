@@ -1,38 +1,80 @@
+import { updateReactionsStatus } from '@/shared/helpers/ApiHelper';
 import type { UserPostReactionModel } from '../types/UserPostReactionModel';
 import { PostApi } from './Post.api';
+import { UserFeedApi } from './UserFeed.api';
 
 export const UserPostLikeApi = PostApi.injectEndpoints({
     endpoints: builder => ({
-        createUserPostLike: builder.mutation<UserPostReactionModel, UserPostReactionModel>({
-            query: userPostLike => ({
-                body: userPostLike,
+        createUserPostLike: builder.mutation<UserPostReactionModel, { feedVersion: number, reaction: UserPostReactionModel }>({
+            query: ({ reaction }) => ({
+                body: reaction,
                 url: '/UserPostLike',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'UserPostLike', id: result.id }] : [],
+            async onQueryStarted({ feedVersion }, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: createdLike } = await queryFulfilled;
+
+                    dispatch(
+                        PostApi.util.updateQueryData(
+                            'getUserPostsByUserId',
+                            {
+                                appUserId: createdLike.appUserId!,
+                                page: 1,
+                                pageSize: 10
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdLike.userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                updateReactionsStatus(createdLike, post);
+                            }
+                        )
+                    );
+
+                    dispatch(
+                        UserFeedApi.util.updateQueryData(
+                            'getFeed',
+                            {
+                                appUserId: createdLike.appUserId!,
+                                page: 1,
+                                pageSize: 10,
+                                feedVersion
+                            },
+                            draft => {
+                                const post = draft.posts.find(
+                                    x => x.id === createdLike.userPostId
+                                );
+
+                                if (!post) {
+                                    return;
+                                }
+
+                                updateReactionsStatus(createdLike, post);
+                            }
+                        )
+                    );
+                } catch {
+                    // creation failed
+                }
+            },
         }),
-        removeUserPostLike: builder.mutation<void, number>({
-            query: id => ({
-                url: `/UserPostLike/${id}`,
-                method: 'DELETE'
-            }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'UserPostLike', id }],
-        }),
-        searchUserPostLikeByPostId: builder.query<UserPostReactionModel[], number>({
-            query: id => `/UserPostLike/searchByPostId/${id}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(userPostLike => ({ type: 'UserPostLike' as const, id: userPostLike.id })),
-                        { type: 'UserPostLike', id: 'LIST' },
-                    ]
-                    : [{ type: 'UserPostLike', id: 'LIST' }]
+        countUserPostLikeByPostId: builder.query<number, number>({
+            query: id => `/UserPostLike/count/${id}`,
+            providesTags: () => [
+                { type: 'UserPostDislike', id: 'LIST' },
+                { type: 'UserPostLike', id: 'LIST' }
+            ]
         }),
     })
 })
 
 export const {
     useCreateUserPostLikeMutation,
-    useRemoveUserPostLikeMutation,
-    useLazySearchUserPostLikeByPostIdQuery,
+    useCountUserPostLikeByPostIdQuery,
 } = UserPostLikeApi;

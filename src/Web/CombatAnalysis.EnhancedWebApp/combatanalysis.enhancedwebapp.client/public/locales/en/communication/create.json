@@ -21,7 +21,7 @@
   "PinMessage": "Who can pin message?",
   "Announcements": "Who can make announcements?",
   "Anyone": "Anyone",
-  "Owner": "Chat owner",
+  "Owner": "Owner",
   "Main": "Main",
   "Members": "Members",
   "Permisions": "Permisions",
@@ -31,5 +31,6 @@
   "PrevioslyStep": "Previosly step",
   "CreateCommunity": "Create community",
   "NameRequired": "Name required",
-  "DescriptionRequired": "Description required"
+  "DescriptionRequired": "Description required",
+  "CommunityInformation": "Community information"
 }

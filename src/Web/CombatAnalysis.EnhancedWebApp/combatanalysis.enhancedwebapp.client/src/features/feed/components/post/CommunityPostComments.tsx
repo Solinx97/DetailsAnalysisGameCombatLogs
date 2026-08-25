@@ -1,44 +1,71 @@
-﻿import { useSearchCommunityPostCommentByPostIdQuery } from '../../api/CommunityPostComment.api';
-import CommunityPostCommentContent from './CommunityPostCommentContent';
-import CommunityPostCommentTitle from './CommunityPostCommentTitle';
+﻿import { APP_CONFIG } from '@/config/appConfig';
+import { useEffect, useRef, useState } from 'react';
+import { useGetCommunityPostCommentByPostIdQuery, useRemoveCommunityPostCommentMutation, useUpdateCommunityPostCommentMutation } from '../../api/CommunityPostComment.api';
+import PostCommentTitle from './PostCommentTitle';
+import PostCommentContent from './PostCommentContent';
 
 import './PostComments.scss';
 
 interface CommunityPostCommentsProps {
     userId: string;
     postId: number;
-    updatePostAsync: (postId: number, likesCount: number, dislikesCount: number, commentsCount: number) => Promise<void>;
+    feedVersion: number;
 }
 
-const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, postId, updatePostAsync }) => {
-    const { data: postComments, isLoading } = useSearchCommunityPostCommentByPostIdQuery(postId);
+const CommunityPostComments: React.FC<CommunityPostCommentsProps> = ({ userId, postId, feedVersion }) => {
+    const maxContentLength = 256;
 
-    if (isLoading) {
+    const pageSizeRef = useRef<number>(APP_CONFIG.communication.posCommentSize ?? 5);
+    const maxContentLengthRef = useRef<number>(APP_CONFIG.communication.length.communityPostCommentContentMaxLength ?? maxContentLength);
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [currentContentLength, setCurrentContentLength] = useState(0);
+
+    const { data: postComments, isLoading } = useGetCommunityPostCommentByPostIdQuery({ communityPostId: postId, page, pageSize: pageSizeRef.current });
+
+    const [removePostCommentAsyncMut] = useRemoveCommunityPostCommentMutation();
+    const [updatePostComment] = useUpdateCommunityPostCommentMutation();
+
+    useEffect(() => {
+        if (!postComments) {
+            return;
+        }
+
+        setHasMore((page * pageSizeRef.current) < postComments.count);
+    }, [page, postComments]);
+
+    if (!postComments || isLoading) {
         return (<div>Loading...</div>);
     }
 
-    if (postComments?.length === 0) {
-        return (<></>);
-    }
-
     return (
-        <ul className="post-comments">
-            {postComments?.map((comment) => (
-                <li key={comment.id} className="post-comments__card">
-                    <CommunityPostCommentTitle
-                        userId={userId}
-                        comment={comment}
-                        postId={postId}
-                        updatePostAsync={updatePostAsync}
-                    />
-                    <CommunityPostCommentContent
-                        userId={userId}
-                        comment={comment}
-                    />
-                </li>
-            ))
+        <>
+            <ul className="post-comments">
+                {postComments.comments.map((comment) => (
+                    <li key={comment.id} className="post-comments__card">
+                        <PostCommentTitle
+                            userId={userId}
+                            comment={comment}
+                            feedVersion={feedVersion}
+                            removeCommunityPostComment={removePostCommentAsyncMut}
+                        />
+                        <PostCommentContent
+                            userId={userId}
+                            comment={comment}
+                            setCurrentContentLength={setCurrentContentLength}
+                            currentContentLength={currentContentLength}
+                            maxContentLength={maxContentLengthRef.current}
+                            updateCommunityPostComment={updatePostComment}
+                        />
+                    </li>
+                ))
+                }
+            </ul>
+            {hasMore &&
+                <div onClick={() => setPage(prev => prev + 1)} className="post-comments__load-more">Load more</div>
             }
-        </ul>
+        </>
     );
 }
 

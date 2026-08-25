@@ -40,7 +40,7 @@ public class FriendController(IFriendService service, IMapper mapper, ILogger<Fr
         var whoFriendId = await _service.GetByParamAsync(nameof(FriendModel.WhoFriendId), id);
         var friends = forWhomId.Concat(whoFriendId);
 
-        return Ok(friends);
+        return Ok(friends.Distinct());
     }
 
     [HttpPost]
