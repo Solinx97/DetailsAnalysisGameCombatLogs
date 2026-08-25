@@ -1,19 +1,19 @@
-import { APP_CONFIG } from '@/config/appConfig';
 import type { RootState } from '@/app/Store';
-import CommunicationMenu from '@/shared/components/CommunicationMenu';
+import { APP_CONFIG } from '@/config/appConfig';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { useGetFeedQuery } from '@/features/feed/api/UserFeed.api';
+import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import UserPost from '../../../feed/components/post/UserPost';
+import { useGetUserByIdQuery } from '../../api/Account.api';
 import Friends from '../userEnvironment/Friends';
 import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
-import { useGetUserByIdQuery } from '../../api/Account.api';
 
 import './SelectedUser.scss';
 
@@ -34,7 +34,7 @@ const SelectedUser: React.FC = () => {
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
 
-    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId: myself?.id ?? "", page, pageSize: pageSizeRef.current, feedVersion });
+    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId: myself?.id ?? "0", page, pageSize: pageSizeRef.current, feedVersion });
     const { data: person, isLoading: personIsLoading } = useGetUserByIdQuery(personId);
 
     useEffect(() => {

@@ -58,7 +58,7 @@ const AppRoutes: Route[] = [
         element: <People />
     },
     {
-        path: '/user',
+        path: '/people/user',
         element: <SelectedUser />
     },
     {

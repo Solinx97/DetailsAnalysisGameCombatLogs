@@ -76,12 +76,23 @@ $mobile-max-width: 425px;
             gap: 50px;
         }
 
-        .create-community__item {
+        .community-information {
             width: 70%;
 
             .title {
                 margin: 10px 0;
             }
+
+            .community-name-required,
+            .community-description-required {
+                font-size: 0.9em;
+                color: red;
+            }
+        }
+
+        .btn-shadow.create.can-not-finish {
+            box-shadow: 2px 2px 2px 2px gray;
+            cursor: default;
         }
 
         .form-group {

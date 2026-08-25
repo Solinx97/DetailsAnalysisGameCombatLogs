@@ -1,9 +1,9 @@
 import { APP_CONFIG } from '@/config/appConfig';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import { useEffect, useRef, useState } from 'react';
 import CommunityItem from '@/features/community/components/CommunityItem';
-import type { AppUserModel } from '../../types/AppUserModel';
+import { useEffect, useRef, useState } from 'react';
 import { useGetCommunityByUserIdQuery } from '../../../community/api/Community.api';
+import type { AppUserModel } from '../../types/AppUserModel';
 
 interface SelectedUserCommunitiesProps {
     user: AppUserModel;

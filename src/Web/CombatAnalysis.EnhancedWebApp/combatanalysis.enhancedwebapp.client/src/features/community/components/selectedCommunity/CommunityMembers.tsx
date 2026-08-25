@@ -1,9 +1,9 @@
 import { APP_CONFIG } from '@/config/appConfig';
 import AddPeople from '@/shared/components/AddPeople';
 import logger from '@/utils/Logger';
-import { faCircleXmark, faPlus, faRectangleXmark, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faCircleXmark, faPlus, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
 import { useGetShortListUsersByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
@@ -43,7 +43,8 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
             return;
         }
 
-        setIsCommunityMember(communityUsers.users.find(x => x.appUserId === myself.id) !== null);
+        const findUser = communityUsers.users.find(x => x.appUserId === myself.id);
+        setIsCommunityMember(findUser !== undefined);
     }, [communityUsers]);
 
     const createInviteAsync = async () => {
@@ -166,4 +167,4 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
     );
 }
 
-export default memo(CommunityMembers);
+export default CommunityMembers;

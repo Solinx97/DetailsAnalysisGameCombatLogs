@@ -1,7 +1,7 @@
+import type { RulesModel } from '@/features/community/types/community/RulesModel';
+import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import AddPeople from '@/shared/components/AddPeople';
 import logger from '@/utils/Logger';
-import type { AppUserModel } from '@/features/user/types/AppUserModel';
-import type { RulesModel } from '@/features/community/types/community/RulesModel';
 import { useEffect, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateCommunityMutation, useUpdateCommunityRulesMutation } from '../../../api/Community.api';
@@ -140,6 +140,10 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
         );
     }
 
+    const canBeUpdated = () => {
+        return communityName.length > 0 && communityDescription.length > 0;
+    }
+
     return (
         <div className="community-menu__items">
             {itemIndex === 0 &&
@@ -158,7 +162,8 @@ const CommunityMenuRestrictionContent: React.FC<CommunityMenuRestrictionContentP
                         }
                     />
                     <div className="actions">
-                        <div className="btn-shadow" onClick={updateCommunityAsync}>{t("Update")}</div>
+                        <div className={`btn-shadow create ${canBeUpdated() ? '' : 'can-not-finish'}`}
+                            onClick={canBeUpdated() ? updateCommunityAsync : () => {}}>{t("Update")}</div>
                     </div>
                 </>
             }

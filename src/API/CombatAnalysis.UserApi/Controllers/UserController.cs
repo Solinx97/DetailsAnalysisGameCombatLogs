@@ -29,6 +29,10 @@ public class UserController(IUserService service, IMapper mapper, ILogger<UserCo
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _service.GetByIdAsync(id);
+        if (result == null)
+        {
+            return NotFound();
+        }
 
         return Ok(result);
     }
@@ -37,6 +41,10 @@ public class UserController(IUserService service, IMapper mapper, ILogger<UserCo
     public async Task<IActionResult> FindByIdentityUserId(string identityUserId)
     {
         var result = await _service.FindByIdentityUserIdAsync(identityUserId);
+        if (result == null)
+        {
+            return NotFound();
+        }
 
         return Ok(result);
     }

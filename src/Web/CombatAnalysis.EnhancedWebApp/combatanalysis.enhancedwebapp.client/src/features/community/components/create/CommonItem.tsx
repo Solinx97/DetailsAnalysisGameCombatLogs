@@ -17,13 +17,13 @@ const CommonItem: React.FC<CommonItemProps> = ({ connector, name, setName, descr
     const maxDescriptionLength = 512;
 
     const { t } = useTranslation('communication/create');
-    
+
     const maxNameLengthRef = useRef<number>(APP_CONFIG.communication.length.communityNameMaxLength ?? maxNameLength);
     const maxDescriptionLengthRef = useRef<number>(APP_CONFIG.communication.length.communityDescriptionMaxLength ?? maxDescriptionLength);
-    
+
     const [currentNameLength, setCurrentNameLength] = useState(0);
     const [currentDescriptionLength, setCurrentDescriptionLength] = useState(0);
-    
+
     useEffect(() => {
         setCurrentNameLength(name.length);
     }, [name]);
@@ -64,7 +64,7 @@ const CommonItem: React.FC<CommonItemProps> = ({ connector, name, setName, descr
     }
 
     return (
-        <div className="create-community__item">
+        <div className="community-information">
             <div className="title">{t("CommunityInformation")}</div>
             <>
                 <>
@@ -74,12 +74,18 @@ const CommonItem: React.FC<CommonItemProps> = ({ connector, name, setName, descr
                         <input type="text" className="form-control" name="name" id="name" maxLength={maxNameLengthRef.current}
                             onChange={nameHandle} value={name} required />
                     </div>
+                    {name.length === 0 &&
+                        <div className="community-name-required">{t("NameRequired")}</div>
+                    }
                     <div className="form-group">
                         <label htmlFor="description">{t("Description")}</label>
                         <div className={`content-length ${description.length === maxDescriptionLengthRef.current ? 'limit' : ''}`}>{currentDescriptionLength}/{maxDescriptionLengthRef.current}</div>
                         <textarea className="form-control" name="description" id="description" maxLength={maxDescriptionLengthRef.current}
                             onChange={descriptionHandle} value={description} required />
                     </div>
+                    {description.length === 0 &&
+                        <div className="community-description-required">{t("DescriptionRequired")}</div>
+                    }
                 </>
                 {connector}
             </>

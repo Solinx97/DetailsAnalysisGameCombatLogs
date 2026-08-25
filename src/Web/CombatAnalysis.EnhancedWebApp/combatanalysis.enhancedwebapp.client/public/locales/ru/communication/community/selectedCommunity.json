@@ -24,5 +24,6 @@
   "Friends": "Друзья",
   "Contacts": "Контакты",
   "Menu": "Меню",
-  "VerificationCreateCommunityPost": "Для создания нового поста в Сообществе, необходимо подвердить email в Профиле"
+  "VerificationCreateCommunityPost": "Для создания нового поста в Сообществе, необходимо подвердить email в Профиле",
+  "Back": "Назад"
 }

@@ -2,13 +2,13 @@ import type { RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import logger from '@/utils/Logger';
-import { useRef, useState, type SetStateAction } from "react";
+import { useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useCreateCommunityMutation } from '../../api/Community.api';
+import type { RulesModel } from '../../types/community/RulesModel';
 import type { CommunityModel } from '../../types/CommunityModel';
 import CommunityRulesItem from './CommunityRulesItem';
-import type { RulesModel } from '../../types/community/RulesModel';
 
 import './Create.scss';
 
@@ -90,7 +90,7 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
                             <input type="text" className="form-control" name="name" id="name" maxLength={maxNameLengthRef.current}
                                 onChange={e => setCurrentNameLength(e.target.value.length)} ref={communityNameRef} required />
                         </div>
-                        {communityNameRef.current?.value.length === 0 &&
+                        {currentNameLength === 0 &&
                             <div className="community-name-required">{t("NameRequired")}</div>
                         }
                         <div className="form-group">
@@ -99,7 +99,7 @@ const CreateCommunity: React.FC<{ setShowCreateCommunity: (value: SetStateAction
                             <textarea className="form-control" name="description" id="description" maxLength={maxDescriptionLengthRef.current}
                                 onChange={e => setCurrentDescriptionLength(e.target.value.length)} ref={communityDescriptionRef} required />
                         </div>
-                        {communityDescriptionRef.current?.value.length === 0 &&
+                        {currentDescriptionLength === 0 &&
                             <div className="community-description-required">{t("DescriptionRequired")}</div>
                         }
                     </div>

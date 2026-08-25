@@ -121,7 +121,7 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
     }
 
     const moreDetails = () => {
-        navigate(`/user?id=${person?.id}`)
+        navigate(`/people/user?id=${person?.id}`);
     }
 
     const isFriend = () => {

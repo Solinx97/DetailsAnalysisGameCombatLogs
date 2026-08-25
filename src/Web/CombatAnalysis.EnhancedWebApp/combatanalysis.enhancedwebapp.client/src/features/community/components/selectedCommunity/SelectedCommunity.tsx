@@ -2,19 +2,20 @@ import type { RootState } from '@/app/Store';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import Loading from '@/shared/components/Loading';
 import logger from '@/utils/Logger';
-import { faBars, faChevronLeft, faChevronRight, faEarthEurope, faEye, faEyeSlash, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronLeft, faChevronRight, faEarthEurope, faEye, faEyeSlash, faShieldHalved, faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useLazyGetCommunityByIdQuery } from '../../api/Community.api';
 import type { CommunityDiscussionModel } from '../../types/CommunityDiscussionModel';
 import type { CommunityModel } from '../../types/CommunityModel';
 import CreateCommunityPost from '../create/CreateCommunityPost';
 import CommunityMembers from './CommunityMembers';
-import CommunityMenu from './menu/CommunityMenu';
 import CommunityDiscussions from './discussion/CommunityDiscussions';
 import Discussion from './discussion/Discussion';
+import CommunityMenu from './menu/CommunityMenu';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import './SelectedCommunity.scss';
@@ -23,7 +24,8 @@ const SelectedCommunity = () => {
     const { t } = useTranslation('communication/community/selectedCommunity');
 
     const myself = useSelector((state: RootState) => state.user.value);
-
+    const navigate = useNavigate();
+    
     const [lastCheck, setLastCheck] = useState((new Date()).toISOString());
     const [feedVersion, setFeedVersion] = useState(1);
 
@@ -80,6 +82,13 @@ const SelectedCommunity = () => {
                 <div className="selected-community__content">
                     <div className="header">
                         <div className="title">
+                            <div className="btn-shadow select-another-player"
+                                onClick={() => navigate(-1)}>
+                                <FontAwesomeIcon
+                                    icon={faDeleteLeft}
+                                />
+                                <div>{t("Back")}</div>
+                            </div>
                             <div className="title__content">
                                 <div className="name" title={community.name}>
                                     <FontAwesomeIcon
