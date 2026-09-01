@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
 
-namespace CombatAnalysis.CombatParser.Entities;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Entities;
 
 public class CombatPlayer
 {

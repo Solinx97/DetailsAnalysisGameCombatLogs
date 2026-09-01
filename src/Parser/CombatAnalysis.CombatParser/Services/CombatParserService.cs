@@ -1,14 +1,14 @@
-﻿using CombatAnalysis.CombatParser.Core;
-using CombatAnalysis.CombatParser.Details;
-using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Interfaces;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Core;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Entities;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text;
 
-namespace CombatAnalysis.CombatParser.Services;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Services;
 
 internal class CombatParserService(IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) : ICombatParserService
 {

@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("CombatAnalysis.CombatParser.Tests")]
+[assembly: InternalsVisibleTo("CombatAnalysis.WoW_5_5_4.CombatParser.Tests")]

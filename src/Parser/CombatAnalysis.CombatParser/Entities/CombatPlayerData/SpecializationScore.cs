@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.CombatParser.Entities.CombatPlayerData;
+﻿namespace CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
 
 public class SpecializationScore
 {

@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Services;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace CombatAnalysis.CombatParser.Tests.Extensions;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Tests.Extensions;
 
 public class CombatDetailsExtensionTests
 {

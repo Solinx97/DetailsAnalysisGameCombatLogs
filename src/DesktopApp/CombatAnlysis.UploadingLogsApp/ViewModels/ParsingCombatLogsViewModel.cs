@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Consts;
 using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
@@ -228,7 +228,7 @@ public partial class ParsingCombatLogsViewModel : ViewModelBase
     {
         _cts = new CancellationTokenSource();
 
-        CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
+        WoW_5_5_4.CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
         await _parser.ParseAsync(combatLogPaths, _cts.Token);
 
         var combats = _mapper.Map<List<CombatModel>>(_parser.Combats);

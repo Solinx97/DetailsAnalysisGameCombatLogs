@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.CombatParser.Helpers;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Services;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Helpers;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CombatAnalysis.CombatParser.Extensions;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
 
 public static class ServicesExtension
 {

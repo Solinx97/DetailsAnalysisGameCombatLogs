@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.CombatParser.Core;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Interfaces;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Core;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Helpers;
 using CombatAnalysis.UploadingLogsApp.Interfaces;

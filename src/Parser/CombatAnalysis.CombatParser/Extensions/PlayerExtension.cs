@@ -1,10 +1,10 @@
-﻿using CombatAnalysis.CombatParser.Consts;
-using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Interfaces;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Consts;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Entities;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
-namespace CombatAnalysis.CombatParser.Extensions;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
 
 internal static class PlayerExtension
 {

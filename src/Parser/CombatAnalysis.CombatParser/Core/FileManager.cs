@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.CombatParser.Interfaces;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 
-namespace CombatAnalysis.CombatParser.Core;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Core;
 
 public class FileManager : IFileManager
 {

@@ -1,10 +1,10 @@
-﻿using CombatAnalysis.CombatParser.Core;
-using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Core;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Entities;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
-namespace CombatAnalysis.CombatParser.Details;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Details;
 
 public class CombatDetails(ILogger logger)
 {

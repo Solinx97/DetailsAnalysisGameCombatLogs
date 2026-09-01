@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Parser\CombatAnalysis.CombatParser\CombatAnalysis.CombatParser.csproj" />
+    <ProjectReference Include="..\..\Parser\CombatAnalysis.CombatParser\CombatAnalysis.WoW_5_5_4.CombatParser.csproj" />
   </ItemGroup>
 
   <ItemGroup>

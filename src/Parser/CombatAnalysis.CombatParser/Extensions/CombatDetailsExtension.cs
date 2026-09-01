@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.CombatParser.Details;
-using CombatAnalysis.CombatParser.Entities.CombatPlayerData;
-using CombatAnalysis.CombatParser.Enums;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Enums;
 using Microsoft.Extensions.Logging;
 
-namespace CombatAnalysis.CombatParser.Extensions;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
 
 public static class CombatDetailsExtension
 {

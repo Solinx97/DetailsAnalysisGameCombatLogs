@@ -1,7 +1,7 @@
-﻿using CombatAnalysis.CombatParser.Details;
-using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Entities;
 
-namespace CombatAnalysis.CombatParser.Interfaces;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 
 public interface ICombatParserService
 {

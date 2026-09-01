@@ -1,7 +1,7 @@
-﻿using CombatAnalysis.CombatParser.Interfaces;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using System.Net.Http.Json;
 
-namespace CombatAnalysis.CombatParser.Helpers;
+namespace CombatAnalysis.WoW_5_5_4.CombatParser.Helpers;
 
 internal class HttpClientHelper : IHttpClientHelper
 {

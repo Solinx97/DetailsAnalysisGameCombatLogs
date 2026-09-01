@@ -75,7 +75,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.IdentityDAL"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.Identity", "src\Common\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj", "{89030A70-93AB-33CF-67A6-2BBD72178B38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.CombatParser", "src\Parser\CombatAnalysis.CombatParser\CombatAnalysis.CombatParser.csproj", "{9A04590A-8B04-7231-0177-351D8FC5E8BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.WoW_5_5_4.CombatParser", "src\Parser\CombatAnalysis.CombatParser\CombatAnalysis.WoW_5_5_4.CombatParser.csproj", "{9A04590A-8B04-7231-0177-351D8FC5E8BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.Core", "src\DesktopApp\CombatAnalysis.Core\CombatAnalysis.Core.csproj", "{6D67BCE6-26F8-3322-946E-A6692B8AA1A4}"
 EndProject
@@ -83,7 +83,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.App", "src\D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Parser", "Parser", "{C6D53361-BD88-4735-8EF6-74393EA2F82C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.CombatParser.Tests", "tests\Parser\CombatAnalysis.CombatParser.Tests\CombatAnalysis.CombatParser.Tests.csproj", "{B74612B8-AA75-4DF4-83CC-09A4E577B3BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.WoW_5_5_4.CombatParser.Tests", "tests\Parser\CombatAnalysis.CombatParser.Tests\CombatAnalysis.WoW_5_5_4.CombatParser.Tests.csproj", "{B74612B8-AA75-4DF4-83CC-09A4E577B3BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.UserBL.Tests", "tests\Common\CombatAnalysis.UserBL.Tests\CombatAnalysis.UserBL.Tests.csproj", "{F8CA5111-EA96-47A2-BE29-DF56DD020250}"
 EndProject
