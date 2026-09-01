@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Parser\CombatAnalysis.CombatParser\CombatAnalysis.WoW_5_5_4.CombatParser.csproj" />
+    <ProjectReference Include="..\..\..\src\Parser\CombatAnalysis.WoW_5_5_4.CombatParser\CombatAnalysis.WoW_5_5_4.CombatParser.csproj" />
   </ItemGroup>
 
   <ItemGroup>
