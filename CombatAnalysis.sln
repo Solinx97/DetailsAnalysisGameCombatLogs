@@ -123,6 +123,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication.Infrastructio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.WoW_5_5_4.CombatParser", "src\Parser\CombatAnalysis.WoW_5_5_4.CombatParser\CombatAnalysis.WoW_5_5_4.CombatParser.csproj", "{E1D4B6CB-D965-26E6-3973-397123D03D22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.WoW_12_1_0.CombatParser", "src\Parser\CombatAnalysis.WoW_12_1_0.CombatParser\CombatAnalysis.WoW_12_1_0.CombatParser.csproj", "{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1107,6 +1109,26 @@ Global
 		{E1D4B6CB-D965-26E6-3973-397123D03D22}.Release|x64.Build.0 = Release|Any CPU
 		{E1D4B6CB-D965-26E6-3973-397123D03D22}.Release|x86.ActiveCfg = Release|Any CPU
 		{E1D4B6CB-D965-26E6-3973-397123D03D22}.Release|x86.Build.0 = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|ARM.Build.0 = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|x64.Build.0 = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Debug|x86.Build.0 = Debug|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|ARM.Build.0 = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|ARM64.Build.0 = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|x64.ActiveCfg = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|x64.Build.0 = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|x86.ActiveCfg = Release|Any CPU
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1169,6 +1191,7 @@ Global
 		{A3350365-C613-F0AC-DCE2-54E4052F3EAB} = {EFD39C94-BC74-4413-A3CE-4F6C699C40C1}
 		{7D6942AE-7A1F-4E55-8562-F45DD100D9C5} = {EFD39C94-BC74-4413-A3CE-4F6C699C40C1}
 		{E1D4B6CB-D965-26E6-3973-397123D03D22} = {6A0A5BAA-99BD-4601-9A88-43948D5EB32A}
+		{C54CC8E5-99CF-69D6-70A0-10FBCE0F6D5D} = {6A0A5BAA-99BD-4601-9A88-43948D5EB32A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6930C3A5-709A-40FD-8649-F7740D84C558}
