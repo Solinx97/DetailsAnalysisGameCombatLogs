@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.UploadingLogsApp.Interfaces;
-using CombatAnalysis.UploadingLogsApp.ViewModels;
+using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using System;

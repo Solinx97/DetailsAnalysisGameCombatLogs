@@ -20,27 +20,26 @@
 
         <StackPanel Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock IsVisible="{Binding CheckAuthInProgress}"
-                       Text="Authorization..." HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                       Text="{Binding Localization.Main[Authorization]}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
             <StackPanel IsVisible="{Binding !CheckAuthInProgress}" HorizontalAlignment="Center">
                 <StackPanel IsVisible="{Binding AuthIsFailed}" HorizontalAlignment="Center">
-                    <TextBlock Text="AuthorizationFailed" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
-
+                    <TextBlock Text="{Binding Localization.Main[AuthorizationFailed]}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
                 </StackPanel>
                 <StackPanel IsVisible="{Binding AuthInProgress}">
                     <TextBlock IsVisible="{Binding !VerificationInProgress}"
-                        Text="ContinueAuthInBrowser" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                        Text="{Binding Localization.Main[ContinueAuthInBrowser]}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
                 </StackPanel>
                 <TextBlock IsVisible="{Binding VerificationInProgress}"
-                       Text="Verification..." HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                       Text="{Binding Localization.Main[Verification]}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
             </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button IsVisible="{Binding AuthIsFailed}" Foreground="Green" HorizontalContentAlignment="Center"
-                    Content="Login" Width="100" FontSize="12"
+                    Content="{Binding Localization.Main[Login]}" Width="100" FontSize="12"
                     Command="{Binding SendAuthorizationRequestCommand}" />
             <Button IsVisible="{Binding AbortAvailable}" HorizontalContentAlignment="Center"
-                    Content="Cancel" Width="100" FontSize="12"
+                    Content="{Binding Localization.Main[Cancel]}" Width="100" FontSize="12"
                     Command="{Binding AbortCommand}" />
         </StackPanel>
     </Grid>

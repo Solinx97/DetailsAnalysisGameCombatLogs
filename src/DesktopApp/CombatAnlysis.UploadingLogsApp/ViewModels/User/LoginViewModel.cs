@@ -3,6 +3,7 @@ using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Interfaces.Security;
 using CombatAnalysis.UploadingLogsApp.Models.User;
+using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.UploadingLogsApp.ViewModels.User;
 
-public partial class LoginViewModel : ViewModelBase, IAsyncInitializable
+public partial class LoginViewModel : LocalizationViewModel, IAsyncInitializable
 {
     private readonly AppState _appState;
     private readonly INavigationService _navigationService;

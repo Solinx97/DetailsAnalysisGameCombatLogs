@@ -3,14 +3,16 @@ using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Interfaces.Security;
+using CombatAnalysis.UploadingLogsApp.Localizations;
 using CombatAnalysis.UploadingLogsApp.Services;
+using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using CombatAnalysis.UploadingLogsApp.ViewModels.User;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace CombatAnalysis.UploadingLogsApp.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : LocalizationViewModel
 {
     private readonly INavigationService _navigationService;
     private readonly IMemoryCache _memoryCache;
@@ -53,5 +55,11 @@ public partial class MainViewModel : ViewModelBase
         _securityStorage.RemoveAccessToken();
 
         _navigationService.NavigateTo<LoginViewModel>();
+    }
+
+    [RelayCommand]
+    private static void ChangeLanguage(string language)
+    {
+        LocalizationService.Instance.SetLanguage(language);
     }
 }

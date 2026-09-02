@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.UploadingLogsApp.ViewModels;
+﻿using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
+
+namespace CombatAnalysis.UploadingLogsApp.ViewModels;
 
 public partial class CombatLogsViewModel : ViewModelBase
 {

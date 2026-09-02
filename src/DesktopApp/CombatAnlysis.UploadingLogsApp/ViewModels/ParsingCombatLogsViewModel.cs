@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Consts;
 using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Models;
+using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.UploadingLogsApp.ViewModels;
 
-public partial class ParsingCombatLogsViewModel : ViewModelBase
+public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 {
     private readonly IMapper _mapper;
     private readonly AppState _appState;

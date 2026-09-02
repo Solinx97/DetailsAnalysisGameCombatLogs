@@ -34,9 +34,9 @@
 
             <StackPanel Grid.Row="0" IsEnabled="{Binding !IsParsing}"
                         HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="375">
-                <TextBlock HorizontalAlignment="Center" Text="UploadFile" Margin="0 20" FontSize="16" Foreground="White" />
-                <Button Command="{Binding SelectFilesCommand}" Content="SelectFile" HorizontalContentAlignment="Center"
-                        HorizontalAlignment="Center" Width="125" FontSize="16" />
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Localization.ParsingCombatLogs[WoWPandariaClassic]}" Margin="0 20" FontSize="16" Foreground="White" />
+                <Button Command="{Binding SelectFilesCommand}" Content="{Binding Localization.ParsingCombatLogs[SelectFile]}" HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Center" FontSize="16" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
                     <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                         <ListBox ItemsSource="{Binding CombatLogNames}">
@@ -56,7 +56,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <ui:FASymbolIcon Symbol="Add" Foreground="Green"
                                               Height="15" Width="15" />
-                                <TextBlock Text="Connect more" FontSize="12" Foreground="White" Margin="10 0" />
+                                <TextBlock Text="{Binding Localization.ParsingCombatLogs[ConnectMore]}" FontSize="12" Foreground="White" Margin="10 0" />
                             </StackPanel>
                         </Button.Content>
                     </Button>
@@ -64,12 +64,12 @@
             </StackPanel>
             
             <StackPanel Grid.Row="1" MaxWidth="500" HorizontalAlignment="Center">
-                <TextBlock Text="TypeOfLogs" Margin="0 10" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
+                <TextBlock Text="{Binding Localization.ParsingCombatLogs[TypeOfLogs]}" Margin="0 10" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
                             IsEnabled="{Binding !IsParsing}">
-                    <RadioButton Content="Public" Width="140" Command="{Binding GetLogTypeCommand}" CommandParameter="0"
+                    <RadioButton Content="{Binding Localization.ParsingCombatLogs[Public]}" Width="140" Command="{Binding GetLogTypeCommand}" CommandParameter="0"
                                  Foreground="White" IsChecked="{Binding IsPublic}" Margin="20" IsDefault="True"/>
-                    <RadioButton Content="Private" Width="140" Command="{Binding GetLogTypeCommand}" CommandParameter="1"
+                    <RadioButton Content="{Binding Localization.ParsingCombatLogs[Private]}" Width="140" Command="{Binding GetLogTypeCommand}" CommandParameter="1"
                                  Foreground="White" IsChecked="{Binding IsPrivate}" Margin="20" />
                 </StackPanel>
             </StackPanel>
@@ -84,13 +84,13 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Width="175" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button IsEnabled="{Binding HasCombatLogs}" Content="Processing" HorizontalAlignment="Center" VerticalAlignment="Center"
+                <Button IsEnabled="{Binding HasCombatLogs}" Content="{Binding Localization.ParsingCombatLogs[Processing]}" HorizontalAlignment="Center" VerticalAlignment="Center"
                     FontSize="16" Command="{Binding OpenPlayerAnalysisCommand}" />
             </StackPanel>
             
             <StackPanel Grid.Row="1" Margin="0 10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"
                         IsVisible="{Binding IsParsing}">
-                <TextBlock Width="175" Text="Processing" FontSize="16" Margin="0 5" TextAlignment="Center" Foreground="White" />
+                <TextBlock Width="175" Text="{Binding Localization.ParsingCombatLogs[ProcessingInProgress]}" FontSize="16" Margin="0 5" TextAlignment="Center" Foreground="White" />
                 <Button Command="{Binding CancelParsingCommand}" Width="25" Height="25">
                     <ui:FASymbolIcon Symbol="Remove" Foreground="Red"
                                 Height="25" Width="25" />
@@ -98,10 +98,10 @@
             </StackPanel>
             
             <StackPanel Grid.Row="2" Margin="0 10" IsVisible="{Binding !FileIsCorrect}">
-                <TextBlock TextWrapping="Wrap" Text="ProcessingFailed" IsVisible="{Binding !FileIsCorrect}"
+                <TextBlock TextWrapping="Wrap" Text="{Binding Localization.ParsingCombatLogs[ProcessingFailed]}" IsVisible="{Binding !FileIsCorrect}"
                        FontSize="16" TextAlignment="Center" Foreground="Orange" />
                 <StackPanel Margin="0 10" Orientation="Horizontal" HorizontalAlignment="Center" IsVisible="{Binding CombatLogUploadingFailed}">
-                    <TextBlock Text="CombatLogUploadingFailed" FontSize="14" TextWrapping="Wrap"
+                    <TextBlock Text="{Binding Localization.ParsingCombatLogs[CombatLogUploadingFailed]}" FontSize="14" TextWrapping="Wrap"
                        MaxWidth="650" Foreground="Red" Margin="20 0" />
                     <Button Command="{Binding OpenPlayerAnalysisCommand}">
                         <ui:FASymbolIcon Symbol="MailReply"
@@ -129,7 +129,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0 5" HorizontalAlignment="Center">
-                <TextBlock HorizontalAlignment="Center" Text="Uploaded" FontSize="14" FontWeight="Bold" Foreground="White"/>
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Localization.ParsingCombatLogs[AlreadyUploaded]}" FontSize="14" FontWeight="Bold" Foreground="White"/>
                 <TextBlock HorizontalAlignment="Center" Margin="20 0" Text="{Binding Name}" FontSize="15" Foreground="White"/>
             </StackPanel>
         </Grid>

@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.UploadingLogsApp.ViewModels;
+﻿using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.UploadingLogsApp.Interfaces;

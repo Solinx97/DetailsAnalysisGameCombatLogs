@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using CombatAnalysis.UploadingLogsApp.ViewModels;
+using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 
 namespace CombatAnalysis.UploadingLogsApp;
 
