@@ -466,7 +466,7 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
             }
         }
 
-        var averageILvl = ilvl.Average();
+        var averageILvl = ilvl.Any() ? ilvl.Average() : 1;
         return averageILvl;
     }
 
