@@ -1,7 +1,9 @@
-﻿using CombatAnalysis.WoW_12_1_0.CombatParser.Core;
+﻿using CombatAnalysis.WoW.CombatParser.Core;
+using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Extensions;
+using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Details;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Entities;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Extensions;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Interfaces;
 using Microsoft.Extensions.Logging;

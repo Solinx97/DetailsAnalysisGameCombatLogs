@@ -34,7 +34,8 @@
 
             <StackPanel Grid.Row="0" IsEnabled="{Binding !IsParsing}"
                         HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="375">
-                <TextBlock HorizontalAlignment="Center" Text="{Binding Localization.ParsingCombatLogs[WoWPandariaClassic]}" Margin="0 20" FontSize="16" Foreground="White" />
+                <TextBlock
+                    HorizontalAlignment="Center" Text="WoW logs parser" Margin="0 20" FontSize="16" Foreground="White" />
                 <Button Command="{Binding SelectFilesCommand}" Content="{Binding Localization.ParsingCombatLogs[SelectFile]}" HorizontalContentAlignment="Center"
                         HorizontalAlignment="Center" FontSize="16" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
@@ -88,9 +89,9 @@
                     FontSize="16" Command="{Binding OpenPlayerAnalysisCommand}" />
             </StackPanel>
             
-            <StackPanel Grid.Row="1" Margin="0 10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"
+            <StackPanel Grid.Row="1" Margin="0 10" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"
                         IsVisible="{Binding IsParsing}">
-                <TextBlock Width="175" Text="{Binding Localization.ParsingCombatLogs[ProcessingInProgress]}" FontSize="16" Margin="0 5" TextAlignment="Center" Foreground="White" />
+                <TextBlock Width="175" Text="{Binding Localization.ParsingCombatLogs[ProcessingInProgress]}" FontSize="16" TextAlignment="Center" Foreground="White" />
                 <Button Command="{Binding CancelParsingCommand}" Width="25" Height="25">
                     <ui:FASymbolIcon Symbol="Remove" Foreground="Red"
                                 Height="25" Width="25" />

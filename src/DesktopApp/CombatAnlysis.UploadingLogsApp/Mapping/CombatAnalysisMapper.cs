@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Entities;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.UploadingLogsApp.Models;
 using CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
 namespace CombatAnalysis.UploadingLogsApp.Mapping;
 

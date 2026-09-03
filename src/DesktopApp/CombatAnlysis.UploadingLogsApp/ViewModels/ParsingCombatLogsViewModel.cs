@@ -5,7 +5,6 @@ using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Models;
 using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -22,7 +21,8 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     private readonly IMapper _mapper;
     private readonly AppState _appState;
     private readonly IFileDialogService _fileDialogService;
-    private readonly ICombatParserService _parser;
+    private readonly WoW_5_5_4.CombatParser.Interfaces.ICombatParserService _wow_5_5_4_Parser;
+    private readonly WoW_12_1_0.CombatParser.Interfaces.ICombatParserService _wow_12_1_0_Parser;
     private readonly ICombatParserAPIService _combatParserAPIService;
 
     private CancellationTokenSource _cts = new();
@@ -34,12 +34,13 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     }
 
     public ParsingCombatLogsViewModel(IMapper mapper, AppState appState, IFileDialogService fileDialogService,
-        ICombatParserService parser, ICombatParserAPIService combatParserAPIService)
+        WoW_5_5_4.CombatParser.Interfaces.ICombatParserService wow_5_5_4_Parser, WoW_12_1_0.CombatParser.Interfaces.ICombatParserService wow_12_1_0_Parser, ICombatParserAPIService combatParserAPIService)
     {
         _mapper = mapper;
         _appState = appState;
         _fileDialogService = fileDialogService;
-        _parser = parser;
+        _wow_5_5_4_Parser = wow_5_5_4_Parser;
+        _wow_12_1_0_Parser = wow_12_1_0_Parser;
         _combatParserAPIService = combatParserAPIService;
 
         CombatLogPaths.CollectionChanged += CombatLogPathsCollectionChanged;
@@ -113,6 +114,9 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 
     [ObservableProperty]
     public partial int CurrentCombatNumber { get; set; }
+
+    [ObservableProperty]
+    public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMoPClassic;
 
     #endregion
 
@@ -210,7 +214,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     {
         foreach (var item in combatLogPaths)
         {
-            FileIsCorrect = await _parser.FileCheckAsync(item);
+            FileIsCorrect = await _wow_5_5_4_Parser.FileCheckAsync(item);
             if (!FileIsCorrect) return;
         }
 
@@ -229,13 +233,8 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     {
         _cts = new CancellationTokenSource();
 
-        WoW_5_5_4.CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
-        await _parser.ParseAsync(combatLogPaths, _cts.Token);
-
-        var combats = _mapper.Map<List<CombatModel>>(_parser.Combats);
-        await _combatParserAPIService.GetBossAsync(combats, _cts.Token);
-
-        _parser.Clear();
+        WoW.CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
+        var combats = await SelectParserVersion(combatLogPaths);
 
         if (_processAborted)
         {
@@ -289,5 +288,33 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         Name = name;
 
         CurrentCombatNumber++;
+    }
+
+    private async Task<List<CombatModel>> SelectParserVersion(List<string> combatLogPaths)
+    {
+        var combats = new List<CombatModel>();
+        switch (CurrentCombatParserVersion.Version)
+        {
+            case CombatParserVersion.WoWMoPClassic:
+                await _wow_5_5_4_Parser.ParseAsync(combatLogPaths, _cts.Token);
+
+                combats = _mapper.Map<List<CombatModel>>(_wow_5_5_4_Parser.Combats);
+                await _combatParserAPIService.GetBossAsync(combats, _cts.Token);
+
+                _wow_5_5_4_Parser.Clear();
+                break;
+            case CombatParserVersion.WoWMidnight:
+                await _wow_12_1_0_Parser.ParseAsync(combatLogPaths, _cts.Token);
+
+                combats = _mapper.Map<List<CombatModel>>(_wow_12_1_0_Parser.Combats);
+                await _combatParserAPIService.GetBossAsync(combats, _cts.Token);
+
+                _wow_12_1_0_Parser.Clear();
+                break;
+            default:
+                break;
+        }
+
+        return combats;
     }
 }

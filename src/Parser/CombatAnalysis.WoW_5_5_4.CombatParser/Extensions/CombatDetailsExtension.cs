@@ -1,5 +1,5 @@
-﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
+﻿using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Enums;
 using Microsoft.Extensions.Logging;
 

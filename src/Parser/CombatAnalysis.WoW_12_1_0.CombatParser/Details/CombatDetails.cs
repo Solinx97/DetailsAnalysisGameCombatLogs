@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.WoW_12_1_0.CombatParser.Core;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Entities;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Entities.CombatPlayerData;
+﻿using CombatAnalysis.WoW.CombatParser.Core;
+using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 

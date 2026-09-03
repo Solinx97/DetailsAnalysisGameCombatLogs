@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.WoW_12_1_0.CombatParser.Core;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Entities;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Entities.CombatPlayerData;
+﻿using CombatAnalysis.WoW.CombatParser.Core;
+using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Enums;
 using System.Collections.Concurrent;
 using System.Globalization;

@@ -1,6 +1,5 @@
-﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Core;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
+﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
+using CombatAnalysis.WoW_12_1_0.CombatParser.Extensions;
 using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Helpers;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
@@ -26,14 +25,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<NavigationStore>();
         services.AddSingleton<AppState>();
 
-        services.CombatParser();
-
+        services.CombatParserWoW_5_5_4();
+        services.CombatParserWoW_12_1_0();
 
         services.AddSingleton<IFileDialogService, FileDialogService>();
         services.AddSingleton<INavigationService, NavigationService>();
 
-        services.AddScoped<IFileManager, FileManager>();
-        services.AddScoped<Interfaces.IHttpClientHelper, HttpClientHelper>();
+        services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
         services.AddMemoryCache();
         services.AddLogging(builder =>
@@ -52,7 +50,6 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<LoginViewModel>();
         services.AddSingleton<MainViewModel>();
-        services.AddSingleton<CombatLogsViewModel>();
         services.AddSingleton<ParsingCombatLogsViewModel>();
 
         var provider = services.BuildServiceProvider();

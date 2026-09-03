@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.UploadingLogsApp.Localizations;
+﻿using CombatAnalysis.UploadingLogsApp.Enums;
+using CombatAnalysis.UploadingLogsApp.Localizations;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace CombatAnalysis.UploadingLogsApp.ViewModels.Base;

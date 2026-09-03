@@ -7,8 +7,10 @@ using CombatAnalysis.UploadingLogsApp.Localizations;
 using CombatAnalysis.UploadingLogsApp.Services;
 using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using CombatAnalysis.UploadingLogsApp.ViewModels.User;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 
 namespace CombatAnalysis.UploadingLogsApp.ViewModels;
 
@@ -41,8 +43,15 @@ public partial class MainViewModel : LocalizationViewModel
 
     public AppState AppState { get; }
 
+    #region View model properties
+
+    [ObservableProperty]
+    public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMoPClassic;
+
+    #endregion
+
     [RelayCommand]
-    public void Logout()
+    private void Logout()
     {
         AppState.User = null;
         AppState.IsAuth = false;
@@ -55,6 +64,13 @@ public partial class MainViewModel : LocalizationViewModel
         _securityStorage.RemoveAccessToken();
 
         _navigationService.NavigateTo<LoginViewModel>();
+    }
+
+    [RelayCommand]
+    private void SwitchParserVersion(string version)
+    {
+        ParserVersion = Enum.Parse<CombatParserVersion>(version);
+        CurrentCombatParserVersion.Version = ParserVersion;
     }
 
     [RelayCommand]

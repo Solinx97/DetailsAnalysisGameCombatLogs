@@ -1,7 +1,9 @@
-﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Core;
+﻿using CombatAnalysis.WoW.CombatParser.Core;
+using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Extensions;
+using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Entities;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -389,10 +391,10 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
         combatPlayer.Player.Username = username;
         combatPlayer.Player.Faction = faction;
 
-        var unit = await combatPlayer.Player.CreateAsync(_httpHelper, _logger);
-        if (unit != null)
+        var player = await combatPlayer.Player.CreateAsync(_httpHelper, _logger);
+        if (player != null)
         {
-            combatPlayer.Player = unit;
+            combatPlayer.Player = player;
         }
     }
 

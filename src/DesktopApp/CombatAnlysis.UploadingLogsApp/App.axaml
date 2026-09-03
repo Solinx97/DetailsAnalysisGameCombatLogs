@@ -3,6 +3,7 @@
              x:Class="CombatAnalysis.UploadingLogsApp.App"
              xmlns:local="using:CombatAnalysis.UploadingLogsApp"
              xmlns:localization="clr-namespace:CombatAnalysis.UploadingLogsApp.Localizations"
+             xmlns:converters="using:CombatAnalysis.UploadingLogsApp.Converters"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -12,6 +13,7 @@
 
     <Application.Resources>
         <localization:LocalizationService x:Key="Localization" />
+        <converters:EnumEqualsConverter x:Key="EnumEqualsConverter" />
     </Application.Resources>
 
     <Application.Styles>
