@@ -15,7 +15,6 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatP
             .AsNoTracking()
             .Where(c => c.CombatId == combatId)
             .Include(c => c.Player)
-            .Include(c => c.Stats)
             .Include(c => c.Score)
             .ToListAsync(cancellationToken);
 

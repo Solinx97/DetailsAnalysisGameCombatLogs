@@ -1,5 +1,7 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
+using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
@@ -61,11 +63,11 @@ internal static class CombatParserContextOneExtension
         return players;
     }
 
-    public static async Task BulkInsertCombatPlayerStatsAsync(this CombatParserContextOne context, List<CombatPlayer> players, CancellationToken cancelationToken)
+    public static async Task BulkInsertCombatPlayerStatsAsync(this CombatParserContextOne context, IEnumerable<CombatPlayer> players, CancellationToken cancelationToken)
     {
         var stats = players.Select(p =>
         {
-            var stats = p.Stats;
+            var stats = (WoWMoPClassicPlayerStats)p.Stats;
             stats.SetCombatPlayerId(p.Id);
 
             return stats;
@@ -77,7 +79,7 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkInsertCombatPlayerScoresAsync(this CombatParserContextOne context, int bossId, List<CombatPlayer> players, CancellationToken cancelationToken)
+    public static async Task BulkInsertCombatPlayerScoresAsync(this CombatParserContextOne context, int bossId, IEnumerable<CombatPlayer> players, CancellationToken cancelationToken)
     {
         var scores = players.Select(p =>
         {
@@ -105,7 +107,7 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkUpdateBestSpecializationScoreAsync(this CombatParserContextOne context, int bossId, List<CombatPlayer> players, CancellationToken cancelationToken)
+    public static async Task BulkUpdateBestSpecializationScoreAsync(this CombatParserContextOne context, int bossId, IEnumerable<CombatPlayer> players, CancellationToken cancelationToken)
     {
         var bestScores = await context.Set<BestSpecializationScore>()
             .Where(x => x.BossId == bossId).ToListAsync(cancellationToken: cancelationToken);

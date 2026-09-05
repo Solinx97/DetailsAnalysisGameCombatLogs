@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
+﻿using CombatAnalysis.CombatParserAPI.Interfaces;
+using CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models;
@@ -23,7 +24,7 @@ public class CombatPlayerModel
     public int DamageTaken { get; set; }
 
     [Required]
-    public CombatPlayerStatsModel Stats { get; set; } = new();
+    public IPlayerStatsModel Stats { get; set; }
 
     public SpecializationScoreModel? Score { get; set; }
 

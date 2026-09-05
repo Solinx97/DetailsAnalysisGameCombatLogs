@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Domain.Data;
-using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using MediatR;
 
 namespace CombatParser.Application.Queries.GetCombatPlayerStatById;
 
-internal class GetCombatPlayerStatByIdHandler(IGenericRepository<CombatPlayerStats, int> repository, IMapper mapper) : IRequestHandler<GetCombatPlayerStatByIdQuery, CombatPlayerStatsDto>
+internal class GetCombatPlayerStatByIdHandler(IGenericRepository<WoWMoPClassicPlayerStats, int> repository, IMapper mapper) : IRequestHandler<GetCombatPlayerStatByIdQuery, CombatPlayerStatsDto>
 {
-    private readonly IGenericRepository<CombatPlayerStats, int> _repository = repository;
+    private readonly IGenericRepository<WoWMoPClassicPlayerStats, int> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<CombatPlayerStatsDto> Handle(GetCombatPlayerStatByIdQuery request, CancellationToken cancellationToken)

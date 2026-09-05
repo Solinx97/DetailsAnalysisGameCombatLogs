@@ -4,5 +4,5 @@ namespace CombatAnalysis.UploadingLogsApp.Core;
 
 internal static class CurrentCombatParserVersion
 {
-    public static CombatParserVersion Version { get; set; } = CombatParserVersion.WoWMoPClassic;
+    public static CombatParserVersion Version { get; set; } = CombatParserVersion.WoWMidnight;
 }

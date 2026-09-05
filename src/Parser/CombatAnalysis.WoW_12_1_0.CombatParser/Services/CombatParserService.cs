@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Entities.WoWMidnight;
 using CombatAnalysis.WoW.CombatParser.Extensions;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Details;
@@ -350,11 +351,11 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
         var combatInfoList = combatInformation.Split(',');
         var combatInfoSpecialParams = combatInformation.Split(['[', ']']);
         var equipmentsInformation = combatInfoSpecialParams[1];
-        var preAurasInformation = combatInfoSpecialParams[3];
+        var preAurasInformation = combatInfoSpecialParams[5];
 
         var averageItemLevel = GetAverageItemLevel(equipmentsInformation);
 
-        var statsInformation = combatInfoList.Skip(3).Take(30).ToArray();
+        var statsInformation = combatInfoList.Skip(3).Take(23).ToArray();
         var stats = GetStats(statsInformation);
         var preAuras = GetPreAuras(preAurasInformation);
 
@@ -468,32 +469,34 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
             }
         }
 
-        var averageILvl = ilvl.Average();
+        var averageILvl = ilvl.Any() ? ilvl.Average() : 1;
         return averageILvl;
     }
 
-    private static CombatPlayerStats GetStats(string[] combatInfo)
+    private static WoWMidnightPlayerStats GetStats(string[] combatInfo)
     {
-        var stats = new CombatPlayerStats
+        var stats = new WoWMidnightPlayerStats
         {
             Strength = int.Parse(combatInfo[0]),
             Agility = int.Parse(combatInfo[1]),
             Stamina = int.Parse(combatInfo[2]),
             Intelligence = int.Parse(combatInfo[3]),
-            Spirit = int.Parse(combatInfo[4]),
-            Dodge = int.Parse(combatInfo[5]),
-            Parry = int.Parse(combatInfo[6]),
-            Block = int.Parse(combatInfo[7]),
+            Dodge = int.Parse(combatInfo[4]),
+            Parry = int.Parse(combatInfo[5]),
+            Block = int.Parse(combatInfo[6]),
             Crit = int.Parse(combatInfo[8]),
-            Haste = int.Parse(combatInfo[11]),
-            Hit = int.Parse(combatInfo[14]),
-            Expertise = int.Parse(combatInfo[15]),
-            Armor = int.Parse(combatInfo[16]),
+            Movement = int.Parse(combatInfo[11]),
+            Lifesteal = int.Parse(combatInfo[12]),
+            Haste = int.Parse(combatInfo[13]),
+            Avoidance = int.Parse(combatInfo[16]),
+            Mastery = int.Parse(combatInfo[17]),
+            Versality = int.Parse(combatInfo[18]),
+            Armor = int.Parse(combatInfo[21]),
         };
 
-        var segment = new ArraySegment<string>(combatInfo, 23, 6);
-        var talents = string.Join(',', segment);
-        stats.Talents = talents;
+        //var segment = new ArraySegment<string>(combatInfo, 23, 6);
+        //var talents = string.Join(',', segment);
+        //stats.Talents = talents;
 
         return stats;
     }

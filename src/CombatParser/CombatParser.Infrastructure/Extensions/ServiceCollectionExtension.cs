@@ -4,6 +4,7 @@ using CombatParser.Domain.Data.Dashboard;
 using CombatParser.Domain.Data.Filters;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Infrastructure.Data;
 using CombatParser.Infrastructure.Data.Dashboard;
 using CombatParser.Infrastructure.Data.Filters;
@@ -26,7 +27,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IGenericRepository<BossMap, int>, GenericRepository<BossMap, int>>();
         services.AddScoped<IGenericRepository<SpecializationScore, int>, GenericRepository<SpecializationScore, int>>();
         services.AddScoped<IGenericRepository<BestSpecializationScore, int>, GenericRepository<BestSpecializationScore, int>>();
-        services.AddScoped<IGenericRepository<CombatPlayerStats, int>, GenericRepository<CombatPlayerStats, int>>();
+        services.AddScoped<IGenericRepository<WoWMoPClassicPlayerStats, int>, GenericRepository<WoWMoPClassicPlayerStats, int>>();
         services.AddScoped<IGenericRepository<Player, string>, GenericRepository<Player, string>>();
         services.AddScoped<IGenericRepository<UnitPosition, string>, GenericRepository<UnitPosition, string>>();
 
@@ -51,7 +52,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICombatPlayerDataByTimeRepository<CombatPlayerDeath>, CombatPlayerDataByTimeRepository<CombatPlayerDeath>>();
 
         services.AddScoped<ICombatPlayerInfoRepository<SpecializationScore>, CombatPlayerInfoRepository<SpecializationScore>>();
-        services.AddScoped<ICombatPlayerInfoRepository<CombatPlayerStats>, CombatPlayerInfoRepository<CombatPlayerStats>>();
+        services.AddScoped<ICombatPlayerInfoRepository<WoWMoPClassicPlayerStats>, CombatPlayerInfoRepository<WoWMoPClassicPlayerStats>>();
         services.AddScoped<ICombatPlayerInfoRepository<DamageDoneGeneral>, CombatPlayerInfoRepository<DamageDoneGeneral>>();
         services.AddScoped<ICombatPlayerInfoRepository<HealDoneGeneral>, CombatPlayerInfoRepository<HealDoneGeneral>>();
         services.AddScoped<ICombatPlayerInfoRepository<DamageTakenGeneral>, CombatPlayerInfoRepository<DamageTakenGeneral>>();

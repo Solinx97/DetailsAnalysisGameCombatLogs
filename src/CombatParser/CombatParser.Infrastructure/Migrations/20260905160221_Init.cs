@@ -376,38 +376,6 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CombatPlayerStats",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Strength = table.Column<int>(type: "int", nullable: false),
-                    Agility = table.Column<int>(type: "int", nullable: false),
-                    Intelligence = table.Column<int>(type: "int", nullable: false),
-                    Stamina = table.Column<int>(type: "int", nullable: false),
-                    Spirit = table.Column<int>(type: "int", nullable: false),
-                    Dodge = table.Column<int>(type: "int", nullable: false),
-                    Parry = table.Column<int>(type: "int", nullable: false),
-                    Crit = table.Column<int>(type: "int", nullable: false),
-                    Haste = table.Column<int>(type: "int", nullable: false),
-                    Hit = table.Column<int>(type: "int", nullable: false),
-                    Expertise = table.Column<int>(type: "int", nullable: false),
-                    Armor = table.Column<int>(type: "int", nullable: false),
-                    Talents = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CombatPlayerStats", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CombatPlayerStats_CombatPlayer_CombatPlayerId",
-                        column: x => x.CombatPlayerId,
-                        principalTable: "CombatPlayer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DamageDone",
                 columns: table => new
                 {
@@ -667,6 +635,74 @@ namespace CombatParser.Infrastructure.Migrations
                         principalTable: "Specialization",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WoWMidnightPlayerStats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Strength = table.Column<int>(type: "int", nullable: false),
+                    Agility = table.Column<int>(type: "int", nullable: false),
+                    Intelligence = table.Column<int>(type: "int", nullable: false),
+                    Stamina = table.Column<int>(type: "int", nullable: false),
+                    Dodge = table.Column<int>(type: "int", nullable: false),
+                    Parry = table.Column<int>(type: "int", nullable: false),
+                    Block = table.Column<int>(type: "int", nullable: false),
+                    Crit = table.Column<int>(type: "int", nullable: false),
+                    Haste = table.Column<int>(type: "int", nullable: false),
+                    Armor = table.Column<int>(type: "int", nullable: false),
+                    Mastery = table.Column<int>(type: "int", nullable: false),
+                    Versality = table.Column<int>(type: "int", nullable: false),
+                    Lifesteal = table.Column<int>(type: "int", nullable: false),
+                    Avoidance = table.Column<int>(type: "int", nullable: false),
+                    Movement = table.Column<int>(type: "int", nullable: false),
+                    Talents = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WoWMidnightPlayerStats", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WoWMidnightPlayerStats_CombatPlayer_CombatPlayerId",
+                        column: x => x.CombatPlayerId,
+                        principalTable: "CombatPlayer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WoWMoPClassicPlayerStats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Strength = table.Column<int>(type: "int", nullable: false),
+                    Agility = table.Column<int>(type: "int", nullable: false),
+                    Intelligence = table.Column<int>(type: "int", nullable: false),
+                    Stamina = table.Column<int>(type: "int", nullable: false),
+                    Dodge = table.Column<int>(type: "int", nullable: false),
+                    Parry = table.Column<int>(type: "int", nullable: false),
+                    Block = table.Column<int>(type: "int", nullable: false),
+                    Crit = table.Column<int>(type: "int", nullable: false),
+                    Haste = table.Column<int>(type: "int", nullable: false),
+                    Armor = table.Column<int>(type: "int", nullable: false),
+                    Spirit = table.Column<int>(type: "int", nullable: false),
+                    Hit = table.Column<int>(type: "int", nullable: false),
+                    Expertise = table.Column<int>(type: "int", nullable: false),
+                    Talents = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WoWMoPClassicPlayerStats", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WoWMoPClassicPlayerStats_CombatPlayer_CombatPlayerId",
+                        column: x => x.CombatPlayerId,
+                        principalTable: "CombatPlayer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -2576,12 +2612,6 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "CombatPlayerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CombatPlayerStats_CombatPlayerId",
-                table: "CombatPlayerStats",
-                column: "CombatPlayerId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CombatUnit_CombatId",
                 table: "CombatUnit",
                 column: "CombatId");
@@ -2651,6 +2681,18 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "IX_UnitPosition_CombatId",
                 table: "UnitPosition",
                 column: "CombatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WoWMidnightPlayerStats_CombatPlayerId",
+                table: "WoWMidnightPlayerStats",
+                column: "CombatPlayerId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WoWMoPClassicPlayerStats_CombatPlayerId",
+                table: "WoWMoPClassicPlayerStats",
+                column: "CombatPlayerId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -2670,9 +2712,6 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CombatPlayerPreAura");
-
-            migrationBuilder.DropTable(
-                name: "CombatPlayerStats");
 
             migrationBuilder.DropTable(
                 name: "CombatUnit");
@@ -2714,10 +2753,16 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "UnitPosition");
 
             migrationBuilder.DropTable(
-                name: "CombatPlayer");
+                name: "WoWMidnightPlayerStats");
+
+            migrationBuilder.DropTable(
+                name: "WoWMoPClassicPlayerStats");
 
             migrationBuilder.DropTable(
                 name: "Specialization");
+
+            migrationBuilder.DropTable(
+                name: "CombatPlayer");
 
             migrationBuilder.DropTable(
                 name: "Combat");

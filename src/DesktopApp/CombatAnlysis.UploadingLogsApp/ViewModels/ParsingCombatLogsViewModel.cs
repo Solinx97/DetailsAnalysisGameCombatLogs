@@ -116,7 +116,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     public partial int CurrentCombatNumber { get; set; }
 
     [ObservableProperty]
-    public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMoPClassic;
+    public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMidnight;
 
     #endregion
 
@@ -314,6 +314,12 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
             default:
                 break;
         }
+
+        combats = [.. combats.Select(x =>
+        {
+            x.GameVersion = (int)CurrentCombatParserVersion.Version;
+            return x;
+        })];
 
         return combats;
     }

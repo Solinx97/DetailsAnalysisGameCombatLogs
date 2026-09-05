@@ -8,6 +8,7 @@ using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.Chart;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.Dashboard;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 
 namespace CombatParser.Application.Mapping;
 
@@ -41,7 +42,7 @@ public class ApplicationMapper : Profile
         CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
         CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
-        CreateMap<CombatPlayerStatsDto, CombatPlayerStats>().ReverseMap();
+        CreateMap<CombatPlayerStatsDto, WoWMoPClassicPlayerStats>().ReverseMap();
 
         CreateMap<ChartGenericDto, ChartGeneric>().ReverseMap();
         CreateMap<DashboardDto, Dashboard>().ReverseMap();

@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
+﻿using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Services;
 using Microsoft.Extensions.Logging;
 using Moq;

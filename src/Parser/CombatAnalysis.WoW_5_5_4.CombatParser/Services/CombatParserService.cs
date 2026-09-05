@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Entities.WoWMoPClassic;
 using CombatAnalysis.WoW.CombatParser.Extensions;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
@@ -472,9 +473,9 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
         return averageILvl;
     }
 
-    private static CombatPlayerStats GetStats(string[] combatInfo)
+    private static WoWMoPClassicPlayerStats GetStats(string[] combatInfo)
     {
-        var stats = new CombatPlayerStats
+        var stats = new WoWMoPClassicPlayerStats
         {
             Strength = int.Parse(combatInfo[0]),
             Agility = int.Parse(combatInfo[1]),

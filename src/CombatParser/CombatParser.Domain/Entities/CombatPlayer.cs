@@ -1,6 +1,10 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMidnight;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Domain.EntityData;
+using CombatParser.Domain.EntityData.WoWMoPClassic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CombatParser.Domain.Entities;
 
@@ -44,8 +48,6 @@ public class CombatPlayer : CombatDataBase
 
     public int DamageTaken { get; private set; }
 
-    public CombatPlayerStats Stats { get; private set; }
-
     public SpecializationScore? Score { get; private set; }
 
     public Player Player { get; private set; }
@@ -53,6 +55,9 @@ public class CombatPlayer : CombatDataBase
     public string PlayerId { get; private set; } = string.Empty;
 
     public Combat Combat { get; private set; }
+
+    [NotMapped]
+    public IPlayerStats Stats { get; private set; }
 
     public IEnumerable<CombatPlayerPreAura> PreAuras => _preAuras.AsReadOnly();
 
@@ -76,8 +81,8 @@ public class CombatPlayer : CombatDataBase
 
     public IReadOnlyCollection<CombatPlayerDeath> CombatPlayerDeathes => _combatPlayerDeathes.AsReadOnly();
 
-    public static CombatPlayer Create(double averageItemLevel, int resourcesRecovery, int damageDone, int healDone, int damageTaken,
-        string playerId, int combatId, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
+    public static CombatPlayer Create(int gameVersion, double averageItemLevel, int resourcesRecovery, int damageDone, int healDone, int damageTaken,
+        string playerId, int combatId, IPlayerStats stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
         IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals,
         IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
         IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
@@ -91,19 +96,19 @@ public class CombatPlayer : CombatDataBase
         var combatPlayer = new CombatPlayer(averageItemLevel, resourcesRecovery, damageDone, healDone, damageTaken, 
             playerId, combatId);
 
-        AddCombatPlayerData(combatPlayer, stats, score, preAuras, auras, damageDones, damageDoneGenerals, 
+        AddCombatPlayerData(gameVersion, combatPlayer, stats, score, preAuras, auras, damageDones, damageDoneGenerals, 
             healDones, healDoneGenerals, damageTakens, damageTakenGenerals, resourceRecoveries, 
             resourceRecoveryGenerals, combatPlayerDeathes);
 
         return combatPlayer;
     }
 
-    private static void AddCombatPlayerData(CombatPlayer combatPlayer, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
+    private static void AddCombatPlayerData(int gameVersion, CombatPlayer combatPlayer, IPlayerStats stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
         IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals, 
         IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
         IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
     {
-        combatPlayer.AddStats(stats);
+        combatPlayer.AddStats(gameVersion, stats);
         combatPlayer.AddSpecializationScore(score);
 
         foreach (var preAura in preAuras)
@@ -241,11 +246,31 @@ public class CombatPlayer : CombatDataBase
         _combatPlayerDeathes.Add(createdCombatPlayerDeath);
     }
 
-    private void AddStats(CombatPlayerStatsData stats)
+    private void AddStats(int gameVersion, IPlayerStats stats)
     {
-        var createdStats = new CombatPlayerStats(stats.Strength, stats.Agility, stats.Intelligence, stats.Stamina, stats.Spirit,
-            stats.Dodge, stats.Parry, stats.Crit, stats.Haste, stats.Hit,
-            stats.Expertise, stats.Armor, stats.Talents, stats.CombatPlayerId);
+        IPlayerStats createdStats;
+        switch (gameVersion)
+        {
+            case 0:
+                var woWMoPClassicPlayerStats = (WoWMoPClassicPlayerStatsData)stats;
+                createdStats = new WoWMoPClassicPlayerStats(woWMoPClassicPlayerStats.Strength, woWMoPClassicPlayerStats.Agility, woWMoPClassicPlayerStats.Intelligence, woWMoPClassicPlayerStats.Stamina, woWMoPClassicPlayerStats.Spirit,
+                    woWMoPClassicPlayerStats.Dodge, woWMoPClassicPlayerStats.Parry, woWMoPClassicPlayerStats.Block, woWMoPClassicPlayerStats.Crit, woWMoPClassicPlayerStats.Haste, woWMoPClassicPlayerStats.Hit,
+                    woWMoPClassicPlayerStats.Expertise, woWMoPClassicPlayerStats.Armor, woWMoPClassicPlayerStats.Talents, woWMoPClassicPlayerStats.CombatPlayerId);
+                break;
+            case 1:
+                var woWMidnightPlayerStats = (WoWMidnightPlayerStats)stats;
+                createdStats = new WoWMidnightPlayerStats(woWMidnightPlayerStats.Strength, woWMidnightPlayerStats.Agility, woWMidnightPlayerStats.Intelligence, woWMidnightPlayerStats.Stamina,
+                    woWMidnightPlayerStats.Dodge, woWMidnightPlayerStats.Parry, woWMidnightPlayerStats.Block, woWMidnightPlayerStats.Crit, woWMidnightPlayerStats.Haste, woWMidnightPlayerStats.Mastery, woWMidnightPlayerStats.Versality,
+                    woWMidnightPlayerStats.Lifesteal, woWMidnightPlayerStats.Avoidance, woWMidnightPlayerStats.Movement, woWMidnightPlayerStats.Armor, woWMidnightPlayerStats.Talents, woWMidnightPlayerStats.CombatPlayerId);
+                break;
+            default:
+                woWMoPClassicPlayerStats = (WoWMoPClassicPlayerStatsData)stats;
+                createdStats = new WoWMoPClassicPlayerStats(woWMoPClassicPlayerStats.Strength, woWMoPClassicPlayerStats.Agility, woWMoPClassicPlayerStats.Intelligence, woWMoPClassicPlayerStats.Stamina, woWMoPClassicPlayerStats.Spirit,
+                    woWMoPClassicPlayerStats.Dodge, woWMoPClassicPlayerStats.Parry, woWMoPClassicPlayerStats.Block, woWMoPClassicPlayerStats.Crit, woWMoPClassicPlayerStats.Haste, woWMoPClassicPlayerStats.Hit,
+                    woWMoPClassicPlayerStats.Expertise, woWMoPClassicPlayerStats.Armor, woWMoPClassicPlayerStats.Talents, woWMoPClassicPlayerStats.CombatPlayerId);
+                break;
+        }
+
         Stats = createdStats;
     }
 

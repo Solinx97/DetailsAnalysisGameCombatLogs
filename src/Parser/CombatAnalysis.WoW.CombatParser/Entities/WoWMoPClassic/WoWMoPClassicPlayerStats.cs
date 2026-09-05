@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
-public class CombatPlayerStats
+namespace CombatAnalysis.WoW.CombatParser.Entities.WoWMoPClassic;
+
+public class WoWMoPClassicPlayerStats : IPlayerStats
 {
     public int Strength { get; set; }
 
@@ -9,8 +11,6 @@ public class CombatPlayerStats
     public int Intelligence { get; set; }
 
     public int Stamina { get; set; }
-
-    public int Spirit { get; set; }
 
     public int Dodge { get; set; }
 
@@ -22,13 +22,15 @@ public class CombatPlayerStats
 
     public int Haste { get; set; }
 
+    public int Armor { get; set; }
+
+    public int Spirit { get; set; }
+
     public int Hit { get; set; }
 
     public int Expertise { get; set; }
 
-    public int Armor { get; set; }
-
-    public string Talents { get; set; }
+    public string Talents { get; set; } = string.Empty;
 
     public int CombatPlayerId { get; set; }
 }

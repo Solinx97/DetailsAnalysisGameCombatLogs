@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260728173801_Init")]
+    [Migration("20260905160221_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -14969,66 +14969,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatPlayerPreAura");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Agility")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Armor")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Crit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Dodge")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Expertise")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Haste")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Hit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Intelligence")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Parry")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Spirit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Stamina")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Strength")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Talents")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId")
-                        .IsUnique();
-
-                    b.ToTable("CombatPlayerStats");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", b =>
                 {
                     b.Property<int>("Id")
@@ -15784,6 +15724,138 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("UnitPosition");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMidnight.WoWMidnightPlayerStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Avoidance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Block")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Crit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dodge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Haste")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Intelligence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Lifesteal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Mastery")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Movement")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Parry")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Talents")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("Versality")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId")
+                        .IsUnique();
+
+                    b.ToTable("WoWMidnightPlayerStats");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMoPClassic.WoWMoPClassicPlayerStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Block")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Crit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dodge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Expertise")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Haste")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Hit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Intelligence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Parry")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Spirit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Talents")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId")
+                        .IsUnique();
+
+                    b.ToTable("WoWMoPClassicPlayerStats");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Aggregates.BestSpecializationScore", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Boss", "Boss")
@@ -15879,17 +15951,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
                         .WithMany("PreAuras")
                         .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithOne("Stats")
-                        .HasForeignKey("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", "CombatPlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -16047,6 +16108,28 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Combat");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMidnight.WoWMidnightPlayerStats", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithOne()
+                        .HasForeignKey("CombatParser.Domain.Entities.WoWMidnight.WoWMidnightPlayerStats", "CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMoPClassic.WoWMoPClassicPlayerStats", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithOne()
+                        .HasForeignKey("CombatParser.Domain.Entities.WoWMoPClassic.WoWMoPClassicPlayerStats", "CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Boss", b =>
                 {
                     b.Navigation("BestSpecializationScores");
@@ -16100,9 +16183,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("ResourceRecoveryGenerals");
 
                     b.Navigation("Score");
-
-                    b.Navigation("Stats")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>

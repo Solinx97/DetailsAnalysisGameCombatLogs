@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
+﻿using CombatAnalysis.UploadingLogsApp.Interfaces.Entities;
+using CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
 using System.Collections.Generic;
 
 namespace CombatAnalysis.UploadingLogsApp.Models;
@@ -19,7 +20,7 @@ public class CombatPlayerModel
 
     public int ResourcesRecovery { get; set; }
 
-    public CombatPlayerStatsModel Stats { get; set; }
+    public IPlayerStatsModel Stats { get; set; }
 
     public SpecializationScoreModel? Score { get; set; }
 

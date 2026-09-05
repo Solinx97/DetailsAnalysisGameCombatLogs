@@ -1,6 +1,8 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMidnight;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Extensions;
@@ -149,14 +151,25 @@ internal static class ModelBuilderExtension
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CombatPlayerStats>(cps =>
+        modelBuilder.Entity<WoWMoPClassicPlayerStats>(cps =>
         {
             cps.Property(p => p.Talents)
-                .HasMaxLength(CombatPlayerStats.TALENTS_MAX_LENGTH);
+                .HasMaxLength(WoWMoPClassicPlayerStats.TALENTS_MAX_LENGTH);
 
             cps.HasOne(cps => cps.CombatPlayer)
-                .WithOne(cp => cp.Stats)
-                .HasForeignKey<CombatPlayerStats>(s => s.CombatPlayerId)
+                .WithOne()
+                .HasForeignKey<WoWMoPClassicPlayerStats>(p => p.CombatPlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WoWMidnightPlayerStats>(cps =>
+        {
+            cps.Property(p => p.Talents)
+                .HasMaxLength(WoWMidnightPlayerStats.TALENTS_MAX_LENGTH);
+
+            cps.HasOne(cps => cps.CombatPlayer)
+                .WithOne()
+                .HasForeignKey<WoWMidnightPlayerStats>(p => p.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

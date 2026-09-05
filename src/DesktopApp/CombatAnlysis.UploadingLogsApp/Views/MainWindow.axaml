@@ -49,6 +49,19 @@
                 </StackPanel>
 
                 <StackPanel IsVisible="{Binding AppState.IsAuth}" Spacing="15" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button
+                        Content="WoW: Midnight"
+                        HorizontalAlignment="Center"
+                        Command="{Binding SwitchParserVersionCommand}"
+                        CommandParameter="WoWMidnight" 
+                        Classes.selected="{Binding ParserVersion,Converter={StaticResource EnumEqualsConverter},ConverterParameter=WoWMidnight}">
+                        <Button.Styles>
+                            <Style Selector="Button.selected">
+                                <Setter Property="Foreground" Value="Orange" />
+                            </Style>
+                        </Button.Styles>
+                     </Button>
+
                      <Button
                         Content="WoW: Mists of Pandaria Classic"
                         HorizontalAlignment="Center"
@@ -58,19 +71,6 @@
                             Converter={StaticResource EnumEqualsConverter},
                             ConverterParameter=WoWMoPClassic}"
                         >
-                        <Button.Styles>
-                            <Style Selector="Button.selected">
-                                <Setter Property="Foreground" Value="Orange" />
-                            </Style>
-                        </Button.Styles>
-                     </Button>
-
-                    <Button
-                        Content="WoW: Midnight"
-                        HorizontalAlignment="Center"
-                        Command="{Binding SwitchParserVersionCommand}"
-                        CommandParameter="WoWMidnight" 
-                        Classes.selected="{Binding ParserVersion,Converter={StaticResource EnumEqualsConverter},ConverterParameter=WoWMidnight}">
                         <Button.Styles>
                             <Style Selector="Button.selected">
                                 <Setter Property="Foreground" Value="Orange" />

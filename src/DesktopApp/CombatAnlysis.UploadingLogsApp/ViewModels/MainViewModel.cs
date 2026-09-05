@@ -46,7 +46,7 @@ public partial class MainViewModel : LocalizationViewModel
     #region View model properties
 
     [ObservableProperty]
-    public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMoPClassic;
+    public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMidnight;
 
     #endregion
 

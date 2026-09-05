@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities;
 
@@ -16,7 +17,7 @@ public class CombatPlayer
 
     public int ResourcesRecovery { get; set; }
 
-    public CombatPlayerStats Stats { get; set; } = new();
+    public IPlayerStats Stats { get; set; }
 
     public Player Player { get; set; } = new();
 

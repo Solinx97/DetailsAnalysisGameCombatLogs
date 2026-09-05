@@ -1,4 +1,6 @@
-﻿namespace CombatParser.Domain.EntityData;
+﻿using CombatParser.Domain.Entities.CombatPlayerData;
+
+namespace CombatParser.Domain.EntityData;
 
 public record CombatPlayerData(
     double AverageItemLevel,
@@ -8,7 +10,7 @@ public record CombatPlayerData(
     int DamageTaken,
     string PlayerId,
     int CombatId,
-    CombatPlayerStatsData Stats,
+    IPlayerStats Stats,
     SpecializationScoreData Score,
     IReadOnlyList<CombatPlayerPreAuraData> PreAuras,
     IReadOnlyList<CombatPlayerAuraData> Auras,

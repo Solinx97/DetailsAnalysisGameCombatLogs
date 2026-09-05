@@ -8,7 +8,10 @@ using CombatParser.Application.Queries.Dashboards.GetHealSpells;
 using CombatParser.Application.Queries.Dashboards.GetPotions;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
+using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.EntityData;
+using CombatParser.Domain.EntityData.WoWMidnight;
+using CombatParser.Domain.EntityData.WoWMoPClassic;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -81,7 +84,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             var combatPlayersData = new List<CombatParser.Domain.EntityData.CombatPlayerData>();
             foreach (var player in combat.CombatPlayers)
             {
-                var playerData = await ExtractCombatPlayerDataAsync(player, cancellationToken);
+                var playerData = await ExtractCombatPlayerDataAsync(combat.GameVersion, player, cancellationToken);
                 combatPlayersData.Add(playerData);
             }
 
@@ -90,7 +93,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
             var unitPositionData = _mapper.Map<List<UnitPositionData>>(combat.UnitPositions);
 
-            var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
+            var command = new CreateCombatCommand(combat.GameVersion, combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
                  combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitCastData, unitHealthData, unitPositionData);
 
             var combatId = await _mediator.Send(command, cancellationToken);
@@ -111,9 +114,21 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         }
     }
 
-    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
+    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(int gameVersion, CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
     {
-        var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
+        IPlayerStats statsMap;
+        switch (gameVersion)
+        {
+            case 0:
+                statsMap = _mapper.Map<WoWMoPClassicPlayerStatsData>(combatPlayer.Stats);
+                break;
+            case 1:
+                statsMap = _mapper.Map<WoWMidnightPlayerStatsData>(combatPlayer.Stats);
+                break;
+            default:
+                statsMap = _mapper.Map<WoWMoPClassicPlayerStatsData>(combatPlayer.Stats);
+                break;
+        }
 
         var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
         var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);

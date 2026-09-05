@@ -1,6 +1,8 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMidnight;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,7 +54,9 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<CombatPlayerDeath>? CombatPlayerDeath { get; }
 
-    public DbSet<CombatPlayerStats>? CombatPlayerStats { get; }
+    public DbSet<WoWMoPClassicPlayerStats>? WoWMoPClassicPlayerStats { get; }
+
+    public DbSet<WoWMidnightPlayerStats>? WoWMidnightPlayerStats { get; }
 
     public DbSet<Specialization>? Specialization { get; }
 

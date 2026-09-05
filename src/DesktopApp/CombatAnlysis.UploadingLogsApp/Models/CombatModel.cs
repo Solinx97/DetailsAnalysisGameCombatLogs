@@ -7,6 +7,8 @@ public class CombatModel
 {
     public int Id { get; set; }
 
+    public int GameVersion { get; set; }
+
     public int Number { get; set; }
 
     public int UniqueCombatCount { get; set; }
