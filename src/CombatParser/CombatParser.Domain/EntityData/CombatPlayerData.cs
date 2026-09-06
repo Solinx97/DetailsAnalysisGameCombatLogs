@@ -1,4 +1,4 @@
-﻿using CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.EntityData;
 
@@ -10,7 +10,7 @@ public record CombatPlayerData(
     int DamageTaken,
     string PlayerId,
     int CombatId,
-    IPlayerStats Stats,
+    IPlayerStatsData Stats,
     SpecializationScoreData Score,
     IReadOnlyList<CombatPlayerPreAuraData> PreAuras,
     IReadOnlyList<CombatPlayerAuraData> Auras,

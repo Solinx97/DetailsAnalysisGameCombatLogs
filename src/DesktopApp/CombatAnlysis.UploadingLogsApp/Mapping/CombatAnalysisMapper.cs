@@ -31,6 +31,7 @@ internal class CombatAnalysisMapper : Profile
 
         CreateMap<WoWMoPClassicPlayerStatsModel, WoWMoPClassicPlayerStats>().ReverseMap();
         CreateMap<WoWMidnightPlayerStatsModel, WoWMidnightPlayerStats>().ReverseMap();
+
         CreateMap<SpecializationScoreModel, SpecializationScore>().ReverseMap();
         CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
         CreateMap<DamageDoneGeneralModel, DamageDoneGeneral>().ReverseMap();

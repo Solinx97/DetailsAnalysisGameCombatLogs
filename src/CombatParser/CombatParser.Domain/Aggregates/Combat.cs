@@ -78,7 +78,7 @@ public class Combat
 
     public IEnumerable<UnitPosition> UnitPositions => _unitPositions;
 
-    public static Combat Create(int gameVersion, string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
+    public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
         int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatUnitData> units, IReadOnlyList<UnitCastData> unitCasts, IReadOnlyList<UnitHealthData> unitHeaths, 
         IReadOnlyList<UnitPositionData> unitPositions)
@@ -99,7 +99,7 @@ public class Combat
 
         foreach (var player in combatPlayers)
         {
-            combat.AddCombatPlayer(gameVersion, player);
+            combat.AddCombatPlayer(player);
         }
 
         foreach (var unit in units)
@@ -125,9 +125,9 @@ public class Combat
         return combat;
     }
 
-    private void AddCombatPlayer(int gameVersion, CombatPlayerData player)
+    private void AddCombatPlayer(CombatPlayerData player)
     {
-        var createdPlayer = CombatPlayer.Create(gameVersion, player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
+        var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
             player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.DamageDones,
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals, player.DamageTakens, player.DamageTakenGenerals,
             player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths);

@@ -1,4 +1,4 @@
-﻿using CombatParser.Application.DTOs.CombatPlayerData;
+﻿using CombatParser.Application.Interfaces;
 
 namespace CombatParser.Application.DTOs;
 
@@ -16,7 +16,7 @@ public class CombatPlayerDto
 
     public int DamageTaken { get; set; }
 
-    public CombatPlayerStatsDto Stats { get; set; }
+    public IPlayerStatsDto Stats { get; set; }
 
     public SpecializationScoreDto Score { get; set; }
 

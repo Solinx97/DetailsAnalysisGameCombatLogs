@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 
 interface DetailsItemProps {
     player: CombatPlayerModel;
@@ -33,7 +33,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                 {player.damageDone > 0 &&
                     <div>
                         {player.score !== null &&
-                            <div className="player-score">{player.score.damageScore.toFixed(2)}%</div>
+                            <div className="player-score">{player.score?.damageScore.toFixed(2)}%</div>
                         }
                         <div className="btn-shadow"
                             onClick={() => navigateToDetails(0)}
@@ -55,7 +55,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                 {player.healDone > 0 &&
                     <div>
                         {player.score !== null &&
-                            <div className="player-score">{player.score.healScore.toFixed(2)}%</div>
+                            <div className="player-score">{player.score?.healScore.toFixed(2)}%</div>
                         }
                         <div className="btn-shadow"
                             onClick={() => navigateToDetails(1)}

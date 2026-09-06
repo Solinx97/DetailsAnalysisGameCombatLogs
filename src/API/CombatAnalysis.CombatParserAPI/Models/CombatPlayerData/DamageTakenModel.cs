@@ -36,7 +36,6 @@ public class DamageTakenModel
     [Range(0, int.MaxValue)]
     public int Absorbed { get; set; }
 
-    [Range(0, int.MaxValue)]
     public int Blocked { get; set; }
 
     public int RealDamage { get; set; }

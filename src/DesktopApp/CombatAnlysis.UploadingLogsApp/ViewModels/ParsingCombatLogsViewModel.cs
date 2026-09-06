@@ -299,7 +299,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
                 await _wow_5_5_4_Parser.ParseAsync(combatLogPaths, _cts.Token);
 
                 combats = _mapper.Map<List<CombatModel>>(_wow_5_5_4_Parser.Combats);
-                await _combatParserAPIService.GetBossAsync(combats, _cts.Token);
+                await _combatParserAPIService.GetBossAsync(combats, false, _cts.Token);
 
                 _wow_5_5_4_Parser.Clear();
                 break;
@@ -307,7 +307,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
                 await _wow_12_1_0_Parser.ParseAsync(combatLogPaths, _cts.Token);
 
                 combats = _mapper.Map<List<CombatModel>>(_wow_12_1_0_Parser.Combats);
-                await _combatParserAPIService.GetBossAsync(combats, _cts.Token);
+                await _combatParserAPIService.GetBossAsync(combats, true, _cts.Token);
 
                 _wow_12_1_0_Parser.Clear();
                 break;

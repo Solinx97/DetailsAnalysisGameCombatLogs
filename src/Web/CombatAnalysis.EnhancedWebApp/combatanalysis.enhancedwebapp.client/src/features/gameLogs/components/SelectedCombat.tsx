@@ -10,7 +10,6 @@ import type { CombatDetailsModel } from '../types/CombatDetailsModel';
 import SelectedCombatChart from './SelectedCombatChart';
 import PersonalTabs from './PersonalTabs';
 import Details from './details/Details';
-import PlayerInfo from './details/PlayerInfo';
 import { useGetGenericChartDamageDoneQuery } from '../api/DamageDone.api';
 import { useGetGenericChartHealDoneQuery } from '../api/HealDone.api';
 
@@ -97,7 +96,7 @@ const SelectedCombat: React.FC = () => {
             return combatPlayersResult;
         } catch (error) {
             console.error("Errror to load Combat players");
-            
+
             return [];
         }
     }
@@ -217,28 +216,11 @@ const SelectedCombat: React.FC = () => {
                     tabsClassName={"charts"}
                 />
             }
-            <PersonalTabs
-                tab={0}
-                tabs={[
-                    {
-                        id: 0,
-                        header: t("Details"),
-                        content: <Details
-                            details={details}
-                            combatPlayers={selectedPlayers}
-                            getValueShortName={getValueShortName}
-                            t={t}
-                        />
-                    },
-                    {
-                        id: 1,
-                        header: t("PlayerInfo"),
-                        content: <PlayerInfo
-                            combatPlayers={selectedPlayers}
-                        />
-                    }
-                ]}
-                tabsClassName={"information"}
+            <Details
+                details={details}
+                combatPlayers={selectedPlayers}
+                getValueShortName={getValueShortName}
+                t={t}
             />
         </div>
     );

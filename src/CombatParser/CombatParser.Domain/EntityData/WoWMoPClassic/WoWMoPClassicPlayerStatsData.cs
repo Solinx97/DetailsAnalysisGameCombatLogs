@@ -1,4 +1,4 @@
-﻿using CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.EntityData.WoWMoPClassic;
 
@@ -18,4 +18,4 @@ public record WoWMoPClassicPlayerStatsData(
     int Expertise,
     string Talents,
     int CombatPlayerId
-    ) : IPlayerStats;
+    ) : IPlayerStatsData;

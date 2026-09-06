@@ -1,5 +1,8 @@
 ﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities;
+using CombatParser.Domain.Entities.WoWMidnight;
+using CombatParser.Domain.Entities.WoWMoPClassic;
+using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,5 +32,25 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatP
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
         return combatPlayer;
+    }
+
+    public async Task<IPlayerStats?> GetPlayerStatsAsync(int combatPlayerId, int gameVersion, CancellationToken cancellationToken)
+    {
+        return gameVersion switch
+        {
+            0 => await _context.Set<WoWMoPClassicPlayerStats>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    x => x.CombatPlayerId == combatPlayerId,
+                    cancellationToken),
+
+            1 => await _context.Set<WoWMidnightPlayerStats>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    x => x.CombatPlayerId == combatPlayerId,
+                    cancellationToken),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(gameVersion))
+        };
     }
 }

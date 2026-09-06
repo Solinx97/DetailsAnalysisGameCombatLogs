@@ -20,6 +20,7 @@ namespace CombatAnalysis.UploadingLogsApp.Services;
 internal class CombatParserAPIService : ICombatParserAPIService
 {
     private const int PARALLEL_COUNT = 3;
+    private const int DEFAULT_RAID_SIZE = 30;
 
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger<CombatParserAPIService> _logger;
@@ -149,13 +150,13 @@ internal class CombatParserAPIService : ICombatParserAPIService
         }
     }
 
-    public async Task GetBossAsync(List<CombatModel> combats, CancellationToken cancellationToken)
+    public async Task GetBossAsync(List<CombatModel> combats, bool useDefault, CancellationToken cancellationToken)
     {
         try
         {
             foreach (var combat in combats)
             { 
-                var boss = await LoadBossAsync(combat.Boss.GameId, combat.Boss.Difficult, combat.Boss.Size, cancellationToken);
+                var boss = await LoadBossAsync(combat.Boss.GameId, combat.Boss.Difficult, useDefault ? DEFAULT_RAID_SIZE : combat.Boss.Size, cancellationToken);
                 combat.Boss = boss ?? new();
             }
 

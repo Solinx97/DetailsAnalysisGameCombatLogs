@@ -6,10 +6,13 @@ using CombatAnalysis.CombatParserAPI.Models.WoWMidnight;
 using CombatAnalysis.CombatParserAPI.Models.WoWMoPClassic;
 using CombatParser.Application.DTOs;
 using CombatParser.Application.DTOs.CombatPlayerData;
-using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Application.DTOs.WoWMidnight;
+using CombatParser.Application.DTOs.WoWMoPClassic;
+using CombatParser.Application.Interfaces;
 using CombatParser.Domain.EntityData;
 using CombatParser.Domain.EntityData.WoWMidnight;
 using CombatParser.Domain.EntityData.WoWMoPClassic;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatAnalysis.CombatParserAPI.Mapping;
 
@@ -68,11 +71,18 @@ internal class CombatParserApiMapper : Profile
         CreateMap<CombatPlayerAuraData, CombatPlayerAuraModel>().ReverseMap();
         CreateMap<UnitCastData, UnitCastModel>().ReverseMap();
 
-        CreateMap<IPlayerStatsModel, IPlayerStats>()
+        CreateMap<IPlayerStatsModel, IPlayerStatsData>()
             .Include<WoWMoPClassicPlayerStatsModel, WoWMoPClassicPlayerStatsData>()
             .Include<WoWMidnightPlayerStatsModel, WoWMidnightPlayerStatsData>().ReverseMap();
 
         CreateMap<WoWMoPClassicPlayerStatsData, WoWMoPClassicPlayerStatsModel>().ReverseMap();
         CreateMap<WoWMidnightPlayerStatsData, WoWMidnightPlayerStatsModel>().ReverseMap();
+
+        CreateMap<IPlayerStatsModel, IPlayerStatsDto>()
+            .Include<WoWMoPClassicPlayerStatsModel, WoWMoPClassicPlayerStatsDto>()
+            .Include<WoWMidnightPlayerStatsModel, WoWMidnightPlayerStatsDto>().ReverseMap();
+
+        CreateMap<WoWMoPClassicPlayerStatsDto, WoWMoPClassicPlayerStatsModel>().ReverseMap();
+        CreateMap<WoWMidnightPlayerStatsDto, WoWMidnightPlayerStatsModel>().ReverseMap();
     }
 }

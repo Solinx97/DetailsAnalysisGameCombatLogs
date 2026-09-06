@@ -1,6 +1,6 @@
-﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
+﻿namespace CombatParser.Application.Interfaces;
 
-public interface IPlayerStats
+public interface IPlayerStatsDto
 {
     int Strength { get;  }
 

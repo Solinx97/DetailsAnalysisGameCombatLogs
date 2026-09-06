@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.WoWMidnight;
 
@@ -12,7 +13,6 @@ public class WoWMidnightPlayerStats : CombatPlayerDataBase, IPlayerStats
         int dodge, int parry, int block, int crit, int haste, int mastery, int versality, 
         int lifesteal, int avoidance, int movement, int armor, string talents, int combatPlayerId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(talents, nameof(talents));
         ArgumentOutOfRangeException.ThrowIfNegative(strength, nameof(strength));
         ArgumentOutOfRangeException.ThrowIfNegative(agility, nameof(agility));
         ArgumentOutOfRangeException.ThrowIfNegative(intelligence, nameof(intelligence));

@@ -1,4 +1,4 @@
-﻿using CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.EntityData.WoWMidnight;
 
@@ -20,4 +20,4 @@ public record WoWMidnightPlayerStatsData(
     int Movement,
     string Talents,
     int CombatPlayerId
-    ) : IPlayerStats;
+    ) : IPlayerStatsData;

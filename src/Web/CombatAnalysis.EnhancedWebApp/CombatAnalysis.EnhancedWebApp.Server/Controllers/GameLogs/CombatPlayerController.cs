@@ -1,6 +1,8 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWMidnight;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWMoPClassic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -34,5 +36,19 @@ public class CombatPlayerController : ControllerBase
         var combatPlayer = await responseMessage.Content.ReadFromJsonAsync<CombatPlayerModel>();
 
         return Ok(combatPlayer);
+    }
+
+    [HttpGet("getPlayerStats/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetPlayerStats(int combatPlayerId, int gameVersion)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/getPlayerStats/{combatPlayerId}?gameVersion={gameVersion}");
+        IPlayerStatsModel? stats = gameVersion switch
+        {
+            0 => await responseMessage.Content.ReadFromJsonAsync<WoWMoPClassicPlayerStatsModel>(),
+            1 => await responseMessage.Content.ReadFromJsonAsync<WoWMidnightPlayerStatsModel>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(gameVersion))
+        };
+
+        return Ok(stats);
     }
 }

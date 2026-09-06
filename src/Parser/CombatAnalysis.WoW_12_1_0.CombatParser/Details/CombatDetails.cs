@@ -208,7 +208,7 @@ public class CombatDetails(ILogger logger)
                 },
                 () =>
                 {
-                    //CalculateGeneral(combatDataLine, combatDetailsManager, splitCombatData);
+                    CalculateGeneral(combatDataLine, combatDetailsManager, splitCombatData);
                 }
             );
     }

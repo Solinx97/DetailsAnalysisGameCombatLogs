@@ -252,10 +252,10 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
         var absorbeDone = new HealDone
         {
-            GameSpellId = int.Parse(combatDataLine[^5]),
-            Spell = combatDataLine[^4].Trim('"'),
+            GameSpellId = int.Parse(combatDataLine[^6]),
+            Spell = combatDataLine[^5].Trim('"'),
             Time = GetTimeFromStart(combatDataLine[0]),
-            Creator = combatDataLine[^8].Trim('"'),
+            Creator = combatDataLine[^9].Trim('"'),
             Target = combatDataLine[7].Trim('"'),
             Overheal = 0,
             IsCrit = false,

@@ -12,6 +12,7 @@ import type { DashboardModel } from '../types/dashboard/DashboardModel';
 import type { UnitCastModel } from '../types/UnitCastModel';
 import type { UnitHealthModel } from '../types/UnitHealthModel';
 import type { CombatUnitModel } from '../types/CombatUnitModel';
+import type { CombatPlayerStatsModel } from '../types/CombatPlayerStatsModel';
 
 const apiURL = '/api/v1';
 
@@ -156,6 +157,9 @@ export const GameLogsApi = createApi({
         getUnitsHealthByCombatId: builder.query<Map<string, UnitHealthModel[]>, number>({
             query: combatId => `/UnitHealth/getByCombatId/${combatId}`,
         }),
+        getPlayerStatsByCombatPlayerId: builder.query<CombatPlayerStatsModel, { combatPlayerId: number, gameVersion: number }>({
+            query: ({ combatPlayerId, gameVersion }) => `/CombatPlayer/getPlayerStats/${combatPlayerId}?gameVersion=${gameVersion}`,
+        }),
     })
 })
 
@@ -179,4 +183,5 @@ export const {
     useLazyGetUnitCastsByCombatPlayerIdQuery,
     useLazyGetUnitPositionsByCombatIdQuery,
     useLazyGetUnitsHealthByCombatIdQuery,
+    useGetPlayerStatsByCombatPlayerIdQuery,
 } = GameLogsApi;

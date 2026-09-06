@@ -9,8 +9,8 @@ export type CombatPlayerModel = {
     damageDone: number;
     healDone: number;
     damageTaken: number;
-    stats: CombatPlayerStatsModel;
-    score: SpecializationScoreModel;
+    stats?: CombatPlayerStatsModel;
+    score?: SpecializationScoreModel;
     player: PlayerModel;
     combatId: number;
 }

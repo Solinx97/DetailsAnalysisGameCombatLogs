@@ -1,9 +1,12 @@
-﻿import { memo, useEffect, useState } from 'react';
-import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
-import DetailsItem from './DetailsItem';
+﻿import { faArrowsToEye } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { memo, useEffect, useState } from 'react';
 import Select from 'react-select';
+import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import CombatPreAuraItem from '../auras/CombatPreAuraItem';
+import DetailsItem from './DetailsItem';
+import PlayerParams from './PlayerParams';
 
 import '../auras/CombatAuras.scss';
 
@@ -21,6 +24,7 @@ type Option = {
 
 const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, t }) => {
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
+    const [playerStatsCombatPlayerId, setPlayerStatsCombatPlayerId] = useState(0);
 
     const sortOptions: Option[] = [
         { value: 0, label: t("Damage") },
@@ -38,10 +42,14 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
         const keys: (keyof CombatPlayerModel)[] = ['damageDone', 'healDone', 'damageTaken', 'resourcesRecovery'];
         const key = keys[sortingValue === null ? 0 : sortingValue.value];
 
+        if (playerA[key] === undefined || playerB[key] === undefined) {
+            return 0;
+        }
+
         if (playerA[key] > playerB[key]) {
             return -1;
         }
-        if (playerA[key] < playerB[key]) {
+        else if (playerA[key] < playerB[key]) {
             return 1;
         }
 
@@ -74,8 +82,15 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
             <ul className="details__content">
                 {filteredCombatPlayers?.map((combatPlayer) => (
                     <li key={combatPlayer.id} className="card">
-                        <div className="card-body">
-                            <h5 className="card-title">{combatPlayer.player.username}</h5>
+                        <div className="card-body card-title">
+                            <h5>{combatPlayer.player.username}</h5>
+                            <div className="btn-shadow"
+                                onClick={() => setPlayerStatsCombatPlayerId(combatPlayer.id)}>
+                                <FontAwesomeIcon
+                                    icon={faArrowsToEye}
+                                />
+                                <div>{t("Params")}</div>
+                            </div>
                         </div>
                         <CombatPreAuraItem
                             combatPlayerId={combatPlayer.id}
@@ -86,6 +101,14 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             details={details}
                             getValueShortName={getValueShortName}
                         />
+                        {playerStatsCombatPlayerId === combatPlayer.id &&
+                            <PlayerParams
+                                t={t}
+                                combatPlayerId={combatPlayer.id}
+                                gameVersion={0}
+                                setPlayerStatsCombatPlayerId={setPlayerStatsCombatPlayerId}
+                            />
+                        }
                     </li>
                 ))}
             </ul>

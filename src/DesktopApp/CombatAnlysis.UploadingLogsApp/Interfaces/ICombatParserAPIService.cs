@@ -13,5 +13,5 @@ public interface ICombatParserAPIService
 
     Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken);
 
-    Task GetBossAsync(List<CombatModel> combats, CancellationToken cancellationToken);
+    Task GetBossAsync(List<CombatModel> combats, bool useDefault, CancellationToken cancellationToken);
 }

@@ -3,11 +3,14 @@ using CombatParser.Application.DTOs;
 using CombatParser.Application.DTOs.Chart;
 using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Application.DTOs.Dashboard;
+using CombatParser.Application.DTOs.WoWMidnight;
+using CombatParser.Application.DTOs.WoWMoPClassic;
 using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.Chart;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.Dashboard;
+using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
 
 namespace CombatParser.Application.Mapping;
@@ -42,7 +45,13 @@ public class ApplicationMapper : Profile
         CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
         CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
-        CreateMap<CombatPlayerStatsDto, WoWMoPClassicPlayerStats>().ReverseMap();
+
+        CreateMap<Interfaces.IPlayerStatsDto, Domain.Interfaces.IPlayerStats>()
+            .Include<WoWMoPClassicPlayerStatsDto, WoWMoPClassicPlayerStats>()
+            .Include<WoWMidnightPlayerStatsDto, WoWMidnightPlayerStats>().ReverseMap();
+
+        CreateMap<WoWMoPClassicPlayerStatsDto, WoWMoPClassicPlayerStats>().ReverseMap();
+        CreateMap<WoWMidnightPlayerStatsDto, WoWMidnightPlayerStats>().ReverseMap();
 
         CreateMap<ChartGenericDto, ChartGeneric>().ReverseMap();
         CreateMap<DashboardDto, Dashboard>().ReverseMap();

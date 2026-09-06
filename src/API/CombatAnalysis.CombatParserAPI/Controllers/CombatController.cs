@@ -8,10 +8,10 @@ using CombatParser.Application.Queries.Dashboards.GetHealSpells;
 using CombatParser.Application.Queries.Dashboards.GetPotions;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
-using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.EntityData;
 using CombatParser.Domain.EntityData.WoWMidnight;
 using CombatParser.Domain.EntityData.WoWMoPClassic;
+using CombatParser.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -116,19 +116,12 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
 
     private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(int gameVersion, CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
     {
-        IPlayerStats statsMap;
-        switch (gameVersion)
+        IPlayerStatsData statsMap = gameVersion switch
         {
-            case 0:
-                statsMap = _mapper.Map<WoWMoPClassicPlayerStatsData>(combatPlayer.Stats);
-                break;
-            case 1:
-                statsMap = _mapper.Map<WoWMidnightPlayerStatsData>(combatPlayer.Stats);
-                break;
-            default:
-                statsMap = _mapper.Map<WoWMoPClassicPlayerStatsData>(combatPlayer.Stats);
-                break;
-        }
+            0 => _mapper.Map<WoWMoPClassicPlayerStatsData>(combatPlayer.Stats),
+            1 => _mapper.Map<WoWMidnightPlayerStatsData>(combatPlayer.Stats),
+            _ => throw new ArgumentOutOfRangeException(nameof(gameVersion))
+        };
 
         var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
         var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);

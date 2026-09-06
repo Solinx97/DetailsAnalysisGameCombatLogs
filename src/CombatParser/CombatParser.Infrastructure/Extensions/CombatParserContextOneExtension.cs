@@ -1,7 +1,9 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
-using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
+using CombatParser.Domain.EntityData.WoWMidnight;
+using CombatParser.Domain.EntityData.WoWMoPClassic;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
@@ -65,12 +67,28 @@ internal static class CombatParserContextOneExtension
 
     public static async Task BulkInsertCombatPlayerStatsAsync(this CombatParserContextOne context, IEnumerable<CombatPlayer> players, CancellationToken cancelationToken)
     {
-        var stats = players.Select(p =>
+        var stats = players.Select<CombatPlayer, IPlayerStats>(p =>
         {
-            var stats = (WoWMoPClassicPlayerStats)p.Stats;
-            stats.SetCombatPlayerId(p.Id);
+            switch (p.Stats)
+            {
+                case WoWMoPClassicPlayerStats mop:
+                    {
+                        var stats = (WoWMoPClassicPlayerStats)p.Stats;
+                        stats.SetCombatPlayerId(p.Id);
+                        return stats;
+                    }
 
-            return stats;
+                case WoWMidnightPlayerStats midnight:
+                    {
+                        var stats = (WoWMidnightPlayerStats)p.Stats;
+                        stats.SetCombatPlayerId(p.Id);
+                        return stats;
+                    }
+
+                default:
+                    throw new InvalidOperationException(
+                        $"Unknown stats type: {p.Stats?.GetType().Name}");
+            }
         }).ToList();
 
         if (stats.Count > 0)

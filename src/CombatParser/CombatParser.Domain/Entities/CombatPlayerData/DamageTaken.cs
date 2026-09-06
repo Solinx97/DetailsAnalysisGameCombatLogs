@@ -23,7 +23,6 @@ public class DamageTaken : CombatPlayerDataBase, ITime, IGeneralEntity
         ArgumentOutOfRangeException.ThrowIfNegative(damageTakenType, nameof(damageTakenType));
         ArgumentOutOfRangeException.ThrowIfNegative(resisted, nameof(resisted));
         ArgumentOutOfRangeException.ThrowIfNegative(absorbed, nameof(absorbed));
-        ArgumentOutOfRangeException.ThrowIfNegative(blocked, nameof(blocked));
         ArgumentOutOfRangeException.ThrowIfNegative(mitigated, nameof(mitigated));
 
         GameSpellId = gameSpellId;
