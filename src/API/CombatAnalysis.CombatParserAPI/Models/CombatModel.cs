@@ -7,8 +7,6 @@ public class CombatModel
     [Range(0, int.MaxValue)]
     public int Id { get; init; }
 
-    public int GameVersion { get; init; }
-
     [Required]
     public string DungeonName { get; init; } = string.Empty;
 

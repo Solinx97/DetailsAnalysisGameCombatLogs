@@ -17861,6 +17861,9 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("Date")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int>("GameVersion")
+                        .HasColumnType("int");
+
                     b.Property<int>("LogType")
                         .HasColumnType("int");
 

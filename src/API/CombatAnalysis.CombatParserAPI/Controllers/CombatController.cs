@@ -77,7 +77,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CombatModel combat, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateCombatModel combat, CancellationToken cancellationToken)
     {
         try
         {
@@ -93,7 +93,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
             var unitPositionData = _mapper.Map<List<UnitPositionData>>(combat.UnitPositions);
 
-            var command = new CreateCombatCommand(combat.GameVersion, combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
+            var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
                  combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitCastData, unitHealthData, unitPositionData);
 
             var combatId = await _mediator.Send(command, cancellationToken);

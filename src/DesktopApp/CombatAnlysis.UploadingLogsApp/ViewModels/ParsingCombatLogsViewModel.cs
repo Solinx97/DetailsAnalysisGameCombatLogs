@@ -245,6 +245,34 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         return combats;
     }
 
+    private async Task<List<CombatModel>> SelectParserVersion(List<string> combatLogPaths)
+    {
+        var combats = new List<CombatModel>();
+        switch (CurrentCombatParserVersion.Version)
+        {
+            case CombatParserVersion.WoWMoPClassic:
+                await _wow_5_5_4_Parser.ParseAsync(combatLogPaths, _cts.Token);
+
+                combats = _mapper.Map<List<CombatModel>>(_wow_5_5_4_Parser.Combats);
+                await _combatParserAPIService.GetBossAsync(combats, false, _cts.Token);
+
+                _wow_5_5_4_Parser.Clear();
+                break;
+            case CombatParserVersion.WoWMidnight:
+                await _wow_12_1_0_Parser.ParseAsync(combatLogPaths, _cts.Token);
+
+                combats = _mapper.Map<List<CombatModel>>(_wow_12_1_0_Parser.Combats);
+                await _combatParserAPIService.GetBossAsync(combats, true, _cts.Token);
+
+                _wow_12_1_0_Parser.Clear();
+                break;
+            default:
+                break;
+        }
+
+        return combats;
+    }
+
     private async Task UploadingCombatLogAsync(List<CombatModel> combats)
     {
         var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combats, LogType, CancellationToken.None);
@@ -288,39 +316,5 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         Name = name;
 
         CurrentCombatNumber++;
-    }
-
-    private async Task<List<CombatModel>> SelectParserVersion(List<string> combatLogPaths)
-    {
-        var combats = new List<CombatModel>();
-        switch (CurrentCombatParserVersion.Version)
-        {
-            case CombatParserVersion.WoWMoPClassic:
-                await _wow_5_5_4_Parser.ParseAsync(combatLogPaths, _cts.Token);
-
-                combats = _mapper.Map<List<CombatModel>>(_wow_5_5_4_Parser.Combats);
-                await _combatParserAPIService.GetBossAsync(combats, false, _cts.Token);
-
-                _wow_5_5_4_Parser.Clear();
-                break;
-            case CombatParserVersion.WoWMidnight:
-                await _wow_12_1_0_Parser.ParseAsync(combatLogPaths, _cts.Token);
-
-                combats = _mapper.Map<List<CombatModel>>(_wow_12_1_0_Parser.Combats);
-                await _combatParserAPIService.GetBossAsync(combats, true, _cts.Token);
-
-                _wow_12_1_0_Parser.Clear();
-                break;
-            default:
-                break;
-        }
-
-        combats = [.. combats.Select(x =>
-        {
-            x.GameVersion = (int)CurrentCombatParserVersion.Version;
-            return x;
-        })];
-
-        return combats;
     }
 }

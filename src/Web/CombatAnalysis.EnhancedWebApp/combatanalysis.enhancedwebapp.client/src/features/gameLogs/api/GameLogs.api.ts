@@ -12,7 +12,8 @@ import type { DashboardModel } from '../types/dashboard/DashboardModel';
 import type { UnitCastModel } from '../types/UnitCastModel';
 import type { UnitHealthModel } from '../types/UnitHealthModel';
 import type { CombatUnitModel } from '../types/CombatUnitModel';
-import type { CombatPlayerStatsModel } from '../types/CombatPlayerStatsModel';
+import type { WoWMidnightPlayerStatsModel } from '../types/woWMidnight/WoWMidnightPlayerStatsModel';
+import type { WoWMoPClassicPlayerStatsModel } from '../types/wowMoPClassic/WoWMoPClassicPlayerStatsModel';
 
 const apiURL = '/api/v1';
 
@@ -53,8 +54,8 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatAbility', id: 'LIST' }]
         }),
-        getCombatLogs: builder.query<CombatLogModel[], { logType: number, appUserId: string | null }>({
-            query: ({ logType, appUserId }) => `/CombatLog/getByLogType?logType=${logType}&appUserId=${appUserId}`,
+        getCombatLogs: builder.query<CombatLogModel[], { logType: number, gameVersion: number, appUserId: string | null }>({
+            query: ({ logType, gameVersion, appUserId }) => `/CombatLog/getByLogType?logType=${logType}&gameVersion=${gameVersion}&appUserId=${appUserId}`,
             providesTags: result =>
                 result
                     ? [
@@ -157,7 +158,7 @@ export const GameLogsApi = createApi({
         getUnitsHealthByCombatId: builder.query<Map<string, UnitHealthModel[]>, number>({
             query: combatId => `/UnitHealth/getByCombatId/${combatId}`,
         }),
-        getPlayerStatsByCombatPlayerId: builder.query<CombatPlayerStatsModel, { combatPlayerId: number, gameVersion: number }>({
+        getPlayerStatsByCombatPlayerId: builder.query<WoWMoPClassicPlayerStatsModel | WoWMidnightPlayerStatsModel, { combatPlayerId: number, gameVersion: number }>({
             query: ({ combatPlayerId, gameVersion }) => `/CombatPlayer/getPlayerStats/${combatPlayerId}?gameVersion=${gameVersion}`,
         }),
     })

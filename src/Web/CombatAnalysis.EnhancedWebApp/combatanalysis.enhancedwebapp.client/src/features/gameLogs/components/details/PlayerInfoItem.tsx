@@ -1,9 +1,56 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { CombatPlayerStatsModel } from '../../types/CombatPlayerStatsModel';
+import type { WoWMoPClassicPlayerStatsModel } from '../../types/wowMoPClassic/WoWMoPClassicPlayerStatsModel';
+import type { WoWMidnightPlayerStatsModel } from '../../types/woWMidnight/WoWMidnightPlayerStatsModel';
 
-const PlayerInfoItem: React.FC<{ stats: CombatPlayerStatsModel }> = ({ stats: stats }) => {
-    const { t } = useTranslation("childs/playerInformation");
+const PlayerInfoItem: React.FC<{ stats: WoWMoPClassicPlayerStatsModel | WoWMidnightPlayerStatsModel }> = ({ stats: stats }) => {
+    const { t } = useTranslation('childs/playerInformation');
+
+    const getWoWMoPClasicStats = (stats: WoWMoPClassicPlayerStatsModel) => {
+        return (
+            <>
+                <li className="list-group-item">
+                    <div>{t("Spirit")}</div>
+                    <div>{stats.spirit}</div>
+                </li>
+                <li className="list-group-item">
+                    <div>{t("Hit")}</div>
+                    <div>{stats.hit}</div>
+                </li>
+                <li className="list-group-item">
+                    <div>{t("Expertise")}</div>
+                    <div>{stats.expertise}</div>
+                </li>
+            </>
+        );
+    }
+
+    const getWoWMidnightStats = (stats: WoWMidnightPlayerStatsModel) => {
+        return (
+            <>
+                <li className="list-group-item">
+                    <div>{t("Mastery")}</div>
+                    <div>{stats.mastery}</div>
+                </li>
+                <li className="list-group-item">
+                    <div>{t("Versality")}</div>
+                    <div>{stats.versality}</div>
+                </li>
+                <li className="list-group-item">
+                    <div>{t("Lifesteal")}</div>
+                    <div>{stats.lifesteal}</div>
+                </li>
+                <li className="list-group-item">
+                    <div>{t("Avoidance")}</div>
+                    <div>{stats.avoidance}</div>
+                </li>
+                <li className="list-group-item">
+                    <div>{t("Movement")}</div>
+                    <div>{stats.movement}</div>
+                </li>
+            </>
+        );
+    }
 
     return (
         <ul className="player-info__stats">
@@ -26,14 +73,10 @@ const PlayerInfoItem: React.FC<{ stats: CombatPlayerStatsModel }> = ({ stats: st
                         <div>{t("Stamina")}</div>
                         <div>{stats.stamina}</div>
                     </li>
-                    <li className="list-group-item">
-                        <div>{t("Spirit")}</div>
-                        <div>{stats.spirit}</div>
-                    </li>
                 </ul>
             </li>
             <li className="category">
-                <div className="title">{t("OtherStats")}</div>
+                <div className="title">{t("SecondStats")}</div>
                 <ul className="content">
                     <li className="list-group-item">
                         <div>{t("Crit")}</div>
@@ -42,14 +85,6 @@ const PlayerInfoItem: React.FC<{ stats: CombatPlayerStatsModel }> = ({ stats: st
                     <li className="list-group-item">
                         <div>{t("Haste")}</div>
                         <div>{stats.haste}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <div>{t("Hit")}</div>
-                        <div>{stats.hit}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <div>{t("Expertise")}</div>
-                        <div>{stats.expertise}</div>
                     </li>
                     <li className="list-group-item">
                         <div>{t("Armor")}</div>
@@ -63,6 +98,19 @@ const PlayerInfoItem: React.FC<{ stats: CombatPlayerStatsModel }> = ({ stats: st
                         <div>{t("Parry")}</div>
                         <div>{stats.parry}</div>
                     </li>
+                    <li className="list-group-item">
+                        <div>{t("Block")}</div>
+                        <div>{stats.block}</div>
+                    </li>
+                </ul>
+            </li>
+            <li className="category">
+                <div className="title">{t("OtherStats")}</div>
+                <ul className="content">
+                    {'spirit' in stats
+                        ? getWoWMoPClasicStats(stats)
+                        : getWoWMidnightStats(stats)
+                    }
                 </ul>
             </li>
             <li className="category">

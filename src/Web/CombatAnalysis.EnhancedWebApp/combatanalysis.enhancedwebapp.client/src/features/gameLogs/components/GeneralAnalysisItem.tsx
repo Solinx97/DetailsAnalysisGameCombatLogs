@@ -18,11 +18,18 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
 
     const navigate = useNavigate();
 
+    const [gameVersion, setgGameVersion] = useState<number>(-1);
     const [selectedCombatIndex, setSelectedCombatIndex] = useState<number>(uniqueCombats.length - 1);
     const [selectedCombat, setSelectedCombat] = useState<CombatModel>(uniqueCombats[selectedCombatIndex]);
 
     const { getTotalSeconds, formatDate } = useTime();
-    
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const version: number = parseInt(queryParams.get("gameVersion") || '-1');
+        setgGameVersion(version);
+    }, []);
+
     useEffect(() => {
         setSelectedCombat(uniqueCombats[selectedCombatIndex]);
     }, [selectedCombatIndex]);
@@ -50,7 +57,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                                 <p className="card-text">{selectedCombat.dungeonName}</p>
                             </div>
                         </div>
-                        <div className="see-reply btn-shadow" 
+                        <div className="see-reply btn-shadow"
                             onClick={() => navigate(`/general-analysis/watch?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
                             <FontAwesomeIcon
                                 icon={faLocationCrosshairs}
@@ -131,7 +138,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                 </ul>
                 <div className="details">
                     <div className="btn-shadow"
-                        onClick={() => navigate(`/selected-combat?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
+                        onClick={() => navigate(`/selected-combat?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}&gameVersion=${gameVersion}`)}>
                         <FontAwesomeIcon
                             icon={faDatabase}
                         />

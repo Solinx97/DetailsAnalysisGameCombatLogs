@@ -11,10 +11,11 @@ interface CombatLogItemProps {
     t: (key: string) => string;
     appUserId: string;
     log: CombatLogModel;
+    gameVersion: number;
     isAuth: boolean;
 }
 
-const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, log, isAuth }) => {
+const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, log, gameVersion, isAuth }) => {
     const navigate = useNavigate();
 
     const [showChats, setShowChats] = useState(false);
@@ -52,7 +53,7 @@ const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, log, is
                 <li className="list-group-item">{format(new Date(log.date), 'MM/dd/yyyy HH:mm')}</li>
             </ul>
             <div className="card-body">
-                <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${log.id}`)}>
+                <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${log.id}&gameVersion=${gameVersion}`)}>
                     <FontAwesomeIcon
                         icon={faMagnifyingGlassChart}
                     />

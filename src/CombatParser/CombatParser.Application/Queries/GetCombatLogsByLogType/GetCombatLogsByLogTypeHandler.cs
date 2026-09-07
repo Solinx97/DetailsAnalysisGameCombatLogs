@@ -12,7 +12,7 @@ internal class GetCombatLogsByLogTypeHandler(ICombatLogRepository repository, IM
 
     public async Task<IEnumerable<CombatLogDto>> Handle(GetCombatLogsByLogTypeQuery request, CancellationToken cancellationToken)
     {
-        var combatLogs = await _repository.GetByLogTypeAsync(request.LogType, request.AppUserId, cancellationToken);
+        var combatLogs = await _repository.GetByLogTypeAsync(request.LogType, request.GameVersion, request.AppUserId, cancellationToken);
         var map = _mapper.Map<IEnumerable<CombatLogDto>>(combatLogs);
 
         return map;

@@ -17,9 +17,9 @@ public class CombatLogController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByLogType")]
-    public async Task<IActionResult> GetByLogType(int logType, string? appUserId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByLogType(int logType, int gameVersion, string? appUserId, CancellationToken cancellationToken)
     {
-        var combatLogs = await _mediator.Send(new GetCombatLogsByLogTypeQuery(logType, appUserId), cancellationToken);
+        var combatLogs = await _mediator.Send(new GetCombatLogsByLogTypeQuery(logType, gameVersion, appUserId), cancellationToken);
 
         return Ok(combatLogs);
     }

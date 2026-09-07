@@ -1,4 +1,4 @@
-import type { BossModel } from "./BossModel";
+import type { BossModel } from './BossModel';
 
 export type CombatModel = {
     id: number;

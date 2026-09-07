@@ -8,8 +8,9 @@ public class CombatLog
 
     private CombatLog() { }
 
-    private CombatLog(string name, int logType, string appUserId)
+    private CombatLog(int gameVersion, string name, int logType, string appUserId)
     {
+        GameVersion = gameVersion;
         Name = name;
         Date = DateTimeOffset.UtcNow;
         LogType = logType;
@@ -17,6 +18,8 @@ public class CombatLog
     }
 
     public int Id { get; private set; }
+
+    public int GameVersion { get; private set; }
 
     public string Name { get; private set; } = string.Empty;
 
@@ -28,7 +31,7 @@ public class CombatLog
 
     public ICollection<Combat> Combats { get; set; } = [];
 
-    public static CombatLog Create(string name, int logType, string appUserId)
+    public static CombatLog Create(int gameVersion, string name, int logType, string appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
         ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
@@ -36,7 +39,7 @@ public class CombatLog
 
         CombatLogException.ThrowIfLong(name);
 
-        return new CombatLog(name, logType, appUserId);
+        return new CombatLog(gameVersion, name, logType, appUserId);
     }
 
     public void Edit(string name)

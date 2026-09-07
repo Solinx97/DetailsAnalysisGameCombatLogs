@@ -14,6 +14,7 @@
   "OpenBuffsAnalyzing": "Open buffs analyzing",
   "AverageItemLevel": "Average item level",
   "MainStats": "Main stats",
+  "SecondStats": "Second stats",
   "OtherStats": "Other stats",
   "More": "More",
   "Strength": "Strength",
@@ -28,5 +29,11 @@
   "Armor": "Armor",
   "Dodge": "Dodge",
   "Parry": "Parry",
+  "Block": "Block",
+  "Mastery": "Mastery",
+  "Versality": "Versality",
+  "Lifesteal": "Lifesteal",
+  "Avoidance": "Avoidance",
+  "Movement": "Movement",
   "Talents": "Talents"
 }

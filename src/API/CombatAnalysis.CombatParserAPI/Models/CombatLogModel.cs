@@ -7,6 +7,8 @@ public class CombatLogModel
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
 
+    public int GameVersion { get; set; }
+
     [Required]
     public string Name { get; set; }
 

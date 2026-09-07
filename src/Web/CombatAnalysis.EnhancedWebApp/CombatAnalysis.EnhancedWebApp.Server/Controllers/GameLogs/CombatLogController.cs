@@ -23,12 +23,12 @@ public class CombatLogController : ControllerBase
     }
 
     [HttpGet("getByLogType")]
-    public async Task<IActionResult> GetByLogType(int logType, string? appUserId)
+    public async Task<IActionResult> GetByLogType(int logType, int gameVersion, string? appUserId)
     {
         var content = string.Empty;
         try
         {
-            var responseMessage = await _httpClient.GetAsync($"CombatLog/getByLogType?logType={logType}&appUserId={appUserId}");
+            var responseMessage = await _httpClient.GetAsync($"CombatLog/getByLogType?logType={logType}&gameVersion={gameVersion}&appUserId={appUserId}");
             if (responseMessage.StatusCode == HttpStatusCode.NoContent)
             {
                 return NoContent();

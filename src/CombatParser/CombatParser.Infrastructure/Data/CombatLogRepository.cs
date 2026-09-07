@@ -10,7 +10,7 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<CombatLog>> GetByLogTypeAsync(int logType, string? appUserId, CancellationToken cancelationToken)
+    public async Task<IEnumerable<CombatLog>> GetByLogTypeAsync(int logType, int gameVersion, string? appUserId, CancellationToken cancelationToken)
     {
         if (logType == (int)LogType.Private && string.IsNullOrEmpty(appUserId))
         {
@@ -23,11 +23,11 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
         IQueryable<CombatLog> filter = combatLogs;
         if (logType == (int)LogType.Public)
         {
-            filter = combatLogs.Where(cl => cl.LogType == logType);
+            filter = combatLogs.Where(cl => cl.LogType == logType && cl.GameVersion == gameVersion);
         }
         else if (logType == (int)LogType.Private)
         {
-            filter = combatLogs.Where(cl => cl.LogType == logType && cl.AppUserId == appUserId);
+            filter = combatLogs.Where(cl => cl.LogType == logType && cl.GameVersion == gameVersion && cl.AppUserId == appUserId);
         }
 
         var result = await filter

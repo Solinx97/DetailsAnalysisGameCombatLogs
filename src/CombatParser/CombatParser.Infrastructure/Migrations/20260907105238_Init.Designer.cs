@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260906104409_Init")]
+    [Migration("20260907105238_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -17863,6 +17863,9 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<DateTimeOffset>("Date")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("GameVersion")
+                        .HasColumnType("int");
 
                     b.Property<int>("LogType")
                         .HasColumnType("int");

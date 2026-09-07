@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.UploadingLogsApp.Consts;
+﻿using AutoMapper;
+using CombatAnalysis.UploadingLogsApp.Consts;
+using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Extensions;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
@@ -25,12 +27,14 @@ internal class CombatParserAPIService : ICombatParserAPIService
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger<CombatParserAPIService> _logger;
     private readonly IMemoryCache _memoryCache;
+    private readonly IMapper _mapper;
 
-    public CombatParserAPIService(IHttpClientHelper httpClient, ILogger<CombatParserAPIService> logger, IMemoryCache memoryCache)
+    public CombatParserAPIService(IHttpClientHelper httpClient, ILogger<CombatParserAPIService> logger, IMemoryCache memoryCache, IMapper mapper)
     {
         _httpClient = httpClient;
         _logger = logger;
         _memoryCache = memoryCache;
+        _mapper = mapper;
 
         _httpClient.BaseAddress = API.CombatParserApi;
     }
@@ -40,16 +44,18 @@ internal class CombatParserAPIService : ICombatParserAPIService
         var cancellationToken = requestCancelationToken();
 
         using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
-
         var combatTasks = combats.Select(async combat =>
         {
             await semaphore.WaitAsync(cancellationToken);
 
             try
             {
-                combat.CombatLogId = combatLog.Id;
+                var createCombat = _mapper.Map<CreateCombatModel>(combat);
 
-                using var content = JsonContent.Create(combat);
+                createCombat.CombatLogId = combatLog.Id;
+                createCombat.GameVersion = (int)CurrentCombatParserVersion.Version;
+
+                using var content = JsonContent.Create(createCombat);
                 using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
                 response.EnsureSuccessStatusCode();
 
@@ -114,6 +120,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 Date = DateTimeOffset.UtcNow,
                 LogType = (int)logType,
                 AppUserId = user.Id,
+                GameVersion = (int)CurrentCombatParserVersion.Version,
             };
 
             var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken, true);

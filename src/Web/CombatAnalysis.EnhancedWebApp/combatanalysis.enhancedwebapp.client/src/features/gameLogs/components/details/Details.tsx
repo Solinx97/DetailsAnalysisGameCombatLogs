@@ -14,6 +14,7 @@ interface DetailsProps {
     details: CombatDetailsModel;
     combatPlayers: CombatPlayerModel[];
     getValueShortName(value: number): string;
+    gameVersion: number;
     t(key: string): string;
 }
 
@@ -22,7 +23,7 @@ type Option = {
     label: string;
 }
 
-const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, t }) => {
+const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, gameVersion, t }) => {
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
     const [playerStatsCombatPlayerId, setPlayerStatsCombatPlayerId] = useState(0);
 
@@ -101,11 +102,11 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             details={details}
                             getValueShortName={getValueShortName}
                         />
-                        {playerStatsCombatPlayerId === combatPlayer.id &&
+                        {(playerStatsCombatPlayerId === combatPlayer.id && gameVersion !== null) &&
                             <PlayerParams
                                 t={t}
                                 combatPlayerId={combatPlayer.id}
-                                gameVersion={0}
+                                gameVersion={gameVersion}
                                 setPlayerStatsCombatPlayerId={setPlayerStatsCombatPlayerId}
                             />
                         }

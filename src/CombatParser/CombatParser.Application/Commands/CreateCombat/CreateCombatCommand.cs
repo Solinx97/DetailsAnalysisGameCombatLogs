@@ -4,7 +4,6 @@ using MediatR;
 namespace CombatParser.Application.Commands.CreateCombat;
 
 public record CreateCombatCommand(
-    int GameVersion,
     string DungeonName,
     double BossHealthPercentage,
     long DamageDone,

@@ -4,6 +4,8 @@ public class CombatLogDto
 {
     public int Id { get; set; }
 
+    public int GameVersion { get; set; }
+
     public string Name { get; set; }
 
     public DateTimeOffset Date { get; set; }

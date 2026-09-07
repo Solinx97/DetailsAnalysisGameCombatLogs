@@ -4,13 +4,11 @@ export type CombatPlayerStatsModel = {
     agility: number;
     intelligence: number;
     stamina: number;
-    spirit: number;
     dodge: number;
     parry: number;
+    block: number;
     crit: number;
     haste: number;
-    hit: number;
-    expertise: number;
     armor: number;
     talents: string;
     combatId: number;

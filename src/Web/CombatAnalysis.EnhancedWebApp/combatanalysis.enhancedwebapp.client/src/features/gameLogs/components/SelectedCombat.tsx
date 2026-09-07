@@ -22,6 +22,7 @@ const SelectedCombat: React.FC = () => {
 
     const navigate = useNavigate();
 
+    const [gameVersion, setgGameVersion] = useState<number>(-1);
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
         detailsType: 0,
@@ -67,6 +68,9 @@ const SelectedCombat: React.FC = () => {
             isWin,
             duration,
         });
+
+        const version: number = parseInt(queryParams.get("gameVersion") || '-1');
+        setgGameVersion(version);
     }, []);
 
     useEffect(() => {
@@ -145,7 +149,7 @@ const SelectedCombat: React.FC = () => {
     return (
         <div className="selected-combat__container">
             <div className="selected-combat__navigate">
-                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}`)}>
+                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}&gameVersion=${gameVersion}`)}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />
@@ -220,6 +224,7 @@ const SelectedCombat: React.FC = () => {
                 details={details}
                 combatPlayers={selectedPlayers}
                 getValueShortName={getValueShortName}
+                gameVersion={gameVersion}
                 t={t}
             />
         </div>
