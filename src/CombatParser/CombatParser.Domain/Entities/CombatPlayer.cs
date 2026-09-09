@@ -170,7 +170,7 @@ public class CombatPlayer : CombatDataBase
     {
         var createdDamageDone = CombatPlayerData.DamageDone.Create(damageDone.GameSpellId, damageDone.Spell, damageDone.Value, damageDone.Time, damageDone.CreatorGameId,
             damageDone.TargetGameId, damageDone.TargetHash, damageDone.TargetCurrentHealth, damageDone.ModificationType, damageDone.DamageType, damageDone.Resisted, damageDone.Absorbed,
-            damageDone.Blocked, damageDone.RealDamage, damageDone.Mitigated, damageDone.CombatPlayerId);
+            damageDone.Blocked, damageDone.RealDamage, damageDone.Overkill, damageDone.Mitigated, damageDone.CombatPlayerId);
         _damageDones.Add(createdDamageDone);
     }
 

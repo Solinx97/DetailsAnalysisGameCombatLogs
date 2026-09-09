@@ -32,6 +32,8 @@ public class DamageDoneModel
 
     public int RealDamage { get; set; }
 
+    public int Overkill { get; set; }
+
     public int Mitigated { get; set; }
 
     public int CombatPlayerId { get; set; }

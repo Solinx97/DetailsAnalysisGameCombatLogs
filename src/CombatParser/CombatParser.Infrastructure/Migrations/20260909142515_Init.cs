@@ -374,6 +374,7 @@ namespace CombatParser.Infrastructure.Migrations
                     Resisted = table.Column<int>(type: "int", nullable: false),
                     Absorbed = table.Column<int>(type: "int", nullable: false),
                     Blocked = table.Column<int>(type: "int", nullable: false),
+                    Overkill = table.Column<int>(type: "int", nullable: false),
                     RealDamage = table.Column<int>(type: "int", nullable: false),
                     Mitigated = table.Column<int>(type: "int", nullable: false),
                     CombatPlayerId = table.Column<int>(type: "int", nullable: false)

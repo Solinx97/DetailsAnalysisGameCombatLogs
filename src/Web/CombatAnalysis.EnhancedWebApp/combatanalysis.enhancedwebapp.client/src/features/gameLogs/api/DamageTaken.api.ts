@@ -1,11 +1,11 @@
 ﻿import type { ChartModel } from '../types/chart/ChartModel';
 import type { DamageTakenGeneralModel } from '../types/DamageTakenGeneralModel';
-import type { DamageTakenModel } from '../types/DamageTakenModel';
+import type { DamageDoneModel } from '../types/DamageDoneModel';
 import { GameLogsApi } from './GameLogs.api';
 
 export const DamageTakenApi = GameLogsApi.injectEndpoints({
     endpoints: builder => ({
-        getDamageTakenByCombatPlayerId: builder.query<DamageTakenModel[], { combatPlayerId: number, page: number, pageSize: number }>({
+        getDamageTakenByCombatPlayerId: builder.query<DamageDoneModel[], { combatPlayerId: number, page: number, pageSize: number }>({
             query: ({ combatPlayerId, page, pageSize }) => `/DamageTaken/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
@@ -18,7 +18,7 @@ export const DamageTakenApi = GameLogsApi.injectEndpoints({
         countDamageTaken: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
             query: ({ combatPlayerId, target, creator, spell, from, to }) => `/DamageTaken/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getAllDamageTaken: builder.query<DamageTakenModel[], { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+        getAllDamageTaken: builder.query<DamageDoneModel[], { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
             query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/DamageTaken/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result

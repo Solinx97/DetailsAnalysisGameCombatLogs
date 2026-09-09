@@ -13,7 +13,7 @@ public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRe
 
     private DamageDone(int gameSpellId, string spell, int value, TimeSpan time, string creatorGameId,
         string targetGameId, string targetHash, long targetCurrentHealth, int modificationType, int damageType, int resisted, int absorbed,
-        int blocked, int realDamage, int mitigated, int combatPlayerId)
+        int blocked, int realDamage, int overkill, int mitigated, int combatPlayerId)
     {
         GameSpellId = gameSpellId;
         Spell = spell;
@@ -29,6 +29,7 @@ public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRe
         Absorbed = absorbed;
         Blocked = blocked;
         RealDamage = realDamage;
+        Overkill = overkill;
         Mitigated = mitigated;
         CombatPlayerId = combatPlayerId;
     }
@@ -65,13 +66,15 @@ public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRe
 
     public int RealDamage { get; private set; }
 
+    public int Overkill { get; private set; }
+
     public int Mitigated { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
 
     public static DamageDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorGameId,
         string targetGameId, string targetHash, long targetCurrentHealth, int modificationType, int damageType, int resisted, 
-        int absorbed, int blocked, int realDamage, int mitigated, int combatPlayerId)
+        int absorbed, int blocked, int realDamage, int overkill,  int mitigated, int combatPlayerId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
@@ -83,6 +86,6 @@ public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRe
 
         return new DamageDone(gameSpellId, spell, value, time, creatorGameId,
             targetGameId, targetHash, targetCurrentHealth, modificationType, damageType, resisted, absorbed,
-            blocked, realDamage, mitigated, combatPlayerId);
+            blocked, realDamage, overkill, mitigated, combatPlayerId);
     }
 }

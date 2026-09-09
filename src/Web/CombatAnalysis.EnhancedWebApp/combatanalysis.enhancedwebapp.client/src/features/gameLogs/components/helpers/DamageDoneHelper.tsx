@@ -1,4 +1,5 @@
-﻿import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
+﻿import { DamageModificationType } from '@/shared/helpers/EnumHelper';
+import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
@@ -10,16 +11,6 @@ import {
 import type { DamageDoneModel } from '../../types/DamageDoneModel';
 import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
-
-const damageType = {
-    Normal: 0,
-    Crit: 1,
-    Dodge: 2,
-    Parry: 3,
-    Miss: 4,
-    Resist: 5,
-    Immune: 6,
-}
 
 interface DamageDoneHelperProps {
     combatPlayerId: number;
@@ -59,37 +50,37 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
 
     const getIcon = (type: number): JSX.Element => {
         switch (type) {
-            case damageType.Crit:
+            case DamageModificationType.Crit:
                 return <FontAwesomeIcon
                     icon={faFire}
                     title={t("CritDamage")}
                     className="crit"
                 />;
-            case damageType.Dodge:
+            case DamageModificationType.Dodge:
                 return <FontAwesomeIcon
                     icon={faCopy}
                     title={t("Dodge")}
                     className="overvalue"
                 />;
-            case damageType.Parry:
+            case DamageModificationType.Parry:
                 return <FontAwesomeIcon
                     icon={faXmark}
                     title={t("Parry")}
                     className="overvalue"
                 />;
-            case damageType.Miss:
+            case DamageModificationType.Miss:
                 return <FontAwesomeIcon
                     icon={faHands}
                     title={t("Miss")}
                     className="overvalue"
                 />;
-            case damageType.Resist:
+            case DamageModificationType.Resist:
                 return <FontAwesomeIcon
                     icon={faFlask}
                     title={t("Resist")}
                     className="overvalue"
                 />;
-            case damageType.Immune:
+            case DamageModificationType.Immune:
                 return <FontAwesomeIcon
                     icon={faPooStorm}
                     title={t("Immune")}
@@ -100,11 +91,11 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         }
     }
 
-    const getClassNameByDamageType = (item: DamageDoneModel): string => {
-        if (item.damageType === 1) {
+    const getClassNameByDamageModificationType = (item: DamageDoneModel): string => {
+        if (item.modificationType === DamageModificationType['Crit']) {
             return "crit";
         }
-        else if (item.damageType > 1) {
+        else if (item.modificationType > 1) {
             return "overvalue";
         }
         else {
@@ -156,11 +147,14 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
                         <ul>
                             <li>
                                 <div>{item.spell}</div>
-                                <div className="extra-details">{getIcon(item.damageType)}</div>
+                                <div className="extra-details">{getIcon(item.modificationType)}</div>
                             </li>
                             <li>{getTimeWithoutMs(item.time)}</li>
                             <li className="extra-details">
-                                <div className={getClassNameByDamageType(item)}>{item.value}</div>
+                                {item.overkill > -1
+                                    ? <div className={getClassNameByDamageModificationType(item)}>{item.value} ({item.overkill})</div>
+                                    : <div className={getClassNameByDamageModificationType(item)}>{item.value}</div>
+                                }
                             </li>
                             <li>{getUserNameWithoutRealm(item.targetGameId)}</li>
                         </ul>

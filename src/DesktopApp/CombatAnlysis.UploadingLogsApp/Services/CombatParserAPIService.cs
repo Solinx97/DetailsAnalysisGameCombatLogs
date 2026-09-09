@@ -39,9 +39,9 @@ internal class CombatParserAPIService : ICombatParserAPIService
         _httpClient.BaseAddress = API.CombatParserApi;
     }
 
-    public async Task SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancelationToken)
+    public async Task SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
     {
-        var cancellationToken = requestCancelationToken();
+        var cancellationToken = requestCancellationToken();
 
         using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
         var combatTasks = combats.Select(async combat =>
@@ -215,7 +215,8 @@ internal class CombatParserAPIService : ICombatParserAPIService
             var leftHealth = item.Boss.Health - 0;
             var precentage = (double)leftHealth / (double)item.Boss.Health;
 
-            item.BossHealthPercentage = precentage < 0 ? 0 : Math.Round(precentage * 100, 2);
+            //item.BossHealthPercentage = precentage < 0 ? 0 : Math.Round(precentage * 100, 2);
+            item.BossHealthPercentage = 100;
         }
     }
 }

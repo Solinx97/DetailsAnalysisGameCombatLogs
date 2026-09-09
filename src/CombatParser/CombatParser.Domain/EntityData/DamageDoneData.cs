@@ -15,6 +15,7 @@ public record DamageDoneData(
     int Absorbed,
     int Blocked,
     int RealDamage,
+    int Overkill,
     int Mitigated,
     int CombatPlayerId
     );

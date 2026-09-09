@@ -17961,6 +17961,9 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("ModificationType")
                         .HasColumnType("int");
 
+                    b.Property<int>("Overkill")
+                        .HasColumnType("int");
+
                     b.Property<int>("RealDamage")
                         .HasColumnType("int");
 

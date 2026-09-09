@@ -19,7 +19,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         units.TryAdd(combatDataLine[6], new CombatUnit
         {
             GameId = combatDataLine[6],
-            Name = combatDataLine[7],
+            Name = combatDataLine[7].Trim('"'),
             CreatorGameId = isSummoned ? combatDataLine[2] : null,
             UnitHash = combatDataLine[8],
         });
@@ -141,7 +141,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
     public (string, HealDone?) GetAbsorb(string[] combatDataLine)
     {
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[10])) 
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[10]))
             && !_playersId.Any(playerId => playerId.Equals(combatDataLine[13])))
         {
             return (string.Empty, null);
@@ -150,9 +150,9 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         var absorbeDone = new HealDone
         {
             GameSpellId = int.Parse(combatDataLine[^6]),
-            Spell = combatDataLine[^5].Trim('"'),
+            Spell = combatDataLine[^4].Trim('"'),
             Time = GetTimeFromStart(combatDataLine[0]),
-            Creator = combatDataLine[^9].Trim('"'),
+            Creator = combatDataLine[^8].Trim('"'),
             Target = combatDataLine[7].Trim('"'),
             Overheal = 0,
             IsCrit = false,
@@ -213,8 +213,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
     {
         var spell = string.Empty;
         var isAutoAttack = false;
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
             || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
         {
             spell += CombatLogKeyWords.Melee;
@@ -225,110 +224,33 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
             spell += combatDataLine[11].Trim('"');
         }
 
-        if (!int.TryParse(isAutoAttack ? combatDataLine[^10] : combatDataLine[^11], out var value))
+        int.TryParse(isAutoAttack ? combatDataLine[^10] : combatDataLine[^11], out var value);
+
+        var isAbsorbed = string.Equals(combatDataLine[^4], CombatLogKeyWords.Absorb, StringComparison.OrdinalIgnoreCase);
+        var hasTypeOfTarget = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsSingleTarget + '\r', StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[^1], CombatLogKeyWords.IsAOETarget + '\r', StringComparison.OrdinalIgnoreCase);
+
+        if (!isAbsorbed && hasTypeOfTarget)
         {
-            return (string.Empty, null);
+            isAbsorbed = string.Equals(combatDataLine[^5], CombatLogKeyWords.Absorb, StringComparison.OrdinalIgnoreCase);
         }
 
-        var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
-
-        int realDamage = 0, mitigated = 0, absorb = 0, blocked = 0, resist = 0;
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            int.TryParse(combatDataLine[^1], out realDamage);
-            int.TryParse(combatDataLine[^2], out absorb);
-        }
-        else if (!string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            int.TryParse(combatDataLine[^9], out realDamage);
-            int.TryParse(combatDataLine[^4], out absorb);
-            int.TryParse(combatDataLine[^5], out blocked);
-            int.TryParse(combatDataLine[^6], out resist);
-
-            mitigated = realDamage - value;
-        }
-
-        var index = -1;
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            index = 13;
-        }
-        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            index = 10;
-        }
-
-        var isCrit = string.Equals(isAutoAttack ? combatDataLine[^3] : combatDataLine[^4], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
-
-        var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
-        var isParry = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
-        var isDodge = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
-        var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
-        var isMiss = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
-
-        var damageModificationType = isCrushing ? DamageModificationType.Crushing : DamageModificationType.Normal;
-        damageModificationType = isCrit ? DamageModificationType.Crit : damageModificationType;
-        damageModificationType = isParry ? DamageModificationType.Parry : damageModificationType;
-        damageModificationType = isDodge ? DamageModificationType.Dodge : damageModificationType;
-        damageModificationType = isImmune ? DamageModificationType.Immune : damageModificationType;
-        damageModificationType = isMiss ? DamageModificationType.Miss : damageModificationType;
-
-        var damageType = DamageType.ST;
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellPeriodicDamage, StringComparison.OrdinalIgnoreCase))
-        {
-            damageType = DamageType.Periodic;
-        }
-        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsSingleTarget, StringComparison.OrdinalIgnoreCase))
-        {
-            damageType = DamageType.ST;
-        }
-        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsAOETarget, StringComparison.OrdinalIgnoreCase))
-        {
-            damageType = DamageType.AOE;
-        }
-
+        var damageType = GetDamageType(combatDataLine);
+        var damageModificationType = GetDamageModification(combatDataLine, isAbsorbed);
         var damageDone = new DamageDone
         {
             GameSpellId = isAutoAttack ? 0 : int.Parse(combatDataLine[10]),
             Spell = spell,
-            Value = value + absorb,
             Time = GetTimeFromStart(combatDataLine[0]),
             CreatorGameId = combatDataLine[2],
             TargetGameId = combatDataLine[6],
             TargetHash = combatDataLine[8],
             DamageType = (int)damageType,
             ModificationType = (int)damageModificationType,
-            Resisted = resist,
-            Absorbed = absorb,
-            Blocked = blocked,
-            RealDamage = realDamage,
-            Mitigated = mitigated < 0 ? 0 : mitigated,
         };
 
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            damageDone.TargetCurrentHealth = -1;
-
-            return (isDamageDone ? damageDone.CreatorGameId : damageDone.TargetGameId, damageDone);
-        }
-
-        var healthIndex = 12;
-        var isSwingDamage = string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
-                            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase);
-        if (!isSwingDamage)
-        {
-            healthIndex = 15;
-        }
-
-        damageDone.TargetCurrentHealth = long.Parse(combatDataLine[healthIndex]);
+        ApplyDamageModification(combatDataLine, value, isAbsorbed, hasTypeOfTarget, damageDone);
+        AddDamageHealth(combatDataLine, damageDone);
 
         return (isDamageDone ? damageDone.CreatorGameId : damageDone.TargetGameId, damageDone);
     }
@@ -454,7 +376,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
             return AuraType.PetBuff;
         }
-        else if (combatDataLine[2].StartsWith(CombatLogKeyWords.Player) 
+        else if (combatDataLine[2].StartsWith(CombatLogKeyWords.Player)
             && combatDataLine[6].StartsWith(CombatLogKeyWords.Creature))
         {
             if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
@@ -505,5 +427,132 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         }
 
         return TimeSpan.Zero;
+    }
+
+    private static DamageModificationType GetDamageModification(string[] combatDataLine, bool isAbsorbed)
+    {
+        var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
+
+        var index = -1;
+        if (isAbsorbed)
+        {
+            index = combatDataLine.Length - 4;
+        }
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            index = combatDataLine.Length - 3;
+        }
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            index = combatDataLine.Length - 2;
+        }
+
+        var isCrit = string.Equals(combatDataLine[^4], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
+
+        var isParry = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+        var isDodge = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+        var isMiss = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
+        var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+        var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+
+        var damageModificationType = isCrushing ? DamageModificationType.Crushing : DamageModificationType.Normal;
+        damageModificationType = isCrit ? DamageModificationType.Crit : damageModificationType;
+        damageModificationType = isParry ? DamageModificationType.Parry : damageModificationType;
+        damageModificationType = isDodge ? DamageModificationType.Dodge : damageModificationType;
+        damageModificationType = isMiss ? DamageModificationType.Miss : damageModificationType;
+        damageModificationType = isResist ? DamageModificationType.Resist : damageModificationType;
+        damageModificationType = isImmune ? DamageModificationType.Immune : damageModificationType;
+        damageModificationType = isAbsorbed ? DamageModificationType.Absorb : damageModificationType;
+
+        return damageModificationType;
+    }
+
+    private static DamageType GetDamageType(string[] combatDataLine)
+    {
+        var damageType = DamageType.ST;
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellPeriodicDamage, StringComparison.OrdinalIgnoreCase))
+        {
+            damageType = DamageType.Periodic;
+        }
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsSingleTarget, StringComparison.OrdinalIgnoreCase))
+        {
+            damageType = DamageType.ST;
+        }
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsAOETarget, StringComparison.OrdinalIgnoreCase))
+        {
+            damageType = DamageType.AOE;
+        }
+
+        return damageType;
+    }
+
+    private static void AddDamageHealth(string[] combatDataLine, DamageDone damageDone)
+    {
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            damageDone.TargetCurrentHealth = -1;
+
+            return;
+        }
+
+        var healthIndex = 12;
+        var isSwingDamage = string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase);
+        if (!isSwingDamage)
+        {
+            healthIndex = 15;
+        }
+
+        damageDone.TargetCurrentHealth = long.Parse(combatDataLine[healthIndex]);
+    }
+
+    private static void ApplyDamageModification(string[] combatDataLine, int value, bool isAbsorbed, bool hasTypeOfTarget, DamageDone damageDone)
+    {
+        int realDamage = 0, overkill = -1, mitigated = 0, absorb = 0, blocked = 0, resist = 0;
+        if (isAbsorbed)
+        {
+            var absorbIndex = hasTypeOfTarget ? combatDataLine.Length - 3 : combatDataLine.Length - 2;
+            var realDamageIndex = hasTypeOfTarget ? combatDataLine.Length - 2 : combatDataLine.Length - 1;
+
+            int.TryParse(combatDataLine[absorbIndex], out absorb);
+            int.TryParse(combatDataLine[realDamageIndex], out realDamage);
+
+            mitigated = realDamage - value - absorb;
+        }
+        else if (!string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            int.TryParse(combatDataLine[^5], out absorb);
+            int.TryParse(combatDataLine[^6], out blocked);
+            int.TryParse(combatDataLine[^7], out resist);
+
+            if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase))
+            {
+                int.TryParse(combatDataLine[^5], out absorb);
+                int.TryParse(combatDataLine[^8], out overkill);
+                int.TryParse(combatDataLine[^9], out realDamage);
+            }
+            else
+            {
+                int.TryParse(combatDataLine[^9], out overkill);
+                int.TryParse(combatDataLine[^8], out realDamage);
+            }
+
+            mitigated = realDamage - value - absorb;
+        }
+
+        damageDone.Value = overkill < 0 ? value : value - overkill;
+        damageDone.Resisted = resist;
+        damageDone.Absorbed = absorb;
+        damageDone.Blocked = blocked;
+        damageDone.RealDamage = realDamage;
+        damageDone.Overkill = overkill;
+        damageDone.Mitigated = mitigated < 0 ? 0 : mitigated;
     }
 }

@@ -13,6 +13,7 @@ export type DamageDoneModel = {
     absorbed: number;
     blocked: number;
     realDamage: number;
+    overkill: number;
     mitigated: number;
     combatPlayerId: number;
 }

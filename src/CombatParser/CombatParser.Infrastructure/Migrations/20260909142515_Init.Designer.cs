@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260909084836_Init")]
+    [Migration("20260909142515_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -17962,6 +17962,9 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ModificationType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Overkill")
                         .HasColumnType("int");
 
                     b.Property<int>("RealDamage")

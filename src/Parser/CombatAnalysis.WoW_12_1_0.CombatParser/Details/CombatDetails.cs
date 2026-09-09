@@ -53,7 +53,7 @@ public class CombatDetails(ILogger logger)
     private readonly string[] _damageVariations =
     [
         CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SwingDamageLanded,
+        CombatLogKeyWords.SwingDamage + ',',
         CombatLogKeyWords.SpellPeriodicDamage,
         CombatLogKeyWords.SwingMissed,
         CombatLogKeyWords.DamageShieldMissed,
@@ -150,7 +150,6 @@ public class CombatDetails(ILogger logger)
     private void Parse(string[] playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         var hasSummon = _summon.Any(combatDataLine.Contains);
-        var hasHealth = _health.Any(combatDataLine.Contains);
         var hasCasts = _casts.Any(combatDataLine.Contains);
         var hasPositions = _positions.Any(combatDataLine.Contains);
         var hasDieds = _dieds.Any(combatDataLine.Contains);
@@ -198,7 +197,7 @@ public class CombatDetails(ILogger logger)
                 },
                 () =>
                 {
-                    CalculateGeneral(combatDataLine, combatDetailsManager, splitCombatData);
+                    CalculateGeneral(combatDataLine, combatDetailsManager, splitCombatData, playersId);
                 }
             );
     }
@@ -231,7 +230,7 @@ public class CombatDetails(ILogger logger)
         }
     }
 
-    private void CalculateGeneral(string combatDataLine, CombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    private void CalculateGeneral(string combatDataLine, CombatDetailsManager combatDetailsManager, string[] splitCombatData, string[] playersId)
     {
         var hasDieds = _dieds.Any(combatDataLine.Contains);
         var hasAuras = _auras.Any(combatDataLine.Contains);
@@ -272,18 +271,9 @@ public class CombatDetails(ILogger logger)
         else if (hasDamage)
         {
             var (gameId, damageDone) = combatDetailsManager.GetDamageDone(splitCombatData);
-            if (!string.IsNullOrEmpty(gameId) && damageDone != null && gameId.Contains("Player"))
+            if (!string.IsNullOrEmpty(gameId) && damageDone != null)
             {
-                if (DamageDones.TryGetValue(gameId, out var collection))
-                {
-                    collection.TryAdd(Guid.NewGuid().ToString(), damageDone);
-                }
-                else
-                {
-                    var newDictionary = new ConcurrentDictionary<string, DamageDone>();
-                    newDictionary.TryAdd(Guid.NewGuid().ToString(), damageDone);
-                    DamageDones.TryAdd(gameId, newDictionary);
-                }
+                AddDamageDone(damageDone, playersId);
             }
 
             combatDetailsManager.GetCombatCreature(splitCombatData, Units);
@@ -343,6 +333,34 @@ public class CombatDetails(ILogger logger)
         {
             content[startIndex] = craft;
             content.RemoveRange(startIndex + 1, finishIndex - startIndex);
+        }
+    }
+
+    private void AddDamageDone(DamageDone damageDone, string[] playersId)
+    {
+        var selectedId = damageDone.CreatorGameId;
+        if (!selectedId.Contains("Player"))
+        {
+            var playerCreature = Units
+                .FirstOrDefault(x => x.Value.CreatorGameId != null && x.Value.GameId == damageDone.CreatorGameId && playersId.Contains(x.Value.CreatorGameId)).Value;
+            if (playerCreature == null)
+            {
+                return;
+            }
+
+            damageDone.Spell = $"{playerCreature.Name} - {damageDone.Spell}";
+            selectedId = playerCreature.CreatorGameId!;
+        }
+
+        if (DamageDones.TryGetValue(selectedId, out var collection))
+        {
+            collection.TryAdd(Guid.NewGuid().ToString(), damageDone);
+        }
+        else
+        {
+            var newDictionary = new ConcurrentDictionary<string, DamageDone>();
+            newDictionary.TryAdd(Guid.NewGuid().ToString(), damageDone);
+            DamageDones.TryAdd(selectedId, newDictionary);
         }
     }
 }
