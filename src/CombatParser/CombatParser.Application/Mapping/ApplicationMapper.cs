@@ -40,8 +40,6 @@ public class ApplicationMapper : Profile
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneral>().ReverseMap();
         CreateMap<HealDoneDto, HealDone>().ReverseMap();
         CreateMap<HealDoneGeneralDto, HealDoneGeneral>().ReverseMap();
-        CreateMap<DamageTakenDto, DamageTaken>().ReverseMap();
-        CreateMap<DamageTakenGeneralDto, DamageTakenGeneral>().ReverseMap();
         CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
         CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();

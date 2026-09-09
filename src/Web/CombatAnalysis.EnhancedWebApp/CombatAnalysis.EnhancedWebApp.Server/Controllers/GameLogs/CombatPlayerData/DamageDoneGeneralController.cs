@@ -45,4 +45,30 @@ public class DamageDoneGeneralController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpGet("getDamageTakenByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetDamageTakenByCombatPlayerId(int combatPlayerId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getDamageTakenByCombatPlayerId/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
+
+            var damageTakenGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
+
+            return Ok(damageTakenGenerals);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
 }

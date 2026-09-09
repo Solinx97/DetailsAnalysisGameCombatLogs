@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +58,50 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
         if (!string.IsNullOrEmpty(target))
         {
             query = query.Where(x => x.Target.Equals(target));
+        }
+
+        if (!string.IsNullOrEmpty(target))
+        {
+            query = query.Where(x => x.Target.Equals(target));
+        }
+
+        if (!string.IsNullOrEmpty(creator))
+        {
+            query = query.Where(x => x.Creator.Equals(creator));
+        }
+
+        if (!string.IsNullOrEmpty(spell))
+        {
+            query = query.Where(x => x.Spell.Equals(spell));
+        }
+
+        if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
+        {
+            var fromTime = TimeSpan.Parse(from);
+            var toTime = TimeSpan.Parse(to);
+            query = query.Where(x => x.Time >= fromTime && x.Time <= toTime);
+        }
+
+        var values = await query
+                     .OrderBy(x => x.Time)
+                     .Skip((page - 1) * pageSize)
+                     .Take(pageSize)
+                     .ToListAsync(cancellationToken);
+
+        return values;
+    }
+
+    public async Task<IEnumerable<DamageDone>> GetDamageAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, string[] targetsHash, CancellationToken cancellationToken)
+    {
+        var query = _context.Set<DamageDone>().AsQueryable();
+        if (targetsHash.Length > 0)
+        {
+            query = query.Where(x => targetsHash.Contains(x.TargetHash));
+        }
+
+        if (combatPlayerId > 0)
+        {
+            query = query.Where(x => x.CombatPlayerId == combatPlayerId);
         }
 
         if (!string.IsNullOrEmpty(target))

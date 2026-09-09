@@ -75,17 +75,6 @@ internal static class ModelBuilderExtension
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<UnitHealth>(uh =>
-        {
-            uh.Property(uh => uh.CreatorGameId)
-                .HasMaxLength(UnitHealth.GAMEID_MAX_LENGTH);
-
-            uh.HasOne(uh => uh.Combat)
-                .WithMany(c => c.UnitHeaths)
-                .HasForeignKey(uh => uh.CombatId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<UnitPosition>(uh =>
         {
             uh.Property(uh => uh.CreatorGameId)
@@ -299,34 +288,6 @@ internal static class ModelBuilderExtension
 
             hdg.HasOne(hdg => hdg.CombatPlayer)
                 .WithMany(cp => cp.HealDoneGenerals)
-                .HasForeignKey(ddg => ddg.CombatPlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<DamageTaken>(dt =>
-        {
-            dt.Property(p => p.Spell)
-                .HasMaxLength(DamageTaken.SPELL_MAX_LENGTH);
-
-            dt.Property(p => p.Creator)
-                .HasMaxLength(DamageTaken.CREATOR_MAX_LENGTH);
-
-            dt.Property(p => p.Target)
-                .HasMaxLength(DamageTaken.TARGET_MAX_LENGTH);
-
-            dt.HasOne(dt => dt.CombatPlayer)
-                .WithMany(cp => cp.DamageTakens)
-                .HasForeignKey(ddg => ddg.CombatPlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<DamageTakenGeneral>(dtg =>
-        {
-            dtg.Property(p => p.Spell)
-                .HasMaxLength(DamageTakenGeneral.SPELL_MAX_LENGTH);
-
-            dtg.HasOne(dtg => dtg.CombatPlayer)
-                .WithMany(cp => cp.DamageTakenGenerals)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });

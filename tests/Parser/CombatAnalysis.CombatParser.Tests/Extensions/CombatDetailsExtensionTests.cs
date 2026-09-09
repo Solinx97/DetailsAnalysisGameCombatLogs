@@ -40,7 +40,6 @@ public class CombatDetailsExtensionTests
         Assert.NotEmpty(service.CombatDetails);
         Assert.NotEmpty(service.CombatDetails.First().DamageDoneGenerals);
         Assert.NotEmpty(service.CombatDetails.First().HealDoneGenerals);
-        Assert.NotEmpty(service.CombatDetails.First().DamageTakenGenerals);
         Assert.NotEmpty(service.CombatDetails.First().ResourcesRecoveryGenerals);
     }
 
@@ -76,7 +75,6 @@ public class CombatDetailsExtensionTests
         Assert.NotEmpty(service.CombatDetails);
         Assert.Empty(service.CombatDetails.First().DamageDoneGenerals);
         Assert.Empty(service.CombatDetails.First().HealDoneGenerals);
-        Assert.Empty(service.CombatDetails.First().DamageTakenGenerals);
         Assert.Empty(service.CombatDetails.First().ResourcesRecoveryGenerals);
     }
 }

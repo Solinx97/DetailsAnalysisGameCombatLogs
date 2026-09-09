@@ -5,8 +5,9 @@ import useCombatLogs from '@/shared/hooks/useCombatLogs';
 import { useContext, useEffect, useState } from 'react';
 import type { CombatUnitModel } from '../../types/CombatUnitModel';
 import type { UnitPositionModel } from '../../types/UnitPositionModel';
-import CombatReplyItem from './CombatReplyItem';
+import CombatReplyUnit from './CombatReplyUnit';
 import type { UnitHealthModel } from '../../types/UnitHealthModel';
+import useTime from '@/shared/hooks/useTime';
 
 interface CombatReplyUnitsCategoryProps {
     name: string;
@@ -30,6 +31,7 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
     const [excludedPositions, setExcludedPositions] = useState<Map<string, UnitPositionModel[]>>(new Map());
 
     const { removeServerName } = useCombatLogs();
+    const { timeToMs } = useTime();
 
     useEffect(() => {
         excluded.forEach((_, value) => {
@@ -73,8 +75,19 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
         setSelectedTargetGameId("");
     }
 
-    const checkIfPositionsAlreadyExist = (positions: UnitPositionModel[] | undefined) => {
-        return positions && positions[0].timeMs <= currentTime && positions.at(-1)!.timeMs >= currentTime;
+    const isAlreadySpawn = (unit: CombatUnitModel) => {
+        var usedHealth = unitsHealth.get(unit.gameId)?.filter(x => timeToMs(x.time) <= currentTime);
+        return usedHealth !== undefined;
+    }
+
+    const isAlive = (unit: CombatUnitModel) => {
+        var usedHealth = unitsHealth.get(unit.gameId)?.filter(x => timeToMs(x.time) <= currentTime).at(-1);
+        if (usedHealth) {
+            return usedHealth.currentHealth > 0;
+        }
+        else {
+            false;
+        }
     }
 
     if (hide) {
@@ -106,16 +119,16 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
             </ul>
             <ul className="content">
                 {units.map((item) => (
-                    checkIfPositionsAlreadyExist(unitPositions.get(item.gameId)) &&
+                    (isAlreadySpawn(item) && isAlive(item)) &&
                     <li className="player" key={item.gameId}>
                         {runExclude &&
-                            <div className="btn-shadow" onClick={() => excludeHandle(item.gameId, item.username)}>
+                            <div className="btn-shadow" onClick={() => excludeHandle(item.gameId, item.name)}>
                                 <FontAwesomeIcon
                                     icon={faMinus}
                                 />
                             </div>
                         }
-                        <CombatReplyItem
+                        <CombatReplyUnit
                             unitsHealth={unitsHealth.get(item.gameId)}
                             unit={item}
                             color={colors.get(item.gameId) ?? "#FFFFFF"}

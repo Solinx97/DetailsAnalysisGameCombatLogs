@@ -10,8 +10,6 @@ public class CombatPlayerModel
 
     public double AverageItemLevel { get; set; }
 
-    public int DamageDoneToBoss { get; set; }
-
     public int DamageDone { get; set; }
 
     public int HealDone { get; set; }
@@ -57,10 +55,6 @@ public class CombatPlayerModel
     public IReadOnlyList<HealDoneModel> HealDones { get; set; } = [];
 
     public IReadOnlyList<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
-
-    public IReadOnlyList<DamageTakenModel> DamageTakens { get; set; } = [];
-
-    public IReadOnlyList<DamageTakenGeneralModel> DamageTakenGenerals { get; set; } = [];
 
     public IReadOnlyList<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
 

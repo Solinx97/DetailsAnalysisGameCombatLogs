@@ -13,7 +13,7 @@ internal class GetUnitsHealthHandler(IUnitRepository<UnitHealth> repository, IMa
 
     public async Task<IDictionary<string, IEnumerable<UnitHealthDto>>> Handle(GetUnitsHealthQuery request, CancellationToken cancellationToken)
     {
-        var unitsHealth = await _repository.GetByCombatIdAsync(request.CombatId, cancellationToken);
+        var unitsHealth = await _repository.GetHealthByCombatIdAsync(request.CombatId, cancellationToken);
         var map = _mapper.Map<IDictionary<string, IEnumerable<UnitHealthDto>>>(unitsHealth);
 
         return map;

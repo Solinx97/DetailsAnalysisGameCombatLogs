@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,16 @@ internal class CombatPlayerInfoRepository<TModel>(CombatParserContextOne context
         var data = await _context.Set<TModel>()
             .AsNoTracking()
             .Where(x => x.CombatPlayerId == combatPlayerId)
+            .ToListAsync(cancellationToken);
+
+        return data;
+    }
+
+    public async Task<IEnumerable<DamageDoneGeneral>> GetDamageByCombatPlayerIdAsync(int combatPlayerId, bool isPlayerTarget, CancellationToken cancellationToken)
+    {
+        var data = await _context.Set<DamageDoneGeneral>()
+            .AsNoTracking()
+            .Where(x => x.CombatPlayerId == combatPlayerId && x.IsPlayerTarget == isPlayerTarget)
             .ToListAsync(cancellationToken);
 
         return data;

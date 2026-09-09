@@ -6,12 +6,11 @@ public class Boss
 
     private Boss() { }
 
-    private Boss(int id, int gameId, string name, long health, int difficult, int size, int bossMapId)
+    private Boss(int id, int gameId, string name, int difficult, int size, int bossMapId)
     {
         Id = id;
         GameId = gameId;
         Name = name;
-        Health = health;
         Difficult = difficult;
         Size = size;
         BossMapId = bossMapId;
@@ -23,8 +22,6 @@ public class Boss
 
     public string Name { get; private set; } = string.Empty;
 
-    public long Health { get; private set; }
-
     public int Difficult { get; private set; }
 
     public int Size { get; private set; }
@@ -35,15 +32,14 @@ public class Boss
 
     public ICollection<BestSpecializationScore> BestSpecializationScores { get; private set; } = [];
 
-    public static Boss Create(int id, int gameId, string name, long health, int difficult, int size, int bossMapId)
+    public static Boss Create(int id, int gameId, string name, int difficult, int size, int bossMapId)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(gameId, nameof(gameId));
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-        ArgumentOutOfRangeException.ThrowIfNegative(health, nameof(health));
         ArgumentOutOfRangeException.ThrowIfNegative(difficult, nameof(difficult));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bossMapId, nameof(bossMapId));
 
-        return new Boss(id, gameId, name, health, difficult, size, bossMapId);
+        return new Boss(id, gameId, name, difficult, size, bossMapId);
     }
 }

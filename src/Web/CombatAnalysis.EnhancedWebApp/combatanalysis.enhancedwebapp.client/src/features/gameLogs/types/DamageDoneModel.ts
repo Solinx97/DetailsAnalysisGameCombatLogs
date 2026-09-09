@@ -3,10 +3,16 @@ export type DamageDoneModel = {
     spell: string;
     value: number;
     time: string;
-    creator: string;
-    target: string;
+    creatorGameId: string;
+    targetGameId: string;
+    targetHash: string;
+    targetCurrentHealth: number;
+    modificationType: number;
     damageType: number;
-    isPeriodicDamage: boolean;
-    isPet: boolean;
+    resisted: number;
+    absorbed: number;
+    blocked: number;
+    realDamage: number;
+    mitigated: number;
     combatPlayerId: number;
 }

@@ -133,7 +133,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         );
     }
 
-    if (countIsLoading || dataIsLoading) {
+    if (countIsLoading || dataIsLoading || !data) {
         return (<div>Loading...</div>);
     }
 
@@ -151,7 +151,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
             </div>
             <ul className="player-data-details">
                 {tableTitle()}
-                {data?.map((item: DamageDoneModel) => (
+                {data.map((item) => (
                     <li className="player-data-details__item" key={item.id}>
                         <ul>
                             <li>
@@ -162,7 +162,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
                             <li className="extra-details">
                                 <div className={getClassNameByDamageType(item)}>{item.value}</div>
                             </li>
-                            <li>{getUserNameWithoutRealm(item.target)}</li>
+                            <li>{getUserNameWithoutRealm(item.targetGameId)}</li>
                         </ul>
                     </li>
                 ))}

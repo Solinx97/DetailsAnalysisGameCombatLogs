@@ -2,7 +2,7 @@ import CombatReplyContext from '@/context/CombatReplyContext';
 import { memo, useContext, useEffect, useMemo, useState } from 'react';
 import type { CombatUnitModel } from '../../types/CombatUnitModel';
 import type { UnitHealthModel } from '../../types/UnitHealthModel';
-import CombatReplyItem from './CombatReplyItem';
+import CombatReplyUnit from './CombatReplyUnit';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import {
     useLazyGetCombatUnitsByCombatIdQuery,
@@ -87,17 +87,15 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
     }, [selectedGameId, selectedTargetGameId]);
 
     const playerUnits = useMemo(() => {
-        return combatUnits.filter(x => x.gameId.startsWith("Player"));
+        return combatUnits.filter(x => x.unitHash.includes("0x51"));
     }, [combatUnits]);
 
     const playerCreatureUnits = useMemo(() => {
-        return combatUnits.filter(x => (x.gameId.startsWith("Creature") || x.gameId.startsWith("Pet"))
-            && ((!x.creatorGameId && x.gameId.startsWith("Pet")) || x.creatorGameId && x.creatorGameId.startsWith("Player")));
+        return combatUnits.filter(x => x.unitHash ==="0xa28" || x.unitHash ==="0x1112");
     }, [combatUnits]);
 
     const enemyUnits = useMemo(() => {
-        return combatUnits.filter(x => !x.gameId.startsWith("Player") && !x.gameId.startsWith("Pet")
-            && (!x.creatorGameId || (x.creatorGameId && !x.creatorGameId.startsWith("Player") && x.unitType && x.unitType.startsWith("0x20"))));
+        return combatUnits.filter(x => x.unitHash.includes("0x10a48") || x.unitHash.includes("0xa48"));
     }, [combatUnits]);
 
     return (
@@ -106,7 +104,7 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
                 <div className="selected-units">
                     {selectedUnit &&
                         <div className="player">
-                            <CombatReplyItem
+                            <CombatReplyUnit
                                 unitCasts={unitsCast.get(selectedGameId)}
                                 unitsHealth={unitsHealth.get(selectedGameId)}
                                 unit={selectedUnit}
@@ -116,7 +114,7 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
                     }
                     {selectedTargetUnit &&
                         <div className="player">
-                            <CombatReplyItem
+                            <CombatReplyUnit
                                 unitCasts={unitsCast.get(selectedTargetGameId)}
                                 unitsHealth={unitsHealth.get(selectedTargetGameId)}
                                 unit={selectedTargetUnit}

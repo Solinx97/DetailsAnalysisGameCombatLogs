@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Details;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace CombatAnalysis.WoW_12_1_0.CombatParser.Extensions;
@@ -17,10 +17,22 @@ public static class CombatDetailsExtension
 
             foreach (var playerId in playersId)
             {
-                combatDetails.DamageDoneGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. combatDetails.DamageDones[playerId].Select(x => x.Value)], duration));
-                combatDetails.HealDoneGenerals.TryAdd(playerId, GetHealDoneGeneral([.. combatDetails.HealDones[playerId].Select(x => x.Value)], duration));
-                combatDetails.DamageTakenGenerals.TryAdd(playerId, GetDamageTakenGeneral([.. combatDetails.DamageTakens[playerId].Select(x => x.Value)], duration));
-                combatDetails.ResourcesRecoveryGenerals.TryAdd(playerId, GetResourceRecoveryGeneral([.. combatDetails.ResourcesRecoveries[playerId].Select(x => x.Value)], duration));
+                if (combatDetails.DamageDones.TryGetValue(playerId, out var damageCollection))
+                {
+                    combatDetails.DamageDoneGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageCollection.Select(x => x.Value)], duration, false));
+                }
+                if (combatDetails.HealDones.TryGetValue(playerId, out var healCollection))
+                {
+                    combatDetails.HealDoneGenerals.TryAdd(playerId, GetHealDoneGeneral([.. healCollection.Select(x => x.Value)], duration));
+                }
+                if (combatDetails.DamageTakens.TryGetValue(playerId, out var damageTakenCollection))
+                {
+                    combatDetails.DamageTakenGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageTakenCollection.Select(x => x.Value)], duration));
+                }
+                if (combatDetails.ResourcesRecoveries.TryGetValue(playerId, out var resourceCollection))
+                {
+                    combatDetails.ResourcesRecoveryGenerals.TryAdd(playerId, GetResourceRecoveryGeneral([.. resourceCollection.Select(x => x.Value)], duration));
+                }
             }
         }
         catch (ArgumentNullException ex)
@@ -33,7 +45,7 @@ public static class CombatDetailsExtension
         }
     }
 
-    private static List<DamageDoneGeneral> GetDamageDoneGeneral(List<DamageDone> collection, string duration)
+    private static List<DamageDoneGeneral> GetDamageDoneGeneral(List<DamageDone> collection, string duration, bool isPlayerTarget = true)
     {
         var damageDoneCollection = collection
             .GroupBy(group => group.GameSpellId)
@@ -50,9 +62,8 @@ public static class CombatDetailsExtension
             var averageValue = double.Round(item.Average(x => x.Value), 2);
             var damagePerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
             var damagePerSecondRound = double.Round(damagePerSecond, 2);
-            var critNumber = item.Where(x => x.DamageType == (int)DamageType.Crit).Count();
-            var missNumber = item.Where(x => x.DamageType != (int)DamageType.Crit && x.DamageType != (int)DamageType.Normal).Count();
-            var isPet = item.FirstOrDefault()?.IsPet ?? false;
+            var critNumber = item.Where(x => x.DamageType == (int)DamageModificationType.Crit).Count();
+            var missNumber = item.Where(x => x.DamageType != (int)DamageModificationType.Crit && x.DamageType != (int)DamageModificationType.Normal).Count();
 
             var damageDoneGeneral = new DamageDoneGeneral
             {
@@ -66,7 +77,7 @@ public static class CombatDetailsExtension
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
                 AverageValue = averageValue,
-                IsPet = isPet,
+                IsPlayerTarget = isPlayerTarget
             };
 
             lessDetails.Add(damageDoneGeneral);
@@ -110,45 +121,6 @@ public static class CombatDetailsExtension
             };
 
             lessDetails.Add(healDoneGeneral);
-        }
-
-        lessDetails = [.. lessDetails.OrderByDescending(x => x.Value)];
-
-        return lessDetails;
-    }
-
-    private static List<DamageTakenGeneral> GetDamageTakenGeneral(List<DamageTaken> collection, string duration)
-    {
-        var spells = collection
-            .GroupBy(group => group.GameSpellId)
-            .Select(select => select.ToList());
-
-        if (!TimeSpan.TryParse(duration, out var durationTime))
-        {
-            return [];
-        }
-
-        var lessDetails = new List<DamageTakenGeneral>();
-        foreach (var item in spells)
-        {
-            var averageValue = double.Round(item.Average(x => x.Value), 2);
-            var damageTakenPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
-            var damageTakenPerSecondRound = double.Round(damageTakenPerSecond, 2);
-
-            var damageTakenGeneral = new DamageTakenGeneral
-            {
-                GameSpellId = item[0].GameSpellId,
-                Spell = item[0].Spell,
-                Value = item.Sum(x => x.Value),
-                ActualValue = item.Sum(x => x.ActualValue),
-                DamageTakenPerSecond = damageTakenPerSecondRound,
-                AverageValue = averageValue,
-                MinValue = item.Min(x => x.Value),
-                MaxValue = item.Max(x => x.Value),
-                CastNumber = item.Count,
-            };
-
-            lessDetails.Add(damageTakenGeneral);
         }
 
         lessDetails = [.. lessDetails.OrderByDescending(x => x.Value)];

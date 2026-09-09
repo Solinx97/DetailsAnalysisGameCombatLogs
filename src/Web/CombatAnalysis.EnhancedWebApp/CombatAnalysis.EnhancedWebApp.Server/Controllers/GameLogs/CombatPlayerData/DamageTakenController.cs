@@ -30,7 +30,7 @@ public class DamageTakenController : ControllerBase
             var response = await _httpClient.GetAsync($"DamageTaken/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var DamageTakenModels = await response.Content.ReadFromJsonAsync<IEnumerable<DamageTakenModel>>();
+            var DamageTakenModels = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
 
             return Ok(DamageTakenModels);
         }
@@ -82,7 +82,7 @@ public class DamageTakenController : ControllerBase
             var response = await _httpClient.GetAsync($"DamageTaken/getAll?combatPlayerId={combatPlayerId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var damageTakens = await response.Content.ReadFromJsonAsync<IEnumerable<DamageTakenModel>>();
+            var damageTakens = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
 
             return Ok(damageTakens);
         }

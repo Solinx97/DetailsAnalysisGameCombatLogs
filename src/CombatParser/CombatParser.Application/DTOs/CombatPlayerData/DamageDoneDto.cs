@@ -16,6 +16,10 @@ public class DamageDoneDto
 
     public string Target { get; set; }
 
+    public string TargetGameId { get; set; }
+
+    public long CurrentHealth { get; set; }
+
     public bool IsTargetBoss { get; set; }
 
     public int DamageType { get; set; }

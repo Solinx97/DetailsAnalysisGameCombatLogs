@@ -2,8 +2,9 @@
 
 public record CombatUnitData(
     string GameId,
-    string Username,
+    string Name,
+    long Health,
+    string UnitHash,
     string? CreatorGameId,
-    string? UnitType,
     int CombatId
     );

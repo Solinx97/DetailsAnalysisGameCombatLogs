@@ -90,11 +90,10 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
 
             var unitData = _mapper.Map<List<CombatUnitData>>(combat.Units);
             var unitCastData = _mapper.Map<List<UnitCastData>>(combat.UnitCasts);
-            var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
             var unitPositionData = _mapper.Map<List<UnitPositionData>>(combat.UnitPositions);
 
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitCastData, unitHealthData, unitPositionData);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitCastData, unitPositionData);
 
             var combatId = await _mediator.Send(command, cancellationToken);
 
@@ -130,8 +129,6 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
         var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
         var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(combatPlayer.HealDoneGenerals);
-        var damageTakenMap = _mapper.Map<List<DamageTakenData>>(combatPlayer.DamageTakens);
-        var damageTakenGeneralsMap = _mapper.Map<List<DamageTakenGeneralData>>(combatPlayer.DamageTakenGenerals);
         var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatPlayer.ResourceRecoveries);
         var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatPlayer.ResourceRecoveryGenerals);
         var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatPlayer.CombatPlayerDeathes);
@@ -161,8 +158,6 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             damageDoneGeneralsMap,
             healDonesMap,
             healDoneGeneralsMap,
-            damageTakenMap,
-            damageTakenGeneralsMap,
             resourceRecoveryMap,
             resourceRecoveryGeneralMap,
             deathsMap,

@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Enums;
 using System.Collections.Concurrent;
 using System.Globalization;
@@ -13,63 +14,15 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
-    public void GetSummonUnit(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
+    public void GetSummonUnit(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units, bool isSummoned = true)
     {
-        if (!units.TryGetValue(combatDataLine[6], out var _))
+        units.TryAdd(combatDataLine[6], new CombatUnit
         {
-            units.TryAdd(combatDataLine[6], new CombatUnit
-            {
-                GameId = combatDataLine[6],
-                Username = combatDataLine[7],
-                CreatorGameId = combatDataLine[2],
-                UnitType = combatDataLine[^1],
-            });
-        }
-    }
-
-    public UnitHealth? GetUnitDeathHealth(string[] combatDataLine, ConcurrentDictionary<string, List<UnitHealth>> units)
-    {
-        if (!units.TryGetValue(combatDataLine[6], out var _))
-        {
-            units.TryAdd(combatDataLine[6], []);
-        }
-
-        var health = new UnitHealth
-        {
-            CreatorGameId = combatDataLine[6],
-            CurrentHealth = 0,
-            MaxHealth = 0,
-            Time = GetTimeFromStart(combatDataLine[0]),
-            IsDead = true,
-        };
-
-        return health;
-    }
-
-    public UnitHealth? GetUnitHealth(string[] combatDataLine, ConcurrentDictionary<string, List<UnitHealth>> units)
-    {
-        if (!int.TryParse(combatDataLine[15], out var currentHealth) || !int.TryParse(combatDataLine[16], out var maxHealth))
-        {
-            return null;
-        }
-
-        var creatorId = maxHealth > 100 ? combatDataLine[6] : combatDataLine[2];
-        if (!units.TryGetValue(creatorId, out var _))
-        {
-            units.TryAdd(creatorId, []);
-        }
-
-        var time = GetTimeFromStart(combatDataLine[0]);
-        var health = new UnitHealth
-        {
-            CreatorGameId = creatorId,
-            CurrentHealth = currentHealth,
-            MaxHealth = maxHealth,
-            Time = time,
-            IsDead = currentHealth == 0,
-        };
-
-        return health;
+            GameId = combatDataLine[6],
+            Name = combatDataLine[7],
+            CreatorGameId = isSummoned ? combatDataLine[2] : null,
+            UnitHash = combatDataLine[8],
+        });
     }
 
     public void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<string> petsId)
@@ -117,7 +70,7 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         }
     }
 
-    public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, List<UnitPosition>> positions, ConcurrentDictionary<string, CombatUnit> units)
+    public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, List<UnitPosition>> positions)
     {
         if (combatDataLine.Length <= 25)
         {
@@ -145,15 +98,6 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         if (double.TryParse(combatDataLine[pos1Index], out var positionX)
             && double.TryParse(combatDataLine[pos2Index], out var positionY))
         {
-            if (!units.TryGetValue(positionOwnerId, out var _))
-            {
-                units.TryAdd(positionOwnerId, new CombatUnit
-                {
-                    GameId = positionOwnerId,
-                    Username = positionOwner,
-                });
-            }
-
             var position = new UnitPosition
             {
                 CreatorGameId = positionOwnerId,
@@ -164,53 +108,6 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
 
             collection.Add(position);
         }
-    }
-
-    public (string, DamageDone?) GetPlayerDamageDone(string[] combatDataLine)
-    {
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
-            || _playersId.Any(playerId => playerId.Equals(combatDataLine[6]))
-            || combatDataLine[6].Contains("0000000000000000"))
-        {
-            return (string.Empty, null);
-        }
-
-        var damageDone = GetDamageDone(combatDataLine, false);
-
-        return (combatDataLine[2], damageDone);
-    }
-
-    public (string, DamageDone?) GetPetsDamageDone(string[] combatDataLine, Dictionary<string, List<string>> petsId)
-    {
-        if (combatDataLine[2].Contains(CombatLogKeyWords.Player) ||
-            (!combatDataLine[2].Contains(CombatLogKeyWords.Creature) && !combatDataLine[2].Contains(CombatLogKeyWords.Pet)))
-        {
-            return (string.Empty, null);
-        }
-
-        var currentPet = string.Empty;
-        var petPlayerId = string.Empty;
-        foreach (var item in petsId)
-        {
-            var pets = item.Value;
-
-            currentPet = pets.Where(x => x.Equals(combatDataLine[2])).FirstOrDefault();
-            if (!string.IsNullOrEmpty(currentPet))
-            {
-                petPlayerId = item.Key;
-                break;
-            }
-        }
-
-        if (string.IsNullOrEmpty(petPlayerId) || !_playersId.Any(playerId => playerId.Equals(petPlayerId)))
-        {
-            return (string.Empty, null);
-        }
-
-        var spellOrItem = $"{combatDataLine[3].Trim('"')} - ";
-        var damageDone = GetDamageDone(combatDataLine, true, spellOrItem);
-
-        return (petPlayerId, damageDone);
     }
 
     public (string, HealDone?) GetHealDone(string[] combatDataLine)
@@ -272,109 +169,6 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return (playerId, absorbeDone);
     }
 
-    public (string, DamageTaken?) GetDamageTaken(string[] combatDataLine)
-    {
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
-        {
-            return (string.Empty, null);
-        }
-
-        if (!combatDataLine[2].Contains("0000000000000000") && !combatDataLine[2].Contains(CombatLogKeyWords.Creature))
-        {
-            return (string.Empty, null);
-        }
-
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
-        {
-            return (string.Empty, null);
-        }
-
-        if (!int.TryParse(combatDataLine[^10], out var value))
-        {
-            return (string.Empty, null);
-        }
-
-        var isAutoAttack = false;
-        var spell = string.Empty;
-        if (combatDataLine[1].Equals(CombatLogKeyWords.SwingDamage) || combatDataLine[1].Equals(CombatLogKeyWords.SwingMissed))
-        {
-            spell = CombatLogKeyWords.Melee;
-            isAutoAttack = true;
-        }
-        else
-        {
-            spell = combatDataLine[11].Trim('"');
-        }
-
-        var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
-
-        int realDamage = 0, mitigated = 0, absorb = 0, blocked = 0, resist = 0;
-        var index = -1;
-
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            index = 13;
-
-            int.TryParse(combatDataLine[^1], out realDamage);
-            int.TryParse(combatDataLine[^2], out absorb);
-        }
-        else if (!string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            int.TryParse(combatDataLine[^9], out realDamage);
-            int.TryParse(combatDataLine[^4], out absorb);
-            int.TryParse(combatDataLine[^5], out blocked);
-            int.TryParse(combatDataLine[^6], out resist);
-
-            mitigated = realDamage - value;
-        }
-
-        var isDodge = string.Equals(combatDataLine[^2], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
-        var isParry = string.Equals(combatDataLine[^2], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
-        var isMiss = string.Equals(combatDataLine[^2], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
-        var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
-        var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
-        var isAbsorb = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Absorb, StringComparison.OrdinalIgnoreCase);
-
-        var damageTakenType = isCrushing ? DamageTakenType.Crushing : DamageTakenType.Normal;
-        damageTakenType = isDodge ? DamageTakenType.Dodge : damageTakenType;
-        damageTakenType = isParry ? DamageTakenType.Parry : damageTakenType;
-        damageTakenType = isMiss ? DamageTakenType.Miss : damageTakenType;
-        damageTakenType = index >= 0 && isResist ? DamageTakenType.Resist : damageTakenType;
-        damageTakenType = index >= 0 && isImmune ? DamageTakenType.Immune : damageTakenType;
-        damageTakenType = index >= 0 && isMiss ? DamageTakenType.Miss : damageTakenType;
-
-        var isPeriodicDamage = false;
-        var enemy = combatDataLine[3];
-        if (string.Equals(combatDataLine[3], "nil", StringComparison.OrdinalIgnoreCase))
-        {
-            isPeriodicDamage = true;
-            enemy = combatDataLine[11];
-        }
-
-        var damageTaken = new DamageTaken
-        {
-            GameSpellId = isAutoAttack ? 0 : int.Parse(combatDataLine[10]),
-            Spell = spell,
-            Value = value,
-            ActualValue = value + absorb,
-            Time = GetTimeFromStart(combatDataLine[0]),
-            Creator = enemy.Trim('"'),
-            Target = combatDataLine[7].Trim('"'),
-            IsPeriodicDamage = isPeriodicDamage,
-            Resisted = resist,
-            Absorbed = absorb,
-            Blocked = blocked,
-            RealDamage = realDamage,
-            Mitigated = mitigated < 0 ? 0 : mitigated,
-            DamageTakenType = (int)damageTakenType,
-        };
-
-        return (combatDataLine[6], damageTaken);
-    }
-
     public (string, ResourceRecovery?) GetResourceRecovery(string[] combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
@@ -415,8 +209,9 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         return (combatDataLine[6], userDeath);
     }
 
-    private DamageDone GetDamageDone(string[] combatDataLine, bool isPet, string spell = "")
+    public (string, DamageDone?) GetDamageDone(string[] combatDataLine, bool isDamageDone = true)
     {
+        var spell = string.Empty;
         var isAutoAttack = false;
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
             || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
@@ -430,10 +225,30 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
             spell += combatDataLine[11].Trim('"');
         }
 
-        var isPeriodicDamage = false;
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellPeriodicDamage, StringComparison.OrdinalIgnoreCase))
+        if (!int.TryParse(isAutoAttack ? combatDataLine[^10] : combatDataLine[^11], out var value))
         {
-            isPeriodicDamage = true;
+            return (string.Empty, null);
+        }
+
+        var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
+
+        int realDamage = 0, mitigated = 0, absorb = 0, blocked = 0, resist = 0;
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            int.TryParse(combatDataLine[^1], out realDamage);
+            int.TryParse(combatDataLine[^2], out absorb);
+        }
+        else if (!string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            int.TryParse(combatDataLine[^9], out realDamage);
+            int.TryParse(combatDataLine[^4], out absorb);
+            int.TryParse(combatDataLine[^5], out blocked);
+            int.TryParse(combatDataLine[^6], out resist);
+
+            mitigated = realDamage - value;
         }
 
         var index = -1;
@@ -455,38 +270,99 @@ internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatSta
         var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
         var isMiss = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
 
-        var damageType = isCrit ? DamageType.Crit : DamageType.Normal;
-        damageType = isResist ? DamageType.Resist : damageType;
-        damageType = isParry ? DamageType.Parry : damageType;
-        damageType = isDodge ? DamageType.Dodge : damageType;
-        damageType = isImmune ? DamageType.Immune : damageType;
-        damageType = isMiss ? DamageType.Miss : damageType;
+        var damageModificationType = isCrushing ? DamageModificationType.Crushing : DamageModificationType.Normal;
+        damageModificationType = isCrit ? DamageModificationType.Crit : damageModificationType;
+        damageModificationType = isParry ? DamageModificationType.Parry : damageModificationType;
+        damageModificationType = isDodge ? DamageModificationType.Dodge : damageModificationType;
+        damageModificationType = isImmune ? DamageModificationType.Immune : damageModificationType;
+        damageModificationType = isMiss ? DamageModificationType.Miss : damageModificationType;
 
-        var isSingleTarget = 
-            isAutoAttack 
-            || (isPeriodicDamage 
-            || (string.Equals(combatDataLine[^1], CombatLogKeyWords.IsSingleTarget + "\r", StringComparison.OrdinalIgnoreCase)));
+        var damageType = DamageType.ST;
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellPeriodicDamage, StringComparison.OrdinalIgnoreCase))
+        {
+            damageType = DamageType.Periodic;
+        }
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsSingleTarget, StringComparison.OrdinalIgnoreCase))
+        {
+            damageType = DamageType.ST;
+        }
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsAOETarget, StringComparison.OrdinalIgnoreCase))
+        {
+            damageType = DamageType.AOE;
+        }
 
         var damageDone = new DamageDone
         {
             GameSpellId = isAutoAttack ? 0 : int.Parse(combatDataLine[10]),
             Spell = spell,
+            Value = value + absorb,
             Time = GetTimeFromStart(combatDataLine[0]),
-            Creator = combatDataLine[3].Trim('"'),
-            Target = combatDataLine[7].Trim('"'),
-            IsTargetBoss = combatDataLine[6].Contains(CombatLogKeyWords.Boss),
+            CreatorGameId = combatDataLine[2],
+            TargetGameId = combatDataLine[6],
+            TargetHash = combatDataLine[8],
             DamageType = (int)damageType,
-            IsPeriodicDamage = isPeriodicDamage,
-            IsSingleTarget = isSingleTarget,
-            IsPet = isPet,
+            ModificationType = (int)damageModificationType,
+            Resisted = resist,
+            Absorbed = absorb,
+            Blocked = blocked,
+            RealDamage = realDamage,
+            Mitigated = mitigated < 0 ? 0 : mitigated,
         };
 
-        if (int.TryParse(isAutoAttack ? combatDataLine[^10] : combatDataLine[^11], out var value))
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
         {
-            damageDone.Value = value;
+            damageDone.TargetCurrentHealth = -1;
+
+            return (isDamageDone ? damageDone.CreatorGameId : damageDone.TargetGameId, damageDone);
         }
 
-        return damageDone;
+        var healthIndex = 12;
+        var isSwingDamage = string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase);
+        if (!isSwingDamage)
+        {
+            healthIndex = 15;
+        }
+
+        damageDone.TargetCurrentHealth = long.Parse(combatDataLine[healthIndex]);
+
+        return (isDamageDone ? damageDone.CreatorGameId : damageDone.TargetGameId, damageDone);
+    }
+
+    public void GetCombatCreature(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
+    {
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var healthIndex = 13;
+        var isSwingDamage = string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase);
+        if (!isSwingDamage)
+        {
+            healthIndex = 16;
+        }
+
+        var gameId = combatDataLine[6];
+        if (units.TryGetValue(gameId, out var unit))
+        {
+            unit.Health = long.Parse(combatDataLine[healthIndex]);
+        }
+        else
+        {
+            GetSummonUnit(combatDataLine, units, false);
+            if (units.TryGetValue(gameId, out unit))
+            {
+                unit.Health = long.Parse(combatDataLine[healthIndex]);
+            }
+        }
     }
 
     private CombatPlayerAura CreateCombatAura(int gameSpellId, string[] combatDataLine, string startTimeAura, string finishTimeAura, List<string> petsId)

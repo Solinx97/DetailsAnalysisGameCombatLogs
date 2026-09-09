@@ -47,6 +47,16 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageDone', id: 'LIST' }]
         }),
+        getDamageTakenGeneralByCombatPlayerId: builder.query<DamageDoneGeneralModel[], number>({
+            query: combatPlayerId => `/DamageDoneGeneral/getDamageTakenByCombatPlayerId/${combatPlayerId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(damageTaken => ({ type: 'DamageTaken' as const, id: damageTaken.id })),
+                        { type: 'DamageTaken', id: 'LIST' },
+                    ]
+                    : [{ type: 'DamageTaken', id: 'LIST' }]
+        }),
     })
 })
 
@@ -61,4 +71,5 @@ export const {
     useGetGenericChartDamageDoneQuery,
     useGetDamageDoneGeneralByCombatPlayerIdQuery,
     useLazyGetDamageDoneGeneralByCombatPlayerIdQuery,
+    useLazyGetDamageTakenGeneralByCombatPlayerIdQuery,
 } = DamageDoneApi;

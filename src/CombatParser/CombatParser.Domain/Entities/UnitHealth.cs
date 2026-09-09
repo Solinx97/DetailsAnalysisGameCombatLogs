@@ -9,13 +9,8 @@ public class UnitHealth : CombatDataBase, ITime, IUnitRef
 
     private UnitHealth() { }
 
-    private UnitHealth(string creatorGameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
+    private UnitHealth(string creatorGameId, long currentHealth, long maxHealth, TimeSpan time, bool isDead, int combatId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
-        ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
-        ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
-        ArgumentOutOfRangeException.ThrowIfNegative(combatId, nameof(combatId));
-
         Id = Guid.NewGuid().ToString();
         CreatorGameId = creatorGameId;
         CurrentHealth = currentHealth;
@@ -29,9 +24,9 @@ public class UnitHealth : CombatDataBase, ITime, IUnitRef
 
     public string CreatorGameId { get; private set; }
 
-    public int CurrentHealth { get; private set; }
+    public long CurrentHealth { get; private set; }
 
-    public int MaxHealth { get; private set; }
+    public long MaxHealth { get; private set; }
 
     public TimeSpan Time { get; private set; }
 
@@ -39,7 +34,7 @@ public class UnitHealth : CombatDataBase, ITime, IUnitRef
 
     public Combat Combat { get; private set; }
 
-    public static UnitHealth Create(string creatorGameId, int currentHealth, int maxHealth, TimeSpan time, bool isDead, int combatId)
+    public static UnitHealth Create(string creatorGameId, long currentHealth, long maxHealth, TimeSpan time, bool isDead, int combatId)
     {
         ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));

@@ -1,6 +1,5 @@
 ﻿import type { JSX } from 'react';
-import { useLazyGetDamageDoneGeneralByCombatPlayerIdQuery } from '../api/DamageDone.api';
-import { useLazyGetDamageTakenGeneralByCombatPlayerIdQuery } from '../api/DamageTaken.api';
+import { useLazyGetDamageDoneGeneralByCombatPlayerIdQuery, useLazyGetDamageTakenGeneralByCombatPlayerIdQuery } from '../api/DamageDone.api';
 import { useLazyGetHealDoneGeneralByCombatPlayerIdQuery } from '../api/HealDone.api';
 import { useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery } from '../api/ResourcesRecovery.api';
 import DamageDoneGeneralHelper from '../components/helpers/DamageDoneGeneralHelper';
@@ -9,13 +8,12 @@ import HealDoneGeneralHelper from '../components/helpers/HealDoneGeneralHelper';
 import ResourceRecoveryGeneralHelper from '../components/helpers/ResourceRecoveryGeneralHelper';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { DamageDoneGeneralModel } from '../types/DamageDoneGeneralModel';
-import type { DamageTakenGeneralModel } from '../types/DamageTakenGeneralModel';
 import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
 import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
 
 type CombatGeneralData = readonly [
     () => Promise<JSX.Element>,
-    () => Promise<DamageDoneGeneralModel[] | DamageTakenGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null>
+    () => Promise<DamageDoneGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null>
 ]
 
 const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: number): CombatGeneralData => {
@@ -34,7 +32,7 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
         return round;
     }
 
-    const getSpellValueProcentage = (item: DamageDoneGeneralModel | DamageTakenGeneralModel | ResourceRecoveryGeneralModel | HealDoneGeneralModel, targetValue: number): string => {
+    const getSpellValueProcentage = (item: DamageDoneGeneralModel | ResourceRecoveryGeneralModel | HealDoneGeneralModel, targetValue: number): string => {
         const procentage = (item.value / targetValue) * 100;
 
         return procentage.toFixed(fixedNumberUntil);
@@ -105,9 +103,9 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
         }
     }
 
-    const getPlayerGeneralDetailsAsync = async (): Promise<DamageDoneGeneralModel[] | DamageTakenGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null> => {
+    const getPlayerGeneralDetailsAsync = async (): Promise<DamageDoneGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null> => {
         try {
-            let detailsResult: DamageDoneGeneralModel[] | DamageTakenGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null = null;
+            let detailsResult: DamageDoneGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null = null;
             switch (detailsType) {
                 case 0:
                     detailsResult = await getDamageDoneGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();

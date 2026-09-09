@@ -18,8 +18,6 @@ public class CombatPlayer : CombatDataBase
     private readonly List<DamageDoneGeneral> _damageDoneGenerals = [];
     private readonly List<HealDone> _healDones = [];
     private readonly List<HealDoneGeneral> _healDoneGenerals = [];
-    private readonly List<DamageTaken> _damageTakens = [];
-    private readonly List<DamageTakenGeneral> _damageTakenGenerals = [];
     private readonly List<ResourceRecovery> _resourceRecoveries = [];
     private readonly List<ResourceRecoveryGeneral> _resourceRecoveryGenerals = [];
     private readonly List<CombatPlayerDeath> _combatPlayerDeathes = [];
@@ -73,10 +71,6 @@ public class CombatPlayer : CombatDataBase
 
     public IReadOnlyCollection<HealDoneGeneral> HealDoneGenerals => _healDoneGenerals.AsReadOnly();
 
-    public IReadOnlyCollection<DamageTaken> DamageTakens => _damageTakens.AsReadOnly();
-
-    public IReadOnlyCollection<DamageTakenGeneral> DamageTakenGenerals => _damageTakenGenerals.AsReadOnly();
-
     public IReadOnlyCollection<ResourceRecovery> ResourceRecoveries => _resourceRecoveries.AsReadOnly();
 
     public IReadOnlyCollection<ResourceRecoveryGeneral> ResourceRecoveryGenerals => _resourceRecoveryGenerals.AsReadOnly();
@@ -86,7 +80,7 @@ public class CombatPlayer : CombatDataBase
     public static CombatPlayer Create(double averageItemLevel, int resourcesRecovery, int damageDone, int healDone, int damageTaken,
         string playerId, int combatId, IPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
         IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals,
-        IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
+        IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
         IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
     {
         ArgumentException.ThrowIfNullOrEmpty(playerId, nameof(playerId));
@@ -99,7 +93,7 @@ public class CombatPlayer : CombatDataBase
             playerId, combatId);
 
         AddCombatPlayerData(combatPlayer, stats, score, preAuras, auras, damageDones, damageDoneGenerals, 
-            healDones, healDoneGenerals, damageTakens, damageTakenGenerals, resourceRecoveries, 
+            healDones, healDoneGenerals, resourceRecoveries, 
             resourceRecoveryGenerals, combatPlayerDeathes);
 
         return combatPlayer;
@@ -107,7 +101,7 @@ public class CombatPlayer : CombatDataBase
 
     private static void AddCombatPlayerData(CombatPlayer combatPlayer, IPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
         IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals, 
-        IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
+        IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
         IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
     {
         combatPlayer.AddStats(stats);
@@ -143,16 +137,6 @@ public class CombatPlayer : CombatDataBase
             combatPlayer.AddHealDoneGeneral(healGeneral);
         }
 
-        foreach (var damageTakenDone in damageTakens)
-        {
-            combatPlayer.AddDamageTaken(damageTakenDone);
-        }
-
-        foreach (var damageTakenDoneGeneral in damageTakenGenerals)
-        {
-            combatPlayer.AddDamageTakenGeneral(damageTakenDoneGeneral);
-        }
-
         foreach (var resourceRecovery in resourceRecoveries)
         {
             combatPlayer.AddResourceRecovery(resourceRecovery);
@@ -184,17 +168,17 @@ public class CombatPlayer : CombatDataBase
 
     private void AddDamageDone(DamageDoneData damageDone)
     {
-        var createdDamageDone = new DamageDone(damageDone.GameSpellId, damageDone.Spell, damageDone.Value, damageDone.Time, damageDone.Creator,
-            damageDone.Target, damageDone.IsTargetBoss, damageDone.DamageType, damageDone.IsPeriodicDamage, damageDone.IsSingleTarget,
-            damageDone.IsPet, damageDone.CombatPlayerId);
+        var createdDamageDone = CombatPlayerData.DamageDone.Create(damageDone.GameSpellId, damageDone.Spell, damageDone.Value, damageDone.Time, damageDone.CreatorGameId,
+            damageDone.TargetGameId, damageDone.TargetHash, damageDone.TargetCurrentHealth, damageDone.ModificationType, damageDone.DamageType, damageDone.Resisted, damageDone.Absorbed,
+            damageDone.Blocked, damageDone.RealDamage, damageDone.Mitigated, damageDone.CombatPlayerId);
         _damageDones.Add(createdDamageDone);
     }
 
     private void AddDamageDoneGeneral(DamageDoneGeneralData damageDoneGeneral)
     {
-        var createdDamageDoneGeneral = new DamageDoneGeneral(damageDoneGeneral.GameSpellId, damageDoneGeneral.Spell, damageDoneGeneral.Value, damageDoneGeneral.DamagePerSecond, damageDoneGeneral.CritNumber,
+        var createdDamageDoneGeneral = DamageDoneGeneral.Create(damageDoneGeneral.GameSpellId, damageDoneGeneral.Spell, damageDoneGeneral.Value, damageDoneGeneral.DamagePerSecond, damageDoneGeneral.CritNumber,
             damageDoneGeneral.MissNumber, damageDoneGeneral.CastNumber, damageDoneGeneral.MinValue, damageDoneGeneral.MaxValue, damageDoneGeneral.AverageValue,
-            damageDoneGeneral.IsPet, damageDoneGeneral.CombatPlayerId);
+            damageDoneGeneral.IsPlayerTarget, damageDoneGeneral.CombatPlayerId);
         _damageDoneGenerals.Add(createdDamageDoneGeneral);
     }
 
@@ -210,22 +194,6 @@ public class CombatPlayer : CombatDataBase
         var createdHealDoneGeneral = new HealDoneGeneral(healDoneGeneral.GameSpellId, healDoneGeneral.Spell, healDoneGeneral.Value, healDoneGeneral.HealPerSecond, healDoneGeneral.CritNumber,
             healDoneGeneral.CastNumber, healDoneGeneral.MinValue, healDoneGeneral.MaxValue, healDoneGeneral.AverageValue, healDoneGeneral.CombatPlayerId);
         _healDoneGenerals.Add(createdHealDoneGeneral);
-    }
-
-    private void AddDamageTaken(DamageTakenData damageTaken)
-    {
-        var createdDamageTaken = new DamageTaken(damageTaken.GameSpellId, damageTaken.Spell, damageTaken.Value, damageTaken.Time, damageTaken.Creator,
-            damageTaken.Target, damageTaken.DamageTakenType, damageTaken.ActualValue, damageTaken.IsPeriodicDamage, damageTaken.Resisted,
-            damageTaken.Absorbed, damageTaken.Blocked, damageTaken.RealDamage, damageTaken.Mitigated, damageTaken.CombatPlayerId);
-        _damageTakens.Add(createdDamageTaken);
-    }
-
-    private void AddDamageTakenGeneral(DamageTakenGeneralData damageTakenGeneral)
-    {
-        var createdDamageTakenGeneral = new DamageTakenGeneral(damageTakenGeneral.GameSpellId, damageTakenGeneral.Spell, damageTakenGeneral.Value, damageTakenGeneral.ActualValue, damageTakenGeneral.DamageTakenPerSecond,
-            damageTakenGeneral.MissNumber, damageTakenGeneral.CritNumber, damageTakenGeneral.CastNumber, damageTakenGeneral.MinValue, damageTakenGeneral.MaxValue,
-            damageTakenGeneral.AverageValue, damageTakenGeneral.CombatPlayerId);
-        _damageTakenGenerals.Add(createdDamageTakenGeneral);
     }
 
     private void AddResourceRecovery(ResourceRecoveryData resourceRecovery)

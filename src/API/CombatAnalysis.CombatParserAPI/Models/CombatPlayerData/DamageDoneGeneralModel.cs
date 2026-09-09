@@ -37,7 +37,7 @@ public class DamageDoneGeneralModel
     [Range(0, int.MaxValue)]
     public double AverageValue { get; set; }
 
-    public bool IsPet { get; set; }
+    public bool IsPlayerTarget { get; set; }
 
     [Range(0, int.MaxValue)]
     public int CombatPlayerId { get; set; }

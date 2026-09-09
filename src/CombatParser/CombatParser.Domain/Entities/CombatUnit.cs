@@ -9,32 +9,36 @@ public class CombatUnit : CombatDataBase
 
     private CombatUnit() { }
 
-    private CombatUnit(string gameId, string username, string? creatorGameId, string? unitType)
+    private CombatUnit(string gameId, string name, long health, string unitHash, string? creatorGameId)
     {
         Id = Guid.NewGuid().ToString();
         GameId = gameId;
-        Username = username;
+        Name = name;
+        Health = health;
+        UnitHash = unitHash;
         CreatorGameId = creatorGameId;
-        UnitType = unitType;
     }
 
     public string Id { get; private set; } = string.Empty;
 
     public string GameId { get; private set; } = string.Empty;
 
-    public string Username { get; private set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
+
+    public long Health { get; private set; }
+
+    public string UnitHash { get; private set; }
 
     public string? CreatorGameId { get; private set; }
 
-    public string? UnitType { get; private set; }
-
     public Combat Combat { get; private set; }
 
-    public static CombatUnit Create(string gameId, string username, string? creatorGameId, string? unitType)
+    public static CombatUnit Create(string gameId, string name, long health, string unitHash, string? creatorGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
-        ArgumentException.ThrowIfNullOrEmpty(username, nameof(username));
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        ArgumentException.ThrowIfNullOrEmpty(unitHash, nameof(unitHash));
 
-        return new CombatUnit(gameId, username, creatorGameId, unitType);
+        return new CombatUnit(gameId, name, health, unitHash, creatorGameId);
     }
 }

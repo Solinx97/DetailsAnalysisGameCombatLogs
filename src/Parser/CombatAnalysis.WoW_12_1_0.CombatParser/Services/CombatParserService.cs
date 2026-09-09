@@ -232,7 +232,6 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
 
         combat.Units = [.. combatDetails.Units.Values];
         combat.UnitCasts = [.. combatDetails.UnitCasts.Values.SelectMany(x => x)];
-        combat.UnitHealths = [.. combatDetails.UnitHealths.Values.SelectMany(x => x)];
         combat.UnitPositions = [.. combatDetails.UnitPositions.Values.SelectMany(x => x)];
 
         CalculatingCommonCombatDetails(combat);
@@ -401,19 +400,32 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
 
     private static void FillCombatPlayerData(CombatPlayer combatPlayer, CombatDetails combatDetails)
     {
-        combatPlayer.DamageDoneToBoss = combatDetails.DamageDones[combatPlayer.Player.GameId].Where(x => x.Value.IsTargetBoss).Sum(x => x.Value.Value);
-        combatPlayer.DamageDone = combatDetails.DamageDones[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
+        if (combatDetails.DamageDones.TryGetValue(combatPlayer.Player.GameId, out var damageCollection))
+        {
+            combatPlayer.DamageDone = damageCollection.Sum(x => x.Value.Value);
+            combatPlayer.DamageDones.AddRange(damageCollection.Select(x => x.Value));
+        }
+
+        if (combatDetails.DamageTakens.TryGetValue(combatPlayer.Player.GameId, out var damageTakenCollection))
+        {
+            combatPlayer.DamageTaken = damageTakenCollection.Sum(x => x.Value.Value);
+        }
+
         combatPlayer.HealDone = combatDetails.HealDones[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
-        combatPlayer.DamageTaken = combatDetails.DamageTakens[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
         combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
 
         combatPlayer.Auras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId]);
-        combatPlayer.DamageDones.AddRange(combatDetails.DamageDones[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.DamageDoneGenerals.AddRange(combatDetails.DamageDoneGenerals[combatPlayer.Player.GameId]);
+        if (combatDetails.DamageDoneGenerals.TryGetValue(combatPlayer.Player.GameId, out var damageGeneralCollection))
+        {
+            combatPlayer.DamageDoneGenerals.AddRange(damageGeneralCollection);
+        }
+        if (combatDetails.DamageTakenGenerals.TryGetValue(combatPlayer.Player.GameId, out var damageTakenGeneralCollection))
+        {
+            combatPlayer.DamageDoneGenerals.AddRange(damageTakenGeneralCollection);
+        }
+
         combatPlayer.HealDones.AddRange(combatDetails.HealDones[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.HealDoneGenerals.AddRange(combatDetails.HealDoneGenerals[combatPlayer.Player.GameId]);
-        combatPlayer.DamageTakens.AddRange(combatDetails.DamageTakens[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.DamageTakenGenerals.AddRange(combatDetails.DamageTakenGenerals[combatPlayer.Player.GameId]);
         combatPlayer.ResourceRecoveries.AddRange(combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.ResourceRecoveryGenerals.AddRange(combatDetails.ResourcesRecoveryGenerals[combatPlayer.Player.GameId]);
 

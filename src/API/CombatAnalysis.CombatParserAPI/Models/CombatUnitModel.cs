@@ -10,11 +10,14 @@ public class CombatUnitModel
     public string GameId { get; set; } = string.Empty;
 
     [Required]
-    public string Username { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+
+    public long Health { get; set; }
+
+    [Required]
+    public string UnitHash { get; set; } = string.Empty;
 
     public string? CreatorGameId { get; set; }
-
-    public string? UnitType { get; set; }
 
     [Range(0, int.MaxValue)]
     public int CombatId { get; set; }

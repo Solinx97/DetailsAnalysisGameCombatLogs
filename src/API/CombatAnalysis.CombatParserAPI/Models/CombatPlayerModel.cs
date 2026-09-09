@@ -58,12 +58,6 @@ public class CombatPlayerModel
     public IReadOnlyList<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
 
     [Required]
-    public IReadOnlyList<DamageTakenModel> DamageTakens { get; set; } = [];
-
-    [Required]
-    public IReadOnlyList<DamageTakenGeneralModel> DamageTakenGenerals { get; set; } = [];
-
-    [Required]
     public IReadOnlyList<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
 
     [Required]

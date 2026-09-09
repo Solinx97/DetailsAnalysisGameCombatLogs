@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import useCombatGeneralData from '../hooks/useCombatGeneralData';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { DamageDoneGeneralModel } from '../types/DamageDoneGeneralModel';
-import type { DamageTakenGeneralModel } from '../types/DamageTakenGeneralModel';
 import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
 import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
 import type { SpellsDataModel } from '../types/SpellsDataModel';
@@ -52,7 +51,7 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
         createBarChartData(playerGeneralDetails);
     }
 
-    const createBarChartData = (combatGeneralDetailsData: DamageDoneGeneralModel[] | DamageTakenGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null) => {
+    const createBarChartData = (combatGeneralDetailsData: DamageDoneGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null) => {
         if (!combatGeneralDetailsData) {
             return;
         }

@@ -20,21 +20,29 @@ public class DamageDoneModel
     public TimeSpan Time { get; set; }
 
     [Required]
-    public string Creator { get; set; } = string.Empty;
+    public string CreatorGameId { get; set; } = string.Empty;
 
     [Required]
-    public string Target { get; set; } = string.Empty;
+    public string TargetGameId { get; set; } = string.Empty;
 
-    public bool IsTargetBoss { get; set; }
+    [Required]
+    public string TargetHash { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
+    public long TargetCurrentHealth { get; set; }
+
+    public int ModificationType { get; set; }
+
     public int DamageType { get; set; }
 
-    public bool IsPeriodicDamage { get; set; }
+    public int Resisted { get; set; }
 
-    public bool IsSingleTarget { get; set; }
+    public int Absorbed { get; set; }
 
-    public bool IsPet { get; set; }
+    public int Blocked { get; set; }
+
+    public int RealDamage { get; set; }
+
+    public int Mitigated { get; set; }
 
     [Range(0, int.MaxValue)]
     public int CombatPlayerId { get; set; }

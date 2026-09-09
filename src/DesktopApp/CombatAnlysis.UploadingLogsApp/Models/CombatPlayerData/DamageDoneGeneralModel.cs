@@ -26,7 +26,7 @@ public class DamageDoneGeneralModel : IGeneralDetailsEntity
 
     public double AverageValue { get; set; }
 
-    public bool IsPet { get; set; }
+    public bool IsPlayerTarget { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

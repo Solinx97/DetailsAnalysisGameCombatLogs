@@ -11,6 +11,6 @@ public record DamageDoneGeneralData(
     int MinValue,
     int MaxValue, 
     double AverageValue,
-    bool IsPet,
+    bool IsPlayerTarget,
     int CombatPlayerId
     );

@@ -35,8 +35,6 @@ public class CombatModel
 
     public List<UnitCastModel> UnitCasts { get; set; } = [];
 
-    public List<UnitHealthModel> UnitHealths { get; set; } = [];
-
     public List<UnitPositionModel> UnitPositions { get; set; } = [];
 
     public Dictionary<string, List<string>> PetsId { get; set; } = [];

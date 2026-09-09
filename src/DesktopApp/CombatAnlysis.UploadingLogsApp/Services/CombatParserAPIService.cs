@@ -212,8 +212,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 continue;
             }
 
-            var damageToBoss = item.CombatPlayers.Sum(x => x.DamageDoneToBoss);
-            var leftHealth = item.Boss.Health - damageToBoss;
+            var leftHealth = item.Boss.Health - 0;
             var precentage = (double)leftHealth / (double)item.Boss.Health;
 
             item.BossHealthPercentage = precentage < 0 ? 0 : Math.Round(precentage * 100, 2);

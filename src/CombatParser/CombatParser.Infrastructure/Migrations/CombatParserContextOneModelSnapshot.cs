@@ -16393,9 +16393,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<long>("Health")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -16417,7 +16414,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1395,
-                            Health = 130841100L,
                             Name = "Каменные стражи",
                             Size = 10
                         },
@@ -16427,7 +16423,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1395,
-                            Health = 235513980L,
                             Name = "Каменные стражи",
                             Size = 10
                         },
@@ -16437,7 +16432,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1390,
-                            Health = 152647950L,
                             Name = "Фэн Проклятый",
                             Size = 10
                         },
@@ -16447,7 +16441,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1390,
-                            Health = 209345760L,
                             Name = "Фэн Проклятый",
                             Size = 10
                         },
@@ -16457,7 +16450,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1434,
-                            Health = 117756990L,
                             Name = "Душелов Гара'джал",
                             Size = 10
                         },
@@ -16467,7 +16459,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1434,
-                            Health = 179252307L,
                             Name = "Душелов Гара'джал",
                             Size = 10
                         },
@@ -16477,7 +16468,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1436,
-                            Health = 174454800L,
                             Name = "Призрачные короли",
                             Size = 10
                         },
@@ -16487,7 +16477,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1436,
-                            Health = 261682200L,
                             Name = "Призрачные короли",
                             Size = 10
                         },
@@ -16497,7 +16486,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1500,
-                            Health = 294392475L,
                             Name = "Элегон",
                             Size = 10
                         },
@@ -16507,7 +16495,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1500,
-                            Health = 339750723L,
                             Name = "Элегон",
                             Size = 10
                         },
@@ -16517,7 +16504,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1407,
-                            Health = 314018640L,
                             Name = "Воля императора",
                             Size = 10
                         },
@@ -16527,7 +16513,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1407,
-                            Health = 471027960L,
                             Name = "Воля императора",
                             Size = 10
                         },
@@ -16537,7 +16522,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1409,
-                            Health = 213968815L,
                             Name = "Вечные защитники",
                             Size = 10
                         },
@@ -16547,7 +16531,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1409,
-                            Health = 344082093L,
                             Name = "Вечные защитники",
                             Size = 10
                         },
@@ -16557,7 +16540,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1505,
-                            Health = 174454800L,
                             Name = "Цулон",
                             Size = 10
                         },
@@ -16567,7 +16549,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1505,
-                            Health = 279127680L,
                             Name = "Цулон",
                             Size = 10
                         },
@@ -16577,7 +16558,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1506,
-                            Health = 138168195L,
                             Name = "Лэй Ши",
                             Size = 10
                         },
@@ -16587,7 +16567,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1506,
-                            Health = 301457900L,
                             Name = "Лэй Ши",
                             Size = 10
                         },
@@ -16597,7 +16576,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1431,
-                            Health = 184704020L,
                             Name = "Ша Страха",
                             Size = 10
                         },
@@ -16607,7 +16585,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1431,
-                            Health = 544037304L,
                             Name = "Ша Страха",
                             Size = 10
                         },
@@ -16617,7 +16594,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1507,
-                            Health = 174454800L,
                             Name = "Императорский визирь Зор'лок",
                             Size = 10
                         },
@@ -16627,7 +16603,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1507,
-                            Health = 218068500L,
                             Name = "Императорский визирь Зор'лок",
                             Size = 10
                         },
@@ -16637,7 +16612,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1504,
-                            Health = 150467265L,
                             Name = "Повелитель клинков Та'як",
                             Size = 10
                         },
@@ -16647,7 +16621,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1504,
-                            Health = 196261650L,
                             Name = "Повелитель клинков Та'як",
                             Size = 10
                         },
@@ -16657,7 +16630,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1463,
-                            Health = 218068500L,
                             Name = "Гаралон",
                             Size = 10
                         },
@@ -16667,7 +16639,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1463,
-                            Health = 290759446L,
                             Name = "Гаралон",
                             Size = 10
                         },
@@ -16677,7 +16648,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1498,
-                            Health = 270404940L,
                             Name = "Повелитель ветров Мел'джарак",
                             Size = 10
                         },
@@ -16687,7 +16657,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1498,
-                            Health = 588784950L,
                             Name = "Повелитель ветров Мел'джарак",
                             Size = 10
                         },
@@ -16697,7 +16666,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1499,
-                            Health = 218068500L,
                             Name = "Ваятель янтаря Ун'сок",
                             Size = 10
                         },
@@ -16707,7 +16675,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1499,
-                            Health = 340186860L,
                             Name = "Ваятель янтаря Ун'сок",
                             Size = 10
                         },
@@ -16717,7 +16684,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1501,
-                            Health = 196261650L,
                             Name = "Великая императрица Шек'зир",
                             Size = 10
                         },
@@ -16727,7 +16693,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1501,
-                            Health = 307476585L,
                             Name = "Великая императрица Шек'зир",
                             Size = 10
                         },
@@ -16737,7 +16702,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1577,
-                            Health = 207601212L,
                             Name = "Джин'рок Разрушитель",
                             Size = 10
                         },
@@ -16747,7 +16711,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1577,
-                            Health = 317507736L,
                             Name = "Джин'рок Разрушитель",
                             Size = 10
                         },
@@ -16757,7 +16720,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1575,
-                            Health = 357632340L,
                             Name = "Хорридон",
                             Size = 10
                         },
@@ -16767,7 +16729,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1575,
-                            Health = 654205500L,
                             Name = "Хорридон",
                             Size = 10
                         },
@@ -16777,7 +16738,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1570,
-                            Health = 299538888L,
                             Name = "Совет старейшин",
                             Size = 10
                         },
@@ -16787,7 +16747,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1570,
-                            Health = 470330152L,
                             Name = "Совет старейшин",
                             Size = 10
                         },
@@ -16797,7 +16756,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1565,
-                            Health = 179999841L,
                             Name = "Тортос",
                             Size = 10
                         },
@@ -16807,7 +16765,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1565,
-                            Health = 319999818L,
                             Name = "Тортос",
                             Size = 10
                         },
@@ -16817,7 +16774,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1578,
-                            Health = 263317712L,
                             Name = "Мегера",
                             Size = 10
                         },
@@ -16827,7 +16783,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1578,
-                            Health = 342297774L,
                             Name = "Мегера",
                             Size = 10
                         },
@@ -16837,7 +16792,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1573,
-                            Health = 244236720L,
                             Name = "Цзи-Кунь",
                             Size = 10
                         },
@@ -16847,7 +16801,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1573,
-                            Health = 366355080L,
                             Name = "Цзи-Кунь",
                             Size = 10
                         },
@@ -16857,7 +16810,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1572,
-                            Health = 261682200L,
                             Name = "Дуруму Позабытый",
                             Size = 10
                         },
@@ -16867,7 +16819,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1572,
-                            Health = 392523300L,
                             Name = "Дуруму Позабытый",
                             Size = 10
                         },
@@ -16877,7 +16828,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1574,
-                            Health = 218068500L,
                             Name = "Изначалий",
                             Size = 10
                         },
@@ -16887,7 +16837,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1574,
-                            Health = 258193104L,
                             Name = "Изначалий",
                             Size = 10
                         },
@@ -16897,7 +16846,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1576,
-                            Health = 80999797L,
                             Name = "Темный Анимус",
                             Size = 10
                         },
@@ -16907,7 +16855,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1576,
-                            Health = 288000023L,
                             Name = "Темный Анимус",
                             Size = 10
                         },
@@ -16917,7 +16864,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1559,
-                            Health = 119937675L,
                             Name = "Кон Железный",
                             Size = 10
                         },
@@ -16927,7 +16873,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1559,
-                            Health = 155700909L,
                             Name = "Кон Железный",
                             Size = 10
                         },
@@ -16937,7 +16882,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1560,
-                            Health = 219812670L,
                             Name = "Небесные сестры",
                             Size = 10
                         },
@@ -16947,7 +16891,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1560,
-                            Health = 628036200L,
                             Name = "Небесные сестры",
                             Size = 10
                         },
@@ -16957,7 +16900,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1579,
-                            Health = 329283435L,
                             Name = "Лэй Шэнь",
                             Size = 10
                         },
@@ -16967,7 +16909,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1579,
-                            Health = 580498347L,
                             Name = "Лэй Шэнь",
                             Size = 10
                         },
@@ -16977,7 +16918,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 2,
                             Difficult = 3,
                             GameId = 1602,
-                            Health = 61900000L,
                             Name = "Глубиний",
                             Size = 10
                         },
@@ -16987,7 +16927,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 2,
                             Difficult = 5,
                             GameId = 1602,
-                            Health = 91500000L,
                             Name = "Глубиний",
                             Size = 10
                         },
@@ -16997,7 +16936,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1598,
-                            Health = 114000000L,
                             Name = "Павшие защитники",
                             Size = 10
                         },
@@ -17007,7 +16945,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1598,
-                            Health = 250000000L,
                             Name = "Павшие защитники",
                             Size = 10
                         },
@@ -17017,7 +16954,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 3,
                             Difficult = 3,
                             GameId = 1624,
-                            Health = 401000000L,
                             Name = "Норусхен",
                             Size = 10
                         },
@@ -17027,7 +16963,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 3,
                             Difficult = 5,
                             GameId = 1624,
-                            Health = 702000000L,
                             Name = "Норусхен",
                             Size = 10
                         },
@@ -17037,7 +16972,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 12,
                             Difficult = 3,
                             GameId = 1604,
-                            Health = 426000000L,
                             Name = "Ша Гордыни",
                             Size = 10
                         },
@@ -17047,7 +16981,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 12,
                             Difficult = 5,
                             GameId = 1604,
-                            Health = 661000000L,
                             Name = "Ша Гордыни",
                             Size = 10
                         },
@@ -17057,7 +16990,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 4,
                             Difficult = 3,
                             GameId = 1622,
-                            Health = 139000000L,
                             Name = "Галакрас",
                             Size = 10
                         },
@@ -17067,7 +16999,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 4,
                             Difficult = 5,
                             GameId = 1622,
-                            Health = 218000000L,
                             Name = "Галакрас",
                             Size = 10
                         },
@@ -17077,7 +17008,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 13,
                             Difficult = 3,
                             GameId = 1600,
-                            Health = 451000000L,
                             Name = "Железный исполин",
                             Size = 10
                         },
@@ -17087,7 +17017,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 13,
                             Difficult = 5,
                             GameId = 1600,
-                            Health = 592000000L,
                             Name = "Железный исполин",
                             Size = 10
                         },
@@ -17097,7 +17026,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 5,
                             Difficult = 3,
                             GameId = 1606,
-                            Health = 349000000L,
                             Name = "Кор'кронские темные шаманы",
                             Size = 10
                         },
@@ -17107,7 +17035,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 5,
                             Difficult = 5,
                             GameId = 1606,
-                            Health = 654000000L,
                             Name = "Кор'кронские темные шаманы",
                             Size = 10
                         },
@@ -17117,7 +17044,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 6,
                             Difficult = 3,
                             GameId = 1603,
-                            Health = 349000000L,
                             Name = "Генерал Назгрим",
                             Size = 10
                         },
@@ -17127,7 +17053,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 6,
                             Difficult = 5,
                             GameId = 1603,
-                            Health = 523000000L,
                             Name = "Генерал Назгрим",
                             Size = 10
                         },
@@ -17137,7 +17062,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 7,
                             Difficult = 3,
                             GameId = 1595,
-                            Health = 377000000L,
                             Name = "Малкорок",
                             Size = 10
                         },
@@ -17147,7 +17071,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 7,
                             Difficult = 5,
                             GameId = 1595,
-                            Health = 630000000L,
                             Name = "Малкорок",
                             Size = 10
                         },
@@ -17157,7 +17080,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 8,
                             Difficult = 3,
                             GameId = 1594,
-                            Health = 621000000L,
                             Name = "Пандарийские трофеи",
                             Size = 10
                         },
@@ -17167,7 +17089,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 8,
                             Difficult = 5,
                             GameId = 1594,
-                            Health = 1190000000L,
                             Name = "Пандарийские трофеи",
                             Size = 10
                         },
@@ -17177,7 +17098,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 14,
                             Difficult = 3,
                             GameId = 1599,
-                            Health = 445000000L,
                             Name = "Ток Кровожадный",
                             Size = 10
                         },
@@ -17187,7 +17107,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 14,
                             Difficult = 5,
                             GameId = 1599,
-                            Health = 654000000L,
                             Name = "Ток Кровожадный",
                             Size = 10
                         },
@@ -17197,7 +17116,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 9,
                             Difficult = 3,
                             GameId = 1601,
-                            Health = 298000000L,
                             Name = "Мастер осады Черноплавс",
                             Size = 10
                         },
@@ -17207,7 +17125,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 9,
                             Difficult = 5,
                             GameId = 1601,
-                            Health = 500000000L,
                             Name = "Мастер осады Черноплавс",
                             Size = 10
                         },
@@ -17217,7 +17134,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 10,
                             Difficult = 3,
                             GameId = 1593,
-                            Health = 510000000L,
                             Name = "Идеалы клакси",
                             Size = 10
                         },
@@ -17227,7 +17143,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 10,
                             Difficult = 5,
                             GameId = 1593,
-                            Health = 1260000000L,
                             Name = "Идеалы клакси",
                             Size = 10
                         },
@@ -17237,7 +17152,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 11,
                             Difficult = 3,
                             GameId = 1623,
-                            Health = 161000000L,
                             Name = "Гаррош Адский Крик",
                             Size = 10
                         },
@@ -17247,7 +17161,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 11,
                             Difficult = 5,
                             GameId = 1623,
-                            Health = 228000000L,
                             Name = "Гаррош Адский Крик",
                             Size = 10
                         },
@@ -17257,7 +17170,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3379,
-                            Health = 560000000L,
                             Name = "Нимрисса Волногон",
                             Size = 30
                         },
@@ -17267,7 +17179,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3379,
-                            Health = 683000000L,
                             Name = "Нимрисса Волногон",
                             Size = 30
                         },
@@ -17277,7 +17188,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3470,
-                            Health = 346000000L,
                             Name = "Нек'зали Душительница Душ",
                             Size = 30
                         },
@@ -17287,7 +17197,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3470,
-                            Health = 652000000L,
                             Name = "Нек'зали Душительница Душ",
                             Size = 30
                         },
@@ -17297,7 +17206,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3497,
-                            Health = 1010000000L,
                             Name = "Потерявшиеся исследователи",
                             Size = 30
                         },
@@ -17307,7 +17215,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3497,
-                            Health = 1484000000L,
                             Name = "Потерявшиеся исследователи",
                             Size = 30
                         },
@@ -17317,7 +17224,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3420,
-                            Health = 556000000L,
                             Name = "Ссзорак",
                             Size = 30
                         },
@@ -17327,7 +17233,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3420,
-                            Health = 898000000L,
                             Name = "Ссзорак",
                             Size = 30
                         },
@@ -17337,7 +17242,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3445,
-                            Health = 440000000L,
                             Name = "Погребенные стражи",
                             Size = 30
                         },
@@ -17347,7 +17251,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3445,
-                            Health = 790000000L,
                             Name = "Погребенные стражи",
                             Size = 30
                         },
@@ -17357,7 +17260,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3455,
-                            Health = 562000000L,
                             Name = "Вашник Тлетворный",
                             Size = 30
                         },
@@ -17367,7 +17269,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3455,
-                            Health = 962000000L,
                             Name = "Вашник Тлетворный",
                             Size = 30
                         },
@@ -17377,7 +17278,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3421,
-                            Health = 798000000L,
                             Name = "Два Клыка",
                             Size = 30
                         },
@@ -17387,7 +17287,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3421,
-                            Health = 1408000000L,
                             Name = "Два Клыка",
                             Size = 30
                         },
@@ -17397,7 +17296,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3429,
-                            Health = 403000000L,
                             Name = "Спиральный алтарь",
                             Size = 30
                         },
@@ -17407,7 +17305,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3429,
-                            Health = 548000000L,
                             Name = "Спиральный алтарь",
                             Size = 30
                         },
@@ -17417,7 +17314,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 14,
                             GameId = 3492,
-                            Health = 714000000L,
                             Name = "Ула'тек",
                             Size = 30
                         },
@@ -17427,7 +17323,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 15,
                             GameId = 3492,
-                            Health = 1550000000L,
                             Name = "Ула'тек",
                             Size = 30
                         });
@@ -18037,13 +17932,22 @@ namespace CombatParser.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Absorbed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Blocked")
+                        .HasColumnType("int");
+
                     b.Property<int>("CombatPlayerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Creator")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("CreatorGameId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DamageType")
                         .HasColumnType("int");
@@ -18051,17 +17955,17 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPeriodicDamage")
-                        .HasColumnType("bit");
+                    b.Property<int>("Mitigated")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("IsPet")
-                        .HasColumnType("bit");
+                    b.Property<int>("ModificationType")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("IsSingleTarget")
-                        .HasColumnType("bit");
+                    b.Property<int>("RealDamage")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("IsTargetBoss")
-                        .HasColumnType("bit");
+                    b.Property<int>("Resisted")
+                        .HasColumnType("int");
 
                     b.Property<string>("Spell")
                         .IsRequired()
@@ -18069,9 +17973,19 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Target")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<long>("TargetCurrentHealth")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TargetGameId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TargetHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
@@ -18112,7 +18026,7 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPet")
+                    b.Property<bool>("IsPlayerTarget")
                         .HasColumnType("bit");
 
                     b.Property<int>("MaxValue")
@@ -18137,125 +18051,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasIndex("CombatPlayerId");
 
                     b.ToTable("DamageDoneGeneral");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTaken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Absorbed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ActualValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Blocked")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Creator")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("DamageTakenType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameSpellId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsPeriodicDamage")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Mitigated")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RealDamage")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Resisted")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Spell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("Target")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("DamageTaken");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTakenGeneral", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActualValue")
-                        .HasColumnType("int");
-
-                    b.Property<double>("AverageValue")
-                        .HasColumnType("float");
-
-                    b.Property<int>("CastNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CritNumber")
-                        .HasColumnType("int");
-
-                    b.Property<double>("DamageTakenPerSecond")
-                        .HasColumnType("float");
-
-                    b.Property<int>("GameSpellId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaxValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MissNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Spell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("DamageTakenGeneral");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDone", b =>
@@ -18497,10 +18292,14 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("UnitType")
+                    b.Property<long>("Health")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UnitHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -18721,38 +18520,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasIndex("CombatId");
 
                     b.ToTable("UnitCast");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.UnitHealth", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("CombatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatorGameId")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("CurrentHealth")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDead")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MaxHealth")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatId");
-
-                    b.ToTable("UnitHealth");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.UnitPosition", b =>
@@ -19039,28 +18806,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("CombatPlayer");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTaken", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("DamageTakens")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTakenGeneral", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("DamageTakenGenerals")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDone", b =>
                 {
                     b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
@@ -19146,17 +18891,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Combat");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.UnitHealth", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
-                        .WithMany("UnitHeaths")
-                        .HasForeignKey("CombatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Combat");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.UnitPosition", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
@@ -19206,8 +18940,6 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Navigation("UnitCasts");
 
-                    b.Navigation("UnitHeaths");
-
                     b.Navigation("UnitPositions");
 
                     b.Navigation("Units");
@@ -19227,10 +18959,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("DamageDoneGenerals");
 
                     b.Navigation("DamageDones");
-
-                    b.Navigation("DamageTakenGenerals");
-
-                    b.Navigation("DamageTakens");
 
                     b.Navigation("HealDoneGenerals");
 

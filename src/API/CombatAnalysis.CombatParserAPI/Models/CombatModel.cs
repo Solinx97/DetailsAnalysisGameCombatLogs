@@ -40,8 +40,6 @@ public class CombatModel
 
     public List<UnitCastModel> UnitCasts { get; init; } = [];
 
-    public List<UnitHealthModel> UnitHealths { get; init; } = [];
-
     public List<UnitPositionModel> UnitPositions { get; init; } = [];
 
     [Required]

@@ -2,6 +2,20 @@
 
 public static class CombatLogKeyWords
 {
+    #region Hash
+
+    public static string PlayerHash { get; } = "0x512";
+
+    public static string PlayerHash1 { get; } = "0x514";
+
+    public static string PlayerHash2 { get; } = "0x511";
+
+    public static string BossHash { get; } = "0x10a48";
+
+    public static string BossHash1 { get; } = "0xa48";
+
+    #endregion
+
     #region Common
 
     public static TimeSpan MinCombatDuration { get; } = TimeSpan.Parse("00:00:20");
@@ -40,8 +54,6 @@ public static class CombatLogKeyWords
 
     public static string SpellCastFailed { get; } = "SPELL_CAST_FAILED";
 
-    public static string SpellMissed { get; } = "SPELL_MISSED";
-
     #endregion
 
     #region Auras
@@ -66,10 +78,6 @@ public static class CombatLogKeyWords
 
     public static string SpellPeriodicDamage { get; } = "SPELL_PERIODIC_DAMAGE";
 
-    public static string SwingMissed { get; } = "SWING_MISSED";
-
-    public static string DamageShieldMissed { get; } = "DAMAGE_SHIELD_MISSED";
-
     public static string RangeDamage { get; } = "RANGE_DAMAGE";
 
     public static string SwingDamageLanded { get; } = "SWING_DAMAGE_LANDED";
@@ -77,6 +85,8 @@ public static class CombatLogKeyWords
     public static string Melee { get; } = "Melee";
 
     public static string IsSingleTarget { get; } = "ST";
+
+    public static string IsAOETarget { get; } = "AOE";
 
     public static string IsCrit { get; } = "1";
 
@@ -115,6 +125,16 @@ public static class CombatLogKeyWords
     public static string SpellPeriodicEnergize { get; } = "SPELL_PERIODIC_ENERGIZE";
 
     public static string SpellEnergize { get; } = "SPELL_ENERGIZE";
+
+    #endregion
+
+    #region Damage missed
+
+    public static string SwingMissed { get; } = "SWING_MISSED";
+
+    public static string DamageShieldMissed { get; } = "DAMAGE_SHIELD_MISSED";
+
+    public static string SpellMissed { get; } = "SPELL_MISSED";
 
     #endregion
 }

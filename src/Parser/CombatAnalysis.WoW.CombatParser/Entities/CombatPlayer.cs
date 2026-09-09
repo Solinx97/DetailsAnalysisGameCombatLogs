@@ -7,8 +7,6 @@ public class CombatPlayer
 {
     public double AverageItemLevel { get; set; }
 
-    public int DamageDoneToBoss { get; set; }
-
     public int DamageDone { get; set; }
 
     public int HealDone { get; set; }
@@ -34,10 +32,6 @@ public class CombatPlayer
     public List<HealDone> HealDones { get; set; } = [];
 
     public List<HealDoneGeneral> HealDoneGenerals { get; set; } = [];
-
-    public List<DamageTaken> DamageTakens { get; set; } = [];
-
-    public List<DamageTakenGeneral> DamageTakenGenerals { get; set; } = [];
 
     public List<ResourceRecovery> ResourceRecoveries { get; set; } = [];
 

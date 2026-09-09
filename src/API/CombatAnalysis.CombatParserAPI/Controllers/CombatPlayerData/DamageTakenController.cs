@@ -1,8 +1,8 @@
-﻿using CombatParser.Application.Queries.DamageTaken.CountDamageTaken;
-using CombatParser.Application.Queries.DamageTaken.GetCombatPlayerChart;
-using CombatParser.Application.Queries.DamageTaken.GetDamageTakens;
-using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenCreators;
-using CombatParser.Application.Queries.DamageTaken.GetUniqueDamageTakenSpells;
+﻿using CombatParser.Application.Queries.DamageDone.DamageTaken.CountDamageTaken;
+using CombatParser.Application.Queries.DamageDone.DamageTaken.GetCombatPlayerChart;
+using CombatParser.Application.Queries.DamageDone.DamageTaken.GetDamageTakens;
+using CombatParser.Application.Queries.DamageDone.DamageTaken.GetUniqueDamageTakenCreators;
+using CombatParser.Application.Queries.DamageDone.DamageTaken.GetUniqueDamageTakenSpells;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

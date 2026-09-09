@@ -47,7 +47,6 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<ICombatPlayerDataByTimeRepository<DamageDone>, CombatPlayerDataByTimeRepository<DamageDone>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<HealDone>, CombatPlayerDataByTimeRepository<HealDone>>();
-        services.AddScoped<ICombatPlayerDataByTimeRepository<DamageTaken>, CombatPlayerDataByTimeRepository<DamageTaken>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<ResourceRecovery>, CombatPlayerDataByTimeRepository<ResourceRecovery>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<CombatPlayerDeath>, CombatPlayerDataByTimeRepository<CombatPlayerDeath>>();
 
@@ -55,17 +54,14 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICombatPlayerInfoRepository<WoWMoPClassicPlayerStats>, CombatPlayerInfoRepository<WoWMoPClassicPlayerStats>>();
         services.AddScoped<ICombatPlayerInfoRepository<DamageDoneGeneral>, CombatPlayerInfoRepository<DamageDoneGeneral>>();
         services.AddScoped<ICombatPlayerInfoRepository<HealDoneGeneral>, CombatPlayerInfoRepository<HealDoneGeneral>>();
-        services.AddScoped<ICombatPlayerInfoRepository<DamageTakenGeneral>, CombatPlayerInfoRepository<DamageTakenGeneral>>();
         services.AddScoped<ICombatPlayerInfoRepository<ResourceRecoveryGeneral>, CombatPlayerInfoRepository<ResourceRecoveryGeneral>>();
 
         services.AddScoped<IGeneralRepository<DamageDone>, GeneralRepositroy<DamageDone>>();
         services.AddScoped<IGeneralRepository<HealDone>, GeneralRepositroy<HealDone>>();
-        services.AddScoped<IGeneralRepository<DamageTaken>, GeneralRepositroy<DamageTaken>>();
         services.AddScoped<IGeneralRepository<ResourceRecovery>, GeneralRepositroy<ResourceRecovery>>();
 
         services.AddScoped<IChartRepository<DamageDone>, ChartRepository<DamageDone>>();
         services.AddScoped<IChartRepository<HealDone>, ChartRepository<HealDone>>();
-        services.AddScoped<IChartRepository<DamageTaken>, ChartRepository<DamageTaken>>();
         services.AddScoped<IChartRepository<ResourceRecovery>, ChartRepository<ResourceRecovery>>();
 
         services.AddScoped<IDashboardRepository, DashboardRepository>();
