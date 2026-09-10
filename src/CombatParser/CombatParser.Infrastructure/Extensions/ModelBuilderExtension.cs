@@ -248,14 +248,14 @@ internal static class ModelBuilderExtension
                 .OnDelete(DeleteBehavior.Cascade);
 
             dd.HasOne(dd => dd.Creator)
-                .WithMany(cp => cp.DamageDonesAsCreator)
+                .WithMany()
                 .HasForeignKey(ddg => ddg.CreatorId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
 
             dd.HasOne(dd => dd.Target)
-                .WithMany(cp => cp.DamageDonesAsTarget)
+                .WithMany()
                 .HasForeignKey(ddg => ddg.TargetId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<DamageDoneGeneral>(ddg =>
@@ -279,15 +279,15 @@ internal static class ModelBuilderExtension
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            hd.HasOne(dd => dd.Creator)
-                .WithMany(cp => cp.HealDonesAsCreator)
+            hd.HasOne(hd => hd.Creator)
+                .WithMany()
                 .HasForeignKey(ddg => ddg.CreatorId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            hd.HasOne(dd => dd.Target)
-                .WithMany(cp => cp.HealDonesAsTarget)
+            hd.HasOne(hd => hd.Target)
+                .WithMany()
                 .HasForeignKey(ddg => ddg.TargetId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<HealDoneGeneral>(hdg =>
@@ -311,15 +311,15 @@ internal static class ModelBuilderExtension
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            rr.HasOne(dd => dd.Creator)
-                .WithMany(cp => cp.ResourceRecoveryAsCreator)
+            rr.HasOne(rr => rr.Creator)
+                .WithMany()
                 .HasForeignKey(ddg => ddg.CreatorId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            rr.HasOne(dd => dd.Target)
-                .WithMany(cp => cp.ResourceRecoveryAsTarget)
+            rr.HasOne(rr => rr.Target)
+                .WithMany()
                 .HasForeignKey(ddg => ddg.TargetId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<ResourceRecoveryGeneral>(rrg =>

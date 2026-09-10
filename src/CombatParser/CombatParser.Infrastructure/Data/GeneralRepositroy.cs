@@ -1,5 +1,5 @@
 ﻿using CombatParser.Domain.Data;
-using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Enums;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +13,10 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
 
     public async Task<IEnumerable<string>> GetUniqueTargetsAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
+        var targetType = (int)CombatUnitType.Player;
         var uniqueTargets = await _context.Set<TModel>()
                      .Include(x => x.Target)
-                     .Where(x => x.CombatPlayerId == combatPlayerId)
+                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Type != targetType)
                      .Select(x => x.Target.Name)
                      .Distinct()
                      .OrderBy(x => x)
@@ -26,9 +27,10 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
 
     public async Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
+        var creatorType = (int)CombatUnitType.Player;
         var uniqueCreatorNames = await _context.Set<TModel>()
-                     .Include(x => x.Target)
-                     .Where(x => x.CombatPlayerId == combatPlayerId)
+                     .Include(x => x.Creator)
+                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Creator.Type != creatorType)
                      .Select(x => x.Creator.Name)
                      .Distinct()
                      .OrderBy(x => x)
@@ -37,83 +39,42 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
         return uniqueCreatorNames;
     }
 
-    public async Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken, int[]? creatorTypes = null, int[]? targetTypes = null)
     {
-        var uniqueSpells = await _context.Set<TModel>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId)
-                     .Select(x => x.Spell)
-                     .Distinct()
-                     .OrderBy(x => x)
-                     .ToListAsync(cancellationToken);
-
-        return uniqueSpells;
-    }
-
-    public async Task<IEnumerable<string>> GetDamageUniqueSpellsAsync(int combatPlayerId, bool isTargetPlayer, CancellationToken cancellationToken)
-    {
-        var uniqueSpells = await _context.Set<DamageDone>()
-                     .Where(x => x.CombatPlayerId == combatPlayerId)
-                     .Select(x => x.Spell)
-                     .Distinct()
-                     .OrderBy(x => x)
-                     .ToListAsync(cancellationToken);
-
-        return uniqueSpells;
-    }
-
-    public async Task<IEnumerable<TModel>> GetAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
-    {
-        var query = _context.Set<TModel>().AsQueryable();
-        if (combatPlayerId > 0)
-        {
-            query = query.Where(x => x.CombatPlayerId == combatPlayerId);
-        }
-
-        if (!string.IsNullOrEmpty(target))
-        {
-            query = query.Where(x => x.Target.Equals(target));
-        }
-
-        if (!string.IsNullOrEmpty(target))
-        {
-            query = query.Where(x => x.Target.Equals(target));
-        }
-
-        if (!string.IsNullOrEmpty(creator))
-        {
-            query = query.Where(x => x.Creator.Equals(creator));
-        }
-
-        if (!string.IsNullOrEmpty(spell))
-        {
-            query = query.Where(x => x.Spell.Equals(spell));
-        }
-
-        if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
-        {
-            var fromTime = TimeSpan.Parse(from);
-            var toTime = TimeSpan.Parse(to);
-            query = query.Where(x => x.Time >= fromTime && x.Time <= toTime);
-        }
-
-        var values = await query
-                     .OrderBy(x => x.Time)
-                     .Skip((page - 1) * pageSize)
-                     .Take(pageSize)
-                     .ToListAsync(cancellationToken);
-
-        return values;
-    }
-
-    public async Task<IEnumerable<DamageDone>> GetDamageAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, string[] targetsHash, CancellationToken cancellationToken)
-    {
-        var query = _context.Set<DamageDone>()
+        var query = _context.Set<TModel>()
+            .Include(x => x.Creator)
             .Include(x => x.Target)
+            .AsNoTracking()
             .AsQueryable();
-        if (targetsHash.Length > 0)
+
+        if (targetTypes != null && targetTypes.Length > 0)
         {
-            query = query.Where(x => targetsHash.Contains(x.Target.UnitHash));
+            query = query.Where(x => targetTypes.Contains(x.Target.Type));
         }
+
+        if (creatorTypes != null && creatorTypes.Length > 0)
+        {
+            query = query.Where(x => creatorTypes.Contains(x.Creator.Type));
+        }
+
+        var uniqueSpells = await query
+                     .Where(x => x.CombatPlayerId == combatPlayerId)
+                     .Select(x => x.Spell)
+                     .Distinct()
+                     .OrderBy(x => x)
+                     .ToListAsync(cancellationToken);
+
+        return uniqueSpells;
+    }
+
+    public async Task<IEnumerable<TModel>> GetAsync(int combatPlayerId, string target, string creator, string spell, string from, string to,
+        int page, int pageSize, CancellationToken cancellationToken, int? targetType = null, int? creatorType = null)
+    {
+        var query = _context.Set<TModel>()
+            .Include(x => x.Creator)
+            .Include(x => x.Target)
+            .AsNoTracking()
+            .AsQueryable();
 
         if (combatPlayerId > 0)
         {
@@ -122,12 +83,12 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
 
         if (!string.IsNullOrEmpty(target))
         {
-            query = query.Where(x => x.Target.Equals(target));
+            query = query.Where(x => x.Target.Name.Equals(target));
         }
 
         if (!string.IsNullOrEmpty(creator))
         {
-            query = query.Where(x => x.Creator.Equals(creator));
+            query = query.Where(x => x.Creator.Name.Equals(creator));
         }
 
         if (!string.IsNullOrEmpty(spell))
@@ -140,6 +101,16 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
             var fromTime = TimeSpan.Parse(from);
             var toTime = TimeSpan.Parse(to);
             query = query.Where(x => x.Time >= fromTime && x.Time <= toTime);
+        }
+
+        if (targetType != null)
+        {
+            query = query.Where(x => x.Target.Type == targetType);
+        }
+
+        if (creatorType != null)
+        {
+            query = query.Where(x => x.Creator.Type == creatorType);
         }
 
         var values = await query
@@ -153,7 +124,12 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
 
     public async Task<int> CountAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
     {
-        var query = _context.Set<TModel>().AsQueryable();
+        var query = _context.Set<TModel>()
+            .Include(x => x.Creator)
+            .Include(x => x.Target)
+            .AsNoTracking()
+            .AsQueryable();
+
         if (combatPlayerId > 0)
         {
             query = query.Where(x => x.CombatPlayerId == combatPlayerId);
@@ -161,17 +137,12 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
 
         if (!string.IsNullOrEmpty(target))
         {
-            query = query.Where(x => x.Target.Equals(target));
-        }
-
-        if (!string.IsNullOrEmpty(target))
-        {
-            query = query.Where(x => x.Target.Equals(target));
+            query = query.Where(x => x.Target.Name.Equals(target));
         }
 
         if (!string.IsNullOrEmpty(creator))
         {
-            query = query.Where(x => x.Creator.Equals(creator));
+            query = query.Where(x => x.Creator.Name.Equals(creator));
         }
 
         if (!string.IsNullOrEmpty(spell))

@@ -1,5 +1,4 @@
 ﻿using CombatParser.Domain.Aggregates;
-using CombatParser.Domain.Entities.CombatPlayerData;
 
 namespace CombatParser.Domain.Entities;
 
@@ -7,13 +6,6 @@ public class CombatUnit : CombatDataBase
 {
     public const int GAMEID_MAX_LENGTH = 128;
     public const int NAME_MAX_LENGTH = 128;
-
-    private readonly List<DamageDone> _damageDonesAsCreator = [];
-    private readonly List<DamageDone> _damageDonesAsTarget = [];
-    private readonly List<HealDone> _healDonesAsCreator = [];
-    private readonly List<HealDone> _healDonesAsTarget = [];
-    private readonly List<ResourceRecovery> _resourceRecoveryAsCreator = [];
-    private readonly List<ResourceRecovery> _resourceRecoveryAsTarget = [];
 
     private CombatUnit() { }
 
@@ -43,18 +35,6 @@ public class CombatUnit : CombatDataBase
     public string? CreatorGameId { get; private set; }
 
     public Combat Combat { get; private set; }
-
-    public IReadOnlyCollection<DamageDone> DamageDonesAsCreator => _damageDonesAsCreator.AsReadOnly();
-
-    public IReadOnlyCollection<DamageDone> DamageDonesAsTarget => _damageDonesAsTarget.AsReadOnly();
-
-    public IReadOnlyCollection<HealDone> HealDonesAsCreator => _healDonesAsCreator.AsReadOnly();
-
-    public IReadOnlyCollection<HealDone> HealDonesAsTarget => _healDonesAsTarget.AsReadOnly();
-
-    public IReadOnlyCollection<ResourceRecovery> ResourceRecoveryAsCreator => _resourceRecoveryAsCreator.AsReadOnly();
-
-    public IReadOnlyCollection<ResourceRecovery> ResourceRecoveryAsTarget => _resourceRecoveryAsTarget.AsReadOnly();
 
     public static CombatUnit Create(string gameId, string name, long health, string unitHash, int type, string? creatorGameId)
     {

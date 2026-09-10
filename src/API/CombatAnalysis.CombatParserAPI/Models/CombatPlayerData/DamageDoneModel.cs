@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
-public class DamageDoneModel
+public class DamageDoneModel : CombatUnitBase
 {
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
@@ -18,16 +19,6 @@ public class DamageDoneModel
 
     [Required]
     public TimeSpan Time { get; set; }
-
-    public string? CreatorId { get; set; }
-
-    [Required]
-    public string CreatorGameId { get; set; }
-
-    public string? TargetId { get; set; }
-
-    [Required]
-    public string TargetGameId { get; set; }
 
     public int ModificationType { get; set; }
 

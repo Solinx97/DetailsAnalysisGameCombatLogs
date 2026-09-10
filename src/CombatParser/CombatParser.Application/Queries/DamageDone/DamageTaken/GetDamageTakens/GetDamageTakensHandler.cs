@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatParser.Application.DTOs.CombatPlayerData;
 using CombatParser.Domain.Data;
+using CombatParser.Domain.Enums;
 using MediatR;
 
 namespace CombatParser.Application.Queries.DamageDone.DamageTaken.GetDamageTakens;
@@ -12,8 +13,8 @@ internal class GetDamageTakensHandler(IGeneralRepository<Domain.Entities.CombatP
 
     public async Task<IEnumerable<DamageDoneDto>> Handle(GetDamageTakensQuery request, CancellationToken cancellationToken)
     {
-        var targetsHash = new string[] { "0x514", "0x512", "0x511" };
-        var damageTakens = await _repository.GetDamageAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, targetsHash, cancellationToken);
+        var targetType = (int)CombatUnitType.Player;
+        var damageTakens = await _repository.GetAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, cancellationToken, targetType);
         var map = _mapper.Map<IEnumerable<DamageDoneDto>>(damageTakens);
 
         return map;

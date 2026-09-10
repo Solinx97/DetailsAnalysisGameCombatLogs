@@ -154,7 +154,7 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
                                 }
                             </li>
                             <li>
-                                {item.creatorGameId}
+                                {item.creator.name}
                             </li>
                         </ul>
                     </li>

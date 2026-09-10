@@ -18792,15 +18792,15 @@ namespace CombatParser.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Creator")
-                        .WithMany("DamageDonesAsCreator")
+                        .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Target")
-                        .WithMany("DamageDonesAsTarget")
+                        .WithMany()
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CombatPlayer");
@@ -18830,15 +18830,15 @@ namespace CombatParser.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Creator")
-                        .WithMany("HealDonesAsCreator")
+                        .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Target")
-                        .WithMany("HealDonesAsTarget")
+                        .WithMany()
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CombatPlayer");
@@ -18868,15 +18868,15 @@ namespace CombatParser.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Creator")
-                        .WithMany("ResourceRecoveryAsCreator")
+                        .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Target")
-                        .WithMany("ResourceRecoveryAsTarget")
+                        .WithMany()
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CombatPlayer");
@@ -19018,21 +19018,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("ResourceRecoveryGenerals");
 
                     b.Navigation("Score");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatUnit", b =>
-                {
-                    b.Navigation("DamageDonesAsCreator");
-
-                    b.Navigation("DamageDonesAsTarget");
-
-                    b.Navigation("HealDonesAsCreator");
-
-                    b.Navigation("HealDonesAsTarget");
-
-                    b.Navigation("ResourceRecoveryAsCreator");
-
-                    b.Navigation("ResourceRecoveryAsTarget");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>

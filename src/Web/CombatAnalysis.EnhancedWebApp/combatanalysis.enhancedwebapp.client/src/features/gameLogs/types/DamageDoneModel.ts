@@ -1,12 +1,12 @@
+import type { CombatUnitModel } from './CombatUnitModel';
+
 export type DamageDoneModel = {
     id: number;
     spell: string;
     value: number;
     time: string;
-    creatorGameId: string;
-    targetGameId: string;
-    targetHash: string;
-    targetCurrentHealth: number;
+    creator: CombatUnitModel;
+    target: CombatUnitModel;
     modificationType: number;
     damageType: number;
     resisted: number;

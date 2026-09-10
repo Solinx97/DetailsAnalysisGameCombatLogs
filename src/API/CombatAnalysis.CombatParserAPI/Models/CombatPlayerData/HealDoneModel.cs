@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
-public class HealDoneModel
+public class HealDoneModel : CombatUnitBase
 {
     [Range(0, int.MaxValue)]
     public int Id { get; set; }
@@ -21,16 +22,6 @@ public class HealDoneModel
 
     [Required]
     public TimeSpan Time { get; set; }
-
-    public string? CreatorId { get; set; }
-
-    [Required]
-    public string CreatorGameId { get; set; }
-
-    public string? TargetId { get; set; }
-
-    [Required]
-    public string TargetGameId { get; set; }
 
     public bool IsCrit { get; set; }
 

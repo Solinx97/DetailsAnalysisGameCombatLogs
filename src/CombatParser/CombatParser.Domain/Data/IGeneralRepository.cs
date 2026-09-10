@@ -1,6 +1,4 @@
-﻿using CombatParser.Domain.Entities.CombatPlayerData;
-
-namespace CombatParser.Domain.Data;
+﻿namespace CombatParser.Domain.Data;
 
 public interface IGeneralRepository<TModel>
     where TModel : class
@@ -9,11 +7,9 @@ public interface IGeneralRepository<TModel>
 
     Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken);
+    Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken, int[]? creatorTypes = null, int[]? targetTypes = null);
 
-    Task<IEnumerable<TModel>> GetAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken);
-
-    Task<IEnumerable<DamageDone>> GetDamageAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, string[] targetsHash, CancellationToken cancellationToken);
+    Task<IEnumerable<TModel>> GetAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken, int? targetType = null, int? creatorType = null);
 
     Task<int> CountAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken);
 }

@@ -12,13 +12,9 @@ public class DamageDoneModel
 
     public TimeSpan Time { get; set; }
 
-    public string CreatorGameId { get; set; } = string.Empty;
+    public CombatUnitModel Creator { get; set; } = new();
 
-    public string TargetGameId { get; set; } = string.Empty;
-
-    public string TargetHash { get; set; } = string.Empty;
-
-    public long TargetCurrentHealth { get; set; }
+    public CombatUnitModel Target { get; set; } = new();
 
     public int ModificationType { get; set; }
 

@@ -120,7 +120,7 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
                                 }
                             </li>
                             <li>
-                                {getUserNameWithoutRealm(item.target)}
+                                {getUserNameWithoutRealm(item.target.name)}
                             </li>
                         </ul>
                     </li>

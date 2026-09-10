@@ -156,7 +156,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
                                     : <div className={getClassNameByDamageModificationType(item)}>{item.value}</div>
                                 }
                             </li>
-                            <li>{getUserNameWithoutRealm(item.targetGameId)}</li>
+                            <li>{getUserNameWithoutRealm(item.target.name)}</li>
                         </ul>
                     </li>
                 ))}

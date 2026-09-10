@@ -30,9 +30,9 @@ public class DamageTakenController : ControllerBase
             var response = await _httpClient.GetAsync($"DamageTaken/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
-            var DamageTakenModels = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+            var damageTaken = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
 
-            return Ok(DamageTakenModels);
+            return Ok(damageTaken);
         }
         catch (HttpRequestException ex)
         {

@@ -12,9 +12,9 @@ public class ResourceRecoveryModel
 
     public string Time { get; set; }
 
-    public string Creator { get; set; }
+    public CombatUnitModel Creator { get; set; } = new();
 
-    public string Target { get; set; }
+    public CombatUnitModel Target { get; set; } = new();
 
     public int CombatPlayerId { get; set; }
 }

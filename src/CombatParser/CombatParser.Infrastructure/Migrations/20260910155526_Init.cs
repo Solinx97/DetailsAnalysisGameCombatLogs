@@ -548,8 +548,6 @@ namespace CombatParser.Infrastructure.Migrations
                     Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ModificationType = table.Column<int>(type: "int", nullable: false),
                     DamageType = table.Column<int>(type: "int", nullable: false),
                     Resisted = table.Column<int>(type: "int", nullable: false),
@@ -558,7 +556,9 @@ namespace CombatParser.Infrastructure.Migrations
                     RealDamage = table.Column<int>(type: "int", nullable: false),
                     Overkill = table.Column<int>(type: "int", nullable: false),
                     Mitigated = table.Column<int>(type: "int", nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -573,12 +573,14 @@ namespace CombatParser.Infrastructure.Migrations
                         name: "FK_DamageDone_CombatUnit_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DamageDone_CombatUnit_TargetId",
                         column: x => x.TargetId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -591,12 +593,12 @@ namespace CombatParser.Infrastructure.Migrations
                     Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Overheal = table.Column<int>(type: "int", nullable: false),
                     IsCrit = table.Column<bool>(type: "bit", nullable: false),
                     IsAbsorbed = table.Column<bool>(type: "bit", nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -611,12 +613,14 @@ namespace CombatParser.Infrastructure.Migrations
                         name: "FK_HealDone_CombatUnit_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_HealDone_CombatUnit_TargetId",
                         column: x => x.TargetId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -629,9 +633,9 @@ namespace CombatParser.Infrastructure.Migrations
                     Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false),
                     CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -646,12 +650,14 @@ namespace CombatParser.Infrastructure.Migrations
                         name: "FK_ResourceRecovery_CombatUnit_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ResourceRecovery_CombatUnit_TargetId",
                         column: x => x.TargetId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
