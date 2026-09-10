@@ -1,8 +1,9 @@
-﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
+﻿using CombatAnalysis.WoW.CombatParser.Entities.Base;
+using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-public class DamageDone : ICombatPlayerEntity
+public class DamageDone : CombatUnitDataBase, ICombatPlayerEntity
 {
     public int GameSpellId { get; set; }
 
@@ -11,14 +12,6 @@ public class DamageDone : ICombatPlayerEntity
     public int Value { get; set; }
 
     public TimeSpan Time { get; set; }
-
-    public string CreatorGameId { get; set; }
-
-    public string TargetGameId { get; set; }
-
-    public string TargetHash { get; set; }
-
-    public long TargetCurrentHealth { get; set; }
 
     public int ModificationType { get; set; }
 

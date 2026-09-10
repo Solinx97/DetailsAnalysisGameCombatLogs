@@ -218,6 +218,7 @@ namespace CombatParser.Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Health = table.Column<long>(type: "bigint", nullable: false),
                     UnitHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     CreatorGameId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CombatId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -354,43 +355,6 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DamageDone",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    CreatorGameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    TargetGameId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    TargetHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TargetCurrentHealth = table.Column<long>(type: "bigint", nullable: false),
-                    ModificationType = table.Column<int>(type: "int", nullable: false),
-                    DamageType = table.Column<int>(type: "int", nullable: false),
-                    Resisted = table.Column<int>(type: "int", nullable: false),
-                    Absorbed = table.Column<int>(type: "int", nullable: false),
-                    Blocked = table.Column<int>(type: "int", nullable: false),
-                    Overkill = table.Column<int>(type: "int", nullable: false),
-                    RealDamage = table.Column<int>(type: "int", nullable: false),
-                    Mitigated = table.Column<int>(type: "int", nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DamageDone", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DamageDone_CombatPlayer_CombatPlayerId",
-                        column: x => x.CombatPlayerId,
-                        principalTable: "CombatPlayer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DamageDoneGeneral",
                 columns: table => new
                 {
@@ -421,34 +385,6 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "HealDone",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Overheal = table.Column<int>(type: "int", nullable: false),
-                    IsCrit = table.Column<bool>(type: "bit", nullable: false),
-                    IsAbsorbed = table.Column<bool>(type: "bit", nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HealDone", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_HealDone_CombatPlayer_CombatPlayerId",
-                        column: x => x.CombatPlayerId,
-                        principalTable: "CombatPlayer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "HealDoneGeneral",
                 columns: table => new
                 {
@@ -470,31 +406,6 @@ namespace CombatParser.Infrastructure.Migrations
                     table.PrimaryKey("PK_HealDoneGeneral", x => x.Id);
                     table.ForeignKey(
                         name: "FK_HealDoneGeneral_CombatPlayer_CombatPlayerId",
-                        column: x => x.CombatPlayerId,
-                        principalTable: "CombatPlayer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ResourceRecovery",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Creator = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Target = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ResourceRecovery", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ResourceRecovery_CombatPlayer_CombatPlayerId",
                         column: x => x.CombatPlayerId,
                         principalTable: "CombatPlayer",
                         principalColumn: "Id",
@@ -625,6 +536,122 @@ namespace CombatParser.Infrastructure.Migrations
                         principalTable: "CombatPlayer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DamageDone",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ModificationType = table.Column<int>(type: "int", nullable: false),
+                    DamageType = table.Column<int>(type: "int", nullable: false),
+                    Resisted = table.Column<int>(type: "int", nullable: false),
+                    Absorbed = table.Column<int>(type: "int", nullable: false),
+                    Blocked = table.Column<int>(type: "int", nullable: false),
+                    RealDamage = table.Column<int>(type: "int", nullable: false),
+                    Overkill = table.Column<int>(type: "int", nullable: false),
+                    Mitigated = table.Column<int>(type: "int", nullable: false),
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DamageDone", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DamageDone_CombatPlayer_CombatPlayerId",
+                        column: x => x.CombatPlayerId,
+                        principalTable: "CombatPlayer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DamageDone_CombatUnit_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "CombatUnit",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DamageDone_CombatUnit_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "CombatUnit",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HealDone",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Overheal = table.Column<int>(type: "int", nullable: false),
+                    IsCrit = table.Column<bool>(type: "bit", nullable: false),
+                    IsAbsorbed = table.Column<bool>(type: "bit", nullable: false),
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HealDone", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HealDone_CombatPlayer_CombatPlayerId",
+                        column: x => x.CombatPlayerId,
+                        principalTable: "CombatPlayer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_HealDone_CombatUnit_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "CombatUnit",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_HealDone_CombatUnit_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "CombatUnit",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ResourceRecovery",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GameSpellId = table.Column<int>(type: "int", nullable: false),
+                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<TimeSpan>(type: "time", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CombatPlayerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResourceRecovery", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ResourceRecovery_CombatPlayer_CombatPlayerId",
+                        column: x => x.CombatPlayerId,
+                        principalTable: "CombatPlayer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ResourceRecovery_CombatUnit_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "CombatUnit",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ResourceRecovery_CombatUnit_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "CombatUnit",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -2922,6 +2949,16 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "CombatPlayerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DamageDone_CreatorId",
+                table: "DamageDone",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DamageDone_TargetId",
+                table: "DamageDone",
+                column: "TargetId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DamageDoneGeneral_CombatPlayerId",
                 table: "DamageDoneGeneral",
                 column: "CombatPlayerId");
@@ -2932,6 +2969,16 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "CombatPlayerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HealDone_CreatorId",
+                table: "HealDone",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HealDone_TargetId",
+                table: "HealDone",
+                column: "TargetId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HealDoneGeneral_CombatPlayerId",
                 table: "HealDoneGeneral",
                 column: "CombatPlayerId");
@@ -2940,6 +2987,16 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "IX_ResourceRecovery_CombatPlayerId",
                 table: "ResourceRecovery",
                 column: "CombatPlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResourceRecovery_CreatorId",
+                table: "ResourceRecovery",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ResourceRecovery_TargetId",
+                table: "ResourceRecovery",
+                column: "TargetId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResourceRecoveryGeneral_CombatPlayerId",
@@ -2999,9 +3056,6 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "CombatPlayerPreAura");
 
             migrationBuilder.DropTable(
-                name: "CombatUnit");
-
-            migrationBuilder.DropTable(
                 name: "DamageDone");
 
             migrationBuilder.DropTable(
@@ -3033,6 +3087,9 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "WoWMoPClassicPlayerStats");
+
+            migrationBuilder.DropTable(
+                name: "CombatUnit");
 
             migrationBuilder.DropTable(
                 name: "Specialization");

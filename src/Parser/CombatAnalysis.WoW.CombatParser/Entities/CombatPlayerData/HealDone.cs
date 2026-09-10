@@ -1,8 +1,9 @@
-﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
+﻿using CombatAnalysis.WoW.CombatParser.Entities.Base;
+using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-public class HealDone : ICombatPlayerEntity
+public class HealDone : CombatUnitDataBase, ICombatPlayerEntity
 {
     public int GameSpellId { get; set; }
 
@@ -13,10 +14,6 @@ public class HealDone : ICombatPlayerEntity
     public int Overheal { get; set; }
 
     public TimeSpan Time { get; set; }
-
-    public string Creator { get; set; } = string.Empty;
-
-    public string Target { get; set; } = string.Empty;
 
     public bool IsCrit { get; set; }
 

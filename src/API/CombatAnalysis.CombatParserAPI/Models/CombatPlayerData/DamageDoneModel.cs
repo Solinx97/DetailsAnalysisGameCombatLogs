@@ -19,16 +19,15 @@ public class DamageDoneModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    [Required]
-    public string CreatorGameId { get; set; } = string.Empty;
+    public string? CreatorId { get; set; }
 
     [Required]
-    public string TargetGameId { get; set; } = string.Empty;
+    public string CreatorGameId { get; set; }
+
+    public string? TargetId { get; set; }
 
     [Required]
-    public string TargetHash { get; set; } = string.Empty;
-
-    public long TargetCurrentHealth { get; set; }
+    public string TargetGameId { get; set; }
 
     public int ModificationType { get; set; }
 

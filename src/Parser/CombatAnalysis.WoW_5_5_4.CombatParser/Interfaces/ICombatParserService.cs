@@ -1,5 +1,5 @@
-﻿using CombatAnalysis.WoW.CombatParser.Entities;
-using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
+﻿using CombatAnalysis.WoW.CombatParser.Details;
+using CombatAnalysis.WoW.CombatParser.Entities;
 
 namespace CombatAnalysis.WoW_5_5_4.CombatParser.Interfaces;
 

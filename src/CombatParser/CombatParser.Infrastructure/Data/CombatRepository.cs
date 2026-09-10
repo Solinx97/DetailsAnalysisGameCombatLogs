@@ -23,20 +23,25 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
 
         var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);
 
-        await _context.BulkInsertCombatDataAsync(combat, c => c.Units, cancellationToken);
         await _context.BulkInsertCombatDataAsync(combat, c => c.UnitCasts, cancellationToken);
         await _context.BulkInsertCombatDataAsync(combat, c => c.UnitPositions, cancellationToken);
 
         await _context.BulkInsertCombatPlayerStatsAsync(players, cancellationToken);
         await _context.BulkInsertCombatPlayerScoresAsync(combat.BossId, players, cancellationToken);
 
+        var units = await _context.BulkInsertUnitsAsync(combat, c => c.Units, cancellationToken);
+
+        var unitsByGameId = units
+            .Where(x => !string.IsNullOrEmpty(x.GameId))
+            .ToDictionary(x => x.GameId, x => x.Id);
+        await _context.BulkInsertUnitDataAsync(players, unitsByGameId, p => p.DamageDones, cancellationToken);
+        await _context.BulkInsertUnitDataAsync(players, unitsByGameId, p => p.HealDones, cancellationToken);
+        await _context.BulkInsertUnitDataAsync(players, unitsByGameId, p => p.ResourceRecoveries, cancellationToken);
+
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.PreAuras, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.Auras, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDones, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDoneGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDones, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDoneGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveries, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveryGenerals, cancellationToken);
         await _context.BulkInsertCombatPlayerDataAsync(players, p => p.CombatPlayerDeathes, cancellationToken);
 

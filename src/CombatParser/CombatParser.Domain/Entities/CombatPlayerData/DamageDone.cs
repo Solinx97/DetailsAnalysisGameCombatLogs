@@ -1,28 +1,28 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Entities.Base;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRefs
+public class DamageDone : CombatUnitDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
-    public const int CREATOR_MAX_LENGTH = 128;
-    public const int TARGET_MAX_LENGTH = 128;
+    public const int CREATOR_GAME_ID_MAX_LENGTH = 128;
 
     private DamageDone() { }
 
-    private DamageDone(int gameSpellId, string spell, int value, TimeSpan time, string creatorGameId,
-        string targetGameId, string targetHash, long targetCurrentHealth, int modificationType, int damageType, int resisted, int absorbed,
-        int blocked, int realDamage, int overkill, int mitigated, int combatPlayerId)
+    private DamageDone(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
+        string targetId, int modificationType, int damageType, int resisted,
+        int absorbed, int blocked, int realDamage, int overkill, int mitigated, string creatorGameId, string targetGameId)
     {
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
         Time = time;
+        CreatorId = creatorId;
         CreatorGameId = creatorGameId;
+        TargetId = targetId;
         TargetGameId = targetGameId;
-        TargetHash = targetHash;
-        TargetCurrentHealth = targetCurrentHealth;
         ModificationType = modificationType;
         DamageType = damageType;
         Resisted = resisted;
@@ -31,7 +31,6 @@ public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRe
         RealDamage = realDamage;
         Overkill = overkill;
         Mitigated = mitigated;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int GameSpellId { get; private set; }
@@ -42,17 +41,9 @@ public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRe
 
     public TimeSpan Time { get; private set; }
 
-    public string CreatorGameId { get; private set; }
+    public CombatUnit Creator { get; private set; }
 
-    public string? Creator { get; private set; }
-
-    public string TargetGameId { get; private set; }
-
-    public string? Target { get; private set; }
-
-    public string TargetHash { get; private set; }
-
-    public long TargetCurrentHealth { get; private set; }
+    public CombatUnit Target { get; private set; }
 
     public int ModificationType { get; private set; }
 
@@ -72,20 +63,18 @@ public class DamageDone : CombatPlayerDataBase, ITime, IGeneralEntity, IDamageRe
 
     public CombatPlayer CombatPlayer { get; private set; }
 
-    public static DamageDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorGameId,
-        string targetGameId, string targetHash, long targetCurrentHealth, int modificationType, int damageType, int resisted, 
-        int absorbed, int blocked, int realDamage, int overkill,  int mitigated, int combatPlayerId)
+    public static DamageDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
+        string targetId, int modificationType, int damageType, int resisted, 
+        int absorbed, int blocked, int realDamage, int overkill, int mitigated, string creatorGameId, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
-        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
-        ArgumentException.ThrowIfNullOrEmpty(targetHash, nameof(targetHash));
-        ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
         ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
-        ArgumentOutOfRangeException.ThrowIfNegative(damageType, nameof(damageType));
+        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
+        ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
 
-        return new DamageDone(gameSpellId, spell, value, time, creatorGameId,
-            targetGameId, targetHash, targetCurrentHealth, modificationType, damageType, resisted, absorbed,
-            blocked, realDamage, overkill, mitigated, combatPlayerId);
+        return new DamageDone(gameSpellId, spell, value, time, creatorId,
+            targetId, modificationType, damageType, resisted, absorbed,
+            blocked, realDamage, overkill, mitigated, creatorGameId, targetGameId);
     }
 }

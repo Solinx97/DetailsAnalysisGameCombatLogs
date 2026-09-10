@@ -10,6 +10,8 @@ public class CombatUnit
 
     public string UnitHash { get; set; } = string.Empty;
 
+    public int Type { get; set; }
+
     public string? CreatorGameId { get; set; }
 
     public int CombatId { get; set; }

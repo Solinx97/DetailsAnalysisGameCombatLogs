@@ -12,9 +12,9 @@ public class ResourceRecoveryDto
 
     public TimeSpan Time { get; set; }
 
-    public string Creator { get; set; }
+    public CombatUnitDto Creator { get; set; } = new();
 
-    public string Target { get; set; }
+    public CombatUnitDto Target { get; set; } = new();
 
     public int CombatPlayerId { get; set; }
 }

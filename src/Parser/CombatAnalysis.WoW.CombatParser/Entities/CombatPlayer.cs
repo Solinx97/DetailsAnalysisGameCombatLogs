@@ -19,8 +19,6 @@ public class CombatPlayer
 
     public Player Player { get; set; } = new();
 
-    public int CombatId { get; set; }
-
     public List<CombatPlayerPreAura> PreAuras { get; set; } = [];
 
     public List<CombatPlayerAura> Auras { get; set; } = [];

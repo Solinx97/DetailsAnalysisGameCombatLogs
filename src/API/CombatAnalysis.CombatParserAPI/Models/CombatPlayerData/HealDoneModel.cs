@@ -22,11 +22,15 @@ public class HealDoneModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    [Required]
-    public string Creator { get; set; } = string.Empty;
+    public string? CreatorId { get; set; }
 
     [Required]
-    public string Target { get; set; } = string.Empty;
+    public string CreatorGameId { get; set; }
+
+    public string? TargetId { get; set; }
+
+    [Required]
+    public string TargetGameId { get; set; }
 
     public bool IsCrit { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using CombatParser.Domain.Interfaces;
+﻿using CombatParser.Domain.Entities.Base;
+using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 

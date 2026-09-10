@@ -1,36 +1,29 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Entities.Base;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class HealDone : CombatPlayerDataBase, ITime, IGeneralEntity
+public class HealDone : CombatUnitDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
-    public const int CREATOR_MAX_LENGTH = 128;
-    public const int TARGET_MAX_LENGTH = 128;
 
     private HealDone() { }
 
-    public HealDone(int gameSpellId, string spell, int value, TimeSpan time, string creator,
-        string target, int overheal, bool isCrit, bool isAbsorbed, int combatPlayerId)
+    private HealDone(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
+        string targetId, int overheal, bool isCrit, bool isAbsorbed, string creatorGameId, string targetGameId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
-        ArgumentException.ThrowIfNullOrEmpty(creator, nameof(creator));
-        ArgumentException.ThrowIfNullOrEmpty(target, nameof(target));
-        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
-        ArgumentOutOfRangeException.ThrowIfNegative(overheal, nameof(overheal));
-
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
         Time = time;
-        Creator = creator;
-        Target = target;
+        CreatorId = creatorId;
+        CreatorGameId = creatorGameId;
+        TargetId = targetId;
+        TargetGameId = targetGameId;
         Overheal = overheal;
         IsCrit = isCrit;
         IsAbsorbed = isAbsorbed;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int GameSpellId { get; private set; }
@@ -41,9 +34,9 @@ public class HealDone : CombatPlayerDataBase, ITime, IGeneralEntity
 
     public TimeSpan Time { get; private set; }
 
-    public string Creator { get; private set; }
+    public CombatUnit Creator { get; private set; }
 
-    public string Target { get; private set; }
+    public CombatUnit Target { get; private set; }
 
     public int Overheal { get; private set;  }
 
@@ -52,4 +45,18 @@ public class HealDone : CombatPlayerDataBase, ITime, IGeneralEntity
     public bool IsAbsorbed { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
+
+    public static HealDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
+        string targetId, int overheal, bool isCrit, bool isAbsorbed, string creatorGameId, string targetGameId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
+        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
+        ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
+        ArgumentOutOfRangeException.ThrowIfNegative(overheal, nameof(overheal));
+
+        return new HealDone(gameSpellId, spell, value, time, creatorId,
+            targetId, overheal, isCrit, isAbsorbed, creatorGameId, targetGameId);
+    }
 }

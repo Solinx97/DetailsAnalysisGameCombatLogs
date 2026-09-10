@@ -15,15 +15,7 @@ public class DamageDoneModel : IDetailsEntity
 
     public string CreatorGameId { get; set; }
 
-    public string Creator { get; set; }
-
     public string TargetGameId { get; set; }
-
-    public string Target { get; set; }
-
-    public string TargetHash { get; set; }
-
-    public long TargetCurrentHealth { get; set; }
 
     public int ModificationType { get; set; }
 

@@ -1,4 +1,6 @@
-﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Entities.Base;
+
+namespace CombatParser.Domain.Entities.CombatPlayerData;
 
 public class DamageDoneGeneral : CombatPlayerDataBase
 {

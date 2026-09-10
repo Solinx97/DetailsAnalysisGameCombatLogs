@@ -4,6 +4,7 @@ using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Mathematics;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -241,16 +242,20 @@ internal static class ModelBuilderExtension
             dd.Property(p => p.Spell)
                 .HasMaxLength(DamageDone.SPELL_MAX_LENGTH);
 
-            dd.Property(p => p.Creator)
-                .HasMaxLength(DamageDone.CREATOR_MAX_LENGTH);
-
-            dd.Property(p => p.Target)
-                .HasMaxLength(DamageDone.TARGET_MAX_LENGTH);
-
             dd.HasOne(dd => dd.CombatPlayer)
                 .WithMany(cp => cp.DamageDones)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            dd.HasOne(dd => dd.Creator)
+                .WithMany(cp => cp.DamageDonesAsCreator)
+                .HasForeignKey(ddg => ddg.CreatorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            dd.HasOne(dd => dd.Target)
+                .WithMany(cp => cp.DamageDonesAsTarget)
+                .HasForeignKey(ddg => ddg.TargetId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<DamageDoneGeneral>(ddg =>
@@ -269,16 +274,20 @@ internal static class ModelBuilderExtension
             hd.Property(p => p.Spell)
                 .HasMaxLength(HealDone.SPELL_MAX_LENGTH);
 
-            hd.Property(p => p.Creator)
-                .HasMaxLength(HealDone.CREATOR_MAX_LENGTH);
-
-            hd.Property(p => p.Target)
-                .HasMaxLength(HealDone.TARGET_MAX_LENGTH);
-
             hd.HasOne(hd => hd.CombatPlayer)
                 .WithMany(cp => cp.HealDones)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            hd.HasOne(dd => dd.Creator)
+                .WithMany(cp => cp.HealDonesAsCreator)
+                .HasForeignKey(ddg => ddg.CreatorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            hd.HasOne(dd => dd.Target)
+                .WithMany(cp => cp.HealDonesAsTarget)
+                .HasForeignKey(ddg => ddg.TargetId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<HealDoneGeneral>(hdg =>
@@ -297,16 +306,20 @@ internal static class ModelBuilderExtension
             rr.Property(p => p.Spell)
                 .HasMaxLength(ResourceRecovery.SPELL_MAX_LENGTH);
 
-            rr.Property(p => p.Creator)
-                .HasMaxLength(ResourceRecovery.CREATOR_MAX_LENGTH);
-
-            rr.Property(p => p.Target)
-                .HasMaxLength(ResourceRecovery.TARGET_MAX_LENGTH);
-
             rr.HasOne(rr => rr.CombatPlayer)
                 .WithMany(cp => cp.ResourceRecoveries)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            rr.HasOne(dd => dd.Creator)
+                .WithMany(cp => cp.ResourceRecoveryAsCreator)
+                .HasForeignKey(ddg => ddg.CreatorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            rr.HasOne(dd => dd.Target)
+                .WithMany(cp => cp.ResourceRecoveryAsTarget)
+                .HasForeignKey(ddg => ddg.TargetId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<ResourceRecoveryGeneral>(rrg =>

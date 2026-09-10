@@ -6,8 +6,10 @@ public record HealDoneData(
     int Value,
     int Overheal,
     TimeSpan Time,
-    string Creator,
-    string Target,
+    string CreatorId,
+    string CreatorGameId,
+    string TargetId,
+    string TargetGameId,
     bool IsCrit,
     bool IsAbsorbed,
     int CombatPlayerId

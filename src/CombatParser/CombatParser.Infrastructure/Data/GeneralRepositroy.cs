@@ -14,8 +14,9 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
     public async Task<IEnumerable<string>> GetUniqueTargetsAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
         var uniqueTargets = await _context.Set<TModel>()
+                     .Include(x => x.Target)
                      .Where(x => x.CombatPlayerId == combatPlayerId)
-                     .Select(x => x.Target)
+                     .Select(x => x.Target.Name)
                      .Distinct()
                      .OrderBy(x => x)
                      .ToListAsync(cancellationToken);
@@ -26,8 +27,9 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
     public async Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
         var uniqueCreatorNames = await _context.Set<TModel>()
+                     .Include(x => x.Target)
                      .Where(x => x.CombatPlayerId == combatPlayerId)
-                     .Select(x => x.Creator)
+                     .Select(x => x.Creator.Name)
                      .Distinct()
                      .OrderBy(x => x)
                      .ToListAsync(cancellationToken);
@@ -38,6 +40,18 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
     public async Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
         var uniqueSpells = await _context.Set<TModel>()
+                     .Where(x => x.CombatPlayerId == combatPlayerId)
+                     .Select(x => x.Spell)
+                     .Distinct()
+                     .OrderBy(x => x)
+                     .ToListAsync(cancellationToken);
+
+        return uniqueSpells;
+    }
+
+    public async Task<IEnumerable<string>> GetDamageUniqueSpellsAsync(int combatPlayerId, bool isTargetPlayer, CancellationToken cancellationToken)
+    {
+        var uniqueSpells = await _context.Set<DamageDone>()
                      .Where(x => x.CombatPlayerId == combatPlayerId)
                      .Select(x => x.Spell)
                      .Distinct()
@@ -93,10 +107,12 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
 
     public async Task<IEnumerable<DamageDone>> GetDamageAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, string[] targetsHash, CancellationToken cancellationToken)
     {
-        var query = _context.Set<DamageDone>().AsQueryable();
+        var query = _context.Set<DamageDone>()
+            .Include(x => x.Target)
+            .AsQueryable();
         if (targetsHash.Length > 0)
         {
-            query = query.Where(x => targetsHash.Contains(x.TargetHash));
+            query = query.Where(x => targetsHash.Contains(x.Target.UnitHash));
         }
 
         if (combatPlayerId > 0)

@@ -14,9 +14,9 @@ public class HealDoneDto
 
     public TimeSpan Time { get; set; }
 
-    public string Creator { get; set; }
+    public CombatUnitDto Creator { get; set; } = new();
 
-    public string Target { get; set; }
+    public CombatUnitDto Target { get; set; } = new();
 
     public bool IsCrit { get; set; }
 

@@ -1,31 +1,26 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Entities.Base;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecovery : CombatPlayerDataBase, ITime, IGeneralEntity
+public class ResourceRecovery : CombatUnitDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
-    public const int CREATOR_MAX_LENGTH = 128;
-    public const int TARGET_MAX_LENGTH = 128;
 
     private ResourceRecovery() { }
 
-    public ResourceRecovery(int gameSpellId, string spell, int value, TimeSpan time, string creator,
-        string target, int combatPlayerId)
+    private ResourceRecovery(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
+        string targetId, string creatorGameId, string targetGameId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
-        ArgumentException.ThrowIfNullOrEmpty(creator, nameof(creator));
-        ArgumentException.ThrowIfNullOrEmpty(target, nameof(target));
-        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
         Time = time;
-        Creator = creator;
-        Target = target;
-        CombatPlayerId = combatPlayerId;
+        CreatorId = creatorId;
+        CreatorGameId = creatorGameId;
+        TargetId = targetId;
+        TargetGameId = targetGameId;
     }
 
     public int GameSpellId { get; private set; }
@@ -36,9 +31,20 @@ public class ResourceRecovery : CombatPlayerDataBase, ITime, IGeneralEntity
 
     public TimeSpan Time { get; private set; }
 
-    public string Creator { get; private set; } = string.Empty;
+    public CombatUnit Creator { get; private set; }
 
-    public string Target { get; private set; } = string.Empty;
+    public CombatUnit Target { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
+
+    public static ResourceRecovery Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
+        string targetId, string creatorGameId, string targetGameId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
+        ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
+
+        return new ResourceRecovery(gameSpellId, spell, value, time, creatorId, targetId, creatorGameId, targetGameId);
+    }
 }

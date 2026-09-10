@@ -1,4 +1,4 @@
-﻿using CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Entities.Base;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.WoWMidnight;

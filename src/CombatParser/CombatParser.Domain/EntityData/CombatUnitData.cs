@@ -5,6 +5,7 @@ public record CombatUnitData(
     string Name,
     long Health,
     string UnitHash,
+    int Type,
     string? CreatorGameId,
     int CombatId
     );

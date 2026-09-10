@@ -33,13 +33,13 @@ internal class UnitRepository<TModel>(CombatParserContextOne context) : IUnitRep
                 on combatPlayer.Id equals damageDone.CombatPlayerId
 
             join unit in _context.Set<CombatUnit>().AsNoTracking()
-                on new { CombatId = combatPlayer.CombatId, GameId = damageDone.TargetGameId }
+                on new { CombatId = combatPlayer.CombatId, GameId = damageDone.Target.GameId }
                 equals new { CombatId = unit.CombatId, GameId = unit.GameId }
 
             select new
             {
                 CreatorGameId = unit.GameId,
-                CurrentHealth = damageDone.TargetCurrentHealth,
+                CurrentHealth = damageDone.Target.Health,
                 MaxHealth = unit.Health,
                 Time = damageDone.Time
             }

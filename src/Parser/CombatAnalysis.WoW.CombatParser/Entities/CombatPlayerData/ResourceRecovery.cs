@@ -1,8 +1,9 @@
-﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
+﻿using CombatAnalysis.WoW.CombatParser.Entities.Base;
+using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-public class ResourceRecovery : ICombatPlayerEntity
+public class ResourceRecovery : CombatUnitDataBase, ICombatPlayerEntity
 {
     public int GameSpellId { get; set; }
 
@@ -11,10 +12,6 @@ public class ResourceRecovery : ICombatPlayerEntity
     public int Value { get; set; }
 
     public TimeSpan Time { get; set; }
-
-    public string Creator { get; set; }
-
-    public string Target { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

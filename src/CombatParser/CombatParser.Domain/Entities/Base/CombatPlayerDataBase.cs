@@ -1,6 +1,6 @@
 ﻿using CombatParser.Domain.Interfaces;
 
-namespace CombatParser.Domain.Entities.CombatPlayerData;
+namespace CombatParser.Domain.Entities.Base;
 
 public class CombatPlayerDataBase : ICombatPlayerRefs
 {

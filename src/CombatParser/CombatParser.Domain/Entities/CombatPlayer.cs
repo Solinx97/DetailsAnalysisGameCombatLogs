@@ -168,9 +168,9 @@ public class CombatPlayer : CombatDataBase
 
     private void AddDamageDone(DamageDoneData damageDone)
     {
-        var createdDamageDone = CombatPlayerData.DamageDone.Create(damageDone.GameSpellId, damageDone.Spell, damageDone.Value, damageDone.Time, damageDone.CreatorGameId,
-            damageDone.TargetGameId, damageDone.TargetHash, damageDone.TargetCurrentHealth, damageDone.ModificationType, damageDone.DamageType, damageDone.Resisted, damageDone.Absorbed,
-            damageDone.Blocked, damageDone.RealDamage, damageDone.Overkill, damageDone.Mitigated, damageDone.CombatPlayerId);
+        var createdDamageDone = CombatPlayerData.DamageDone.Create(damageDone.GameSpellId, damageDone.Spell, damageDone.Value, damageDone.Time, damageDone.CreatorId,
+            damageDone.TargetId, damageDone.ModificationType, damageDone.DamageType, damageDone.Resisted, damageDone.Absorbed,
+            damageDone.Blocked, damageDone.RealDamage, damageDone.Overkill, damageDone.Mitigated, damageDone.CreatorGameId, damageDone.TargetGameId);
         _damageDones.Add(createdDamageDone);
     }
 
@@ -184,8 +184,8 @@ public class CombatPlayer : CombatDataBase
 
     private void AddHealDone(HealDoneData healDone)
     {
-        var createdHealDone = new HealDone(healDone.GameSpellId, healDone.Spell, healDone.Value, healDone.Time, healDone.Creator,
-            healDone.Target, healDone.Overheal, healDone.IsCrit, healDone.IsAbsorbed, healDone.CombatPlayerId);
+        var createdHealDone = CombatPlayerData.HealDone.Create(healDone.GameSpellId, healDone.Spell, healDone.Value, healDone.Time, healDone.CreatorId,
+            healDone.TargetId, healDone.Overheal, healDone.IsCrit, healDone.IsAbsorbed, healDone.CreatorGameId, healDone.TargetGameId);
         _healDones.Add(createdHealDone);
     }
 
@@ -198,8 +198,8 @@ public class CombatPlayer : CombatDataBase
 
     private void AddResourceRecovery(ResourceRecoveryData resourceRecovery)
     {
-        var createdResourceRecovery = new ResourceRecovery(resourceRecovery.GameSpellId, resourceRecovery.Spell, resourceRecovery.Value, resourceRecovery.Time, resourceRecovery.Creator,
-            resourceRecovery.Target, resourceRecovery.CombatPlayerId);
+        var createdResourceRecovery = ResourceRecovery.Create(resourceRecovery.GameSpellId, resourceRecovery.Spell, resourceRecovery.Value, resourceRecovery.Time, resourceRecovery.CreatorId,
+            resourceRecovery.TargetId, resourceRecovery.CreatorGameId, resourceRecovery.TargetGameId);
         _resourceRecoveries.Add(createdResourceRecovery);
     }
 

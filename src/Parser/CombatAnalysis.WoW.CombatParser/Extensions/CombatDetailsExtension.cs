@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+﻿using CombatAnalysis.WoW.CombatParser.Details;
+using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Enums;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Details;
 using Microsoft.Extensions.Logging;
 
-namespace CombatAnalysis.WoW_12_1_0.CombatParser.Extensions;
+namespace CombatAnalysis.WoW.CombatParser.Extensions;
 
 public static class CombatDetailsExtension
 {
@@ -36,7 +36,7 @@ public static class CombatDetailsExtension
             }
         }
         catch (ArgumentNullException ex)
-        {
+        {   
             combatDetails.Logger.LogError("Some argument was null: {Param}", ex.ParamName);
         }
         catch (ArgumentOutOfRangeException ex)

@@ -2,8 +2,6 @@
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
-using CombatParser.Domain.EntityData.WoWMidnight;
-using CombatParser.Domain.EntityData.WoWMoPClassic;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
@@ -30,7 +28,57 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+    public static async Task BulkInsertUnitDataAsync<TModel>(this CombatParserContextOne context, List<CombatPlayer> players, Dictionary<string, string> unitsByGameId, Func<CombatPlayer, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatPlayerRefs, ICombatUnitRefs
+    {
+        var combatPlayerData = players.SelectMany(p =>
+            selector(p).Select(dd =>
+            {
+                if (!unitsByGameId.TryGetValue(dd.TargetGameId, out var targetId))
+                {
+                    return null;
+                }
+
+                if (!unitsByGameId.TryGetValue(dd.CreatorGameId, out var creatorId))
+                {
+                    return null;
+                }
+
+                dd.SetUnits(creatorId, targetId);
+                dd.SetCombatPlayerId(p.Id);
+
+                return dd;
+            }
+        ))
+            .Where(dd => dd != null)
+            .ToList();
+
+        if (combatPlayerData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatPlayerData, cancellationToken: cancelationToken);
+        }
+    }
+
+    public static async Task<List<CombatUnit>> BulkInsertUnitsAsync(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<CombatUnit>> selector, CancellationToken cancelationToken)
+    {
+        var combatData = selector(combat).Select(cr =>
+        {
+            cr.SetCombatId(combat.Id);
+            return cr;
+        }).ToList();
+
+        if (combatData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatData, new BulkConfig
+            {
+                SetOutputIdentity = true
+            }, cancellationToken: cancelationToken);
+        }
+
+        return combatData;
+    }
+
+    public static async Task<List<TModel>> BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
         where TModel : class, ICombatRefs
     {
         var combatData = selector(combat).Select(cr =>
@@ -43,6 +91,8 @@ internal static class CombatParserContextOneExtension
         {
             await context.BulkInsertAsync(combatData, cancellationToken: cancelationToken);
         }
+
+        return combatData;
     }
 
     public static async Task<List<CombatPlayer>> BulkInsertCombatPlayersAsync(this CombatParserContextOne context, int combatId, IEnumerable<CombatPlayer> combatPlayers, CancellationToken cancelationToken)

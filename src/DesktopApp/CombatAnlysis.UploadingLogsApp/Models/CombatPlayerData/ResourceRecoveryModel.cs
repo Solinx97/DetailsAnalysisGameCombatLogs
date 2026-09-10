@@ -15,9 +15,9 @@ public class ResourceRecoveryModel : IDetailsEntity
 
     public TimeSpan Time { get; set; }
 
-    public string Creator { get; set; }
+    public string CreatorGameId { get; set; }
 
-    public string Target { get; set; }
+    public string TargetGameId { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

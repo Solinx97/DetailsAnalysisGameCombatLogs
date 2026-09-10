@@ -12,13 +12,9 @@ public class DamageDoneDto
 
     public TimeSpan Time { get; set; }
 
-    public string CreatorGameId { get; set; }
+    public CombatUnitDto Creator { get; set; } = new();
 
-    public string TargetGameId { get; set; }
-
-    public string TargetHash { get; set; }
-
-    public long TargetCurrentHealth { get; set; }
+    public CombatUnitDto Target { get; set; } = new();
 
     public int ModificationType { get; set; }
 

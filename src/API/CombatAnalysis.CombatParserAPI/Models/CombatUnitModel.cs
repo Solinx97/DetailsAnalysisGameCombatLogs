@@ -17,6 +17,8 @@ public class CombatUnitModel
     [Required]
     public string UnitHash { get; set; } = string.Empty;
 
+    public int Type { get; set; }
+
     public string? CreatorGameId { get; set; }
 
     [Range(0, int.MaxValue)]
