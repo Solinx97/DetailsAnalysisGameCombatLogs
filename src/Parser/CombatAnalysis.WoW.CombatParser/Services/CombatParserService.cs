@@ -8,6 +8,7 @@ using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Runtime;
 using System.Text;
 
 namespace CombatAnalysis.WoW.CombatParser.Services;
@@ -60,9 +61,29 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
     public void Clear()
     {
-        Combats = [];
-        CombatDetails = [];
-        _zones = [];
+        foreach (var combat in Combats)
+        {
+            ClearCombat(combat);
+        }
+
+        Combats.Clear();
+
+        foreach (var details in CombatDetails)
+        {
+            details.Clear();
+        }
+
+        CombatDetails.Clear();
+        _zones.Clear();
+
+        // Reduce capacity, provided to collections but not release after cleaning collection yet
+        Combats.TrimExcess();
+        CombatDetails.TrimExcess();
+        _zones.TrimExcess();
+
+        // Call GC to collect and release LOH right now
+        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
     }
 
     private async Task ProcessCombatLogLinesAsync(string[] lines, ConcurrentDictionary<string, CombatUnit> units, bool combatStarted, StringBuilder newCombatFromLogs, CancellationToken cancellationToken)
@@ -116,6 +137,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             await GetCombatInformationAsync(combatInformations, units);
 
             combatData.Clear();
+            combatData.Capacity = 16;
             units.Clear();
         }
         else
@@ -413,5 +435,27 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         }
 
         return combatPlayer;
+    }
+
+    private static void ClearCombat(Combat combat)
+    {
+        foreach (var player in combat.CombatPlayers)
+        {
+            player.Auras.Clear();
+            player.DamageDones.Clear();
+            player.DamageDoneGenerals.Clear();
+            player.HealDones.Clear();
+            player.HealDoneGenerals.Clear();
+            player.ResourceRecoveries.Clear();
+            player.ResourceRecoveryGenerals.Clear();
+            player.CombatPlayerDeathes.Clear();
+            player.CombatPlayerPositions.Clear();
+            player.PreAuras.Clear();
+        }
+
+        combat.CombatPlayers.Clear();
+        combat.Units.Clear();
+        combat.UnitCasts.Clear();
+        combat.UnitPositions.Clear();
     }
 }

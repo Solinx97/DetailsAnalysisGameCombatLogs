@@ -14,10 +14,8 @@ public class TokenResponseModel
     public string RefreshToken { get; set; }
 
     [JsonPropertyName("expires_in")]
-    public int ExpiresInHours { get; set; }
+    public int AccessTokenExpInSeconds { get; set; }
 
     [JsonPropertyName("token_type")]
     public string TokenType { get; set; }
-
-    public int RefreshTokenExpiresInHours { get; set; } = 720;
 }

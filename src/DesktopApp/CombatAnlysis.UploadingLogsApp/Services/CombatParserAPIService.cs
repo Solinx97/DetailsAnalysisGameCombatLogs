@@ -11,8 +11,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,13 +66,21 @@ internal class CombatParserAPIService : ICombatParserAPIService
 
                 uplodedCallback(combat.DungeonName, combat.Boss.Name);
 
-                combat.CombatPlayers = [];
+                combat.ReleaseParsedData();
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                _logger.LogError(ex, "Authorization failed: {Message}", ex.Message);
+
+                combat.ReleaseParsedData();
+
+                throw;
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-                combat.CombatPlayers = [];
+                combat.ReleaseParsedData();
 
                 throw;
             }
@@ -78,7 +88,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
             {
                 _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
 
-                combat.CombatPlayers = [];
+                combat.ReleaseParsedData();
 
                 throw;
             }
@@ -86,7 +96,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
             {
                 _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-                combat.CombatPlayers = [];
+                combat.ReleaseParsedData();
             }
             finally
             {
@@ -96,7 +106,14 @@ internal class CombatParserAPIService : ICombatParserAPIService
 
         await Task.WhenAll(combatTasks);
 
-        combats = [];
+        combats.Clear();
+
+        // Reduce capacity, provided to collections but not release after cleaning collection yet
+        combats.TrimExcess();
+
+        // Call GC to collect and release LOH right now
+        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
     }
 
     public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken)

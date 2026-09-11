@@ -37,8 +37,6 @@ public class CombatModel
 
     public List<UnitPositionModel> UnitPositions { get; set; } = [];
 
-    public Dictionary<string, List<string>> PetsId { get; set; } = [];
-
     public string Duration
     {
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
@@ -47,4 +45,12 @@ public class CombatModel
     public int CombatLogId { get; set; }
 
     public BossModel Boss { get; set; }
+
+    public void ReleaseParsedData()
+    {
+        CombatPlayers.Clear();
+        Units.Clear();
+        UnitCasts.Clear();
+        UnitPositions.Clear();
+    }
 }

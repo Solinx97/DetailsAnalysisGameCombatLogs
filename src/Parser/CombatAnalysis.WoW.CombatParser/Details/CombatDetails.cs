@@ -90,6 +90,25 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     #endregion
 
+    public void Clear()
+    {
+        ClearNested(UnitCasts);
+        ClearNested(UnitPositions);
+        ClearNested(Auras);
+        ClearNested(Deathes);
+        ClearNested(DamageDones);
+        ClearNested(HealDones);
+        ClearNested(DamageTakens);
+        ClearNested(ResourcesRecoveries);
+
+        DamageDoneGenerals.Clear();
+        HealDoneGenerals.Clear();
+        DamageTakenGenerals.Clear();
+        ResourcesRecoveryGenerals.Clear();
+
+        Units.Clear();
+    }
+
     public virtual void Calculate(string[] playersId, string[] combatData, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         try
@@ -216,6 +235,26 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
                 collection.TryAdd(Guid.NewGuid().ToString(), resourceRecovery);
             }
         }
+    }
+
+    private static void ClearNested<T>(ConcurrentDictionary<string, List<T>> source)
+    {
+        foreach (var item in source.Values)
+        {
+            item.Clear();
+        }
+
+        source.Clear();
+    }
+
+    private static void ClearNested<T>(ConcurrentDictionary<string, ConcurrentDictionary<string, T>> source)
+    {
+        foreach (var item in source.Values)
+        {
+            item.Clear();
+        }
+
+        source.Clear();
     }
 
     private void AddDamageDone(DamageDone damageDone, string[] playersId)

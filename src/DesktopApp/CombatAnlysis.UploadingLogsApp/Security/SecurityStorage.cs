@@ -58,12 +58,13 @@ internal class SecurityStorage : ISecurityStorage
             var encryptedRefreshToken = _refreshTokenProtector.Protect(token.RefreshToken);
             File.WriteAllText(_refreshTokenFilePath, encryptedRefreshToken);
 
-            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), token.RefreshToken, DateTimeOffset.UtcNow.AddHours(token.RefreshTokenExpiresInHours));
+            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), token.RefreshToken, DateTimeOffset.UtcNow.AddSeconds(JWTToken.RefreshTokenExpnSeconds));
 
             var encryptedAccessToken = _accessTokenProtector.Protect(token.AccessToken);
             File.WriteAllText(_accessTokenFilePath, encryptedAccessToken);
 
-            _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), token.AccessToken, DateTimeOffset.UtcNow.AddHours(token.ExpiresInHours));
+            JWTToken.AccessTokenExpInSeconds = token.AccessTokenExpInSeconds;
+            _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), token.AccessToken, DateTimeOffset.UtcNow.AddSeconds(token.AccessTokenExpInSeconds));
         }
         catch (Exception ex)
         {
@@ -94,18 +95,20 @@ internal class SecurityStorage : ISecurityStorage
     {
         try
         {
-            if (!File.Exists(_accessTokenFilePath) || !File.Exists(_refreshTokenFilePath))
+            if (!File.Exists(_refreshTokenFilePath) || !File.Exists(_accessTokenFilePath))
             {
                 return;
             }
 
-            var encryptedAccessToken = File.ReadAllText(_accessTokenFilePath);
-            var decryptedAccessToken = _accessTokenProtector.Unprotect(encryptedAccessToken);
-            _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), decryptedAccessToken, DateTimeOffset.Now.AddMinutes(60));
-
             var encryptedRefreshToken = File.ReadAllText(_refreshTokenFilePath);
             var decryptedRefresahToken = _refreshTokenProtector.Unprotect(encryptedRefreshToken);
-            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), decryptedRefresahToken, DateTimeOffset.Now.AddDays(3));
+
+            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), decryptedRefresahToken, DateTimeOffset.Now.AddSeconds(JWTToken.RefreshTokenExpnSeconds));
+
+            var encryptedAccessToken = File.ReadAllText(_accessTokenFilePath);
+            var decryptedAccessToken = _accessTokenProtector.Unprotect(encryptedAccessToken);
+
+            _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), decryptedAccessToken, DateTimeOffset.Now.AddSeconds(JWTToken.AccessTokenExpInSeconds));
         }
         catch (Exception ex)
         {

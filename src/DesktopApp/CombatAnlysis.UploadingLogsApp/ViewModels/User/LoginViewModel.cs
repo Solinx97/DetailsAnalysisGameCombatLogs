@@ -93,7 +93,7 @@ public partial class LoginViewModel : LocalizationViewModel, IAsyncInitializable
                 AuthIsFailed = true;
             }
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
             _logger.LogInformation("Listening cancelled");
 
