@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Enums;
 using MediatR;
 
 namespace CombatParser.Application.Queries.DamageDone.DamageTaken.GetUniqueDamageTakenCreators;
@@ -9,7 +10,8 @@ internal class GetUniqueDamageTakenCreatorsHandler(IGeneralRepository<Domain.Ent
 
     public async Task<IEnumerable<string>> Handle(GetUniqueDamageTakenCreatorsQuery request, CancellationToken cancellationToken)
     {
-        var targets = await _repository.GetCreatorNamesAsync(request.CombatPlayerId, cancellationToken);
+        var creatorTypes = new int[] { (int)CombatUnitType.EnemyCreature, (int)CombatUnitType.Vehicle };
+        var targets = await _repository.GetCreatorNamesAsync(request.CombatPlayerId, cancellationToken, creatorTypes);
 
         return targets;
     }

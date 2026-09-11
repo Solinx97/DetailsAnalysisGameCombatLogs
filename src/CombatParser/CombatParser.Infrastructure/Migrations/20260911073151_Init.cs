@@ -573,14 +573,12 @@ namespace CombatParser.Infrastructure.Migrations
                         name: "FK_DamageDone_CombatUnit_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_DamageDone_CombatUnit_TargetId",
                         column: x => x.TargetId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -613,14 +611,12 @@ namespace CombatParser.Infrastructure.Migrations
                         name: "FK_HealDone_CombatUnit_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_HealDone_CombatUnit_TargetId",
                         column: x => x.TargetId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -650,14 +646,12 @@ namespace CombatParser.Infrastructure.Migrations
                         name: "FK_ResourceRecovery_CombatUnit_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ResourceRecovery_CombatUnit_TargetId",
                         column: x => x.TargetId,
                         principalTable: "CombatUnit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(

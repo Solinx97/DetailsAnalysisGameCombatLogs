@@ -4,7 +4,6 @@ using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
 using Microsoft.EntityFrameworkCore;
-using NetTopologySuite.Mathematics;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -250,12 +249,12 @@ internal static class ModelBuilderExtension
             dd.HasOne(dd => dd.Creator)
                 .WithMany()
                 .HasForeignKey(ddg => ddg.CreatorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             dd.HasOne(dd => dd.Target)
                 .WithMany()
                 .HasForeignKey(ddg => ddg.TargetId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<DamageDoneGeneral>(ddg =>
@@ -282,12 +281,12 @@ internal static class ModelBuilderExtension
             hd.HasOne(hd => hd.Creator)
                 .WithMany()
                 .HasForeignKey(ddg => ddg.CreatorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             hd.HasOne(hd => hd.Target)
                 .WithMany()
                 .HasForeignKey(ddg => ddg.TargetId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<HealDoneGeneral>(hdg =>
@@ -314,12 +313,12 @@ internal static class ModelBuilderExtension
             rr.HasOne(rr => rr.Creator)
                 .WithMany()
                 .HasForeignKey(ddg => ddg.CreatorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             rr.HasOne(rr => rr.Target)
                 .WithMany()
                 .HasForeignKey(ddg => ddg.TargetId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<ResourceRecoveryGeneral>(rrg =>

@@ -6,13 +6,15 @@ using CombatAnalysis.WoW.CombatParser.Extensions;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text;
 
 namespace CombatAnalysis.WoW.CombatParser.Services;
 
-public abstract class CombatParserService(IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper)
+public abstract class CombatParserService(ICombatParserHelper combatParserHelper, IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper)
 {
+    protected readonly ICombatParserHelper _combatParserHelper = combatParserHelper;
     private readonly IFileManager _fileManager = fileManager;
     protected readonly ILogger<CombatParserService> _logger = logger;
     private readonly IHttpClientHelper _httpHelper = httpHelper;
@@ -38,7 +40,7 @@ public abstract class CombatParserService(IFileManager fileManager, ILogger<Comb
         try
         {
             var newCombatFromLogs = new StringBuilder();
-            var petsId = new Dictionary<string, List<string>>();
+            var units = new ConcurrentDictionary<string, CombatUnit>();
             var bossCombatStarted = false;
 
             Clear();
@@ -46,7 +48,7 @@ public abstract class CombatParserService(IFileManager fileManager, ILogger<Comb
             foreach (var path in combatLogPaths)
             {
                 var lines = await _fileManager.ReadAllLinesAsync(path, cancellationToken);
-                await ProcessCombatLogLinesAsync(lines, petsId, bossCombatStarted, newCombatFromLogs, cancellationToken);
+                await ProcessCombatLogLinesAsync(lines, units, bossCombatStarted, newCombatFromLogs, cancellationToken);
             }
         }
         catch (OperationCanceledException ex)
@@ -63,25 +65,21 @@ public abstract class CombatParserService(IFileManager fileManager, ILogger<Comb
         _zones = [];
     }
 
-    private async Task ProcessCombatLogLinesAsync(string[] lines, Dictionary<string, List<string>> petsId, bool combatStarted, StringBuilder newCombatFromLogs, CancellationToken cancellationToken)
+    private async Task ProcessCombatLogLinesAsync(string[] lines, ConcurrentDictionary<string, CombatUnit> units, bool combatStarted, StringBuilder newCombatFromLogs, CancellationToken cancellationToken)
     {
         foreach (var line in lines)
         {
-            combatStarted = await ProcessLine(line, newCombatFromLogs, combatStarted, petsId);
+            combatStarted = await ProcessLine(line, newCombatFromLogs, combatStarted, units);
             cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
-    private async Task<bool> ProcessLine(string line, StringBuilder combatData, bool combatStarted, Dictionary<string, List<string>> petsId)
+    private async Task<bool> ProcessLine(string line, StringBuilder combatData, bool combatStarted, ConcurrentDictionary<string, CombatUnit> units)
     {
         if (line.Contains(CombatLogKeyWords.SpellSummon))
         {
-            ParsePlayerCreatures(line, petsId);
-        }
-        
-        if (line.Contains($"{CombatLogKeyWords.SwingDamage},") && line.Contains(CombatLogKeyWords.Pet))
-        {
-            ParsePlayerPets(line, petsId);
+            var splitCombatData = _combatParserHelper.SplitCombatData(line);
+            _combatParserHelper.ParseUnits(splitCombatData, units);
         }
         
         if (line.Contains(CombatLogKeyWords.ZoneChange))
@@ -115,10 +113,10 @@ public abstract class CombatParserService(IFileManager fileManager, ILogger<Comb
             var newCombatFromLogsString = combatData.ToString();
             var combatInformations = newCombatFromLogsString.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-            await GetCombatInformationAsync(combatInformations, petsId);
+            await GetCombatInformationAsync(combatInformations, units);
 
             combatData.Clear();
-            petsId = [];
+            units.Clear();
         }
         else
         {
@@ -128,72 +126,7 @@ public abstract class CombatParserService(IFileManager fileManager, ILogger<Comb
         return combatStarted;
     }
 
-    private static void ParsePlayerCreatures(string data, Dictionary<string, List<string>> creaturesId)
-    {
-        var splitStr = data.Split("  ")[1].Split(',');
-        var playerId = splitStr[1].Contains(CombatLogKeyWords.Player) 
-            ? splitStr[1]
-            : string.Empty;
-        var friendlyCreatureId = splitStr[1].Contains(CombatLogKeyWords.Creature)
-            ? splitStr[1]
-            : string.Empty;
-
-        if (string.IsNullOrEmpty(playerId) && string.IsNullOrEmpty(friendlyCreatureId))
-        {
-            return;
-        }
-
-        var creatureId = splitStr[5];
-        var friendCreaturePlayerId = creaturesId.FirstOrDefault(x => x.Value.Contains(friendlyCreatureId)).Key;
-        if (!string.IsNullOrEmpty(friendCreaturePlayerId))
-        {
-            if (creaturesId.TryGetValue(friendCreaturePlayerId, out var petList))
-            {
-                petList.Add(creatureId);
-            }
-        }
-        else
-        {
-            if (!creaturesId.TryGetValue(playerId, out var petList))
-            {
-                petList = [];
-                creaturesId[playerId] = petList;
-            }
-
-            petList.Add(creatureId);
-        }
-    }
-
-    private static void ParsePlayerPets(string data, Dictionary<string, List<string>> petsId)
-    {
-        var combatLogParts = data.Split("  ")[1].Split(',');
-
-        if (combatLogParts[3].Contains("0x10a48"))
-        {
-            return;
-        }
-
-        var playerId = combatLogParts[10].Contains(CombatLogKeyWords.Player) ? combatLogParts[10] : string.Empty;
-
-        if (string.IsNullOrEmpty(playerId))
-        {
-            return;
-        }
-
-        var petId = combatLogParts[1];
-        if (!petsId.TryGetValue(playerId, out var petList))
-        {
-            petList = [];
-            petsId[playerId] = petList;
-        }
-
-        if (!petList.Any(x => x.Equals(petId)))
-        {
-            petList.Add(petId);
-        }
-    }
-
-    protected static Combat? CreateCombat(string[] builtCombat, Dictionary<string, List<string>> petsId)
+    protected static Combat? CreateCombat(string[] builtCombat)
     {
         if (!builtCombat[^1].Contains(CombatLogKeyWords.EncounterEnd))
         {
@@ -210,17 +143,15 @@ public abstract class CombatParserService(IFileManager fileManager, ILogger<Comb
         var combat = new Combat
         {
             Boss = boss,
-            Data = builtCombat,
             IsWin = GetCombatResult(builtCombat[^1]),
             StartDate = GetTime(builtCombat[0]),
             FinishDate = GetTime(builtCombat[^1]),
-            PetsId = petsId,
         };
 
         return combat;
     }
 
-    protected abstract Task GetCombatInformationAsync(string[] builtCombat, Dictionary<string, List<string>> petsId);
+    protected abstract Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, CombatUnit> units);
 
     protected static int GetGameBossId(string encounterStart)
     {
@@ -300,23 +231,23 @@ public abstract class CombatParserService(IFileManager fileManager, ILogger<Comb
         Combats.Add(combat);
     }
 
-    protected async Task<CombatPlayer[]> GetCombatPlayers(Combat combat, CombatDetails combatDetails)
+    protected async Task<CombatPlayer[]> GetCombatPlayers(string[] data, string duration, DateTimeOffset start, DateTimeOffset finish, CombatDetails combatDetails)
     {
-        var combatInformations = combat.Data
+        var combatInformations = data
             .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
             .ToArray();
 
         var combatPlayers = new CombatPlayer[combatInformations.Length];
         for (var i = 0; i < combatInformations.Length; i++)
         {
-            var combatPlayer = await CreateCombatPlayerAsync(combatInformations[i], combat.Data);
+            var combatPlayer = await CreateCombatPlayerAsync(combatInformations[i], data);
             combatPlayers[i] = combatPlayer;
         }
 
         var playersId = combatPlayers.Select(x => x.Player.GameId).ToArray();
 
-        combatDetails.Calculate(playersId, combat.Data, combat.StartDate, combat.FinishDate);
-        combatDetails.CalculateGeneralData(playersId, combat.Duration);
+        combatDetails.Calculate(playersId, data, start, finish);
+        combatDetails.CalculateGeneralData(playersId, duration);
 
         CombatDetails.Add(combatDetails);
 

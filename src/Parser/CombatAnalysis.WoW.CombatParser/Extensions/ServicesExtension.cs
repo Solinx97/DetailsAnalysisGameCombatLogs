@@ -11,5 +11,6 @@ public static class ServicesExtension
     {
         collection.AddScoped<IHttpClientHelper, HttpClientHelper>();
         collection.AddScoped<IFileManager, FileManager>();
+        collection.AddScoped<ICombatParserHelper, CombatParserHelper>();
     }
 }

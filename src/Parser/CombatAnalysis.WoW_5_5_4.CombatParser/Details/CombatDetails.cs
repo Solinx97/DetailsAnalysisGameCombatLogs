@@ -1,17 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW_5_5_4.CombatParser.Details;
 
-public class CombatDetails(ILogger logger) : WoW.CombatParser.Details.CombatDetails(logger)
+public class CombatDetails(ICombatParserHelper combatParserHelper, ILogger logger, ConcurrentDictionary<string, CombatUnit> units) 
+    : WoW.CombatParser.Details.CombatDetails(combatParserHelper, logger, units)
 {
-    public CombatDetails(ILogger logger, Dictionary<string, List<string>> petsId) : this(logger)
-    {
-        _petsId = petsId;
-    }
-
     protected override void Parse(string[] playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
-        var hasSummon = _summon.Any(combatDataLine.Contains);
         var hasCasts = _casts.Any(combatDataLine.Contains);
         var hasPositions = _positions.Any(combatDataLine.Contains);
         var hasDieds = _dieds.Any(combatDataLine.Contains);
@@ -21,19 +19,14 @@ public class CombatDetails(ILogger logger) : WoW.CombatParser.Details.CombatDeta
         var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
         var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
-        if (!hasSummon && !hasCasts && !hasPositions && !hasDieds
+        if (!hasCasts && !hasPositions && !hasDieds
             && !hasAuras && !hasHeal && !hasDamage && !hasAbsorb && !hasResources)
         {
             return;
         }
 
-        var splitCombatData = SplitCombatData(combatDataLine);
-        var combatDetailsManager = new CombatDetailsManager(playersId, combatStarted, combatFinished);
-
-        if (hasSummon)
-        {
-            combatDetailsManager.GetSummonUnit(splitCombatData, Units);
-        }
+        var splitCombatData = _combatParserHelper.SplitCombatData(combatDataLine);
+        var combatDetailsManager = new CombatDetailsManager(_combatParserHelper, playersId, combatStarted, combatFinished);
 
         Parallel.Invoke(
                 () =>

@@ -1,10 +1,12 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Interfaces;
 using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW_12_1_0.CombatParser.Details;
 
-internal class CombatDetailsManager(string[] playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished) : WoW.CombatParser.Details.CombatDetailsManager(playersId, combatStarted, combatFinished)
+internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, string[] playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished) 
+    : WoW.CombatParser.Details.CombatDetailsManager(combatParserHelper, playersId, combatStarted, combatFinished)
 {
     private readonly string[] _playersId = playersId;
 

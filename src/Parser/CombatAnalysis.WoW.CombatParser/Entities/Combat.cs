@@ -4,8 +4,6 @@ public class Combat
 {
     public string DungeonName { get; set; } = string.Empty;
 
-    public string[] Data { get; set; } = [];
-
     public long DamageDone { get; set; }
 
     public int HealDone { get; set; }
@@ -27,8 +25,6 @@ public class Combat
     public List<UnitCast> UnitCasts { get; set; } = [];
 
     public List<UnitPosition> UnitPositions { get; set; } = [];
-
-    public Dictionary<string, List<string>> PetsId { get; set; } = [];
 
     public Boss Boss { get; set; } = new();
 

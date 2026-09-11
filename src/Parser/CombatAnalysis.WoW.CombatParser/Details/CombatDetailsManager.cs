@@ -2,6 +2,7 @@
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Enums;
+using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Details;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using System.Collections.Concurrent;
@@ -9,44 +10,15 @@ using System.Globalization;
 
 namespace CombatAnalysis.WoW.CombatParser.Details;
 
-public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished) : ICombatDetailsManager
+public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelper, string[] playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished) 
+    : ICombatDetailsManager
 {
     private readonly string[] _playersId = playersId;
+    private readonly ICombatParserHelper _combatParserHelper = combatParserHelper;
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
-    public CombatUnit GetSummonUnit(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units, bool isSummoned = true, int? gameIdIndex = null)
-    {
-        var type = CombatUnitType.Creature;
-        var gameId = gameIdIndex == null ? combatDataLine[6] : combatDataLine[gameIdIndex.Value];
-        if (gameId.Contains(CombatUnitType.Vehicle.ToString(), StringComparison.OrdinalIgnoreCase))
-        {
-            type = CombatUnitType.Vehicle;
-        }
-        else if (gameId.Contains(CombatUnitType.Player.ToString(), StringComparison.OrdinalIgnoreCase))
-        {
-            type = CombatUnitType.Player;
-        }
-        else if (gameId.Contains(CombatUnitType.Pet.ToString(), StringComparison.OrdinalIgnoreCase))
-        {
-            type = CombatUnitType.Pet;
-        }
-
-        var unit = new CombatUnit
-        {
-            GameId = gameId,
-            Name = gameIdIndex == null ? combatDataLine[7].Trim('"') : combatDataLine[gameIdIndex.Value + 1].Trim('"'),
-            CreatorGameId = isSummoned ? combatDataLine[2] : null,
-            UnitHash = gameIdIndex == null ? combatDataLine[8] : combatDataLine[gameIdIndex.Value + 2],
-            Type = (int)type,
-        };
-
-        units.TryAdd(gameId, unit);
-
-        return unit;
-    }
-
-    public void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<string> petsId)
+    public void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<CombatUnit> summonedCreatures)
     {
         if (!auras.TryGetValue(combatDataLine[2], out var combatPlayerAuras))
         {
@@ -57,7 +29,7 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
         var gameSpellId = int.Parse(combatDataLine[10]);
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraApplied) || combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose))
         {
-            var aura = CreateCombatAura(gameSpellId, combatDataLine, combatDataLine[0], string.Empty, petsId);
+            var aura = CreateCombatAura(gameSpellId, combatDataLine, combatDataLine[0], string.Empty, summonedCreatures);
             if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[^1], out var stacks))
             {
                 aura.Stacks = stacks;
@@ -67,7 +39,7 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
         }
         else
         {
-            RemoveAura(gameSpellId, combatDataLine, combatPlayerAuras, petsId);
+            RemoveAura(gameSpellId, combatDataLine, combatPlayerAuras);
         }
     }
 
@@ -268,7 +240,7 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
         }
         else
         {
-            GetSummonUnit(combatDataLine, units, false);
+            _combatParserHelper.ParseUnits(combatDataLine, units);
             if (units.TryGetValue(gameId, out unit))
             {
                 unit.Health = long.Parse(combatDataLine[healthIndex]);
@@ -276,12 +248,12 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
         }
     }
 
-    private CombatPlayerAura CreateCombatAura(int gameSpellId, string[] combatDataLine, string startTimeAura, string finishTimeAura, List<string> petsId)
+    private CombatPlayerAura CreateCombatAura(int gameSpellId, string[] combatDataLine, string startTimeAura, string finishTimeAura, List<CombatUnit> summonedCreatures)
     {
         var startTime = GetTimeFromStart(startTimeAura);
         var finishTime = GetTimeFromStart(finishTimeAura);
         var auraType = SelectAuraType(combatDataLine);
-        var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], petsId);
+        var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], summonedCreatures);
 
         var aura = new CombatPlayerAura
         {
@@ -318,7 +290,7 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
         return cast;
     }
 
-    private void RemoveAura(int gameSpellId, string[] combatDataLine, List<CombatPlayerAura> combatPlayerAuras, List<string> petsId)
+    private void RemoveAura(int gameSpellId, string[] combatDataLine, List<CombatPlayerAura> combatPlayerAuras)
     {
         var aura = combatPlayerAuras
             .FirstOrDefault(x => x.GameAuraId == gameSpellId);
@@ -386,7 +358,7 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
         }
     }
 
-    private static AuraCreatorType SelectAuraCreatorType(string creatorId, List<string> petsId)
+    private static AuraCreatorType SelectAuraCreatorType(string creatorId, List<CombatUnit> summonedCreatures)
     {
         if (creatorId.Contains(CombatLogKeyWords.Player))
         {
@@ -396,7 +368,7 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
         {
             return AuraCreatorType.Pet;
         }
-        else if (petsId.Contains(creatorId))
+        else if (summonedCreatures.Any(x => x.CreatorGameId != null && x.CreatorGameId.Contains(creatorId)))
         {
             return AuraCreatorType.AllyCreature;
         }
@@ -549,11 +521,11 @@ public abstract class CombatDetailsManager(string[] playersId, DateTimeOffset co
     {
         if (!units.TryGetValue(combatDataLine[2], out var creatorUnit))
         {
-            creatorUnit = GetSummonUnit(combatDataLine, units, false, 2);
+            creatorUnit = _combatParserHelper.ParseUnits(combatDataLine, units, false);
         }
         if (!units.TryGetValue(combatDataLine[6], out var targetUnit))
         {
-            targetUnit = GetSummonUnit(combatDataLine, units, false, 6);
+            targetUnit = _combatParserHelper.ParseUnits(combatDataLine, units, false);
         }
 
         unitData.Creator = creatorUnit;

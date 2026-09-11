@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260910155526_Init")]
+    [Migration("20260911073151_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -18797,13 +18797,13 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Target")
                         .WithMany()
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("CombatPlayer");
@@ -18835,13 +18835,13 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Target")
                         .WithMany()
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("CombatPlayer");
@@ -18873,13 +18873,13 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("CombatParser.Domain.Entities.CombatUnit", "Target")
                         .WithMany()
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("CombatPlayer");

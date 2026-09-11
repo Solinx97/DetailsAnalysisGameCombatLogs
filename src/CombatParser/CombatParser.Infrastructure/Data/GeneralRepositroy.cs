@@ -1,5 +1,4 @@
 ﻿using CombatParser.Domain.Data;
-using CombatParser.Domain.Enums;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -11,12 +10,24 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<string>> GetUniqueTargetsAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<string>> GetUniqueTargetsAsync(int combatPlayerId, CancellationToken cancellationToken, int[]? targetTypes = null)
     {
-        var targetType = (int)CombatUnitType.Player;
-        var uniqueTargets = await _context.Set<TModel>()
+        var query = _context.Set<TModel>()
                      .Include(x => x.Target)
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Type != targetType)
+                     .AsNoTracking()
+                     .AsQueryable();
+
+        if (combatPlayerId > 0)
+        {
+            query = query.Where(x => x.CombatPlayerId == combatPlayerId);
+        }
+
+        if (targetTypes != null && targetTypes.Length > 0)
+        {
+            query = query.Where(x => targetTypes.Contains(x.Target.Type));
+        }
+
+        var uniqueTargets = await query
                      .Select(x => x.Target.Name)
                      .Distinct()
                      .OrderBy(x => x)
@@ -25,12 +36,24 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
         return uniqueTargets;
     }
 
-    public async Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<string>> GetCreatorNamesAsync(int combatPlayerId, CancellationToken cancellationToken, int[]? creatorTypes = null)
     {
-        var creatorType = (int)CombatUnitType.Player;
-        var uniqueCreatorNames = await _context.Set<TModel>()
+        var query = _context.Set<TModel>()
                      .Include(x => x.Creator)
-                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Creator.Type != creatorType)
+                     .AsNoTracking()
+                     .AsQueryable();
+
+        if (combatPlayerId > 0)
+        {
+            query = query.Where(x => x.CombatPlayerId == combatPlayerId);
+        }
+
+        if (creatorTypes != null && creatorTypes.Length > 0)
+        {
+            query = query.Where(x => creatorTypes.Contains(x.Creator.Type));
+        }
+
+        var uniqueCreatorNames = await query
                      .Select(x => x.Creator.Name)
                      .Distinct()
                      .OrderBy(x => x)
@@ -39,11 +62,11 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
         return uniqueCreatorNames;
     }
 
-    public async Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken, int[]? creatorTypes = null, int[]? targetTypes = null)
+    public async Task<IEnumerable<string>> GetUniqueSpellsAsync(int combatPlayerId, CancellationToken cancellationToken, int[]? targetTypes = null, int[]? creatorTypes = null)
     {
         var query = _context.Set<TModel>()
-            .Include(x => x.Creator)
             .Include(x => x.Target)
+            .Include(x => x.Creator)
             .AsNoTracking()
             .AsQueryable();
 
@@ -68,11 +91,11 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
     }
 
     public async Task<IEnumerable<TModel>> GetAsync(int combatPlayerId, string target, string creator, string spell, string from, string to,
-        int page, int pageSize, CancellationToken cancellationToken, int? targetType = null, int? creatorType = null)
+        int page, int pageSize, CancellationToken cancellationToken, int[]? targetTypes = null, int[]? creatorTypes = null)
     {
         var query = _context.Set<TModel>()
-            .Include(x => x.Creator)
             .Include(x => x.Target)
+            .Include(x => x.Creator)
             .AsNoTracking()
             .AsQueryable();
 
@@ -103,14 +126,14 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
             query = query.Where(x => x.Time >= fromTime && x.Time <= toTime);
         }
 
-        if (targetType != null)
+        if (targetTypes != null && targetTypes.Length > 0)
         {
-            query = query.Where(x => x.Target.Type == targetType);
+            query = query.Where(x => targetTypes.Contains(x.Target.Type));
         }
 
-        if (creatorType != null)
+        if (creatorTypes != null && creatorTypes.Length > 0)
         {
-            query = query.Where(x => x.Creator.Type == creatorType);
+            query = query.Where(x => creatorTypes.Contains(x.Creator.Type));
         }
 
         var values = await query
@@ -125,8 +148,6 @@ internal class GeneralRepositroy<TModel>(CombatParserContextOne context) : IGene
     public async Task<int> CountAsync(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
     {
         var query = _context.Set<TModel>()
-            .Include(x => x.Creator)
-            .Include(x => x.Target)
             .AsNoTracking()
             .AsQueryable();
 

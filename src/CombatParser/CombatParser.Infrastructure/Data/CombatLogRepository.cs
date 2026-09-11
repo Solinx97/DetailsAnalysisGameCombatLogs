@@ -8,6 +8,8 @@ namespace CombatParser.Infrastructure.Data;
 
 internal class CombatLogRepository(CombatParserContextOne context) : GenericRepository<CombatLog, int>(context), ICombatLogRepository
 {
+    private const int CONTEXT_TIMEOUT_MINUTES = 10;
+
     private readonly CombatParserContextOne _context = context;
 
     public async Task<IEnumerable<CombatLog>> GetByLogTypeAsync(int logType, int gameVersion, string? appUserId, CancellationToken cancelationToken)
@@ -38,6 +40,8 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
 
     public async Task DeleteAsync(int id, CancellationToken cancelationToken)
     {
+        _context.Database.SetCommandTimeout(TimeSpan.FromMinutes(CONTEXT_TIMEOUT_MINUTES));
+
         await _context.Set<CombatLog>()
             .Where(cl => cl.Id == id)
             .ExecuteDeleteAsync(cancelationToken);

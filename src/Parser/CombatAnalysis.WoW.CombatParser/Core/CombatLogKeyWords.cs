@@ -40,7 +40,7 @@ public static class CombatLogKeyWords
 
     public static string Pet { get; } = "Pet";
 
-    public static string Boss { get; } = "Vehicle";
+    public static string Vehicle { get; } = "Vehicle";
 
     public static string Player { get; } = "Player";
 

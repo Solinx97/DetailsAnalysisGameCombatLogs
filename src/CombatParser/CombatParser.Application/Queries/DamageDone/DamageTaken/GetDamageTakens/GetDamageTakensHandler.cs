@@ -13,8 +13,8 @@ internal class GetDamageTakensHandler(IGeneralRepository<Domain.Entities.CombatP
 
     public async Task<IEnumerable<DamageDoneDto>> Handle(GetDamageTakensQuery request, CancellationToken cancellationToken)
     {
-        var targetType = (int)CombatUnitType.Player;
-        var damageTakens = await _repository.GetAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, cancellationToken, targetType);
+        var creatorTypes = new int[] { (int)CombatUnitType.EnemyCreature, (int)CombatUnitType.Vehicle };
+        var damageTakens = await _repository.GetAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, cancellationToken, null, creatorTypes);
         var map = _mapper.Map<IEnumerable<DamageDoneDto>>(damageTakens);
 
         return map;

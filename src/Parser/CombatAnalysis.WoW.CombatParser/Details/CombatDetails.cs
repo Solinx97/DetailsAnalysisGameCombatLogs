@@ -1,18 +1,17 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Details;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW.CombatParser.Details;
 
-public abstract class CombatDetails(ILogger logger)
+public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILogger logger, ConcurrentDictionary<string, CombatUnit> units)
 {
-    protected readonly string[] _summon =
-    [
-        CombatLogKeyWords.SpellSummon,
-    ];
+    protected readonly ICombatParserHelper _combatParserHelper = combatParserHelper;
+
     protected readonly string[] _dieds =
     [
         CombatLogKeyWords.UnitDied,
@@ -59,13 +58,11 @@ public abstract class CombatDetails(ILogger logger)
         CombatLogKeyWords.SpellEnergize,
     ];
 
-    protected Dictionary<string, List<string>> _petsId = [];
-
     public ILogger Logger { get; private set; } = logger;
 
     #region Details collections
 
-    public ConcurrentDictionary<string, CombatUnit> Units { get; private set; } = [];
+    public ConcurrentDictionary<string, CombatUnit> Units { get; protected set; } = units;
 
     public ConcurrentDictionary<string, List<UnitCast>> UnitCasts { get; private set; } = [];
 
@@ -93,11 +90,6 @@ public abstract class CombatDetails(ILogger logger)
 
     #endregion
 
-    public CombatDetails(ILogger logger, Dictionary<string, List<string>> petsId) : this(logger)
-    {
-        _petsId = petsId;
-    }
-
     public virtual void Calculate(string[] playersId, string[] combatData, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         try
@@ -112,9 +104,9 @@ public abstract class CombatDetails(ILogger logger)
                 PrepareCollections(playersId[i]);
             }
 
-            foreach (var CombatDataLine in combatData)
+            foreach (var combatDataLine in combatData)
             {
-                Parse(playersId, CombatDataLine, combatStarted, combatFinished);
+                Parse(playersId, combatDataLine, combatStarted, combatFinished);
             }
         }
         catch (ArgumentNullException ex)
@@ -189,8 +181,8 @@ public abstract class CombatDetails(ILogger logger)
         }
         else if (hasAuras)
         {
-            var allPetsId = _petsId.SelectMany(x => x.Value).ToList();
-            combatDetailsManager.GetAuras(splitCombatData, Auras, allPetsId);
+            var units = Units.Select(x => x.Value).ToList();
+            combatDetailsManager.GetAuras(splitCombatData, Auras, units);
         }
         else if (hasHeal)
         {
@@ -215,8 +207,6 @@ public abstract class CombatDetails(ILogger logger)
             {
                 AddDamageDone(damageDone, playersId);
             }
-
-            combatDetailsManager.GetCombatCreature(splitCombatData, Units);
         }
         else if (hasResources)
         {
@@ -228,55 +218,7 @@ public abstract class CombatDetails(ILogger logger)
         }
     }
 
-    protected static string[] SplitCombatData(string combatData)
-    {
-        var log = combatData.Split("  ");
-        var parse = log[1].Split(',');
-
-        var data = new List<string>
-        {
-            log[0],
-        };
-
-        data.AddRange(parse);
-
-        CheckComplexText(data);
-
-        return [.. data];
-    }
-
-    protected static void CheckComplexText(List<string> content)
-    {
-        var craft = string.Empty;
-        var startIndex = -1;
-        var finishIndex = -1;
-        for (int i = 0; i < content.Count; i++)
-        {
-            if (content[i].StartsWith('\"') && !content[i].EndsWith('\"'))
-            {
-                craft += content[i];
-                startIndex = i;
-            }
-            else if (!string.IsNullOrEmpty(craft) && !content[i].EndsWith('\"'))
-            {
-                craft += content[i];
-            }
-            else if (!string.IsNullOrEmpty(craft) && content[i].EndsWith('\"'))
-            {
-                craft += content[i];
-                finishIndex = i;
-                break;
-            }
-        }
-
-        if (startIndex >= 0 && startIndex + 1 < content.Count && finishIndex >= 0)
-        {
-            content[startIndex] = craft;
-            content.RemoveRange(startIndex + 1, finishIndex - startIndex);
-        }
-    }
-
-    protected void AddDamageDone(DamageDone damageDone, string[] playersId)
+    private void AddDamageDone(DamageDone damageDone, string[] playersId)
     {
         var selectedId = damageDone.Creator.GameId;
         if (!selectedId.Contains("Player"))

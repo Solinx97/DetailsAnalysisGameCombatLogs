@@ -1,18 +1,21 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
+using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Entities.WoWMoPClassic;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW_5_5_4.CombatParser.Services;
 
-internal class CombatParserService(IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) : WoW.CombatParser.Services.CombatParserService(fileManager, logger, httpHelper), Interfaces.ICombatParserService
+internal class CombatParserService(ICombatParserHelper combatParserHelper, IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) 
+    : WoW.CombatParser.Services.CombatParserService(combatParserHelper, fileManager, logger, httpHelper), Interfaces.ICombatParserService
 {
-    protected override async Task GetCombatInformationAsync(string[] builtCombat, Dictionary<string, List<string>> petsId)
+    protected override async Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, CombatUnit> units)
     {
-        var combat = CreateCombat(builtCombat, petsId);
+        var combat = CreateCombat(builtCombat);
         if (combat == null)
         {
             return;
@@ -24,9 +27,9 @@ internal class CombatParserService(IFileManager fileManager, ILogger<CombatParse
             return;
         }
 
-        var combatDetails = new CombatDetails(_logger, combat.PetsId);
+        var combatDetails = new CombatDetails(_combatParserHelper, _logger, units);
 
-        var players = await GetCombatPlayers(combat, combatDetails);
+        var players = await GetCombatPlayers(builtCombat, combat.Duration, combat.StartDate, combat.FinishDate, combatDetails);
         combat.CombatPlayers = [.. players];
 
         combat.Units = [.. combatDetails.Units.Values];

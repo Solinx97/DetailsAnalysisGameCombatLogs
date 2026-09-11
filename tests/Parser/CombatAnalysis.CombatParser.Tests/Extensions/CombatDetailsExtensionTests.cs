@@ -11,6 +11,7 @@ public class CombatDetailsExtensionTests
     public async Task CalculateGeneralData_ShouldCalculateGeneralData()
     {
         // Arrange
+        var mockCombatParserHelper = new Mock<ICombatParserHelper>();
         var mockFileManager = new Mock<IFileManager>();
         var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
@@ -27,7 +28,7 @@ public class CombatDetailsExtensionTests
             .Setup(fm => fm.ReadAllLinesAsync("file1.txt", It.IsAny<CancellationToken>()))
             .ReturnsAsync(fakeLines1);
 
-        var service = new CombatParserService(mockFileManager.Object, mockLogger.Object, mockHttp.Object);
+        var service = new CombatParserService(mockCombatParserHelper.Object, mockFileManager.Object, mockLogger.Object, mockHttp.Object);
 
         var paths = new List<string> { "file1.txt" };
         var cancellationToken = CancellationToken.None;
@@ -48,6 +49,7 @@ public class CombatDetailsExtensionTests
     {
         // Arrange
         var mockFileManager = new Mock<IFileManager>();
+        var mockCombatParserHelper = new Mock<ICombatParserHelper>();
         var mockLogger = new Mock<ILogger<CombatParserService>>();
         var mockHttp = new Mock<IHttpClientHelper>();
 
@@ -62,7 +64,7 @@ public class CombatDetailsExtensionTests
             .Setup(fm => fm.ReadAllLinesAsync("file1.txt", It.IsAny<CancellationToken>()))
             .ReturnsAsync(fakeLines1);
 
-        var service = new CombatParserService(mockFileManager.Object, mockLogger.Object, mockHttp.Object);
+        var service = new CombatParserService(mockCombatParserHelper.Object, mockFileManager.Object, mockLogger.Object, mockHttp.Object);
 
         var paths = new List<string> { "file1.txt" };
         var cancellationToken = CancellationToken.None;

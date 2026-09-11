@@ -6,9 +6,7 @@ namespace CombatAnalysis.WoW.CombatParser.Interfaces.Details;
 
 public interface ICombatDetailsManager
 {
-    CombatUnit GetSummonUnit(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units, bool isSummoned = true, int? gameIdIndex = null);
-
-    void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<string> petsId);
+    void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<CombatUnit> summonedCreatures);
 
     void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, List<UnitCast>> casts);
 
