@@ -17,7 +17,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
     protected readonly ICombatParserHelper _combatParserHelper = combatParserHelper;
     private readonly IFileManager _fileManager = fileManager;
     protected readonly ILogger<CombatParserService> _logger = logger;
-    private readonly IHttpClientHelper _httpHelper = httpHelper;
+    protected readonly IHttpClientHelper _httpHelper = httpHelper;
 
     private List<PlaceInformation> _zones = [];
 
@@ -259,45 +259,9 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         return combatPlayers;
     }
 
-    private async Task<CombatPlayer> CreateCombatPlayerAsync(string combatInformation, string[] combatData)
-    {
-        var combatInfoList = combatInformation.Split(',');
-        var combatInfoSpecialParams = combatInformation.Split(['[', ']']);
-        var equipmentsInformation = combatInfoSpecialParams[1];
-        var preAurasInformation = combatInfoSpecialParams[3];
+    protected abstract Task<CombatPlayer> CreateCombatPlayerAsync(string combatInformation, string[] combatData);
 
-        var averageItemLevel = GetAverageItemLevel(equipmentsInformation);
-
-        var statsInformation = combatInfoList.Skip(3).Take(30).ToArray();
-        var stats = GetStats(statsInformation);
-        var preAuras = GetPreAuras(preAurasInformation);
-
-        var combatPlayer = new CombatPlayer
-        {
-            AverageItemLevel = double.Round(averageItemLevel, 2),
-            Stats = stats,
-            Player = new Player
-            {
-                GameId = combatInfoList[1],
-            },
-            PreAuras = preAuras,
-        };
-
-        var player = await combatPlayer.Player.LoadAsync(_httpHelper, _logger);
-
-        if (player == null)
-        {
-            await CreatePlayer(combatData, combatInfoList, combatPlayer);
-        }
-        else
-        {
-            combatPlayer.Player = player;
-        }
-
-        return combatPlayer;
-    }
-
-    private async Task CreatePlayer(string[] combatData, string[] combatInfoList, CombatPlayer combatPlayer)
+    protected async Task CreatePlayer(string[] combatData, string[] combatInfoList, CombatPlayer combatPlayer)
     {
         var username = GetUsernameByPlayerGameId(combatData, combatInfoList[1]);
         var faction = int.Parse(combatInfoList[2]);
@@ -382,7 +346,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         return username;
     }
 
-    private static double GetAverageItemLevel(string equipmentsInformation)
+    protected static double GetAverageItemLevel(string equipmentsInformation)
     {
         var splitEquipementsInformation = equipmentsInformation.Split("))");
 
@@ -402,5 +366,52 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
     protected abstract IPlayerStats GetStats(string[] combatInfo);
 
-    protected abstract List<CombatPlayerPreAura> GetPreAuras(string preAurasInformation);
+    protected virtual List<CombatPlayerPreAura> GetPreAuras(string preAurasInformation)
+    {
+        var allPreAuras = preAurasInformation.Split(',');
+        var preAuras = new List<CombatPlayerPreAura>();
+        for (var i = 0; i + 2 < allPreAuras.Length; i += 3)
+        {
+            var preAura = new CombatPlayerPreAura
+            {
+                CreatorGameId = allPreAuras[i],
+                GameId = int.Parse(allPreAuras[i + 1]),
+                Status = int.Parse(allPreAuras[i + 2]),
+            };
+            preAuras.Add(preAura);
+        }
+
+        return preAuras;
+    }
+
+    protected async Task<CombatPlayer> CreateCombatPlayerAsync(string[] statsInformation, string[] combatData, string[] combatInfoList, string preAurasInformation, string equipmentsInformation)
+    {
+        var averageItemLevel = GetAverageItemLevel(equipmentsInformation);
+
+        var stats = GetStats(statsInformation);
+        var preAuras = GetPreAuras(preAurasInformation);
+
+        var combatPlayer = new CombatPlayer
+        {
+            AverageItemLevel = double.Round(averageItemLevel, 2),
+            Stats = stats,
+            Player = new Player
+            {
+                GameId = combatInfoList[1],
+            },
+            PreAuras = preAuras,
+        };
+
+        var player = await combatPlayer.Player.LoadAsync(_httpHelper, _logger);
+        if (player == null)
+        {
+            await CreatePlayer(combatData, combatInfoList, combatPlayer);
+        }
+        else
+        {
+            combatPlayer.Player = player;
+        }
+
+        return combatPlayer;
+    }
 }

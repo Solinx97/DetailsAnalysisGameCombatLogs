@@ -1,8 +1,8 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
-namespace CombatAnalysis.WoW.CombatParser.Entities.WoWMoPClassic;
+namespace CombatAnalysis.WoW_12_1_0.CombatParser.Entities;
 
-public class WoWMoPClassicPlayerStats : IPlayerStats
+public class PlayerStats : IPlayerStats
 {
     public int Strength { get; set; }
 
@@ -24,11 +24,15 @@ public class WoWMoPClassicPlayerStats : IPlayerStats
 
     public int Armor { get; set; }
 
-    public int Spirit { get; set; }
+    public int Mastery { get; set; }
 
-    public int Hit { get; set; }
+    public int Versality { get; set; }
 
-    public int Expertise { get; set; }
+    public int Lifesteal { get; set; }
+
+    public int Avoidance { get; set; }
+
+    public int Movement { get; set; }
 
     public string Talents { get; set; } = string.Empty;
 

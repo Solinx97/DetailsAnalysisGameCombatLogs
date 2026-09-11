@@ -1,10 +1,9 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
 using CombatAnalysis.WoW.CombatParser.Entities;
-using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
-using CombatAnalysis.WoW.CombatParser.Entities.WoWMidnight;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using CombatAnalysis.WoW_12_1_0.CombatParser.Details;
+using CombatAnalysis.WoW_12_1_0.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
@@ -41,9 +40,23 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
         AddNewCombat(combat);
     }
 
+    protected override async Task<CombatPlayer> CreateCombatPlayerAsync(string combatInformation, string[] combatData)
+    {
+        var combatInformationParams = combatInformation.Split(',');
+        var combatPlayerParams = combatInformation.Split(['[', ']']);
+        var equipments = combatPlayerParams[3];
+        var preAuras = combatPlayerParams[5];
+
+        var statsInformation = combatInformationParams.Skip(3).Take(23).ToArray();
+
+        var combatPlayer = await CreateCombatPlayerAsync(statsInformation, combatData, combatInformationParams, preAuras, equipments);
+
+        return combatPlayer;
+    }
+
     protected override IPlayerStats GetStats(string[] combatInfo)
     {
-        var stats = new WoWMidnightPlayerStats
+        var stats = new PlayerStats
         {
             Strength = int.Parse(combatInfo[0]),
             Agility = int.Parse(combatInfo[1]),
@@ -67,25 +80,5 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
         //stats.Talents = talents;
 
         return stats;
-    }
-
-    protected override List<CombatPlayerPreAura> GetPreAuras(string preAurasInformation)
-    {
-        //var allPreAuras = preAurasInformation.Split(',');
-        //var preAuras = new List<CombatPlayerPreAura>();
-        //for (var i = 0; i + 2 < allPreAuras.Length; i += 3)
-        //{
-        //    var preAura = new CombatPlayerPreAura
-        //    {
-        //        CreatorGameId = allPreAuras[i],
-        //        GameId = int.Parse(allPreAuras[i + 1]),
-        //        Status = int.Parse(allPreAuras[i + 2]),
-        //    };
-        //    preAuras.Add(preAura);
-        //}
-
-        //return preAuras;
-
-        return [];
     }
 }

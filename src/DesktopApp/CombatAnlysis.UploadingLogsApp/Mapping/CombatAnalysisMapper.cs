@@ -6,8 +6,6 @@ using CombatAnalysis.UploadingLogsApp.Models;
 using CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
-using CombatAnalysis.WoW.CombatParser.Entities.WoWMidnight;
-using CombatAnalysis.WoW.CombatParser.Entities.WoWMoPClassic;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.UploadingLogsApp.Mapping;
@@ -25,11 +23,11 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<UnitCastModel, UnitCast>().ReverseMap();
 
         CreateMap<IPlayerStatsModel, IPlayerStats>()
-            .Include<WoWMoPClassicPlayerStatsModel, WoWMoPClassicPlayerStats>()
-            .Include<WoWMidnightPlayerStatsModel, WoWMidnightPlayerStats>().ReverseMap();
+            .Include<WoWMoPClassicPlayerStatsModel, WoW_5_5_4.CombatParser.Entities.PlayerStats>()
+            .Include<WoWMidnightPlayerStatsModel, WoW_12_1_0.CombatParser.Entities.PlayerStats>().ReverseMap();
 
-        CreateMap<WoWMoPClassicPlayerStatsModel, WoWMoPClassicPlayerStats>().ReverseMap();
-        CreateMap<WoWMidnightPlayerStatsModel, WoWMidnightPlayerStats>().ReverseMap();
+        CreateMap<WoWMoPClassicPlayerStatsModel, WoW_5_5_4.CombatParser.Entities.PlayerStats>().ReverseMap();
+        CreateMap<WoWMidnightPlayerStatsModel, WoW_12_1_0.CombatParser.Entities.PlayerStats>().ReverseMap();
 
         CreateMap<SpecializationScoreModel, SpecializationScore>().ReverseMap();
         CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
