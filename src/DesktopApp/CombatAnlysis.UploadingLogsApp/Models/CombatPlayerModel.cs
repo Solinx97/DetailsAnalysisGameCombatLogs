@@ -44,23 +44,34 @@ public class CombatPlayerModel
 
     public double ResourcesRecoveryPercentages { get; set; }
 
-    public IReadOnlyList<CombatPlayerPreAuraModel> PreAuras { get; set; } = [];
+    public List<CombatPlayerPreAuraModel> PreAuras { get; set; } = [];
 
-    public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
+    public List<CombatPlayerAuraModel> Auras { get; set; } = [];
 
-    public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
+    public List<DamageDoneModel> DamageDones { get; set; } = [];
 
-    public IReadOnlyList<DamageDoneGeneralModel> DamageDoneGenerals { get; set; } = [];
+    public List<DamageDoneGeneralModel> DamageDoneGenerals { get; set; } = [];
 
-    public IReadOnlyList<HealDoneModel> HealDones { get; set; } = [];
+    public List<HealDoneModel> HealDones { get; set; } = [];
 
-    public IReadOnlyList<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
+    public List<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
 
-    public IReadOnlyList<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
+    public List<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
 
-    public IReadOnlyList<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
+    public List<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
 
-    public IReadOnlyCollection<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
+    public List<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 
-    public IReadOnlyCollection<UnitPositionModel> CombatPlayerPositions { get; set; } = [];
+    public void ReleaseParsedData()
+    {
+        PreAuras.Clear();
+        Auras.Clear();
+        DamageDones.Clear();
+        DamageDoneGenerals.Clear();
+        HealDones.Clear();
+        HealDoneGenerals.Clear();
+        ResourceRecoveries.Clear();
+        ResourceRecoveryGenerals.Clear();
+        CombatPlayerDeathes.Clear();
+    }
 }

@@ -52,10 +52,9 @@ internal class CombatParserAPIService : ICombatParserAPIService
 
             try
             {
-                var createCombat = _mapper.Map<CreateCombatModel>(combat);
+                var createCombat = _mapper.Map<CombatModel>(combat);
 
                 createCombat.CombatLogId = combatLog.Id;
-                createCombat.GameVersion = (int)CurrentCombatParserVersion.Version;
 
                 using var content = JsonContent.Create(createCombat);
                 using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);

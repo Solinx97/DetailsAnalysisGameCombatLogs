@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.WoW.CombatParser.Enums;
 
-public enum DamageModificationType
+public enum ModificationType
 {
     Normal = 0,
     Crit = 1,

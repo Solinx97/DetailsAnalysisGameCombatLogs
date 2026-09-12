@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using System.Collections.Concurrent;
 
@@ -10,12 +11,12 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, stri
 {
     private readonly string[] _playersId = playersId;
 
-    public override (string, HealDone?) GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
+    public override HealDone? GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[10])) 
             && !_playersId.Any(playerId => playerId.Equals(combatDataLine[13])))
         {
-            return (string.Empty, null);
+            return null;
         }
 
         var absorbeDone = new HealDone
@@ -24,18 +25,16 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, stri
             Spell = combatDataLine[^4].Trim('"'),
             Time = GetTimeFromStart(combatDataLine[0]),
             Overheal = 0,
-            IsCrit = false,
-            IsAbsorbed = true
+            ModificationType = (int)ModificationType.Absorb,
         };
 
-        ApplyUnits(combatDataLine, absorbeDone, units);
         if (int.TryParse(combatDataLine[^2], out var amountOfHeal))
         {
             absorbeDone.Value = amountOfHeal;
         }
 
-        var playerId = _playersId.Any(playerId => playerId.Equals(combatDataLine[10])) ? combatDataLine[10] : combatDataLine[13];
+        ApplyUnits(combatDataLine, absorbeDone, units);
 
-        return (playerId, absorbeDone);
+        return absorbeDone;
     }
 }

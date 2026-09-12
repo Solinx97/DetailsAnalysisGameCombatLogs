@@ -7,5 +7,6 @@ export type ResourceRecoveryModel = {
     time: string;
     creator: CombatUnitModel;
     target: CombatUnitModel;
+    modificationType: number;
     combatPlayerId: number;
 }

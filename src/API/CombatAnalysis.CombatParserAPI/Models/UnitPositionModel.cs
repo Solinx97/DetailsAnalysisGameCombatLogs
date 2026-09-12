@@ -16,6 +16,5 @@ public class UnitPositionModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatId { get; set; }
+    public string? CombatUnitId { get; set; }
 }

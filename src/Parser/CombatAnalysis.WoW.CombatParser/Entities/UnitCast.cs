@@ -17,6 +17,4 @@ public class UnitCast
     public bool IsImmediatly { get; set; }
 
     public bool IsSuccess { get; set; }
-
-    public int CombatId { get; set; }
 }

@@ -16,7 +16,5 @@ public record CreateCombatCommand(
     int BossId,
     int CombatLogId,
     IReadOnlyList<CombatPlayerData> CombatPlayers,
-    IReadOnlyList<CombatUnitData> Units,
-    IReadOnlyList<UnitCastData> UnitCasts,
-    IReadOnlyList<UnitPositionData> UnitPositions
+    IReadOnlyList<CombatUnitData> Units
     ) : IRequest<int>;

@@ -65,17 +65,17 @@ public class CombatPlayer : CombatDataBase
 
     public IEnumerable<DamageDone> DamageDones => _damageDones.AsReadOnly();
 
-    public IReadOnlyCollection<DamageDoneGeneral> DamageDoneGenerals => _damageDoneGenerals.AsReadOnly();
+    public IEnumerable<DamageDoneGeneral> DamageDoneGenerals => _damageDoneGenerals.AsReadOnly();
 
-    public IReadOnlyCollection<HealDone> HealDones => _healDones.AsReadOnly();
+    public IEnumerable<HealDone> HealDones => _healDones.AsReadOnly();
 
-    public IReadOnlyCollection<HealDoneGeneral> HealDoneGenerals => _healDoneGenerals.AsReadOnly();
+    public IEnumerable<HealDoneGeneral> HealDoneGenerals => _healDoneGenerals.AsReadOnly();
 
-    public IReadOnlyCollection<ResourceRecovery> ResourceRecoveries => _resourceRecoveries.AsReadOnly();
+    public IEnumerable<ResourceRecovery> ResourceRecoveries => _resourceRecoveries.AsReadOnly();
 
-    public IReadOnlyCollection<ResourceRecoveryGeneral> ResourceRecoveryGenerals => _resourceRecoveryGenerals.AsReadOnly();
+    public IEnumerable<ResourceRecoveryGeneral> ResourceRecoveryGenerals => _resourceRecoveryGenerals.AsReadOnly();
 
-    public IReadOnlyCollection<CombatPlayerDeath> CombatPlayerDeathes => _combatPlayerDeathes.AsReadOnly();
+    public IEnumerable<CombatPlayerDeath> CombatPlayerDeathes => _combatPlayerDeathes.AsReadOnly();
 
     public static CombatPlayer Create(double averageItemLevel, int resourcesRecovery, int damageDone, int healDone, int damageTaken,
         string playerId, int combatId, IPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
@@ -185,7 +185,7 @@ public class CombatPlayer : CombatDataBase
     private void AddHealDone(HealDoneData healDone)
     {
         var createdHealDone = CombatPlayerData.HealDone.Create(healDone.GameSpellId, healDone.Spell, healDone.Value, healDone.Time, healDone.CreatorId,
-            healDone.TargetId, healDone.Overheal, healDone.IsCrit, healDone.IsAbsorbed, healDone.CreatorGameId, healDone.TargetGameId);
+            healDone.TargetId, healDone.Overheal, healDone.ModificationType, healDone.CreatorGameId, healDone.TargetGameId);
         _healDones.Add(createdHealDone);
     }
 
@@ -198,8 +198,8 @@ public class CombatPlayer : CombatDataBase
 
     private void AddResourceRecovery(ResourceRecoveryData resourceRecovery)
     {
-        var createdResourceRecovery = ResourceRecovery.Create(resourceRecovery.GameSpellId, resourceRecovery.Spell, resourceRecovery.Value, resourceRecovery.Time, resourceRecovery.CreatorId,
-            resourceRecovery.TargetId, resourceRecovery.CreatorGameId, resourceRecovery.TargetGameId);
+        var createdResourceRecovery = ResourceRecovery.Create(resourceRecovery.GameSpellId, resourceRecovery.Spell, resourceRecovery.Value, resourceRecovery.Time, resourceRecovery.ModificationType,  
+            resourceRecovery.CreatorId, resourceRecovery.TargetId, resourceRecovery.CreatorGameId, resourceRecovery.TargetGameId);
         _resourceRecoveries.Add(createdResourceRecovery);
     }
 

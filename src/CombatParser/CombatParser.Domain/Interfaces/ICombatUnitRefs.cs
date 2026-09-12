@@ -2,13 +2,9 @@
 
 public interface ICombatUnitRefs
 {
-    string CreatorId { get; }
+    string Id { get; }
 
-    string CreatorGameId { get; }
+    string CombatUnitId { get; }
 
-    string TargetId { get; }
-
-    string TargetGameId { get; }
-
-    void SetUnits(string creatorId, string targetId);
+    void SetCombatUnitId(string combatUnitId);
 }

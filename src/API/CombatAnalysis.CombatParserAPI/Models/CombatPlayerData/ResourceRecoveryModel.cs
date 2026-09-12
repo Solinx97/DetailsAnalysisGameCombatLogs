@@ -19,6 +19,8 @@ public class ResourceRecoveryModel : CombatUnitBase
     [Required]
     public TimeSpan Time { get; set; }
 
+    public int ModificationType { get; set; }
+
     [Range(0, int.MaxValue)]
     public int CombatPlayerId { get; set; }
 }

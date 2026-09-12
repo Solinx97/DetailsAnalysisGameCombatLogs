@@ -26,3 +26,12 @@ export const DamageModificationType = {
     Block: 8,
     Absorb: 9,
 } as const;
+
+export const CombatUnitType = {
+    PlayerCreature: 0,
+    EnemyCreature: 1,
+    Vehicle: 2,
+    Player: 3,
+    Pet: 4,
+} as const;
+

@@ -9,5 +9,5 @@ public record UnitCastData(
     string? TargetGameId,
     bool IsImmediatly,
     bool IsSuccess,
-    int CombatId
+    string CombatUnitId
     );

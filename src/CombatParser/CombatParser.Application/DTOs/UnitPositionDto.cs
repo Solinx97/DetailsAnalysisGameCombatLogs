@@ -12,5 +12,5 @@ public class UnitPositionDto
 
     public TimeSpan Time { get; set; }
 
-    public int CombatId { get; set; }
+    public string CombatUnitId { get; set; }
 }

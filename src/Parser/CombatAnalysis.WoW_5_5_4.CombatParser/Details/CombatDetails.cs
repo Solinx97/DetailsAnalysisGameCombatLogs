@@ -38,16 +38,9 @@ public class CombatDetails(ICombatParserHelper combatParserHelper, ILogger logge
                 },
                 () =>
                 {
-                    if (hasPositions)
-                    {
-                        CalculatePositions(combatDetailsManager, splitCombatData);
-                    }
-                },
-                () =>
-                {
                     if (hasDamage)
                     {
-                        CalculateDamageTaken(combatDetailsManager, splitCombatData);
+                        CalculateDamageTaken(combatDetailsManager, splitCombatData, playersId);
                     }
                 },
                 () =>

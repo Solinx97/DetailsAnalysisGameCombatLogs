@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Details;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Enums;
+using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace CombatAnalysis.WoW.CombatParser.Extensions;
@@ -19,15 +20,15 @@ public static class CombatDetailsExtension
             {
                 if (combatDetails.DamageDones.TryGetValue(playerId, out var damageCollection))
                 {
-                    combatDetails.DamageDoneGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageCollection.Select(x => x.Value)], duration, false));
+                    combatDetails.DamageDoneGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageCollection.Select(x => x.Value)], duration));
+                }
+                if (combatDetails.DamageTakens.TryGetValue(playerId, out var damageTakenCollection))
+                {
+                    combatDetails.DamageTakenGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageTakenCollection.Select(x => x.Value)], duration, true));
                 }
                 if (combatDetails.HealDones.TryGetValue(playerId, out var healCollection))
                 {
                     combatDetails.HealDoneGenerals.TryAdd(playerId, GetHealDoneGeneral([.. healCollection.Select(x => x.Value)], duration));
-                }
-                if (combatDetails.DamageTakens.TryGetValue(playerId, out var damageTakenCollection))
-                {
-                    combatDetails.DamageTakenGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageTakenCollection.Select(x => x.Value)], duration));
                 }
                 if (combatDetails.ResourcesRecoveries.TryGetValue(playerId, out var resourceCollection))
                 {
@@ -45,9 +46,9 @@ public static class CombatDetailsExtension
         }
     }
 
-    private static List<DamageDoneGeneral> GetDamageDoneGeneral(List<DamageDone> collection, string duration, bool isPlayerTarget = true)
+    private static List<DamageDoneGeneral> GetDamageDoneGeneral(List<ICombatPlayerResourceRefs> collection, string duration, bool isPlayerTarget = false)
     {
-        var damageDoneCollection = collection
+        var damageCollection = collection
             .GroupBy(group => group.GameSpellId)
             .Select(select => select.ToList()).ToList();
 
@@ -57,13 +58,15 @@ public static class CombatDetailsExtension
         }
 
         var lessDetails = new List<DamageDoneGeneral>();
-        foreach (var item in damageDoneCollection)
+        foreach (var item in damageCollection)
         {
             var averageValue = double.Round(item.Average(x => x.Value), 2);
             var damagePerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
             var damagePerSecondRound = double.Round(damagePerSecond, 2);
-            var critNumber = item.Where(x => x.DamageType == (int)DamageModificationType.Crit).Count();
-            var missNumber = item.Where(x => x.DamageType != (int)DamageModificationType.Crit && x.DamageType != (int)DamageModificationType.Normal).Count();
+            var critNumber = item.Where(x => x.ModificationType == (int)ModificationType.Crit).Count();
+            var missNumber = item.Where(x => x.ModificationType != (int)ModificationType.Crit 
+                                    && x.ModificationType != (int)ModificationType.Normal
+                                    && x.ModificationType != (int)ModificationType.Absorb).Count();
 
             var damageDoneGeneral = new DamageDoneGeneral
             {
@@ -88,7 +91,7 @@ public static class CombatDetailsExtension
         return lessDetails;
     }
 
-    private static List<HealDoneGeneral> GetHealDoneGeneral(List<HealDone> collection, string duration)
+    private static List<HealDoneGeneral> GetHealDoneGeneral(List<ICombatPlayerResourceRefs> collection, string duration)
     {
         var spells = collection
             .GroupBy(group => group.GameSpellId)
@@ -105,7 +108,7 @@ public static class CombatDetailsExtension
             var averageValue = double.Round(item.Average(x => x.Value), 2);
             var healPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
             var healPerSecondRound = double.Round(healPerSecond, 2);
-            var critNumber = item.Where(x => x.IsCrit).Count();
+            var critNumber = item.Where(x => x.ModificationType == (int)ModificationType.Crit).Count();
 
             var healDoneGeneral = new HealDoneGeneral
             {
@@ -128,7 +131,7 @@ public static class CombatDetailsExtension
         return lessDetails;
     }
 
-    private static List<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(List<ResourceRecovery> collection, string duration)
+    private static List<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(List<ICombatPlayerResourceRefs> collection, string duration)
     {
         var spells = collection
             .GroupBy(group => group.GameSpellId)

@@ -21,9 +21,7 @@ public class HealDoneModel : IDetailsEntity
 
     public string TargetGameId { get; set; }
 
-    public bool IsCrit { get; set; }
-
-    public bool IsAbsorbed { get; set; }
+    public int ModificationType { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

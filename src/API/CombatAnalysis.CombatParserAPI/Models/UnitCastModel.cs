@@ -27,6 +27,5 @@ public class UnitCastModel
 
     public bool IsSuccess { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatId { get; set; }
+    public string? CombatUnitId { get; set; }
 }

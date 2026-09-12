@@ -3,6 +3,7 @@ using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Details;
+using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
@@ -64,27 +65,23 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     public ConcurrentDictionary<string, CombatUnit> Units { get; protected set; } = units;
 
-    public ConcurrentDictionary<string, List<UnitCast>> UnitCasts { get; private set; } = [];
-
-    public ConcurrentDictionary<string, List<UnitPosition>> UnitPositions { get; private set; } = [];
-
     public ConcurrentDictionary<string, List<CombatPlayerAura>> Auras { get; private set; } = [];
 
     public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> Deathes { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageDone>> DamageDones { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> DamageDones { get; private set; } = [];
 
     public Dictionary<string, List<DamageDoneGeneral>> DamageDoneGenerals { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, HealDone>> HealDones { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> HealDones { get; private set; } = [];
 
     public Dictionary<string, List<HealDoneGeneral>> HealDoneGenerals { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, DamageDone>> DamageTakens { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> DamageTakens { get; private set; } = [];
 
     public Dictionary<string, List<DamageDoneGeneral>> DamageTakenGenerals { get; private set; } = [];
 
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, ResourceRecovery>> ResourcesRecoveries { get; private set; } = [];
+    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> ResourcesRecoveries { get; private set; } = [];
 
     public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGenerals { get; private set; } = [];
 
@@ -92,8 +89,6 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     public void Clear()
     {
-        ClearNested(UnitCasts);
-        ClearNested(UnitPositions);
         ClearNested(Auras);
         ClearNested(Deathes);
         ClearNested(DamageDones);
@@ -140,9 +135,7 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     protected void PrepareCollections(string playersd)
     {
-        UnitPositions.TryAdd(playersd, []);
         Deathes.TryAdd(playersd, []);
-        UnitCasts.TryAdd(playersd, []);
         Auras.TryAdd(playersd, []);
 
         DamageDones.TryAdd(playersd, []);
@@ -155,15 +148,15 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     protected virtual void CalculateCasts(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
-        combatDetailsManager.GetCasts(splitCombatData, UnitCasts);
+        combatDetailsManager.GetCasts(splitCombatData, Units);
     }
 
     protected virtual void CalculatePositions(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
-        combatDetailsManager.GetPosition(splitCombatData, UnitPositions);
+        combatDetailsManager.GetPosition(splitCombatData, Units);
     }
 
-    protected virtual void CalculateDamageTaken(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    protected virtual void CalculateDamageTaken(ICombatDetailsManager combatDetailsManager, string[] splitCombatData, string[] playersId)
     {
         var damageTaken = combatDetailsManager.GetDamageDone(splitCombatData, Units);
         if (damageTaken != null && damageTaken.Target.GameId.Contains("Player"))
@@ -174,7 +167,7 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
             }
             else
             {
-                var newDictionary = new ConcurrentDictionary<string, DamageDone>();
+                var newDictionary = new ConcurrentDictionary<string, ICombatPlayerResourceRefs>();
                 newDictionary.TryAdd(Guid.NewGuid().ToString(), damageTaken);
                 DamageTakens.TryAdd(damageTaken.Target.GameId, newDictionary);
             }
@@ -205,18 +198,19 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         }
         else if (hasHeal)
         {
-            var (playerId, healDone) = combatDetailsManager.GetHealDone(splitCombatData, Units);
-            if (!string.IsNullOrEmpty(playerId) && healDone != null && HealDones.TryGetValue(playerId, out var collection))
+            var healDone = combatDetailsManager.GetHealDone(splitCombatData, Units);
+            if (healDone != null)
             {
-                collection.TryAdd(Guid.NewGuid().ToString(), healDone);
+                GroupUnits(healDone, HealDones);
+                CalculatePositions(combatDetailsManager, splitCombatData);
             }
         }
         else if (hasAbsorb)
         {
-            var (playerId, absorb) = combatDetailsManager.GetAbsorb(splitCombatData, Units);
-            if (absorb != null && HealDones.TryGetValue(playerId, out var collection))
+            var absorb = combatDetailsManager.GetAbsorb(splitCombatData, Units);
+            if (absorb != null)
             {
-                collection.TryAdd(Guid.NewGuid().ToString(), absorb);
+                GroupUnits(absorb, HealDones);
             }
         }
         else if (hasDamage)
@@ -224,15 +218,17 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
             var damageDone = combatDetailsManager.GetDamageDone(splitCombatData, Units);
             if (damageDone != null)
             {
-                AddDamageDone(damageDone, playersId);
+                GroupUnits(damageDone, DamageDones);
+                CalculatePositions(combatDetailsManager, splitCombatData);
             }
         }
         else if (hasResources)
         {
-            var (playerId, resourceRecovery) = combatDetailsManager.GetResourceRecovery(splitCombatData, Units);
-            if (!string.IsNullOrEmpty(playerId) && resourceRecovery != null && ResourcesRecoveries.TryGetValue(playerId, out var collection))
+            var resourceRecovery = combatDetailsManager.GetResourceRecovery(splitCombatData, Units);
+            if (resourceRecovery != null && ResourcesRecoveries.TryGetValue(resourceRecovery.CreatorGameId, out var collection))
             {
-                collection.TryAdd(Guid.NewGuid().ToString(), resourceRecovery);
+                GroupUnits(resourceRecovery, ResourcesRecoveries);
+                CalculatePositions(combatDetailsManager, splitCombatData);
             }
         }
     }
@@ -257,31 +253,27 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         source.Clear();
     }
 
-    private void AddDamageDone(DamageDone damageDone, string[] playersId)
+    private void GroupUnits<TModel>(TModel entity, ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> targetDictionary)
+        where TModel : ICombatPlayerResourceRefs
     {
-        var selectedId = damageDone.Creator.GameId;
-        if (!selectedId.Contains("Player"))
+        var selectedId = entity.Creator.GameId;
+        var playerCreature = Units
+            .FirstOrDefault(x => x.Value.CreatorGameId != null && x.Value.GameId == entity.Creator.GameId).Value;
+        if (playerCreature != null)
         {
-            var playerCreature = Units
-                .FirstOrDefault(x => x.Value.CreatorGameId != null && x.Value.GameId == damageDone.Creator.GameId && playersId.Contains(x.Value.CreatorGameId)).Value;
-            if (playerCreature == null)
-            {
-                return;
-            }
-
-            damageDone.Spell = $"{playerCreature.Name} - {damageDone.Spell}";
+            entity.Spell = $"{playerCreature.Name} - {entity.Spell}";
             selectedId = playerCreature.CreatorGameId!;
         }
 
-        if (DamageDones.TryGetValue(selectedId, out var collection))
+        if (targetDictionary.TryGetValue(selectedId, out var collection))
         {
-            collection.TryAdd(Guid.NewGuid().ToString(), damageDone);
+            collection.TryAdd(Guid.NewGuid().ToString(), entity);
         }
         else
         {
-            var newDictionary = new ConcurrentDictionary<string, DamageDone>();
-            newDictionary.TryAdd(Guid.NewGuid().ToString(), damageDone);
-            DamageDones.TryAdd(selectedId, newDictionary);
+            var newDictionary = new ConcurrentDictionary<string, ICombatPlayerResourceRefs>();
+            newDictionary.TryAdd(Guid.NewGuid().ToString(), entity);
+            targetDictionary.TryAdd(selectedId, newDictionary);
         }
     }
 }

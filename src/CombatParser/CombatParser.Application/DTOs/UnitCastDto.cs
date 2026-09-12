@@ -20,5 +20,5 @@ public class UnitCastDto
 
     public bool IsSuccess { get; set; }
 
-    public int CombatId { get; set; }
+    public string CombatUnitId { get; set; }
 }

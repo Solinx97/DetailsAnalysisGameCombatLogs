@@ -18,9 +18,7 @@ public class HealDoneModel
 
     public CombatUnitModel Target { get; set; } = new();
 
-    public bool IsCrit { get; set; }
-
-    public bool IsAbsorbed { get; set; }
+    public int ModificationType { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

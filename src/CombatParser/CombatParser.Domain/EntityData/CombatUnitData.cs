@@ -7,5 +7,7 @@ public record CombatUnitData(
     string UnitHash,
     int Type,
     string? CreatorGameId,
-    int CombatId
+    int CombatId,
+    IReadOnlyList<UnitCastData> UnitCasts,
+    IReadOnlyList<UnitPositionData> UnitPositions
     );

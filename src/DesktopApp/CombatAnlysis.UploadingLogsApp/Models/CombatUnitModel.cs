@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.UploadingLogsApp.Models;
+﻿using System.Collections.Generic;
+
+namespace CombatAnalysis.UploadingLogsApp.Models;
 
 public class CombatUnitModel
 {
@@ -17,4 +19,14 @@ public class CombatUnitModel
     public string? CreatorGameId { get; set; }
 
     public int CombatId { get; set; }
+
+    public List<UnitCastModel> UnitCasts { get; set; } = [];
+
+    public List<UnitPositionModel> UnitPositions { get; set; } = [];
+
+    public void ReleaseParsedData()
+    {
+        UnitCasts.Clear();
+        UnitPositions.Clear();
+    }
 }

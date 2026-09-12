@@ -41,9 +41,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IBestSpecializationScoreRepository, BestSpecializationScoreRepository>();
 
-        services.AddScoped<IUnitRepository<UnitCast>, UnitRepository<UnitCast>>();
-        services.AddScoped<IUnitRepository<UnitHealth>, UnitRepository<UnitHealth>>();
-        services.AddScoped<IUnitRepository<UnitPosition>, UnitRepository<UnitPosition>>();
+        services.AddScoped<IUnitRepository, UnitRepository>();
 
         services.AddScoped<ICombatPlayerDataByTimeRepository<DamageDone>, CombatPlayerDataByTimeRepository<DamageDone>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<HealDone>, CombatPlayerDataByTimeRepository<HealDone>>();
@@ -66,8 +64,6 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IDashboardRepository, DashboardRepository>();
 
-        services.AddScoped<ICombatDataRepository<UnitHealth>, CombatDataRepository<UnitHealth>>();
-        services.AddScoped<ICombatDataRepository<UnitCast>, CombatDataRepository<UnitCast>>();
         services.AddScoped<ICombatDataRepository<CombatUnit>, CombatDataRepository<CombatUnit>>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -43,41 +43,33 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    public void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, List<UnitCast>> casts)
+    public void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
     {
-        if (!casts.TryGetValue(combatDataLine[2], out var combatPlayerCasts))
+        if (!units.TryGetValue(combatDataLine[2], out var unit))
         {
-            combatPlayerCasts = [];
-            casts.TryAdd(combatDataLine[2], combatPlayerCasts);
+            return;
         }
 
         var gameSpellId = int.Parse(combatDataLine[10]);
         if (combatDataLine[1].Equals(CombatLogKeyWords.SpellCastStart))
         {
-            var newCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], false, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
-            combatPlayerCasts.Add(newCast);
+            var unitCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], false, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+            unit.UnitCasts.Add(unitCast);
         }
         else
         {
-            FinishCast(gameSpellId, combatDataLine, combatPlayerCasts, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+            FinishCast(gameSpellId, combatDataLine, unit.UnitCasts, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
         }
     }
 
-    public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, List<UnitPosition>> positions)
+    public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
     {
-        if (combatDataLine.Length <= 25)
+        if (combatDataLine.Length <= 25 || !units.TryGetValue(combatDataLine[2], out var unit))
         {
             return;
         }
 
         var positionOwnerId = combatDataLine[2];
-        var positionOwner = combatDataLine[3];
-        if (!positions.TryGetValue(positionOwnerId, out var collection))
-        {
-            collection = [];
-            positions.TryAdd(positionOwnerId, collection);
-        }
-
         var pos1Index = 26;
         var pos2Index = 27;
 
@@ -99,20 +91,15 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
                 Time = GetTimeFromStart(combatDataLine[0])
             };
 
-            collection.Add(position);
+            unit.UnitPositions.Add(position);
         }
     }
 
-    public (string, HealDone?) GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
+    public HealDone? GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
     {
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2])))
-        {
-            return (string.Empty, null);
-        }
-
         if (!int.TryParse(combatDataLine[^4], out var value) || !int.TryParse(combatDataLine[^3], out var overheal))
         {
-            return (string.Empty, null);
+            return null;
         }
 
         var isCrit = combatDataLine[^1].Contains(CombatLogKeyWords.IsCrit);
@@ -123,23 +110,18 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
             Value = value,
             Overheal = overheal,
             Time = GetTimeFromStart(combatDataLine[0]),
-            IsCrit = isCrit
+            ModificationType = isCrit ? (int)ModificationType.Crit : (int)ModificationType.Normal,
         };
 
         ApplyUnits(combatDataLine, healDone, units);
 
-        return (combatDataLine[2], healDone);
+        return healDone;
     }
 
-    public abstract (string, HealDone?) GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
+    public abstract HealDone? GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
 
-    public (string, ResourceRecovery?) GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
+    public ResourceRecovery? GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
     {
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
-        {
-            return (string.Empty, null);
-        }
-
         var energyRecovery = new ResourceRecovery
         {
             GameSpellId = int.Parse(combatDataLine[10]),
@@ -147,13 +129,14 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
             Time = GetTimeFromStart(combatDataLine[0]),
         };
 
-        ApplyUnits(combatDataLine, energyRecovery, units);
         if (int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery))
         {
             energyRecovery.Value = amoutOfResourcesRecovery;
         }
 
-        return (combatDataLine[6], energyRecovery);
+        ApplyUnits(combatDataLine, energyRecovery, units);
+
+        return energyRecovery;
     }
 
     public (string, CombatPlayerDeath?) GetPlayerDeath(string[] combatDataLine)
@@ -214,38 +197,6 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         AddDamageHealth(combatDataLine, damageDone);
 
         return damageDone;
-    }
-
-    public void GetCombatCreature(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
-    {
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
-        {
-            return;
-        }
-
-        var healthIndex = 13;
-        var isSwingDamage = string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
-                            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase);
-        if (!isSwingDamage)
-        {
-            healthIndex = 16;
-        }
-
-        var gameId = combatDataLine[6];
-        if (units.TryGetValue(gameId, out var unit))
-        {
-            unit.Health = long.Parse(combatDataLine[healthIndex]);
-        }
-        else
-        {
-            _combatParserHelper.ParseUnits(combatDataLine, units);
-            if (units.TryGetValue(gameId, out unit))
-            {
-                unit.Health = long.Parse(combatDataLine[healthIndex]);
-            }
-        }
     }
 
     private CombatPlayerAura CreateCombatAura(int gameSpellId, string[] combatDataLine, string startTimeAura, string finishTimeAura, List<CombatUnit> summonedCreatures)
@@ -390,7 +341,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         return TimeSpan.Zero;
     }
 
-    private static DamageModificationType GetDamageModification(string[] combatDataLine, bool isAbsorbed)
+    private static ModificationType GetDamageModification(string[] combatDataLine, bool isAbsorbed)
     {
         var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
 
@@ -417,14 +368,14 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
         var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
 
-        var damageModificationType = isCrushing ? DamageModificationType.Crushing : DamageModificationType.Normal;
-        damageModificationType = isCrit ? DamageModificationType.Crit : damageModificationType;
-        damageModificationType = isParry ? DamageModificationType.Parry : damageModificationType;
-        damageModificationType = isDodge ? DamageModificationType.Dodge : damageModificationType;
-        damageModificationType = isMiss ? DamageModificationType.Miss : damageModificationType;
-        damageModificationType = isResist ? DamageModificationType.Resist : damageModificationType;
-        damageModificationType = isImmune ? DamageModificationType.Immune : damageModificationType;
-        damageModificationType = isAbsorbed ? DamageModificationType.Absorb : damageModificationType;
+        var damageModificationType = isCrushing ? ModificationType.Crushing : ModificationType.Normal;
+        damageModificationType = isCrit ? ModificationType.Crit : damageModificationType;
+        damageModificationType = isParry ? ModificationType.Parry : damageModificationType;
+        damageModificationType = isDodge ? ModificationType.Dodge : damageModificationType;
+        damageModificationType = isMiss ? ModificationType.Miss : damageModificationType;
+        damageModificationType = isResist ? ModificationType.Resist : damageModificationType;
+        damageModificationType = isImmune ? ModificationType.Immune : damageModificationType;
+        damageModificationType = isAbsorbed ? ModificationType.Absorb : damageModificationType;
 
         return damageModificationType;
     }
@@ -521,11 +472,11 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
     {
         if (!units.TryGetValue(combatDataLine[2], out var creatorUnit))
         {
-            creatorUnit = _combatParserHelper.ParseUnits(combatDataLine, units, false);
+            creatorUnit = _combatParserHelper.ParseUnits(units, combatDataLine[2], combatDataLine[3], combatDataLine[4]);
         }
         if (!units.TryGetValue(combatDataLine[6], out var targetUnit))
         {
-            targetUnit = _combatParserHelper.ParseUnits(combatDataLine, units, false);
+            targetUnit = _combatParserHelper.ParseUnits(units, combatDataLine[6], combatDataLine[7], combatDataLine[8]);
         }
 
         unitData.Creator = creatorUnit;

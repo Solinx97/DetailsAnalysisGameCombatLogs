@@ -2,6 +2,7 @@
 using CombatAnalysis.WoW.CombatParser.Details;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW.CombatParser.Extensions;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
@@ -99,8 +100,8 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
     {
         if (line.Contains(CombatLogKeyWords.SpellSummon))
         {
-            var splitCombatData = _combatParserHelper.SplitCombatData(line);
-            _combatParserHelper.ParseUnits(splitCombatData, units);
+            var combatDataLine = _combatParserHelper.SplitCombatData(line);
+            _combatParserHelper.ParseUnits(units, combatDataLine[6], combatDataLine[7], combatDataLine[8], combatDataLine[2]);
         }
         
         if (line.Contains(CombatLogKeyWords.ZoneChange))
@@ -305,7 +306,6 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             combatPlayer.DamageDone = damageCollection.Sum(x => x.Value.Value);
             combatPlayer.DamageDones.AddRange(damageCollection.Select(x => x.Value));
         }
-
         if (combatDetails.DamageTakens.TryGetValue(combatPlayer.Player.GameId, out var damageTakenCollection))
         {
             combatPlayer.DamageTaken = damageTakenCollection.Sum(x => x.Value.Value);
@@ -449,13 +449,16 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             player.ResourceRecoveries.Clear();
             player.ResourceRecoveryGenerals.Clear();
             player.CombatPlayerDeathes.Clear();
-            player.CombatPlayerPositions.Clear();
             player.PreAuras.Clear();
+        }
+
+        foreach (var unit in combat.Units)
+        {
+            unit.UnitCasts.Clear();
+            unit.UnitPositions.Clear();
         }
 
         combat.CombatPlayers.Clear();
         combat.Units.Clear();
-        combat.UnitCasts.Clear();
-        combat.UnitPositions.Clear();
     }
 }

@@ -4,6 +4,6 @@ export type UnitPositionModel = {
     x: number;
     y: number;
     time: string;
-    combatId: number;
+    combatUnitId: string;
     timeMs: number;
 }

@@ -33,10 +33,6 @@ public class CombatModel
 
     public List<CombatUnitModel> Units { get; set; } = [];
 
-    public List<UnitCastModel> UnitCasts { get; set; } = [];
-
-    public List<UnitPositionModel> UnitPositions { get; set; } = [];
-
     public string Duration
     {
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
@@ -48,9 +44,17 @@ public class CombatModel
 
     public void ReleaseParsedData()
     {
+        foreach (var player in CombatPlayers)
+        {
+            player.ReleaseParsedData();
+        }
+
+        foreach (var unit in Units)
+        {
+            unit.ReleaseParsedData();
+        }
+
         CombatPlayers.Clear();
         Units.Clear();
-        UnitCasts.Clear();
-        UnitPositions.Clear();
     }
 }

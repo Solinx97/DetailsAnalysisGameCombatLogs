@@ -32,8 +32,6 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
         combat.CombatPlayers = [.. players];
 
         combat.Units = [.. combatDetails.Units.Values];
-        combat.UnitCasts = [.. combatDetails.UnitCasts.Values.SelectMany(x => x)];
-        combat.UnitPositions = [.. combatDetails.UnitPositions.Values.SelectMany(x => x)];
 
         CalculatingCommonCombatDetails(combat);
 

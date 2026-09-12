@@ -29,7 +29,7 @@ internal static class CombatParserContextOneExtension
     }
 
     public static async Task BulkInsertUnitDataAsync<TModel>(this CombatParserContextOne context, List<CombatPlayer> players, Dictionary<string, string> unitsByGameId, Func<CombatPlayer, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatPlayerRefs, ICombatUnitRefs
+        where TModel : class, ICombatPlayerRefs, ICombatPlayerUnitRefs
     {
         var combatPlayerData = players.SelectMany(p =>
             selector(p).Select(dd =>
@@ -78,21 +78,22 @@ internal static class CombatParserContextOneExtension
         return combatData;
     }
 
-    public static async Task<List<TModel>> BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatRefs
+    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, IEnumerable<CombatUnit> combatUnits, Func<CombatUnit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatUnitRefs
     {
-        var combatData = selector(combat).Select(cr =>
-        {
-            cr.SetCombatId(combat.Id);
-            return cr;
-        }).ToList();
+        var combatUnitData = combatUnits.SelectMany(p =>
+            selector(p).Select(u =>
+            {
+                u.SetCombatUnitId(p.Id);
 
-        if (combatData.Count > 0)
+                return u;
+            }
+        )).ToList();
+
+        if (combatUnitData.Count > 0)
         {
-            await context.BulkInsertAsync(combatData, cancellationToken: cancelationToken);
+            await context.BulkInsertAsync(combatUnitData, cancellationToken: cancelationToken);
         }
-
-        return combatData;
     }
 
     public static async Task<List<CombatPlayer>> BulkInsertCombatPlayersAsync(this CombatParserContextOne context, int combatId, IEnumerable<CombatPlayer> combatPlayers, CancellationToken cancelationToken)

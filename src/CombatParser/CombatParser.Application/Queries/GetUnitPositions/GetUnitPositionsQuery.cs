@@ -4,5 +4,5 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetUnitPositions;
 
 public record GetUnitPositionsQuery(
-    int CombatId
+    string CombatUnitId
     ) : IRequest<IDictionary<string, IEnumerable<UnitPositionDto>>>;

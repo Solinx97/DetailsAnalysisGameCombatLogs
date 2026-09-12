@@ -8,7 +8,6 @@ export type HealDoneModel = {
     time: string;
     creator: CombatUnitModel;
     target: CombatUnitModel;
-    isCrit: boolean;
-    isAbsorbed: boolean;
+    modificationType: number;
     combatPlayerId: number;
 }

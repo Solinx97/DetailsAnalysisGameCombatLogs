@@ -4,19 +4,20 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecovery : CombatUnitDataBase, ITime, IGeneralEntity
+public class ResourceRecovery : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
 
     private ResourceRecovery() { }
 
-    private ResourceRecovery(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, string creatorGameId, string targetGameId)
+    private ResourceRecovery(int gameSpellId, string spell, int value, TimeSpan time, int modificationType,
+        string creatorId, string targetId, string creatorGameId, string targetGameId)
     {
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
         Time = time;
+        ModificationType = modificationType;
         CreatorId = creatorId;
         CreatorGameId = creatorGameId;
         TargetId = targetId;
@@ -31,20 +32,22 @@ public class ResourceRecovery : CombatUnitDataBase, ITime, IGeneralEntity
 
     public TimeSpan Time { get; private set; }
 
+    public int ModificationType { get; private set; }
+
     public CombatUnit Creator { get; private set; }
 
     public CombatUnit Target { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
 
-    public static ResourceRecovery Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, string creatorGameId, string targetGameId)
+    public static ResourceRecovery Create(int gameSpellId, string spell, int value, TimeSpan time, int modificationType,
+        string creatorId, string targetId, string creatorGameId, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
         ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
         ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
 
-        return new ResourceRecovery(gameSpellId, spell, value, time, creatorId, targetId, creatorGameId, targetGameId);
+        return new ResourceRecovery(gameSpellId, spell, value, time, modificationType, creatorId, targetId, creatorGameId, targetGameId);
     }
 }

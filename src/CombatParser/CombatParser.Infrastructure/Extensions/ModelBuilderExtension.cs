@@ -69,9 +69,9 @@ internal static class ModelBuilderExtension
             uc.Property(p => p.TargetGameId)
                 .HasMaxLength(UnitCast.GAME_MAX_LENGTH);
 
-            uc.HasOne(uh => uh.Combat)
+            uc.HasOne(uh => uh.CombatUnit)
                 .WithMany(c => c.UnitCasts)
-                .HasForeignKey(uh => uh.CombatId)
+                .HasForeignKey(uh => uh.CombatUnitId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -80,9 +80,9 @@ internal static class ModelBuilderExtension
             uh.Property(uh => uh.CreatorGameId)
                 .HasMaxLength(UnitPosition.GAMEID_MAX_LENGTH);
 
-            uh.HasOne(uh => uh.Combat)
+            uh.HasOne(uh => uh.CombatUnit)
                 .WithMany(c => c.UnitPositions)
-                .HasForeignKey(uh => uh.CombatId)
+                .HasForeignKey(uh => uh.CombatUnitId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

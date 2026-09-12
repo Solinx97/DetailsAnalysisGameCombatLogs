@@ -43,9 +43,6 @@ public class CombatPlayerModel
     public IReadOnlyList<CombatPlayerAuraModel> Auras { get; set; } = [];
 
     [Required]
-    public IReadOnlyList<UnitCastModel> Casts { get; set; } = [];
-
-    [Required]
     public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
 
     [Required]
@@ -65,7 +62,4 @@ public class CombatPlayerModel
 
     [Required]
     public IReadOnlyList<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
-
-    [Required]
-    public IReadOnlyList<UnitPositionModel> CombatPlayerPositions { get; set; } = [];
 }

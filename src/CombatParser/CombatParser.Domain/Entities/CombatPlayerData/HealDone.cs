@@ -4,14 +4,14 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class HealDone : CombatUnitDataBase, ITime, IGeneralEntity
+public class HealDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
 
     private HealDone() { }
 
     private HealDone(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, int overheal, bool isCrit, bool isAbsorbed, string creatorGameId, string targetGameId)
+        string targetId, int overheal, int modificationType, string creatorGameId, string targetGameId)
     {
         GameSpellId = gameSpellId;
         Spell = spell;
@@ -22,8 +22,7 @@ public class HealDone : CombatUnitDataBase, ITime, IGeneralEntity
         TargetId = targetId;
         TargetGameId = targetGameId;
         Overheal = overheal;
-        IsCrit = isCrit;
-        IsAbsorbed = isAbsorbed;
+        ModificationType = modificationType;
     }
 
     public int GameSpellId { get; private set; }
@@ -40,14 +39,12 @@ public class HealDone : CombatUnitDataBase, ITime, IGeneralEntity
 
     public int Overheal { get; private set;  }
 
-    public bool IsCrit { get; private set; }
-
-    public bool IsAbsorbed { get; private set; }
+    public int ModificationType { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
 
     public static HealDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, int overheal, bool isCrit, bool isAbsorbed, string creatorGameId, string targetGameId)
+        string targetId, int overheal, int modificationType, string creatorGameId, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
@@ -57,6 +54,6 @@ public class HealDone : CombatUnitDataBase, ITime, IGeneralEntity
         ArgumentOutOfRangeException.ThrowIfNegative(overheal, nameof(overheal));
 
         return new HealDone(gameSpellId, spell, value, time, creatorId,
-            targetId, overheal, isCrit, isAbsorbed, creatorGameId, targetGameId);
+            targetId, overheal, modificationType, creatorGameId, targetGameId);
     }
 }

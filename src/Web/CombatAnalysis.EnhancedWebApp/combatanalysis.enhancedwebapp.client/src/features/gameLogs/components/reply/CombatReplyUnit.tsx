@@ -133,10 +133,6 @@ const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, co
             setSelectedTargetGameId(currentNotImmediatlyCast.targetGameId ?? "");
         }
     }, [currentImmediatlyCast, currentNotImmediatlyCast]);
-
-    if (health?.isDead) {
-        return (<></>);
-    }
     
     return (
         <>

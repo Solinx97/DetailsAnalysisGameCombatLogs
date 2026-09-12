@@ -9,6 +9,4 @@ public class UnitPosition
     public double Y { get; set; }
 
     public TimeSpan Time { get; set; }
-
-    public int CombatId { get; set; }
 }

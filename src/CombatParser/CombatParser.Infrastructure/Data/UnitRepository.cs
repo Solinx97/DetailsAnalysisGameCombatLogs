@@ -1,24 +1,41 @@
 ﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
-using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatParser.Infrastructure.Data;
 
-internal class UnitRepository<TModel>(CombatParserContextOne context) : IUnitRepository<TModel>
-    where TModel : class, ICombatRefs, IUnitRef, ITime
+internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IDictionary<string, IEnumerable<TModel>>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CombatUnit>> GetAsync(int combatId, CancellationToken cancellationToken)
     {
-        var data = await _context.Set<TModel>()
+        var data = await _context.Set<CombatUnit>()
                     .AsNoTracking()
                     .Where(x => x.CombatId == combatId)
-                    .GroupBy(x => x.CreatorGameId)
-                    .ToDictionaryAsync(x => x.Key, x => x.OrderBy(y => y.Time).Select(y => y), cancellationToken);
+                    .ToListAsync(cancellationToken);
+
+        return data.Count != 0 ? data : [];
+    }
+
+    public async Task<IEnumerable<UnitPosition>> GetPositionsAsync(string combatUnitId, CancellationToken cancellationToken)
+    {
+        var data = await _context.Set<UnitPosition>()
+                    .AsNoTracking()
+                    .Where(x => x.CombatUnitId == combatUnitId)
+                    .ToListAsync(cancellationToken);
+
+        return data.Count != 0 ? data : [];
+    }
+
+    public async Task<IEnumerable<UnitCast>> GetCastsAsync(string combatUnitId, CancellationToken cancellationToken)
+    {
+        var data = await _context.Set<UnitCast>()
+                    .AsNoTracking()
+                    .Where(x => x.CombatUnitId == combatUnitId)
+                    .ToListAsync(cancellationToken);
 
         return data.Count != 0 ? data : [];
     }
@@ -41,7 +58,8 @@ internal class UnitRepository<TModel>(CombatParserContextOne context) : IUnitRep
                 CreatorGameId = unit.GameId,
                 CurrentHealth = damageDone.Target.Health,
                 MaxHealth = unit.Health,
-                Time = damageDone.Time
+                Time = damageDone.Time,
+                CombatUnit = unit.Id
             }
         ).ToListAsync(cancellationToken);
 
@@ -51,8 +69,7 @@ internal class UnitRepository<TModel>(CombatParserContextOne context) : IUnitRep
                 x.CurrentHealth,
                 x.MaxHealth,
                 x.Time,
-                x.CurrentHealth == 0,
-                combatId))
+                x.CurrentHealth == 0))
             .GroupBy(x => x.CreatorGameId)
             .ToDictionary(
                 x => x.Key,

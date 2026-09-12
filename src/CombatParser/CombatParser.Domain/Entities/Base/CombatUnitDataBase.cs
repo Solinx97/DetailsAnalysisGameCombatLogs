@@ -1,23 +1,15 @@
 ﻿using CombatParser.Domain.Interfaces;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CombatParser.Domain.Entities.Base;
 
-public class CombatUnitDataBase : CombatPlayerDataBase, ICombatUnitRefs
+public class CombatUnitDataBase : ICombatUnitRefs
 {
-    public string CreatorId { get; protected set; }
+    public string Id { get; protected set; }
 
-    [NotMapped]
-    public string CreatorGameId { get; protected set; }
+    public string CombatUnitId { get; protected set; }
 
-    public string TargetId { get; protected set; }
-
-    [NotMapped]
-    public string TargetGameId { get; protected set; }
-
-    public void SetUnits(string creatorId, string targetId)
+    public void SetCombatUnitId(string combatUnitId)
     {
-        CreatorId = creatorId;
-        TargetId = targetId;
+        CombatUnitId = combatUnitId;
     }
 }

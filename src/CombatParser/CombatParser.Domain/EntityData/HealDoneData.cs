@@ -10,7 +10,6 @@ public record HealDoneData(
     string CreatorGameId,
     string TargetId,
     string TargetGameId,
-    bool IsCrit,
-    bool IsAbsorbed,
+    int ModificationType,
     int CombatPlayerId
     );

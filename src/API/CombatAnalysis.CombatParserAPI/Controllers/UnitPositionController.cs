@@ -10,10 +10,10 @@ public class UnitPositionController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatId, CancellationToken cancellationToken)
+    [HttpGet("getByCombatUnitId/{combatUnitId}")]
+    public async Task<IActionResult> GetByCombatId(string combatUnitId, CancellationToken cancellationToken)
     {
-        var unitPositions = await _mediator.Send(new GetUnitPositionsQuery(combatId), cancellationToken);
+        var unitPositions = await _mediator.Send(new GetUnitPositionsQuery(combatUnitId), cancellationToken);
 
         return Ok(unitPositions);
     }

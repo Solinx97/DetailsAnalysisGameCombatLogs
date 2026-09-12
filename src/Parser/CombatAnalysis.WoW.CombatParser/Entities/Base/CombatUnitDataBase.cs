@@ -1,8 +1,6 @@
-﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
+﻿namespace CombatAnalysis.WoW.CombatParser.Entities.Base;
 
-namespace CombatAnalysis.WoW.CombatParser.Entities.Base;
-
-public class CombatUnitDataBase : ICombatUnitRefs
+public class CombatUnitDataBase
 {
     public CombatUnit Creator { get; set; } = new();
 

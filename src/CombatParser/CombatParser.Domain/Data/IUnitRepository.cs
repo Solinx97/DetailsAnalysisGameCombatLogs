@@ -1,12 +1,14 @@
 ﻿using CombatParser.Domain.Entities;
-using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Data;
 
-public interface IUnitRepository<TModel>
-    where TModel : class, ICombatRefs, IUnitRef, ITime
+public interface IUnitRepository
 {
-    Task<IDictionary<string, IEnumerable<TModel>>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken);
+    Task<IEnumerable<CombatUnit>> GetAsync(int combatId, CancellationToken cancellationToken);
+
+    Task<IEnumerable<UnitPosition>> GetPositionsAsync(string combatUnitId, CancellationToken cancellationToken);
+
+    Task<IEnumerable<UnitCast>> GetCastsAsync(string combatUnitId, CancellationToken cancellationToken);
 
     Task<IDictionary<string, List<UnitHealth>>> GetHealthByCombatIdAsync(int combatId, CancellationToken cancellationToken);
 }

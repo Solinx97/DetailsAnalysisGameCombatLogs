@@ -19,5 +19,7 @@ public class ResourceRecoveryModel : IDetailsEntity
 
     public string TargetGameId { get; set; }
 
+    public int ModificationType { get; set; }
+
     public int CombatPlayerId { get; set; }
 }

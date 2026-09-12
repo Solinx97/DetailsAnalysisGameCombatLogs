@@ -16,5 +16,7 @@ public class ResourceRecoveryDto
 
     public CombatUnitDto Target { get; set; } = new();
 
+    public int ModificationType { get; set; }
+
     public int CombatPlayerId { get; set; }
 }

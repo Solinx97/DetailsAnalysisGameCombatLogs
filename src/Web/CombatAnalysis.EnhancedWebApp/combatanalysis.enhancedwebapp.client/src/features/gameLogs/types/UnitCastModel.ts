@@ -8,5 +8,5 @@ export type UnitCastModel = {
     targetGameId: string | null;
     isImmediatly: boolean;
     isSuccess: boolean;
-    combatId: number;
+    combatUnitId: string;
 }

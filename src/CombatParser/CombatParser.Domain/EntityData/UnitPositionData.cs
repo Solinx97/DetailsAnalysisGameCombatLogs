@@ -5,5 +5,5 @@ public record UnitPositionData(
     int X, 
     int Y,
     TimeSpan Time,
-    int CombatId
+    string CombatUnitId
     );

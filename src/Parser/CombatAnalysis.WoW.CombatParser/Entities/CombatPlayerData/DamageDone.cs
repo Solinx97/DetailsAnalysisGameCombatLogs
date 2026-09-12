@@ -3,11 +3,11 @@ using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-public class DamageDone : CombatUnitDataBase, ICombatPlayerEntity
+public class DamageDone : CombatUnitDataBase, ICombatPlayerEntity, ICombatPlayerResourceRefs
 {
     public int GameSpellId { get; set; }
 
-    public string Spell { get; set; }
+    public string Spell { get; set; } = string.Empty;
 
     public int Value { get; set; }
 

@@ -21,6 +21,12 @@ public class CombatUnitModel
 
     public string? CreatorGameId { get; set; }
 
+    [Required]
+    public List<UnitCastModel> UnitCasts { get; init; } = [];
+
+    [Required]
+    public List<UnitPositionModel> UnitPositions { get; init; } = [];
+
     [Range(0, int.MaxValue)]
     public int CombatId { get; set; }
 }

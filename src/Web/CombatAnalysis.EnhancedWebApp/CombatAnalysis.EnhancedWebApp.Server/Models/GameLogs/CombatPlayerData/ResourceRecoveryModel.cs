@@ -16,5 +16,7 @@ public class ResourceRecoveryModel
 
     public CombatUnitModel Target { get; set; } = new();
 
+    public int ModificationType { get; set; }
+
     public int CombatPlayerId { get; set; }
 }

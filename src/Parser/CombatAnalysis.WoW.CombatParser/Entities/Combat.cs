@@ -22,10 +22,6 @@ public class Combat
 
     public List<CombatUnit> Units { get; set; } = [];
 
-    public List<UnitCast> UnitCasts { get; set; } = [];
-
-    public List<UnitPosition> UnitPositions { get; set; } = [];
-
     public Boss Boss { get; set; } = new();
 
     public string Duration

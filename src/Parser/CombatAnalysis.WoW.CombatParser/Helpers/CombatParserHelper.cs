@@ -25,13 +25,8 @@ internal class CombatParserHelper : ICombatParserHelper
         return [.. data];
     }
 
-    public CombatUnit ParseUnits(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units, bool isSummon = true)
+    public CombatUnit ParseUnits(ConcurrentDictionary<string, CombatUnit> units, string gameId, string name, string unitHash,  string? creatorGameId = null)
     {
-        var creatorGameId = isSummon ? combatDataLine[2] : null;
-        var gameId = isSummon ? combatDataLine[6] : combatDataLine[2];
-        var name = isSummon ? combatDataLine[7].Trim('"') : combatDataLine[3].Trim('"');
-        var unitHash = isSummon ? combatDataLine[8] : combatDataLine[4];
-
         var type = CombatUnitType.EnemyCreature;
         if (gameId.Contains(CombatLogKeyWords.Creature) && creatorGameId != null && creatorGameId.Contains(CombatLogKeyWords.Player))
         {
@@ -53,7 +48,7 @@ internal class CombatParserHelper : ICombatParserHelper
         var unit = new CombatUnit
         {
             GameId = gameId,
-            Name = name,
+            Name = name.Trim('"'),
             CreatorGameId = creatorGameId,
             UnitHash = unitHash,
             Type = (int)type,

@@ -11,8 +11,6 @@ public class Combat
 
     private readonly List<CombatPlayer> _players = [];
     private readonly List<CombatUnit> _units = [];
-    private readonly List<UnitCast> _unitCasts = [];
-    private readonly List<UnitPosition> _unitPositions = [];
 
     private Combat() { }
 
@@ -71,13 +69,9 @@ public class Combat
 
     public IEnumerable<CombatUnit> Units => _units;
 
-    public IEnumerable<UnitCast> UnitCasts => _unitCasts;
-
-    public IEnumerable<UnitPosition> UnitPositions => _unitPositions;
-
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatUnitData> units, IReadOnlyList<UnitCastData> unitCasts, IReadOnlyList<UnitPositionData> unitPositions)
+        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatUnitData> units)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
@@ -103,16 +97,6 @@ public class Combat
             combat.AddUnit(unit);
         }
 
-        foreach (var unitCast in unitCasts)
-        {
-            combat.AddCast(unitCast);
-        }
-
-        foreach (var unitPosition in unitPositions)
-        {
-            combat.AddUnitPosition(unitPosition);
-        }
-
         return combat;
     }
 
@@ -127,21 +111,7 @@ public class Combat
 
     private void AddUnit(CombatUnitData unit)
     {
-        var createdUnit = CombatUnit.Create(unit.GameId, unit.Name, unit.Health, unit.UnitHash, unit.Type, unit.CreatorGameId);
+        var createdUnit = CombatUnit.Create(unit.GameId, unit.Name, unit.Health, unit.UnitHash, unit.Type, unit.CreatorGameId, unit.UnitCasts, unit.UnitPositions);
         _units.Add(createdUnit);
-    }
-
-    private void AddCast(UnitCastData cast)
-    {
-        var createdCast = UnitCast.Create(cast.CreatorGameId, cast.GameSpellId, cast.Spell, cast.Time, cast.FinishTime,
-            cast.TargetGameId, cast.IsImmediatly, cast.IsSuccess, cast.CombatId);
-        _unitCasts.Add(createdCast);
-    }
-
-    private void AddUnitPosition(UnitPositionData unitPosition)
-    {
-        var createdUnitPosition = UnitPosition.Create(unitPosition.CreatorGameId, unitPosition.X, unitPosition.Y,
-            unitPosition.Time, unitPosition.CombatId);
-        _unitPositions.Add(createdUnitPosition);
     }
 }

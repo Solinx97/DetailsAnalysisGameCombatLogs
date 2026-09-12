@@ -4,7 +4,7 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class DamageDone : CombatUnitDataBase, ITime, IGeneralEntity
+public class DamageDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
     public const int CREATOR_GAME_ID_MAX_LENGTH = 128;
@@ -64,8 +64,8 @@ public class DamageDone : CombatUnitDataBase, ITime, IGeneralEntity
     public CombatPlayer CombatPlayer { get; private set; }
 
     public static DamageDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, int modificationType, int damageType, int resisted, 
-        int absorbed, int blocked, int realDamage, int overkill, int mitigated, string creatorGameId, string targetGameId)
+        string targetId, int modificationType, int damageType, int resisted, int absorbed, 
+        int blocked, int realDamage, int overkill, int mitigated, string creatorGameId, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));

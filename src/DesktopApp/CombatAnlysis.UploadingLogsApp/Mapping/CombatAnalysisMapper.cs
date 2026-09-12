@@ -39,7 +39,5 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<CombatPlayerDeathModel, CombatPlayerDeath>().ReverseMap();
         CreateMap<CombatPlayerPreAuraModel, CombatPlayerPreAura>().ReverseMap();
         CreateMap<CombatPlayerAuraModel, CombatPlayerAura>().ReverseMap();
-
-        CreateMap<CreateCombatModel, CombatModel>().ReverseMap();
     }
 }

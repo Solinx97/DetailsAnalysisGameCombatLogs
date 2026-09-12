@@ -14,5 +14,7 @@ public class CombatUnit
 
     public string? CreatorGameId { get; set; }
 
-    public int CombatId { get; set; }
+    public List<UnitCast> UnitCasts { get; set; } = [];
+
+    public List<UnitPosition> UnitPositions { get; set; } = [];
 }
