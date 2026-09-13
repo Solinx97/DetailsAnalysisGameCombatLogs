@@ -74,7 +74,7 @@ public static class CombatLogKeyWords
 
     public static string SpellDamage { get; } = "SPELL_DAMAGE";
 
-    public static string SwingDamage { get; } = "SWING_DAMAGE";
+    public static string SwingDamage { get; } = "SWING_DAMAGE,";
 
     public static string SpellPeriodicDamage { get; } = "SPELL_PERIODIC_DAMAGE";
 

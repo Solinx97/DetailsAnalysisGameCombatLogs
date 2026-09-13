@@ -10,7 +10,7 @@ public interface IGeneralEntity
 
     TimeSpan Time { get; }
 
-    CombatUnit Creator { get; }
+    Unit Creator { get; }
 
-    CombatUnit Target { get; }
+    Unit Target { get; }
 }

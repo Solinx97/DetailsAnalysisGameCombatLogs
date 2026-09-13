@@ -22,7 +22,7 @@ public class UnitPositionController : ControllerBase
     public async Task<IActionResult> GetByCombatId(string combatUnitId)
     {
         var responseMessage = await _httpClient.GetAsync($"UnitPosition/getByCombatUnitId/{combatUnitId}");
-        var unitPositions = await responseMessage.Content.ReadFromJsonAsync<IDictionary<string, IEnumerable<UnitPositionModel>>>();
+        var unitPositions = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitPositionModel>>();
 
         return Ok(unitPositions);
     }

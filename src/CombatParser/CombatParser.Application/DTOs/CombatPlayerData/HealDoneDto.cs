@@ -14,9 +14,9 @@ public class HealDoneDto
 
     public TimeSpan Time { get; set; }
 
-    public CombatUnitDto Creator { get; set; } = new();
+    public UnitDto Creator { get; set; } = new();
 
-    public CombatUnitDto Target { get; set; } = new();
+    public UnitDto Target { get; set; } = new();
 
     public int ModificationType { get; set; }
 

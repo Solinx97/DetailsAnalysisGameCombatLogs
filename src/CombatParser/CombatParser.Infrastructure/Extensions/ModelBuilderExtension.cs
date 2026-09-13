@@ -47,14 +47,25 @@ internal static class ModelBuilderExtension
             .HasForeignKey(cp => cp.CombatId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<CombatUnit>(uh =>
+        modelBuilder.Entity<Unit>(u =>
         {
-            uh.Property(uh => uh.GameId)
-                .HasMaxLength(CombatUnit.GAMEID_MAX_LENGTH);
+            u.Property(p => p.GameId)
+                .HasMaxLength(Unit.GAMEID_MAX_LENGTH);
 
-            uh.HasOne(uh => uh.Combat)
+            u.HasOne(u => u.Combat)
                 .WithMany(c => c.Units)
-                .HasForeignKey(uh => uh.CombatId)
+                .HasForeignKey(u => u.CombatId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UnitHealth>(uh =>
+        {
+            uh.Property(p => p.OwnerGameId)
+                .HasMaxLength(UnitHealth.OWNER_GAMEID_MAX_LENGTH);
+
+            uh.HasOne(uh => uh.CombatUnit)
+                .WithMany(c => c.UnitHealthes)
+                .HasForeignKey(uh => uh.CombatUnitId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -63,22 +74,25 @@ internal static class ModelBuilderExtension
             uc.Property(p => p.Spell)
                 .HasMaxLength(UnitCast.SPELL_MAX_LENGTH);
 
-            uc.Property(p => p.CreatorGameId)
-                .HasMaxLength(UnitCast.GAME_MAX_LENGTH);
+            uc.Property(p => p.GameSpellId)
+                .HasMaxLength(UnitCast.GAME_SPELL_MAX_LENGTH);
+
+            uc.Property(p => p.OwnerGameId)
+                .HasMaxLength(UnitCast.OWNER_GAME_MAX_LENGTH);
 
             uc.Property(p => p.TargetGameId)
-                .HasMaxLength(UnitCast.GAME_MAX_LENGTH);
+                .HasMaxLength(UnitCast.OWNER_GAME_MAX_LENGTH);
 
-            uc.HasOne(uh => uh.CombatUnit)
+            uc.HasOne(uc => uc.CombatUnit)
                 .WithMany(c => c.UnitCasts)
-                .HasForeignKey(uh => uh.CombatUnitId)
+                .HasForeignKey(uc => uc.CombatUnitId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<UnitPosition>(uh =>
         {
-            uh.Property(uh => uh.CreatorGameId)
-                .HasMaxLength(UnitPosition.GAMEID_MAX_LENGTH);
+            uh.Property(uh => uh.OwnerGameId)
+                .HasMaxLength(UnitPosition.OWNER_GAMEID_MAX_LENGTH);
 
             uh.HasOne(uh => uh.CombatUnit)
                 .WithMany(c => c.UnitPositions)
@@ -329,20 +343,6 @@ internal static class ModelBuilderExtension
             rrg.HasOne(rrg => rrg.CombatPlayer)
                 .WithMany(cp => cp.ResourceRecoveryGenerals)
                 .HasForeignKey(ddg => ddg.CombatPlayerId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<CombatPlayerDeath>(cpd =>
-        {
-            cpd.Property(p => p.Username)
-                .HasMaxLength(CombatPlayerDeath.USERNAME_MAX_LENGTH);
-
-            cpd.Property(p => p.LastHitSpell)
-                .HasMaxLength(CombatPlayerDeath.SPELL_MAX_LENGTH);
-
-            cpd.HasOne(cpd => cpd.CombatPlayer)
-                .WithMany(cp => cp.CombatPlayerDeathes)
-                .HasForeignKey(cpd => cpd.CombatPlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

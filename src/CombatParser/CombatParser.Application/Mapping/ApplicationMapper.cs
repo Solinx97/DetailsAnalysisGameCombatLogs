@@ -29,7 +29,7 @@ public class ApplicationMapper : Profile
         CreateMap<CombatPlayerPreAuraDto, CombatPlayerPreAura>().ReverseMap();
         CreateMap<Domain.DTOs.CombatPlayerPreAuraDto, CombatPlayerPreAuraDto>().ReverseMap();
         CreateMap<CombatPlayerAuraDto, CombatPlayerAura>().ReverseMap();
-        CreateMap<CombatUnitDto, CombatUnit>().ReverseMap();
+        CreateMap<UnitDto, Unit>().ReverseMap();
         CreateMap<UnitHealthDto, UnitHealth>().ReverseMap();
         CreateMap<UnitPositionDto, UnitPosition>().ReverseMap();
         CreateMap<UnitCastDto, UnitCast>().ReverseMap();
@@ -42,7 +42,6 @@ public class ApplicationMapper : Profile
         CreateMap<HealDoneGeneralDto, HealDoneGeneral>().ReverseMap();
         CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
-        CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
 
         CreateMap<Interfaces.IPlayerStatsDto, Domain.Interfaces.IPlayerStats>()
             .Include<WoWMoPClassicPlayerStatsDto, WoWMoPClassicPlayerStats>()

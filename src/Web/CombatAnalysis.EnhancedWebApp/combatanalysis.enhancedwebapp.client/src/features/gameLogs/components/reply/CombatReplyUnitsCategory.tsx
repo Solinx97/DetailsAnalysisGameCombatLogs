@@ -3,20 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CombatReplyContext from '@/context/CombatReplyContext';
 import useCombatLogs from '@/shared/hooks/useCombatLogs';
 import { useContext, useEffect, useState } from 'react';
-import type { CombatUnitModel } from '../../types/CombatUnitModel';
+import type { UnitModel } from '../../types/UnitModel';
 import type { UnitPositionModel } from '../../types/UnitPositionModel';
 import CombatReplyUnit from './CombatReplyUnit';
-import type { UnitHealthModel } from '../../types/UnitHealthModel';
 import useTime from '@/shared/hooks/useTime';
 
 interface CombatReplyUnitsCategoryProps {
     name: string;
-    units: CombatUnitModel[];
-    unitPositions: Map<string, UnitPositionModel[]>;
-    unitsHealth: Map<string, UnitHealthModel[]>;
+    units: UnitModel[];
 }
 
-const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ name, units, unitPositions, unitsHealth }) => {
+const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ name, units }) => {
     const context = useContext(CombatReplyContext);
 
     if (!context) {
@@ -35,12 +32,12 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
 
     useEffect(() => {
         excluded.forEach((_, value) => {
-            const ePos = unitPositions.get(value);
+            const ePos = units.find(x => x.gameId === value)?.unitPositions;
             if (ePos) {
                 excludedPositions.set(value, ePos);
                 setExcludedPositions(excludedPositions);
 
-                unitPositions.delete(value);
+                // unitPositions.delete(value);
             }
         });
     }, [excluded]);
@@ -58,9 +55,9 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
 
     const includeHandle = (gameId: string) => {
         const ePos = excludedPositions.get(gameId);
-        const unitPos = unitPositions.get(gameId);
+        const unitPos = units.find(x => x.gameId === gameId)?.unitPositions
         if (ePos && !unitPos) {
-            unitPositions.set(gameId, ePos);
+            // unitPositions.set(gameId, ePos);
             excludedPositions.delete(gameId);
 
             const exl = new Map(excluded);
@@ -75,19 +72,13 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
         setSelectedTargetGameId("");
     }
 
-    const isAlreadySpawn = (unit: CombatUnitModel) => {
-        var usedHealth = unitsHealth.get(unit.gameId)?.filter(x => timeToMs(x.time) <= currentTime);
-        return usedHealth !== undefined;
-    }
+    const isHaveHealth = (unit: UnitModel) => {
+        if (unit.unitHealthes.length === 0) {
+            return false;
+        }
 
-    const isAlive = (unit: CombatUnitModel) => {
-        var usedHealth = unitsHealth.get(unit.gameId)?.filter(x => timeToMs(x.time) <= currentTime).at(-1);
-        if (usedHealth) {
-            return usedHealth.currentHealth > 0;
-        }
-        else {
-            false;
-        }
+        var healthes = unit.unitHealthes.filter(x => timeToMs(x.time) <= currentTime);
+        return healthes && healthes.length > 0 && healthes[healthes.length - 1].currentHealth > 0;
     }
 
     if (hide) {
@@ -119,7 +110,7 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
             </ul>
             <ul className="content">
                 {units.map((item) => (
-                    (isAlreadySpawn(item) && isAlive(item)) &&
+                    isHaveHealth(item) &&
                     <li className="player" key={item.gameId}>
                         {runExclude &&
                             <div className="btn-shadow" onClick={() => excludeHandle(item.gameId, item.name)}>
@@ -129,7 +120,6 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
                             </div>
                         }
                         <CombatReplyUnit
-                            unitsHealth={unitsHealth.get(item.gameId)}
                             unit={item}
                             color={colors.get(item.gameId) ?? "#FFFFFF"}
                         />

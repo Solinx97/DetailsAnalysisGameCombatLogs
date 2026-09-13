@@ -17,10 +17,11 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<PlayerModel, Player>().ReverseMap();
         CreateMap<BossModel, Boss>().ReverseMap();
         CreateMap<CombatModel, Combat>().ReverseMap();
-        CreateMap<CombatUnitModel, CombatUnit>().ReverseMap();
+        CreateMap<UnitModel, Unit>().ReverseMap();
+        CreateMap<UnitHealthModel, UnitHealth>().ReverseMap();
         CreateMap<UnitPositionModel, UnitPosition>().ReverseMap();
-        CreateMap<CombatPlayerModel, CombatPlayer>().ReverseMap();
         CreateMap<UnitCastModel, UnitCast>().ReverseMap();
+        CreateMap<CombatPlayerModel, CombatPlayer>().ReverseMap();
 
         CreateMap<IPlayerStatsModel, IPlayerStats>()
             .Include<WoWMoPClassicPlayerStatsModel, WoW_5_5_4.CombatParser.Entities.PlayerStats>()
@@ -36,7 +37,6 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<HealDoneGeneralModel, HealDoneGeneral>().ReverseMap();
         CreateMap<ResourceRecoveryModel, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralModel, ResourceRecoveryGeneral>().ReverseMap();
-        CreateMap<CombatPlayerDeathModel, CombatPlayerDeath>().ReverseMap();
         CreateMap<CombatPlayerPreAuraModel, CombatPlayerPreAura>().ReverseMap();
         CreateMap<CombatPlayerAuraModel, CombatPlayerAura>().ReverseMap();
     }

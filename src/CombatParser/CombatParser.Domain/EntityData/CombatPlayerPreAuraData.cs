@@ -3,6 +3,5 @@
 public record CombatPlayerPreAuraData(
     string CreatorGameId,
     int GameId,
-    int Status,
-    int CombatPlayerId
+    int Status
     );

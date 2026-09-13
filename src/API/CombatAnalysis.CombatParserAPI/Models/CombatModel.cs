@@ -37,7 +37,7 @@ public class CombatModel
     public List<CombatPlayerModel> CombatPlayers { get; init; } = [];
 
     [Required]
-    public List<CombatUnitModel> Units { get; init; } = [];
+    public List<UnitModel> Units { get; init; } = [];
 
     [Required]
     public string Duration { get; init; } = string.Empty;

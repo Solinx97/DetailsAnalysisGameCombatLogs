@@ -1,4 +1,4 @@
-import type { CombatUnitModel } from './CombatUnitModel';
+import type { UnitModel } from './UnitModel';
 
 export type HealDoneModel = {
     id: number;
@@ -6,8 +6,8 @@ export type HealDoneModel = {
     value: number;
     overheal: number;
     time: string;
-    creator: CombatUnitModel;
-    target: CombatUnitModel;
+    creator: UnitModel;
+    target: UnitModel;
     modificationType: number;
     combatPlayerId: number;
 }

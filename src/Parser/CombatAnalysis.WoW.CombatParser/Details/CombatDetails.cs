@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW.CombatParser.Details;
 
-public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILogger logger, ConcurrentDictionary<string, CombatUnit> units)
+public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILogger logger, ConcurrentDictionary<string, Unit> units)
 {
     protected readonly ICombatParserHelper _combatParserHelper = combatParserHelper;
 
@@ -34,6 +34,25 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
     [
         CombatLogKeyWords.SpellCastSuccess,
     ];
+    protected readonly string[] _health =
+    [
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SwingDamageLanded,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellHeal,
+        CombatLogKeyWords.SpellPeriodicHeal,
+    ];
+    protected readonly string[] _damageVariations =
+    [
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SwingDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SwingMissed,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellMissed,
+    ];
     protected readonly string[] _healVariations =
     [
         CombatLogKeyWords.SpellHeal,
@@ -42,16 +61,6 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
     protected readonly string[] _absorbVariations =
     [
         CombatLogKeyWords.SpellAbsorbed,
-    ];
-    protected readonly string[] _damageVariations =
-    [
-        CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SwingDamage + ',',
-        CombatLogKeyWords.SpellPeriodicDamage,
-        CombatLogKeyWords.SwingMissed,
-        CombatLogKeyWords.DamageShieldMissed,
-        CombatLogKeyWords.RangeDamage,
-        CombatLogKeyWords.SpellMissed,
     ];
     protected readonly string[] _resourceVariations =
     [
@@ -63,11 +72,9 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     #region Details collections
 
-    public ConcurrentDictionary<string, CombatUnit> Units { get; protected set; } = units;
+    public ConcurrentDictionary<string, Unit> Units { get; protected set; } = units;
 
     public ConcurrentDictionary<string, List<CombatPlayerAura>> Auras { get; private set; } = [];
-
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, CombatPlayerDeath>> Deathes { get; private set; } = [];
 
     public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> DamageDones { get; private set; } = [];
 
@@ -90,7 +97,6 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
     public void Clear()
     {
         ClearNested(Auras);
-        ClearNested(Deathes);
         ClearNested(DamageDones);
         ClearNested(HealDones);
         ClearNested(DamageTakens);
@@ -135,7 +141,6 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     protected void PrepareCollections(string playersd)
     {
-        Deathes.TryAdd(playersd, []);
         Auras.TryAdd(playersd, []);
 
         DamageDones.TryAdd(playersd, []);
@@ -154,6 +159,11 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
     protected virtual void CalculatePositions(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
         combatDetailsManager.GetPosition(splitCombatData, Units);
+    }
+
+    protected virtual void CalculateHealthes(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    {
+        combatDetailsManager.GetHealth(splitCombatData, Units);
     }
 
     protected virtual void CalculateDamageTaken(ICombatDetailsManager combatDetailsManager, string[] splitCombatData, string[] playersId)
@@ -185,11 +195,7 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
         if (hasDieds)
         {
-            var (playerId, death) = combatDetailsManager.GetPlayerDeath(splitCombatData);
-            if (!string.IsNullOrEmpty(playerId) && death != null && Deathes.TryGetValue(playerId, out var collection))
-            {
-                collection.TryAdd(Guid.NewGuid().ToString(), death);
-            }
+            combatDetailsManager.AddUnitDeath(splitCombatData, Units);
         }
         else if (hasAuras)
         {
@@ -202,25 +208,17 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
             if (healDone != null)
             {
                 GroupUnits(healDone, HealDones);
-                CalculatePositions(combatDetailsManager, splitCombatData);
             }
         }
         else if (hasAbsorb)
         {
             var absorb = combatDetailsManager.GetAbsorb(splitCombatData, Units);
-            if (absorb != null)
-            {
-                GroupUnits(absorb, HealDones);
-            }
+            GroupUnits(absorb, HealDones);
         }
         else if (hasDamage)
         {
             var damageDone = combatDetailsManager.GetDamageDone(splitCombatData, Units);
-            if (damageDone != null)
-            {
-                GroupUnits(damageDone, DamageDones);
-                CalculatePositions(combatDetailsManager, splitCombatData);
-            }
+            GroupUnits(damageDone, DamageDones);
         }
         else if (hasResources)
         {
@@ -228,7 +226,6 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
             if (resourceRecovery != null && ResourcesRecoveries.TryGetValue(resourceRecovery.CreatorGameId, out var collection))
             {
                 GroupUnits(resourceRecovery, ResourcesRecoveries);
-                CalculatePositions(combatDetailsManager, splitCombatData);
             }
         }
     }

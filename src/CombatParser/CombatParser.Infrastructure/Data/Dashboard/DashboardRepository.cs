@@ -27,23 +27,12 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
                         u.HealDone,
                         Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(EF.Functions, x.StartDate, x.FinishDate)
                     })
-            .GroupJoin(_context.Set<CombatPlayerDeath>(),
-                    x => x.Id,
-                    u => u.CombatPlayerId,
-                    (x, u) => new
-                    {
-                        x.Username,
-                        x.DamageDone,
-                        x.HealDone,
-                        x.Duration,
-                        Deaths = u.Count()
-                    })
             .GroupBy(x => x.Username)
             .Select(g => new Domain.Entities.Dashboard.Dashboard(
                     g.Key,
                     Math.Round((double)g.Sum(x => (long)x.DamageDone) / g.Sum(x => x.Duration), 2),
                     Math.Round((double)g.Sum(x => (long)x.HealDone) / g.Sum(x => x.Duration), 2),
-                    g.Sum(x => x.Deaths)))
+                    0))
             .ToArrayAsync(cancellationToken);
 
         return dashboards;

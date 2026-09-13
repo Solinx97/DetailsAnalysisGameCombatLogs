@@ -5,15 +5,15 @@ using MediatR;
 
 namespace CombatParser.Application.Queries.GetUnitPositions;
 
-internal class GetUnitPositionsHandler(IUnitRepository repository, IMapper mapper) : IRequestHandler<GetUnitPositionsQuery, IDictionary<string, IEnumerable<UnitPositionDto>>>
+internal class GetUnitPositionsHandler(IUnitRepository repository, IMapper mapper) : IRequestHandler<GetUnitPositionsQuery, IEnumerable<UnitPositionDto>>
 {
     private readonly IUnitRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IDictionary<string, IEnumerable<UnitPositionDto>>> Handle(GetUnitPositionsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<UnitPositionDto>> Handle(GetUnitPositionsQuery request, CancellationToken cancellationToken)
     {
         var unitsPosition = await _repository.GetPositionsAsync(request.CombatUnitId, cancellationToken);
-        var map = _mapper.Map<IDictionary<string, IEnumerable<UnitPositionDto>>>(unitsPosition);
+        var map = _mapper.Map<IEnumerable<UnitPositionDto>>(unitsPosition);
 
         return map;
     }

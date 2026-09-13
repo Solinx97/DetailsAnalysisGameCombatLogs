@@ -10,7 +10,7 @@ public class DamageDoneGeneral : CombatPlayerDataBase
 
     private DamageDoneGeneral(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber, 
         int missNumber, int castNumber, int minValue, int maxValue, double averageValue,
-        bool isPlayerTarget, int combatPlayerId)
+        bool isPlayerTarget)
     {
         GameSpellId = gameSpellId;
         Spell = spell;
@@ -23,7 +23,6 @@ public class DamageDoneGeneral : CombatPlayerDataBase
         MaxValue = maxValue;
         AverageValue = averageValue;
         IsPlayerTarget = isPlayerTarget;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int GameSpellId { get; private set; }
@@ -51,8 +50,7 @@ public class DamageDoneGeneral : CombatPlayerDataBase
     public CombatPlayer CombatPlayer { get; private set; }
 
     public static DamageDoneGeneral Create(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber,
-        int missNumber, int castNumber, int minValue, int maxValue, double averageValue,
-        bool isPlayerTarget, int combatPlayerId)
+        int missNumber, int castNumber, int minValue, int maxValue, double averageValue, bool isPlayerTarget)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
@@ -67,6 +65,6 @@ public class DamageDoneGeneral : CombatPlayerDataBase
 
         return new DamageDoneGeneral(gameSpellId, spell, value, damagePerSecond, critNumber,
             missNumber, castNumber, minValue, maxValue, averageValue,
-            isPlayerTarget, combatPlayerId);
+            isPlayerTarget);
     }
 }

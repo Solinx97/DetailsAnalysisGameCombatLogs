@@ -1,14 +1,16 @@
-﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
+﻿using System;
 
-public class UnitPositionModel
+namespace CombatAnalysis.UploadingLogsApp.Models;
+
+public class UnitHealthModel
 {
     public string Id { get; set; } = string.Empty;
 
     public string OwnerGameId { get; set; } = string.Empty;
 
-    public double X { get; set; }
+    public long CurrentHealth { get; set; }
 
-    public double Y { get; set; }
+    public long MaxHealth { get; set; }
 
     public TimeSpan Time { get; set; }
 

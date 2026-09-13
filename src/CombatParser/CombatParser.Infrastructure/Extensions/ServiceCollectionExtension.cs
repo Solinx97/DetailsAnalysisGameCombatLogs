@@ -46,7 +46,6 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICombatPlayerDataByTimeRepository<DamageDone>, CombatPlayerDataByTimeRepository<DamageDone>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<HealDone>, CombatPlayerDataByTimeRepository<HealDone>>();
         services.AddScoped<ICombatPlayerDataByTimeRepository<ResourceRecovery>, CombatPlayerDataByTimeRepository<ResourceRecovery>>();
-        services.AddScoped<ICombatPlayerDataByTimeRepository<CombatPlayerDeath>, CombatPlayerDataByTimeRepository<CombatPlayerDeath>>();
 
         services.AddScoped<ICombatPlayerInfoRepository<SpecializationScore>, CombatPlayerInfoRepository<SpecializationScore>>();
         services.AddScoped<ICombatPlayerInfoRepository<WoWMoPClassicPlayerStats>, CombatPlayerInfoRepository<WoWMoPClassicPlayerStats>>();
@@ -64,7 +63,7 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IDashboardRepository, DashboardRepository>();
 
-        services.AddScoped<ICombatDataRepository<CombatUnit>, CombatDataRepository<CombatUnit>>();
+        services.AddScoped<ICombatDataRepository<Unit>, CombatDataRepository<Unit>>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

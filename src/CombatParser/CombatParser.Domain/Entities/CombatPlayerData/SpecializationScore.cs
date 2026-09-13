@@ -6,22 +6,15 @@ public class SpecializationScore : CombatPlayerDataBase
 {
     private SpecializationScore() { }
 
-    public SpecializationScore(double damageScore, int damageDone, double healScore, int healDone, DateTimeOffset? updated,
-        int specializationId, int combatPlayerId)
+    private SpecializationScore(double damageScore, int damageDone, double healScore, int healDone,
+        DateTimeOffset? updated, int specializationId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(damageScore, nameof(damageScore));
-        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
-        ArgumentOutOfRangeException.ThrowIfNegative(healScore, nameof(healScore));
-        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(specializationId, nameof(specializationId));
-
         DamageScore = damageScore;
         DamageDone = damageDone;
         HealScore = healScore;
         HealDone = healDone;
         Updated = updated;
         SpecializationId = specializationId;
-        CombatPlayerId = combatPlayerId;
     }
 
     public double DamageScore { get; private set; }
@@ -39,6 +32,18 @@ public class SpecializationScore : CombatPlayerDataBase
     public int SpecializationId { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
+
+    public static SpecializationScore Create(double damageScore, int damageDone, double healScore, int healDone, 
+        DateTimeOffset? updated, int specializationId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(damageScore, nameof(damageScore));
+        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
+        ArgumentOutOfRangeException.ThrowIfNegative(healScore, nameof(healScore));
+        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(specializationId, nameof(specializationId));
+
+        return new SpecializationScore(damageScore, damageDone, healScore, healDone, updated, specializationId);
+    }
 
     public void SetScore(int bestSpecialziationDamageDone, int bestSpecialziationHealDone)
     {

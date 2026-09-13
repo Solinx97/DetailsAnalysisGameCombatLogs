@@ -1,6 +1,6 @@
 export type UnitPositionModel = {
     id: string;
-    creatorGameId: string;
+    ownerGameId: string;
     x: number;
     y: number;
     time: string;

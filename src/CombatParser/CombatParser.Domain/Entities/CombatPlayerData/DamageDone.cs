@@ -41,9 +41,9 @@ public class DamageDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public TimeSpan Time { get; private set; }
 
-    public CombatUnit Creator { get; private set; }
+    public Unit Creator { get; private set; }
 
-    public CombatUnit Target { get; private set; }
+    public Unit Target { get; private set; }
 
     public int ModificationType { get; private set; }
 

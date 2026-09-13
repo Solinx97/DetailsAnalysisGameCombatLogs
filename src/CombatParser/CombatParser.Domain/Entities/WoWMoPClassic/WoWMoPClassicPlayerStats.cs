@@ -9,24 +9,10 @@ public class WoWMoPClassicPlayerStats : CombatPlayerDataBase, IPlayerStats
 
     private WoWMoPClassicPlayerStats() { }
 
-    public WoWMoPClassicPlayerStats(int strength, int agility, int intelligence, int stamina, int spirit,
+    private WoWMoPClassicPlayerStats(int strength, int agility, int intelligence, int stamina, int spirit,
         int dodge, int parry, int block, int crit, int haste, int hit, 
-        int expertise, int armor, string talents, int combatPlayerId)
+        int expertise, int armor, string talents)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(strength, nameof(strength));
-        ArgumentOutOfRangeException.ThrowIfNegative(agility, nameof(agility));
-        ArgumentOutOfRangeException.ThrowIfNegative(intelligence, nameof(intelligence));
-        ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina));
-        ArgumentOutOfRangeException.ThrowIfNegative(spirit, nameof(spirit));
-        ArgumentOutOfRangeException.ThrowIfNegative(dodge, nameof(dodge));
-        ArgumentOutOfRangeException.ThrowIfNegative(parry, nameof(parry));
-        ArgumentOutOfRangeException.ThrowIfNegative(block, nameof(block));
-        ArgumentOutOfRangeException.ThrowIfNegative(crit, nameof(crit));
-        ArgumentOutOfRangeException.ThrowIfNegative(haste, nameof(haste));
-        ArgumentOutOfRangeException.ThrowIfNegative(hit, nameof(hit));
-        ArgumentOutOfRangeException.ThrowIfNegative(expertise, nameof(expertise));
-        ArgumentOutOfRangeException.ThrowIfNegative(armor, nameof(armor));
-
         Strength = strength;
         Agility = agility;
         Intelligence = intelligence;
@@ -41,7 +27,6 @@ public class WoWMoPClassicPlayerStats : CombatPlayerDataBase, IPlayerStats
         Expertise = expertise;
         Armor = armor;
         Talents = talents;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int Strength { get; private set; }
@@ -73,4 +58,27 @@ public class WoWMoPClassicPlayerStats : CombatPlayerDataBase, IPlayerStats
     public string Talents { get; private set; } = string.Empty;
 
     public CombatPlayer CombatPlayer { get; private set; }
+
+    public static WoWMoPClassicPlayerStats Create(int strength, int agility, int intelligence, int stamina, int spirit,
+        int dodge, int parry, int block, int crit, int haste, int hit,
+        int expertise, int armor, string talents)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(strength, nameof(strength));
+        ArgumentOutOfRangeException.ThrowIfNegative(agility, nameof(agility));
+        ArgumentOutOfRangeException.ThrowIfNegative(intelligence, nameof(intelligence));
+        ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina));
+        ArgumentOutOfRangeException.ThrowIfNegative(spirit, nameof(spirit));
+        ArgumentOutOfRangeException.ThrowIfNegative(dodge, nameof(dodge));
+        ArgumentOutOfRangeException.ThrowIfNegative(parry, nameof(parry));
+        ArgumentOutOfRangeException.ThrowIfNegative(block, nameof(block));
+        ArgumentOutOfRangeException.ThrowIfNegative(crit, nameof(crit));
+        ArgumentOutOfRangeException.ThrowIfNegative(haste, nameof(haste));
+        ArgumentOutOfRangeException.ThrowIfNegative(hit, nameof(hit));
+        ArgumentOutOfRangeException.ThrowIfNegative(expertise, nameof(expertise));
+        ArgumentOutOfRangeException.ThrowIfNegative(armor, nameof(armor));
+
+        return new WoWMoPClassicPlayerStats(strength, agility, intelligence, stamina, spirit,
+            dodge, parry, block, crit, haste, hit,
+            expertise, armor, talents);
+    }
 }

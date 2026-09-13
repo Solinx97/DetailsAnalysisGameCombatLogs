@@ -3,22 +3,22 @@ using CombatParser.Domain.EntityData;
 
 namespace CombatParser.Domain.Entities;
 
-public class CombatUnit : CombatDataBase
+public class Unit : CombatDataBase
 {
     public const int GAMEID_MAX_LENGTH = 128;
     public const int NAME_MAX_LENGTH = 128;
 
+    private readonly List<UnitHealth> _unitHealthes = [];
     private readonly List<UnitCast> _unitCasts = [];
     private readonly List<UnitPosition> _unitPositions = [];
 
-    private CombatUnit() { }
+    private Unit() { }
 
-    private CombatUnit(string gameId, string name, long health, string unitHash, int type, string? creatorGameId)
+    private Unit(string gameId, string name, string unitHash, int type, string? creatorGameId)
     {
         Id = Guid.NewGuid().ToString();
         GameId = gameId;
         Name = name;
-        Health = health;
         UnitHash = unitHash;
         Type = type;
         CreatorGameId = creatorGameId;
@@ -30,8 +30,6 @@ public class CombatUnit : CombatDataBase
 
     public string Name { get; private set; } = string.Empty;
 
-    public long Health { get; private set; }
-
     public string UnitHash { get; private set; }
 
     public int Type { get; private set; }
@@ -40,18 +38,26 @@ public class CombatUnit : CombatDataBase
 
     public Combat Combat { get; private set; }
 
+    public IEnumerable<UnitHealth> UnitHealthes => _unitHealthes;
+
     public IEnumerable<UnitCast> UnitCasts => _unitCasts;
 
     public IEnumerable<UnitPosition> UnitPositions => _unitPositions;
 
-    public static CombatUnit Create(string gameId, string name, long health, string unitHash, int type, string? creatorGameId,
-        IReadOnlyList<UnitCastData> unitCasts, IReadOnlyList<UnitPositionData> unitPositions)
+    public static Unit Create(string gameId, string name, string unitHash, int type, string? creatorGameId,
+        IReadOnlyList<UnitHealthData> unitHealthes, IReadOnlyList<UnitCastData> unitCasts, IReadOnlyList<UnitPositionData> unitPositions)
     {
         ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
         ArgumentException.ThrowIfNullOrEmpty(unitHash, nameof(unitHash));
 
-        var combatUnit = new CombatUnit(gameId, name, health, unitHash, type, creatorGameId);
+        var combatUnit = new Unit(gameId, name, unitHash, type, creatorGameId);
+
+        foreach (var unitHealth in unitHealthes)
+        {
+            combatUnit.AddHealth(unitHealth);
+        }
+
 
         foreach (var unitCast in unitCasts)
         {
@@ -66,16 +72,22 @@ public class CombatUnit : CombatDataBase
         return combatUnit;
     }
 
+    private void AddHealth(UnitHealthData health)
+    {
+        var createdHealth = UnitHealth.Create(health.OwnerGameId, health.CurrentHealth, health.MaxHealth, health.Time);
+        _unitHealthes.Add(createdHealth);
+    }
+
     private void AddCast(UnitCastData cast)
     {
-        var createdCast = UnitCast.Create(cast.CreatorGameId, cast.GameSpellId, cast.Spell, cast.Time, cast.FinishTime,
+        var createdCast = UnitCast.Create(cast.OwnerGameId, cast.GameSpellId, cast.Spell, cast.Time, cast.FinishTime,
             cast.TargetGameId, cast.IsImmediatly, cast.IsSuccess);
         _unitCasts.Add(createdCast);
     }
 
     private void AddUnitPosition(UnitPositionData unitPosition)
     {
-        var createdPosition = UnitPosition.Create(unitPosition.CreatorGameId, unitPosition.X, unitPosition.Y,
+        var createdPosition = UnitPosition.Create(unitPosition.OwnerGameId, unitPosition.X, unitPosition.Y,
             unitPosition.Time);
         _unitPositions.Add(createdPosition);
     }

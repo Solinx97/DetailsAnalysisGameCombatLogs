@@ -2,15 +2,13 @@
 
 namespace CombatAnalysis.UploadingLogsApp.Models;
 
-public class CombatUnitModel
+public class UnitModel
 {
     public string Id { get; set; } = string.Empty;
 
     public string GameId { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;
-
-    public long Health { get; set; }
 
     public string UnitHash { get; set; } = string.Empty;
 
@@ -20,12 +18,15 @@ public class CombatUnitModel
 
     public int CombatId { get; set; }
 
+    public List<UnitHealthModel> UnitHealthes { get; set; } = [];
+
     public List<UnitCastModel> UnitCasts { get; set; } = [];
 
     public List<UnitPositionModel> UnitPositions { get; set; } = [];
 
     public void ReleaseParsedData()
     {
+        UnitHealthes.Clear();
         UnitCasts.Clear();
         UnitPositions.Clear();
     }

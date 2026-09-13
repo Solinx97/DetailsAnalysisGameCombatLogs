@@ -34,6 +34,4 @@ public class CombatPlayer
     public List<ICombatPlayerResourceRefs> ResourceRecoveries { get; set; } = [];
 
     public List<ResourceRecoveryGeneral> ResourceRecoveryGenerals { get; set; } = [];
-
-    public List<CombatPlayerDeath> CombatPlayerDeathes { get; set; } = [];
 }

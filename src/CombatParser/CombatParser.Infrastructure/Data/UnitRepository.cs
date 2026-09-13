@@ -1,6 +1,5 @@
 ﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities;
-using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,14 +9,20 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<CombatUnit>> GetAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Unit>> GetAsync(int combatId, CancellationToken cancellationToken)
     {
-        var data = await _context.Set<CombatUnit>()
-                    .AsNoTracking()
+        var data = await _context.Set<Unit>()
                     .Where(x => x.CombatId == combatId)
+                    .Include(x => x.UnitPositions
+                        .OrderBy(x => x.Time)
+                     )
+                    .Include(x => x.UnitHealthes
+                        .OrderBy(x => x.Time)
+                     )
+                    .AsNoTracking()
                     .ToListAsync(cancellationToken);
 
-        return data.Count != 0 ? data : [];
+        return data;
     }
 
     public async Task<IEnumerable<UnitPosition>> GetPositionsAsync(string combatUnitId, CancellationToken cancellationToken)
@@ -27,7 +32,7 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
                     .Where(x => x.CombatUnitId == combatUnitId)
                     .ToListAsync(cancellationToken);
 
-        return data.Count != 0 ? data : [];
+        return data;
     }
 
     public async Task<IEnumerable<UnitCast>> GetCastsAsync(string combatUnitId, CancellationToken cancellationToken)
@@ -37,44 +42,33 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
                     .Where(x => x.CombatUnitId == combatUnitId)
                     .ToListAsync(cancellationToken);
 
-        return data.Count != 0 ? data : [];
+        return data;
     }
 
-    public async Task<IDictionary<string, List<UnitHealth>>> GetHealthByCombatIdAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IDictionary<string, List<UnitHealth>>> GetHealthesAsync(int combatId, CancellationToken cancellationToken)
     {
-        var data = await (
-            from combatPlayer in _context.Set<CombatPlayer>().AsNoTracking()
-            where combatPlayer.CombatId == combatId
+        var data = await _context.Set<Unit>()
+                    .Join(_context.Set<UnitHealth>(),
+                        x => x.Id,
+                        y => y.CombatUnitId,
+                        (x, y) => new
+                        {
+                            CombatId = x.CombatId,
+                            GameId = x.GameId,
+                            Time = y.Time,
+                            Health = y
+                        })
+                    .AsNoTracking()
+                    .Where(x => x.CombatId == combatId)
+                    .GroupBy(x => x.GameId)
+                    .ToDictionaryAsync(
+                        x => x.Key,
+                        x => x
+                            .OrderBy(y => y.Time)
+                            .Select(y => y.Health)
+                            .ToList(),
+                        cancellationToken);
 
-            join damageDone in _context.Set<DamageDone>().AsNoTracking()
-                on combatPlayer.Id equals damageDone.CombatPlayerId
-
-            join unit in _context.Set<CombatUnit>().AsNoTracking()
-                on new { CombatId = combatPlayer.CombatId, GameId = damageDone.Target.GameId }
-                equals new { CombatId = unit.CombatId, GameId = unit.GameId }
-
-            select new
-            {
-                CreatorGameId = unit.GameId,
-                CurrentHealth = damageDone.Target.Health,
-                MaxHealth = unit.Health,
-                Time = damageDone.Time,
-                CombatUnit = unit.Id
-            }
-        ).ToListAsync(cancellationToken);
-
-        var unitHealths = data
-            .Select(x => UnitHealth.Create(
-                x.CreatorGameId,
-                x.CurrentHealth,
-                x.MaxHealth,
-                x.Time,
-                x.CurrentHealth == 0))
-            .GroupBy(x => x.CreatorGameId)
-            .ToDictionary(
-                x => x.Key,
-                x => x.OrderBy(y => y.Time).ToList());
-
-        return unitHealths;
+        return data;
     }
 }

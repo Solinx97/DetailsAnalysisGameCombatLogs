@@ -1,25 +1,21 @@
 import CombatReplyContext from '@/context/CombatReplyContext';
+import { CombatUnitType } from '@/shared/helpers/EnumHelper';
 import { memo, useContext, useEffect, useMemo, useState } from 'react';
-import type { CombatUnitModel } from '../../types/CombatUnitModel';
-import type { UnitHealthModel } from '../../types/UnitHealthModel';
-import CombatReplyUnit from './CombatReplyUnit';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import {
-    useLazyGetCombatUnitsByCombatIdQuery,
-    useLazyGetUnitCastsByCombatPlayerIdQuery, useLazyGetUnitsHealthByCombatIdQuery
+    useLazyGetUnitCastsByCombatUnitIdQuery
 } from '../../api/GameLogs.api';
-import type { UnitPositionModel } from '../../types/UnitPositionModel';
+import type { UnitModel } from '../../types/UnitModel';
 import type { UnitCastModel } from '../../types/UnitCastModel';
+import CombatReplyUnit from './CombatReplyUnit';
 import CombatReplyUnitsCategory from './CombatReplyUnitsCategory';
 
 import './CombatReplyUnits.scss';
 
 interface CombatReplyUnitsProps {
-    unitPositions: Map<string, UnitPositionModel[]>;
-    details: CombatDetailsModel;
+    combatUnits: UnitModel[];
 }
 
-const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, details }) => {
+const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ combatUnits }) => {
     const context = useContext(CombatReplyContext);
 
     if (!context) {
@@ -28,43 +24,12 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
 
     const { t, selectedGameId, selectedTargetGameId, colors } = context;
 
-    const [combatUnits, setCombatUnits] = useState<CombatUnitModel[]>([]);
-    const [unitsCast, setUnitsCast] = useState<Map<string, UnitCastModel[]>>(new Map());
-    const [unitsHealth, setUnitsHealth] = useState<Map<string, UnitHealthModel[]>>(new Map());
-    const [selectedUnit, setSelectedUnit] = useState<CombatUnitModel | undefined>();
-    const [selectedTargetUnit, setSelectedTargetUnit] = useState<CombatUnitModel | undefined>();
+    const [selectedUnitCasts, setSelectedUnitCasts] = useState<UnitCastModel[]>([]);
+    const [selectedTargetUnitCasts, setSelectedTargetUnitCasts] = useState<UnitCastModel[]>([]);
+    const [selectedUnit, setSelectedUnit] = useState<UnitModel | undefined>();
+    const [selectedTargetUnit, setSelectedTargetUnit] = useState<UnitModel | undefined>();
 
-    const [getCombatUnits] = useLazyGetCombatUnitsByCombatIdQuery();
-    const [getUnitCasts] = useLazyGetUnitCastsByCombatPlayerIdQuery();
-    const [getUnitsHealth] = useLazyGetUnitsHealthByCombatIdQuery();
-
-    useEffect(() => {
-        if (details.id === 0) {
-            return;
-        }
-
-        const loadData = async () => {
-            try {
-                const [combatUnits, unitsCast, unitsHealth] = await Promise.all([
-                    getCombatUnits(details.id).unwrap(),
-                    getUnitCasts(details.id).unwrap(),
-                    getUnitsHealth(details.id).unwrap()
-                ]);
-
-                setCombatUnits(combatUnits);
-
-                const unitsCastMap = new Map(Object.entries(unitsCast));
-                setUnitsCast(unitsCastMap);
-
-                const unitsHealthMap = new Map(Object.entries(unitsHealth));
-                setUnitsHealth(unitsHealthMap);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-
-        loadData();
-    }, [details]);
+    const [getUnitCasts] = useLazyGetUnitCastsByCombatUnitIdQuery();
 
     useEffect(() => {
         if (selectedGameId === "") {
@@ -77,6 +42,26 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
     }, [selectedGameId]);
 
     useEffect(() => {
+        if (!selectedUnit) {
+            return;
+        }
+
+        const loadData = async () => {
+            try {
+                const [unitCasts] = await Promise.all([
+                    getUnitCasts(selectedUnit.id).unwrap(),
+                ]);
+
+                setSelectedUnitCasts(unitCasts);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        loadData();
+    }, [selectedUnit]);
+
+    useEffect(() => {
         if (selectedTargetGameId === "" || selectedGameId === "") {
             setSelectedTargetUnit(undefined);
         }
@@ -87,15 +72,15 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
     }, [selectedGameId, selectedTargetGameId]);
 
     const playerUnits = useMemo(() => {
-        return combatUnits.filter(x => x.unitHash.includes("0x51"));
+        return combatUnits.filter(x => x.type === CombatUnitType["Player"]);
     }, [combatUnits]);
 
     const playerCreatureUnits = useMemo(() => {
-        return combatUnits.filter(x => x.unitHash ==="0xa28" || x.unitHash ==="0x1112");
+        return combatUnits.filter(x => x.type === CombatUnitType["PlayerCreature"] || x.type === CombatUnitType["Pet"]);
     }, [combatUnits]);
 
     const enemyUnits = useMemo(() => {
-        return combatUnits.filter(x => x.unitHash.includes("0x10a48") || x.unitHash.includes("0xa48"));
+        return combatUnits.filter(x => x.type === CombatUnitType["EnemyCreature"] || x.type === CombatUnitType["Vehicle"]);
     }, [combatUnits]);
 
     return (
@@ -105,8 +90,7 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
                     {selectedUnit &&
                         <div className="player">
                             <CombatReplyUnit
-                                unitCasts={unitsCast.get(selectedGameId)}
-                                unitsHealth={unitsHealth.get(selectedGameId)}
+                                unitCasts={selectedUnitCasts}
                                 unit={selectedUnit}
                                 color={colors.get(selectedGameId) ?? "#FFFFFF"}
                             />
@@ -115,8 +99,7 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
                     {selectedTargetUnit &&
                         <div className="player">
                             <CombatReplyUnit
-                                unitCasts={unitsCast.get(selectedTargetGameId)}
-                                unitsHealth={unitsHealth.get(selectedTargetGameId)}
+                                unitCasts={selectedTargetUnitCasts}
                                 unit={selectedTargetUnit}
                                 color={colors.get(selectedTargetGameId) ?? "#FFFFFF"}
                             />
@@ -127,20 +110,14 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ unitPositions, deta
             <CombatReplyUnitsCategory
                 name={t("Players")}
                 units={playerUnits}
-                unitPositions={unitPositions}
-                unitsHealth={unitsHealth}
             />
             <CombatReplyUnitsCategory
                 name={t("PlayerCreatures")}
                 units={playerCreatureUnits}
-                unitPositions={unitPositions}
-                unitsHealth={unitsHealth}
             />
             <CombatReplyUnitsCategory
                 name={t("Enemy")}
                 units={enemyUnits}
-                unitPositions={unitPositions}
-                unitsHealth={unitsHealth}
             />
         </ul>
     );

@@ -11,11 +11,24 @@ import type { BossMapModel } from '../types/BossMapModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
 import type { UnitCastModel } from '../types/UnitCastModel';
 import type { UnitHealthModel } from '../types/UnitHealthModel';
-import type { CombatUnitModel } from '../types/CombatUnitModel';
+import type { UnitModel } from '../types/UnitModel';
 import type { WoWMidnightPlayerStatsModel } from '../types/woWMidnight/WoWMidnightPlayerStatsModel';
 import type { WoWMoPClassicPlayerStatsModel } from '../types/wowMoPClassic/WoWMoPClassicPlayerStatsModel';
+import useTime from '@/shared/hooks/useTime';
 
 const apiURL = '/api/v1';
+
+const setTimeToms = (units: UnitModel[]): UnitModel[] => {
+    const { timeToMs } = useTime();
+
+    return units.map(unit => ({
+        ...unit,
+        unitPositions: unit.unitPositions.map(p => ({
+            ...p,
+            timeMs: timeToMs(p.time)
+        }))
+    }));
+}
 
 export const GameLogsApi = createApi({
     reducerPath: 'combatParserAPi',
@@ -146,11 +159,12 @@ export const GameLogsApi = createApi({
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }],
             keepUnusedDataFor: 0,
         }),
-        getCombatUnitsByCombatId: builder.query<CombatUnitModel[], number>({
-            query: combatId => `/CombatUnit/getByCombatId/${combatId}`,
+        getCombatUnitsByCombatId: builder.query<UnitModel[], number>({
+            query: combatId => `/Unit/getByCombatId/${combatId}`,
+            transformResponse: setTimeToms
         }),
-        getUnitCastsByCombatPlayerId: builder.query<Map<string, UnitCastModel[]>, number>({
-            query: combatId => `/UnitCast/getByCombatId/${combatId}`,
+        getUnitCastsByCombatUnitId: builder.query<UnitCastModel[], string>({
+            query: combatUnitId => `/UnitCast/getByCombatUnitId/${combatUnitId}`,
         }),
         getUnitPositionsByCombatId: builder.query<Map<string, UnitPositionModel[]>, number>({
             query: combatId => `/UnitPosition/getByCombatId/${combatId}`,
@@ -180,8 +194,8 @@ export const {
     useLazyGetCombatPlayerByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatByPreAuraQuery,
-    useLazyGetCombatUnitsByCombatIdQuery,
-    useLazyGetUnitCastsByCombatPlayerIdQuery,
+    useGetCombatUnitsByCombatIdQuery,
+    useLazyGetUnitCastsByCombatUnitIdQuery,
     useLazyGetUnitPositionsByCombatIdQuery,
     useLazyGetUnitsHealthByCombatIdQuery,
     useGetPlayerStatsByCombatPlayerIdQuery,

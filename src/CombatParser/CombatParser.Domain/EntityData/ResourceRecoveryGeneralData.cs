@@ -8,6 +8,5 @@ public record ResourceRecoveryGeneralData(
     int CastNumber,
     int MinValue,
     int MaxValue,
-    double AverageValue,
-    int CombatPlayerId
+    double AverageValue
     );

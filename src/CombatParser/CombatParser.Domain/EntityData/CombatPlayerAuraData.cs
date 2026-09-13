@@ -9,6 +9,5 @@ public record CombatPlayerAuraData(
     int AuraType,
     TimeSpan StartTime,
     TimeSpan FinishTime, 
-    int Stacks,
-    int CombatPlayerId
+    int Stacks
     );

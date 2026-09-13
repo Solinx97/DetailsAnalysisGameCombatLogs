@@ -1,6 +1,6 @@
-﻿namespace CombatParser.Application.DTOs;
+﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.GameLogs;
 
-public class CombatUnitDto
+public class UnitModel
 {
     public string Id { get; set; } = string.Empty;
 
@@ -8,13 +8,17 @@ public class CombatUnitDto
 
     public string Name { get; set; } = string.Empty;
 
-    public long Health { get; set; }
-
     public string UnitHash { get; set; } = string.Empty;
 
     public int Type { get; set; }
 
     public string? CreatorGameId { get; set; }
-
+    
     public int CombatId { get; set; }
+
+    public List<UnitHealthModel> UnitHealthes { get; set; } = [];
+
+    public List<UnitCastModel> UnitCasts { get; init; } = [];
+
+    public List<UnitPositionModel> UnitPositions { get; set; } = [];
 }

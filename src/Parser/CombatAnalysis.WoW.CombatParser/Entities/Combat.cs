@@ -20,7 +20,7 @@ public class Combat
 
     public List<CombatPlayer> CombatPlayers { get; set; } = [];
 
-    public List<CombatUnit> Units { get; set; } = [];
+    public List<Unit> Units { get; set; } = [];
 
     public Boss Boss { get; set; } = new();
 

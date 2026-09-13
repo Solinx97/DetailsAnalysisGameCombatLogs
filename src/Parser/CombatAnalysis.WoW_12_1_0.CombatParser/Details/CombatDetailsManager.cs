@@ -6,19 +6,11 @@ using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW_12_1_0.CombatParser.Details;
 
-internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, string[] playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished) 
-    : WoW.CombatParser.Details.CombatDetailsManager(combatParserHelper, playersId, combatStarted, combatFinished)
+internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, DateTimeOffset combatStarted, DateTimeOffset combatFinished) 
+    : WoW.CombatParser.Details.CombatDetailsManager(combatParserHelper, combatStarted, combatFinished)
 {
-    private readonly string[] _playersId = playersId;
-
-    public override HealDone? GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units)
+    public override HealDone GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
-        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[10]))
-            && !_playersId.Any(playerId => playerId.Equals(combatDataLine[13])))
-        {
-            return null;
-        }
-
         var absorbeDone = new HealDone
         {
             GameSpellId = int.Parse(combatDataLine[^6]),

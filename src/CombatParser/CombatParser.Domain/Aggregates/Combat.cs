@@ -10,7 +10,7 @@ public class Combat
     public const int DUNGEON_NAME_MAX_LENGTH = 128;
 
     private readonly List<CombatPlayer> _players = [];
-    private readonly List<CombatUnit> _units = [];
+    private readonly List<Unit> _units = [];
 
     private Combat() { }
 
@@ -67,11 +67,11 @@ public class Combat
 
     public IEnumerable<CombatPlayer> CombatPlayers => _players;
 
-    public IEnumerable<CombatUnit> Units => _units;
+    public IEnumerable<Unit> Units => _units;
 
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
         long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<CombatUnitData> units)
+        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<UnitData> units)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
@@ -103,15 +103,16 @@ public class Combat
     private void AddCombatPlayer(CombatPlayerData player)
     {
         var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
-            player.PlayerId, player.CombatId, player.Stats, player.Score, player.PreAuras, player.Auras, player.DamageDones,
+            player.PlayerId, player.Stats, player.Score, player.PreAuras, player.Auras, player.DamageDones,
             player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals,
-            player.ResourceRecoveries, player.ResourceRecoveryGenerals, player.CombatPlayerDeaths);
+            player.ResourceRecoveries, player.ResourceRecoveryGenerals);
         _players.Add(createdPlayer);
     }
 
-    private void AddUnit(CombatUnitData unit)
+    private void AddUnit(UnitData unit)
     {
-        var createdUnit = CombatUnit.Create(unit.GameId, unit.Name, unit.Health, unit.UnitHash, unit.Type, unit.CreatorGameId, unit.UnitCasts, unit.UnitPositions);
+        var createdUnit = Unit.Create(unit.GameId, unit.Name, unit.UnitHash, unit.Type, unit.CreatorGameId, 
+            unit.UnitHealths, unit.UnitCasts, unit.UnitPositions);
         _units.Add(createdUnit);
     }
 }

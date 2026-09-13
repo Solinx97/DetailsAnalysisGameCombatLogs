@@ -22,7 +22,9 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
-    public DbSet<CombatUnit>? CombatUnit { get; }
+    public DbSet<Unit>? Unit { get; }
+
+    public DbSet<UnitHealth>? UnitHealth { get; }
 
     public DbSet<UnitCast>? UnitCast { get; }
 
@@ -45,8 +47,6 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
     public DbSet<ResourceRecovery>? ResourceRecovery { get; }
 
     public DbSet<ResourceRecoveryGeneral>? ResourceRecoveryGeneral { get; }
-
-    public DbSet<CombatPlayerDeath>? CombatPlayerDeath { get; }
 
     public DbSet<WoWMoPClassicPlayerStats>? WoWMoPClassicPlayerStats { get; }
 

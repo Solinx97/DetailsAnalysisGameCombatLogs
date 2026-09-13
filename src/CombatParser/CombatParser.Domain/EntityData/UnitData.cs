@@ -1,13 +1,13 @@
 ﻿namespace CombatParser.Domain.EntityData;
 
-public record CombatUnitData(
+public record UnitData(
     string GameId,
     string Name,
-    long Health,
     string UnitHash,
     int Type,
     string? CreatorGameId,
     int CombatId,
+    IReadOnlyList<UnitHealthData> UnitHealths,
     IReadOnlyList<UnitCastData> UnitCasts,
     IReadOnlyList<UnitPositionData> UnitPositions
     );

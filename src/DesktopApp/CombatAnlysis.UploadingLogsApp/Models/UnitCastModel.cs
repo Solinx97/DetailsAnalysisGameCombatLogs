@@ -6,7 +6,7 @@ public class UnitCastModel
 {
     public string Id { get; set; } = string.Empty;
 
-    public string CreatorGameId { get; set; } = string.Empty;
+    public string OwnerGameId { get; set; } = string.Empty;
 
     public int GameSpellId { get; set; }
 
@@ -22,5 +22,5 @@ public class UnitCastModel
 
     public bool IsSuccess { get; set; }
 
-    public string CombatUnitId { get; set; }
+    public string CombatUnitId { get; set; } = string.Empty;
 }

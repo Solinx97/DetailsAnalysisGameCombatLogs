@@ -47,7 +47,6 @@ internal class CombatParserApiMapper : Profile
         CreateMap<HealDoneGeneralDto, HealDoneGeneralModel>().ReverseMap();
         CreateMap<ResourceRecoveryDto, ResourceRecoveryModel>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneralModel>().ReverseMap();
-        CreateMap<CombatPlayerDeathDto, CombatPlayerDeathModel>().ReverseMap();
         CreateMap<SpecializationScoreDto, SpecializationScoreModel>().ReverseMap();
         CreateMap<BestSpecializationScoreDto, BestSpecializationScoreModel>().ReverseMap();
 
@@ -57,15 +56,14 @@ internal class CombatParserApiMapper : Profile
         CreateMap<HealDoneGeneralData, HealDoneGeneralModel>().ReverseMap();
         CreateMap<ResourceRecoveryData, ResourceRecoveryModel>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralData, ResourceRecoveryGeneralModel>().ReverseMap();
-        CreateMap<CombatUnitData, CombatUnitModel>().ReverseMap();
+        CreateMap<UnitData, UnitModel>().ReverseMap();
         CreateMap<UnitHealthData, UnitHealthModel>().ReverseMap();
         CreateMap<UnitPositionData, UnitPositionModel>().ReverseMap();
+        CreateMap<UnitCastData, UnitCastModel>().ReverseMap();
 
-        CreateMap<CombatPlayerDeathData, CombatPlayerDeathModel>().ReverseMap();
         CreateMap<SpecializationScoreData, SpecializationScoreModel>().ReverseMap();
         CreateMap<CombatPlayerPreAuraData, CombatPlayerPreAuraModel>().ReverseMap();
         CreateMap<CombatPlayerAuraData, CombatPlayerAuraModel>().ReverseMap();
-        CreateMap<UnitCastData, UnitCastModel>().ReverseMap();
 
         CreateMap<IPlayerStatsModel, IPlayerStatsData>()
             .Include<WoWMoPClassicPlayerStatsModel, WoWMoPClassicPlayerStatsData>()

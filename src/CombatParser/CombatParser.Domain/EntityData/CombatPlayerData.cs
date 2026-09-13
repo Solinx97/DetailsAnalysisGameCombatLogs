@@ -9,7 +9,6 @@ public record CombatPlayerData(
     int HealDone, 
     int DamageTaken,
     string PlayerId,
-    int CombatId,
     IPlayerStatsData Stats,
     SpecializationScoreData Score,
     IReadOnlyList<CombatPlayerPreAuraData> PreAuras,
@@ -19,6 +18,5 @@ public record CombatPlayerData(
     IReadOnlyList<HealDoneData> HealDones,
     IReadOnlyList<HealDoneGeneralData> HealDoneGenerals,
     IReadOnlyList<ResourceRecoveryData> ResourceRecoveries,
-    IReadOnlyList<ResourceRecoveryGeneralData> ResourceRecoveryGenerals,
-    IReadOnlyList<CombatPlayerDeathData> CombatPlayerDeaths
+    IReadOnlyList<ResourceRecoveryGeneralData> ResourceRecoveryGenerals
     );

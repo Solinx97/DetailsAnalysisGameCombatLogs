@@ -60,8 +60,6 @@ public class CombatPlayerModel
 
     public List<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
 
-    public List<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
-
     public void ReleaseParsedData()
     {
         PreAuras.Clear();
@@ -72,6 +70,5 @@ public class CombatPlayerModel
         HealDoneGenerals.Clear();
         ResourceRecoveries.Clear();
         ResourceRecoveryGenerals.Clear();
-        CombatPlayerDeathes.Clear();
     }
 }

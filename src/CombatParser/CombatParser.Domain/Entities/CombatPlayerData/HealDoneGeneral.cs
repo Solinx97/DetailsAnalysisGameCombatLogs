@@ -8,19 +8,9 @@ public class HealDoneGeneral : CombatPlayerDataBase
 
     private HealDoneGeneral() { }
 
-    public HealDoneGeneral(int gameSpellId, string spell, int value, double healPerSecond, int critNumber,
-        int castNumber, int minValue, int maxValue, double averageValue, int combatPlayerId)
+    private HealDoneGeneral(int gameSpellId, string spell, int value, double healPerSecond, int critNumber,
+        int castNumber, int minValue, int maxValue, double averageValue)
     {
-        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
-        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
-        ArgumentOutOfRangeException.ThrowIfNegative(healPerSecond, nameof(healPerSecond));
-        ArgumentOutOfRangeException.ThrowIfNegative(critNumber, nameof(critNumber));
-        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
-        ArgumentOutOfRangeException.ThrowIfNegative(minValue, nameof(minValue));
-        ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
-        ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
-
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
@@ -30,7 +20,6 @@ public class HealDoneGeneral : CombatPlayerDataBase
         MinValue = minValue;
         MaxValue = maxValue;
         AverageValue = averageValue;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int GameSpellId { get; private set; }
@@ -52,4 +41,21 @@ public class HealDoneGeneral : CombatPlayerDataBase
     public double AverageValue { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
+
+    public static HealDoneGeneral Create(int gameSpellId, string spell, int value, double healPerSecond, int critNumber,
+        int castNumber, int minValue, int maxValue, double averageValue)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
+        ArgumentOutOfRangeException.ThrowIfNegative(healPerSecond, nameof(healPerSecond));
+        ArgumentOutOfRangeException.ThrowIfNegative(critNumber, nameof(critNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(minValue, nameof(minValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
+
+        return new HealDoneGeneral(gameSpellId, spell, value, healPerSecond, critNumber, 
+            castNumber, minValue, maxValue, averageValue);
+    }
 }

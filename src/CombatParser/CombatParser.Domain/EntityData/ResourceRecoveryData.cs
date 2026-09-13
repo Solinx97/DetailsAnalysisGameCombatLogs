@@ -9,6 +9,5 @@ public record ResourceRecoveryData(
     string CreatorGameId,
     string TargetId,
     string TargetGameId,
-    int ModificationType,
-    int CombatPlayerId
+    int ModificationType
     );

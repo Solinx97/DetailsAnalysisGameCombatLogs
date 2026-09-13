@@ -9,10 +9,11 @@ using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW_5_5_4.CombatParser.Services;
 
-internal class CombatParserService(ICombatParserHelper combatParserHelper, IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) 
+internal class CombatParserService(ICombatParserHelper combatParserHelper, IFileManager fileManager,
+    ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) 
     : WoW.CombatParser.Services.CombatParserService(combatParserHelper, fileManager, logger, httpHelper), Interfaces.ICombatParserService
 {
-    protected override async Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, CombatUnit> units)
+    protected override async Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, Unit> units)
     {
         var combat = CreateCombat(builtCombat);
         if (combat == null)

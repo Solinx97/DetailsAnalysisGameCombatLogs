@@ -5,21 +5,20 @@ namespace CombatParser.Domain.Entities;
 
 public class UnitHealth : CombatUnitDataBase, ITime, IUnitRef
 {
-    public const int GAMEID_MAX_LENGTH = 128;
+    public const int OWNER_GAMEID_MAX_LENGTH = 128;
 
     private UnitHealth() { }
 
-    private UnitHealth(string creatorGameId, long currentHealth, long maxHealth, TimeSpan time, bool isDead)
+    private UnitHealth(string creatorGameId, long currentHealth, long maxHealth, TimeSpan time)
     {
         Id = Guid.NewGuid().ToString();
-        CreatorGameId = creatorGameId;
+        OwnerGameId = creatorGameId;
         CurrentHealth = currentHealth;
         MaxHealth = maxHealth;
         Time = time;
-        IsDead = isDead;
     }
 
-    public string CreatorGameId { get; private set; }
+    public string OwnerGameId { get; private set; }
 
     public long CurrentHealth { get; private set; }
 
@@ -27,16 +26,14 @@ public class UnitHealth : CombatUnitDataBase, ITime, IUnitRef
 
     public TimeSpan Time { get; private set; }
 
-    public bool IsDead { get; private set; }
+    public Unit CombatUnit { get; private set; }
 
-    public CombatUnit CombatUnit { get; private set; }
-
-    public static UnitHealth Create(string creatorGameId, long currentHealth, long maxHealth, TimeSpan time, bool isDead)
+    public static UnitHealth Create(string ownerGameId, long currentHealth, long maxHealth, TimeSpan time)
     {
-        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
+        ArgumentException.ThrowIfNullOrEmpty(ownerGameId, nameof(ownerGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
 
-        return new UnitHealth(creatorGameId, currentHealth, maxHealth, time, isDead);
+        return new UnitHealth(ownerGameId, currentHealth, maxHealth, time);
     }
 }

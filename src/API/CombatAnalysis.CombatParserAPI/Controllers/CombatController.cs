@@ -88,7 +88,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
                 combatPlayersData.Add(playerData);
             }
 
-            var unitsData = new List<CombatUnitData>();
+            var unitsData = new List<UnitData>();
             foreach (var item in combat.Units)
             {
                 var unit = ExtractUnitDataAsync(item);
@@ -133,7 +133,6 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(combatPlayer.HealDoneGenerals);
         var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatPlayer.ResourceRecoveries);
         var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatPlayer.ResourceRecoveryGenerals);
-        var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatPlayer.CombatPlayerDeathes);
 
         var spellIds = combatPlayer.DamageDone > combatPlayer.HealDone
             ? combatPlayer.DamageDones.Select(d => d.GameSpellId).ToArray()
@@ -149,7 +148,6 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             combatPlayer.HealDone,
             combatPlayer.DamageTaken,
             combatPlayer.PlayerId,
-            combatPlayer.CombatId,
             statsMap,
             scoreMap,
             preAurasMap,
@@ -159,26 +157,26 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             healDonesMap,
             healDoneGeneralsMap,
             resourceRecoveryMap,
-            resourceRecoveryGeneralMap,
-            deathsMap
+            resourceRecoveryGeneralMap
         );
 
         return playerData;
     }
 
-    private CombatUnitData ExtractUnitDataAsync(CombatUnitModel unit)
+    private UnitData ExtractUnitDataAsync(UnitModel unit)
     {
+        var unitHealthesMap = _mapper.Map<List<UnitHealthData>>(unit.UnitHealthes);
         var unitCastsMap = _mapper.Map<List<UnitCastData>>(unit.UnitCasts);
         var unitPositionsMap = _mapper.Map<List<UnitPositionData>>(unit.UnitPositions);
 
-        var unitData = new CombatUnitData(
+        var unitData = new UnitData(
             unit.GameId,
             unit.Name,
-            unit.Health,
             unit.UnitHash,
             unit.Type,
             unit.CreatorGameId,
             unit.CombatId,
+            unitHealthesMap,
             unitCastsMap,
             unitPositionsMap
         );

@@ -6,6 +6,5 @@ public record SpecializationScoreData(
     double HealScore, 
     int HealDone,
     DateTimeOffset? Updated,
-    int SpecializationId,
-    int CombatPlayerId
+    int SpecializationId
     );

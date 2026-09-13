@@ -59,7 +59,7 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task<List<CombatUnit>> BulkInsertUnitsAsync(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<CombatUnit>> selector, CancellationToken cancelationToken)
+    public static async Task<List<Unit>> BulkInsertUnitsAsync(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<Unit>> selector, CancellationToken cancelationToken)
     {
         var combatData = selector(combat).Select(cr =>
         {
@@ -78,7 +78,7 @@ internal static class CombatParserContextOneExtension
         return combatData;
     }
 
-    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, IEnumerable<CombatUnit> combatUnits, Func<CombatUnit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, IEnumerable<Unit> combatUnits, Func<Unit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
         where TModel : class, ICombatUnitRefs
     {
         var combatUnitData = combatUnits.SelectMany(p =>

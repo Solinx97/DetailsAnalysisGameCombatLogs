@@ -5,4 +5,4 @@ namespace CombatParser.Application.Queries.GetUnitPositions;
 
 public record GetUnitPositionsQuery(
     string CombatUnitId
-    ) : IRequest<IDictionary<string, IEnumerable<UnitPositionDto>>>;
+    ) : IRequest<IEnumerable<UnitPositionDto>>;

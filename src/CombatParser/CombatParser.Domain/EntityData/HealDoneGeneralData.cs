@@ -9,6 +9,5 @@ public record HealDoneGeneralData(
     int CastNumber,
     int MinValue,
     int MaxValue,
-    double AverageValue,
-    int CombatPlayerId
+    double AverageValue
     );

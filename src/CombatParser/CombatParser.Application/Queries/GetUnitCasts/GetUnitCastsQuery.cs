@@ -5,4 +5,4 @@ namespace CombatParser.Application.Queries.GetUnitCasts;
 
 public record GetUnitCastsQuery(
     string CombatUnitId
-    ) : IRequest<IDictionary<string, IEnumerable<UnitCastDto>>>;
+    ) : IRequest<IEnumerable<UnitCastDto>>;

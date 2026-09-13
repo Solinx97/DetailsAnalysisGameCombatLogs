@@ -7,5 +7,5 @@ public interface ICombatParserHelper
 {
     string[] SplitCombatData(string combatData);
 
-    CombatUnit ParseUnits(ConcurrentDictionary<string, CombatUnit> units, string gameId, string name, string unitHash, string? creatorGameId = null);
+    Unit ParseUnits(ConcurrentDictionary<string, Unit> units, string gameId, string name, string unitHash, string? creatorGameId = null);
 }

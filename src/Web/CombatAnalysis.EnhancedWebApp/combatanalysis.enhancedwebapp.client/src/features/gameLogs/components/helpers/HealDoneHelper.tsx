@@ -1,4 +1,5 @@
-﻿import { faFire, faFlask } from '@fortawesome/free-solid-svg-icons';
+﻿import { DamageModificationType } from '@/shared/helpers/EnumHelper';
+import { faFire, faFlask } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
@@ -91,7 +92,7 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
                             <li>
                                 <div>{item.spell}</div>
                                 <div className="extra-details">
-                                    {item.isCrit &&
+                                    {item.modificationType === DamageModificationType["Crit"] &&
                                         <FontAwesomeIcon
                                             icon={faFire}
                                             title={t("CritHealing")}
@@ -116,7 +117,7 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
                                         <div>0</div>
                                         <div className="overvalue">({item.value})</div>
                                     </div>
-                                    : <div className={item.isCrit ? 'crit' : ''}>{item.value}</div>
+                                    : <div className={item.modificationType === DamageModificationType["Crit"] ? 'crit' : ''}>{item.value}</div>
                                 }
                             </li>
                             <li>

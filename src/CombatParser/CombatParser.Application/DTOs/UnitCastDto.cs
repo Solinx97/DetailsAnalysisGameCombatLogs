@@ -2,7 +2,7 @@
 
 public class UnitCastDto
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public string CreatorGameId { get; set; } = string.Empty;
 
@@ -20,5 +20,5 @@ public class UnitCastDto
 
     public bool IsSuccess { get; set; }
 
-    public string CombatUnitId { get; set; }
+    public string CombatUnitId { get; set; } = string.Empty;
 }

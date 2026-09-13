@@ -2,7 +2,7 @@
 
 public class UnitCast
 {
-    public string CreatorGameId { get; set; } = string.Empty;
+    public string OwnerGameId { get; set; } = string.Empty;
 
     public int GameSpellId { get; set; }
 

@@ -1,7 +1,9 @@
+import { CombatUnitType } from '@/shared/helpers/EnumHelper';
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import type { UnitPositionModel } from '../types/UnitPositionModel';
+import { useLazyGetBossMapByIdQuery, useLazyGetCombatByIdQuery } from '../api/GameLogs.api';
 import type { CombatModel } from '../types/CombatModel';
-import { useLazyGetCombatByIdQuery, useLazyGetBossMapByIdQuery } from '../api/GameLogs.api';
+import type { UnitModel } from '../types/UnitModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
 
 interface Position {
     x: number;
@@ -23,7 +25,7 @@ interface WorldSize {
 const useCombatReply = (
     selectedGameId: string,
     canvasRef: RefObject<HTMLCanvasElement | null>,
-    unitPositions: Map<string, UnitPositionModel[]>,
+    combatUnits: UnitModel[] | undefined,
     colors: Map<string, string>
 ) => {
     const zoom = 5;
@@ -134,7 +136,7 @@ const useCombatReply = (
     useEffect(() => {
         const canvas = canvasRef.current;
 
-        if (!unitPositions || !canvas) {
+        if (!combatUnits || !canvas) {
             return;
         }
 
@@ -154,10 +156,10 @@ const useCombatReply = (
 
             ctx.save();
 
-            unitPositions.forEach((positions, unit) => {
+            combatUnits.forEach(unit => {
                 const pos =
                     getPosition(
-                        positions
+                        unit.unitPositions
                     );
 
                 if (pos !== null) {
@@ -174,12 +176,12 @@ const useCombatReply = (
                         );
 
                     drawUnit(
-                        unit,
-                        unit.startsWith("Player"),
+                        unit.gameId,
+                        unit.type === CombatUnitType["Player"],
                         ctx,
                         zoomed.x,
                         zoomed.y,
-                        colors.get(unit) ?? "#000000"
+                        colors.get(unit.gameId) ?? "#000000"
                     );
                 }
 
@@ -193,7 +195,7 @@ const useCombatReply = (
         return () => {
             cancelAnimationFrame(frameIdRef.current);
         }
-    }, [unitPositions, selectedGameId, colors, view, instanceBounds]);
+    }, [combatUnits, selectedGameId, colors, view, instanceBounds]);
 
     const getPosition = (positions: UnitPositionModel[]): Position | null => {
         if (positions.length === 0) {

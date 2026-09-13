@@ -16,6 +16,5 @@ public record WoWMoPClassicPlayerStatsData(
     int Spirit,
     int Hit,
     int Expertise,
-    string Talents,
-    int CombatPlayerId
+    string Talents
     ) : IPlayerStatsData;

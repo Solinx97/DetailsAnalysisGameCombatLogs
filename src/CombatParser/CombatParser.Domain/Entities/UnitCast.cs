@@ -3,18 +3,19 @@ using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class UnitCast : CombatUnitDataBase, IUnitRef, ITime
+public class UnitCast : CombatUnitDataBase, ITime, IUnitRef
 {
+    public const int OWNER_GAME_MAX_LENGTH = 128;
+    public const int GAME_SPELL_MAX_LENGTH = 128;
     public const int SPELL_MAX_LENGTH = 128;
-    public const int GAME_MAX_LENGTH = 128;
 
     private UnitCast() { }
 
-    private UnitCast(string creatorGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
+    private UnitCast(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
          string? targetGameId, bool isImmediatly, bool isSuccess)
     {
         Id = Guid.NewGuid().ToString();
-        CreatorGameId = creatorGameId;
+        OwnerGameId = ownerGameId;
         GameSpellId = gameSpellId;
         Spell = spell;
         Time = startTime;
@@ -24,7 +25,7 @@ public class UnitCast : CombatUnitDataBase, IUnitRef, ITime
         IsSuccess = isSuccess;
     }
 
-    public string CreatorGameId { get; private set; } = string.Empty;
+    public string OwnerGameId { get; private set; } = string.Empty;
 
     public int GameSpellId { get; private set; }
 
@@ -40,15 +41,15 @@ public class UnitCast : CombatUnitDataBase, IUnitRef, ITime
 
     public bool IsSuccess { get; private set; }
 
-    public CombatUnit CombatUnit { get; private set; }
+    public Unit CombatUnit { get; private set; }
 
-    public static UnitCast Create(string creatorGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
+    public static UnitCast Create(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
          string? targetGameId, bool isImmediatly, bool isSuccess)
     {
-        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
+        ArgumentException.ThrowIfNullOrEmpty(ownerGameId, nameof(ownerGameId));
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
 
-        return new UnitCast(creatorGameId, gameSpellId, spell, startTime, finishTime, targetGameId, isImmediatly, isSuccess);
+        return new UnitCast(ownerGameId, gameSpellId, spell, startTime, finishTime, targetGameId, isImmediatly, isSuccess);
     }
 }

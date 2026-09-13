@@ -21,8 +21,8 @@ public class UnitCastController : ControllerBase
     [HttpGet("getByCombatUnitId/{combatUnitId}")]
     public async Task<IActionResult> GetByCombatId(string combatUnitId)
     {
-        var responseMessage = await _httpClient.GetAsync($"UnitCast/getByCombatId/{combatUnitId}");
-        var casts = await responseMessage.Content.ReadFromJsonAsync<IDictionary<string, IEnumerable<UnitCastModel>>>();
+        var responseMessage = await _httpClient.GetAsync($"UnitCast/getByCombatUnitId/{combatUnitId}");
+        var casts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitCastModel>>();
 
         return Ok(casts);
     }

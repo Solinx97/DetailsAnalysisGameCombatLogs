@@ -18,6 +18,5 @@ public record WoWMidnightPlayerStatsData(
     int Lifesteal,
     int Avoidance,
     int Movement,
-    string Talents,
-    int CombatPlayerId
+    string Talents
     ) : IPlayerStatsData;

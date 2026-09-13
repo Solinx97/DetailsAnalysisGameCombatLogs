@@ -34,9 +34,9 @@ public class ResourceRecovery : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public int ModificationType { get; private set; }
 
-    public CombatUnit Creator { get; private set; }
+    public Unit Creator { get; private set; }
 
-    public CombatUnit Target { get; private set; }
+    public Unit Target { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
 

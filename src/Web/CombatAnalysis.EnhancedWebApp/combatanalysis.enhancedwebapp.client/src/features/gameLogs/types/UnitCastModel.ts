@@ -1,6 +1,6 @@
 export type UnitCastModel = {
     id: string;
-    creatorGmaeId: string;
+    ownerGmaeId: string;
     gameSpellId: number;
     spell: string;
     time: string;

@@ -10,8 +10,8 @@ public class CombatPlayerAura : CombatPlayerDataBase
 
     private CombatPlayerAura() { }
 
-    public CombatPlayerAura(int gameAuraId, string name, string creator, string target, int auraCreatorType, int auraType,
-        TimeSpan startTime, TimeSpan finishTime, int stacks, int combatPlayerId)
+    private CombatPlayerAura(int gameAuraId, string name, string creator, string target, int auraCreatorType, int auraType,
+        TimeSpan startTime, TimeSpan finishTime, int stacks)
     {
         GameAuraId = gameAuraId;
         Name = name;
@@ -22,7 +22,6 @@ public class CombatPlayerAura : CombatPlayerDataBase
         StartTime = startTime;
         FinishTime = finishTime;
         Stacks = stacks;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int GameAuraId { get; private set; }
@@ -44,4 +43,15 @@ public class CombatPlayerAura : CombatPlayerDataBase
     public int Stacks { get; private set; }
 
     public CombatPlayer CombatPlayer { get; private set; }
+
+    public static CombatPlayerAura Create(int gameAuraId, string name, string creator, string target, int auraCreatorType, int auraType,
+        TimeSpan startTime, TimeSpan finishTime, int stacks)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        ArgumentException.ThrowIfNullOrEmpty(creator, nameof(creator));
+        ArgumentException.ThrowIfNullOrEmpty(target, nameof(target));
+
+        return new CombatPlayerAura(gameAuraId, name, creator, target, auraCreatorType, auraType,
+            startTime, finishTime, stacks);
+    }
 }

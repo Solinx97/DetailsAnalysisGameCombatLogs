@@ -2,5 +2,5 @@
 
 public interface IUnitRef
 {
-    string CreatorGameId { get; }
+    string OwnerGameId { get; }
 }

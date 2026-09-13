@@ -8,17 +8,15 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import type { UnitCastModel } from '../../types/UnitCastModel';
 import CastBar from './CastBar';
 import InstantCast from './InstantCast';
-import type { UnitHealthModel } from '../../types/UnitHealthModel';
-import type { CombatUnitModel } from '../../types/CombatUnitModel';
+import type { UnitModel } from '../../types/UnitModel';
 
 interface CombatReplyItemProps {
-    unitsHealth: UnitHealthModel[] | undefined;
-    unit: CombatUnitModel;
+    unit: UnitModel;
     color: string;
     unitCasts?: UnitCastModel[] | undefined;
 }
 
-const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, color, unitCasts }) => {
+const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unit, color, unitCasts }) => {
     const INSTANT_CAST_DURATION = 500;
 
     const context = useContext(CombatReplyContext);
@@ -37,13 +35,13 @@ const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, co
     const { removeServerName } = useCombatLogs();
 
     const health = useMemo(() => {
-        if (!unitsHealth) {
+        if (!unit.unitHealthes) {
             return;
         }
 
-        return unitsHealth
+        return unit.unitHealthes
             .filter(health => timeToMs(health.time) <= currentTime).at(-1);
-    }, [currentTime, unitsHealth]);
+    }, [currentTime, unit]);
 
     const currentHealthProcentage = useMemo(() => {
         if (currentHealth === 0 || maxHealth === 0) {
@@ -62,7 +60,7 @@ const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, co
         setMaxHealth(health.maxHealth);
     }, [health]);
 
-    const handleSelectPlayer = () => {
+    const handleSelectUnit = () => {
         if (selectedGameId !== unit.gameId) {
             setSelectedGameId("");
             setSelectedGameId(unit.gameId);
@@ -137,15 +135,16 @@ const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unitsHealth, unit, co
     return (
         <>
             <div className={`username ${selectedGameId === unit.gameId ? "selected" : ""}`} style={{ color: color }}
-                onClick={handleSelectPlayer}>
-                {health?.isDead &&
+                onClick={handleSelectUnit}>
+                {health?.currentHealth === 0 &&
                     <FontAwesomeIcon
                         icon={faSkull}
                     />
                 }
                 <div>{removeServerName(unit.name)}</div>
+                <div>{removeServerName(unit.unitHash)}</div>
             </div>
-            <div className={`health ${health?.isDead ? 'dead' : ''}`}>
+            <div className={`health ${health?.currentHealth === 0 ? 'dead' : ''}`}>
                 <div className="health__current" style={{ width: `${currentHealthProcentage}%` }}>{formatNumber(currentHealth)}/{formatNumber(maxHealth)}</div>
             </div>
             {unitCasts &&

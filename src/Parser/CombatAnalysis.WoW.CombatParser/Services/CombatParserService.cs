@@ -2,7 +2,6 @@
 using CombatAnalysis.WoW.CombatParser.Details;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
-using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW.CombatParser.Extensions;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
@@ -14,7 +13,8 @@ using System.Text;
 
 namespace CombatAnalysis.WoW.CombatParser.Services;
 
-public abstract class CombatParserService(ICombatParserHelper combatParserHelper, IFileManager fileManager, ILogger<CombatParserService> logger, IHttpClientHelper httpHelper)
+public abstract class CombatParserService(ICombatParserHelper combatParserHelper, IFileManager fileManager, 
+    ILogger<CombatParserService> logger, IHttpClientHelper httpHelper)
 {
     protected readonly ICombatParserHelper _combatParserHelper = combatParserHelper;
     private readonly IFileManager _fileManager = fileManager;
@@ -42,7 +42,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         try
         {
             var newCombatFromLogs = new StringBuilder();
-            var units = new ConcurrentDictionary<string, CombatUnit>();
+            var units = new ConcurrentDictionary<string, Unit>();
             var bossCombatStarted = false;
 
             Clear();
@@ -87,7 +87,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
     }
 
-    private async Task ProcessCombatLogLinesAsync(string[] lines, ConcurrentDictionary<string, CombatUnit> units, bool combatStarted, StringBuilder newCombatFromLogs, CancellationToken cancellationToken)
+    private async Task ProcessCombatLogLinesAsync(string[] lines, ConcurrentDictionary<string, Unit> units, bool combatStarted, StringBuilder newCombatFromLogs, CancellationToken cancellationToken)
     {
         foreach (var line in lines)
         {
@@ -96,7 +96,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         }
     }
 
-    private async Task<bool> ProcessLine(string line, StringBuilder combatData, bool combatStarted, ConcurrentDictionary<string, CombatUnit> units)
+    private async Task<bool> ProcessLine(string line, StringBuilder combatData, bool combatStarted, ConcurrentDictionary<string, Unit> units)
     {
         if (line.Contains(CombatLogKeyWords.SpellSummon))
         {
@@ -174,7 +174,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         return combat;
     }
 
-    protected abstract Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, CombatUnit> units);
+    protected abstract Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, Unit> units);
 
     protected static int GetGameBossId(string encounterStart)
     {
@@ -329,8 +329,6 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         combatPlayer.HealDoneGenerals.AddRange(combatDetails.HealDoneGenerals[combatPlayer.Player.GameId]);
         combatPlayer.ResourceRecoveries.AddRange(combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Select(x => x.Value));
         combatPlayer.ResourceRecoveryGenerals.AddRange(combatDetails.ResourcesRecoveryGenerals[combatPlayer.Player.GameId]);
-
-        combatPlayer.CombatPlayerDeathes.AddRange(combatDetails.Deathes[combatPlayer.Player.GameId].Select(x => x.Value));
     }
 
     private void ZoneName(string combatLog)
@@ -448,7 +446,6 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             player.HealDoneGenerals.Clear();
             player.ResourceRecoveries.Clear();
             player.ResourceRecoveryGenerals.Clear();
-            player.CombatPlayerDeathes.Clear();
             player.PreAuras.Clear();
         }
 

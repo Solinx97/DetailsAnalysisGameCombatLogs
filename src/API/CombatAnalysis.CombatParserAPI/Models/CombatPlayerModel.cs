@@ -59,7 +59,4 @@ public class CombatPlayerModel
 
     [Required]
     public IReadOnlyList<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
-
-    [Required]
-    public IReadOnlyList<CombatPlayerDeathModel> CombatPlayerDeathes { get; set; } = [];
 }

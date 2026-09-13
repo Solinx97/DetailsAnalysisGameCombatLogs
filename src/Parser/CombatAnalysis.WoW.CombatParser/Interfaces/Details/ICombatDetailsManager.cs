@@ -6,19 +6,21 @@ namespace CombatAnalysis.WoW.CombatParser.Interfaces.Details;
 
 public interface ICombatDetailsManager
 {
-    void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<CombatUnit> summonedCreatures);
+    void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<Unit> summonedCreatures);
 
-    void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
+    void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
+    void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, bool isDamage = true);
 
-    HealDone? GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
+    void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    HealDone? GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
+    HealDone? GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    ResourceRecovery? GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
+    HealDone GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    (string, CombatPlayerDeath?) GetPlayerDeath(string[] combatDataLine);
+    ResourceRecovery? GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    DamageDone? GetDamageDone(string[] combatDataLine, ConcurrentDictionary<string, CombatUnit> units);
+    void AddUnitDeath(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
+
+    DamageDone GetDamageDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 }

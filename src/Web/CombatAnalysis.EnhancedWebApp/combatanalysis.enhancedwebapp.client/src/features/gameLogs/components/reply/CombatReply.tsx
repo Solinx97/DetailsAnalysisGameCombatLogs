@@ -1,15 +1,16 @@
-import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
-import useTime from '@/shared/hooks/useTime';
 import CombatReplyContext from '@/context/CombatReplyContext';
+import useTime from '@/shared/hooks/useTime';
+import { faDeleteLeft, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLazyGetUnitPositionsByCombatIdQuery } from '../../api/GameLogs.api';
-import type { UnitPositionModel } from '../../types/UnitPositionModel';
+import {
+    useGetCombatUnitsByCombatIdQuery
+} from '../../api/GameLogs.api';
 import useCombatReply from '../../hooks/useCombatReply';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import type { UnitModel } from '../../types/UnitModel';
 import CombatReplyUnits from './CombatReplyUnits';
 
 import './CombatReply.scss';
@@ -30,7 +31,6 @@ const CombatReply: React.FC = () => {
         isWin: false,
         duration: 0
     });
-    const [unitPositions, setUnitPositions] = useState<Map<string, UnitPositionModel[]>>(new Map());
 
     const [playing, setPlaying] = useState(false);
     const [selectedGameId, setSelectedGameId] = useState<string>("");
@@ -40,10 +40,11 @@ const CombatReply: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const lastFrameRef = useRef<number>(0);
 
-    const { view, currentTime, setCurrentTime, stop } = useCombatReply(selectedGameId, canvasRef, unitPositions, colors);
-    const { formatSeconds, timeToMs } = useTime();
+    const { data: combatUnits, isLoading } = useGetCombatUnitsByCombatIdQuery(details.id);
 
-    const [getUnitPositions] = useLazyGetUnitPositionsByCombatIdQuery();
+    const { view, currentTime, setCurrentTime, stop } = useCombatReply(selectedGameId, canvasRef, combatUnits, colors);
+    const { formatSeconds } = useTime();
+
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -83,35 +84,13 @@ const CombatReply: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (details.id < 1) {
+        if (!combatUnits || combatUnits.length === 0) {
             return;
         }
 
-        const loadData = async () => {
-            try {
-                const [unitPositions] = await Promise.all([
-                    getUnitPositions(details.id).unwrap(),
-                ]);
-
-                const unitPositionsMap = new Map(Object.entries(unitPositions));
-                const unitPositionsUpdated = setTimeToms(unitPositionsMap);
-                setUnitPositions(unitPositionsUpdated);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-
-        loadData();
-    }, [details]);
-
-    useEffect(() => {
-        if (unitPositions.size === 0) {
-            return;
-        }
-
-        const randomColors = getRandomColors(unitPositions);
+        const randomColors = getRandomColors(combatUnits);
         setColors(randomColors);
-    }, [unitPositions]);
+    }, [combatUnits]);
 
     useEffect(() => {
         if (!playing) {
@@ -155,30 +134,17 @@ const CombatReply: React.FC = () => {
         return () => {
             cancelAnimationFrame(frameId);
         }
-    }, [playing, unitPositions]);
+    }, [playing, combatUnits]);
 
     useEffect(() => {
         playingRef.current = playing;
     }, [playing]);
 
-    const setTimeToms = (combatPlayerPositions: Map<string, UnitPositionModel[]>): Map<string, UnitPositionModel[]> => {
-        return new Map(
-            [...combatPlayerPositions.entries()].map(([key, positions]) => [
-                key,
-                positions
-                    .map(p => ({
-                        ...p,
-                        timeMs: timeToMs(p.time)
-                    }))
-            ])
-        );
-    }
-
-    const getRandomColors = (positions: Map<string, UnitPositionModel[]>) => {
+    const getRandomColors = (units: UnitModel[]) => {
         const colors = new Map<string, string>();
 
-        positions.forEach((_, key) => {
-            colors.set(key, `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`);
+        units.forEach(key => {
+            colors.set(key.gameId, `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`);
         });
 
         return colors;
@@ -190,6 +156,10 @@ const CombatReply: React.FC = () => {
         stop();
 
         navigate(`/general-analysis?id=${details.combatLogId}`);
+    }
+
+    if (!combatUnits || isLoading) {
+        return (<div>Loading...</div>);
     }
 
     return (
@@ -209,58 +179,53 @@ const CombatReply: React.FC = () => {
                     </div>
                 </div>
             </div>
-            {(unitPositions !== undefined && unitPositions.size > 0) &&
-                <>
-                    <canvas
-                        ref={canvasRef}
-                        width={view.width}
-                        height={view.height}
-                    />
-                    <div className="reply__actions">
-                        <div className="details">
-                            <div className="play btn-shadow"
-                                onClick={() => setPlaying(prev => !prev)}>
-                                <FontAwesomeIcon
-                                    icon={playing ? faPause : faPlay}
-                                />
-                                <div>{playing ? t("Pause") : t("Play")}</div>
-                            </div>
-                        </div>
-                        <input
-                            type="range"
-                            min={0}
-                            max={details.duration * 1000}
-                            value={currentTime}
-                            className="range"
-
-                            onChange={(e) =>
-                                setCurrentTime(
-                                    Number(e.target.value)
-                                )
-                            }
+            <canvas
+                ref={canvasRef}
+                width={view.width}
+                height={view.height}
+            />
+            <div className="reply__actions">
+                <div className="details">
+                    <div className="play btn-shadow"
+                        onClick={() => setPlaying(prev => !prev)}>
+                        <FontAwesomeIcon
+                            icon={playing ? faPause : faPlay}
                         />
-                        <div className="time">
-                            {formatSeconds(Math.floor(currentTime / 1000))}
-                        </div>
+                        <div>{playing ? t("Pause") : t("Play")}</div>
                     </div>
-                    <CombatReplyContext.Provider
-                        value={{
-                            t: t,
-                            selectedGameId: selectedGameId,
-                            setSelectedGameId: setSelectedGameId,
-                            selectedTargetGameId: selectedTargetGameId,
-                            setSelectedTargetGameId: setSelectedTargetGameId,
-                            currentTime: currentTime,
-                            colors: colors,
-                        }}
-                    >
-                        <CombatReplyUnits
-                            unitPositions={unitPositions}
-                            details={details}
-                        />
-                    </CombatReplyContext.Provider>
-                </>
-            }
+                </div>
+                <input
+                    type="range"
+                    min={0}
+                    max={details.duration * 1000}
+                    value={currentTime}
+                    className="range"
+
+                    onChange={(e) =>
+                        setCurrentTime(
+                            Number(e.target.value)
+                        )
+                    }
+                />
+                <div className="time">
+                    {formatSeconds(Math.floor(currentTime / 1000))}
+                </div>
+            </div>
+            <CombatReplyContext.Provider
+                value={{
+                    t: t,
+                    selectedGameId: selectedGameId,
+                    setSelectedGameId: setSelectedGameId,
+                    selectedTargetGameId: selectedTargetGameId,
+                    setSelectedTargetGameId: setSelectedTargetGameId,
+                    currentTime: currentTime,
+                    colors: colors,
+                }}
+            >
+                <CombatReplyUnits
+                    combatUnits={combatUnits}
+                />
+            </CombatReplyContext.Provider>
         </div>
     );
 }

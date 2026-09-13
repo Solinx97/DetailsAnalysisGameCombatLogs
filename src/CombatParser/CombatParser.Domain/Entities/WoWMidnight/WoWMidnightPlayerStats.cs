@@ -9,26 +9,10 @@ public class WoWMidnightPlayerStats : CombatPlayerDataBase, IPlayerStats
 
     private WoWMidnightPlayerStats() { }
 
-    public WoWMidnightPlayerStats(int strength, int agility, int intelligence, int stamina,
+    private WoWMidnightPlayerStats(int strength, int agility, int intelligence, int stamina,
         int dodge, int parry, int block, int crit, int haste, int mastery, int versality, 
-        int lifesteal, int avoidance, int movement, int armor, string talents, int combatPlayerId)
+        int lifesteal, int avoidance, int movement, int armor, string talents)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(strength, nameof(strength));
-        ArgumentOutOfRangeException.ThrowIfNegative(agility, nameof(agility));
-        ArgumentOutOfRangeException.ThrowIfNegative(intelligence, nameof(intelligence));
-        ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina));
-        ArgumentOutOfRangeException.ThrowIfNegative(dodge, nameof(dodge));
-        ArgumentOutOfRangeException.ThrowIfNegative(parry, nameof(parry));
-        ArgumentOutOfRangeException.ThrowIfNegative(block, nameof(block));
-        ArgumentOutOfRangeException.ThrowIfNegative(crit, nameof(crit));
-        ArgumentOutOfRangeException.ThrowIfNegative(haste, nameof(haste));
-        ArgumentOutOfRangeException.ThrowIfNegative(mastery, nameof(mastery));
-        ArgumentOutOfRangeException.ThrowIfNegative(versality, nameof(versality));
-        ArgumentOutOfRangeException.ThrowIfNegative(lifesteal, nameof(lifesteal));
-        ArgumentOutOfRangeException.ThrowIfNegative(avoidance, nameof(avoidance));
-        ArgumentOutOfRangeException.ThrowIfNegative(movement, nameof(movement));
-        ArgumentOutOfRangeException.ThrowIfNegative(armor, nameof(armor));
-
         Strength = strength;
         Agility = agility;
         Intelligence = intelligence;
@@ -45,7 +29,6 @@ public class WoWMidnightPlayerStats : CombatPlayerDataBase, IPlayerStats
         Movement = movement;
         Armor = armor;
         Talents = talents;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int Strength { get; protected set; }
@@ -81,4 +64,29 @@ public class WoWMidnightPlayerStats : CombatPlayerDataBase, IPlayerStats
     public string Talents { get; protected set; } = string.Empty;
 
     public CombatPlayer CombatPlayer { get; protected set; }
+
+    public static WoWMidnightPlayerStats Create(int strength, int agility, int intelligence, int stamina,
+        int dodge, int parry, int block, int crit, int haste, int mastery, int versality,
+        int lifesteal, int avoidance, int movement, int armor, string talents)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(strength, nameof(strength));
+        ArgumentOutOfRangeException.ThrowIfNegative(agility, nameof(agility));
+        ArgumentOutOfRangeException.ThrowIfNegative(intelligence, nameof(intelligence));
+        ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina));
+        ArgumentOutOfRangeException.ThrowIfNegative(dodge, nameof(dodge));
+        ArgumentOutOfRangeException.ThrowIfNegative(parry, nameof(parry));
+        ArgumentOutOfRangeException.ThrowIfNegative(block, nameof(block));
+        ArgumentOutOfRangeException.ThrowIfNegative(crit, nameof(crit));
+        ArgumentOutOfRangeException.ThrowIfNegative(haste, nameof(haste));
+        ArgumentOutOfRangeException.ThrowIfNegative(mastery, nameof(mastery));
+        ArgumentOutOfRangeException.ThrowIfNegative(versality, nameof(versality));
+        ArgumentOutOfRangeException.ThrowIfNegative(lifesteal, nameof(lifesteal));
+        ArgumentOutOfRangeException.ThrowIfNegative(avoidance, nameof(avoidance));
+        ArgumentOutOfRangeException.ThrowIfNegative(movement, nameof(movement));
+        ArgumentOutOfRangeException.ThrowIfNegative(armor, nameof(armor));
+
+        return new WoWMidnightPlayerStats(strength, agility, intelligence, stamina,
+            dodge, parry, block, crit, haste, mastery, versality,
+            lifesteal, avoidance, movement, armor, talents);
+    }
 }
