@@ -32,7 +32,7 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
         var players = await GetCombatPlayers(builtCombat, combat.Duration, combat.StartDate, combat.FinishDate, combatDetails);
         combat.CombatPlayers = [.. players];
 
-        combat.Units = [.. combatDetails.Units.Values];
+        combat.Units = [.. combatDetails.Units.Values.Where(x => x.UnitHealthes.Count > 0 && x.UnitPositions.Count > 0)];
 
         CalculatingCommonCombatDetails(combat);
 

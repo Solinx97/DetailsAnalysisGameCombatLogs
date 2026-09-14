@@ -14,11 +14,11 @@ public interface ICombatDetailsManager
 
     void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    HealDone? GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
+    HealDone GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
     HealDone GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    ResourceRecovery? GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
+    ResourceRecovery GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
     void AddUnitDeath(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 

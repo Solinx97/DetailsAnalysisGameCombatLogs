@@ -205,10 +205,7 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         else if (hasHeal)
         {
             var healDone = combatDetailsManager.GetHealDone(splitCombatData, Units);
-            if (healDone != null)
-            {
-                GroupUnits(healDone, HealDones);
-            }
+            GroupUnits(healDone, HealDones);
         }
         else if (hasAbsorb)
         {
@@ -223,31 +220,8 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         else if (hasResources)
         {
             var resourceRecovery = combatDetailsManager.GetResourceRecovery(splitCombatData, Units);
-            if (resourceRecovery != null && ResourcesRecoveries.TryGetValue(resourceRecovery.CreatorGameId, out var collection))
-            {
-                GroupUnits(resourceRecovery, ResourcesRecoveries);
-            }
+            GroupUnits(resourceRecovery, ResourcesRecoveries);
         }
-    }
-
-    private static void ClearNested<T>(ConcurrentDictionary<string, List<T>> source)
-    {
-        foreach (var item in source.Values)
-        {
-            item.Clear();
-        }
-
-        source.Clear();
-    }
-
-    private static void ClearNested<T>(ConcurrentDictionary<string, ConcurrentDictionary<string, T>> source)
-    {
-        foreach (var item in source.Values)
-        {
-            item.Clear();
-        }
-
-        source.Clear();
     }
 
     private void GroupUnits<TModel>(TModel entity, ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> targetDictionary)
@@ -272,5 +246,25 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
             newDictionary.TryAdd(Guid.NewGuid().ToString(), entity);
             targetDictionary.TryAdd(selectedId, newDictionary);
         }
+    }
+
+    private static void ClearNested<T>(ConcurrentDictionary<string, List<T>> source)
+    {
+        foreach (var item in source.Values)
+        {
+            item.Clear();
+        }
+
+        source.Clear();
+    }
+
+    private static void ClearNested<T>(ConcurrentDictionary<string, ConcurrentDictionary<string, T>> source)
+    {
+        foreach (var item in source.Values)
+        {
+            item.Clear();
+        }
+
+        source.Clear();
     }
 }

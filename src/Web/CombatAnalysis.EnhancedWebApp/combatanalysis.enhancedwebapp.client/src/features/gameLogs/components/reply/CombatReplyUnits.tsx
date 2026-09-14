@@ -1,9 +1,6 @@
 import CombatReplyContext from '@/context/CombatReplyContext';
 import { CombatUnitType } from '@/shared/helpers/EnumHelper';
 import { memo, useContext, useEffect, useMemo, useState } from 'react';
-import {
-    useLazyGetUnitCastsByCombatUnitIdQuery
-} from '../../api/GameLogs.api';
 import type { UnitModel } from '../../types/UnitModel';
 import type { UnitCastModel } from '../../types/UnitCastModel';
 import CombatReplyUnit from './CombatReplyUnit';
@@ -29,8 +26,6 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ combatUnits }) => {
     const [selectedUnit, setSelectedUnit] = useState<UnitModel | undefined>();
     const [selectedTargetUnit, setSelectedTargetUnit] = useState<UnitModel | undefined>();
 
-    const [getUnitCasts] = useLazyGetUnitCastsByCombatUnitIdQuery();
-
     useEffect(() => {
         if (selectedGameId === "") {
             setSelectedUnit(undefined);
@@ -46,20 +41,16 @@ const CombatReplyUnits: React.FC<CombatReplyUnitsProps> = ({ combatUnits }) => {
             return;
         }
 
-        const loadData = async () => {
-            try {
-                const [unitCasts] = await Promise.all([
-                    getUnitCasts(selectedUnit.id).unwrap(),
-                ]);
-
-                setSelectedUnitCasts(unitCasts);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-
-        loadData();
+        setSelectedUnitCasts(selectedUnit.unitCasts);
     }, [selectedUnit]);
+
+    useEffect(() => {
+        if (!selectedTargetUnit) {
+            return;
+        }
+
+        setSelectedTargetUnitCasts(selectedTargetUnit.unitCasts);
+    }, [selectedTargetUnit]);
 
     useEffect(() => {
         if (selectedTargetGameId === "" || selectedGameId === "") {

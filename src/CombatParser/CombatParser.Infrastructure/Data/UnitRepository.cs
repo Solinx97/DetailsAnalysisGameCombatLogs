@@ -19,6 +19,10 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
                     .Include(x => x.UnitHealthes
                         .OrderBy(x => x.Time)
                      )
+                    .Include(x => x.UnitCasts
+                        .OrderBy(x => x.Time)
+                     )
+                    .AsSplitQuery()
                     .AsNoTracking()
                     .ToListAsync(cancellationToken);
 

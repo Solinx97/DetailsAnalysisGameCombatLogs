@@ -21,7 +21,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
     protected readonly ILogger<CombatParserService> _logger = logger;
     protected readonly IHttpClientHelper _httpHelper = httpHelper;
 
-    private List<PlaceInformation> _zones = [];
+    private readonly List<PlaceInformation> _zones = [];
 
     public List<Combat> Combats { get; private set; } = [];
 

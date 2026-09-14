@@ -102,12 +102,10 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    public HealDone? GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
+    public HealDone GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
-        if (!int.TryParse(combatDataLine[^4], out var value) || !int.TryParse(combatDataLine[^3], out var overheal))
-        {
-            return null;
-        }
+        int.TryParse(combatDataLine[^4], out var value);
+        int.TryParse(combatDataLine[^3], out var overheal);
 
         var isCrit = combatDataLine[^1].Contains(CombatLogKeyWords.IsCrit);
         var healDone = new HealDone
@@ -127,7 +125,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
 
     public abstract HealDone GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    public ResourceRecovery? GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
+    public ResourceRecovery GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
         var energyRecovery = new ResourceRecovery
         {

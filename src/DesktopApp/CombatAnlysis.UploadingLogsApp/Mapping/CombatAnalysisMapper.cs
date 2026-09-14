@@ -39,5 +39,7 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<ResourceRecoveryGeneralModel, ResourceRecoveryGeneral>().ReverseMap();
         CreateMap<CombatPlayerPreAuraModel, CombatPlayerPreAura>().ReverseMap();
         CreateMap<CombatPlayerAuraModel, CombatPlayerAura>().ReverseMap();
+
+        CreateMap<CreateCombatModel, CombatModel>().ReverseMap();
     }
 }

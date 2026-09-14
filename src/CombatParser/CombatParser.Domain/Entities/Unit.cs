@@ -38,11 +38,11 @@ public class Unit : CombatDataBase
 
     public Combat Combat { get; private set; }
 
-    public IEnumerable<UnitHealth> UnitHealthes => _unitHealthes;
+    public IReadOnlyCollection<UnitHealth> UnitHealthes => _unitHealthes;
 
-    public IEnumerable<UnitCast> UnitCasts => _unitCasts;
+    public IReadOnlyCollection<UnitCast> UnitCasts => _unitCasts;
 
-    public IEnumerable<UnitPosition> UnitPositions => _unitPositions;
+    public IReadOnlyCollection<UnitPosition> UnitPositions => _unitPositions;
 
     public static Unit Create(string gameId, string name, string unitHash, int type, string? creatorGameId,
         IReadOnlyList<UnitHealthData> unitHealthes, IReadOnlyList<UnitCastData> unitCasts, IReadOnlyList<UnitPositionData> unitPositions)
