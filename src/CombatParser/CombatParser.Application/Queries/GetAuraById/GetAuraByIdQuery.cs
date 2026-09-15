@@ -4,5 +4,5 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetAuraById;
 
 public record GetAuraByIdQuery(
-    int Id
+    string Id
     ) : IRequest<CombatPlayerAuraDto>;

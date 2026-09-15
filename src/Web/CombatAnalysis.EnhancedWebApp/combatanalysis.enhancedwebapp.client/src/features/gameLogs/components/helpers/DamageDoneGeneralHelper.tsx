@@ -21,7 +21,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
     const [showPets, setShowPets] = useState(true);
     const [hideColumns, setHideColumns] = useState<string[]>([]);
     const [data, setData] = useState<DamageDoneGeneralModel[] | null | undefined>(generalData);
-    const [totalDamage, setTotalDamage] = useState(combatPlayer.damageDone);
+    const [totalDamage, setTotalDamage] = useState(combatPlayer.unit.unitInfo.damageDone);
 
     useEffect(() => {
         if (!generalData) {
@@ -165,7 +165,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         </li>
                         <li className="amount">
                             <span>{getValueShortName(item.value)}</span>
-                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.damageDone)}%</span>
+                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.unit.unitInfo.damageDone)}%</span>
                         </li>
                         {!hideColumns.includes("Average") &&
                             <li>

@@ -17,10 +17,10 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("count")]
-    public async Task<IActionResult> Count(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
+    public async Task<IActionResult> Count(string unitId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
     {
         var count = await _mediator.Send(new CountResourceQuery(
-            combatPlayerId,
+            unitId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
             spell.Equals(NONE_VALUE) ? string.Empty : spell,
@@ -32,10 +32,10 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(string unitId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
         var resourceRecoveries = await _mediator.Send(new GetResourcesQuery(
-            combatPlayerId,
+            unitId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
             spell.Equals(NONE_VALUE) ? string.Empty : spell,
@@ -56,18 +56,18 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
         return Ok(resourceRecoveries);
     }
 
-    [HttpGet("getUniqueCreators/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueCreators(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueCreators/{unitId}")]
+    public async Task<IActionResult> GetUniqueCreators(string unitId, CancellationToken cancellationToken)
     {
-        var uniqueCreators = await _mediator.Send(new GetUniqueResourcesCreatorsQuery(combatPlayerId), cancellationToken);
+        var uniqueCreators = await _mediator.Send(new GetUniqueResourcesCreatorsQuery(unitId), cancellationToken);
 
         return Ok(uniqueCreators);
     }
 
-    [HttpGet("getUniqueSpells/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueSpells/{unitId}")]
+    public async Task<IActionResult> GetUniqueSpells(string unitId, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _mediator.Send(new GetUniqueResourcesSpellsQuery(combatPlayerId), cancellationToken);
+        var uniqueSpells = await _mediator.Send(new GetUniqueResourcesSpellsQuery(unitId), cancellationToken);
 
         return Ok(uniqueSpells);
     }

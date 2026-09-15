@@ -1,8 +1,6 @@
-﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
+﻿namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
-
-public class ResourceRecoveryGeneral : ICombatPlayerEntity
+public class ResourceRecoveryGeneral
 {
     public int GameSpellId { get; set; }
 
@@ -19,6 +17,4 @@ public class ResourceRecoveryGeneral : ICombatPlayerEntity
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

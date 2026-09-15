@@ -11,7 +11,7 @@ internal class GetUniqueHealSpellsHandler(IGeneralRepository<Domain.Entities.Com
     public async Task<IEnumerable<string>> Handle(GetUniqueHealSpellsQuery request, CancellationToken cancellationToken)
     {
         var creatorTypes = new int[] { (int)CombatUnitType.Player };
-        var spells = await _repository.GetUniqueSpellsAsync(request.CombatPlayerId, cancellationToken, creatorTypes: creatorTypes);
+        var spells = await _repository.GetUniqueSpellsAsync(request.UniId, cancellationToken, creatorTypes: creatorTypes);
 
         return spells;
     }

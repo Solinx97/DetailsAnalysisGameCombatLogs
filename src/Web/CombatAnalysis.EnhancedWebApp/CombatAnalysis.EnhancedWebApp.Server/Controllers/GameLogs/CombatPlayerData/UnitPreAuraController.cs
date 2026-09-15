@@ -8,21 +8,21 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.GameLogs.CombatPlayer
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatPlayerPreAuraController : ControllerBase
+public class UnitPreAuraController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public CombatPlayerPreAuraController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
+    public UnitPreAuraController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatId")]
-    public async Task<IActionResult> GetByCombatId(int combatId, int combatPlayerId)
+    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatId, string unitId)
     {
-        var responseMessage = await _httpClient.GetAsync($"CombatPlayerPreAura/getByCombatId?combatId={combatId}&combatPlayerId={combatPlayerId}");
-        var preAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerPreAuraModel>>();
+        var responseMessage = await _httpClient.GetAsync($"UnitPreAura/getByCombatId/{combatId}?unitId={unitId}");
+        var preAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitPreAuraModel>>();
 
         return Ok(preAuras);
     }

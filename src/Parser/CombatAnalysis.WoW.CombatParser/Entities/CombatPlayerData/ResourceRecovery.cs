@@ -3,7 +3,7 @@ using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-public class ResourceRecovery : CombatUnitDataBase, ICombatPlayerEntity, ICombatPlayerResourceRefs
+public class ResourceRecovery : CombatUnitDataBase, ICombatPlayerResourceRefs
 {
     public int GameSpellId { get; set; }
 
@@ -14,6 +14,4 @@ public class ResourceRecovery : CombatUnitDataBase, ICombatPlayerEntity, ICombat
     public TimeSpan Time { get; set; }
 
     public int ModificationType { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

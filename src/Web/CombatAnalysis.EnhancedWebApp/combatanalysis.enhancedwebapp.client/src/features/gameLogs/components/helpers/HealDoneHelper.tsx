@@ -12,13 +12,13 @@ import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
 interface HealDoneHelperProps {
-    combatPlayerId: number;
+    unitId: string;
     pageSize: number;
     getUserNameWithoutRealm: (username: string) => string;
     t: (key: string) => string;
 }
 
-const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
+const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ unitId, pageSize, getUserNameWithoutRealm, t }) => {
     const NONE_VALUE = "NONE";
     const ZERO_TIME_VALUE = "00:00:00"
 
@@ -29,10 +29,10 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
     const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
 
     const { data: count, isLoading: countIsLoading } = useCountHealDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
     const { data, isLoading: dataIsLoading } = useGetAllHealDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
 
     useEffect(() => {
@@ -77,7 +77,7 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
             <div className="player-filter-details">
                 <DetailsFilter
                     filters={["Target", "Spell"]}
-                    combatPlayerId={combatPlayerId}
+                    unitId={unitId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
                     useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}

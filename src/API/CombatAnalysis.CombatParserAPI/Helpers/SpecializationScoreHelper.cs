@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
+using CombatAnalysis.CombatParserAPI.Models.Base;
 using CombatParser.Application.Queries.GetSpecializationBySpell;
 using MediatR;
 
@@ -9,7 +10,7 @@ internal class SpecializationScoreHelper(IMediator mediator) : ISpecializationSc
 {
     private readonly IMediator _mediator = mediator;
 
-    public async Task CreateSpecializationScoreAsync(CombatPlayerModel combatPlayer, int[] spellsId, CancellationToken cancellationToken)
+    public async Task CreateSpecializationScoreAsync(CombatPlayerBaseModel combatPlayer, UnitInfoModel unitInfo, int[] spellsId, CancellationToken cancellationToken)
     {
         var spellsIdAsString = string.Join(',', spellsId);
 
@@ -21,8 +22,8 @@ internal class SpecializationScoreHelper(IMediator mediator) : ISpecializationSc
 
         var score = new SpecializationScoreModel
         {
-            DamageDone = combatPlayer.DamageDone,
-            HealDone = combatPlayer.HealDone,
+            DamageDone = unitInfo.DamageDone,
+            HealDone = unitInfo.HealDone,
             SpecializationId = spec.Id,
         };
 

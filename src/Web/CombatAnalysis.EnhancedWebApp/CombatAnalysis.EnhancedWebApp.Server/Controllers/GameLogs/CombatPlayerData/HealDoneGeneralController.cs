@@ -20,12 +20,12 @@ public class HealDoneGeneralController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
+    [HttpGet("getByUnitId/{unitId}")]
+    public async Task<IActionResult> GetByUnitId(string unitId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"HealDoneGeneral/getByCombatPlayerId/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"HealDoneGeneral/getByUnitId/{unitId}");
             response.EnsureSuccessStatusCode();
 
             var healDoneGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();

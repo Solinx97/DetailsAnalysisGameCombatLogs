@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.WoW.CombatParser.Core;
-using CombatAnalysis.WoW.CombatParser.Entities;
+﻿using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using CombatAnalysis.WoW_5_5_4.CombatParser.Details;
@@ -13,33 +12,12 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
     ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) 
     : WoW.CombatParser.Services.CombatParserService(combatParserHelper, fileManager, logger, httpHelper), Interfaces.ICombatParserService
 {
-    protected override async Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, Unit> units)
+    protected override CombatDetails GetCombatDetails(ConcurrentDictionary<string, Unit> units)
     {
-        var combat = CreateCombat(builtCombat);
-        if (combat == null)
-        {
-            return;
-        }
-
-        var duration = combat.FinishDate - combat.StartDate;
-        if (duration < CombatLogKeyWords.MinCombatDuration)
-        {
-            return;
-        }
-
-        var combatDetails = new CombatDetails(_combatParserHelper, _logger, units);
-
-        var players = await GetCombatPlayers(builtCombat, combat.Duration, combat.StartDate, combat.FinishDate, combatDetails);
-        combat.CombatPlayers = [.. players];
-
-        combat.Units = [.. combatDetails.Units.Values.Where(x => x.UnitHealthes.Count > 0 && x.UnitPositions.Count > 0)];
-
-        CalculatingCommonCombatDetails(combat);
-
-        AddNewCombat(combat);
+        return new CombatDetails(_combatParserHelper, _logger, units);
     }
 
-    protected override async Task<CombatPlayer> CreateCombatPlayerAsync(string combatInformation, string[] combatData)
+    protected override async Task<CombatPlayer> GetCombatPlayerDataAsync(string combatInformation, string[] combatData, ConcurrentDictionary<string, Unit> units)
     {
         var combatInformationParams = combatInformation.Split(',');
         var combatPlayerParams = combatInformation.Split(['[', ']']);
@@ -48,7 +26,7 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
 
         var statsInformation = combatInformationParams.Skip(3).Take(30).ToArray();
 
-        var combatPlayer = await CreateCombatPlayerAsync(statsInformation, combatData, combatInformationParams, preAuras, equipments);
+        var combatPlayer = await CreateCombatPlayerAsync(statsInformation, combatData, combatInformationParams, preAuras, equipments, units);
 
         return combatPlayer;
     }

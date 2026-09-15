@@ -11,17 +11,15 @@ public class DamageDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     private DamageDone() { }
 
-    private DamageDone(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, int modificationType, int damageType, int resisted,
-        int absorbed, int blocked, int realDamage, int overkill, int mitigated, string creatorGameId, string targetGameId)
+    private DamageDone(int gameSpellId, string spell, int value, TimeSpan time,
+        int modificationType, int damageType, int resisted,
+        int absorbed, int blocked, int realDamage, int overkill, int mitigated, string targetGameId)
     {
+        Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
         Time = time;
-        CreatorId = creatorId;
-        CreatorGameId = creatorGameId;
-        TargetId = targetId;
         TargetGameId = targetGameId;
         ModificationType = modificationType;
         DamageType = damageType;
@@ -41,10 +39,6 @@ public class DamageDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public TimeSpan Time { get; private set; }
 
-    public Unit Creator { get; private set; }
-
-    public Unit Target { get; private set; }
-
     public int ModificationType { get; private set; }
 
     public int DamageType { get; private set; }
@@ -61,20 +55,19 @@ public class DamageDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public int Mitigated { get; private set; }
 
-    public CombatPlayer CombatPlayer { get; private set; }
+    public Unit Unit { get; private set; }
 
-    public static DamageDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, int modificationType, int damageType, int resisted, int absorbed, 
-        int blocked, int realDamage, int overkill, int mitigated, string creatorGameId, string targetGameId)
+    public static DamageDone Create(int gameSpellId, string spell, int value, TimeSpan time,
+        int modificationType, int damageType, int resisted, int absorbed, 
+        int blocked, int realDamage, int overkill, int mitigated, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
         ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
-        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
         ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
 
-        return new DamageDone(gameSpellId, spell, value, time, creatorId,
-            targetId, modificationType, damageType, resisted, absorbed,
-            blocked, realDamage, overkill, mitigated, creatorGameId, targetGameId);
+        return new DamageDone(gameSpellId, spell, value, time,
+            modificationType, damageType, resisted, absorbed,
+            blocked, realDamage, overkill, mitigated, targetGameId);
     }
 }

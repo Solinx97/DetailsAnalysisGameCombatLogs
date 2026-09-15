@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CombatParser.Infrastructure.Data.Filters;
 
 internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartRepository<TModel>
-    where TModel : class, ICombatPlayerRefs, IGeneralEntity
+    where TModel : class, ICombatUnitRefs, IGeneralEntity
 {
     const int INTERVAL = 10;
     private readonly CombatParserContextOne _context = context;
@@ -18,7 +18,7 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
     {
         var values = await _context.Set<TModel>()
             .AsNoTracking()
-            .Where(x => x.CombatPlayerId == combatPlayerId)
+            //.Where(x => x.CombatPlayerId == combatPlayerId)
             .Select(x => new
             {
                 x.Time,
@@ -45,8 +45,8 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
             .AsNoTracking()
             .Where(x => x.CombatId == combatId)
             .SelectMany(
-                x => _context.Set<TModel>()
-                    .Where(t => t.CombatPlayerId == x.Id),
+                x => _context.Set<TModel>(),
+                    //.Where(t => t.CombatPlayerId == x.Id),
                 (player, stat) => new
                 {
                     player.Player.Username,

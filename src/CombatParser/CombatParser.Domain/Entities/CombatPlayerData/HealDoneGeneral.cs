@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class HealDoneGeneral : CombatPlayerDataBase
+public class HealDoneGeneral : CombatUnitDataBase
 {
     public const int SPELL_MAX_LENGTH = 128;
 
@@ -11,6 +11,7 @@ public class HealDoneGeneral : CombatPlayerDataBase
     private HealDoneGeneral(int gameSpellId, string spell, int value, double healPerSecond, int critNumber,
         int castNumber, int minValue, int maxValue, double averageValue)
     {
+        Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
@@ -40,7 +41,7 @@ public class HealDoneGeneral : CombatPlayerDataBase
 
     public double AverageValue { get; private set; }
 
-    public CombatPlayer CombatPlayer { get; private set; }
+    public Unit Unit { get; private set; }
 
     public static HealDoneGeneral Create(int gameSpellId, string spell, int value, double healPerSecond, int critNumber,
         int castNumber, int minValue, int maxValue, double averageValue)

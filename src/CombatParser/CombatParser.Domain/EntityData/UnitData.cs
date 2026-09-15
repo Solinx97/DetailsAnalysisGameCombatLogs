@@ -7,7 +7,16 @@ public record UnitData(
     int Type,
     string? CreatorGameId,
     int CombatId,
+    UnitInfoData UnitInfo,
     IReadOnlyList<UnitHealthData> UnitHealths,
     IReadOnlyList<UnitCastData> UnitCasts,
-    IReadOnlyList<UnitPositionData> UnitPositions
+    IReadOnlyList<UnitPositionData> UnitPositions,
+    IReadOnlyList<UnitPreAuraData> PreAuras,
+    IReadOnlyList<UnitAuraData> Auras,
+    IReadOnlyList<DamageDoneData> DamageDones,
+    IReadOnlyList<DamageDoneGeneralData> DamageDoneGenerals,
+    IReadOnlyList<HealDoneData> HealDones,
+    IReadOnlyList<HealDoneGeneralData> HealDoneGenerals,
+    IReadOnlyList<ResourceRecoveryData> ResourceRecoveries,
+    IReadOnlyList<ResourceRecoveryGeneralData> ResourceRecoveryGenerals
     );

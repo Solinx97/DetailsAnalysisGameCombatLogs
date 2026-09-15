@@ -9,7 +9,7 @@ internal class CountDamageTakenHandler(IGeneralRepository<Domain.Entities.Combat
 
     public async Task<int> Handle(CountDamageTakenQuery request, CancellationToken cancellationToken)
     {
-        var count = await _repository.CountAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, cancellationToken);
+        var count = await _repository.CountAsync(request.UnitId, request.Target, request.Creator, request.Spell, request.From, request.To, cancellationToken);
 
         return count;
     }

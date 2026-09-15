@@ -1,7 +1,7 @@
 import type { UnitModel } from './UnitModel';
 
 export type DamageDoneModel = {
-    id: number;
+    id: string;
     spell: string;
     value: number;
     time: string;
@@ -15,5 +15,5 @@ export type DamageDoneModel = {
     realDamage: number;
     overkill: number;
     mitigated: number;
-    combatPlayerId: number;
+    unitId: string;
 }

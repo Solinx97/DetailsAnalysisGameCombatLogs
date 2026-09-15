@@ -3,7 +3,7 @@
 namespace CombatParser.Application.Queries.Resources.CountResource;
 
 public record CountResourceQuery(
-    int CombatPlayerId,
+    string UnitId,
     string Target,
     string Creator,
     string Spell,

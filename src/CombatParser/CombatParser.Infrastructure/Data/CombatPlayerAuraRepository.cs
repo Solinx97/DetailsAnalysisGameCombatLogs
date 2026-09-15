@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -9,29 +10,38 @@ internal class CombatPlayerAuraRepository(CombatParserContextOne context) : ICom
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<CombatPlayerAura>> GetAurasAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<UnitAura>> GetAurasAsync(int combatId, CancellationToken cancellationToken)
     {
-        var data = await _context.Set<CombatPlayerAura>()
+        var data = await _context.Set<Unit>()
+            .Join(_context.Set<UnitAura>(),
+                x => x.Id,
+                y => y.UnitId,
+                (x, y) => new
+                {
+                    CombatId = x.CombatId,
+                    Aura = y
+                })
             .AsNoTracking()
-            .Where(x => x.CombatPlayer.CombatId == combatId)
+            .Where(x => x.CombatId == combatId)
+            .Select(x => x.Aura)
             .ToListAsync(cancellationToken);
 
         return data;
     }
 
-    public async Task<IEnumerable<CombatPlayerAura>> GetAurasAsync(int combatId, int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<UnitAura>> GetAurasAsync(string unitId, CancellationToken cancellationToken)
     {
-        var data = await _context.Set<CombatPlayerAura>()
+        var data = await _context.Set<UnitAura>()
             .AsNoTracking()
-            .Where(x => x.CombatPlayerId == combatPlayerId && x.CombatPlayer.CombatId == combatId)
+            .Where(x => x.UnitId == unitId)
             .ToListAsync(cancellationToken);
 
         return data;
     }
 
-    public async Task<CombatPlayerAura?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<UnitAura?> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
-        var data = await _context.Set<CombatPlayerAura>()
+        var data = await _context.Set<UnitAura>()
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 

@@ -8,14 +8,6 @@ public class CombatPlayerDto
 
     public double AverageItemLevel { get; set; }
 
-    public int ResourcesRecovery { get; set; }
-
-    public int DamageDone { get; set; }
-
-    public int HealDone { get; set; }
-
-    public int DamageTaken { get; set; }
-
     public IPlayerStatsDto Stats { get; set; }
 
     public SpecializationScoreDto Score { get; set; }
@@ -24,5 +16,11 @@ public class CombatPlayerDto
 
     public string PlayerId { get; set; }
 
+    public UnitDto Unit { get; set; }
+
+    public string UnitId { get; set; }
+
     public int CombatId { get; set; }
+
+    public string UnitGameId { get; set; }
 }

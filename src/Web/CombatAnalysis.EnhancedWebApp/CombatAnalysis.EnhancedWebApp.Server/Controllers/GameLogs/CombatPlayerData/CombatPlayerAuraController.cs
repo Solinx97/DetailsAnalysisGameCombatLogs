@@ -22,7 +22,7 @@ public class CombatPlayerAuraController : ControllerBase
     public async Task<IActionResult> GetByCombatId(int combatId, int combatPlayerId)
     {
         var responseMessage = await _httpClient.GetAsync($"CombatPlayerAura/getByCombatId?combatId={combatId}&combatPlayerId={combatPlayerId}");
-        var combatAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerAuraModel>>();
+        var combatAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitAuraModel>>();
 
         return Ok(combatAuras);
     }
@@ -31,7 +31,7 @@ public class CombatPlayerAuraController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var responseMessage = await _httpClient.GetAsync($"CombatPlayerAura/{id}");
-        var combatAura = await responseMessage.Content.ReadFromJsonAsync<CombatPlayerAuraModel>();
+        var combatAura = await responseMessage.Content.ReadFromJsonAsync<UnitAuraModel>();
 
         return Ok(combatAura);
     }

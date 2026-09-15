@@ -4,7 +4,7 @@ using MediatR;
 namespace CombatParser.Application.Queries.DamageDone.DamageTaken.GetDamageTakens;
 
 public record GetDamageTakensQuery(
-    int CombatPlayerId,
+    string UnitId,
     string Target,
     string Creator,
     string Spell,

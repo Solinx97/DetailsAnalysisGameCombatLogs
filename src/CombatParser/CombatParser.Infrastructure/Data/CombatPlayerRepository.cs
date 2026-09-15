@@ -15,6 +15,8 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatP
     public async Task<IEnumerable<CombatPlayer>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken)
     {
         var combatPlayers = await _context.Set<CombatPlayer>()
+            .Include(x => x.Unit)
+            .ThenInclude(x => x.UnitInfo)
             .AsNoTracking()
             .Where(c => c.CombatId == combatId)
             .Include(c => c.Player)
@@ -27,6 +29,8 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatP
     public async Task<CombatPlayer?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         var combatPlayer = await _context.Set<CombatPlayer>()
+            .Include(x => x.Unit)
+            .ThenInclude(x => x.UnitInfo)
             .AsNoTracking()
             .Include(c => c.Player)
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);

@@ -3,5 +3,5 @@
 namespace CombatParser.Application.Queries.DamageDone.GetUniqueDamageTargets;
 
 public record GetUniqueDamageTargetsQuery(
-    int CombatPlayerId
+    string UnitId
     ) : IRequest<IEnumerable<string>>;

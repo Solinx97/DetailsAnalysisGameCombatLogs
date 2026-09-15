@@ -4,21 +4,25 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
-import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
+import type { UnitInfoModel } from '../../types/UnitInfoModel';
+import type { SpecializationScoreModel } from '../../types/SpecializationScoreModel';
 
 interface DetailsItemProps {
-    player: CombatPlayerModel;
+    avilvl: number;
+    playerId: number;
+    unitInfo: UnitInfoModel;
     details: CombatDetailsModel;
     getValueShortName(value: number): string;
+    score?: SpecializationScoreModel;
 }
 
-const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShortName }) => {
+const DetailsItem: React.FC<DetailsItemProps> = ({ avilvl, playerId, unitInfo, details, getValueShortName, score }) => {
     const { t } = useTranslation("childs/playerInformation");
 
     const navigate = useNavigate();
 
     const navigateToDetails = (detailsType: number) => {
-        navigate(`/combat-details?id=${details.id}&playerId=${player.id}&detailsType=${detailsType}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}`);
+        navigate(`/combat-details?id=${details.id}&playerId=${playerId}&detailsType=${detailsType}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}`);
     }
 
     return (
@@ -29,11 +33,11 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faKhanda}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(Math.round(player.damageDone / details.duration))}</div>
-                {player.damageDone > 0 &&
+                <div>{getValueShortName(Math.round(unitInfo.damageDone / details.duration))}</div>
+                {unitInfo.damageDone > 0 &&
                     <div>
-                        {player.score !== null &&
-                            <div className="player-score">{player.score?.damageScore.toFixed(2)}%</div>
+                        {score !== undefined &&
+                            <div className="player-score">{score.damageScore.toFixed(2)}%</div>
                         }
                         <div className="btn-shadow"
                             onClick={() => navigateToDetails(0)}
@@ -51,11 +55,11 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faPlusCircle}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(Math.round(player.healDone / details.duration))}</div>
-                {player.healDone > 0 &&
+                <div>{getValueShortName(Math.round(unitInfo.healDone / details.duration))}</div>
+                {unitInfo.healDone > 0 &&
                     <div>
-                        {player.score !== null &&
-                            <div className="player-score">{player.score?.healScore.toFixed(2)}%</div>
+                        {score !== undefined &&
+                            <div className="player-score">{score.healScore.toFixed(2)}%</div>
                         }
                         <div className="btn-shadow"
                             onClick={() => navigateToDetails(1)}
@@ -73,8 +77,8 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faShieldHalved}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(Math.round(player.damageTaken))}</div>
-                {player.damageTaken > 0 &&
+                <div>{getValueShortName(Math.round(unitInfo.damageTaken))}</div>
+                {unitInfo.damageTaken > 0 &&
                     <div className="btn-shadow"
                         onClick={() => navigateToDetails(2)}
                         title={t("OpenDamageTakenAnalyzing") || ""}>
@@ -90,8 +94,8 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faBolt}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{getValueShortName(Math.round(player.resourcesRecovery))}</div>
-                {player.resourcesRecovery > 0 &&
+                <div>{getValueShortName(Math.round(unitInfo.resourcesRecovery))}</div>
+                {unitInfo.resourcesRecovery > 0 &&
                     <div className="btn-shadow"
                         onClick={() => navigateToDetails(3)}
                         title={t("OpenResourcesRecoveryAnalyzing") || ""}>
@@ -107,7 +111,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ player, details, getValueShor
                     icon={faUser}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{player.averageItemLevel}</div>
+                <div>{avilvl}</div>
             </li>
         </ul>
     );

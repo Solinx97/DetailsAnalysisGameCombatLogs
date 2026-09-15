@@ -1,9 +1,7 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
 using CombatAnalysis.WoW.CombatParser.Entities;
-using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Details;
-using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
@@ -74,59 +72,35 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
 
     public ConcurrentDictionary<string, Unit> Units { get; protected set; } = units;
 
-    public ConcurrentDictionary<string, List<CombatPlayerAura>> Auras { get; private set; } = [];
-
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> DamageDones { get; private set; } = [];
-
-    public Dictionary<string, List<DamageDoneGeneral>> DamageDoneGenerals { get; private set; } = [];
-
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> HealDones { get; private set; } = [];
-
-    public Dictionary<string, List<HealDoneGeneral>> HealDoneGenerals { get; private set; } = [];
-
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> DamageTakens { get; private set; } = [];
-
-    public Dictionary<string, List<DamageDoneGeneral>> DamageTakenGenerals { get; private set; } = [];
-
-    public ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> ResourcesRecoveries { get; private set; } = [];
-
-    public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGenerals { get; private set; } = [];
-
     #endregion
 
     public void Clear()
     {
-        ClearNested(Auras);
-        ClearNested(DamageDones);
-        ClearNested(HealDones);
-        ClearNested(DamageTakens);
-        ClearNested(ResourcesRecoveries);
-
-        DamageDoneGenerals.Clear();
-        HealDoneGenerals.Clear();
-        DamageTakenGenerals.Clear();
-        ResourcesRecoveryGenerals.Clear();
+        foreach (var unit in Units)
+        {
+            unit.Value.DamageDones.Clear();
+            unit.Value.DamageDoneGenerals.Clear();
+            unit.Value.DamageTakens.Clear();
+            unit.Value.DamageTakenGenerals.Clear();
+            unit.Value.HealDones.Clear();
+            unit.Value.HealDoneGenerals.Clear();
+            unit.Value.ResourceRecoveries.Clear();
+            unit.Value.ResourceRecoveryGenerals.Clear();
+        }
 
         Units.Clear();
     }
 
-    public virtual void Calculate(string[] playersId, string[] combatData, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
+    public virtual void Calculate(string[] combatData, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         try
         {
-            ArgumentNullException.ThrowIfNull(playersId, nameof(playersId));
             ArgumentNullException.ThrowIfNull(combatData, nameof(combatData));
-            ArgumentOutOfRangeException.ThrowIfZero(playersId.Length);
             ArgumentOutOfRangeException.ThrowIfZero(combatData.Length);
-
-            for (int i = 0; i < playersId.Length; i++)
-            {
-                PrepareCollections(playersId[i]);
-            }
 
             foreach (var combatDataLine in combatData)
             {
-                Parse(playersId, combatDataLine, combatStarted, combatFinished);
+                Parse(combatDataLine, combatStarted, combatFinished);
             }
         }
         catch (ArgumentNullException ex)
@@ -139,17 +113,7 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         }
     }
 
-    protected void PrepareCollections(string playersd)
-    {
-        Auras.TryAdd(playersd, []);
-
-        DamageDones.TryAdd(playersd, []);
-        HealDones.TryAdd(playersd, []);
-        DamageTakens.TryAdd(playersd, []);
-        ResourcesRecoveries.TryAdd(playersd, []);
-    }
-
-    protected abstract void Parse(string[] playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished);
+    protected abstract void Parse(string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished);
 
     protected virtual void CalculateCasts(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
@@ -166,25 +130,25 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         combatDetailsManager.GetHealth(splitCombatData, Units);
     }
 
-    protected virtual void CalculateDamageTaken(ICombatDetailsManager combatDetailsManager, string[] splitCombatData, string[] playersId)
+    protected virtual void CalculateDamageTaken(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
-        var damageTaken = combatDetailsManager.GetDamageDone(splitCombatData, Units);
-        if (damageTaken != null && damageTaken.Target.GameId.Contains("Player"))
-        {
-            if (DamageTakens.TryGetValue(damageTaken.Target.GameId, out var collection))
-            {
-                collection.TryAdd(Guid.NewGuid().ToString(), damageTaken);
-            }
-            else
-            {
-                var newDictionary = new ConcurrentDictionary<string, ICombatPlayerResourceRefs>();
-                newDictionary.TryAdd(Guid.NewGuid().ToString(), damageTaken);
-                DamageTakens.TryAdd(damageTaken.Target.GameId, newDictionary);
-            }
-        }
+        //var damageTaken = combatDetailsManager.GetDamageDone(splitCombatData, Units);
+        //if (damageTaken != null && damageTaken.Target.GameId.Contains("Player"))
+        //{
+        //    if (DamageTakens.TryGetValue(damageTaken.Target.GameId, out var collection))
+        //    {
+        //        collection.TryAdd(Guid.NewGuid().ToString(), damageTaken);
+        //    }
+        //    else
+        //    {
+        //        var newDictionary = new ConcurrentDictionary<string, ICombatPlayerResourceRefs>();
+        //        newDictionary.TryAdd(Guid.NewGuid().ToString(), damageTaken);
+        //        DamageTakens.TryAdd(damageTaken.Target.GameId, newDictionary);
+        //    }
+        //}
     }
 
-    protected void CalculateGeneral(string combatDataLine, ICombatDetailsManager combatDetailsManager, string[] splitCombatData, string[] playersId)
+    protected void CalculateGeneral(string combatDataLine, ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
     {
         var hasDieds = _dieds.Any(combatDataLine.Contains);
         var hasAuras = _auras.Any(combatDataLine.Contains);
@@ -199,72 +163,23 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         }
         else if (hasAuras)
         {
-            var units = Units.Select(x => x.Value).ToList();
-            combatDetailsManager.GetAuras(splitCombatData, Auras, units);
+            combatDetailsManager.GetAuras(splitCombatData, units);
         }
         else if (hasHeal)
         {
-            var healDone = combatDetailsManager.GetHealDone(splitCombatData, Units);
-            GroupUnits(healDone, HealDones);
+            combatDetailsManager.GetHealDone(splitCombatData, Units);
         }
         else if (hasAbsorb)
         {
-            var absorb = combatDetailsManager.GetAbsorb(splitCombatData, Units);
-            GroupUnits(absorb, HealDones);
+            combatDetailsManager.GetAbsorb(splitCombatData, Units);
         }
         else if (hasDamage)
         {
-            var damageDone = combatDetailsManager.GetDamageDone(splitCombatData, Units);
-            GroupUnits(damageDone, DamageDones);
+            combatDetailsManager.GetDamageDone(splitCombatData, Units);
         }
         else if (hasResources)
         {
-            var resourceRecovery = combatDetailsManager.GetResourceRecovery(splitCombatData, Units);
-            GroupUnits(resourceRecovery, ResourcesRecoveries);
+            combatDetailsManager.GetResourceRecovery(splitCombatData, Units);
         }
-    }
-
-    private void GroupUnits<TModel>(TModel entity, ConcurrentDictionary<string, ConcurrentDictionary<string, ICombatPlayerResourceRefs>> targetDictionary)
-        where TModel : ICombatPlayerResourceRefs
-    {
-        var selectedId = entity.Creator.GameId;
-        var playerCreature = Units
-            .FirstOrDefault(x => x.Value.CreatorGameId != null && x.Value.GameId == entity.Creator.GameId).Value;
-        if (playerCreature != null)
-        {
-            entity.Spell = $"{playerCreature.Name} - {entity.Spell}";
-            selectedId = playerCreature.CreatorGameId!;
-        }
-
-        if (targetDictionary.TryGetValue(selectedId, out var collection))
-        {
-            collection.TryAdd(Guid.NewGuid().ToString(), entity);
-        }
-        else
-        {
-            var newDictionary = new ConcurrentDictionary<string, ICombatPlayerResourceRefs>();
-            newDictionary.TryAdd(Guid.NewGuid().ToString(), entity);
-            targetDictionary.TryAdd(selectedId, newDictionary);
-        }
-    }
-
-    private static void ClearNested<T>(ConcurrentDictionary<string, List<T>> source)
-    {
-        foreach (var item in source.Values)
-        {
-            item.Clear();
-        }
-
-        source.Clear();
-    }
-
-    private static void ClearNested<T>(ConcurrentDictionary<string, ConcurrentDictionary<string, T>> source)
-    {
-        foreach (var item in source.Values)
-        {
-            item.Clear();
-        }
-
-        source.Clear();
     }
 }

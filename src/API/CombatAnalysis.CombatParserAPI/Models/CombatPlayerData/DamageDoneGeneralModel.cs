@@ -4,8 +4,7 @@ namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
 public class DamageDoneGeneralModel
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Required]
     public int GameSpellId { get; set; }
@@ -39,6 +38,5 @@ public class DamageDoneGeneralModel
 
     public bool IsPlayerTarget { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
+    public string? UnitId { get; set; }
 }

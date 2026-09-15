@@ -1,20 +1,20 @@
+import useTime from '@/shared/hooks/useTime';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { CombatPlayerAuraModel } from '../types/CombatPlayerAuraModel';
+import type { BossMapModel } from '../types/BossMapModel';
+import type { CombatAbilityModel } from '../types/CombatAbilityModel';
 import type { CombatLogModel } from '../types/CombatLogModel';
 import type { CombatModel } from '../types/CombatModel';
-import type { CombatPlayerModel } from '../types/CombatPlayerModel';
+import type { CombatPlayerAuraModel } from '../types/CombatPlayerAuraModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
-import type { CombatAbilityModel } from '../types/CombatAbilityModel';
-import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
-import type { UnitPositionModel } from '../types/UnitPositionModel';
-import type { BossMapModel } from '../types/BossMapModel';
+import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
 import type { UnitCastModel } from '../types/UnitCastModel';
 import type { UnitHealthModel } from '../types/UnitHealthModel';
 import type { UnitModel } from '../types/UnitModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
+import type { UnitPreAuraModel } from '../types/UnitPreAuraModel';
 import type { WoWMidnightPlayerStatsModel } from '../types/woWMidnight/WoWMidnightPlayerStatsModel';
 import type { WoWMoPClassicPlayerStatsModel } from '../types/wowMoPClassic/WoWMoPClassicPlayerStatsModel';
-import useTime from '@/shared/hooks/useTime';
 
 const apiURL = '/api/v1';
 
@@ -138,8 +138,8 @@ export const GameLogsApi = createApi({
             query: id => `/CombatPlayer/${id}`,
             providesTags: result => result ? [{ type: 'CombatPlayer', id: result.id }] : [],
         }),
-        getCombatByPreAura: builder.query<CombatPlayerPreAuraModel[], { combatId: number, combatPlayerId: number }>({
-            query: ({ combatId, combatPlayerId }) => `/CombatPlayerPreAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
+        getCombatByPreAura: builder.query<UnitPreAuraModel[], { combatId: number, unitId: string }>({
+            query: ({ combatId, unitId }) => `/UnitPreAura/getByCombatId/${combatId}?unitId=${unitId}`,
             providesTags: result =>
                 result
                     ? [

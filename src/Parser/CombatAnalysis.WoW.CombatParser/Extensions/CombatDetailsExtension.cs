@@ -18,21 +18,12 @@ public static class CombatDetailsExtension
 
             foreach (var playerId in playersId)
             {
-                if (combatDetails.DamageDones.TryGetValue(playerId, out var damageCollection))
+                if (combatDetails.Units.TryGetValue(playerId, out var unit))
                 {
-                    combatDetails.DamageDoneGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageCollection.Select(x => x.Value)], duration));
-                }
-                if (combatDetails.DamageTakens.TryGetValue(playerId, out var damageTakenCollection))
-                {
-                    combatDetails.DamageTakenGenerals.TryAdd(playerId, GetDamageDoneGeneral([.. damageTakenCollection.Select(x => x.Value)], duration, true));
-                }
-                if (combatDetails.HealDones.TryGetValue(playerId, out var healCollection))
-                {
-                    combatDetails.HealDoneGenerals.TryAdd(playerId, GetHealDoneGeneral([.. healCollection.Select(x => x.Value)], duration));
-                }
-                if (combatDetails.ResourcesRecoveries.TryGetValue(playerId, out var resourceCollection))
-                {
-                    combatDetails.ResourcesRecoveryGenerals.TryAdd(playerId, GetResourceRecoveryGeneral([.. resourceCollection.Select(x => x.Value)], duration));
+                    unit.DamageDoneGenerals.AddRange(GetDamageDoneGeneral([.. unit.DamageDones], duration));
+                    unit.DamageTakenGenerals.AddRange(GetDamageDoneGeneral([.. unit.DamageTakens], duration, true));
+                    unit.HealDoneGenerals.AddRange(GetHealDoneGeneral([.. unit.HealDones], duration));
+                    unit.ResourceRecoveryGenerals.AddRange(GetResourceRecoveryGeneral([.. unit.ResourceRecoveries], duration));
                 }
             }
         }

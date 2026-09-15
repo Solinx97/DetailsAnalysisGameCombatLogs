@@ -2,10 +2,9 @@
 
 namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
-public class CombatPlayerAuraModel
+public class UnitAuraModel
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int GameAuraId { get; set; }
@@ -14,10 +13,7 @@ public class CombatPlayerAuraModel
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    public string Creator { get; set; } = string.Empty;
-
-    [Required]
-    public string Target { get; set; } = string.Empty;
+    public string TargetGameId { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int AuraCreatorType { get; set; }
@@ -34,6 +30,5 @@ public class CombatPlayerAuraModel
     [Range(0, int.MaxValue)]
     public int Stacks { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
+    public string? UnitId { get; set; }
 }

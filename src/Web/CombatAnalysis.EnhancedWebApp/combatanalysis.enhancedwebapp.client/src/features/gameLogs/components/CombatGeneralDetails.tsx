@@ -15,10 +15,11 @@ import CombatPreAuraItem from './auras/CombatPreAuraItem';
 
 interface CombatGeneralDetailsProps {
     combatPlayer: CombatPlayerModel;
+    combatId: number;
     detailsType: number;
 }
 
-const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlayer, detailsType }) => {
+const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlayer, combatId, detailsType }) => {
     const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
     const [spells, setSpells] = useState<SpellsDataModel[]>([]);
@@ -108,8 +109,8 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
     return (
         <div className="details__container">
             <CombatPreAuraItem
-                combatPlayerId={combatPlayer.id}
-                combatId={combatPlayer.combatId}
+                unitId={combatPlayer.unitId}
+                combatId={combatId}
             />
             {(spells.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-switch">

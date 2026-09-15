@@ -5,8 +5,8 @@ import { GameLogsApi } from './GameLogs.api';
 
 export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
     endpoints: builder => ({
-        getResourceRecoveryByCombatPlayerId: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, page, pageSize }) => `/ResourceRecovery/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
+        getResourceRecoveryByCombatPlayerId: builder.query<ResourceRecoveryModel[], { unitId: string, page: number, pageSize: number }>({
+            query: ({ unitId, page, pageSize }) => `/ResourceRecovery/getByCombatPlayerId?unitId=${unitId}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -15,11 +15,11 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
-        countResourceRecovery: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
-            query: ({ combatPlayerId, target, creator, spell, from, to }) => `/ResourceRecovery/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
+        countResourceRecovery: builder.query<number, { unitId: string, target: string, creator: string, spell: string, from: string, to: string }>({
+            query: ({ unitId, target, creator, spell, from, to }) => `/ResourceRecovery/count?unitId=${unitId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getAllResourceRecovery: builder.query<ResourceRecoveryModel[], { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/ResourceRecovery/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
+        getAllResourceRecovery: builder.query<ResourceRecoveryModel[], { unitId: string, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+            query: ({ unitId, target, creator, spell, from, to, page, pageSize }) => `/ResourceRecovery/getAll?unitId=${unitId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -31,11 +31,11 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
         getCombatPlayerChartResourceRecovery: builder.query<ChartModel[], number>({
             query: combatPlayerId => `/ResourceRecovery/getCombatPlayerChart/${combatPlayerId}`
         }),
-        getResourceRecoveryUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
-            query: ({ combatPlayerId, filter }) => `/ResourceRecovery/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
+        getResourceRecoveryUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
+            query: ({ unitId, filter }) => `/ResourceRecovery/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,
         }),
-        getResourceRecoveryGeneralByCombatPlayerId: builder.query<ResourceRecoveryGeneralModel[], number>({
-            query: combatPlayerId => `/ResourceRecoveryGeneral/getByCombatPlayerId/${combatPlayerId}`,
+        getResourceRecoveryGeneralByUnitId: builder.query<ResourceRecoveryGeneralModel[], string>({
+            query: unitId => `/ResourceRecoveryGeneral/getByUnitId/${unitId}`,
             providesTags: result =>
                 result
                     ? [
@@ -53,6 +53,6 @@ export const {
     useGetResourceRecoveryUniqueFilterValuesQuery,
     useGetAllResourceRecoveryQuery,
     useGetCombatPlayerChartResourceRecoveryQuery,
-    useGetResourceRecoveryGeneralByCombatPlayerIdQuery,
-    useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery,
+    useGetResourceRecoveryGeneralByUnitIdQuery,
+    useLazyGetResourceRecoveryGeneralByUnitIdQuery,
 } = ResourcesRecoveryApi;

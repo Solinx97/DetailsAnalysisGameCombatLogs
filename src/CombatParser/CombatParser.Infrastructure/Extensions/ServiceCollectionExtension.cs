@@ -49,9 +49,10 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<ICombatPlayerInfoRepository<SpecializationScore>, CombatPlayerInfoRepository<SpecializationScore>>();
         services.AddScoped<ICombatPlayerInfoRepository<WoWMoPClassicPlayerStats>, CombatPlayerInfoRepository<WoWMoPClassicPlayerStats>>();
-        services.AddScoped<ICombatPlayerInfoRepository<DamageDoneGeneral>, CombatPlayerInfoRepository<DamageDoneGeneral>>();
-        services.AddScoped<ICombatPlayerInfoRepository<HealDoneGeneral>, CombatPlayerInfoRepository<HealDoneGeneral>>();
-        services.AddScoped<ICombatPlayerInfoRepository<ResourceRecoveryGeneral>, CombatPlayerInfoRepository<ResourceRecoveryGeneral>>();
+
+        services.AddScoped<IUnitInfoRepository<DamageDoneGeneral>, UnitInfoRepository<DamageDoneGeneral>>();
+        services.AddScoped<IUnitInfoRepository<HealDoneGeneral>, UnitInfoRepository<HealDoneGeneral>>();
+        services.AddScoped<IUnitInfoRepository<ResourceRecoveryGeneral>, UnitInfoRepository<ResourceRecoveryGeneral>>();
 
         services.AddScoped<IGeneralRepository<DamageDone>, GeneralRepositroy<DamageDone>>();
         services.AddScoped<IGeneralRepository<HealDone>, GeneralRepositroy<HealDone>>();

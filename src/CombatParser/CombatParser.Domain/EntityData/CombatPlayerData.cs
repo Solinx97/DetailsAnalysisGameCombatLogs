@@ -4,19 +4,8 @@ namespace CombatParser.Domain.EntityData;
 
 public record CombatPlayerData(
     double AverageItemLevel,
-    int ResourcesRecovery,
-    int DamageDone,
-    int HealDone, 
-    int DamageTaken,
     string PlayerId,
     IPlayerStatsData Stats,
     SpecializationScoreData Score,
-    IReadOnlyList<CombatPlayerPreAuraData> PreAuras,
-    IReadOnlyList<CombatPlayerAuraData> Auras,
-    IReadOnlyList<DamageDoneData> DamageDones,
-    IReadOnlyList<DamageDoneGeneralData> DamageDoneGenerals,
-    IReadOnlyList<HealDoneData> HealDones,
-    IReadOnlyList<HealDoneGeneralData> HealDoneGenerals,
-    IReadOnlyList<ResourceRecoveryData> ResourceRecoveries,
-    IReadOnlyList<ResourceRecoveryGeneralData> ResourceRecoveryGenerals
+    string UnitGameId
     );

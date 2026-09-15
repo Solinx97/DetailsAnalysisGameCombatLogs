@@ -22,12 +22,12 @@ public class HealDoneController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatPlayerId")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
+    [HttpGet("getByUnitId")]
+    public async Task<IActionResult> GetByUnitId(string unitId, int page, int pageSize)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"HealDone/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
+            var response = await _httpClient.GetAsync($"HealDone/getByUnitId?unitId={unitId}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
             var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
@@ -49,11 +49,11 @@ public class HealDoneController : ControllerBase
     }
 
     [HttpGet("count")]
-    public async Task<IActionResult> Count(int combatPlayerId, string target, string creator, string spell, string from, string to)
+    public async Task<IActionResult> Count(string unitId, string target, string creator, string spell, string from, string to)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"HealDone/count?combatPlayerId={combatPlayerId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}");
+            var response = await _httpClient.GetAsync($"HealDone/count?unitId={unitId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}");
             response.EnsureSuccessStatusCode();
 
             var count = await response.Content.ReadFromJsonAsync<int>();
@@ -75,11 +75,11 @@ public class HealDoneController : ControllerBase
     }
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize)
+    public async Task<IActionResult> GetAll(string unitId, string target, string creator, string spell, string from, string to, int page, int pageSize)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"HealDone/getAll?combatPlayerId={combatPlayerId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
+            var response = await _httpClient.GetAsync($"HealDone/getAll?unitId={unitId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
             var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
@@ -153,7 +153,7 @@ public class HealDoneController : ControllerBase
     }
 
     [HttpGet("getUniqueFilterValues")]
-    public async Task<IActionResult> GetUniqueFilterValues(int combatPlayerId, DetailsFilterType filter)
+    public async Task<IActionResult> GetUniqueFilterValues(string unitId, DetailsFilterType filter)
     {
         try
         {
@@ -172,7 +172,7 @@ public class HealDoneController : ControllerBase
                     return BadRequest();
             }
 
-            var response = await _httpClient.GetAsync($"HealDone/{filterActionName}/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"HealDone/{filterActionName}/{unitId}");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();

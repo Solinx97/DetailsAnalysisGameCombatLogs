@@ -10,10 +10,10 @@ public class HealDoneGeneralController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getByUnitId/{unitId}")]
+    public async Task<IActionResult> GetByUnitId(string unitId, CancellationToken cancellationToken)
     {
-        var healGenerals = await _mediator.Send(new GetHealGeneralsQuery(combatPlayerId), cancellationToken);
+        var healGenerals = await _mediator.Send(new GetHealGeneralsQuery(unitId), cancellationToken);
 
         return Ok(healGenerals);
     }

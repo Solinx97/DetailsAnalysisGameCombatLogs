@@ -2,6 +2,7 @@
 using CombatParser.Domain.EntityData;
 using CombatParser.Domain.Exceptions;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 
 namespace CombatParser.Domain.Aggregates;
 
@@ -102,17 +103,16 @@ public class Combat
 
     private void AddCombatPlayer(CombatPlayerData player)
     {
-        var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.ResourcesRecovery, player.DamageDone, player.HealDone, player.DamageTaken,
-            player.PlayerId, player.Stats, player.Score, player.PreAuras, player.Auras, player.DamageDones,
-            player.DamageDoneGenerals, player.HealDones, player.HealDoneGenerals,
-            player.ResourceRecoveries, player.ResourceRecoveryGenerals);
+        var createdPlayer = CombatPlayer.Create(player.AverageItemLevel, player.PlayerId, player.Stats, player.Score, player.UnitGameId);
         _players.Add(createdPlayer);
     }
 
     private void AddUnit(UnitData unit)
     {
-        var createdUnit = Unit.Create(unit.GameId, unit.Name, unit.UnitHash, unit.Type, unit.CreatorGameId, 
-            unit.UnitHealths, unit.UnitCasts, unit.UnitPositions);
+        var createdUnit = Unit.Create(unit.GameId, unit.Name, unit.UnitHash, unit.Type, unit.CreatorGameId, unit.UnitInfo,
+            unit.UnitHealths, unit.UnitCasts, unit.UnitPositions, unit.PreAuras, unit.Auras, unit.DamageDones,
+            unit.DamageDoneGenerals, unit.HealDones, unit.HealDoneGenerals,
+            unit.ResourceRecoveries, unit.ResourceRecoveryGenerals);
         _units.Add(createdUnit);
     }
 }

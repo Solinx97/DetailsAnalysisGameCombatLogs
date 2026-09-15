@@ -2,7 +2,7 @@
 
 public class DamageDoneDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -32,5 +32,5 @@ public class DamageDoneDto
 
     public int Mitigated { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; }
 }

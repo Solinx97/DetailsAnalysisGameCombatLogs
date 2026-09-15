@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models;
 
@@ -19,15 +20,41 @@ public class UnitModel
 
     public string? CreatorGameId { get; set; }
 
+    public UnitInfoModel UnitInfo { get; set; } = new();
+
     [Range(0, int.MaxValue)]
     public int CombatId { get; set; }
 
     [Required]
-    public List<UnitHealthModel> UnitHealthes { get; set; } = [];
+    public IReadOnlyList<UnitHealthModel> UnitHealthes { get; set; } = [];
 
     [Required]
-    public List<UnitCastModel> UnitCasts { get; init; } = [];
+    public IReadOnlyList<UnitCastModel> UnitCasts { get; init; } = [];
 
     [Required]
-    public List<UnitPositionModel> UnitPositions { get; init; } = [];
+    public IReadOnlyList<UnitPositionModel> UnitPositions { get; init; } = [];
+
+    [Required]
+    public IReadOnlyList<UnitPreAuraModel> PreAuras { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<UnitAuraModel> Auras { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<DamageDoneModel> DamageDones { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<DamageDoneGeneralModel> DamageDoneGenerals { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<HealDoneModel> HealDones { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<HealDoneGeneralModel> HealDoneGenerals { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<ResourceRecoveryModel> ResourceRecoveries { get; set; } = [];
+
+    [Required]
+    public IReadOnlyList<ResourceRecoveryGeneralModel> ResourceRecoveryGenerals { get; set; } = [];
 }

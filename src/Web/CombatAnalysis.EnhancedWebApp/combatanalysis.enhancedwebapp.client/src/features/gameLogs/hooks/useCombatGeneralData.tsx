@@ -1,7 +1,7 @@
 ﻿import type { JSX } from 'react';
-import { useLazyGetDamageDoneGeneralByCombatPlayerIdQuery, useLazyGetDamageTakenGeneralByCombatPlayerIdQuery } from '../api/DamageDone.api';
-import { useLazyGetHealDoneGeneralByCombatPlayerIdQuery } from '../api/HealDone.api';
-import { useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery } from '../api/ResourcesRecovery.api';
+import { useLazyGetDamageDoneGeneralByUnitIdQuery, useLazyGetDamageTakenGeneralByUnitIdQuery } from '../api/DamageDone.api';
+import { useLazyGetHealDoneGeneralByUnitIdQuery } from '../api/HealDone.api';
+import { useLazyGetResourceRecoveryGeneralByUnitIdQuery } from '../api/ResourcesRecovery.api';
 import DamageDoneGeneralHelper from '../components/helpers/DamageDoneGeneralHelper';
 import DamageTakenGeneralHelper from '../components/helpers/DamageTakenGeneralHelper';
 import HealDoneGeneralHelper from '../components/helpers/HealDoneGeneralHelper';
@@ -19,10 +19,10 @@ type CombatGeneralData = readonly [
 const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: number): CombatGeneralData => {
     const fixedNumberUntil = 2;
 
-    const [getDamageDoneGeneralByCombatPlayerIdAsync] = useLazyGetDamageDoneGeneralByCombatPlayerIdQuery();
-    const [getDamageTakenGeneralByCombatPlayerIdAsync] = useLazyGetDamageTakenGeneralByCombatPlayerIdQuery();
-    const [getHealDoneGeneralByCombatPlayerIdAsync] = useLazyGetHealDoneGeneralByCombatPlayerIdQuery();
-    const [getResourceRecoveryGeneralByCombatPlayerIdAsync] = useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery();
+    const [getDamageDoneGeneralByUnitIdAsync] = useLazyGetDamageDoneGeneralByUnitIdQuery();
+    const [getDamageTakenGeneralByUnitIdAsync] = useLazyGetDamageTakenGeneralByUnitIdQuery();
+    const [getHealDoneGeneralByUnutIdAsync] = useLazyGetHealDoneGeneralByUnitIdQuery();
+    const [getResourceRecoveryGeneralByUnitIdAsync] = useLazyGetResourceRecoveryGeneralByUnitIdQuery();
 
     const getProcentage = (firstValue: number, secondValue: number): string => {
         const number = firstValue / secondValue;
@@ -57,7 +57,7 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
 
         switch (detailsType) {
             case 0:
-                data = await getDamageDoneGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();
+                data = await getDamageDoneGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();
                 return <DamageDoneGeneralHelper
                     generalData={data}
                     getProcentage={getProcentage}
@@ -66,7 +66,7 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
                     getSpellValueProcentage={getSpellValueProcentage}
                 />
             case 1:
-                data = await getHealDoneGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();
+                data = await getHealDoneGeneralByUnutIdAsync(combatPlayer.unitId).unwrap();
                 return <HealDoneGeneralHelper
                     generalData={data}
                     getProcentage={getProcentage}
@@ -75,7 +75,7 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
                     getSpellValueProcentage={getSpellValueProcentage}
                 />
             case 2:
-                data = await getDamageTakenGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();
+                data = await getDamageTakenGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();
                 return <DamageTakenGeneralHelper
                     generalData={data}
                     getProcentage={getProcentage}
@@ -84,7 +84,7 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
                     getSpellValueProcentage={getSpellValueProcentage}
                 />
             case 3:
-                data = await getResourceRecoveryGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();
+                data = await getResourceRecoveryGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();
                 return <ResourceRecoveryGeneralHelper
                     generalData={data}
                     combatPlayer={combatPlayer}
@@ -92,7 +92,7 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
                     getSpellValueProcentage={getSpellValueProcentage}
                 />
             default:
-                data = await getDamageDoneGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();
+                data = await getDamageDoneGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();
                 return <DamageDoneGeneralHelper
                     generalData={data}
                     getProcentage={getProcentage}
@@ -108,19 +108,19 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, detailsType: numb
             let detailsResult: DamageDoneGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null = null;
             switch (detailsType) {
                 case 0:
-                    detailsResult = await getDamageDoneGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();
+                    detailsResult = await getDamageDoneGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();
                     break;
                 case 1:
-                    detailsResult = await getHealDoneGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();;
+                    detailsResult = await getHealDoneGeneralByUnutIdAsync(combatPlayer.unitId).unwrap();;
                     break;
                 case 2:
-                    detailsResult = await getDamageTakenGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();;
+                    detailsResult = await getDamageTakenGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();;
                     break;
                 case 3:
-                    detailsResult = await getResourceRecoveryGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();;
+                    detailsResult = await getResourceRecoveryGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();;
                     break;
                 default:
-                    detailsResult = await getDamageDoneGeneralByCombatPlayerIdAsync(combatPlayer.id).unwrap();
+                    detailsResult = await getDamageDoneGeneralByUnitIdAsync(combatPlayer.unitId).unwrap();
                     break;
             }
 

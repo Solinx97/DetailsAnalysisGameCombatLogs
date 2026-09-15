@@ -1,6 +1,12 @@
-﻿namespace CombatAnalysis.CombatParserAPI.Models;
+﻿using CombatAnalysis.CombatParserAPI.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
-public class CreateCombatModel : CombatModel
+namespace CombatAnalysis.CombatParserAPI.Models;
+
+public class CreateCombatModel : CombatBaseModel
 {
     public int GameVersion { get; init; }
+
+    [Required]
+    public List<CreateCombatPlayerModel> CombatPlayers { get; init; } = [];
 }

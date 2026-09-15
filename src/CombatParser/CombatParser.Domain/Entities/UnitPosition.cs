@@ -26,7 +26,7 @@ public class UnitPosition : CombatUnitDataBase, ITime, IUnitRef
 
     public TimeSpan Time { get; private set; }
 
-    public Unit CombatUnit { get; private set; }
+    public Unit Unit { get; private set; }
 
     public static UnitPosition Create(string ownerGameId, double x, double y, TimeSpan time)
     {

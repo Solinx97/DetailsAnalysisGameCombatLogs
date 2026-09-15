@@ -17,10 +17,19 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<PlayerModel, Player>().ReverseMap();
         CreateMap<BossModel, Boss>().ReverseMap();
         CreateMap<CombatModel, Combat>().ReverseMap();
+
         CreateMap<UnitModel, Unit>().ReverseMap();
+        CreateMap<UnitInfoModel, UnitInfo>().ReverseMap();
         CreateMap<UnitHealthModel, UnitHealth>().ReverseMap();
         CreateMap<UnitPositionModel, UnitPosition>().ReverseMap();
         CreateMap<UnitCastModel, UnitCast>().ReverseMap();
+        CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
+        CreateMap<DamageDoneGeneralModel, DamageDoneGeneral>().ReverseMap();
+        CreateMap<HealDoneModel, HealDone>().ReverseMap();
+        CreateMap<HealDoneGeneralModel, HealDoneGeneral>().ReverseMap();
+        CreateMap<ResourceRecoveryModel, ResourceRecovery>().ReverseMap();
+        CreateMap<ResourceRecoveryGeneralModel, ResourceRecoveryGeneral>().ReverseMap();
+
         CreateMap<CombatPlayerModel, CombatPlayer>().ReverseMap();
 
         CreateMap<IPlayerStatsModel, IPlayerStats>()
@@ -31,14 +40,8 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<WoWMidnightPlayerStatsModel, WoW_12_1_0.CombatParser.Entities.PlayerStats>().ReverseMap();
 
         CreateMap<SpecializationScoreModel, SpecializationScore>().ReverseMap();
-        CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
-        CreateMap<DamageDoneGeneralModel, DamageDoneGeneral>().ReverseMap();
-        CreateMap<HealDoneModel, HealDone>().ReverseMap();
-        CreateMap<HealDoneGeneralModel, HealDoneGeneral>().ReverseMap();
-        CreateMap<ResourceRecoveryModel, ResourceRecovery>().ReverseMap();
-        CreateMap<ResourceRecoveryGeneralModel, ResourceRecoveryGeneral>().ReverseMap();
-        CreateMap<CombatPlayerPreAuraModel, CombatPlayerPreAura>().ReverseMap();
-        CreateMap<CombatPlayerAuraModel, CombatPlayerAura>().ReverseMap();
+        CreateMap<UnitPreAuraModel, UnitPreAura>().ReverseMap();
+        CreateMap<UnitAuraModel, UnitAura>().ReverseMap();
 
         CreateMap<CreateCombatModel, CombatModel>().ReverseMap();
     }

@@ -22,5 +22,5 @@ public class UnitCastModel
 
     public bool IsSuccess { get; set; }
 
-    public string CombatUnitId { get; set; } = string.Empty;
+    public string UnitId { get; set; } = string.Empty;
 }

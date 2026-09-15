@@ -14,7 +14,7 @@ internal class GetResourcesHandler(IGeneralRepository<Domain.Entities.CombatPlay
     public async Task<IEnumerable<ResourceRecoveryDto>> Handle(GetResourcesQuery request, CancellationToken cancellationToken)
     {
         var creatorTypes = new int[] { (int)CombatUnitType.Player };
-        var resources = await _repository.GetAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, cancellationToken, creatorTypes: creatorTypes);
+        var resources = await _repository.GetAsync(request.UnitId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, cancellationToken, creatorTypes: creatorTypes);
         var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(resources);
 
         return map;

@@ -4,7 +4,7 @@ namespace CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
 
 public class HealDoneGeneralModel : IGeneralDetailsEntity
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public int GameSpellId { get; set; }
 
@@ -24,5 +24,5 @@ public class HealDoneGeneralModel : IGeneralDetailsEntity
 
     public double AverageValue { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; } = string.Empty;
 }

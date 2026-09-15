@@ -9,7 +9,7 @@ internal class GetUniqueHealTargetsHandler(IGeneralRepository<Domain.Entities.Co
 
     public async Task<IEnumerable<string>> Handle(GetUniqueHealTargetsQuery request, CancellationToken cancellationToken)
     {
-        var targets = await _repository.GetUniqueTargetsAsync(request.CombatPlayerId, cancellationToken);
+        var targets = await _repository.GetUniqueTargetsAsync(request.UnitId, cancellationToken);
 
         return targets;
     }

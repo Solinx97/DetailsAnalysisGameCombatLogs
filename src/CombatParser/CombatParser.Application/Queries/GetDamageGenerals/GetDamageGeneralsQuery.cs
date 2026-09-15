@@ -4,5 +4,5 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetDamageGenerals;
 
 public record GetDamageGeneralsQuery(
-    int CombatPlayerId
+    string UnitId
     ) : IRequest<IEnumerable<DamageDoneGeneralDto>>;

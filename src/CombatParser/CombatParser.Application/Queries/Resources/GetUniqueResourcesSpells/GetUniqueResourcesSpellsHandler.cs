@@ -11,7 +11,7 @@ internal class GetUniqueResourcesSpellsHandler(IGeneralRepository<Domain.Entitie
     public async Task<IEnumerable<string>> Handle(GetUniqueResourcesSpellsQuery request, CancellationToken cancellationToken)
     {
         var creatorTypes = new int[] { (int)CombatUnitType.Player };
-        var spells = await _repository.GetUniqueSpellsAsync(request.CombatPlayerId, cancellationToken, creatorTypes: creatorTypes);
+        var spells = await _repository.GetUniqueSpellsAsync(request.UnitId, cancellationToken, creatorTypes: creatorTypes);
 
         return spells;
     }

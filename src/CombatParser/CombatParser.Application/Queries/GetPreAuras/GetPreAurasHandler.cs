@@ -12,8 +12,8 @@ internal class GetPreAurasHandler(ICombatAbilityRepository repository, IMapper m
 
     public async Task<IEnumerable<CombatPlayerPreAuraDto>> Handle(GetPreAurasQuery request, CancellationToken cancellationToken)
     {
-        var combatPlayerPreAuras = request.CombatPlayerId > 0
-            ? await _repository.GetByPreAuraAsync(request.CombatId, request.CombatPlayerId, cancellationToken)
+        var combatPlayerPreAuras = !string.IsNullOrEmpty(request.UnitId)
+            ? await _repository.GetByPreAuraAsync(request.CombatId, request.UnitId, cancellationToken)
             : await _repository.GetByPreAuraAsync(request.CombatId, cancellationToken);
         var map = _mapper.Map<IEnumerable<CombatPlayerPreAuraDto>>(combatPlayerPreAuras);
 

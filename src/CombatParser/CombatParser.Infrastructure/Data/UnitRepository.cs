@@ -33,7 +33,7 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
     {
         var data = await _context.Set<UnitPosition>()
                     .AsNoTracking()
-                    .Where(x => x.CombatUnitId == combatUnitId)
+                    .Where(x => x.UnitId == combatUnitId)
                     .ToListAsync(cancellationToken);
 
         return data;
@@ -43,7 +43,7 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
     {
         var data = await _context.Set<UnitCast>()
                     .AsNoTracking()
-                    .Where(x => x.CombatUnitId == combatUnitId)
+                    .Where(x => x.UnitId == combatUnitId)
                     .ToListAsync(cancellationToken);
 
         return data;
@@ -54,7 +54,7 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
         var data = await _context.Set<Unit>()
                     .Join(_context.Set<UnitHealth>(),
                         x => x.Id,
-                        y => y.CombatUnitId,
+                        y => y.UnitId,
                         (x, y) => new
                         {
                             CombatId = x.CombatId,

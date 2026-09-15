@@ -4,7 +4,7 @@ using MediatR;
 namespace CombatParser.Application.Queries.HealDone.GetHeals;
 
 public record GetHealsQuery(
-    int CombatPlayerId,
+    string UnitId,
     string Target,
     string Creator,
     string Spell,

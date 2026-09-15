@@ -18,10 +18,10 @@ public class HealDoneController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("count")]
-    public async Task<IActionResult> Count(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
+    public async Task<IActionResult> Count(string unitId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
     {
         var count = await _mediator.Send(new CountHealQuery(
-            combatPlayerId,
+            unitId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
             spell.Equals(NONE_VALUE) ? string.Empty : spell,
@@ -33,10 +33,10 @@ public class HealDoneController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(string unitId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
         var heals = await _mediator.Send(new GetHealsQuery(
-            combatPlayerId,
+            unitId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
             spell.Equals(NONE_VALUE) ? string.Empty : spell,
@@ -65,18 +65,18 @@ public class HealDoneController(IMediator mediator) : ControllerBase
         return Ok(heals);
     }
 
-    [HttpGet("getUniqueTargets/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueTargets(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueTargets/{unitId}")]
+    public async Task<IActionResult> GetUniqueTargets(string unitId, CancellationToken cancellationToken)
     {
-        var uniqueTargets = await _mediator.Send(new GetUniqueHealTargetsQuery(combatPlayerId), cancellationToken);
+        var uniqueTargets = await _mediator.Send(new GetUniqueHealTargetsQuery(unitId), cancellationToken);
 
         return Ok(uniqueTargets);
     }
 
-    [HttpGet("getUniqueSpells/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueSpells/{unitId}")]
+    public async Task<IActionResult> GetUniqueSpells(string unitId, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _mediator.Send(new GetUniqueHealSpellsQuery(combatPlayerId), cancellationToken);
+        var uniqueSpells = await _mediator.Send(new GetUniqueHealSpellsQuery(unitId), cancellationToken);
 
         return Ok(uniqueSpells);
     }

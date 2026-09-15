@@ -16,6 +16,8 @@ public class UnitModel
     
     public int CombatId { get; set; }
 
+    public UnitInfoModel UnitInfo { get; set; }
+
     public List<UnitHealthModel> UnitHealthes { get; set; } = [];
 
     public List<UnitCastModel> UnitCasts { get; init; } = [];

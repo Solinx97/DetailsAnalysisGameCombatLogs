@@ -3,5 +3,5 @@
 namespace CombatParser.Application.Queries.DamageDone.DamageTaken.GetUniqueDamageTakenCreators;
 
 public record GetUniqueDamageTakenCreatorsQuery(
-    int CombatPlayerId
+    string UnitId
     ) : IRequest<IEnumerable<string>>;

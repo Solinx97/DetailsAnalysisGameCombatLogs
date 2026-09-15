@@ -9,7 +9,7 @@ namespace CombatAnalysis.WoW_5_5_4.CombatParser.Details;
 internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, DateTimeOffset combatStarted, DateTimeOffset combatFinished) 
     : WoW.CombatParser.Details.CombatDetailsManager(combatParserHelper, combatStarted, combatFinished)
 {
-    public override HealDone GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
+    public override void GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
         var absorbeDone = new HealDone
         {
@@ -25,8 +25,11 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, Date
             absorbeDone.Value = amountOfHeal;
         }
 
-        ApplyUnits(combatDataLine, absorbeDone, units);
+        ApplyUnits(combatDataLine, absorbeDone, units, 10, 6);
 
-        return absorbeDone;
+        if (units.TryGetValue(absorbeDone.CreatorGameId, out var creatorUnit))
+        {
+            creatorUnit.HealDones.Add(absorbeDone);
+        }
     }
 }

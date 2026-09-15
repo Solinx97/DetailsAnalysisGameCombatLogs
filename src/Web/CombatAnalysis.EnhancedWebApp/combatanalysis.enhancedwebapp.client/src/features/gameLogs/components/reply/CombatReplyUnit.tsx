@@ -142,7 +142,6 @@ const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unit, color, unitCast
                     />
                 }
                 <div>{removeServerName(unit.name)}</div>
-                <div>{removeServerName(unit.unitHash)}</div>
             </div>
             <div className={`health ${health?.currentHealth === 0 ? 'dead' : ''}`}>
                 <div className="health__current" style={{ width: `${currentHealthProcentage}%` }}>{formatNumber(currentHealth)}/{formatNumber(maxHealth)}</div>

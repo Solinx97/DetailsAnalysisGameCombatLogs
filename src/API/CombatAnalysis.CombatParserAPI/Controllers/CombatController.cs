@@ -84,8 +84,12 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             var combatPlayersData = new List<CombatParser.Domain.EntityData.CombatPlayerData>();
             foreach (var player in combat.CombatPlayers)
             {
-                var playerData = await ExtractCombatPlayerDataAsync(combat.GameVersion, player, cancellationToken);
-                combatPlayersData.Add(playerData);
+                var unit = combat.Units.FirstOrDefault(x => x.GameId == player.Player.GameId);
+                if (unit != null)
+                {
+                    var playerData = await ExtractCombatPlayerDataAsync(combat.GameVersion, unit, player, cancellationToken);
+                    combatPlayersData.Add(playerData);
+                }
             }
 
             var unitsData = new List<UnitData>();
@@ -116,7 +120,7 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         }
     }
 
-    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(int gameVersion, CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
+    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(int gameVersion, UnitModel unit, CreateCombatPlayerModel combatPlayer, CancellationToken cancellationToken)
     {
         IPlayerStatsData statsMap = gameVersion switch
         {
@@ -125,39 +129,19 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             _ => throw new ArgumentOutOfRangeException(nameof(gameVersion))
         };
 
-        var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
-        var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
-        var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
-        var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
-        var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
-        var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(combatPlayer.HealDoneGenerals);
-        var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatPlayer.ResourceRecoveries);
-        var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatPlayer.ResourceRecoveryGenerals);
+        var spellIds = unit.UnitInfo.DamageDone > unit.UnitInfo.HealDone
+            ? unit.DamageDones.Select(d => d.GameSpellId).ToArray()
+            : [.. unit.HealDones.Select(d => d.GameSpellId)];
 
-        var spellIds = combatPlayer.DamageDone > combatPlayer.HealDone
-            ? combatPlayer.DamageDones.Select(d => d.GameSpellId).ToArray()
-            : [.. combatPlayer.HealDones.Select(d => d.GameSpellId)];
-
-        await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, spellIds, cancellationToken);
+        await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, unit.UnitInfo, spellIds, cancellationToken);
         var scoreMap = _mapper.Map<SpecializationScoreData>(combatPlayer.Score);
 
         var playerData = new CombatParser.Domain.EntityData.CombatPlayerData(
             combatPlayer.AverageItemLevel,
-            combatPlayer.ResourcesRecovery,
-            combatPlayer.DamageDone,
-            combatPlayer.HealDone,
-            combatPlayer.DamageTaken,
-            combatPlayer.PlayerId,
+            combatPlayer.Player.Id,
             statsMap,
             scoreMap,
-            preAurasMap,
-            aurasMap,
-            damageDonesMap,
-            damageDoneGeneralsMap,
-            healDonesMap,
-            healDoneGeneralsMap,
-            resourceRecoveryMap,
-            resourceRecoveryGeneralMap
+            combatPlayer.UnitGameId
         );
 
         return playerData;
@@ -165,9 +149,18 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
 
     private UnitData ExtractUnitDataAsync(UnitModel unit)
     {
+        var unitInfoMap = _mapper.Map<UnitInfoData>(unit.UnitInfo);
         var unitHealthesMap = _mapper.Map<List<UnitHealthData>>(unit.UnitHealthes);
         var unitCastsMap = _mapper.Map<List<UnitCastData>>(unit.UnitCasts);
         var unitPositionsMap = _mapper.Map<List<UnitPositionData>>(unit.UnitPositions);
+        var preAurasMap = _mapper.Map<List<UnitPreAuraData>>(unit.PreAuras);
+        var aurasMap = _mapper.Map<List<UnitAuraData>>(unit.Auras);
+        var damageDonesMap = _mapper.Map<List<DamageDoneData>>(unit.DamageDones);
+        var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(unit.DamageDoneGenerals);
+        var healDonesMap = _mapper.Map<List<HealDoneData>>(unit.HealDones);
+        var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(unit.HealDoneGenerals);
+        var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(unit.ResourceRecoveries);
+        var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(unit.ResourceRecoveryGenerals);
 
         var unitData = new UnitData(
             unit.GameId,
@@ -176,9 +169,18 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             unit.Type,
             unit.CreatorGameId,
             unit.CombatId,
+            unitInfoMap,
             unitHealthesMap,
             unitCastsMap,
-            unitPositionsMap
+            unitPositionsMap,
+            preAurasMap,
+            aurasMap,
+            damageDonesMap,
+            damageDoneGeneralsMap,
+            healDonesMap,
+            healDoneGeneralsMap,
+            resourceRecoveryMap,
+            resourceRecoveryGeneralMap
         );
 
         return unitData;

@@ -138,10 +138,11 @@ const CombatDetails: React.FC = () => {
             {tabIndex === 0
                 ? <CombatGeneralDetails
                     combatPlayer={combatPlayer}
+                    combatId={details.id}
                     detailsType={details.detailsType}
                 />
                 : <CombatMoreDetails
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     detailsType={details.detailsType}
                 />
             }

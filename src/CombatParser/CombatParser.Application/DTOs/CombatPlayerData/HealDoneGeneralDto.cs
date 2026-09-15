@@ -2,7 +2,7 @@
 
 public class HealDoneGeneralDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -22,5 +22,5 @@ public class HealDoneGeneralDto
 
     public double AverageValue { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; }
 }

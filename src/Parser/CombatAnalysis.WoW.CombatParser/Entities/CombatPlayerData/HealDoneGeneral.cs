@@ -1,8 +1,6 @@
-﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
+﻿namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
-
-public class HealDoneGeneral : ICombatPlayerEntity
+public class HealDoneGeneral
 {
     public int GameSpellId { get; set; }
 
@@ -21,6 +19,4 @@ public class HealDoneGeneral : ICombatPlayerEntity
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

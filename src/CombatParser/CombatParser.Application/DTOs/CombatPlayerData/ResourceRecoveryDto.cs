@@ -2,7 +2,7 @@
 
 public class ResourceRecoveryDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -18,5 +18,5 @@ public class ResourceRecoveryDto
 
     public int ModificationType { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; }
 }

@@ -28,29 +28,44 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkInsertUnitDataAsync<TModel>(this CombatParserContextOne context, List<CombatPlayer> players, Dictionary<string, string> unitsByGameId, Func<CombatPlayer, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatPlayerRefs, ICombatPlayerUnitRefs
+    public static async Task BulkInsertUnitDataAsync<TModel>(this CombatParserContextOne context, List<Unit> units, Dictionary<string, string> unitsByGameId, Func<Unit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatUnitRefs
     {
-        var combatPlayerData = players.SelectMany(p =>
-            selector(p).Select(dd =>
+        var combatPlayerData = units.SelectMany(p =>
+            selector(p).Select(result =>
             {
-                if (!unitsByGameId.TryGetValue(dd.TargetGameId, out var targetId))
-                {
-                    return null;
-                }
+                result.SetUnitId(p.Id);
 
-                if (!unitsByGameId.TryGetValue(dd.CreatorGameId, out var creatorId))
-                {
-                    return null;
-                }
-
-                dd.SetUnits(creatorId, targetId);
-                dd.SetCombatPlayerId(p.Id);
-
-                return dd;
+                return result;
             }
         ))
             .Where(dd => dd != null)
+            .ToList();
+
+        if (combatPlayerData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatPlayerData, cancellationToken: cancelationToken);
+        }
+    }
+
+    public static async Task BulkInsertUnitTargetDataAsync<TModel>(this CombatParserContextOne context, List<Unit> units, Dictionary<string, string> unitsByGameId, Func<Unit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatUnitRefs, IUnitTargetRefs
+    {
+        var combatPlayerData = units.SelectMany(u  =>
+            selector(u).Select(result =>
+            {
+                if (!unitsByGameId.TryGetValue(result.TargetGameId, out var targetId))
+                {
+                    return null;
+                }
+
+                result.SetTargetUnitId(targetId);
+                result.SetUnitId(u.Id);
+
+                return result;
+            }
+        ))
+            .Where(x => x != null)
             .ToList();
 
         if (combatPlayerData.Count > 0)
@@ -84,7 +99,7 @@ internal static class CombatParserContextOneExtension
         var combatUnitData = combatUnits.SelectMany(p =>
             selector(p).Select(u =>
             {
-                u.SetCombatUnitId(p.Id);
+                u.SetUnitId(p.Id);
 
                 return u;
             }
@@ -96,13 +111,34 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task<List<CombatPlayer>> BulkInsertCombatPlayersAsync(this CombatParserContextOne context, int combatId, IEnumerable<CombatPlayer> combatPlayers, CancellationToken cancelationToken)
+    public static async Task BulkInsertUnitInfoAsync(this CombatParserContextOne context, IEnumerable<Unit> combatUnits, CancellationToken cancelationToken)
     {
-        var players = combatPlayers.Select(cd =>
+        var combatUnitData = combatUnits.Select(p =>
         {
-            cd.SetCombatId(combatId);
+            p.UnitInfo.SetUnitId(p.Id);
 
-            return cd;
+            return p.UnitInfo;
+        }).ToList();
+
+        if (combatUnitData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatUnitData, cancellationToken: cancelationToken);
+        }
+    }
+
+    public static async Task<List<CombatPlayer>> BulkInsertCombatPlayersAsync(this CombatParserContextOne context, int combatId, Dictionary<string, string> unitsByGameId, IEnumerable<CombatPlayer> combatPlayers, CancellationToken cancelationToken)
+    {
+        var players = combatPlayers.Select(cp =>
+        {
+            if (!unitsByGameId.TryGetValue(cp.UnitGameId, out var unitId))
+            {
+                return null;
+            }
+
+            cp.SetUnitId(unitId);
+            cp.SetCombatId(combatId);
+
+            return cp;
         }).ToList();
 
         if (players.Count > 0)

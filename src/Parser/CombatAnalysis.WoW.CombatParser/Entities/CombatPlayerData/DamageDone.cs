@@ -3,7 +3,7 @@ using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-public class DamageDone : CombatUnitDataBase, ICombatPlayerEntity, ICombatPlayerResourceRefs
+public class DamageDone : CombatUnitDataBase, ICombatPlayerResourceRefs
 {
     public int GameSpellId { get; set; }
 
@@ -28,6 +28,4 @@ public class DamageDone : CombatUnitDataBase, ICombatPlayerEntity, ICombatPlayer
     public int Overkill { get; set; }
 
     public int Mitigated { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

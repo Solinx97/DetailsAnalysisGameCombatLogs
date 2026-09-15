@@ -8,7 +8,7 @@ public interface ICombatPlayerInfoRepository<TModel>
 {
     Task<IEnumerable<TModel>> GetByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<DamageDoneGeneral>> GetDamageByCombatPlayerIdAsync(int combatPlayerId, bool isPlayerTarget, CancellationToken cancellationToken);
+    Task<IEnumerable<DamageDoneGeneral>> GetDamageByCombatPlayerIdAsync(string unitId, bool isPlayerTarget, CancellationToken cancellationToken);
 
     Task<TModel?> GetFirstByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken);
 }

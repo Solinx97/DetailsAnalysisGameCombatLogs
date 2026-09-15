@@ -79,8 +79,7 @@ const SelectedCombat: React.FC = () => {
         }
 
         const fetchData = async () => {
-            const combatPlayersData = await getCombatPlayersAsync();
-            await getPlayersDeathAsync(combatPlayersData);
+            await getCombatPlayersAsync();
         }
 
         fetchData();
@@ -105,14 +104,14 @@ const SelectedCombat: React.FC = () => {
         }
     }
 
-    const getPlayersDeathAsync = async (players: CombatPlayerModel[]) => {
-        const deathsPromises = players.map(player => getPlayersDeathByCombatIdAsync(player.id));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const deathsResults: any[] = await Promise.all(deathsPromises);
-        const deaths: CombatPlayerDeathModel[] = deathsResults.filter(result => result.data && result.data.length > 0).map(result => result.data[0]);
+    // const getPlayersDeathAsync = async (players: CombatPlayerModel[]) => {
+    //     const deathsPromises = players.map(player => getPlayersDeathByCombatIdAsync(player.id));
+    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     const deathsResults: any[] = await Promise.all(deathsPromises);
+    //     const deaths: CombatPlayerDeathModel[] = deathsResults.filter(result => result.data && result.data.length > 0).map(result => result.data[0]);
 
-        setPlayersDeath(deaths);
-    }
+    //     setPlayersDeath(deaths);
+    // }
 
     const cleanSearch = () => {
         if (filterContent.current) {
@@ -201,7 +200,7 @@ const SelectedCombat: React.FC = () => {
                             header: t("Damage"),
                             content: <SelectedCombatChart
                                 combatPlayers={selectedPlayers}
-                                combatId={selectedPlayers[0].combatId}
+                                combatId={details.id}
                                 colors={getRandomColors(selectedPlayers.length)}
                                 useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
                             />
@@ -211,7 +210,7 @@ const SelectedCombat: React.FC = () => {
                             header: t("Healing"),
                             content: <SelectedCombatChart
                                 combatPlayers={selectedPlayers}
-                                combatId={selectedPlayers[0].combatId}
+                                combatId={details.id}
                                 colors={getRandomColors(selectedPlayers.length)}
                                 useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
                             />

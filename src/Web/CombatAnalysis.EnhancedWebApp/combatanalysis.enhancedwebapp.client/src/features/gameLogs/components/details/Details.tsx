@@ -9,6 +9,7 @@ import DetailsItem from './DetailsItem';
 import PlayerParams from './PlayerParams';
 
 import '../auras/CombatAuras.scss';
+import type { UnitInfoModel } from '../../types/UnitInfoModel';
 
 interface DetailsProps {
     details: CombatDetailsModel;
@@ -39,18 +40,14 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
         filter();
     }, [sortingValue, combatPlayers]);
 
-    const compare = (playerA: CombatPlayerModel, playerB: CombatPlayerModel) => {
-        const keys: (keyof CombatPlayerModel)[] = ['damageDone', 'healDone', 'damageTaken', 'resourcesRecovery'];
+    const compare = (unitA: UnitInfoModel, unitB: UnitInfoModel) => {
+        const keys: (keyof UnitInfoModel)[] = ['damageDone', 'healDone', 'damageTaken', 'resourcesRecovery'];
         const key = keys[sortingValue === null ? 0 : sortingValue.value];
 
-        if (playerA[key] === undefined || playerB[key] === undefined) {
-            return 0;
-        }
-
-        if (playerA[key] > playerB[key]) {
+        if (unitA[key] > unitB[key]) {
             return -1;
         }
-        else if (playerA[key] < playerB[key]) {
+        else if (unitA[key] < unitB[key]) {
             return 1;
         }
 
@@ -62,7 +59,10 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
             return;
         }
 
-        setFilteredCombatPlayers([...combatPlayers].sort(compare));
+        setFilteredCombatPlayers(
+            [...combatPlayers]
+                .sort((a, b) => compare(a.unit?.unitInfo, b.unit?.unitInfo))
+        );
     }
 
     if (filteredCombatPlayers.length === 0) {
@@ -94,11 +94,13 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             </div>
                         </div>
                         <CombatPreAuraItem
-                            combatPlayerId={combatPlayer.id}
-                            combatId={combatPlayer.combatId}
+                            unitId={combatPlayer.unitId}
+                            combatId={details.id}
                         />
                         <DetailsItem
-                            player={combatPlayer}
+                            avilvl={combatPlayer.averageItemLevel}
+                            playerId={combatPlayer.id}
+                            unitInfo={combatPlayer.unit.unitInfo}
                             details={details}
                             getValueShortName={getValueShortName}
                         />

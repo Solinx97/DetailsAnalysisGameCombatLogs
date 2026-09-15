@@ -5,18 +5,18 @@ import useCombatDetailsData from '../hooks/useCombatDetailsData';
 import './CombatMoreDetails.scss';
 
 interface CombatMoreDetailsProps {
-    combatPlayerId: number;
+    unitId: string;
     detailsType: number;
 }
 
-const CombatMoreDetails: React.FC<CombatMoreDetailsProps> = ({ combatPlayerId, detailsType }) => {
+const CombatMoreDetails: React.FC<CombatMoreDetailsProps> = ({ unitId, detailsType }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
     const pageSize = 50;
 
     const [detailsDataRender, setDetailsDataRender] = useState<JSX.Element>(<></>);
 
-    const { getComponentByDetailsTypeAsync } = useCombatDetailsData(combatPlayerId, pageSize, detailsType, t);
+    const { getComponentByDetailsTypeAsync } = useCombatDetailsData(unitId, pageSize, detailsType, t);
 
     useEffect(() => {
         const getHelperComponent = async () => {

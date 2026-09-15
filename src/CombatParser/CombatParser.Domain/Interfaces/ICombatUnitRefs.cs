@@ -4,7 +4,7 @@ public interface ICombatUnitRefs
 {
     string Id { get; }
 
-    string CombatUnitId { get; }
+    string UnitId { get; }
 
-    void SetCombatUnitId(string combatUnitId);
+    void SetUnitId(string combatUnitId);
 }

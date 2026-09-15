@@ -3,5 +3,5 @@
 namespace CombatParser.Application.Queries.Resources.GetUniqueResourcesCreators;
 
 public record GetUniqueResourcesCreatorsQuery(
-    int CombatPlayerId
+    string UnitId
     ) : IRequest<IEnumerable<string>>;

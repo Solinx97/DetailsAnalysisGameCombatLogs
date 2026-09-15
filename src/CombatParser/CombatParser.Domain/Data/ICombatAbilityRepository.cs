@@ -11,5 +11,5 @@ public interface ICombatAbilityRepository
 
     Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, int combatPlayerId, CancellationToken cancellationToken);
+    Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, string unitId, CancellationToken cancellationToken);
 }

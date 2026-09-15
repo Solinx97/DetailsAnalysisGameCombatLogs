@@ -5,6 +5,8 @@ namespace CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
 
 public class DamageDoneModel : IDetailsEntity
 {
+    public string Id { get; set; } = string.Empty;
+
     public int GameSpellId { get; set; }
 
     public string Spell { get; set; }
@@ -12,8 +14,6 @@ public class DamageDoneModel : IDetailsEntity
     public int Value { get; set; }
 
     public TimeSpan Time { get; set; }
-
-    public string CreatorGameId { get; set; }
 
     public string TargetGameId { get; set; }
 
@@ -33,5 +33,5 @@ public class DamageDoneModel : IDetailsEntity
 
     public int Mitigated { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; } = string.Empty;
 }

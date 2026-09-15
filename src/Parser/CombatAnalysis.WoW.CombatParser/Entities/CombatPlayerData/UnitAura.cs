@@ -1,18 +1,12 @@
-﻿using System;
+﻿namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-namespace CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
-
-public class CombatPlayerAuraModel
+public class UnitAura
 {
-    public int Id { get; set; }
-
     public int GameAuraId { get; set; }
 
     public string Name { get; set; } = string.Empty;
 
-    public string Creator { get; set; } = string.Empty;
-
-    public string Target { get; set; } = string.Empty;
+    public string TargetGameId { get; set; } = string.Empty;
 
     public int AuraCreatorType { get; set; }
 
@@ -23,6 +17,4 @@ public class CombatPlayerAuraModel
     public TimeSpan FinishTime { get; set; }
 
     public int Stacks { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

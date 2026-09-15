@@ -2,6 +2,7 @@
 using CombatAnalysis.WoW.CombatParser.Details;
 using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW.CombatParser.Extensions;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
@@ -24,8 +25,6 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
     private readonly List<PlaceInformation> _zones = [];
 
     public List<Combat> Combats { get; private set; } = [];
-
-    public List<CombatDetails> CombatDetails { get; private set; } = [];
 
     public async Task<bool> FileCheckAsync(string combatLog)
     {
@@ -68,18 +67,10 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         }
 
         Combats.Clear();
-
-        foreach (var details in CombatDetails)
-        {
-            details.Clear();
-        }
-
-        CombatDetails.Clear();
         _zones.Clear();
 
         // Reduce capacity, provided to collections but not release after cleaning collection yet
         Combats.TrimExcess();
-        CombatDetails.TrimExcess();
         _zones.TrimExcess();
 
         // Call GC to collect and release LOH right now
@@ -173,8 +164,34 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
         return combat;
     }
+    
+    private async Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, Unit> units)
+    {
+        var combat = CreateCombat(builtCombat);
+        if (combat == null)
+        {
+            return;
+        }
 
-    protected abstract Task GetCombatInformationAsync(string[] builtCombat, ConcurrentDictionary<string, Unit> units);
+        var duration = combat.FinishDate - combat.StartDate;
+        if (duration < CombatLogKeyWords.MinCombatDuration)
+        {
+            return;
+        }
+
+        var combatDetails = GetCombatDetails(units);
+
+        var players = await GetCombatPlayers(builtCombat, combat.Duration, combat.StartDate, combat.FinishDate, combatDetails);
+        combat.CombatPlayers = [.. players];
+
+        combat.Units = [.. combatDetails.Units.Values];
+
+        CalculatingCommonCombatDetails(combat);
+
+        AddNewCombat(combat);
+    }
+
+    protected abstract CombatDetails GetCombatDetails(ConcurrentDictionary<string, Unit> units);
 
     protected static int GetGameBossId(string encounterStart)
     {
@@ -233,12 +250,14 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
     protected static void CalculatingCommonCombatDetails(Combat combat)
     {
-        var players = combat.CombatPlayers;
+        var players = combat.Units
+            .Where(x => x.Type == (int)CombatUnitType.Player)
+            .ToList();
 
-        combat.DamageDone = players.Sum(player => player.DamageDone);
-        combat.HealDone = players.Sum(player => player.HealDone);
-        combat.DamageTaken = players.Sum(player => player.DamageTaken);
-        combat.ResourcesRecovery = players.Sum(player => player.ResourcesRecovery);
+        combat.DamageDone = players.Sum(player => player.UnitInfo.DamageDone);
+        combat.HealDone = players.Sum(player => player.UnitInfo.HealDone);
+        combat.DamageTaken = players.Sum(player => player.UnitInfo.DamageTaken);
+        combat.ResourcesRecovery = players.Sum(player => player.UnitInfo.ResourcesRecovery);
     }
 
     protected void AddNewCombat(Combat combat)
@@ -260,29 +279,28 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
             .ToArray();
 
+        combatDetails.Calculate(data, start, finish);
+
         var combatPlayers = new CombatPlayer[combatInformations.Length];
         for (var i = 0; i < combatInformations.Length; i++)
         {
-            var combatPlayer = await CreateCombatPlayerAsync(combatInformations[i], data);
+            var combatPlayer = await GetCombatPlayerDataAsync(combatInformations[i], data, combatDetails.Units);
             combatPlayers[i] = combatPlayer;
         }
 
         var playersId = combatPlayers.Select(x => x.Player.GameId).ToArray();
 
-        combatDetails.Calculate(playersId, data, start, finish);
         combatDetails.CalculateGeneralData(playersId, duration);
 
-        CombatDetails.Add(combatDetails);
-
-        foreach (var combatPlayer in combatPlayers)
+        foreach (var combatPlayerUnit in combatDetails.Units.Values)
         {
-            FillCombatPlayerData(combatPlayer, combatDetails);
+            FillUnitInfo(combatPlayerUnit, combatDetails.Units);
         }
 
         return combatPlayers;
     }
 
-    protected abstract Task<CombatPlayer> CreateCombatPlayerAsync(string combatInformation, string[] combatData);
+    protected abstract Task<CombatPlayer> GetCombatPlayerDataAsync(string combatInformation, string[] combatData, ConcurrentDictionary<string, Unit> units);
 
     protected async Task CreatePlayer(string[] combatData, string[] combatInfoList, CombatPlayer combatPlayer)
     {
@@ -299,36 +317,22 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         }
     }
 
-    private static void FillCombatPlayerData(CombatPlayer combatPlayer, CombatDetails combatDetails)
+    private static void FillUnitInfo(Unit unit, ConcurrentDictionary<string, Unit> units)
     {
-        if (combatDetails.DamageDones.TryGetValue(combatPlayer.Player.GameId, out var damageCollection))
+        UnitInfo unitInfo;
+        if (unit.CreatorGameId != null && units.TryGetValue(unit.CreatorGameId, out var creatorUnit))
         {
-            combatPlayer.DamageDone = damageCollection.Sum(x => x.Value.Value);
-            combatPlayer.DamageDones.AddRange(damageCollection.Select(x => x.Value));
+            unitInfo = creatorUnit.UnitInfo;
         }
-        if (combatDetails.DamageTakens.TryGetValue(combatPlayer.Player.GameId, out var damageTakenCollection))
+        else
         {
-            combatPlayer.DamageTaken = damageTakenCollection.Sum(x => x.Value.Value);
-            combatPlayer.DamageDones.AddRange(damageTakenCollection.Select(x => x.Value));
-        }
-
-        combatPlayer.HealDone = combatDetails.HealDones[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
-        combatPlayer.ResourcesRecovery = combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Sum(x => x.Value.Value);
-
-        combatPlayer.Auras.AddRange(combatDetails.Auras[combatPlayer.Player.GameId]);
-        if (combatDetails.DamageDoneGenerals.TryGetValue(combatPlayer.Player.GameId, out var damageGeneralCollection))
-        {
-            combatPlayer.DamageDoneGenerals.AddRange(damageGeneralCollection);
-        }
-        if (combatDetails.DamageTakenGenerals.TryGetValue(combatPlayer.Player.GameId, out var damageTakenGeneralCollection))
-        {
-            combatPlayer.DamageDoneGenerals.AddRange(damageTakenGeneralCollection);
+            unitInfo = unit.UnitInfo;
         }
 
-        combatPlayer.HealDones.AddRange(combatDetails.HealDones[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.HealDoneGenerals.AddRange(combatDetails.HealDoneGenerals[combatPlayer.Player.GameId]);
-        combatPlayer.ResourceRecoveries.AddRange(combatDetails.ResourcesRecoveries[combatPlayer.Player.GameId].Select(x => x.Value));
-        combatPlayer.ResourceRecoveryGenerals.AddRange(combatDetails.ResourcesRecoveryGenerals[combatPlayer.Player.GameId]);
+        unitInfo.DamageDone += unit.DamageDones.Sum(x => x.Value);
+        unitInfo.DamageTaken += unit.DamageTakens.Sum(x => x.Value);
+        unitInfo.HealDone += unit.HealDones.Sum(x => x.Value);
+        unitInfo.ResourcesRecovery += unit.ResourceRecoveries.Sum(x => x.Value);
     }
 
     private void ZoneName(string combatLog)
@@ -386,15 +390,16 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
     protected abstract IPlayerStats GetStats(string[] combatInfo);
 
-    protected virtual List<CombatPlayerPreAura> GetPreAuras(string preAurasInformation)
+    protected virtual List<UnitPreAura> GetPreAuras(string preAurasInformation)
     {
         var allPreAuras = preAurasInformation.Split(',');
-        var preAuras = new List<CombatPlayerPreAura>();
+        var preAuras = new List<UnitPreAura>();
+
         for (var i = 0; i + 2 < allPreAuras.Length; i += 3)
         {
-            var preAura = new CombatPlayerPreAura
+            var preAura = new UnitPreAura
             {
-                CreatorGameId = allPreAuras[i],
+                TargetGameId = allPreAuras[i],
                 GameId = int.Parse(allPreAuras[i + 1]),
                 Status = int.Parse(allPreAuras[i + 2]),
             };
@@ -404,7 +409,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         return preAuras;
     }
 
-    protected async Task<CombatPlayer> CreateCombatPlayerAsync(string[] statsInformation, string[] combatData, string[] combatInfoList, string preAurasInformation, string equipmentsInformation)
+    protected async Task<CombatPlayer> CreateCombatPlayerAsync(string[] statsInformation, string[] combatData, string[] combatInfoList, string preAurasInformation, string equipmentsInformation, ConcurrentDictionary<string, Unit> units)
     {
         var averageItemLevel = GetAverageItemLevel(equipmentsInformation);
 
@@ -419,8 +424,13 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             {
                 GameId = combatInfoList[1],
             },
-            PreAuras = preAuras,
+            UnitGameId = combatInfoList[1],
         };
+
+        if (units.TryGetValue(combatPlayer.UnitGameId, out var unit))
+        {
+            unit.PreAuras.AddRange(preAuras);
+        }
 
         var player = await combatPlayer.Player.LoadAsync(_httpHelper, _logger);
         if (player == null)
@@ -437,22 +447,21 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
     private static void ClearCombat(Combat combat)
     {
-        foreach (var player in combat.CombatPlayers)
-        {
-            player.Auras.Clear();
-            player.DamageDones.Clear();
-            player.DamageDoneGenerals.Clear();
-            player.HealDones.Clear();
-            player.HealDoneGenerals.Clear();
-            player.ResourceRecoveries.Clear();
-            player.ResourceRecoveryGenerals.Clear();
-            player.PreAuras.Clear();
-        }
-
         foreach (var unit in combat.Units)
         {
             unit.UnitCasts.Clear();
             unit.UnitPositions.Clear();
+            unit.UnitHealthes.Clear();
+            unit.Auras.Clear();
+            unit.PreAuras.Clear();
+            unit.DamageDones.Clear();
+            unit.DamageDoneGenerals.Clear();
+            unit.DamageTakens.Clear();
+            unit.DamageTakenGenerals.Clear();
+            unit.HealDones.Clear();
+            unit.HealDoneGenerals.Clear();
+            unit.ResourceRecoveries.Clear();
+            unit.ResourceRecoveryGenerals.Clear();
         }
 
         combat.CombatPlayers.Clear();

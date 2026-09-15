@@ -6,10 +6,10 @@ public class CombatUnitDataBase : ICombatUnitRefs
 {
     public string Id { get; protected set; }
 
-    public string CombatUnitId { get; protected set; }
+    public string UnitId { get; protected set; }
 
-    public void SetCombatUnitId(string combatUnitId)
+    public void SetUnitId(string unitId)
     {
-        CombatUnitId = combatUnitId;
+        UnitId = unitId;
     }
 }

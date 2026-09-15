@@ -1,19 +1,19 @@
 import { faFlask, faHourglass, faAppleWhole, faVial, faBolt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import type { CombatPlayerPreAuraModel } from '../../types/CombatPlayerPreAuraModel';
+import type { UnitPreAuraModel } from '../../types/UnitPreAuraModel';
 import { useGetCombatByPreAuraQuery } from '../../api/GameLogs.api';
 import Loading from '@/shared/components/Loading';
 
 interface CombatPreAuraItemProps {
-    combatPlayerId: number;
+    unitId: string;
     combatId: number;
 }
 
-const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, combatId }) => {
-    const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>([]);
+const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ unitId, combatId }) => {
+    const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<UnitPreAuraModel[]>([]);
 
-    const { data: allPreAuras, isLoading } = useGetCombatByPreAuraQuery({ combatPlayerId, combatId });
+    const { data: allPreAuras, isLoading } = useGetCombatByPreAuraQuery({ combatId, unitId });
 
     useEffect(() => {
         if (!allPreAuras) {
@@ -24,8 +24,8 @@ const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, c
     }, [allPreAuras]);
 
     const makeCreatorAurasMap = () => {
-        let unique: CombatPlayerPreAuraModel[] = [];
-        const selectedCombatPlayerPreAuras = allPreAuras!.filter(x => x.combatPlayerId === combatPlayerId);
+        let unique: UnitPreAuraModel[] = [];
+        const selectedCombatPlayerPreAuras = allPreAuras!.filter(x => x.unitId === unitId);
 
         if (selectedCombatPlayerPreAuras.length > 0) {
             unique = [...new Map(

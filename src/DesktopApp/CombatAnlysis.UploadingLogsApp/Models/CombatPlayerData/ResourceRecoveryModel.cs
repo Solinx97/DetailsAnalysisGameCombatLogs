@@ -5,7 +5,7 @@ namespace CombatAnalysis.UploadingLogsApp.Models.CombatPlayerData;
 
 public class ResourceRecoveryModel : IDetailsEntity
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public int GameSpellId { get; set; }
 
@@ -15,11 +15,9 @@ public class ResourceRecoveryModel : IDetailsEntity
 
     public TimeSpan Time { get; set; }
 
-    public string CreatorGameId { get; set; }
-
     public string TargetGameId { get; set; }
 
     public int ModificationType { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; } = string.Empty;
 }

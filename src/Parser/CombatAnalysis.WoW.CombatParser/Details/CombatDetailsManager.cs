@@ -17,28 +17,28 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
     private readonly DateTimeOffset _combatStarted = combatStarted;
     private readonly DateTimeOffset _combatFinished = combatFinished;
 
-    public void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, List<CombatPlayerAura>> auras, List<Unit> summonedCreatures)
+    public void GetAuras(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
-        if (!auras.TryGetValue(combatDataLine[2], out var combatPlayerAuras))
+        var ownerId = combatDataLine[6];
+        if (!units.TryGetValue(ownerId, out var unit))
         {
-            combatPlayerAuras = [];
-            auras.TryAdd(combatDataLine[2], combatPlayerAuras);
+            return;
         }
 
         var gameSpellId = int.Parse(combatDataLine[10]);
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraApplied) || combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose))
         {
-            var aura = CreateCombatAura(gameSpellId, combatDataLine, combatDataLine[0], string.Empty, summonedCreatures);
+            var aura = CreateCombatAura(combatDataLine, combatDataLine[0], string.Empty, units);
             if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[^1], out var stacks))
             {
                 aura.Stacks = stacks;
             }
 
-            combatPlayerAuras.Add(aura);
+            unit.Auras.Add(aura);
         }
         else
         {
-            RemoveAura(gameSpellId, combatDataLine, combatPlayerAuras);
+            RemoveAura(gameSpellId, combatDataLine, unit.Auras);
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    public HealDone GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
+    public void GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
         int.TryParse(combatDataLine[^4], out var value);
         int.TryParse(combatDataLine[^3], out var overheal);
@@ -118,16 +118,19 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
             ModificationType = isCrit ? (int)ModificationType.Crit : (int)ModificationType.Normal,
         };
 
-        ApplyUnits(combatDataLine, healDone, units);
+        ApplyUnits(combatDataLine, healDone, units, 2, 6);
 
-        return healDone;
+        if (units.TryGetValue(healDone.CreatorGameId, out var creatorUnit))
+        {
+            creatorUnit.HealDones.Add(healDone);
+        }
     }
 
-    public abstract HealDone GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
+    public abstract void GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    public ResourceRecovery GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
+    public void GetResourceRecovery(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
-        var energyRecovery = new ResourceRecovery
+        var resourceRecovery = new ResourceRecovery
         {
             GameSpellId = int.Parse(combatDataLine[10]),
             Spell = combatDataLine[11].Trim('"'),
@@ -136,12 +139,15 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
 
         if (int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery))
         {
-            energyRecovery.Value = amoutOfResourcesRecovery;
+            resourceRecovery.Value = amoutOfResourcesRecovery;
         }
 
-        ApplyUnits(combatDataLine, energyRecovery, units);
+        ApplyUnits(combatDataLine, resourceRecovery, units, 2, 6);
 
-        return energyRecovery;
+        if (units.TryGetValue(resourceRecovery.CreatorGameId, out var creatorUnit))
+        {
+            creatorUnit.ResourceRecoveries.Add(resourceRecovery);
+        }
     }
 
     public void AddUnitDeath(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
@@ -152,7 +158,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    public DamageDone GetDamageDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
+    public void GetDamageDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
         var spell = string.Empty;
         var isAutoAttack = false;
@@ -189,10 +195,17 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
             ModificationType = (int)damageModificationType,
         };
 
-        ApplyUnits(combatDataLine, damageDone, units);
+        ApplyUnits(combatDataLine, damageDone, units, 2, 6);
         ApplyDamageModification(combatDataLine, value, isAbsorbed, hasTypeOfTarget, damageDone);
 
-        return damageDone;
+        if (units.TryGetValue(damageDone.CreatorGameId, out var creatorUnit))
+        {
+            creatorUnit.DamageDones.Add(damageDone);
+        }
+        if (units.TryGetValue(damageDone.TargetGameId, out var targetUnit))
+        {
+            targetUnit.DamageTakens.Add(damageDone);
+        }
     }
 
     private void AddUnitHealth(Unit unit, string ownerId, long currentHealth, long maxHealth, string time)
@@ -208,19 +221,18 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         unit.UnitHealthes.Add(health);
     }
 
-    private CombatPlayerAura CreateCombatAura(int gameSpellId, string[] combatDataLine, string startTimeAura, string finishTimeAura, List<Unit> summonedCreatures)
+    private UnitAura CreateCombatAura(string[] combatDataLine, string startTimeAura, string finishTimeAura, ConcurrentDictionary<string, Unit> units)
     {
         var startTime = GetTimeFromStart(startTimeAura);
         var finishTime = GetTimeFromStart(finishTimeAura);
         var auraType = SelectAuraType(combatDataLine);
-        var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], summonedCreatures);
+        var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], units);
 
-        var aura = new CombatPlayerAura
+        var aura = new UnitAura
         {
             GameAuraId = int.Parse(combatDataLine[10]),
             Name = combatDataLine[11].Trim('"'),
-            Creator = combatDataLine[3].Trim('"'),
-            Target = combatDataLine[7].Trim('"'),
+            TargetGameId = combatDataLine[6],
             StartTime = startTime,
             FinishTime = finishTime,
             AuraCreatorType = (int)auraCreatorType,
@@ -250,9 +262,9 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         return cast;
     }
 
-    private void RemoveAura(int gameSpellId, string[] combatDataLine, List<CombatPlayerAura> combatPlayerAuras)
+    private void RemoveAura(int gameSpellId, string[] combatDataLine, List<UnitAura> unitAuras)
     {
-        var aura = combatPlayerAuras
+        var aura = unitAuras
             .FirstOrDefault(x => x.GameAuraId == gameSpellId);
         if (aura != null)
         {
@@ -318,7 +330,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    private static AuraCreatorType SelectAuraCreatorType(string creatorId, List<Unit> summonedCreatures)
+    private static AuraCreatorType SelectAuraCreatorType(string creatorId, ConcurrentDictionary<string, Unit> units)
     {
         if (creatorId.Contains(CombatLogKeyWords.Player))
         {
@@ -328,7 +340,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         {
             return AuraCreatorType.Pet;
         }
-        else if (summonedCreatures.Any(x => x.CreatorGameId != null && x.CreatorGameId.Contains(creatorId)))
+        else if (units.Any(x => x.Value.CreatorGameId != null && x.Value.CreatorGameId.Contains(creatorId)))
         {
             return AuraCreatorType.AllyCreature;
         }
@@ -455,20 +467,18 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         damageDone.Mitigated = mitigated < 0 ? 0 : mitigated;
     }
 
-    protected void ApplyUnits(string[] combatDataLine, ICombatUnitRefs unitData, ConcurrentDictionary<string, Unit> units)
+    protected void ApplyUnits(string[] combatDataLine, ICombatUnitRefs unitData, ConcurrentDictionary<string, Unit> units, int creatorGameIdIndex, int targetGameIdIndex)
     {
-        if (!units.TryGetValue(combatDataLine[2], out var creatorUnit))
+        if (!units.TryGetValue(combatDataLine[creatorGameIdIndex], out var creatorUnit))
         {
-            creatorUnit = _combatParserHelper.ParseUnits(units, combatDataLine[2], combatDataLine[3], combatDataLine[4]);
+            creatorUnit = _combatParserHelper.ParseUnits(units, combatDataLine[creatorGameIdIndex], combatDataLine[creatorGameIdIndex + 1], combatDataLine[creatorGameIdIndex + 2]);
         }
-        if (!units.TryGetValue(combatDataLine[6], out var targetUnit))
+        if (!units.TryGetValue(combatDataLine[targetGameIdIndex], out var targetUnit))
         {
-            targetUnit = _combatParserHelper.ParseUnits(units, combatDataLine[6], combatDataLine[7], combatDataLine[8]);
+            targetUnit = _combatParserHelper.ParseUnits(units, combatDataLine[targetGameIdIndex], combatDataLine[targetGameIdIndex + 1], combatDataLine[targetGameIdIndex + 2]);
         }
 
-        unitData.Creator = creatorUnit;
         unitData.CreatorGameId = creatorUnit.GameId;
-        unitData.Target = targetUnit;
         unitData.TargetGameId = targetUnit.GameId;
     }
 }

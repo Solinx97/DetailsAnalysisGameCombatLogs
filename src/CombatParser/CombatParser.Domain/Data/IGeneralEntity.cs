@@ -1,6 +1,4 @@
-﻿using CombatParser.Domain.Entities;
-
-namespace CombatParser.Domain.Data;
+﻿namespace CombatParser.Domain.Data;
 
 public interface IGeneralEntity
 {
@@ -9,8 +7,4 @@ public interface IGeneralEntity
     int Value { get; }
 
     TimeSpan Time { get; }
-
-    Unit Creator { get; }
-
-    Unit Target { get; }
 }

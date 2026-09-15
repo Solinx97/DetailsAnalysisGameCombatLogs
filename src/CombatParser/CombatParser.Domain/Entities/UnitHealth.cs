@@ -26,7 +26,7 @@ public class UnitHealth : CombatUnitDataBase, ITime, IUnitRef
 
     public TimeSpan Time { get; private set; }
 
-    public Unit CombatUnit { get; private set; }
+    public Unit Unit { get; private set; }
 
     public static UnitHealth Create(string ownerGameId, long currentHealth, long maxHealth, TimeSpan time)
     {

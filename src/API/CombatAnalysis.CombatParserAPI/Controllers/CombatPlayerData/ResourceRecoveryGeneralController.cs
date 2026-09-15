@@ -10,10 +10,10 @@ public class ResourceRecoveryGeneralController(IMediator mediator) : ControllerB
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getByUnitId/{unitId}")]
+    public async Task<IActionResult> GetByUnitId(string unitId, CancellationToken cancellationToken)
     {
-        var resourcesGenerals = await _mediator.Send(new GetResourcesGeneralsQuery(combatPlayerId), cancellationToken);
+        var resourcesGenerals = await _mediator.Send(new GetResourcesGeneralsQuery(unitId), cancellationToken);
 
         return Ok(resourcesGenerals);
     }

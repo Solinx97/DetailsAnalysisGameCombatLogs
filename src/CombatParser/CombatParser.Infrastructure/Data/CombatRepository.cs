@@ -21,9 +21,14 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
             PreserveInsertOrder = true
         }, cancellationToken: cancellationToken);
 
-        var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);
         var units = await _context.BulkInsertUnitsAsync(combat, c => c.Units, cancellationToken);
+        var unitsByGameId = units
+            .Where(x => !string.IsNullOrEmpty(x.GameId))
+            .ToDictionary(x => x.GameId, x => x.Id);
 
+        var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, unitsByGameId, combat.CombatPlayers, cancellationToken);
+
+        await _context.BulkInsertUnitInfoAsync(units, cancellationToken);
         await _context.BulkInsertCombatDataAsync(units, c => c.UnitHealthes, cancellationToken);
         await _context.BulkInsertCombatDataAsync(units, c => c.UnitCasts, cancellationToken);
         await _context.BulkInsertCombatDataAsync(units, c => c.UnitPositions, cancellationToken);
@@ -31,18 +36,15 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
         await _context.BulkInsertCombatPlayerStatsAsync(players, cancellationToken);
         await _context.BulkInsertCombatPlayerScoresAsync(combat.BossId, players, cancellationToken);
 
-        var unitsByGameId = units
-            .Where(x => !string.IsNullOrEmpty(x.GameId))
-            .ToDictionary(x => x.GameId, x => x.Id);
-        await _context.BulkInsertUnitDataAsync(players, unitsByGameId, p => p.DamageDones, cancellationToken);
-        await _context.BulkInsertUnitDataAsync(players, unitsByGameId, p => p.HealDones, cancellationToken);
-        await _context.BulkInsertUnitDataAsync(players, unitsByGameId, p => p.ResourceRecoveries, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.PreAuras, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.Auras, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.DamageDones, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.HealDones, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.ResourceRecoveries, cancellationToken);
 
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.PreAuras, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.Auras, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDoneGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDoneGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveryGenerals, cancellationToken);
+        await _context.BulkInsertUnitDataAsync(units, unitsByGameId, p => p.DamageDoneGenerals, cancellationToken);
+        await _context.BulkInsertUnitDataAsync(units, unitsByGameId, p => p.HealDoneGenerals, cancellationToken);
+        await _context.BulkInsertUnitDataAsync(units, unitsByGameId, p => p.ResourceRecoveryGenerals, cancellationToken);
 
         if (combat.IsWin)
         {

@@ -13,13 +13,13 @@ import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
 interface DamageDoneHelperProps {
-    combatPlayerId: number;
+    unitId: string;
     pageSize: number;
     getUserNameWithoutRealm: (username: string) => string;
     t: (key: string) => string;
 }
 
-const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
+const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ unitId, pageSize, getUserNameWithoutRealm, t }) => {
     const NONE_VALUE = "NONE";
     const ZERO_TIME_VALUE = "00:00:00";
 
@@ -30,10 +30,10 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
     const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
 
     const { data: count, isLoading: countIsLoading } = useCountDamageDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
     const { data, isLoading: dataIsLoading } = useGetAllDamageDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
 
     useEffect(() => {
@@ -133,7 +133,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
             <div className="player-filter-details">
                 <DetailsFilter
                     filters={[ "Target", "Spell" ]}
-                    combatPlayerId={combatPlayerId}
+                    unitId={unitId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
                     useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}

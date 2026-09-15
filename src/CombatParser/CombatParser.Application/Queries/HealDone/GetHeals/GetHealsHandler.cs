@@ -14,7 +14,7 @@ internal class GetHealsHandler(IGeneralRepository<Domain.Entities.CombatPlayerDa
     public async Task<IEnumerable<HealDoneDto>> Handle(GetHealsQuery request, CancellationToken cancellationToken)
     {
         var creatorType = new int[] { (int)CombatUnitType.PlayerCreature, (int)CombatUnitType.Player };
-        var heals = await _repository.GetAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, cancellationToken, creatorTypes: creatorType);
+        var heals = await _repository.GetAsync(request.UnitId, request.Target, request.Creator, request.Spell, request.From, request.To, request.Page, request.PageSzie, cancellationToken, creatorTypes: creatorType);
         var map = _mapper.Map<IEnumerable<HealDoneDto>>(heals);
 
         return map;

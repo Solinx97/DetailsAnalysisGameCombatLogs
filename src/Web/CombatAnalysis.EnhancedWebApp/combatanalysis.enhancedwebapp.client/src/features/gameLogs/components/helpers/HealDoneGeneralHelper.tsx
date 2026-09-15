@@ -118,7 +118,7 @@ const HealDoneGeneralHelper: React.FC<HealDoneGeneralHelperProps> = ({ generalDa
         <>
             <li className="player-general-data-details__inherit">
                 <div>
-                    {t("Total")}: {getValueShortName(combatPlayer.healDone)}
+                    {t("Total")}: {getValueShortName(combatPlayer.unit.unitInfo.healDone)}
                 </div>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
@@ -131,7 +131,7 @@ const HealDoneGeneralHelper: React.FC<HealDoneGeneralHelperProps> = ({ generalDa
                             </li>
                             <li className="amount">
                                 <span>{getValueShortName(item.value)}</span>
-                                <span className="procentage">{getSpellValueProcentage(item, combatPlayer.healDone)}%</span>
+                                <span className="procentage">{getSpellValueProcentage(item, combatPlayer.unit.unitInfo.healDone)}%</span>
                             </li>
                             {!hideColumns.includes("Average") &&
                                 <li>

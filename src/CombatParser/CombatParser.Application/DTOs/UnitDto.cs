@@ -16,9 +16,5 @@ public class UnitDto
 
     public int CombatId { get; set; }
 
-    public List<UnitHealthDto> UnitHealthes { get; set; } = [];
-
-    public List<UnitCastDto> UnitCasts { get; set; } = [];
-
-    public List<UnitPositionDto> UnitPositions { get; set; } = [];
+    public UnitInfoDto UnitInfo { get; set; }
 }

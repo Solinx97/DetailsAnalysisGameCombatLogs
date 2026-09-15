@@ -2,7 +2,7 @@
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class ResourceRecoveryGeneral : CombatPlayerDataBase
+public class ResourceRecoveryGeneral : CombatUnitDataBase
 {
     public const int SPELL_MAX_LENGTH = 128;
 
@@ -11,6 +11,7 @@ public class ResourceRecoveryGeneral : CombatPlayerDataBase
     private ResourceRecoveryGeneral(int gameSpellId, string spell, int value, double resourcePerSecond, int castNumber,
         int minValue, int maxValue, double averageValue)
     {
+        Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
@@ -37,7 +38,7 @@ public class ResourceRecoveryGeneral : CombatPlayerDataBase
 
     public double AverageValue { get; private set; }
 
-    public CombatPlayer CombatPlayer { get; private set; }
+    public Unit Unit { get; private set; }
 
     public static ResourceRecoveryGeneral Create(int gameSpellId, string spell, int value, double resourcePerSecond, int castNumber,
         int minValue, int maxValue, double averageValue)

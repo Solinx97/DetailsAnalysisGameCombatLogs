@@ -14,5 +14,5 @@ public class UnitHealthModel
 
     public TimeSpan Time { get; set; }
 
-    public string CombatUnitId { get; set; } = string.Empty;
+    public string UnitId { get; set; } = string.Empty;
 }

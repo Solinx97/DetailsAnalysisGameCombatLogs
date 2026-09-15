@@ -3,7 +3,7 @@ using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-public class HealDone : CombatUnitDataBase, ICombatPlayerEntity, ICombatPlayerResourceRefs
+public class HealDone : CombatUnitDataBase, ICombatPlayerResourceRefs
 {
     public int GameSpellId { get; set; }
 
@@ -16,6 +16,4 @@ public class HealDone : CombatUnitDataBase, ICombatPlayerEntity, ICombatPlayerRe
     public TimeSpan Time { get; set; }
 
     public int ModificationType { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

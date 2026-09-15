@@ -10,16 +10,14 @@ public class HealDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     private HealDone() { }
 
-    private HealDone(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, int overheal, int modificationType, string creatorGameId, string targetGameId)
+    private HealDone(int gameSpellId, string spell, int value, TimeSpan time,
+        int overheal, int modificationType, string targetGameId)
     {
+        Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
         Time = time;
-        CreatorId = creatorId;
-        CreatorGameId = creatorGameId;
-        TargetId = targetId;
         TargetGameId = targetGameId;
         Overheal = overheal;
         ModificationType = modificationType;
@@ -33,27 +31,24 @@ public class HealDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public TimeSpan Time { get; private set; }
 
-    public Unit Creator { get; private set; }
-
     public Unit Target { get; private set; }
 
     public int Overheal { get; private set;  }
 
     public int ModificationType { get; private set; }
 
-    public CombatPlayer CombatPlayer { get; private set; }
+    public Unit Unit { get; private set; }
 
-    public static HealDone Create(int gameSpellId, string spell, int value, TimeSpan time, string creatorId,
-        string targetId, int overheal, int modificationType, string creatorGameId, string targetGameId)
+    public static HealDone Create(int gameSpellId, string spell, int value, TimeSpan time,
+        int overheal, int modificationType, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
         ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
-        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
         ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(overheal, nameof(overheal));
 
-        return new HealDone(gameSpellId, spell, value, time, creatorId,
-            targetId, overheal, modificationType, creatorGameId, targetGameId);
+        return new HealDone(gameSpellId, spell, value, time,
+            overheal, modificationType, targetGameId);
     }
 }

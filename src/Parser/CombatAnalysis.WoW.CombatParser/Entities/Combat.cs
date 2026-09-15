@@ -6,11 +6,11 @@ public class Combat
 
     public long DamageDone { get; set; }
 
-    public int HealDone { get; set; }
+    public long HealDone { get; set; }
 
-    public int DamageTaken { get; set; }
+    public long DamageTaken { get; set; }
 
-    public int ResourcesRecovery { get; set; }
+    public long ResourcesRecovery { get; set; }
 
     public bool IsWin { get; set; }
 

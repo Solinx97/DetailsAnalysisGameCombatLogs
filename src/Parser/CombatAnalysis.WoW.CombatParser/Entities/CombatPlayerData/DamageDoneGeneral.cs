@@ -1,8 +1,6 @@
-﻿using CombatAnalysis.WoW.CombatParser.Interfaces.Entities;
+﻿namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 
-namespace CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
-
-public class DamageDoneGeneral : ICombatPlayerEntity
+public class DamageDoneGeneral
 {
     public int GameSpellId { get; set; }
 
@@ -25,6 +23,4 @@ public class DamageDoneGeneral : ICombatPlayerEntity
     public double AverageValue { get; set; }
 
     public bool IsPlayerTarget { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

@@ -5,8 +5,7 @@ namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
 public class HealDoneModel : CombatUnitBase
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
@@ -25,6 +24,5 @@ public class HealDoneModel : CombatUnitBase
 
     public int ModificationType { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
+    public string? UnitId { get; set; }
 }

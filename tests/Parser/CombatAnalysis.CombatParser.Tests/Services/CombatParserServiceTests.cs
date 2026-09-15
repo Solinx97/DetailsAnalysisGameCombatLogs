@@ -84,7 +84,6 @@ public class CombatParserServiceTests
 
         // Assert
         Assert.NotEmpty(service.Combats);
-        Assert.NotEmpty(service.CombatDetails);
     }
 
     [Fact]
@@ -117,7 +116,6 @@ public class CombatParserServiceTests
 
         // Assert
         Assert.Empty(service.Combats);
-        Assert.Empty(service.CombatDetails);
     }
 
     [Fact]
@@ -164,9 +162,7 @@ public class CombatParserServiceTests
 
         // Assert
         Assert.NotEmpty(service.Combats);
-        Assert.NotEmpty(service.CombatDetails);
         Assert.Equal(2, service.Combats.Count);
-        Assert.Equal(2, service.CombatDetails.Count);
     }
 
     [Fact]
@@ -213,7 +209,6 @@ public class CombatParserServiceTests
 
         // Assert
         Assert.Empty(service.Combats);
-        Assert.Empty(service.CombatDetails);
     }
 
     [Fact]
@@ -260,9 +255,7 @@ public class CombatParserServiceTests
 
         // Assert
         Assert.NotEmpty(service.Combats);
-        Assert.NotEmpty(service.CombatDetails);
         Assert.Equal(1, service.Combats.Count);
-        Assert.Equal(1, service.CombatDetails.Count);
     }
 
     [Fact]
@@ -296,11 +289,6 @@ public class CombatParserServiceTests
 
         // Assert
         Assert.NotEmpty(service.Combats);
-        Assert.NotEmpty(service.CombatDetails);
-        Assert.NotEmpty(service.CombatDetails.First().DamageDones);
-        Assert.NotEmpty(service.CombatDetails.First().HealDones);
-        Assert.NotEmpty(service.CombatDetails.First().DamageTakens);
-        Assert.NotEmpty(service.CombatDetails.First().ResourcesRecoveries);
     }
 
     [Fact]
@@ -349,17 +337,7 @@ public class CombatParserServiceTests
 
         // Assert
         Assert.NotEmpty(service.Combats);
-        Assert.NotEmpty(service.CombatDetails);
         Assert.Equal(2, service.Combats.Count);
-        Assert.Equal(2, service.CombatDetails.Count);
-        Assert.NotEmpty(service.CombatDetails[0].DamageDones);
-        Assert.NotEmpty(service.CombatDetails[0].HealDones);
-        Assert.NotEmpty(service.CombatDetails[0].DamageTakens);
-        Assert.NotEmpty(service.CombatDetails[0].ResourcesRecoveries);
-        Assert.NotEmpty(service.CombatDetails[1].DamageDones);
-        Assert.NotEmpty(service.CombatDetails[1].HealDones);
-        Assert.NotEmpty(service.CombatDetails[1].DamageTakens);
-        Assert.NotEmpty(service.CombatDetails[1].ResourcesRecoveries);
     }
 
     [Fact]
@@ -385,16 +363,9 @@ public class CombatParserServiceTests
         var service = new CombatParserService(mockCombatParserHelper.Object, mockFileManager.Object, mockLogger.Object, mockHttp.Object);
 
         await service.ParseAsync(["file1.txt"], CancellationToken.None);
-        var details = service.CombatDetails.First();
 
         service.Clear();
 
         Assert.Empty(service.Combats);
-        Assert.Empty(service.CombatDetails);
-        Assert.Empty(details.DamageDones);
-        Assert.Empty(details.HealDones);
-        Assert.Empty(details.DamageTakens);
-        Assert.Empty(details.ResourcesRecoveries);
-        Assert.Empty(details.Units);
     }
 }

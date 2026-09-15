@@ -12,15 +12,15 @@ public class CombatPlayerAuraController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByCombatId")]
-    public async Task<IActionResult> GetByCombatId(int combatId, int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByCombatId(int combatId, string unitId, CancellationToken cancellationToken)
     {
-        var auras = await _mediator.Send(new GetAurasByCombatIdQuery(combatId, combatPlayerId), cancellationToken);
+        var auras = await _mediator.Send(new GetAurasByCombatIdQuery(combatId, unitId), cancellationToken);
 
         return Ok(auras);
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
     {
         var aura = await _mediator.Send(new GetAuraByIdQuery(id), cancellationToken);
 

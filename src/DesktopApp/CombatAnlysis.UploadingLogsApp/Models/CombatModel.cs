@@ -44,11 +44,6 @@ public class CombatModel
 
     public void ReleaseParsedData()
     {
-        foreach (var player in CombatPlayers)
-        {
-            player.ReleaseParsedData();
-        }
-
         foreach (var unit in Units)
         {
             unit.ReleaseParsedData();
