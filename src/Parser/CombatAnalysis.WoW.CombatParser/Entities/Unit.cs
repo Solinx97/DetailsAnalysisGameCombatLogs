@@ -28,17 +28,9 @@ public class Unit
 
     public List<DamageDone> DamageDones { get; set; } = [];
 
-    public List<DamageDoneGeneral> DamageDoneGenerals { get; set; } = [];
-
     public List<DamageDone> DamageTakens { get; set; } = [];
-
-    public List<DamageDoneGeneral> DamageTakenGenerals { get; set; } = [];
 
     public List<HealDone> HealDones { get; set; } = [];
 
-    public List<HealDoneGeneral> HealDoneGenerals { get; set; } = [];
-
     public List<ResourceRecovery> ResourceRecoveries { get; set; } = [];
-
-    public List<ResourceRecoveryGeneral> ResourceRecoveryGenerals { get; set; } = [];
 }

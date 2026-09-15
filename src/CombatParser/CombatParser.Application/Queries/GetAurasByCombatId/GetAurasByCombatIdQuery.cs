@@ -6,4 +6,4 @@ namespace CombatParser.Application.Queries.GetAurasByCombatId;
 public record GetAurasByCombatIdQuery(
     int CombatId,
     string UnitId
-    ) : IRequest<IEnumerable<CombatPlayerAuraDto>>;
+    ) : IRequest<IEnumerable<UnitAuraDto>>;

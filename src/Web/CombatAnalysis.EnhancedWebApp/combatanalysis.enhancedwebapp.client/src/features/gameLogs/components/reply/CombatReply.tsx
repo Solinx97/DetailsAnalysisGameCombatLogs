@@ -45,7 +45,6 @@ const CombatReply: React.FC = () => {
     const { view, currentTime, setCurrentTime, stop } = useCombatReply(selectedGameId, canvasRef, combatUnits, colors);
     const { formatSeconds } = useTime();
 
-
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
 

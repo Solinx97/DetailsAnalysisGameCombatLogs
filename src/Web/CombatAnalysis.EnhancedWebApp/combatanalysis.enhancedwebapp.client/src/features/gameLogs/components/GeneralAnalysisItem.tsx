@@ -91,7 +91,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                 </div>
                 <ul className="stats">
                     <li className="list-group-item">
-                        <div>{t("DPS")}</div>
+                        <div>{t("DamageDone")}</div>
                         <FontAwesomeIcon
                             icon={faKhanda}
                             className="list-group-item__player-statistic-item"
@@ -100,7 +100,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                         <div>{getValueShortName(selectedCombat.damageDone)}</div>
                     </li>
                     <li className="list-group-item">
-                        <div>{t("HPS")}</div>
+                        <div>{t("HealDone")}</div>
                         <FontAwesomeIcon
                             icon={faPlusCircle}
                             className="list-group-item__player-statistic-item"

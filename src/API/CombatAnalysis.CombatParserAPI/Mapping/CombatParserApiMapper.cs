@@ -38,8 +38,8 @@ internal class CombatParserApiMapper : Profile
         CreateMap<BossModel, BossDto>().ReverseMap();
         CreateMap<CombatAbilityModel, CombatAbilityDto>().ReverseMap();
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
-        CreateMap<CombatPlayerPreAuraDto, UnitPreAuraModel>().ReverseMap();
-        CreateMap<CombatPlayerAuraDto, UnitAuraModel>().ReverseMap();
+        CreateMap<UnitPreAuraDto, UnitPreAuraModel>().ReverseMap();
+        CreateMap<UnitAuraDto, UnitAuraModel>().ReverseMap();
         CreateMap<UnitInfoDto, UnitInfoModel>().ReverseMap();
         CreateMap<UnitCastDto, UnitCastModel>().ReverseMap();
         CreateMap<UnitPositionDto, UnitPositionModel>().ReverseMap();
@@ -53,11 +53,8 @@ internal class CombatParserApiMapper : Profile
         CreateMap<BestSpecializationScoreDto, BestSpecializationScoreModel>().ReverseMap();
 
         CreateMap<DamageDoneData, DamageDoneModel>().ReverseMap();
-        CreateMap<DamageDoneGeneralData, DamageDoneGeneralModel>().ReverseMap();
         CreateMap<HealDoneData, HealDoneModel>().ReverseMap();
-        CreateMap<HealDoneGeneralData, HealDoneGeneralModel>().ReverseMap();
         CreateMap<ResourceRecoveryData, ResourceRecoveryModel>().ReverseMap();
-        CreateMap<ResourceRecoveryGeneralData, ResourceRecoveryGeneralModel>().ReverseMap();
         CreateMap<UnitData, UnitModel>().ReverseMap();
         CreateMap<UnitInfoData, UnitInfoModel>().ReverseMap();
         CreateMap<UnitHealthData, UnitHealthModel>().ReverseMap();

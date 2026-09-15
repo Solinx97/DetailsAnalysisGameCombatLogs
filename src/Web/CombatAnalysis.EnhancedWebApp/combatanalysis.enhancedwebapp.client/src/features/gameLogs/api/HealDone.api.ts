@@ -37,8 +37,8 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
         getHealDoneUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
             query: ({ unitId, filter }) => `/HealDone/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,
         }),
-        getHealDoneGeneralByUnitId: builder.query<HealDoneGeneralModel[], string>({
-            query: unitId => `/HealDoneGeneral/getByUnitId/${unitId}`,
+        getHealDoneGeneralByUnitId: builder.query<HealDoneGeneralModel[], { unitId: string, combatId: number }>({
+            query: ({ unitId, combatId }) => `/HealDoneGeneral/getByUnitId/${unitId}?combatId=${combatId}`,
             providesTags: result =>
                 result
                     ? [

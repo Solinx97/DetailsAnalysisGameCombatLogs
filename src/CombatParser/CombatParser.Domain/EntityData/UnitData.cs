@@ -14,9 +14,6 @@ public record UnitData(
     IReadOnlyList<UnitPreAuraData> PreAuras,
     IReadOnlyList<UnitAuraData> Auras,
     IReadOnlyList<DamageDoneData> DamageDones,
-    IReadOnlyList<DamageDoneGeneralData> DamageDoneGenerals,
     IReadOnlyList<HealDoneData> HealDones,
-    IReadOnlyList<HealDoneGeneralData> HealDoneGenerals,
-    IReadOnlyList<ResourceRecoveryData> ResourceRecoveries,
-    IReadOnlyList<ResourceRecoveryGeneralData> ResourceRecoveryGenerals
+    IReadOnlyList<ResourceRecoveryData> ResourceRecoveries
     );

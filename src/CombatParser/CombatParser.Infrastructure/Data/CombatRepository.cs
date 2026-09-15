@@ -42,10 +42,6 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
         await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.HealDones, cancellationToken);
         await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.ResourceRecoveries, cancellationToken);
 
-        await _context.BulkInsertUnitDataAsync(units, unitsByGameId, p => p.DamageDoneGenerals, cancellationToken);
-        await _context.BulkInsertUnitDataAsync(units, unitsByGameId, p => p.HealDoneGenerals, cancellationToken);
-        await _context.BulkInsertUnitDataAsync(units, unitsByGameId, p => p.ResourceRecoveryGenerals, cancellationToken);
-
         if (combat.IsWin)
         {
             await _context.BulkUpdateBestSpecializationScoreAsync(combat.BossId, players, cancellationToken);

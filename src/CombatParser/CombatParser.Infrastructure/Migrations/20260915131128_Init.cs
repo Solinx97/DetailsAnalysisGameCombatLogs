@@ -271,35 +271,6 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DamageDoneGeneral",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    DamagePerSecond = table.Column<double>(type: "float", nullable: false),
-                    CritNumber = table.Column<int>(type: "int", nullable: false),
-                    MissNumber = table.Column<int>(type: "int", nullable: false),
-                    CastNumber = table.Column<int>(type: "int", nullable: false),
-                    MinValue = table.Column<int>(type: "int", nullable: false),
-                    MaxValue = table.Column<int>(type: "int", nullable: false),
-                    AverageValue = table.Column<double>(type: "float", nullable: false),
-                    IsPlayerTarget = table.Column<bool>(type: "bit", nullable: false),
-                    UnitId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DamageDoneGeneral", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DamageDoneGeneral_Unit_UnitId",
-                        column: x => x.UnitId,
-                        principalTable: "Unit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "HealDone",
                 columns: table => new
                 {
@@ -323,33 +294,6 @@ namespace CombatParser.Infrastructure.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_HealDone_Unit_UnitId",
-                        column: x => x.UnitId,
-                        principalTable: "Unit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HealDoneGeneral",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    HealPerSecond = table.Column<double>(type: "float", nullable: false),
-                    CritNumber = table.Column<int>(type: "int", nullable: false),
-                    CastNumber = table.Column<int>(type: "int", nullable: false),
-                    MinValue = table.Column<int>(type: "int", nullable: false),
-                    MaxValue = table.Column<int>(type: "int", nullable: false),
-                    AverageValue = table.Column<double>(type: "float", nullable: false),
-                    UnitId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HealDoneGeneral", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_HealDoneGeneral_Unit_UnitId",
                         column: x => x.UnitId,
                         principalTable: "Unit",
                         principalColumn: "Id",
@@ -386,32 +330,6 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResourceRecoveryGeneral",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    GameSpellId = table.Column<int>(type: "int", nullable: false),
-                    Spell = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    ResourcePerSecond = table.Column<double>(type: "float", nullable: false),
-                    CastNumber = table.Column<int>(type: "int", nullable: false),
-                    MinValue = table.Column<int>(type: "int", nullable: false),
-                    MaxValue = table.Column<int>(type: "int", nullable: false),
-                    AverageValue = table.Column<double>(type: "float", nullable: false),
-                    UnitId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ResourceRecoveryGeneral", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ResourceRecoveryGeneral_Unit_UnitId",
-                        column: x => x.UnitId,
-                        principalTable: "Unit",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UnitAura",
                 columns: table => new
                 {
@@ -424,11 +342,16 @@ namespace CombatParser.Infrastructure.Migrations
                     FinishTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     Stacks = table.Column<int>(type: "int", nullable: false),
                     UnitId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TargetId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UnitAura", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UnitAura_Unit_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Unit",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UnitAura_Unit_UnitId",
                         column: x => x.UnitId,
@@ -490,10 +413,10 @@ namespace CombatParser.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ResourcesRecovery = table.Column<long>(type: "bigint", nullable: false),
                     DamageDone = table.Column<long>(type: "bigint", nullable: false),
                     HealDone = table.Column<long>(type: "bigint", nullable: false),
                     DamageTaken = table.Column<long>(type: "bigint", nullable: false),
-                    ResourcesRecovery = table.Column<long>(type: "bigint", nullable: false),
                     UnitId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -537,11 +460,16 @@ namespace CombatParser.Infrastructure.Migrations
                     GameId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     UnitId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TargetId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TargetId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UnitPreAura", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UnitPreAura_Unit_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Unit",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UnitPreAura_Unit_UnitId",
                         column: x => x.UnitId,
@@ -2934,11 +2862,6 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DamageDoneGeneral_UnitId",
-                table: "DamageDoneGeneral",
-                column: "UnitId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HealDone_TargetId",
                 table: "HealDone",
                 column: "TargetId");
@@ -2949,11 +2872,6 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HealDoneGeneral_UnitId",
-                table: "HealDoneGeneral",
-                column: "UnitId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ResourceRecovery_TargetId",
                 table: "ResourceRecovery",
                 column: "TargetId");
@@ -2961,11 +2879,6 @@ namespace CombatParser.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ResourceRecovery_UnitId",
                 table: "ResourceRecovery",
-                column: "UnitId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ResourceRecoveryGeneral_UnitId",
-                table: "ResourceRecoveryGeneral",
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
@@ -2983,6 +2896,11 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "IX_Unit_CombatId",
                 table: "Unit",
                 column: "CombatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UnitAura_TargetId",
+                table: "UnitAura",
+                column: "TargetId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UnitAura_UnitId",
@@ -3009,6 +2927,11 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "IX_UnitPosition_UnitId",
                 table: "UnitPosition",
                 column: "UnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UnitPreAura_TargetId",
+                table: "UnitPreAura",
+                column: "TargetId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UnitPreAura_UnitId",
@@ -3041,19 +2964,10 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "DamageDone");
 
             migrationBuilder.DropTable(
-                name: "DamageDoneGeneral");
-
-            migrationBuilder.DropTable(
                 name: "HealDone");
 
             migrationBuilder.DropTable(
-                name: "HealDoneGeneral");
-
-            migrationBuilder.DropTable(
                 name: "ResourceRecovery");
-
-            migrationBuilder.DropTable(
-                name: "ResourceRecoveryGeneral");
 
             migrationBuilder.DropTable(
                 name: "SpecializationScore");

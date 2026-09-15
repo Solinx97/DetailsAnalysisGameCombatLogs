@@ -91,6 +91,7 @@ const CombatReplyUnitsCategory: React.FC<CombatReplyUnitsCategoryProps> = ({ nam
         );
     }
 
+    console.log(units);
     return (
         <li className="units__category">
             <div className="title">

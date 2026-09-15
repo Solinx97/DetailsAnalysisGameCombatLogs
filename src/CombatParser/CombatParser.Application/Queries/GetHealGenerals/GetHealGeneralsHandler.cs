@@ -13,8 +13,8 @@ internal class GetHealGeneralsHandler(IUnitInfoRepository<HealDoneGeneral> repos
 
     public async Task<IEnumerable<HealDoneGeneralDto>> Handle(GetHealGeneralsQuery request, CancellationToken cancellationToken)
     {
-        var damageDoneGenerals = await _repository.GetByCombatPlayerIdAsync(request.UnitId, cancellationToken);
-        var map = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(damageDoneGenerals);
+        var healDoneGenerals = await _repository.GetHealByUnitIdAsync(request.UnitId, request.CombatId, cancellationToken);
+        var map = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(healDoneGenerals);
 
         return map;
     }

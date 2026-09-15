@@ -32,7 +32,7 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
         height: window.innerHeight
     };
 
-    const [getGeneralListAsync, getPlayerGeneralDetailsAsync] = useCombatGeneralData(combatPlayer, detailsType);
+    const [getGeneralListAsync, getPlayerGeneralDetailsAsync] = useCombatGeneralData(combatPlayer, combatId, detailsType);
 
     useEffect(() => {
         const getGeneralDetails = async () => {

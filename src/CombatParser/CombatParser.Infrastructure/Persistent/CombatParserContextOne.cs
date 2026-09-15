@@ -40,15 +40,9 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<DamageDone>? DamageDone { get; }
 
-    public DbSet<DamageDoneGeneral>? DamageDoneGeneral { get; }
-
     public DbSet<HealDone>? HealDone { get; }
 
-    public DbSet<HealDoneGeneral>? HealDoneGeneral { get; }
-
     public DbSet<ResourceRecovery>? ResourceRecovery { get; }
-
-    public DbSet<ResourceRecoveryGeneral>? ResourceRecoveryGeneral { get; }
 
     public DbSet<WoWMoPClassicPlayerStats>? WoWMoPClassicPlayerStats { get; }
 

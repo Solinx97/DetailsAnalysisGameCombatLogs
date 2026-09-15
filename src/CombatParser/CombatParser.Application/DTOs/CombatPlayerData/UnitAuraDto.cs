@@ -1,8 +1,8 @@
 ﻿namespace CombatParser.Application.DTOs.CombatPlayerData;
 
-public class CombatPlayerAuraDto
+public class UnitAuraDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public string Name { get; set; }
 
@@ -20,5 +20,5 @@ public class CombatPlayerAuraDto
 
     public int Stacks { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string? UnitId { get; set; }
 }

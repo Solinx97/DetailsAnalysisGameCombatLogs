@@ -79,13 +79,9 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         foreach (var unit in Units)
         {
             unit.Value.DamageDones.Clear();
-            unit.Value.DamageDoneGenerals.Clear();
             unit.Value.DamageTakens.Clear();
-            unit.Value.DamageTakenGenerals.Clear();
             unit.Value.HealDones.Clear();
-            unit.Value.HealDoneGenerals.Clear();
             unit.Value.ResourceRecoveries.Clear();
-            unit.Value.ResourceRecoveryGenerals.Clear();
         }
 
         Units.Clear();

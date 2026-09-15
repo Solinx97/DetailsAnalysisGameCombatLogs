@@ -289,9 +289,6 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         }
 
         var playersId = combatPlayers.Select(x => x.Player.GameId).ToArray();
-
-        combatDetails.CalculateGeneralData(playersId, duration);
-
         foreach (var combatPlayerUnit in combatDetails.Units.Values)
         {
             FillUnitInfo(combatPlayerUnit, combatDetails.Units);
@@ -455,13 +452,9 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             unit.Auras.Clear();
             unit.PreAuras.Clear();
             unit.DamageDones.Clear();
-            unit.DamageDoneGenerals.Clear();
             unit.DamageTakens.Clear();
-            unit.DamageTakenGenerals.Clear();
             unit.HealDones.Clear();
-            unit.HealDoneGenerals.Clear();
             unit.ResourceRecoveries.Clear();
-            unit.ResourceRecoveryGenerals.Clear();
         }
 
         combat.CombatPlayers.Clear();

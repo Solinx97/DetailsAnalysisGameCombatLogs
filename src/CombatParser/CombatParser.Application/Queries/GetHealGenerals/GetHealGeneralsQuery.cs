@@ -4,5 +4,6 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetHealGenerals;
 
 public record GetHealGeneralsQuery(
-    string UnitId
+    string UnitId,
+    int CombatId
     ) : IRequest<IEnumerable<HealDoneGeneralDto>>;

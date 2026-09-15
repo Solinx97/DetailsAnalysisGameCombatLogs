@@ -5,4 +5,4 @@ namespace CombatParser.Application.Queries.GetAuraById;
 
 public record GetAuraByIdQuery(
     string Id
-    ) : IRequest<CombatPlayerAuraDto>;
+    ) : IRequest<UnitAuraDto>;

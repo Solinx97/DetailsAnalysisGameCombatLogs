@@ -21,11 +21,11 @@ public class HealDoneGeneralController : ControllerBase
     }
 
     [HttpGet("getByUnitId/{unitId}")]
-    public async Task<IActionResult> GetByUnitId(string unitId)
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"HealDoneGeneral/getByUnitId/{unitId}");
+            var response = await _httpClient.GetAsync($"HealDoneGeneral/getByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
             var healDoneGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();

@@ -15,11 +15,8 @@ public class Unit : CombatDataBase
     private readonly List<UnitPreAura> _preAuras = [];
     private readonly List<UnitAura> _auras = [];
     private readonly List<DamageDone> _damageDones = [];
-    private readonly List<DamageDoneGeneral> _damageDoneGenerals = [];
     private readonly List<HealDone> _healDones = [];
-    private readonly List<HealDoneGeneral> _healDoneGenerals = [];
     private readonly List<ResourceRecovery> _resourceRecoveries = [];
-    private readonly List<ResourceRecoveryGeneral> _resourceRecoveryGenerals = [];
 
     private Unit() { }
 
@@ -61,21 +58,14 @@ public class Unit : CombatDataBase
 
     public IReadOnlyCollection<DamageDone> DamageDones => _damageDones.AsReadOnly();
 
-    public IReadOnlyCollection<DamageDoneGeneral> DamageDoneGenerals => _damageDoneGenerals.AsReadOnly();
-
     public IReadOnlyCollection<HealDone> HealDones => _healDones.AsReadOnly();
 
-    public IReadOnlyCollection<HealDoneGeneral> HealDoneGenerals => _healDoneGenerals.AsReadOnly();
-
     public IReadOnlyCollection<ResourceRecovery> ResourceRecoveries => _resourceRecoveries.AsReadOnly();
-
-    public IReadOnlyCollection<ResourceRecoveryGeneral> ResourceRecoveryGenerals => _resourceRecoveryGenerals.AsReadOnly();
 
     public static Unit Create(string gameId, string name, string unitHash, int type, string? creatorGameId, UnitInfoData unitInfo,
         IReadOnlyList<UnitHealthData> unitHealthes, IReadOnlyList<UnitCastData> unitCasts, IReadOnlyList<UnitPositionData> unitPositions,
         IReadOnlyList<UnitPreAuraData> preAuras, IReadOnlyList<UnitAuraData> auras,
-        IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals,
-        IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals)
+        IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<ResourceRecoveryData> resourceRecoveries)
     {
         ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
@@ -115,29 +105,14 @@ public class Unit : CombatDataBase
             unit.AddDamageDone(damage);
         }
 
-        foreach (var damageGeneral in damageDoneGenerals)
-        {
-            unit.AddDamageDoneGeneral(damageGeneral);
-        }
-
         foreach (var heal in healDones)
         {
             unit.AddHealDone(heal);
         }
 
-        foreach (var healGeneral in healDoneGenerals)
-        {
-            unit.AddHealDoneGeneral(healGeneral);
-        }
-
         foreach (var resourceRecovery in resourceRecoveries)
         {
             unit.AddResourceRecovery(resourceRecovery);
-        }
-
-        foreach (var resourceRecoveryGeneral in resourceRecoveryGenerals)
-        {
-            unit.AddResourceRecoveryGeneral(resourceRecoveryGeneral);
         }
 
         return unit;
@@ -190,13 +165,6 @@ public class Unit : CombatDataBase
         _damageDones.Add(createdDamageDone);
     }
 
-    private void AddDamageDoneGeneral(DamageDoneGeneralData damageDoneGeneral)
-    {
-        var createdDamageDoneGeneral = DamageDoneGeneral.Create(damageDoneGeneral.GameSpellId, damageDoneGeneral.Spell, damageDoneGeneral.Value, damageDoneGeneral.DamagePerSecond, damageDoneGeneral.CritNumber,
-            damageDoneGeneral.MissNumber, damageDoneGeneral.CastNumber, damageDoneGeneral.MinValue, damageDoneGeneral.MaxValue, damageDoneGeneral.AverageValue, damageDoneGeneral.IsPlayerTarget);
-        _damageDoneGenerals.Add(createdDamageDoneGeneral);
-    }
-
     private void AddHealDone(HealDoneData healDone)
     {
         var createdHealDone = HealDone.Create(healDone.GameSpellId, healDone.Spell, healDone.Value, healDone.Time,
@@ -204,23 +172,9 @@ public class Unit : CombatDataBase
         _healDones.Add(createdHealDone);
     }
 
-    private void AddHealDoneGeneral(HealDoneGeneralData healDoneGeneral)
-    {
-        var createdHealDoneGeneral = HealDoneGeneral.Create(healDoneGeneral.GameSpellId, healDoneGeneral.Spell, healDoneGeneral.Value, healDoneGeneral.HealPerSecond, healDoneGeneral.CritNumber,
-            healDoneGeneral.CastNumber, healDoneGeneral.MinValue, healDoneGeneral.MaxValue, healDoneGeneral.AverageValue);
-        _healDoneGenerals.Add(createdHealDoneGeneral);
-    }
-
     private void AddResourceRecovery(ResourceRecoveryData resourceRecovery)
     {
         var createdResourceRecovery = ResourceRecovery.Create(resourceRecovery.GameSpellId, resourceRecovery.Spell, resourceRecovery.Value, resourceRecovery.Time, resourceRecovery.ModificationType, resourceRecovery.TargetGameId);
         _resourceRecoveries.Add(createdResourceRecovery);
-    }
-
-    private void AddResourceRecoveryGeneral(ResourceRecoveryGeneralData resourceGeneral)
-    {
-        var createdResourceRecoveryGeneral = ResourceRecoveryGeneral.Create(resourceGeneral.GameSpellId, resourceGeneral.Spell, resourceGeneral.Value, resourceGeneral.ResourcePerSecond,
-            resourceGeneral.CastNumber, resourceGeneral.MinValue, resourceGeneral.MaxValue, resourceGeneral.AverageValue);
-        _resourceRecoveryGenerals.Add(createdResourceRecoveryGeneral);
     }
 }

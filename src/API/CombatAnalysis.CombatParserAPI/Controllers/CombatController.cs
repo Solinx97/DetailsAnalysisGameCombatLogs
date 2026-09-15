@@ -156,11 +156,8 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         var preAurasMap = _mapper.Map<List<UnitPreAuraData>>(unit.PreAuras);
         var aurasMap = _mapper.Map<List<UnitAuraData>>(unit.Auras);
         var damageDonesMap = _mapper.Map<List<DamageDoneData>>(unit.DamageDones);
-        var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(unit.DamageDoneGenerals);
         var healDonesMap = _mapper.Map<List<HealDoneData>>(unit.HealDones);
-        var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(unit.HealDoneGenerals);
         var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(unit.ResourceRecoveries);
-        var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(unit.ResourceRecoveryGenerals);
 
         var unitData = new UnitData(
             unit.GameId,
@@ -176,11 +173,8 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             preAurasMap,
             aurasMap,
             damageDonesMap,
-            damageDoneGeneralsMap,
             healDonesMap,
-            healDoneGeneralsMap,
-            resourceRecoveryMap,
-            resourceRecoveryGeneralMap
+            resourceRecoveryMap
         );
 
         return unitData;

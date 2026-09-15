@@ -1,7 +1,7 @@
 ﻿import type { ChartModel } from '../types/chart/ChartModel';
-import type { DamageTakenGeneralModel } from '../types/DamageTakenGeneralModel';
 import type { DamageDoneModel } from '../types/DamageDoneModel';
 import { GameLogsApi } from './GameLogs.api';
+import type { DamageDoneGeneralModel } from '../types/DamageDoneGeneralModel';
 
 export const DamageTakenApi = GameLogsApi.injectEndpoints({
     endpoints: builder => ({
@@ -34,15 +34,15 @@ export const DamageTakenApi = GameLogsApi.injectEndpoints({
         getDamageTakenUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
             query: ({ unitId, filter }) => `/DamageTaken/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,
         }),
-        getDamageTakenGeneralByCombatPlayerId: builder.query<DamageTakenGeneralModel[], number>({
-            query: combatPlayerId => `/DamageTakenGeneral/getByCombatPlayerId/${combatPlayerId}`,
+        getDamageTakenGeneralByUnitId: builder.query<DamageDoneGeneralModel[], { unitId: string, combatId: number }>({
+            query: ({ unitId, combatId }) => `/DamageDoneGeneral/getByUnitId/${unitId}?combatId=${combatId}`,
             providesTags: result =>
                 result
                     ? [
-                        ...result.map(damageTakenGeneral => ({ type: 'DamageTakenGeneral' as const, id: damageTakenGeneral.id })),
-                        { type: 'DamageTakenGeneral', id: 'LIST' },
+                        ...result.map(damageTaken => ({ type: 'DamageTaken' as const, id: damageTaken.id })),
+                        { type: 'DamageTaken', id: 'LIST' },
                     ]
-                    : [{ type: 'DamageTakenGeneral', id: 'LIST' }]
+                    : [{ type: 'DamageTaken', id: 'LIST' }]
         }),
     })
 })
@@ -54,6 +54,6 @@ export const {
     useGetDamageTakenUniqueFilterValuesQuery,
     useGetAllDamageTakenQuery,
     useGetCombatPlayerChartDamageTakenQuery,
-    useGetDamageTakenGeneralByCombatPlayerIdQuery,
-    useLazyGetDamageTakenGeneralByCombatPlayerIdQuery,
+    useGetDamageTakenGeneralByUnitIdQuery,
+    useLazyGetDamageTakenGeneralByUnitIdQuery,
 } = DamageTakenApi;

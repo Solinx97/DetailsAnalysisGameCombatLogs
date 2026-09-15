@@ -21,16 +21,6 @@ internal class CombatPlayerInfoRepository<TModel>(CombatParserContextOne context
         return data;
     }
 
-    public async Task<IEnumerable<DamageDoneGeneral>> GetDamageByCombatPlayerIdAsync(string unitId, bool isPlayerTarget, CancellationToken cancellationToken)
-    {
-        var data = await _context.Set<DamageDoneGeneral>()
-            .AsNoTracking()
-            .Where(x => x.UnitId == unitId && x.IsPlayerTarget == isPlayerTarget)
-            .ToListAsync(cancellationToken);
-
-        return data;
-    }
-
     public async Task<TModel?> GetFirstByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken)
     {
         var data = await _context.Set<TModel>()

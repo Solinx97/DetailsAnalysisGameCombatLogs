@@ -1,4 +1,6 @@
-﻿namespace CombatParser.Application.DTOs;
+﻿using CombatParser.Application.DTOs.CombatPlayerData;
+
+namespace CombatParser.Application.DTOs;
 
 public class UnitDto
 {
@@ -17,4 +19,14 @@ public class UnitDto
     public int CombatId { get; set; }
 
     public UnitInfoDto UnitInfo { get; set; }
+
+    public IReadOnlyList<UnitHealthDto> UnitHealthes { get; set; } = [];
+
+    public IReadOnlyList<UnitCastDto> UnitCasts { get; init; } = [];
+
+    public IReadOnlyList<UnitPositionDto> UnitPositions { get; init; } = [];
+
+    public IReadOnlyList<UnitPreAuraDto> PreAuras { get; set; } = [];
+
+    public IReadOnlyList<UnitAuraDto> Auras { get; set; } = [];
 }

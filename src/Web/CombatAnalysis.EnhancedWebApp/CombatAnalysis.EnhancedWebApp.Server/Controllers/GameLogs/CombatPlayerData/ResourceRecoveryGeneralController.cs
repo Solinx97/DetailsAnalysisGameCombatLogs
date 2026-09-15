@@ -21,11 +21,11 @@ public class ResourceRecoveryGeneralController : ControllerBase
     }
 
     [HttpGet("getByUnitId/{unitId}")]
-    public async Task<IActionResult> GetByUnitId(string unitId)
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"ResourceRecoveryGeneral/getByUnitId/{unitId}");
+            var response = await _httpClient.GetAsync($"ResourceRecoveryGeneral/getByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
             var resourceRecoveryGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryGeneralModel>>();

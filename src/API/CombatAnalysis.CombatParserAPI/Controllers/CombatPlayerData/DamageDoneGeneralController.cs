@@ -12,17 +12,17 @@ public class DamageDoneGeneralController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByUnitId/{unitId}")]
-    public async Task<IActionResult> GetByUnitId(string unitId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId, CancellationToken cancellationToken)
     {
-        var damageGenerals = await _mediator.Send(new GetDamageGeneralsQuery(unitId), cancellationToken);
+        var damageGenerals = await _mediator.Send(new GetDamageGeneralsQuery(unitId, combatId), cancellationToken);
 
         return Ok(damageGenerals);
     }
 
     [HttpGet("getDamageTakenByUnitId/{unitId}")]
-    public async Task<IActionResult> GetDamageTakenByUnitId(string unitId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetDamageTakenByUnitId(string unitId, int combatId, CancellationToken cancellationToken)
     {
-        var damageTakenGenerals = await _mediator.Send(new GetDamageTakenGeneralsQuery(unitId), cancellationToken);
+        var damageTakenGenerals = await _mediator.Send(new GetDamageTakenGeneralsQuery(unitId, combatId), cancellationToken);
 
         return Ok(damageTakenGenerals);
     }

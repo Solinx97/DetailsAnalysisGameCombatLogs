@@ -111,8 +111,7 @@ public class Combat
     {
         var createdUnit = Unit.Create(unit.GameId, unit.Name, unit.UnitHash, unit.Type, unit.CreatorGameId, unit.UnitInfo,
             unit.UnitHealths, unit.UnitCasts, unit.UnitPositions, unit.PreAuras, unit.Auras, unit.DamageDones,
-            unit.DamageDoneGenerals, unit.HealDones, unit.HealDoneGenerals,
-            unit.ResourceRecoveries, unit.ResourceRecoveryGenerals);
+            unit.HealDones, unit.ResourceRecoveries);
         _units.Add(createdUnit);
     }
 }

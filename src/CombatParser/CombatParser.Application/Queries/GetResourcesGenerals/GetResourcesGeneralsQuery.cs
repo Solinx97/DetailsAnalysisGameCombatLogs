@@ -4,5 +4,6 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetResourcesGenerals;
 
 public record GetResourcesGeneralsQuery(
-    string UnitId
+    string UnitId,
+    int CombatId
     ) : IRequest<IEnumerable<ResourceRecoveryGeneralDto>>;

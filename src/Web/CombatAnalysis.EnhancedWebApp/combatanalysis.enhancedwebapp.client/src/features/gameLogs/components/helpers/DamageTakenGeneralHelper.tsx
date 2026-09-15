@@ -127,7 +127,7 @@ const DamageTakenGeneralHelper: React.FC<DamageTakenGeneralHelperProps> = ({ gen
         <>
             <li className="player-general-data-details__inherit">
                 <div>
-                    {t("Total")}: {getValueShortName(combatPlayer.damageTaken)}
+                    {t("Total")}: {getValueShortName(combatPlayer.unit.unitInfo.damageTaken)}
                 </div>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
@@ -140,7 +140,7 @@ const DamageTakenGeneralHelper: React.FC<DamageTakenGeneralHelperProps> = ({ gen
                         </li>
                         <li className="amount">
                             <span>{getValueShortName(item.value)}</span>
-                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.damageTaken)}%</span>
+                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.unit.unitInfo.damageTaken)}%</span>
                         </li>
                         {!hideColumns.includes("Average") &&
                             <li>

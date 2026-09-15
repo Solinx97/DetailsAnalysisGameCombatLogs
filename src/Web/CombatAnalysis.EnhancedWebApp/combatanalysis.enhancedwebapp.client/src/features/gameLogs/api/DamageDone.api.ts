@@ -37,8 +37,8 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
         getDamageDoneUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
             query: ({ unitId: combatPlayerId, filter }) => `/DamageDone/getUniqueFilterValues?unitId=${combatPlayerId}&filter=${filter}`,
         }),
-        getDamageDoneGeneralByUnitId: builder.query<DamageDoneGeneralModel[], string>({
-            query: unitId => `/DamageDoneGeneral/getByUnitId/${unitId}`,
+        getDamageDoneGeneralByUnitId: builder.query<DamageDoneGeneralModel[], { unitId: string, combatId: number }>({
+            query: ({ unitId, combatId }) => `/DamageDoneGeneral/getByUnitId/${unitId}?combatId=${combatId}`,
             providesTags: result =>
                 result
                     ? [
@@ -46,16 +46,6 @@ export const DamageDoneApi = GameLogsApi.injectEndpoints({
                         { type: 'DamageDone', id: 'LIST' },
                     ]
                     : [{ type: 'DamageDone', id: 'LIST' }]
-        }),
-        getDamageTakenGeneralByUnitId: builder.query<DamageDoneGeneralModel[], string>({
-            query: unitId => `/DamageDoneGeneral/getByUnitId/${unitId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(damageTaken => ({ type: 'DamageTaken' as const, id: damageTaken.id })),
-                        { type: 'DamageTaken', id: 'LIST' },
-                    ]
-                    : [{ type: 'DamageTaken', id: 'LIST' }]
         }),
     })
 })
@@ -71,5 +61,4 @@ export const {
     useGetGenericChartDamageDoneQuery,
     useGetDamageDoneGeneralByUnitIdQuery,
     useLazyGetDamageDoneGeneralByUnitIdQuery,
-    useLazyGetDamageTakenGeneralByUnitIdQuery,
 } = DamageDoneApi;

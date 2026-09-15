@@ -34,8 +34,8 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
         getResourceRecoveryUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
             query: ({ unitId, filter }) => `/ResourceRecovery/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,
         }),
-        getResourceRecoveryGeneralByUnitId: builder.query<ResourceRecoveryGeneralModel[], string>({
-            query: unitId => `/ResourceRecoveryGeneral/getByUnitId/${unitId}`,
+        getResourceRecoveryGeneralByUnitId: builder.query<ResourceRecoveryGeneralModel[], { unitId: string, combatId: number }>({
+            query: ({ unitId, combatId }) => `/ResourceRecoveryGeneral/getByUnitId/${unitId}?combatId=${combatId}`,
             providesTags: result =>
                 result
                     ? [

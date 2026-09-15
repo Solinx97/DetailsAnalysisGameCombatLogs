@@ -4,6 +4,7 @@ using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Mathematics;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -239,17 +240,27 @@ internal static class ModelBuilderExtension
                 .WithMany(cp => cp.PreAuras)
                 .HasForeignKey(a => a.UnitId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            cpa.HasOne(dd => dd.Target)
+                .WithMany()
+                .HasForeignKey(ddg => ddg.TargetId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
-        modelBuilder.Entity<UnitAura>(cpa =>
+        modelBuilder.Entity<UnitAura>(a =>
         {
-            cpa.Property(p => p.Name)
+            a.Property(x => x.Name)
                 .HasMaxLength(UnitAura.NAME_MAX_LENGTH);
 
-            cpa.HasOne(a => a.Unit)
-                .WithMany(cp => cp.Auras)
-                .HasForeignKey(a => a.UnitId)
+            a.HasOne(x => x.Unit)
+                .WithMany(x => x.Auras)
+                .HasForeignKey(x => x.UnitId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            a.HasOne(dd => dd.Target)
+                .WithMany()
+                .HasForeignKey(ddg => ddg.TargetId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<DamageDone>(dd =>
@@ -268,17 +279,6 @@ internal static class ModelBuilderExtension
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
-        modelBuilder.Entity<DamageDoneGeneral>(ddg =>
-        {
-            ddg.Property(p => p.Spell)
-                .HasMaxLength(DamageDoneGeneral.SPELL_MAX_LENGTH);
-
-            ddg.HasOne(ddg => ddg.Unit)
-                .WithMany(cp => cp.DamageDoneGenerals)
-                .HasForeignKey(ddg => ddg.UnitId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<HealDone>(hd =>
         {
             hd.Property(p => p.Spell)
@@ -295,17 +295,6 @@ internal static class ModelBuilderExtension
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
-        modelBuilder.Entity<HealDoneGeneral>(hdg =>
-        {
-            hdg.Property(p => p.Spell)
-                .HasMaxLength(HealDoneGeneral.SPELL_MAX_LENGTH);
-
-            hdg.HasOne(hdg => hdg.Unit)
-                .WithMany(cp => cp.HealDoneGenerals)
-                .HasForeignKey(ddg => ddg.UnitId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<ResourceRecovery>(rr =>
         {
             rr.Property(p => p.Spell)
@@ -320,17 +309,6 @@ internal static class ModelBuilderExtension
                 .WithMany()
                 .HasForeignKey(ddg => ddg.TargetId)
                 .OnDelete(DeleteBehavior.NoAction);
-        });
-
-        modelBuilder.Entity<ResourceRecoveryGeneral>(rrg =>
-        {
-            rrg.Property(p => p.Spell)
-                .HasMaxLength(ResourceRecoveryGeneral.SPELL_MAX_LENGTH);
-
-            rrg.HasOne(rrg => rrg.Unit)
-                .WithMany(cp => cp.ResourceRecoveryGenerals)
-                .HasForeignKey(ddg => ddg.UnitId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

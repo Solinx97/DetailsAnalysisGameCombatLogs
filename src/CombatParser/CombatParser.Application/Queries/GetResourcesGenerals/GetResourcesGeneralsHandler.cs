@@ -13,8 +13,8 @@ internal class GetResourcesGeneralsHandler(IUnitInfoRepository<ResourceRecoveryG
 
     public async Task<IEnumerable<ResourceRecoveryGeneralDto>> Handle(GetResourcesGeneralsQuery request, CancellationToken cancellationToken)
     {
-        var damageDoneGenerals = await _repository.GetByCombatPlayerIdAsync(request.UnitId, cancellationToken);
-        var map = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(damageDoneGenerals);
+        var resourcesGenerals = await _repository.GetResourcesByUnitIdAsync(request.UnitId, request.CombatId, cancellationToken);
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(resourcesGenerals);
 
         return map;
     }

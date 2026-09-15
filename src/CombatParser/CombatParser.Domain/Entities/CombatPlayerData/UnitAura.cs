@@ -5,8 +5,6 @@ namespace CombatParser.Domain.Entities.CombatPlayerData;
 public class UnitAura : CombatPlayerUnitDataBase
 {
     public const int NAME_MAX_LENGTH = 128;
-    public const int CREATOR_MAX_LENGTH = 128;
-    public const int TARGET_MAX_LENGTH = 128;
 
     private UnitAura() { }
 

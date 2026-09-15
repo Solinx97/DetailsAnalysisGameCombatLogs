@@ -21,11 +21,11 @@ public class DamageDoneGeneralController : ControllerBase
     }
 
     [HttpGet("getByUnitId/{unitId}")]
-    public async Task<IActionResult> GetByUnitId(string unitId)
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getByUnitId/{unitId}");
+            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
             var damageDoneGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
@@ -47,11 +47,11 @@ public class DamageDoneGeneralController : ControllerBase
     }
 
     [HttpGet("getDamageTakenByUnitId/{unitId}")]
-    public async Task<IActionResult> GetDamageTakenByUnitId(string unitId)
+    public async Task<IActionResult> GetDamageTakenByUnitId(string unitId, int combatId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getDamageTakenByUnitId/{unitId}");
+            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getDamageTakenByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
             var damageTakenGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();

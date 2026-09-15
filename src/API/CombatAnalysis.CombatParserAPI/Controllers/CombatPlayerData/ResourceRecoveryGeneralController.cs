@@ -11,9 +11,9 @@ public class ResourceRecoveryGeneralController(IMediator mediator) : ControllerB
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByUnitId/{unitId}")]
-    public async Task<IActionResult> GetByUnitId(string unitId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId, CancellationToken cancellationToken)
     {
-        var resourcesGenerals = await _mediator.Send(new GetResourcesGeneralsQuery(unitId), cancellationToken);
+        var resourcesGenerals = await _mediator.Send(new GetResourcesGeneralsQuery(unitId, combatId), cancellationToken);
 
         return Ok(resourcesGenerals);
     }

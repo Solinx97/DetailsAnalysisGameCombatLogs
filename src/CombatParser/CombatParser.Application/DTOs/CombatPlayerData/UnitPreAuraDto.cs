@@ -1,6 +1,6 @@
 ﻿namespace CombatParser.Application.DTOs.CombatPlayerData;
 
-public class CombatPlayerPreAuraDto
+public class UnitPreAuraDto
 {
     public string Id { get; set; }
 
