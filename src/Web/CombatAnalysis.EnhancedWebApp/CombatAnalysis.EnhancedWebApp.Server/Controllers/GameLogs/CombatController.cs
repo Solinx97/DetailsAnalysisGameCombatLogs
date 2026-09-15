@@ -44,17 +44,15 @@ public class CombatController : ControllerBase
         var spells = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
 
         return Ok(spells);
-
     }
 
     [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
     public async Task<IActionResult> GetHealSpells(int combatLogId)
     {
         var responseMessage = await _httpClient.GetAsync($"Combat/getHealSpells/{combatLogId}");
-        var spells = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+        var spells = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, long>>();
 
         return Ok(spells);
-
     }
 
     [HttpGet("getPotions/{combatLogId:int:min(1)}")]

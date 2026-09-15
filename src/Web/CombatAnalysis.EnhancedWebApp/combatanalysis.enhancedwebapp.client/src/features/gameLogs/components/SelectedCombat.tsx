@@ -3,15 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayersDeathByCombatPlayerIdQuery } from '../api/GameLogs.api';
-import type { CombatPlayerModel } from '../types/CombatPlayerModel';
-import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
-import type { CombatDetailsModel } from '../types/CombatDetailsModel';
-import SelectedCombatChart from './SelectedCombatChart';
-import PersonalTabs from './PersonalTabs';
-import Details from './details/Details';
 import { useGetGenericChartDamageDoneQuery } from '../api/DamageDone.api';
+import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayersDeathByCombatPlayerIdQuery } from '../api/GameLogs.api';
 import { useGetGenericChartHealDoneQuery } from '../api/HealDone.api';
+import type { CombatDetailsModel } from '../types/CombatDetailsModel';
+import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
+import type { CombatPlayerModel } from '../types/CombatPlayerModel';
+import SelectedCombatChart from './charts/SelectedCombatChart';
+import Details from './details/Details';
+import PersonalTabs from './PersonalTabs';
 
 import './SelectedCombat.scss';
 

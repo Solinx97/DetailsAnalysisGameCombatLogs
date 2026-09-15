@@ -1,17 +1,17 @@
 import useNumber from '@/shared/hooks/useNumber';
 import { useEffect, useMemo, useState } from 'react';
-import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import {
-    ResponsiveContainer,
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    Tooltip,
     CartesianGrid,
-    Legend
+    Legend,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
 } from 'recharts';
-import type { ChartModel } from '../types/chart/ChartModel';
+import type { ChartModel } from '../../types/chart/ChartModel';
+import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 
 type QueryHook<TResult, TArg> = (arg: TArg) => { data?: TResult, isLoading: boolean };
 

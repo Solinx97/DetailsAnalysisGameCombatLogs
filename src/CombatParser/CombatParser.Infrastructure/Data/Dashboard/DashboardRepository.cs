@@ -13,38 +13,37 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
 
     public async Task<Domain.Entities.Dashboard.Dashboard[]> GetAsync(int combatLogId, CancellationToken cancellationToken)
     {
-        //var dashboards = await _context.Set<Combat>()
-        //    .AsNoTracking()
-        //    .Where(x => x.CombatLogId == combatLogId)
-        //    .Join(_context.Set<Unit>(),
-        //            x => x.Id,
-        //            u => u.CombatId,
-        //            (x, u) => new
-        //            {
-        //                Combat = x,
-        //                Unit = u
-        //            })
-        //    .Join(_context.Set<UnitInfo>(),
-        //            x => x.Unit.Id,
-        //            u => u.Id,
-        //            (x, u) => new
-        //            {
-        //                u.Id,
-        //                x.Name,
-        //                u.DamageDone,
-        //                u.HealDone,
-        //                Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(EF.Functions, x.Combat.StartDate, x.Combat.FinishDate)
-        //            })
-        //    .GroupBy(x => x.Username)
-        //    .Select(g => new Domain.Entities.Dashboard.Dashboard(
-        //            g.Key,
-        //            Math.Round((double)g.Sum(x => (long)x.DamageDone) / g.Sum(x => x.Duration), 2),
-        //            Math.Round((double)g.Sum(x => (long)x.HealDone) / g.Sum(x => x.Duration), 2),
-        //            0))
-        //    .ToArrayAsync(cancellationToken);
+        var dashboards = await _context.Set<Combat>()
+            .AsNoTracking()
+            .Where(x => x.CombatLogId == combatLogId)
+            .Join(_context.Set<Unit>(),
+                    x => x.Id,
+                    u => u.CombatId,
+                    (x, u) => new
+                    {
+                        Combat = x,
+                        Unit = u
+                    })
+            .Join(_context.Set<UnitInfo>(),
+                    x => x.Unit.Id,
+                    u => u.UnitId,
+                    (x, u) => new
+                    {
+                        u.Id,
+                        x.Unit.Name,
+                        u.DamageDone,
+                        u.HealDone,
+                        Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(EF.Functions, x.Combat.StartDate, x.Combat.FinishDate)
+                    })
+            .GroupBy(x => x.Name)
+            .Select(g => new Domain.Entities.Dashboard.Dashboard(
+                    g.Key,
+                    Math.Round((double)g.Sum(x => (long)x.DamageDone) / g.Sum(x => x.Duration), 2),
+                    Math.Round((double)g.Sum(x => (long)x.HealDone) / g.Sum(x => x.Duration), 2),
+                    0))
+            .ToArrayAsync(cancellationToken);
 
-        //return dashboards;
-        return [];
+        return dashboards;
     }
 
     public async Task<Dictionary<string, int>> GetDamageSpellsAsync(int combatLogId, CancellationToken cancellationToken)
@@ -73,28 +72,30 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
         return spells;
     }
 
-    public async Task<Dictionary<string, int>> GetHealSpellsAsync(int combatLogId, CancellationToken cancellationToken)
+    public async Task<Dictionary<string, long>> GetHealSpellsAsync(int combatLogId, CancellationToken cancellationToken)
     {
         var spells = await _context.Set<Combat>()
             .AsNoTracking()
             .Where(x => x.CombatLogId == combatLogId)
-            .Join(_context.Set<Unit>(),
-                    x => x.Id,
-                    u => u.CombatId,
-                    (x, u) => new
-                    {
-                        u.Id,
-                    })
-            .Join(_context.Set<HealDone>(),
-                    x => x.Id,
-                    u => u.UnitId,
-                    (x, u) => new
-                    {
-                        u.Spell,
-                        u.Value
-                    })
+            .Join(
+                _context.Set<Unit>(),
+                combat => combat.Id,
+                unit => unit.CombatId,
+                (combat, unit) => unit.Id)
+            .Join(
+                _context.Set<HealDone>(),
+                unitId => unitId,
+                heal => heal.UnitId,
+                (unitId, heal) => new
+                {
+                    heal.Spell,
+                    heal.Value
+                })
             .GroupBy(x => x.Spell)
-            .ToDictionaryAsync(x => x.Key, g => g.Sum(x => x.Value), cancellationToken);
+            .ToDictionaryAsync(
+                x => x.Key,
+                x => x.Sum(y => (long)y.Value),
+                cancellationToken);
 
         return spells;
     }

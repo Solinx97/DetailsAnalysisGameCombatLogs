@@ -6,5 +6,5 @@ public interface IDashboardRepository
 
     Task<Dictionary<string, int>> GetDamageSpellsAsync(int combatLogId, CancellationToken cancellationToken);
 
-    Task<Dictionary<string, int>> GetHealSpellsAsync(int combatLogId, CancellationToken cancellationToken);
+    Task<Dictionary<string, long>> GetHealSpellsAsync(int combatLogId, CancellationToken cancellationToken);
 }
