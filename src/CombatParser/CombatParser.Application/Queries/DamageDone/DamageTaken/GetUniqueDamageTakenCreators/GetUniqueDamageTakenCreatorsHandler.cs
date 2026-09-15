@@ -10,8 +10,8 @@ internal class GetUniqueDamageTakenCreatorsHandler(IGeneralRepository<Domain.Ent
 
     public async Task<IEnumerable<string>> Handle(GetUniqueDamageTakenCreatorsQuery request, CancellationToken cancellationToken)
     {
-        var creatorTypes = new int[] { (int)CombatUnitType.EnemyCreature, (int)CombatUnitType.Vehicle };
-        var targets = await _repository.GetCreatorNamesAsync(request.UnitId, cancellationToken, creatorTypes);
+        var creatorTypes = new int[] { (int)CombatUnitType.PlayerCreature, (int)CombatUnitType.Player };
+        var targets = await _repository.GetUniqueCreatorsByTargetIdAsync(request.UnitId, cancellationToken, creatorTypes);
 
         return targets;
     }

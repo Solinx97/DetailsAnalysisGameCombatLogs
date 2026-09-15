@@ -100,12 +100,12 @@ public class HealDoneController : ControllerBase
         }
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"HealDone/getCombatPlayerChart/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"HealDone/getUnitChart/{unitId}");
             response.EnsureSuccessStatusCode();
 
             var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();

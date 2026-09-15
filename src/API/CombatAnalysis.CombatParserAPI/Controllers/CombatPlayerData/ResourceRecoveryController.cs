@@ -48,10 +48,10 @@ public class ResourceRecoveryController(IMediator mediator) : ControllerBase
         return Ok(resourceRecoveries);
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId, CancellationToken cancellationToken)
     {
-        var resourceRecoveries = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
+        var resourceRecoveries = await _mediator.Send(new GetCombatPlayerChartQuery(unitId), cancellationToken);
 
         return Ok(resourceRecoveries);
     }

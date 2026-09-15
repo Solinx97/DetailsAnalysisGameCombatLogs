@@ -18,8 +18,6 @@ public class UnitPreAura : CombatPlayerUnitDataBase
 
     public int Status { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static UnitPreAura Create(int gameId, int status, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));

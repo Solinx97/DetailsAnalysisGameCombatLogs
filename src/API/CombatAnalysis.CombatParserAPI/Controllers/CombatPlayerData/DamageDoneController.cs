@@ -49,10 +49,10 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
         return Ok(damages);
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
+        var damages = await _mediator.Send(new GetCombatPlayerChartQuery(unitId), cancellationToken);
 
         return Ok(damages);
     }

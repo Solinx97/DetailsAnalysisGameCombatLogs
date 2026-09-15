@@ -5,6 +5,7 @@ namespace CombatParser.Application.Queries.DamageDone.DamageTaken.GetDamageTaken
 
 public record GetDamageTakensQuery(
     string UnitId,
+    int CombatId,
     string Target,
     string Creator,
     string Spell,

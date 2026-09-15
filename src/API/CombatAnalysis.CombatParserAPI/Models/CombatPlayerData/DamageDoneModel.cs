@@ -35,5 +35,7 @@ public class DamageDoneModel : CombatUnitBase
 
     public int Mitigated { get; set; }
 
+    public UnitModel? Unit { get; set; }
+
     public string? UnitId { get; set; }
 }

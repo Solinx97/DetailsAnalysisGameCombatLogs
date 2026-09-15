@@ -41,8 +41,6 @@ public class UnitCast : CombatUnitDataBase, ITime, IUnitRef
 
     public bool IsSuccess { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static UnitCast Create(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
          string? targetGameId, bool isImmediatly, bool isSuccess)
     {

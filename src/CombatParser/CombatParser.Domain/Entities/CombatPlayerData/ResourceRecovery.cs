@@ -33,8 +33,6 @@ public class ResourceRecovery : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public Unit Target { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static ResourceRecovery Create(int gameSpellId, string spell, int value, TimeSpan time, int modificationType, string targetGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));

@@ -32,10 +32,11 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll(string unitId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(string unitId, int combatId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
         var damageTakens = await _mediator.Send(new GetDamageTakensQuery(
             unitId,
+            combatId,
             target.Equals(NONE_VALUE) ? string.Empty : target,
             creator.Equals(NONE_VALUE) ? string.Empty : creator,
             spell.Equals(NONE_VALUE) ? string.Empty : spell,
@@ -48,10 +49,10 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
         return Ok(damageTakens);
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId, CancellationToken cancellationToken)
     {
-        var damageTakens = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
+        var damageTakens = await _mediator.Send(new GetCombatPlayerChartQuery(unitId), cancellationToken);
 
         return Ok(damageTakens);
     }

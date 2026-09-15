@@ -55,8 +55,6 @@ public class DamageDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public int Mitigated { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static DamageDone Create(int gameSpellId, string spell, int value, TimeSpan time,
         int modificationType, int damageType, int resisted, int absorbed, 
         int blocked, int realDamage, int overkill, int mitigated, string targetGameId)

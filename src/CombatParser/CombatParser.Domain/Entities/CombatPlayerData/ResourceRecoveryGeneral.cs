@@ -38,8 +38,6 @@ public class ResourceRecoveryGeneral : CombatUnitDataBase
 
     public double AverageValue { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static ResourceRecoveryGeneral Create(int gameSpellId, string spell, int value, double resourcePerSecond, int castNumber,
         int minValue, int maxValue, double averageValue)
     {

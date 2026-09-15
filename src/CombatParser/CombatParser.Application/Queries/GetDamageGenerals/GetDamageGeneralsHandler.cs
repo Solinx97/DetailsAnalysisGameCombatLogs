@@ -13,7 +13,7 @@ internal class GetDamageGeneralsHandler(IUnitInfoRepository<DamageDoneGeneral> r
 
     public async Task<IEnumerable<DamageDoneGeneralDto>> Handle(GetDamageGeneralsQuery request, CancellationToken cancellationToken)
     {
-        var damageDoneGenerals = await _repository.GetDamageByUnitIdAsync(request.UnitId, request.CombatId, false, cancellationToken);
+        var damageDoneGenerals = await _repository.GetDamageByUnitIdAsync(request.UnitId, request.CombatId, cancellationToken);
         var map = _mapper.Map<IEnumerable<DamageDoneGeneralDto>>(damageDoneGenerals);
 
         return map;

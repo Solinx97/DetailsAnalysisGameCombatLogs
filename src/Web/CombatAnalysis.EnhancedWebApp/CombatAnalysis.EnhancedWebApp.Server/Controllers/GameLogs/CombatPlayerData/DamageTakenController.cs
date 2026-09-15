@@ -22,32 +22,6 @@ public class DamageTakenController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatPlayerId")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
-    {
-        try
-        {
-            var response = await _httpClient.GetAsync($"DamageTaken/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
-            response.EnsureSuccessStatusCode();
-
-            var damageTaken = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
-
-            return Ok(damageTaken);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-    }
-
     [HttpGet("count")]
     public async Task<IActionResult> Count(string unitId, string target, string creator, string spell, string from, string to)
     {
@@ -75,11 +49,11 @@ public class DamageTakenController : ControllerBase
     }
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll(string unitId, string target, string creator, string spell, string from, string to, int page, int pageSize)
+    public async Task<IActionResult> GetAll(string unitId, int combatId, string target, string creator, string spell, string from, string to, int page, int pageSize)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageTaken/getAll?unitId={unitId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
+            var response = await _httpClient.GetAsync($"DamageTaken/getAll?unitId={unitId}&combatId={combatId}&target={target}&creator={creator}&spell={spell}&from={from}&to={to}&page={page}&pageSize={pageSize}");
             response.EnsureSuccessStatusCode();
 
             var damageTakens = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
@@ -100,12 +74,12 @@ public class DamageTakenController : ControllerBase
         }
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageTaken/getCombatPlayerChart/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"DamageTaken/getUnitChart/{unitId}");
             response.EnsureSuccessStatusCode();
 
             var damageTakens = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();

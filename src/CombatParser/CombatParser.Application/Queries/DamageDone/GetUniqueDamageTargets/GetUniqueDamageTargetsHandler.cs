@@ -10,8 +10,8 @@ internal class GetUniqueDamageTargetsHandler(IGeneralRepository<Domain.Entities.
 
     public async Task<IEnumerable<string>> Handle(GetUniqueDamageTargetsQuery request, CancellationToken cancellationToken)
     {
-        var targetTypes = new int[] { (int)CombatUnitType.EnemyCreature, (int)CombatUnitType.Vehicle };
-        var targets = await _repository.GetUniqueTargetsAsync(request.UnitId, cancellationToken, targetTypes);
+        var targetTypes = new int[] { (int)CombatUnitType.PlayerCreature, (int)CombatUnitType.Player };
+        var targets = await _repository.GetUniqueTargetsByCreatorIdAsync(request.UnitId, cancellationToken, targetTypes);
 
         return targets;
     }

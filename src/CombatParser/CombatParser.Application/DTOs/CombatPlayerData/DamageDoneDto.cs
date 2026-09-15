@@ -12,7 +12,7 @@ public class DamageDoneDto
 
     public TimeSpan Time { get; set; }
 
-    public UnitDto Creator { get; set; } = new();
+    public UnitDto Unit { get; set; } = new();
 
     public UnitDto Target { get; set; } = new();
 

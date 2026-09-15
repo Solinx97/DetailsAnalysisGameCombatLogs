@@ -41,8 +41,6 @@ public class HealDoneGeneral : CombatUnitDataBase
 
     public double AverageValue { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static HealDoneGeneral Create(int gameSpellId, string spell, int value, double healPerSecond, int critNumber,
         int castNumber, int minValue, int maxValue, double averageValue)
     {

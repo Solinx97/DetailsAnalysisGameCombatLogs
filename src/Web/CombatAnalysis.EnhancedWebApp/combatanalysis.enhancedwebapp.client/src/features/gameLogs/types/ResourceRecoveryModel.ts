@@ -5,7 +5,7 @@ export type ResourceRecoveryModel = {
     spell: string;
     value: number;
     time: string;
-    creator: UnitModel;
+    unit: UnitModel;
     target: UnitModel;
     modificationType: number;
     combatPlayerId: number;

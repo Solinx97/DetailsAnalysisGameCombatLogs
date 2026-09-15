@@ -100,12 +100,12 @@ public class ResourceRecoveryController : ControllerBase
         }
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"ResourceRecovery/getCombatPlayerChart/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"ResourceRecovery/getUnitChart/{unitId}");
             response.EnsureSuccessStatusCode();
 
             var resourceRecoveries = await response.Content.ReadFromJsonAsync<IEnumerable<ChartGenericModel>>();

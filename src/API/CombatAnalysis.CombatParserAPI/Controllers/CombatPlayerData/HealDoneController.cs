@@ -49,10 +49,10 @@ public class HealDoneController(IMediator mediator) : ControllerBase
         return Ok(heals);
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId, CancellationToken cancellationToken)
     {
-        var heals = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
+        var heals = await _mediator.Send(new GetCombatPlayerChartQuery(unitId), cancellationToken);
 
         return Ok(heals);
     }

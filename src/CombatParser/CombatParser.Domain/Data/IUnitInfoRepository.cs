@@ -8,7 +8,9 @@ public interface IUnitInfoRepository<TModel>
 {
     Task<IEnumerable<TModel>> GetByUnitIdAsync(string unitId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<DamageDoneGeneral>> GetDamageByUnitIdAsync(string unitId, int combatId, bool isPlayerTarget, CancellationToken cancellationToken);
+    Task<IEnumerable<DamageDoneGeneral>> GetDamageByUnitIdAsync(string unitId, int combatId, CancellationToken cancellationToken);
+
+    Task<IEnumerable<DamageDoneGeneral>> GetDamageTakenByUnitIdAsync(string unitId, int combatId, CancellationToken cancellationToken);
 
     Task<IEnumerable<HealDoneGeneral>> GetHealByUnitIdAsync(string unitId, int combatId, CancellationToken cancellationToken);
 

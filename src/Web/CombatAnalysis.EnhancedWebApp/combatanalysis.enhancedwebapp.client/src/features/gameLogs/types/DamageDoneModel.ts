@@ -5,7 +5,7 @@ export type DamageDoneModel = {
     spell: string;
     value: number;
     time: string;
-    creator: UnitModel;
+    unit: UnitModel;
     target: UnitModel;
     modificationType: number;
     damageType: number;

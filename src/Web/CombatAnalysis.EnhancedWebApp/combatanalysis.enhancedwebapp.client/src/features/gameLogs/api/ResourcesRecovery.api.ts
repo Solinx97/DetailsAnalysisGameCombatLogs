@@ -28,8 +28,8 @@ export const ResourcesRecoveryApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'ResourceRecoveryGeneral', id: 'LIST' }]
         }),
-        getCombatPlayerChartResourceRecovery: builder.query<ChartModel[], number>({
-            query: combatPlayerId => `/ResourceRecovery/getCombatPlayerChart/${combatPlayerId}`
+        getCombatPlayerChartResourceRecovery: builder.query<ChartModel[], string>({
+            query: unitId => `/ResourceRecovery/getUnitChart/${unitId}`
         }),
         getResourceRecoveryUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
             query: ({ unitId, filter }) => `/ResourceRecovery/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,

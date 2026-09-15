@@ -36,8 +36,6 @@ public class UnitAura : CombatPlayerUnitDataBase
 
     public int Stacks { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static UnitAura Create(int gameAuraId, string name, int auraCreatorType, int auraType,
         TimeSpan startTime, TimeSpan finishTime, int stacks, string targetGameId)
     {

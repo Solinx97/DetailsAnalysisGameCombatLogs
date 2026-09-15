@@ -154,7 +154,7 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ unitId, pageSize,
                                 }
                             </li>
                             <li>
-                                {item.creator.name}
+                                {item.unit.name}
                             </li>
                         </ul>
                     </li>

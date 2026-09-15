@@ -28,8 +28,8 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'HealDone', id: 'LIST' }]
         }),
-        getCombatPlayerChartHealDone: builder.query<ChartModel[], number>({
-            query: combatPlayerId => `/HealDone/getCombatPlayerChart/${combatPlayerId}`
+        getCombatPlayerChartHealDone: builder.query<ChartModel[], string>({
+            query: unitId => `/HealDone/getUnitChart/${unitId}`
         }),
         getGenericChartHealDone: builder.query<Map<string, ChartModel[]>, number>({
             query: combatId => `/HealDone/getGenericChart/${combatId}`

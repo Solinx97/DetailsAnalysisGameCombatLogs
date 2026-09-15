@@ -23,7 +23,7 @@ internal class UnitInfoRepository<TModel>(CombatParserContextOne context) : IUni
         return data;
     }
 
-    public async Task<IEnumerable<DamageDoneGeneral>> GetDamageByUnitIdAsync(string unitId, int combatId, bool isPlayerTarget, CancellationToken cancellationToken)
+    public async Task<IEnumerable<DamageDoneGeneral>> GetDamageByUnitIdAsync(string unitId, int combatId, CancellationToken cancellationToken)
     {
         var duration = await GetDurationAsync(combatId, cancellationToken);
 
@@ -31,13 +31,7 @@ internal class UnitInfoRepository<TModel>(CombatParserContextOne context) : IUni
             .AsNoTracking()
             .Where(x =>
                 x.UnitId == unitId &&
-                x.Unit.CombatId == combatId &&
-                (
-                    isPlayerTarget
-                        ? x.Target.Type == (int)CombatUnitType.Player
-                        : x.Target.Type != (int)CombatUnitType.Player &&
-                          x.Target.Type != (int)CombatUnitType.PlayerCreature
-                ))
+                x.Unit.CombatId == combatId)
              .GroupBy(x => x.GameSpellId)
              .Select(x => new
              {
@@ -68,8 +62,53 @@ internal class UnitInfoRepository<TModel>(CombatParserContextOne context) : IUni
                 x.Count,
                 x.Min,
                 x.Max,
-                x.Average,
-                isPlayerTarget))
+                x.Average))
+            .OrderByDescending(x => x.Value)
+            .ToList();
+
+        return result;
+    }
+
+    public async Task<IEnumerable<DamageDoneGeneral>> GetDamageTakenByUnitIdAsync(string unitId, int combatId, CancellationToken cancellationToken)
+    {
+        var duration = await GetDurationAsync(combatId, cancellationToken);
+
+        var data = await _context.Set<DamageDone>()
+            .AsNoTracking()
+            .Where(x =>
+                x.TargetId == unitId &&
+                x.Unit.CombatId == combatId)
+             .GroupBy(x => x.GameSpellId)
+             .Select(x => new
+             {
+                 GameSpellId = x.Key,
+                 Spell = x.Select(y => y.Spell).First(),
+                 Value = x.Sum(y => y.Value),
+                 CritCount = x.Count(y =>
+                     y.ModificationType == (int)ModificationType.Crit),
+                 ModifiedCount = x.Count(y =>
+                     y.ModificationType != (int)ModificationType.Crit &&
+                     y.ModificationType != (int)ModificationType.Normal &&
+                     y.ModificationType != (int)ModificationType.Absorb),
+                 Count = x.Count(),
+                 Min = x.Min(y => y.Value),
+                 Max = x.Max(y => y.Value),
+                 Average = x.Average(y => y.Value)
+             })
+            .ToListAsync(cancellationToken);
+
+        var result = data
+            .Select(x => DamageDoneGeneral.Create(
+                x.GameSpellId,
+                x.Spell,
+                x.Value,
+                x.Value / duration.TotalSeconds,
+                x.CritCount,
+                x.ModifiedCount,
+                x.Count,
+                x.Min,
+                x.Max,
+                x.Average))
             .OrderByDescending(x => x.Value)
             .ToList();
 

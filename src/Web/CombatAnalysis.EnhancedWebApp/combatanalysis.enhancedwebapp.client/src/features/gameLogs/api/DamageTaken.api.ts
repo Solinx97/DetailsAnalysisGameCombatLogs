@@ -28,14 +28,14 @@ export const DamageTakenApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageTakenGeneral', id: 'LIST' }]
         }),
-        getCombatPlayerChartDamageTaken: builder.query<ChartModel[], number>({
-            query: combatPlayerId => `/DamageTaken/getCombatPlayerChart/${combatPlayerId}`
+        getCombatPlayerChartDamageTaken: builder.query<ChartModel[], string>({
+            query: unitId => `/DamageTaken/getUnitChart/${unitId}`
         }),
         getDamageTakenUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
             query: ({ unitId, filter }) => `/DamageTaken/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,
         }),
         getDamageTakenGeneralByUnitId: builder.query<DamageDoneGeneralModel[], { unitId: string, combatId: number }>({
-            query: ({ unitId, combatId }) => `/DamageDoneGeneral/getByUnitId/${unitId}?combatId=${combatId}`,
+            query: ({ unitId, combatId }) => `/DamageDoneGeneral/getDamageTakenByUnitId/${unitId}?combatId=${combatId}`,
             providesTags: result =>
                 result
                     ? [

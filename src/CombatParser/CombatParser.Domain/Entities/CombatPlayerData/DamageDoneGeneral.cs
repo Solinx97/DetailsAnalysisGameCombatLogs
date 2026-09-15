@@ -9,8 +9,7 @@ public class DamageDoneGeneral : CombatUnitDataBase
     private DamageDoneGeneral() { }
 
     private DamageDoneGeneral(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber, 
-        int missNumber, int castNumber, int minValue, int maxValue, double averageValue,
-        bool isPlayerTarget)
+        int missNumber, int castNumber, int minValue, int maxValue, double averageValue)
     {
         Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
@@ -23,7 +22,6 @@ public class DamageDoneGeneral : CombatUnitDataBase
         MinValue = minValue;
         MaxValue = maxValue;
         AverageValue = averageValue;
-        IsPlayerTarget = isPlayerTarget;
     }
 
     public int GameSpellId { get; private set; }
@@ -46,12 +44,8 @@ public class DamageDoneGeneral : CombatUnitDataBase
 
     public double AverageValue { get; private set; }
 
-    public bool IsPlayerTarget { get; private set; }
-
-    public Unit Unit { get; private set; }
-
     public static DamageDoneGeneral Create(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber,
-        int missNumber, int castNumber, int minValue, int maxValue, double averageValue, bool isPlayerTarget)
+        int missNumber, int castNumber, int minValue, int maxValue, double averageValue)
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
@@ -65,7 +59,6 @@ public class DamageDoneGeneral : CombatUnitDataBase
         ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
 
         return new DamageDoneGeneral(gameSpellId, spell, value, damagePerSecond, critNumber,
-            missNumber, castNumber, minValue, maxValue, averageValue,
-            isPlayerTarget);
+            missNumber, castNumber, minValue, maxValue, averageValue);
     }
 }

@@ -10,8 +10,8 @@ internal class GetUniqueDamageTakenSpellsHandler(IGeneralRepository<Domain.Entit
 
     public async Task<IEnumerable<string>> Handle(GetUniqueDamageTakenSpellsQuery request, CancellationToken cancellationToken)
     {
-        var creatorTypes = new int[] { (int)CombatUnitType.EnemyCreature, (int)CombatUnitType.Vehicle };
-        var spells = await _repository.GetUniqueSpellsAsync(request.UnitId, cancellationToken, null, creatorTypes);
+        var creatorTypes = new int[] { (int)CombatUnitType.PlayerCreature, (int)CombatUnitType.Player };
+        var spells = await _repository.GetUniqueCreatorSpellsByTargetIdAsync(request.UnitId, cancellationToken, creatorTypes);
 
         return spells;
     }

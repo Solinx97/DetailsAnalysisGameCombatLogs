@@ -6,7 +6,7 @@ namespace CombatParser.Domain.Data.Filters;
 public interface IChartRepository<TModel>
     where TModel : class, ICombatUnitRefs, IGeneralEntity
 {
-    Task<IEnumerable<ChartGeneric>> GetCombatPlayerChartAsync(int combatPlayerId, CancellationToken cancellationToken);
+    Task<IEnumerable<ChartGeneric>> GetUnitChartAsync(string unitId, CancellationToken cancellationToken);
 
     Task<Dictionary<string, ChartGeneric[]>> GetChartAsync(int combatId, CancellationToken cancellationToken);
 }

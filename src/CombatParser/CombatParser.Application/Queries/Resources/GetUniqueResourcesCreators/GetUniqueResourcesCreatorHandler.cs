@@ -9,7 +9,7 @@ internal class GetUniqueResourcesCreatorHandler(IGeneralRepository<Domain.Entiti
 
     public async Task<IEnumerable<string>> Handle(GetUniqueResourcesCreatorsQuery request, CancellationToken cancellationToken)
     {
-        var targets = await _repository.GetUniqueTargetsAsync(request.UnitId, cancellationToken);
+        var targets = await _repository.GetUniqueTargetsByCreatorIdAsync(request.UnitId, cancellationToken);
 
         return targets;
     }

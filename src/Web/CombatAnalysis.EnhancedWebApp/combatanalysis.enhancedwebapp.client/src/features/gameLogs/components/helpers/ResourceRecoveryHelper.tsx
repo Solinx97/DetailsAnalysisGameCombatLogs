@@ -91,7 +91,7 @@ const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ unitId,
                                 <div>{getTimeWithoutMs(item.time)}</div>
                             </li>
                             <li>{item.value}</li>
-                            <li>{getUserNameWithoutRealm(item.creator.name)}</li>
+                            <li>{getUserNameWithoutRealm(item.unit.name)}</li>
                         </ul>
                     </li>
                 ))}

@@ -14,11 +14,11 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
     const int INTERVAL = 10;
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<ChartGeneric>> GetCombatPlayerChartAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ChartGeneric>> GetUnitChartAsync(string unitId, CancellationToken cancellationToken)
     {
         var values = await _context.Set<TModel>()
             .AsNoTracking()
-            //.Where(x => x.CombatPlayerId == combatPlayerId)
+            .Where(x => x.UnitId == unitId)
             .Select(x => new
             {
                 x.Time,
@@ -46,7 +46,6 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
             .Where(x => x.CombatId == combatId)
             .SelectMany(
                 x => _context.Set<TModel>(),
-                    //.Where(t => t.CombatPlayerId == x.Id),
                 (player, stat) => new
                 {
                     player.Player.Username,

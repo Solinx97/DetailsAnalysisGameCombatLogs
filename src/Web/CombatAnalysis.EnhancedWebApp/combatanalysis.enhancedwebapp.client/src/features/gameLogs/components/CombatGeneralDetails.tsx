@@ -75,31 +75,31 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
         switch (detailsType) {
             case 0:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("DPS")}
                     useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />
             case 1:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("HPS")}
                     useGetChartQuery={useGetCombatPlayerChartHealDoneQuery}
                 />
             case 2:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("DamageTaken")}
                     useGetChartQuery={useGetCombatPlayerChartDamageTakenQuery}
                 />
             case 3:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("ResourcesRecovery")}
                     useGetChartQuery={useGetCombatPlayerChartResourceRecoveryQuery}
                 />
             default:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("DPS")}
                     useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />

@@ -12,7 +12,7 @@ public class ResourceRecoveryModel
 
     public string Time { get; set; }
 
-    public UnitModel Creator { get; set; } = new();
+    public UnitModel Unit { get; set; } = new();
 
     public UnitModel Target { get; set; } = new();
 

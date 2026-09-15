@@ -37,8 +37,6 @@ public class HealDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 
     public int ModificationType { get; private set; }
 
-    public Unit Unit { get; private set; }
-
     public static HealDone Create(int gameSpellId, string spell, int value, TimeSpan time,
         int overheal, int modificationType, string targetGameId)
     {
