@@ -91,7 +91,7 @@ const SelectedCombatChart: React.FC<DetailsSpecificalCombatChartProps> = ({ comb
         );
     }
 
-    if (isLoading || !combatPlayersData) {
+    if (isLoading || !combatPlayersData || combatPlayersData.size === 0) {
         return (<div>Loading...</div>);
     }
 

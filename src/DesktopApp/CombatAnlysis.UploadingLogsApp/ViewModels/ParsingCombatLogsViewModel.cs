@@ -131,8 +131,10 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     public async Task SelectFiles()
     {
         var files = await _fileDialogService.OpenFilesAsync();
-
-        CombatLogPaths.Clear();
+        if (files.Length > 0)
+        {
+            CombatLogPaths.Clear();
+        }
 
         foreach (var file in files)
         {

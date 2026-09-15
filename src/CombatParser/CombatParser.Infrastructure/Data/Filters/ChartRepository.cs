@@ -44,13 +44,15 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
         var values = await _context.Set<CombatPlayer>()
             .AsNoTracking()
             .Where(x => x.CombatId == combatId)
-            .SelectMany(
-                x => _context.Set<TModel>(),
-                (player, stat) => new
+            .Join(
+                _context.Set<TModel>(),
+                player => player.UnitId,
+                resource => resource.UnitId,
+                (player, resource) => new
                 {
                     player.Player.Username,
-                    stat.Value,
-                    stat.Time
+                    resource.Value,
+                    resource.Time
                 })
             .ToListAsync(cancellationToken);
 
@@ -59,11 +61,11 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
             .ToDictionary(
                 g => g.Key,
                 g => g.GroupBy(x => (int)x.Time.TotalSeconds / INTERVAL)
-                      .Select(bucket => new ChartGeneric(
-                          bucket.Sum(x => x.Value),
-                          TimeSpan.FromSeconds(bucket.Key * INTERVAL)))
-                      .OrderBy(x => x.Time)
-                      .ToArray());
+                    .Select(bucket => new ChartGeneric(
+                        bucket.Sum(x => x.Value),
+                        TimeSpan.FromSeconds(bucket.Key * INTERVAL)))
+                    .OrderBy(x => x.Time)
+                    .ToArray());
 
         return allCharts;
     }
