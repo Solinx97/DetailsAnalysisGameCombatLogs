@@ -40,7 +40,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
     private string? _selectedTarget;
     private string? _selectedSpell;
     private string? _selectedPlayer;
-    private int _selectedPlayerId;
+    private string _selectedPlayerId;
     private long _totalValue;
     private ObservableCollection<string>? _creators = [];
     private ObservableCollection<string>? _targets = [];
@@ -160,7 +160,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         }
     }
 
-    public int SelectedPlayerId
+    public string SelectedUniId
     {
         get { return _selectedPlayerId; }
         set
@@ -257,26 +257,26 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         {
             case "DamageDone":
                 CurrentView = new DamageDoneViewModel();
-                TotalValue = parameter.CombatPlayer.DamageDone;
+                TotalValue = parameter.CombatPlayer.Unit.UnitInfo.DamageDone;
                 break;
             case "HealDone":
                 CurrentView = new HealDoneViewModel();
-                TotalValue = parameter.CombatPlayer.HealDone;
+                TotalValue = parameter.CombatPlayer.Unit.UnitInfo.HealDone;
                 break;
             case "DamageTaken":
                 CurrentView = new DamageTakenViewModel();
-                TotalValue = parameter.CombatPlayer.DamageTaken;
+                TotalValue = parameter.CombatPlayer.Unit.UnitInfo.DamageTaken;
                 break;
             case "ResourceRecovery":
                 CurrentView = new ResourceRecoveryViewModel();
-                TotalValue = parameter.CombatPlayer.ResourcesRecovery;
+                TotalValue = parameter.CombatPlayer.Unit.UnitInfo.ResourcesRecovery;
                 break;
             default:
                 break;
         }
 
         SelectedPlayer = parameter.CombatPlayer.Player.Username;
-        SelectedPlayerId = parameter.CombatPlayer.Id;
+        SelectedUniId = parameter.CombatPlayer.UnitId;
 
         base.Prepare();
     }
@@ -294,22 +294,22 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         switch (_detailsGeneric.APIName)
         {
             case "DamageDone":
-                GetTargets();
+                await GetTargetsAsync();
                 break;
             case "HealDone":
-                GetTargets();
+                await GetTargetsAsync();
                 break;
             case "DamageTaken":
-                GetCreators();
+                await GetCreatorsAsync();
                 break;
             case "ResourceRecovery":
-                GetCreators();
+                await GetCreatorsAsync();
                 break;
             default:
                 break;
         }
 
-        GetSpells();
+        await GetSpells();
 
         LoadingStatus = LoadingStatus.Successful;
 
@@ -355,7 +355,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
 
     public async Task LoadGenericDetailsAsync()
     {
-        var generalInformations = (IEnumerable<IGeneralDetailsEntity>)await _combatParserAPIService.LoadCombatDetailsAsync(_listGenericModelType, _httpClient, _logger, $"{_detailsGeneric.GenericAPIName}/getByCombatPlayerId/{SelectedPlayerId}", _cancelToken.Token);
+        var generalInformations = (IEnumerable<IGeneralDetailsEntity>)await _combatParserAPIService.LoadCombatDetailsAsync(_listGenericModelType, _httpClient, _logger, $"{_detailsGeneric.GenericAPIName}/getByUnitId/{SelectedUniId}?combatId={_detailsGeneric.CombatPlayer.CombatId}", _cancelToken.Token);
         if (generalInformations != null && generalInformations.Any())
         {
             _allGeneralInformations = [.. generalInformations];
@@ -383,7 +383,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
             source = "NONE";
         }
 
-        var detailsInformations = (IEnumerable<IDetailsEntity>)await _combatParserAPIService.LoadCombatDetailsAsync(_listModelType, _httpClient, _logger, $"{_detailsGeneric.APIName}/getAll?combatPlayerId={SelectedPlayerId}&target={target}&creator={creator}&spell={source}&from=00:00:00&to=00:00:00&page={page}&pageSize={pageSize}", _cancelToken.Token);
+        var detailsInformations = (IEnumerable<IDetailsEntity>)await _combatParserAPIService.LoadCombatDetailsAsync(_listModelType, _httpClient, _logger, $"{_detailsGeneric.APIName}/getAll?unitId={SelectedUniId}&target={target}&creator={creator}&spell={source}&from=00:00:00&to=00:00:00&page={page}&pageSize={pageSize}", _cancelToken.Token);
         if (detailsInformations != null && detailsInformations.Any())
         {
             _allDetailsInformations = [.. detailsInformations];
@@ -414,7 +414,7 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
             source = "NONE";
         }
 
-        var count = await _combatParserAPIService.LoadCountAsync($"{_detailsGeneric.APIName}/count?combatPlayerId={SelectedPlayerId}&target={target}&creator={creator}&spell={source}&from=00:00:00&to=00:00:00", _cancelToken.Token);
+        var count = await _combatParserAPIService.LoadCountAsync($"{_detailsGeneric.APIName}/count?unitId={SelectedUniId}&target={target}&creator={creator}&spell={source}&from=00:00:00&to=00:00:00", _cancelToken.Token);
         Count = count;
 
         if (count == 0)
@@ -428,16 +428,12 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         }
     }
 
-    public void GetCreators()
+    public async Task GetCreatorsAsync()
     {
-        var creators = DetailsInformations?.Select(x => x.Creator).Distinct().ToList();
-        if (creators == null)
-        {
-            return;
-        }
-
         var resourceManager = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneric.Resource", Assembly.Load("CombatAnalysis.App"));
         var allSourcesName = resourceManager.GetString(SourcesType.All.ToString());
+
+        var creators = await _combatParserAPIService.LoadFilterItemsAsync($"{_detailsGeneric.APIName}/getUniqueCreators/{SelectedUniId}", _cancelToken.Token);
         if (!string.IsNullOrEmpty(allSourcesName))
         {
             creators.Insert(0, allSourcesName);
@@ -446,16 +442,12 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         Creators = new ObservableCollection<string>(creators);
     }
 
-    public void GetTargets()
+    public async Task GetTargetsAsync()
     {
-        var targets = DetailsInformations?.Select(x => x.Target).Distinct().ToList();
-        if (targets == null)
-        {
-            return;
-        }
-
         var resourceManager = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneric.Resource", Assembly.Load("CombatAnalysis.App"));
         var allSourcesName = resourceManager.GetString(SourcesType.All.ToString());
+
+        var targets = await _combatParserAPIService.LoadFilterItemsAsync($"{_detailsGeneric.APIName}/getUniqueTargets/{SelectedUniId}", _cancelToken.Token);
         if (!string.IsNullOrEmpty(allSourcesName))
         {
             targets.Insert(0, allSourcesName);
@@ -464,16 +456,12 @@ public class DetailsGenericTemplateViewModel : ParentTemplate<DetailsGenericMode
         Targets = new ObservableCollection<string>(targets);
     }
 
-    public void GetSpells()
+    public async Task GetSpells()
     {
-        var spells = DetailsInformations?.Select(x => x.Spell).Distinct().ToList();
-        if (spells == null)
-        {
-            return;
-        }
-
         var resourceManager = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneric.Resource", Assembly.Load("CombatAnalysis.App"));
         var allSourcesName = resourceManager.GetString(SourcesType.All.ToString());
+
+        var spells = await _combatParserAPIService.LoadFilterItemsAsync($"{_detailsGeneric.APIName}/getUniqueSpells/{SelectedUniId}", _cancelToken.Token);
         if (!string.IsNullOrEmpty(allSourcesName))
         {
             spells.Insert(0, allSourcesName);

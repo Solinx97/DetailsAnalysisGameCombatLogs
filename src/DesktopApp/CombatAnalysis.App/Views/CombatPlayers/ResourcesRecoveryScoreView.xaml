@@ -183,7 +183,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <ProgressBar Height="20" Width="400" Margin="20 0" Value="{Binding Path=ResourcesRecovery}" Maximum="{Binding DataContext.BestValue, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                <ProgressBar Height="20" Width="400" Margin="20 0" Value="{Binding Path=Unit.UnitInfo.ResourcesRecovery}" Maximum="{Binding DataContext.BestValue, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                                 <TextBlock Text="{Binding Path=ResourcesRecovery, Converter={StaticResource IntToEnhancedInt}}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>

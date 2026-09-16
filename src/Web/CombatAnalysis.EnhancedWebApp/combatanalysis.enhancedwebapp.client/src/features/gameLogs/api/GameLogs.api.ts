@@ -149,7 +149,7 @@ export const GameLogsApi = createApi({
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }]
         }),
         getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], { combatId: number, combatPlayerId: number }>({
-            query: ({ combatId, combatPlayerId }) => `/CombatPlayerAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
+            query: ({ combatId, combatPlayerId }) => `/UnitAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [

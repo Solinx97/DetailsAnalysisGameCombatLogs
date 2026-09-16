@@ -8,11 +8,11 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.GameLogs.CombatPlayer
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatPlayerAuraController : ControllerBase
+public class UnitAuraController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public CombatPlayerAuraController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
+    public UnitAuraController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
         _httpClient.APIUrl = cluster.Value.CombatParser;
@@ -21,7 +21,7 @@ public class CombatPlayerAuraController : ControllerBase
     [HttpGet("getByCombatId")]
     public async Task<IActionResult> GetByCombatId(int combatId, int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"CombatPlayerAura/getByCombatId?combatId={combatId}&combatPlayerId={combatPlayerId}");
+        var responseMessage = await _httpClient.GetAsync($"UnitAura/getByCombatId?combatId={combatId}&combatPlayerId={combatPlayerId}");
         var combatAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitAuraModel>>();
 
         return Ok(combatAuras);
@@ -30,7 +30,7 @@ public class CombatPlayerAuraController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"CombatPlayerAura/{id}");
+        var responseMessage = await _httpClient.GetAsync($"UnitAura/{id}");
         var combatAura = await responseMessage.Content.ReadFromJsonAsync<UnitAuraModel>();
 
         return Ok(combatAura);

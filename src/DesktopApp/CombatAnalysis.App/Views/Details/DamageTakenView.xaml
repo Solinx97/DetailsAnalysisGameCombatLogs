@@ -187,25 +187,25 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"
+                                <Icon:PackIconMaterial Visibility="{Binding Path=ModificationType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:9}"
                                                    Kind="ShieldAirplane" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Crushing}"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}"
+                                <Icon:PackIconMaterial Visibility="{Binding Path=ModificationType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"
                                                    Kind="StarCheck" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Dodge}"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}"
+                                <Icon:PackIconMaterial Visibility="{Binding Path=ModificationType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}"
                                                    Kind="SwordCross" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Parry}"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:4}"
+                                <Icon:PackIconMaterial Visibility="{Binding Path=ModificationType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:4}"
                                                    Kind="CallMissed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Miss}"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:5}"
+                                <Icon:PackIconMaterial Visibility="{Binding Path=ModificationType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:5}"
                                                    Kind="Resistor" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Resist}"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:6}"
+                                <Icon:PackIconMaterial Visibility="{Binding Path=ModificationType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:6}"
                                                    Kind="CarLightDimmed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Immune}"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:7}"
+                                <Icon:PackIconMaterial Visibility="{Binding Path=ModificationType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:7}"
                                                    Kind="Shield" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Absorption}"/>
                             </StackPanel>
@@ -221,7 +221,7 @@
                 <DataGridTemplateColumn SortMemberPath="Creator" IsReadOnly="True" MinWidth="200">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Creator}" Margin="10" FontSize="12" TextAlignment="Center" />
+                            <TextBlock Text="{Binding Path=Unit.Name}" Margin="10" FontSize="12" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -234,8 +234,7 @@
 
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <StackPanel HorizontalAlignment="Left" Margin="10"
-                                    Visibility="{Binding DataContext.IsShowDamageInfrom, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
+                    <StackPanel HorizontalAlignment="Left" Margin="10">
                         <StackPanel Orientation="Horizontal" MinWidth="100">
                             <StackPanel VerticalAlignment="Center" MinWidth="200">
                                 <StackPanel Orientation="Horizontal" Margin="5">

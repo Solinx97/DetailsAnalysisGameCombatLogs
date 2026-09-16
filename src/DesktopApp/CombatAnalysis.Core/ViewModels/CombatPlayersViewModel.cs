@@ -8,13 +8,13 @@ namespace CombatAnalysis.Core.ViewModels;
 
 public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 {
-    private readonly ICombatParserAPIService _combatparserAPIService;
+    private readonly ICombatParserAPIService _combatParserAPIService;
 
     private int _selectedTabIndex = 1;
 
     public CombatPlayersViewModel(ICombatParserAPIService combatparserAPIService)
     {
-        _combatparserAPIService = combatparserAPIService;
+        _combatParserAPIService = combatparserAPIService;
 
         Basic.Parent = this;
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 2);
@@ -23,7 +23,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         DamageTakenScoreVM = new DamageTakenScoreViewModel();
         HealDoneScoreVM = new HealDoneScoreViewModel();
         ResourcesRecoveryScoreVM = new ResourcesRecoveryScoreViewModel();
-        PlayerInfoVM = new PlayerInfoViewModel();
+        PlayerInfoVM = new PlayerInfoViewModel(combatparserAPIService);
     }
 
     public int SelectedTabIndex
@@ -64,7 +64,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         }
 
         var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
-        var combatPlayers = await _combatparserAPIService.LoadCombatPlayersAsync(Combat.Id, token);
+        var combatPlayers = await _combatParserAPIService.LoadCombatPlayersAsync(Combat.Id, token);
 
         InitCombatPlayersData([.. combatPlayers]);
 
@@ -80,21 +80,21 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
         var updatedCombatPlayers = combatPlayers
             .Select(p => {
-                var damageDonePercentages = (double)p.DamageDone / (double)Combat.DamageDone;
+                var damageDonePercentages = (double)p.Unit.UnitInfo.DamageDone / (double)Combat.DamageDone;
                 p.DamageDonePercentages = double.Round(damageDonePercentages * 100, 2);
 
-                var healDonePercentages = (double)p.HealDone / (double)Combat.HealDone;
+                var healDonePercentages = (double)p.Unit.UnitInfo.HealDone / (double)Combat.HealDone;
                 p.HealDonePercentages = double.Round(healDonePercentages * 100, 2);
 
-                var damageTakenPercentages = (double)p.DamageTaken / (double)Combat.DamageTaken;
+                var damageTakenPercentages = (double)p.Unit.UnitInfo.DamageTaken / (double)Combat.DamageTaken;
                 p.DamageTakenPercentages = double.Round(damageTakenPercentages * 100, 2);
 
-                var resourcesRecoveryPercentages = (double)p.ResourcesRecovery / (double)Combat.ResourcesRecovery;
+                var resourcesRecoveryPercentages = (double)p.Unit.UnitInfo.ResourcesRecovery / (double)Combat.ResourcesRecovery;
                 p.ResourcesRecoveryPercentages = double.Round(resourcesRecoveryPercentages * 100, 2);
 
                 return p;
             })
-            .OrderByDescending(p => p.DamageDone)
+            .OrderByDescending(p => p.Unit.UnitInfo.DamageDone)
             .ToList();
 
         GetCombatAverageInformation(Combat.Duration, updatedCombatPlayers);
@@ -135,10 +135,10 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         {
             foreach (var player in players)
             {
-                player.DamageDonePerSecond = player.DamageDone / duration.TotalSeconds;
-                player.HealDonePerSecond = player.HealDone / duration.TotalSeconds;
-                player.ResourcesRecoveryPerSecond = player.ResourcesRecovery / duration.TotalSeconds;
-                player.DamageTakenPerSecond = player.DamageTaken / duration.TotalSeconds;
+                player.DamageDonePerSecond = player.Unit.UnitInfo.DamageDone / duration.TotalSeconds;
+                player.HealDonePerSecond = player.Unit.UnitInfo.HealDone / duration.TotalSeconds;
+                player.ResourcesRecoveryPerSecond = player.Unit.UnitInfo.ResourcesRecovery / duration.TotalSeconds;
+                player.DamageTakenPerSecond = player.Unit.UnitInfo.DamageTaken / duration.TotalSeconds;
             }
         }
     }

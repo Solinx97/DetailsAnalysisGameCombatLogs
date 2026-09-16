@@ -9,13 +9,13 @@ public class DamageDoneScoreViewModel : BasicCombatPlayerViewModel
         Players = parameter;
         _defaultPlayers = parameter;
 
-        BestValue = Players.Max(p => p.DamageDone);
+        BestValue = Players.Max(p => p.Unit.UnitInfo.DamageDone);
 
-        var value = Players.Average(x => x.DamageDone);
+        var value = Players.Average(x => x.Unit.UnitInfo.DamageDone);
         AverageValue = double.Round(value, 2);
         AverageVPS = Players.Average(x => x.DamageDonePerSecond);
 
-        TotalValue = Players.Sum(x => x.DamageDone);
+        TotalValue = Players.Sum(x => x.Unit.UnitInfo.DamageDone);
         TotalVPS = Players.Sum(x => x.DamageDonePerSecond);
 
         ValueType = 0;
@@ -30,6 +30,6 @@ public class DamageDoneScoreViewModel : BasicCombatPlayerViewModel
             return;
         }
 
-        Players = [.. Players.OrderByDescending(p => p.DamageDone)];
+        Players = [.. Players.OrderByDescending(p => p.Unit.UnitInfo.DamageDone)];
     }
 }

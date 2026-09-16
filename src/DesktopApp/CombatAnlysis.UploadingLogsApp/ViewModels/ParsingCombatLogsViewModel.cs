@@ -6,6 +6,7 @@ using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Models;
 using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using CombatAnalysis.UploadingLogsApp.ViewModels.User;
+using CombatAnalysis.WoW.CombatParser.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -166,11 +167,11 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         CombatLogUploadingFailed = false;
         _appState.AllowLogout = false;
 
-        await CombatLogFileValidateAsync(CombatLogPaths.ToList() ?? []);
+        await ProcessUploadingCombatLogsAsync(CombatLogPaths.ToList() ?? []);
 
         _appState.AllowLogout = true;
 
-        _ = Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith((task) => UploadingStatusShow = false);
+        _ = Task.Delay(TimeSpan.FromSeconds(20)).ContinueWith((task) => UploadingStatusShow = false);
     }
 
     [RelayCommand]
@@ -217,17 +218,33 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         }
     }
 
-    private async Task CombatLogFileValidateAsync(List<string> combatLogPaths)
+    private async Task ProcessUploadingCombatLogsAsync(List<string> combatLogPathes)
     {
-        foreach (var item in combatLogPaths)
+        var tasks = combatLogPathes.Select(async combatLogPath =>
         {
-            FileIsCorrect = await _wow_5_5_4_Parser.FileCheckAsync(item);
-            if (!FileIsCorrect) return;
+            switch (CurrentCombatParserVersion.Version)
+            {
+                case CombatParserVersion.WoWMoPClassic:
+                    return await _wow_5_5_4_Parser.FileCheckAsync(combatLogPath);
+                case CombatParserVersion.WoWMidnight:
+                    return await _wow_12_1_0_Parser.FileCheckAsync(combatLogPath);
+                default:
+                    return false;
+            }
+        });
+
+        var result =  await Task.WhenAll(tasks);
+
+        FileIsCorrect = result.All(x => x);
+        if (result.Any(x => !x))
+        {
+            _ = Task.Delay(TimeSpan.FromSeconds(20)).ContinueWith((task) => FileIsCorrect = true);
+            return;
         }
 
         IsParsing = true;
 
-        var combats = await PrepareCombatDataAsync(combatLogPaths);
+        var combats = await PrepareCombatDataAsync(combatLogPathes);
         if (combats.Count > 0)
         {
             await UploadingCombatLogAsync(combats);

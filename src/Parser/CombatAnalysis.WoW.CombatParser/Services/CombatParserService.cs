@@ -18,11 +18,13 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
     ILogger<CombatParserService> logger, IHttpClientHelper httpHelper)
 {
     protected readonly ICombatParserHelper _combatParserHelper = combatParserHelper;
-    private readonly IFileManager _fileManager = fileManager;
+    protected readonly IFileManager _fileManager = fileManager;
     protected readonly ILogger<CombatParserService> _logger = logger;
     protected readonly IHttpClientHelper _httpHelper = httpHelper;
 
     private readonly List<PlaceInformation> _zones = [];
+
+    protected abstract string LogBuildVersion { get; set; }
 
     public List<Combat> Combats { get; private set; } = [];
 
@@ -30,10 +32,22 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
     {
         using var reader = _fileManager.StreamReader(combatLog);
         var line = await reader.ReadLineAsync();
+        if (line == null)
+        {
+            return false;
+        }
 
-        var fileIsCorrect = !string.IsNullOrEmpty(line) && line.Contains(CombatLogKeyWords.CombatLogVersion);
+        var isCombatLogFile = line.Contains(CombatLogKeyWords.CombatLogVersion);
+        if (!isCombatLogFile)
+        {
+            return false;
+        }
 
-        return fileIsCorrect;
+        var split = line.Split("  ")[1].Split(',');
+        var build = split[5].Split('.');
+        var isReleventVersion = build[0].Equals(LogBuildVersion);
+
+        return isReleventVersion;
     }
 
     public async Task ParseAsync(List<string> combatLogPaths, CancellationToken cancellationToken)

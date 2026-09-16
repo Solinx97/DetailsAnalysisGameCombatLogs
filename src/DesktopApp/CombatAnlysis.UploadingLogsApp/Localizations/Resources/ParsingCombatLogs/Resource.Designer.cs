@@ -89,6 +89,15 @@ namespace CombatAnalysis.UploadingLogsApp.Localizations.Resources.ParsingCombatL
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File incorrect. Please, check log file or selected game version.
+        /// </summary>
+        internal static string FileIncorrect {
+            get {
+                return ResourceManager.GetString("FileIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Private.
         /// </summary>
         internal static string Private {

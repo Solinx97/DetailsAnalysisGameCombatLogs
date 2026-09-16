@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.Core.Enums;
+﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.GameLogs;
 using CombatAnalysis.Core.Models.User;
@@ -154,7 +155,7 @@ public class PublicCombatLogsViewModel : ParentTemplate
     {
         CombatLogLoadingStatus = LoadingStatus.Pending;
 
-        var combatLogs = await _combatParserAPIService.LoadCombatLogsAsync((int)LogType.Public, User?.Id, cancellationToken);
+        var combatLogs = await _combatParserAPIService.LoadCombatLogsAsync((int)LogType.Public, GameVersion.Version, User?.Id, cancellationToken);
         if (combatLogs == null)
         {
             CombatLogLoadingStatus = LoadingStatus.Failed;

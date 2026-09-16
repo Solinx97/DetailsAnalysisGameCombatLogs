@@ -7,7 +7,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers.CombatPlayerData;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatPlayerAuraController(IMediator mediator) : ControllerBase
+public class UnitAuraController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 

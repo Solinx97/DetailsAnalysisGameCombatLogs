@@ -1,16 +1,14 @@
 ﻿namespace CombatAnalysis.Core.Models.GameLogs.CombatPlayerData;
 
-public class CombatPlayerAuraModel
+public class UnitAuraModel
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameAuraId { get; set; }
 
     public string Name { get; set; } = string.Empty;
 
-    public string Creator { get; set; } = string.Empty;
-
-    public string Target { get; set; } = string.Empty;
+    public string TargetGameId { get; set; } = string.Empty;
 
     public int AuraCreatorType { get; set; }
 
@@ -22,5 +20,5 @@ public class CombatPlayerAuraModel
 
     public int Stacks { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; }
 }

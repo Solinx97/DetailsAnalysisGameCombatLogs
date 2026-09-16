@@ -2,6 +2,7 @@
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.GameLogs;
+using CombatAnalysis.Core.Models.GameLogs.CombatPlayerData;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
@@ -37,11 +38,11 @@ internal class CombatParserAPIService : ICombatParserAPIService
         }
     }
 
-    public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync(int logType, string? appUserId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync(int logType, int gameVersion, string? appUserId, CancellationToken cancellationToken)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"CombatLog/getByLogType?logType={logType}&appUserId={appUserId}", cancellationToken);
+            var response = await _httpClient.GetAsync($"CombatLog/getByLogType?logType={logType}&gameVersion={gameVersion}&appUserId={appUserId}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var combatLogs = await response.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
@@ -155,6 +156,56 @@ internal class CombatParserAPIService : ICombatParserAPIService
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
             return 0;
+        }
+    }
+
+    public async Task<CombatPlayerStatsModel?> LoadPlayerStatsAsync(string address, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(address, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var details = await response.Content.ReadFromJsonAsync<CombatPlayerStatsModel>(cancellationToken);
+
+            return details;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return null;
+        }
+    }
+
+    public async Task<List<string>> LoadFilterItemsAsync(string address, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(address, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var details = await response.Content.ReadFromJsonAsync<List<string>>(cancellationToken);
+
+            return details;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return [];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return [];
         }
     }
 }

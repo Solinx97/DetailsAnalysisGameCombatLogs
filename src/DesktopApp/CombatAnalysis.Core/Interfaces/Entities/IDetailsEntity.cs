@@ -1,8 +1,12 @@
-﻿namespace CombatAnalysis.Core.Interfaces.Entities;
+﻿using CombatAnalysis.Core.Models.GameLogs;
+
+namespace CombatAnalysis.Core.Interfaces.Entities;
 
 public interface IDetailsEntity : IGeneralDetailsEntity
 {
-    string Creator { get; set; }
+    UnitModel Unit { get; set; }
 
-    string Target { get; set; }
+    UnitModel Target { get; set; }
+
+    string UnitId { get; set; }
 }

@@ -43,38 +43,38 @@
         <StackPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal" Margin="0 10">
                 <TextBlock Text="Strength: " FontSize="14" />
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Strength}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Strength}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0 10">
                 <TextBlock Text="Agility: " FontSize="14"/>
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Agility}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Agility}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0 10">
                 <TextBlock Text="Intelligence: " FontSize="14"/>
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Intelligence}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Intelligence}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0 10">
                 <TextBlock Text="Stamina: " FontSize="14"/>
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Stamina}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Stamina}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 10">
                 <TextBlock Text="Crit: " FontSize="14"/>
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Crit}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Crit}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 10">
                 <TextBlock Text="Haste: " FontSize="14"/>
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Haste}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Haste}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 10">
                 <TextBlock Text="Hit: " FontSize="14"/>
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Hit}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Hit}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 10">
                 <TextBlock Text="Armor: " FontSize="14"/>
-                <TextBlock Text="{Binding SelectedPlayer.Stats.Armor}" FontSize="14" Opacity="0.5"/>
+                <TextBlock Text="{Binding SelectedPlayerStats.Armor}" FontSize="14" Opacity="0.5"/>
             </StackPanel>
         </StackPanel>
 
@@ -83,7 +83,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
-            <TextBlock Text="{Binding SelectedPlayer.Stats.Talents}" FontSize="14" TextAlignment="Center" />
+            <TextBlock Text="{Binding SelectedPlayerStats.Talents}" FontSize="14" TextAlignment="Center" />
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

@@ -153,4 +153,7 @@
   <data name="ProcessingInProgress" xml:space="preserve">
     <value>Идет обработка</value>
   </data>
+  <data name="FileIncorrect" xml:space="preserve">
+    <value>Файл некорректный. Пожалуйста, проверьте файл или версию игру</value>
+  </data>
 </root>

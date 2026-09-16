@@ -20,6 +20,7 @@
         <Grid.Resources>
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
         
         <Grid.ColumnDefinitions>
@@ -28,11 +29,11 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="0.6*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.RowSpan="2" Grid.ColumnSpan="3" Content="{Binding Basic}">
+        <ContentControl Grid.RowSpan="2" Grid.ColumnSpan="4" Content="{Binding Basic}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type basicViewModel:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
@@ -40,8 +41,28 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <TextBlock Name="combatLogInformTitle" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Text="{loc:Loc Title}" FontSize="18" Foreground="White" Margin="0 30" Style="{StaticResource titleText}"/>
+        <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center"
+                   Text="{loc:Loc Title}" FontSize="18" Foreground="White" Margin="0 40" Style="{StaticResource titleText}"/>
+
+        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 20">
+            <StackPanel Margin="20 0">
+                <Button mvx:Bi.nd="Command UpdateGameVersionCommand, CommandParameter=0" Content="WoW MoP Classic" Width="150" FontSize="14"
+                        Visibility="{Binding Version, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"
+                        Style="{StaticResource showButton}" Foreground="Green" HorizontalAlignment="Center" />
+                <Button mvx:Bi.nd="Command UpdateGameVersionCommand, CommandParameter=0" Content="WoW MoP Classic" Width="150" FontSize="14"
+                        Visibility="{Binding Version, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"
+                        Style="{StaticResource showButton}" HorizontalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Margin="20 0">
+                <Button mvx:Bi.nd="Command UpdateGameVersionCommand, CommandParameter=1" Content="WoW Midnight" Width="150" FontSize="14"
+                        Visibility="{Binding Version, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"
+                        Style="{StaticResource showButton}" Foreground="Green" HorizontalAlignment="Center"/>
+                <Button mvx:Bi.nd="Command UpdateGameVersionCommand, CommandParameter=1" Content="WoW Midnight" Width="150" FontSize="14"
+                        Visibility="{Binding Version, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"
+                        Style="{StaticResource showButton}" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+        </StackPanel>
 
         <TabControl Grid.Row="1" Grid.Column="2" Background="Transparent" BorderThickness="0" SelectedIndex="{Binding SelectedTabIndex}">
             <TabControl.Resources>

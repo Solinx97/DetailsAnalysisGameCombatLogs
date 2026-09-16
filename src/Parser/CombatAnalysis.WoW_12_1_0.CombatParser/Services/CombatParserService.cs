@@ -12,6 +12,8 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
     ILogger<CombatParserService> logger, IHttpClientHelper httpHelper) 
     : WoW.CombatParser.Services.CombatParserService(combatParserHelper, fileManager, logger, httpHelper), Interfaces.ICombatParserService
 {
+    protected override string LogBuildVersion { get; set; } = "12";
+
     protected override CombatDetails GetCombatDetails(ConcurrentDictionary<string, Unit> units)
     {
         return new CombatDetails(_combatParserHelper, _logger, units);

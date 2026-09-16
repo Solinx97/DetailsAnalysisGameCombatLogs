@@ -4,7 +4,7 @@ public class UnitHealthModel
 {
     public string Id { get; set; } = string.Empty;
 
-    public string CreatorGameId { get; set; } = string.Empty;
+    public string OwnerGameId { get; set; } = string.Empty;
 
     public int CurrentHealth { get; set; }
 
@@ -12,7 +12,5 @@ public class UnitHealthModel
 
     public TimeSpan Time { get; set; }
 
-    public bool IsDead { get; set; }
-
-    public int CombatId { get; set; }
+    public string UniId { get; set; }
 }

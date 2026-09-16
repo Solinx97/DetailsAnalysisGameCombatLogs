@@ -11,43 +11,6 @@ namespace CombatParser.Infrastructure.Extensions;
 
 internal static class CombatParserContextOneExtension
 {
-    public static async Task BulkInsertCombatPlayerDataAsync<TModel>(this CombatParserContextOne context, List<CombatPlayer> players, Func<CombatPlayer, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatPlayerRefs
-    {
-        var combatPlayerData = players.SelectMany(p =>
-            selector(p).Select(dd =>
-            {
-                dd.SetCombatPlayerId(p.Id);
-                return dd;
-            }
-        )).ToList();
-
-        if (combatPlayerData.Count > 0)
-        {
-            await context.BulkInsertAsync(combatPlayerData, cancellationToken: cancelationToken);
-        }
-    }
-
-    public static async Task BulkInsertUnitDataAsync<TModel>(this CombatParserContextOne context, List<Unit> units, Dictionary<string, string> unitsByGameId, Func<Unit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatUnitRefs
-    {
-        var combatPlayerData = units.SelectMany(p =>
-            selector(p).Select(result =>
-            {
-                result.SetUnitId(p.Id);
-
-                return result;
-            }
-        ))
-            .Where(dd => dd != null)
-            .ToList();
-
-        if (combatPlayerData.Count > 0)
-        {
-            await context.BulkInsertAsync(combatPlayerData, cancellationToken: cancelationToken);
-        }
-    }
-
     public static async Task BulkInsertUnitTargetDataAsync<TModel>(this CombatParserContextOne context, List<Unit> units, Dictionary<string, string> unitsByGameId, Func<Unit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
         where TModel : class, ICombatUnitRefs, IUnitTargetRefs
     {

@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.Core.Enums;
+﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models.User;
@@ -6,6 +7,7 @@ using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.CombatLogs;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
+using MvvmCross.Commands;
 using MvvmCross.Navigation;
 
 namespace CombatAnalysis.Core.ViewModels;
@@ -14,6 +16,7 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
 {
     private readonly IMemoryCache _memoryCache;
 
+    private int _version;
     private int _selectedTabIndex;
     private bool _isAllowSwitchTabs = true;
     private bool _isAuth;
@@ -22,6 +25,8 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
         ICombatParserAPIService combatParserAPIService)
     {
         _memoryCache = memoryCache;
+
+        UpdateGameVersionCommand = new MvxCommand<int>((version) => Version = version);
 
         PublicCombatLogsVM = new PublicCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
         PrivateCombatLogsVM = new PrivateCombatLogsViewModel(mvvmNavigation, combatParserAPIService, memoryCache);
@@ -36,7 +41,27 @@ public class CombatLogsViewModel : ParentTemplate, IAuthObserver
         IsAuth = false;
     }
 
+    #region Commands
+
+    public IMvxCommand UpdateGameVersionCommand { get; private set; }
+
+
+    #endregion
+
     #region View model properties
+
+    public int Version
+    {
+        get { return _version; }
+        set
+        {
+            SetProperty(ref _version, value);
+
+            GameVersion.Version = value;
+            PublicCombatLogsVM.ReloadCombatLogsCommand.Execute();
+            PrivateCombatLogsVM.ReloadCombatLogsCommand.Execute();
+        }
+    }
 
     public int SelectedTabIndex
     {

@@ -16,5 +16,5 @@ public class UnitPositionModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    public string? CombatUnitId { get; set; }
+    public string? UnitId { get; set; }
 }

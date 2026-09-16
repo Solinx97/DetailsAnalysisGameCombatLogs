@@ -8,12 +8,12 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.GameLogs.CombatPlayer
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class DamageDoneGeneralController : ControllerBase
+public class DamageTakenGeneralController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger<DamageDoneGeneralController> _logger;
 
-    public DamageDoneGeneralController(IOptions<Cluster> cluster, IHttpClientHelper httpClient, ILogger<DamageDoneGeneralController> logger)
+    public DamageTakenGeneralController(IOptions<Cluster> cluster, IHttpClientHelper httpClient, ILogger<DamageDoneGeneralController> logger)
     {
         _httpClient = httpClient;
         _logger = logger;
@@ -25,12 +25,12 @@ public class DamageDoneGeneralController : ControllerBase
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getByUnitId/{unitId}?combatId={combatId}");
+            var response = await _httpClient.GetAsync($"DamageTakenGeneral/getByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
-            var damageDoneGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
+            var damageTakenGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
 
-            return Ok(damageDoneGenerals);
+            return Ok(damageTakenGenerals);
         }
         catch (HttpRequestException ex)
         {
