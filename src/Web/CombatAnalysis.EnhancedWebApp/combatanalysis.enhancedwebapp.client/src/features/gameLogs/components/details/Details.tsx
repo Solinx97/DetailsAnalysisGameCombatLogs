@@ -98,11 +98,12 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             combatId={details.id}
                         />
                         <DetailsItem
-                            avilvl={combatPlayer.averageItemLevel}
+                            avgilvl={combatPlayer.averageItemLevel}
                             playerId={combatPlayer.id}
                             unitInfo={combatPlayer.unit.unitInfo}
                             details={details}
                             getValueShortName={getValueShortName}
+                            deathCount={combatPlayer.deathCount}
                         />
                         {(playerStatsCombatPlayerId === combatPlayer.id && gameVersion !== null) &&
                             <PlayerParams

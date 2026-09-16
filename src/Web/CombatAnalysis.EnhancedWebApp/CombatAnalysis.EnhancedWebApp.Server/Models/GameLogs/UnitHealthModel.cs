@@ -10,6 +10,8 @@ public class UnitHealthModel
 
     public long MaxHealth { get; set; }
 
+    public int Status { get; set; }
+
     public TimeSpan Time { get; set; }
 
     public string CombatUnitId { get; set; } = string.Empty;

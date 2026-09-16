@@ -10,6 +10,7 @@ import CombatGeneralDetails from './CombatGeneralDetails';
 import CombatMoreDetails from './CombatMoreDetails';
 
 import './CombatGeneralDetails.scss';
+import Loading from '@/shared/components/Loading';
 
 const CombatDetails: React.FC = () => {
     const { t } = useTranslation("combatDetails/combatGeneralDetails");
@@ -93,7 +94,7 @@ const CombatDetails: React.FC = () => {
     }
 
     if (details.id <= 0 || !combatPlayer) {
-        return <div>Loading...</div>;
+        return <Loading />;
     }
 
     return (

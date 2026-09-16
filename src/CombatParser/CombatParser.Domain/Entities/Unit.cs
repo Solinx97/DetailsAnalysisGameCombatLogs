@@ -126,7 +126,7 @@ public class Unit : CombatDataBase
 
     private void AddHealth(UnitHealthData health)
     {
-        var createdHealth = UnitHealth.Create(health.OwnerGameId, health.CurrentHealth, health.MaxHealth, health.Time);
+        var createdHealth = UnitHealth.Create(health.OwnerGameId, health.CurrentHealth, health.MaxHealth, health.Status, health.Time);
         _unitHealthes.Add(createdHealth);
     }
 

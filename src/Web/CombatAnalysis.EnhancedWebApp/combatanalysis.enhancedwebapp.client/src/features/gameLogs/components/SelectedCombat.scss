@@ -100,9 +100,11 @@
 
         .legends {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
+            gap: 25px;
             font-size: 0.75em;
             text-align: center;
+            overflow-x: auto;
 
             .legend {
                 cursor: pointer;

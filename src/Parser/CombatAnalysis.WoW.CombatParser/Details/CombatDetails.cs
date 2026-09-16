@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Core;
 using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
 using CombatAnalysis.WoW.CombatParser.Interfaces.Details;
 using Microsoft.Extensions.Logging;
@@ -32,12 +33,15 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
     [
         CombatLogKeyWords.SpellCastSuccess,
     ];
-    protected readonly string[] _health =
+    protected readonly string[] _damageHealth =
     [
         CombatLogKeyWords.SpellDamage,
         CombatLogKeyWords.SpellPeriodicDamage,
         CombatLogKeyWords.SwingDamageLanded,
         CombatLogKeyWords.RangeDamage,
+    ];
+    protected readonly string[] _healHealth =
+    [
         CombatLogKeyWords.SpellHeal,
         CombatLogKeyWords.SpellPeriodicHeal,
     ];
@@ -109,39 +113,61 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         }
     }
 
-    protected abstract void Parse(string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished);
+    protected abstract CombatDetailsManager CreateCombatDetailsManager(DateTimeOffset combatStarted, DateTimeOffset combatFinished);
 
-    protected virtual void CalculateCasts(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
+    private void Parse(string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
-        combatDetailsManager.GetCasts(splitCombatData, Units);
-    }
+        var hasCasts = _casts.Any(combatDataLine.Contains);
+        var hasPositions = _positions.Any(combatDataLine.Contains);
+        var hasDieds = _dieds.Any(combatDataLine.Contains);
+        var hasAuras = _auras.Any(combatDataLine.Contains);
+        var hasDamageHealth = _damageHealth.Any(combatDataLine.Contains);
+        var hasHealHealth = _healHealth.Any(combatDataLine.Contains);
+        var hasDamage = _damageVariations.Any(combatDataLine.Contains);
+        var hasHeal = _healVariations.Any(combatDataLine.Contains);
+        var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
+        var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
-    protected virtual void CalculatePositions(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
-    {
-        combatDetailsManager.GetPosition(splitCombatData, Units);
-    }
+        if (!hasCasts && !hasPositions && !hasDieds && !hasAuras
+            && !hasDamageHealth !&& hasHealHealth && !hasDamage && !hasHeal && !hasAbsorb && !hasResources)
+        {
+            return;
+        }
 
-    protected virtual void CalculateHealthes(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
-    {
-        combatDetailsManager.GetHealth(splitCombatData, Units);
-    }
+        var splitCombatData = _combatParserHelper.SplitCombatData(combatDataLine);
+        var combatDetailsManager = CreateCombatDetailsManager(combatStarted, combatFinished);
 
-    protected virtual void CalculateDamageTaken(ICombatDetailsManager combatDetailsManager, string[] splitCombatData)
-    {
-        //var damageTaken = combatDetailsManager.GetDamageDone(splitCombatData, Units);
-        //if (damageTaken != null && damageTaken.Target.GameId.Contains("Player"))
-        //{
-        //    if (DamageTakens.TryGetValue(damageTaken.Target.GameId, out var collection))
-        //    {
-        //        collection.TryAdd(Guid.NewGuid().ToString(), damageTaken);
-        //    }
-        //    else
-        //    {
-        //        var newDictionary = new ConcurrentDictionary<string, ICombatPlayerResourceRefs>();
-        //        newDictionary.TryAdd(Guid.NewGuid().ToString(), damageTaken);
-        //        DamageTakens.TryAdd(damageTaken.Target.GameId, newDictionary);
-        //    }
-        //}
+        Parallel.Invoke(
+                () =>
+                {
+                    if (hasCasts)
+                    {
+                        combatDetailsManager.GetCasts(splitCombatData, Units);
+                    }
+                },
+                () =>
+                {
+                    if (hasPositions)
+                    {
+                        combatDetailsManager.GetPosition(splitCombatData, Units);
+                    }
+                },
+                () =>
+                {
+                    if (hasDamageHealth)
+                    {
+                        combatDetailsManager.GetHealth(splitCombatData, Units, UnitHealthStatus.Decrease);
+                    }
+                    else if (hasHealHealth)
+                    {
+                        combatDetailsManager.GetHealth(splitCombatData, Units, UnitHealthStatus.Increase);
+                    }
+                },
+                () =>
+                {
+                    CalculateGeneral(combatDataLine, combatDetailsManager, splitCombatData);
+                }
+            );
     }
 
     protected void CalculateGeneral(string combatDataLine, ICombatDetailsManager combatDetailsManager, string[] splitCombatData)

@@ -61,7 +61,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    public void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, bool isDamage = true)
+    public void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, UnitHealthStatus status)
     {
         var ownerId = combatDataLine[6];
         if (!units.TryGetValue(ownerId, out var unit))
@@ -72,7 +72,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         if (long.TryParse(combatDataLine[15], out var currentHealth)
             && long.TryParse(combatDataLine[16], out var maxHealth))
         {
-            AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0]);
+            AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0], UnitHealthStatus.Increase);
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
     {
         if (units.TryGetValue(combatDataLine[6], out var unit) && unit.UnitHealthes.Count > 0)
         {
-            AddUnitHealth(unit, combatDataLine[6], 0, unit.UnitHealthes[^1].MaxHealth, combatDataLine[0]);
+            AddUnitHealth(unit, combatDataLine[6], 0, unit.UnitHealthes[^1].MaxHealth, combatDataLine[0], UnitHealthStatus.Dead);
         }
     }
 
@@ -208,13 +208,14 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    private void AddUnitHealth(Unit unit, string ownerId, long currentHealth, long maxHealth, string time)
+    private void AddUnitHealth(Unit unit, string ownerId, long currentHealth, long maxHealth, string time, UnitHealthStatus status)
     {
         var health = new UnitHealth
         {
             OwnerGameId = ownerId,
             CurrentHealth = currentHealth,
             MaxHealth = maxHealth,
+            Status = (int)status,
             Time = GetTimeFromStart(time)
         };
 

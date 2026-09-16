@@ -8,6 +8,8 @@ public class CombatPlayerModel
 
     public double AverageItemLevel { get; set; }
 
+    public int DeathCount { get; set; }
+
     public CombatPlayerStatsModel Stats { get; set; }
 
     public SpecializationScoreModel? Score { get; set; }
@@ -17,4 +19,6 @@ public class CombatPlayerModel
     public UnitModel? Unit { get; set; }
 
     public string UnitId { get; set; }
+
+    public int CombatId { get; set; }
 }

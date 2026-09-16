@@ -394,6 +394,7 @@ namespace CombatParser.Infrastructure.Migrations
                     OwnerGameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     CurrentHealth = table.Column<long>(type: "bigint", nullable: false),
                     MaxHealth = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
                     UnitId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },

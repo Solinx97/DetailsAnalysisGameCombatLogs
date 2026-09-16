@@ -9,12 +9,13 @@ public class UnitHealth : CombatUnitDataBase, ITime, IUnitRef
 
     private UnitHealth() { }
 
-    private UnitHealth(string creatorGameId, long currentHealth, long maxHealth, TimeSpan time)
+    private UnitHealth(string creatorGameId, long currentHealth, long maxHealth, int status, TimeSpan time)
     {
         Id = Guid.NewGuid().ToString();
         OwnerGameId = creatorGameId;
         CurrentHealth = currentHealth;
         MaxHealth = maxHealth;
+        Status = status;
         Time = time;
     }
 
@@ -24,14 +25,16 @@ public class UnitHealth : CombatUnitDataBase, ITime, IUnitRef
 
     public long MaxHealth { get; private set; }
 
+    public int Status { get; private set; }
+
     public TimeSpan Time { get; private set; }
 
-    public static UnitHealth Create(string ownerGameId, long currentHealth, long maxHealth, TimeSpan time)
+    public static UnitHealth Create(string ownerGameId, long currentHealth, long maxHealth, int status, TimeSpan time)
     {
         ArgumentException.ThrowIfNullOrEmpty(ownerGameId, nameof(ownerGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
 
-        return new UnitHealth(ownerGameId, currentHealth, maxHealth, time);
+        return new UnitHealth(ownerGameId, currentHealth, maxHealth, status, time);
     }
 }

@@ -8,5 +8,7 @@
   "More": "More",
   "Less": "Less",
   "OverallByRaid": "Overall by raid",
-  "OverallEfficiencyPotionsUsed": "Overall efficiency potions used"
+  "OverallEfficiencyPotionsUsed": "Overall efficiency potions used",
+  "OnlyPlayers": "See only players",
+  "AnyUnits": "See any units"
 }

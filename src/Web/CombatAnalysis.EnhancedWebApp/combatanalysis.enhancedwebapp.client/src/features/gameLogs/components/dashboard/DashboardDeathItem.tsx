@@ -1,6 +1,5 @@
 ﻿import DashboardContext from '@/context/DashboardContext';
-import { useContext, useEffect, useState } from 'react';
-import type { DashboardModel } from '../../types/dashboard/DashboardModel';
+import { useContext, useEffect } from 'react';
 
 const DashboardDeathItem = () => {
     const context = useContext(DashboardContext);
@@ -9,29 +8,18 @@ const DashboardDeathItem = () => {
         throw new Error("Child must be inside DashboardContext.Provider");
     }
 
-    const { dashboards, itemCount, setContentSize, compare, setFilter, filter } = context;
-
-    const [filteredDashboardItem, setFilteredDashboardItem] = useState<DashboardModel[]>([]);
+    const { dashboards, setFilter} = context;
 
     useEffect(() => {
         setFilter(2);
-        setContentSize(dashboards.length);
     }, []);
-
-    useEffect(() => {
-        if (!dashboards) {
-            return;
-        }
-
-        setFilteredDashboardItem([...dashboards].sort(compare));
-    }, [filter, dashboards]);
 
     return (
         <ul className="details">
-            {filteredDashboardItem.slice(0, itemCount).map((combat, index) => (
+            {dashboards.map((combat, index) => (
                 <li key={index} className="details-item">
                     <div>{combat.username}</div>
-                    <div>{combat.averageDeaths}</div>
+                    <div>{combat.deathCount}</div>
                 </li>
             ))}
         </ul>

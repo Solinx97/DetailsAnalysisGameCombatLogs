@@ -18322,6 +18322,9 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 

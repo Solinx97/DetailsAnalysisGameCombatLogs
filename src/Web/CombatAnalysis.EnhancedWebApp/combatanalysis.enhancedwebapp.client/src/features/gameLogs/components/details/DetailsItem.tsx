@@ -1,4 +1,4 @@
-﻿import { faBolt, faBookOpenReader, faKhanda, faPlusCircle, faShieldHalved, faUser } from '@fortawesome/free-solid-svg-icons';
+﻿import { faBolt, faBookOpenReader, faKhanda, faPlusCircle, faShieldHalved, faUser, faBookDead } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,16 +8,17 @@ import type { UnitInfoModel } from '../../types/UnitInfoModel';
 import type { SpecializationScoreModel } from '../../types/SpecializationScoreModel';
 
 interface DetailsItemProps {
-    avilvl: number;
+    avgilvl: number;
     playerId: number;
     unitInfo: UnitInfoModel;
     details: CombatDetailsModel;
     getValueShortName(value: number): string;
     score?: SpecializationScoreModel;
+    deathCount: number;
 }
 
-const DetailsItem: React.FC<DetailsItemProps> = ({ avilvl, playerId, unitInfo, details, getValueShortName, score }) => {
-    const { t } = useTranslation("childs/playerInformation");
+const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, details, getValueShortName, score, deathCount }) => {
+    const { t } = useTranslation('childs/playerInformation');
 
     const navigate = useNavigate();
 
@@ -106,12 +107,20 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ avilvl, playerId, unitInfo, d
                 }
             </li>
             <li className="list-group-item">
+                <div>{t("Death")}</div>
+                <FontAwesomeIcon
+                    icon={faBookDead}
+                    className="list-group-item__player-statistic-item"
+                />
+                <div>{deathCount}</div>
+            </li>
+            <li className="list-group-item">
                 <div>{t("AverageItemLevel")}</div>
                 <FontAwesomeIcon
                     icon={faUser}
                     className="list-group-item__player-statistic-item"
                 />
-                <div>{avilvl}</div>
+                <div>{avgilvl}</div>
             </li>
         </ul>
     );

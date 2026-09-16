@@ -4,10 +4,9 @@ import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useGetGenericChartDamageDoneQuery } from '../api/DamageDone.api';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayersDeathByCombatPlayerIdQuery } from '../api/GameLogs.api';
+import { useLazyGetCombatPlayersByCombatIdQuery } from '../api/GameLogs.api';
 import { useGetGenericChartHealDoneQuery } from '../api/HealDone.api';
 import type { CombatDetailsModel } from '../types/CombatDetailsModel';
-import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import SelectedCombatChart from './charts/SelectedCombatChart';
 import Details from './details/Details';
@@ -33,7 +32,6 @@ const SelectedCombat: React.FC = () => {
         duration: 0
     });
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
-    const [playersDeath, setPlayersDeath] = useState<CombatPlayerDeathModel[] | null>(null);
     const [selectedPlayers, setSelectedPlayers] = useState<CombatPlayerModel[]>([]);
     const [showCommonStatistics, setShowCommonStatistics] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
@@ -45,7 +43,6 @@ const SelectedCombat: React.FC = () => {
     };
 
     const [getCombatPlayersByCombatIdAsync] = useLazyGetCombatPlayersByCombatIdQuery();
-    const [getPlayersDeathByCombatIdAsync] = useLazyGetCombatPlayersDeathByCombatPlayerIdQuery();
 
     const filterContent = useRef<HTMLInputElement>(null);
 
@@ -104,15 +101,6 @@ const SelectedCombat: React.FC = () => {
         }
     }
 
-    // const getPlayersDeathAsync = async (players: CombatPlayerModel[]) => {
-    //     const deathsPromises = players.map(player => getPlayersDeathByCombatIdAsync(player.id));
-    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     const deathsResults: any[] = await Promise.all(deathsPromises);
-    //     const deaths: CombatPlayerDeathModel[] = deathsResults.filter(result => result.data && result.data.length > 0).map(result => result.data[0]);
-
-    //     setPlayersDeath(deaths);
-    // }
-
     const cleanSearch = () => {
         if (filterContent.current) {
             filterContent.current.value = "";
@@ -165,11 +153,6 @@ const SelectedCombat: React.FC = () => {
                     <div>{details.name}</div>
                     <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
                 </div>
-                {playersDeath?.length === 0 &&
-                    <div className="no-deaths">
-                        <span>{t("ZeroDeaths")}</span>
-                    </div>
-                }
             </div>
             {showSearch &&
                 <div className="mb-3 search-people">

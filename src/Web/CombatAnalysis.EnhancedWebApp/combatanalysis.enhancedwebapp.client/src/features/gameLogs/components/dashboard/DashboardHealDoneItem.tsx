@@ -1,6 +1,5 @@
 import DashboardContext from '@/context/DashboardContext';
-import { memo, useContext, useEffect, useState } from 'react';
-import type { DashboardModel } from '../../types/dashboard/DashboardModel';
+import { memo, useContext, useEffect } from 'react';
 
 const DashboardHealDoneItem = () => {
     const context = useContext(DashboardContext);
@@ -9,26 +8,15 @@ const DashboardHealDoneItem = () => {
         throw new Error("Child must be inside DashboardContext.Provider");
     }
 
-    const { dashboards, itemCount, setContentSize, formatNumber, compare, setFilter, filter } = context;
-
-    const [filteredDashboardItem, setFilteredDashboardItem] = useState<DashboardModel[]>([]);
+    const { dashboards, formatNumber, setFilter} = context;
 
     useEffect(() => {
         setFilter(1);
-        setContentSize(dashboards.length);
     }, []);
-
-    useEffect(() => {
-        if (!dashboards) {
-            return;
-        }
-
-        setFilteredDashboardItem([...dashboards].sort(compare));
-    }, [filter, dashboards]);
 
     return (
         <ul className="details">
-            {filteredDashboardItem.slice(0, itemCount).map((combat, index) => (
+            {dashboards.filter(x => x.averageHPS > 0).map((combat, index) => (
                 <li key={index} className="details-item">
                     <div>{combat.username}</div>
                     <div>{formatNumber(combat.averageHPS)}</div>

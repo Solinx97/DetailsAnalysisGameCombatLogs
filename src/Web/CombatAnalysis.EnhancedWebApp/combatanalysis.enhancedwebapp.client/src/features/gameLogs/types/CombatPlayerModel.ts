@@ -6,6 +6,7 @@ import type { UnitModel } from './UnitModel';
 export type CombatPlayerModel = {
     id: number;
     averageItemLevel: number;
+    deathCount: number;
     stats?: CombatPlayerStatsModel;
     score?: SpecializationScoreModel;
     player: PlayerModel;

@@ -2,7 +2,8 @@
 
 public record Dashboard(
     string Username,
+    int Type,
     double AverageDPS,
-    double AverageHPS, 
-    double AverageDeaths
+    double AverageHPS,
+    int DeathCount
     );

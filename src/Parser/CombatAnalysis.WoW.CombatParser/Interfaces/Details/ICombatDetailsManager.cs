@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Entities;
+using CombatAnalysis.WoW.CombatParser.Enums;
 using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW.CombatParser.Interfaces.Details;
@@ -9,7 +10,7 @@ public interface ICombatDetailsManager
 
     void GetCasts(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
-    void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, bool isDamage = true);
+    void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, UnitHealthStatus status);
 
     void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 

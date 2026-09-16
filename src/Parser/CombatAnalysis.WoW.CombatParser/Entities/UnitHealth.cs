@@ -8,5 +8,7 @@ public class UnitHealth
 
     public long MaxHealth { get; set; }
 
+    public int Status { get; set; }
+
     public TimeSpan Time { get; set; }
 }

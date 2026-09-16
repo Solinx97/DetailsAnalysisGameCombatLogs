@@ -15,6 +15,8 @@ public class UnitHealthModel
     [Range(0, int.MaxValue)]
     public long MaxHealth { get; set; }
 
+    public int Status { get; set; }
+
     [Required]
     public TimeSpan Time { get; set; }
 

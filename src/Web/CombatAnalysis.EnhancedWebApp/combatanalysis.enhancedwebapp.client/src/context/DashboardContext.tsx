@@ -4,13 +4,15 @@ import React from 'react';
 
 interface DashboardContextValue {
     dashboards: DashboardModel[];
-    setItemCount: Dispatch<SetStateAction<number>>;
-    itemCount: number;
+    dashboardsSize: number;
+    setDashboardsSize: Dispatch<SetStateAction<number>>;
+    contentSize: number;
     setContentSize: Dispatch<SetStateAction<number>>;
     formatNumber: (value: number | string | undefined) => string;
     compare: (boardA: DashboardModel, boardB: DashboardModel) => number;
     setFilter: Dispatch<SetStateAction<number>>;
     filter: number;
+    onlyPlayers: boolean;
 }
 
 const DashboardContext = React.createContext<DashboardContextValue | null>(null);

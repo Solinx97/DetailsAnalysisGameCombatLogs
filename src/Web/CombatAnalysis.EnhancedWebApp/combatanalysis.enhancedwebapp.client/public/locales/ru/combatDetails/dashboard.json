@@ -8,5 +8,7 @@
   "More": "Больше",
   "Less": "Меньше",
   "OverallByRaid": "Итоговая информация по рейду",
-  "OverallEfficiencyPotionsUsed": "Общее значение использованых боевых зелий"
+  "OverallEfficiencyPotionsUsed": "Общее значение использованых боевых зелий",
+  "OnlyPlayers": "Показывать только игроков",
+  "AnyUnits": "Показывать любые цели"
 }

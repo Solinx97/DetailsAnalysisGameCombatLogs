@@ -14,7 +14,7 @@ const DashboardDurationItem: React.FC<DashboardDurationItemProps> = ({ allUnique
         throw new Error("Child must be inside DashboardContext.Provider");
     }
 
-    const { itemCount, setContentSize } = context;
+    const { contentSize, setDashboardsSize } = context;
     
     const { formatSeconds } = useTime();
 
@@ -40,7 +40,7 @@ const DashboardDurationItem: React.FC<DashboardDurationItemProps> = ({ allUnique
         );
 
         setDuratiuons(sortedMap);
-        setContentSize(sortedMap.size);
+        setDashboardsSize(sortedMap.size);
     }, []);
 
     const parseDuration = (duration: string): number => {
@@ -55,7 +55,7 @@ const DashboardDurationItem: React.FC<DashboardDurationItemProps> = ({ allUnique
 
     return (
         <ul className="details">
-            {Array.from(durations.entries()).slice(0, itemCount).map(([key, duration]) => (
+            {Array.from(durations.entries()).slice(0, contentSize).map(([key, duration]) => (
                 <li key={key} className="details-item">
                     <div>{key}</div>
                     <div>{formatSeconds(duration)}</div>

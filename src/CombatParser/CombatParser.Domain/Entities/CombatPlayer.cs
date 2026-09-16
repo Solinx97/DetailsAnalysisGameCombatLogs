@@ -43,9 +43,17 @@ public class CombatPlayer : CombatDataBase
     [NotMapped]
     public string UnitGameId { get; private set; } = string.Empty;
 
+    [NotMapped]
+    public int DeathCount { get; private set; }
+
     public void SetUnitId(string unitId)
     {
         UnitId = unitId;
+    }
+
+    public void SetDeathCount(int deathCount)
+    {
+        DeathCount = deathCount;
     }
 
     public static CombatPlayer Create(double averageItemLevel, string playerId, IPlayerStatsData stats, SpecializationScoreData score, string unitGameId)

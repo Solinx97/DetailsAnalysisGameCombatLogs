@@ -2,6 +2,7 @@
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
+using CombatParser.Domain.Enums;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -18,19 +19,31 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatP
             .Include(c => c.Player)
             .Include(c => c.Score)
             .Include(x => x.Unit)
-            .ThenInclude(x => x.UnitInfo)
-            .AsNoTracking()
+                .ThenInclude(x => x.UnitInfo)
             .Where(c => c.CombatId == combatId)
+            .Select(x => new
+            {
+                Player = x,
+                DeathCount = _context.Set<UnitHealth>()
+                    .Where(h => h.UnitId == x.UnitId)
+                    .Count(h => h.Status == (int)UnitHealthStatus.Dead)
+            })
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-        return combatPlayers;
+        foreach (var x in combatPlayers)
+        {
+            x.Player.SetDeathCount(x.DeathCount);
+        }
+
+        return [.. combatPlayers.Select(x => x.Player)];
     }
 
     public async Task<CombatPlayer?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         var combatPlayer = await _context.Set<CombatPlayer>()
             .Include(x => x.Unit)
-            .ThenInclude(x => x.UnitInfo)
+                .ThenInclude(x => x.UnitInfo)
             .AsNoTracking()
             .Include(c => c.Player)
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);

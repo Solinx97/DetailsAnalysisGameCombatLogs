@@ -13,7 +13,7 @@ const DashboardDamageSpellsItem: React.FC<DashboardDamageSpellsItemProps> = ({ c
         throw new Error("Child must be inside DashboardContext.Provider");
     }
 
-    const { itemCount, setContentSize, formatNumber } = context;
+    const { formatNumber, contentSize, setDashboardsSize } = context;
 
     const [sortedDashboardItem, setFilteredDashboardItem] = useState<Map<string, number>>(new Map());
 
@@ -29,7 +29,7 @@ const DashboardDamageSpellsItem: React.FC<DashboardDamageSpellsItemProps> = ({ c
         );
 
         setFilteredDashboardItem(sorted);
-        setContentSize(sorted.size);
+        setDashboardsSize(sorted.size);
     }, [data]);
 
     if (isLoading || !data) {
@@ -38,7 +38,7 @@ const DashboardDamageSpellsItem: React.FC<DashboardDamageSpellsItemProps> = ({ c
 
     return (
         <ul className="details">
-            {Array.from(sortedDashboardItem.entries()).filter(key => key[1] > 0).slice(0, itemCount).map(([key, value]) => (
+            {Array.from(sortedDashboardItem.entries()).filter(key => key[1] > 0).slice(0, contentSize).map(([key, value]) => (
                 <li key={key} className="details-item">
                     <div>{key}</div>
                     <div>{formatNumber(value)}</div>

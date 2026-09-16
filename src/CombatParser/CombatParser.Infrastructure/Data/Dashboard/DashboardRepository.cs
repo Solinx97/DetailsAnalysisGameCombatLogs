@@ -2,6 +2,7 @@
 using CombatParser.Domain.Data.Dashboard;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Enums;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +22,6 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
                     u => u.CombatId,
                     (x, u) => new
                     {
-                        Combat = x,
                         Unit = u
                     })
             .Join(_context.Set<UnitInfo>(),
@@ -29,18 +29,29 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
                     u => u.UnitId,
                     (x, u) => new
                     {
-                        u.Id,
-                        x.Unit.Name,
-                        u.DamageDone,
-                        u.HealDone,
-                        Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(EF.Functions, x.Combat.StartDate, x.Combat.FinishDate)
+                        x.Unit,
+                        UnitInfo = u,
                     })
+             .Join(_context.Set<UnitHealth>(),
+                    x => x.Unit.Id,
+                    u => u.UnitId,
+                    (x, u) => new
+                    {
+                        x.Unit.Name,
+                        x.Unit.Type,
+                        x.UnitInfo.DamageDone,
+                        x.UnitInfo.HealDone,
+                        Status = u.Status,
+                        Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(EF.Functions, x.Unit.Combat.StartDate, x.Unit.Combat.FinishDate)
+                    })
+            .Where(x => x.DamageDone > 0 || x.HealDone > 0)
             .GroupBy(x => x.Name)
             .Select(g => new Domain.Entities.Dashboard.Dashboard(
                     g.Key,
+                    g.Select(x => x.Type).First(),
                     Math.Round((double)g.Sum(x => (long)x.DamageDone) / g.Sum(x => x.Duration), 2),
                     Math.Round((double)g.Sum(x => (long)x.HealDone) / g.Sum(x => x.Duration), 2),
-                    0))
+                    g.Count(x => x.Status == (int)UnitHealthStatus.Dead)))
             .ToArrayAsync(cancellationToken);
 
         return dashboards;

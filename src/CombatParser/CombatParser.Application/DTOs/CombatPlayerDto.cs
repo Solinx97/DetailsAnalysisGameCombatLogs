@@ -8,6 +8,8 @@ public class CombatPlayerDto
 
     public double AverageItemLevel { get; set; }
 
+    public int DeathCount { get; set; }
+
     public IPlayerStatsDto Stats { get; set; }
 
     public SpecializationScoreDto Score { get; set; }
@@ -21,6 +23,4 @@ public class CombatPlayerDto
     public string UnitId { get; set; }
 
     public int CombatId { get; set; }
-
-    public string UnitGameId { get; set; }
 }
