@@ -10,5 +10,5 @@ public interface IUnitRepository
 
     Task<IEnumerable<UnitCast>> GetCastsAsync(string combatUnitId, CancellationToken cancellationToken);
 
-    Task<IDictionary<string, List<UnitHealth>>> GetHealthesAsync(int combatId, CancellationToken cancellationToken);
+    Task<IDictionary<string, List<UnitHealth>>> GetUnitsHealthAsync(int combatId, CancellationToken cancellationToken);
 }

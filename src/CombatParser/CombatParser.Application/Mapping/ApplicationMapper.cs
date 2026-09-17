@@ -28,6 +28,7 @@ public class ApplicationMapper : Profile
         CreateMap<CombatPlayerDto, CombatPlayer>().ReverseMap();
         CreateMap<UnitPreAuraDto, UnitPreAura>().ReverseMap();
         CreateMap<Domain.DTOs.CombatPlayerPreAuraDto, UnitPreAuraDto>().ReverseMap();
+        CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
         CreateMap<UnitAuraDto, UnitAura>().ReverseMap();
         CreateMap<UnitDto, Unit>().ReverseMap();
         CreateMap<UnitInfoDto, UnitInfo>().ReverseMap();

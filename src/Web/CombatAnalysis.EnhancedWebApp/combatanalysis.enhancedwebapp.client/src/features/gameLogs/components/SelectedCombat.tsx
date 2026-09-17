@@ -21,7 +21,6 @@ const SelectedCombat: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const [gameVersion, setgGameVersion] = useState<number>(-1);
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
         detailsType: 0,
@@ -29,7 +28,8 @@ const SelectedCombat: React.FC = () => {
         name: '',
         number: 0,
         isWin: false,
-        duration: 0
+        duration: 0,
+        gameVersion: -1
     });
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [selectedPlayers, setSelectedPlayers] = useState<CombatPlayerModel[]>([]);
@@ -55,6 +55,7 @@ const SelectedCombat: React.FC = () => {
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
         const duration: number = parseInt(queryParams.get("duration") || "1");
+        const gameVersion: number = parseInt(queryParams.get("gameVersion") || '-1');
 
         setDetails({
             id,
@@ -64,10 +65,8 @@ const SelectedCombat: React.FC = () => {
             number,
             isWin,
             duration,
+            gameVersion
         });
-
-        const version: number = parseInt(queryParams.get("gameVersion") || '-1');
-        setgGameVersion(version);
     }, []);
 
     useEffect(() => {
@@ -136,7 +135,7 @@ const SelectedCombat: React.FC = () => {
     return (
         <div className="selected-combat__container">
             <div className="selected-combat__navigate">
-                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}&gameVersion=${gameVersion}`)}>
+                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}&gameVersion=${details.gameVersion}`)}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />
@@ -206,7 +205,6 @@ const SelectedCombat: React.FC = () => {
                 details={details}
                 combatPlayers={selectedPlayers}
                 getValueShortName={getValueShortName}
-                gameVersion={gameVersion}
                 t={t}
             />
         </div>

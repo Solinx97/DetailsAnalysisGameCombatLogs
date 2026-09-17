@@ -1,5 +1,7 @@
 ﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities;
+using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Enums;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,7 +51,7 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
         return data;
     }
 
-    public async Task<IDictionary<string, List<UnitHealth>>> GetHealthesAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IDictionary<string, List<UnitHealth>>> GetUnitsHealthAsync(int combatId, CancellationToken cancellationToken)
     {
         var data = await _context.Set<Unit>()
                     .Join(_context.Set<UnitHealth>(),

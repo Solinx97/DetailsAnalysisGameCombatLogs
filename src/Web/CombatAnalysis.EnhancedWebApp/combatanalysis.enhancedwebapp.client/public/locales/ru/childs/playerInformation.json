@@ -2,6 +2,10 @@
   "NeedToAddSomething": "Необходимо добавить как минимум 1 элемент.",
   "DPS": "УВС",
   "HPS": "ИВС",
+  "DTPS": "ПУВС",
+  "RPS": "РВС",
+  "Damage": "Урон",
+  "Healing": "Исцеление",
   "DamageTaken": "Полученный урон",
   "ResourcesRecovery": "Восстановлено ресурсов",
   "Resources": "Ресурсы",
@@ -12,7 +16,7 @@
   "OpenHealingAnalyzing": "Открыть анализ исцеления",
   "OpenResourcesRecoveryAnalyzing": "Открыть анализ восстановленных ресурсов",
   "OpenBuffsAnalyzing": "Открыть анализ усилений",
-  "AverageItemLevel": "Средний уровень предмета",
+  "AverageItemLevel": "Ср. уровень предмета",
   "MainStats": "Основные параметры",
   "SecondStats": "Второстепенные параметры",
   "OtherStats": "Другие параметры",
@@ -36,5 +40,6 @@
   "Avoidance": "Избегание",
   "Movement": "Передвижение",
   "Talents": "Таланты",
-  "Death": "Смертей"
+  "Death": "Смертей",
+  "HowDeath": "Как умер?"
 }

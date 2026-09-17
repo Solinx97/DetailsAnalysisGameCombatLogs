@@ -2,6 +2,10 @@
   "NeedToAddSomething": "Need to add at least 1 item.",
   "DPS": "DPS",
   "HPS": "HPS",
+  "DTPS": "DTPS",
+  "RPS": "RPS",
+  "Damage": "Damage",
+  "Healing": "Healing",
   "DamageTaken": "Damage taken",
   "ResourcesRecovery": "Resources recovery",
   "Resources": "Resources",
@@ -12,7 +16,7 @@
   "OpenHealingAnalyzing": "Open healing analyzing",
   "OpenResourcesRecoveryAnalyzing": "Open resources recovery analyzing",
   "OpenBuffsAnalyzing": "Open buffs analyzing",
-  "AverageItemLevel": "Average item level",
+  "AverageItemLevel": "Avg. item level",
   "MainStats": "Main stats",
   "SecondStats": "Second stats",
   "OtherStats": "Other stats",
@@ -36,5 +40,6 @@
   "Avoidance": "Avoidance",
   "Movement": "Movement",
   "Talents": "Talents",
-  "Death": "Death"
+  "Death": "Death",
+  "HowDeath": "How die?"
 }

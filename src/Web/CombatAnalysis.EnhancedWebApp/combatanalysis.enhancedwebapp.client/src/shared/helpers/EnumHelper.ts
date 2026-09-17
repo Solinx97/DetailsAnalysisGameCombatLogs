@@ -35,3 +35,8 @@ export const CombatUnitType = {
     Pet: 4,
 } as const;
 
+export const UnitHealthStatus = {
+    Increase: 0,
+    Decrease: 1,
+    Dead: 2,
+} as const;

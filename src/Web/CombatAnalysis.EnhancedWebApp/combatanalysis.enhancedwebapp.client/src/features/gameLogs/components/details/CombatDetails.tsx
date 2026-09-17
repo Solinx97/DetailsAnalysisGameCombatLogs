@@ -1,25 +1,23 @@
-﻿import { faCalendarDay, faDeleteLeft, faSitemap } from '@fortawesome/free-solid-svg-icons';
+﻿import Loading from '@/shared/components/Loading';
+import { faCalendarDay, faSitemap } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayerByIdQuery } from '../api/GameLogs.api';
-import type { CombatDetailsModel } from '../types/CombatDetailsModel';
-import type { CombatPlayerModel } from '../types/CombatPlayerModel';
-import CombatGeneralDetails from './CombatGeneralDetails';
-import CombatMoreDetails from './CombatMoreDetails';
+import { useLazyGetCombatPlayerByIdQuery } from '../../api/GameLogs.api';
+import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
+import CombatGeneralDetails from '../CombatGeneralDetails';
+import CombatMoreDetails from '../CombatMoreDetails';
+import CombatDetailsHeader from './CombatDetailsHeader';
 
-import './CombatGeneralDetails.scss';
-import Loading from '@/shared/components/Loading';
+import './CombatDetails.scss';
 
 const CombatDetails: React.FC = () => {
-    const { t } = useTranslation("combatDetails/combatGeneralDetails");
+    const { t } = useTranslation('combatDetails/combatGeneralDetails');
 
-    const navigate = useNavigate();
-
+    const [playerId, setPlayerId] = useState<number>(0);
     const [combatPlayer, setCombatPlayer] = useState<CombatPlayerModel | null>(null);
     const [tabIndex, setTabIndex] = useState<number>(0);
-    const [playerId, setPlayerId] = useState<number>(0);
     const [details, setDetails] = useState<CombatDetailsModel>({
         id: 0,
         detailsType: 0,
@@ -27,7 +25,8 @@ const CombatDetails: React.FC = () => {
         name: '',
         number: 0,
         isWin: false,
-        duration: 0
+        duration: 0,
+        gameVersion: -1
     });
 
     const [getCombatPlayerById] = useLazyGetCombatPlayerByIdQuery();
@@ -42,6 +41,7 @@ const CombatDetails: React.FC = () => {
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
         const duration: number = parseInt(queryParams.get("duration") || "1");
+        const gameVersion: number = parseInt(queryParams.get("gameVersion") || "-1");
 
         const playerId: number = parseInt(queryParams.get("playerId") || '0');
         setPlayerId(playerId);
@@ -54,6 +54,7 @@ const CombatDetails: React.FC = () => {
             number,
             isWin,
             duration,
+            gameVersion
         });
     }, []);
 
@@ -94,28 +95,17 @@ const CombatDetails: React.FC = () => {
     }
 
     if (details.id <= 0 || !combatPlayer) {
-        return <Loading />;
+        return (<Loading />);
     }
 
     return (
         <div className="general-details__container">
             <div className="general-details__navigate">
-                <div className="player">
-                    <div className="btn-shadow select-another-player"
-                        onClick={() => navigate(`/selected-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}`)}>
-                        <FontAwesomeIcon
-                            icon={faDeleteLeft}
-                        />
-                        <div>{t("SelectPlayer")}</div>
-                    </div>
-                    <div className="btn-shadow username">
-                        <div>{combatPlayer?.player?.username}</div>
-                    </div>
-                </div>
-                <div className="boss">
-                    <div>{details.name}</div>
-                    <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
-                </div>
+                <CombatDetailsHeader
+                    details={details}
+                    combatPlayer={combatPlayer}
+                    t={t}
+                />
                 <div className="details-type">{getDetailsTypeName()}</div>
                 <ul className="types">
                     <li className="nav-item">

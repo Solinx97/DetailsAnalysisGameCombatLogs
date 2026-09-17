@@ -10,7 +10,7 @@
                 font-size: 0.7em;
             }
         }
-        
+
         .player-params {
             position: absolute;
             display: flex;
@@ -58,10 +58,13 @@
                     }
                 }
 
+                .btn-shadow.death-count {
+                    width: auto;
+                }
+
                 div {
                     display: flex;
                     align-items: center;
-                    width: auto;
                 }
 
                 svg {
@@ -153,6 +156,7 @@
             &__item {
                 display: flex;
                 justify-content: center;
+                align-items: center;
                 margin: 10px 0;
                 gap: 75px;
                 flex-wrap: wrap;
@@ -162,6 +166,18 @@
                     padding: 5px 10px;
                     border-radius: 25px;
                     box-shadow: 2px 2px green;
+                }
+
+                .death-count {
+                    padding: 10px 20px;
+                    border-radius: 100px;
+                    box-shadow: 2px 2px 2px 2px red;
+                    cursor: pointer;
+
+                    &:hover {
+                        transform: scale(1.05);
+                        box-shadow: 2px 2px 2px 2px orange;
+                    }
                 }
             }
         }

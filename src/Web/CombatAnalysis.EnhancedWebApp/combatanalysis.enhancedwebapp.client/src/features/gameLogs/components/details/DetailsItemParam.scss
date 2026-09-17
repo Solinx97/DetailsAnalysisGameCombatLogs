@@ -1,0 +1,32 @@
+.details-item-param {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: default;
+
+    &__value {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px;
+        height: 120px;
+        width: 120px;
+        box-shadow: 2px 2px 2px 2px gray;
+        border-radius: 120px;
+
+        span {
+            height: 5px;
+            width: 100%;
+            background: gray;
+        }
+    }
+}
+
+.details-item-param__value.active:hover {
+    transform: scale(1.05);
+    border: 2px solid green;
+    box-shadow: 2px 2px 2px 2px green;
+    cursor: pointer;
+}

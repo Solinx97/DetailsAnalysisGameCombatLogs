@@ -1,21 +1,21 @@
-﻿import { faArrowsToEye } from '@fortawesome/free-solid-svg-icons';
+﻿import Loading from '@/shared/components/Loading';
+import { faArrowsToEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import Select from 'react-select';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
+import type { UnitInfoModel } from '../../types/UnitInfoModel';
 import CombatPreAuraItem from '../auras/CombatPreAuraItem';
 import DetailsItem from './DetailsItem';
 import PlayerParams from './PlayerParams';
 
 import '../auras/CombatAuras.scss';
-import type { UnitInfoModel } from '../../types/UnitInfoModel';
 
 interface DetailsProps {
     details: CombatDetailsModel;
     combatPlayers: CombatPlayerModel[];
     getValueShortName(value: number): string;
-    gameVersion: number;
     t(key: string): string;
 }
 
@@ -24,7 +24,7 @@ type Option = {
     label: string;
 }
 
-const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, gameVersion, t }) => {
+const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, t }) => {
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
     const [playerStatsCombatPlayerId, setPlayerStatsCombatPlayerId] = useState(0);
 
@@ -66,7 +66,7 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
     }
 
     if (filteredCombatPlayers.length === 0) {
-        return (<div>Loading...</div>);
+        return (<Loading />);
     }
 
     return (
@@ -90,7 +90,7 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                                 <FontAwesomeIcon
                                     icon={faArrowsToEye}
                                 />
-                                <div>{t("Params")}</div>
+                                <div>{t("Stats")}</div>
                             </div>
                         </div>
                         <CombatPreAuraItem
@@ -105,11 +105,11 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             getValueShortName={getValueShortName}
                             deathCount={combatPlayer.deathCount}
                         />
-                        {(playerStatsCombatPlayerId === combatPlayer.id && gameVersion !== null) &&
+                        {playerStatsCombatPlayerId === combatPlayer.id &&
                             <PlayerParams
                                 t={t}
                                 combatPlayerId={combatPlayer.id}
-                                gameVersion={gameVersion}
+                                gameVersion={details.gameVersion}
                                 setPlayerStatsCombatPlayerId={setPlayerStatsCombatPlayerId}
                             />
                         }

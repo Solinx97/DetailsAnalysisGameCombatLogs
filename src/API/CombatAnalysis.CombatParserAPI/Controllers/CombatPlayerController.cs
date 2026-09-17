@@ -4,6 +4,8 @@ using CombatAnalysis.CombatParserAPI.Models.WoWMidnight;
 using CombatAnalysis.CombatParserAPI.Models.WoWMoPClassic;
 using CombatParser.Application.Queries.GetCombatPlayerById;
 using CombatParser.Application.Queries.GetCombatPlayersByCombatId;
+using CombatParser.Application.Queries.GetPlayerDeath;
+using CombatParser.Application.Queries.GetPlayerDeathCount;
 using CombatParser.Application.Queries.GetPlayerStats;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -45,5 +47,21 @@ public class CombatPlayerController(IMediator mediator, IMapper mapper) : Contro
         };
 
         return Ok(result);
+    }
+
+    [HttpGet("getPlayerDeathCount/{unitId}")]
+    public async Task<IActionResult> GetPlayerDeathCount(string unitId, CancellationToken cancellationToken)
+    {
+        var playerDeathCount = await _mediator.Send(new GetPlayerDeathCountQuery(unitId), cancellationToken);
+       
+        return Ok(playerDeathCount);
+    }
+
+    [HttpGet("getPlayerDeath/{unitId}")]
+    public async Task<IActionResult> GetPlayerDeath(string unitId, int skipCount, CancellationToken cancellationToken)
+    {
+        var playerDeath = await _mediator.Send(new GetPlayerDeathQuery(unitId, skipCount), cancellationToken);
+
+        return Ok(playerDeath);
     }
 }

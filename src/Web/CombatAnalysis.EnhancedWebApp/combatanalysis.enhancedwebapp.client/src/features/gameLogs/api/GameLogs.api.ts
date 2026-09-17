@@ -84,16 +84,6 @@ export const GameLogsApi = createApi({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'CombatLog', id }]
         }),
-        getCombatPlayersDeathByCombatPlayerId: builder.query<CombatPlayerDeathModel[], number>({
-            query: combatPlayerId => `/CombatPlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(playerDeath => ({ type: 'CombatPlayerDeath' as const, id: playerDeath.id })),
-                        { type: 'CombatPlayerDeath', id: 'LIST' },
-                    ]
-                    : [{ type: 'CombatPlayerDeath', id: 'LIST' }]
-        }),
         getCombatsByCombatLogId: builder.query<CombatModel[], number>({
             query: combatLogId => `/Combat/getByCombatLogId/${combatLogId}`,
             providesTags: result =>
@@ -103,6 +93,12 @@ export const GameLogsApi = createApi({
                         { type: 'Combat', id: 'LIST' },
                     ]
                     : [{ type: 'Combat', id: 'LIST' }]
+        }),
+        getCombatPlayerDeathCount: builder.query<number, string>({
+            query: unitId => `/CombatPlayer/getPlayerDeathCount/${unitId}`,
+        }),
+        getCombatPlayerDeath: builder.query<CombatPlayerDeathModel[], { unitId: string, skipCount: number }>({
+            query: ({ unitId, skipCount }) => `/CombatPlayer/getPlayerDeath/${unitId}?skipCount=${skipCount}`,
         }),
         getCombatsDashboard: builder.query<DashboardModel[], number>({
             query: combatLogId => `/Combat/getDashboards/${combatLogId}`
@@ -182,8 +178,9 @@ export const {
     useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
     useRemoveCombatLogMutation,
-    useLazyGetCombatPlayersDeathByCombatPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
+    useLazyGetCombatPlayerDeathCountQuery,
+    useLazyGetCombatPlayerDeathQuery,
     useGetCombatsDashboardQuery,
     useGetCombatsDamageSpellsQuery,
     useGetCombatsHealSpellsQuery,

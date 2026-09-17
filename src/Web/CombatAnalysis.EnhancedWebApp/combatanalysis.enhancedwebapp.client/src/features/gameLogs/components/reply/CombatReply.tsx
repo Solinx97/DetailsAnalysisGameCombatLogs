@@ -29,7 +29,8 @@ const CombatReply: React.FC = () => {
         name: '',
         number: 0,
         isWin: false,
-        duration: 0
+        duration: 0,
+        gameVersion: -1,
     });
 
     const [playing, setPlaying] = useState(false);
@@ -54,6 +55,7 @@ const CombatReply: React.FC = () => {
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
         const duration: number = parseInt(queryParams.get("duration") || "1");
+        const gameVersion: number = parseInt(queryParams.get("gameVersion") || "-1");
 
         setDetails({
             id,
@@ -63,6 +65,7 @@ const CombatReply: React.FC = () => {
             number,
             isWin,
             duration,
+            gameVersion,
         });
     }, []);
 

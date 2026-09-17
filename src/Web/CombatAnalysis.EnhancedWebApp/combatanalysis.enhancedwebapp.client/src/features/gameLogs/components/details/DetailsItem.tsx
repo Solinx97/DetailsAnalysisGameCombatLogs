@@ -1,11 +1,11 @@
-﻿import { faBolt, faBookOpenReader, faKhanda, faPlusCircle, faShieldHalved, faUser, faBookDead } from '@fortawesome/free-solid-svg-icons';
+﻿import { faUser, faBookDead, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import type { UnitInfoModel } from '../../types/UnitInfoModel';
-import type { SpecializationScoreModel } from '../../types/SpecializationScoreModel';
+import DetailsItemParam from './DetailsItemParam';
 
 interface DetailsItemProps {
     avgilvl: number;
@@ -13,105 +13,84 @@ interface DetailsItemProps {
     unitInfo: UnitInfoModel;
     details: CombatDetailsModel;
     getValueShortName(value: number): string;
-    score?: SpecializationScoreModel;
     deathCount: number;
 }
 
-const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, details, getValueShortName, score, deathCount }) => {
+const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, details, getValueShortName, deathCount }) => {
     const { t } = useTranslation('childs/playerInformation');
 
     const navigate = useNavigate();
 
     const navigateToDetails = (detailsType: number) => {
-        navigate(`/combat-details?id=${details.id}&playerId=${playerId}&detailsType=${detailsType}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}`);
+        navigate(`/combat-details?id=${details.id}&playerId=${playerId}&detailsType=${detailsType}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}&gameVersion=${details.gameVersion}`);
+    }
+
+    const navigateToDeathetails = () => {
+        navigate(`/player-dieth-details?id=${details.id}&playerId=${playerId}&unitId=${unitInfo.unitId}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}&gameVersion=${details.gameVersion}`);
     }
 
     return (
         <ul className="details__item">
             <li className="list-group-item">
-                <div>{t("DPS")}</div>
-                <FontAwesomeIcon
-                    icon={faKhanda}
-                    className="list-group-item__player-statistic-item"
+                <DetailsItemParam
+                    topName={t("Damage")}
+                    topValue={getValueShortName(Math.round(unitInfo.damageDone))}
+                    bottomName={t("DPS")}
+                    bottomValue={getValueShortName(Math.round(unitInfo.damageDone / details.duration))}
+                    title={t("OpenDamageAnalyzing") || ""}
+                    isActive={unitInfo.damageDone > 0}
+                    navigate={() => navigateToDetails(0)}
                 />
-                <div>{getValueShortName(Math.round(unitInfo.damageDone / details.duration))}</div>
-                {unitInfo.damageDone > 0 &&
-                    <div>
-                        {score !== undefined &&
-                            <div className="player-score">{score.damageScore.toFixed(2)}%</div>
-                        }
-                        <div className="btn-shadow"
-                            onClick={() => navigateToDetails(0)}
-                            title={t("OpenDamageAnalyzing") || ""}>
-                            <FontAwesomeIcon
-                                icon={faBookOpenReader}
-                            />
-                        </div>
-                    </div>
-                }
             </li>
             <li className="list-group-item">
-                <div>{t("HPS")}</div>
-                <FontAwesomeIcon
-                    icon={faPlusCircle}
-                    className="list-group-item__player-statistic-item"
+                <DetailsItemParam
+                    topName={t("Healing")}
+                    topValue={getValueShortName(Math.round(unitInfo.healDone))}
+                    bottomName={t("HPS")}
+                    bottomValue={getValueShortName(Math.round(unitInfo.healDone / details.duration))}
+                    title={t("OpenHealingAnalyzing") || ""}
+                    isActive={unitInfo.healDone > 0}
+                    navigate={() => navigateToDetails(1)}
                 />
-                <div>{getValueShortName(Math.round(unitInfo.healDone / details.duration))}</div>
-                {unitInfo.healDone > 0 &&
-                    <div>
-                        {score !== undefined &&
-                            <div className="player-score">{score.healScore.toFixed(2)}%</div>
-                        }
-                        <div className="btn-shadow"
-                            onClick={() => navigateToDetails(1)}
-                            title={t("OpenHealingAnalyzing") || ""}>
-                            <FontAwesomeIcon
-                                icon={faBookOpenReader}
-                            />
-                        </div>
-                    </div>
-                }
             </li>
             <li className="list-group-item">
-                <div>{t("DamageTaken")}</div>
-                <FontAwesomeIcon
-                    icon={faShieldHalved}
-                    className="list-group-item__player-statistic-item"
+                <DetailsItemParam
+                    topName={t("DamageTaken")}
+                    topValue={getValueShortName(Math.round(unitInfo.damageTaken))}
+                    bottomName={t("DTPS")}
+                    bottomValue={getValueShortName(Math.round(unitInfo.damageTaken / details.duration))}
+                    title={t("OpenDamageTakenAnalyzing") || ""}
+                    isActive={unitInfo.damageTaken > 0}
+                    navigate={() => navigateToDetails(2)}
                 />
-                <div>{getValueShortName(Math.round(unitInfo.damageTaken))}</div>
-                {unitInfo.damageTaken > 0 &&
-                    <div className="btn-shadow"
-                        onClick={() => navigateToDetails(2)}
-                        title={t("OpenDamageTakenAnalyzing") || ""}>
+            </li>
+            <li className="list-group-item">
+                <DetailsItemParam
+                    topName={t("ResourcesRecovery")}
+                    topValue={getValueShortName(Math.round(unitInfo.resourcesRecovery))}
+                    bottomName={t("RPS")}
+                    bottomValue={getValueShortName(Math.round(unitInfo.resourcesRecovery / details.duration))}
+                    title={t("OpenResourcesRecoveryAnalyzing") || ""}
+                    isActive={unitInfo.resourcesRecovery > 0}
+                    navigate={() => navigateToDetails(3)}
+                />
+            </li>
+            <li className="list-group-item">
+                {deathCount > 0
+                    ? <div className="btn-shadow death-count" onClick={navigateToDeathetails}>
                         <FontAwesomeIcon
-                            icon={faBookOpenReader}
+                            icon={faPlus}
                         />
+                        <div>{t("HowDeath")}</div>
                     </div>
-                }
-            </li>
-            <li className="list-group-item">
-                <div>{t("ResourcesRecovery")}</div>
-                <FontAwesomeIcon
-                    icon={faBolt}
-                    className="list-group-item__player-statistic-item"
-                />
-                <div>{getValueShortName(Math.round(unitInfo.resourcesRecovery))}</div>
-                {unitInfo.resourcesRecovery > 0 &&
-                    <div className="btn-shadow"
-                        onClick={() => navigateToDetails(3)}
-                        title={t("OpenResourcesRecoveryAnalyzing") || ""}>
+                    : <>
+                        <div>{t("Death")}</div>
                         <FontAwesomeIcon
-                            icon={faBookOpenReader}
+                            icon={faBookDead}
+                            className="list-group-item__player-statistic-item"
                         />
-                    </div>
+                    </>
                 }
-            </li>
-            <li className="list-group-item">
-                <div>{t("Death")}</div>
-                <FontAwesomeIcon
-                    icon={faBookDead}
-                    className="list-group-item__player-statistic-item"
-                />
                 <div>{deathCount}</div>
             </li>
             <li className="list-group-item">

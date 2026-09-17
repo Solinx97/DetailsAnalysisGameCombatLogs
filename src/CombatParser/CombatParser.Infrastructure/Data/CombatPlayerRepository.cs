@@ -1,5 +1,6 @@
 ﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities;
+using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Domain.Enums;
@@ -69,5 +70,99 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatP
 
             _ => throw new ArgumentOutOfRangeException(nameof(gameVersion))
         };
+    }
+
+    public async Task<int> GetPlayerDeathCountAsync(string unitId, CancellationToken cancellationToken)
+    {
+        var countDeath = await _context.Set<UnitHealth>()
+            .Where(x =>
+                x.UnitId == unitId &&
+                x.Status == (int)UnitHealthStatus.Dead)
+            .CountAsync(cancellationToken);
+
+        return countDeath;
+    }
+
+    public async Task<List<CombatPlayerDeath>> GetPlayerDeathAsync(string unitId, int skipCount, CancellationToken cancellationToken)
+    {
+        var whenDied = await _context.Set<UnitHealth>()
+            .Where(x =>
+                x.UnitId == unitId &&
+                x.Status == (int)UnitHealthStatus.Dead)
+            .OrderBy(x => x.Time)
+            .Select(x => (TimeSpan?)x.Time)
+            .Skip(skipCount)
+            .Take(1)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (!whenDied.HasValue)
+        {
+            return [];
+        }
+
+        var whenDiedValue = whenDied.Value;
+        var from = whenDiedValue - TimeSpan.FromSeconds(10);
+
+        var damage = await _context.Set<DamageDone>()
+            .Where(x =>
+                x.TargetId == unitId &&
+                x.Time >= from &&
+                x.Time <= whenDiedValue)
+            .Select(x => new
+            {
+                Damage = x,
+                Health = _context.Set<UnitHealth>()
+                    .Where(h =>
+                        h.UnitId == x.TargetId &&
+                        h.Time <= x.Time)
+                    .OrderByDescending(h => h.Time)
+                    .FirstOrDefault()
+            })
+            .AsNoTracking()
+            .Select(x => new CombatPlayerDeath(
+                x.Damage.Time,
+                x.Damage.Unit.Name,
+                x.Damage.Spell,
+                x.Damage.Value,
+                x.Health.CurrentHealth,
+                x.Health.MaxHealth,
+                x.Health.Status,
+                x.Damage.UnitId))
+            .ToListAsync(cancellationToken);
+
+        var heal = await _context.Set<HealDone>()
+            .Where(x =>
+                x.TargetId == unitId &&
+                x.Time >= from &&
+                x.Time <= whenDiedValue)
+            .Select(x => new
+            {
+                Heal = x,
+                Health = _context.Set<UnitHealth>()
+                    .Where(h =>
+                        h.UnitId == x.TargetId &&
+                        h.Time <= x.Time)
+                    .OrderByDescending(h => h.Time)
+                    .FirstOrDefault()
+            })
+            .AsNoTracking()
+            .Select(x => new CombatPlayerDeath(
+                x.Heal.Time,
+                x.Heal.Unit.Name,
+                x.Heal.Spell,
+                x.Heal.Value,
+                x.Health.CurrentHealth,
+                x.Health.MaxHealth,
+                x.Health.Status,
+                x.Heal.UnitId))
+            .ToListAsync(cancellationToken);
+
+        var data = damage
+            .Concat(heal)
+            .OrderBy(x => x.Time)
+            .Reverse()
+            .ToList();
+
+        return data;
     }
 }

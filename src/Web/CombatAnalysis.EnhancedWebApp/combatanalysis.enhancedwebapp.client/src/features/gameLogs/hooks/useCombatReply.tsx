@@ -93,7 +93,7 @@ const useCombatReply = (
             } catch (e) {
                 console.error(e);
             }
-        };
+        }
 
         loadData();
     }, [combatId]);
