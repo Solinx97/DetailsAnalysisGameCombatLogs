@@ -299,20 +299,21 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 
     private async Task UploadingCombatLogAsync(List<CombatModel> combats)
     {
-        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combats, LogType, CancellationToken.None);
-        if (createdCombatLog.AppUserId == null)
+        try
+        {
+            var createdCombatLogId = await _combatParserAPIService.SaveCombatLogAsync(combats, LogType, CancellationToken.None);
+
+            UploadingStatusShow = true;
+
+            await SaveCombatsAsync(createdCombatLogId, combats);
+        }
+        catch (Exception)
         {
             CombatLogUploadingFailed = true;
-
-            return;
         }
-
-        UploadingStatusShow = true;
-
-        await SaveCombatsAsync(createdCombatLog, combats);
     }
 
-    private async Task SaveCombatsAsync(CombatLogModel combatLog, List<CombatModel> combats)
+    private async Task SaveCombatsAsync(int combatLogId, List<CombatModel> combats)
     {
         try
         {
@@ -322,7 +323,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
             CurrentCombatNumber = 0;
             CombatsNumber = combats.Count;
 
-            await _combatParserAPIService.SaveAsync(combats, combatLog, CombatUploaded, RequestCancelationToken);
+            await _combatParserAPIService.SaveAsync(combats, combatLogId, CombatUploaded, RequestCancelationToken);
 
             ResponseStatus = LoadingStatus.Successful;
             UploadingInProgress = false;

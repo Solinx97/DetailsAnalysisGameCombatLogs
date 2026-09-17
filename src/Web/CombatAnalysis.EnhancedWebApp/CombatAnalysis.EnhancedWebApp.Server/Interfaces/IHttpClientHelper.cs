@@ -8,9 +8,9 @@ public interface IHttpClientHelper
 
     void AddAuthorizationHeader(string scheme, string parameter);
 
-    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent? content);
 
-    Task<HttpResponseMessage> PostAsync(string requestUri, StringContent content);
+    Task<HttpResponseMessage> PostAsync(string requestUri, StringContent? content);
 
     Task<HttpResponseMessage> GetAsync(string requestAddress);
 

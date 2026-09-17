@@ -24,6 +24,7 @@ public class ApplicationMapper : Profile
         CreateMap<BossMapDto, BossMap>().ReverseMap();
         CreateMap<CombatAbilityDto, CombatAbility>().ReverseMap();
         CreateMap<CombatLogDto, CombatLog>().ReverseMap();
+        CreateMap<CombatLogStatusDto, CombatLogStatus>().ReverseMap();
         CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayer>().ReverseMap();
         CreateMap<UnitPreAuraDto, UnitPreAura>().ReverseMap();

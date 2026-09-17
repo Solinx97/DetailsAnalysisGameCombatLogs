@@ -1,37 +1,36 @@
+import { CombatLogStatus } from '@/shared/helpers/EnumHelper';
 import { faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRemoveCombatLogMutation } from '../api/GameLogs.api';
-import { useState } from 'react';
+import { useAddCombatLogStatusMutation, useRemoveCombatLogMutation } from '../api/GameLogs.api';
+import type { CombatLogModel } from '../types/CombatLogModel';
 
-const CombatLogItemActions: React.FC<{ t: (key: string) => string, combatLogId: number }> = ({ t, combatLogId }) => {
+const CombatLogItemActions: React.FC<{ t: (key: string) => string, combatLog: CombatLogModel }> = ({ t, combatLog }) => {
+    const [addCombatLogStatus] = useAddCombatLogStatusMutation();
     const [removeLog] = useRemoveCombatLogMutation();
 
-    const [removing, setRemoving] = useState(false);
-
     const removeHandle = async () => {
-        if (removing) {
+        if (combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleting"]) {
             return;
         }
 
         try {
-            setRemoving(true);
-            await removeLog(combatLogId).unwrap();
+            await addCombatLogStatus({ combatLogId: combatLog.id, status: CombatLogStatus["Deleting"] }).unwrap();
+            await removeLog(combatLog.id).unwrap();
         } catch (error) {
             console.error("Failed to remove combat log:", error);
-            setRemoving(false);
         }
     }
 
     return (
-        <div className={`logs-actions ${removing ? 'in-progress' : ''}`}>
+        <div className={`logs-actions ${combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleting"] ? 'in-progress' : ''}`}>
             <div className="btn-shadow" onClick={removeHandle}>
                 <FontAwesomeIcon
                     icon={faRemove}
                 />
-                <div>{t("Remove")}</div>
+                <div>{t("Delete")}</div>
             </div>
-            {removing &&
-                <div className="removing">{t("Removing")}</div>
+            {combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleting"] &&
+                <div className="removing">{t("Deleting")}</div>
             }
         </div>
     );

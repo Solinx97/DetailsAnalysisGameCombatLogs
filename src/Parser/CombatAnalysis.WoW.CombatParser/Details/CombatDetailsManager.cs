@@ -61,26 +61,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    public void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, UnitHealthStatus status)
-    {
-        var ownerId = combatDataLine[6];
-        if (!units.TryGetValue(ownerId, out var unit))
-        {
-            return;
-        }
-
-        if (combatDataLine[1].Equals(CombatLogKeyWords.SwingDamageLanded) 
-            && long.TryParse(combatDataLine[12], out var currentHealth)
-            && long.TryParse(combatDataLine[13], out var maxHealth))
-        {
-            AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0], status);
-        }
-        else if (long.TryParse(combatDataLine[15], out currentHealth)
-            && long.TryParse(combatDataLine[16], out maxHealth))
-        {
-            AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0], status);
-        }
-    }
+    public abstract void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, UnitHealthStatus status);
 
     public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
@@ -214,7 +195,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
     }
 
-    private void AddUnitHealth(Unit unit, string ownerId, long currentHealth, long maxHealth, string time, UnitHealthStatus status)
+    protected void AddUnitHealth(Unit unit, string ownerId, long currentHealth, long maxHealth, string time, UnitHealthStatus status)
     {
         var health = new UnitHealth
         {

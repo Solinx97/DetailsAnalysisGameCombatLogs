@@ -10,7 +10,7 @@ internal class DeleteCombatLogHandler(ICombatLogRepository repository, IUnitOfWo
 
     public async Task Handle(DeleteCombatLogCommand request, CancellationToken cancellationToken)
     {
-        await _repository.DeleteAsync(request.Id, cancellationToken);
+        await _repository.DeleteAsync(request.Id);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

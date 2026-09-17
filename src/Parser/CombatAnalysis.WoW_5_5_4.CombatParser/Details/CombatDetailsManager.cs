@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WoW.CombatParser.Entities;
+﻿using CombatAnalysis.WoW.CombatParser.Core;
+using CombatAnalysis.WoW.CombatParser.Entities;
 using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
 using CombatAnalysis.WoW.CombatParser.Enums;
 using CombatAnalysis.WoW.CombatParser.Interfaces;
@@ -30,6 +31,27 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, Date
         if (units.TryGetValue(absorbeDone.CreatorGameId, out var creatorUnit))
         {
             creatorUnit.HealDones.Add(absorbeDone);
+        }
+    }
+
+    public override void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, UnitHealthStatus status)
+    {
+        var ownerId = combatDataLine[6];
+        if (!units.TryGetValue(ownerId, out var unit))
+        {
+            return;
+        }
+
+        if (combatDataLine[1].Equals(CombatLogKeyWords.SwingDamageLanded)
+            && long.TryParse(combatDataLine[12], out var currentHealth)
+            && long.TryParse(combatDataLine[13], out var maxHealth))
+        {
+            AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0], status);
+        }
+        else if (long.TryParse(combatDataLine[15], out currentHealth)
+            && long.TryParse(combatDataLine[16], out maxHealth))
+        {
+            AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0], status);
         }
     }
 }

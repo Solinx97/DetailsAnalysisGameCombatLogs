@@ -19,4 +19,6 @@ public class CombatLogDto
     public bool IsReady { get; set; }
 
     public string AppUserId { get; set; }
+
+    public IReadOnlyList<CombatLogStatusDto> Statuses { get; set; } = [];
 }

@@ -40,11 +40,6 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         CombatLogKeyWords.SwingDamageLanded,
         CombatLogKeyWords.RangeDamage,
     ];
-    protected readonly string[] _healHealth =
-    [
-        CombatLogKeyWords.SpellHeal,
-        CombatLogKeyWords.SpellPeriodicHeal,
-    ];
     protected readonly string[] _damageVariations =
     [
         CombatLogKeyWords.SpellDamage,
@@ -122,14 +117,13 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
         var hasDieds = _dieds.Any(combatDataLine.Contains);
         var hasAuras = _auras.Any(combatDataLine.Contains);
         var hasDamageHealth = _damageHealth.Any(combatDataLine.Contains);
-        var hasHealHealth = _healHealth.Any(combatDataLine.Contains);
         var hasDamage = _damageVariations.Any(combatDataLine.Contains);
         var hasHeal = _healVariations.Any(combatDataLine.Contains);
         var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
         var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
         if (!hasCasts && !hasPositions && !hasDieds && !hasAuras
-            && !hasDamageHealth !&& hasHealHealth && !hasDamage && !hasHeal && !hasAbsorb && !hasResources)
+            && !hasDamageHealth && !hasDamage && !hasHeal && !hasAbsorb && !hasResources)
         {
             return;
         }
@@ -158,7 +152,7 @@ public abstract class CombatDetails(ICombatParserHelper combatParserHelper, ILog
                     {
                         combatDetailsManager.GetHealth(splitCombatData, Units, UnitHealthStatus.Decrease);
                     }
-                    else if (hasHealHealth)
+                    else if (hasHeal)
                     {
                         combatDetailsManager.GetHealth(splitCombatData, Units, UnitHealthStatus.Increase);
                     }

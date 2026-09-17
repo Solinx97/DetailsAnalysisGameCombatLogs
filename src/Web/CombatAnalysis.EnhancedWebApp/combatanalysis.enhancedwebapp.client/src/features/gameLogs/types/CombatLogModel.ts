@@ -1,3 +1,5 @@
+import type { CombatLogStatusModel } from './CombatLogStatusModel';
+
 export type CombatLogModel = {
     id: number;
     gameVersion: number;
@@ -5,4 +7,5 @@ export type CombatLogModel = {
     date: string;
     logType: number;
     appUserId: string;
+    statuses: CombatLogStatusModel[];
 }

@@ -16,19 +16,19 @@ const WoWMidnightCombatLogs: React.FC<CombatLogsProps> = ({ selectedLogType, gam
 
     const { data: combatLogs, isLoading } = useGetCombatLogsQuery({ logType: selectedLogType, gameVersion, appUserId: user ? user.id : null });
 
-    if (isLoading) {
+    if (isLoading || !combatLogs) {
         return (<Loading />);
     }
 
     return (
         <div className="main-information__container">
             <ul className="combats__container">
-                {combatLogs?.map((item) => (
+                {combatLogs.map((item) => (
                     <li key={item.id}>
                         <GameCombatLogItem
                             t={t}
                             appUserId={user ? user.id : ""}
-                            log={item}
+                            combatLog={item}
                             gameVersion={gameVersion}
                             isAuth={user !== null}
                         />

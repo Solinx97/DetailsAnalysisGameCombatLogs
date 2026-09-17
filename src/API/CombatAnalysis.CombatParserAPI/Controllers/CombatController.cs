@@ -102,9 +102,9 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
                  combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitsData);
 
-            var combatId = await _mediator.Send(command, cancellationToken);
+            await _mediator.Send(command, cancellationToken);
 
-            return Ok(combatId);
+            return NoContent();
         }
         catch (OperationCanceledException ex)
         {

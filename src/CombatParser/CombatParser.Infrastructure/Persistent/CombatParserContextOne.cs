@@ -18,6 +18,8 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<CombatLog>? CombatLog { get; }
 
+    public DbSet<CombatLogStatus>? CombatLogStatus { get; }
+
     public DbSet<Combat>? Combat { get; }
 
     public DbSet<CombatAbility>? CombatAbility { get; }

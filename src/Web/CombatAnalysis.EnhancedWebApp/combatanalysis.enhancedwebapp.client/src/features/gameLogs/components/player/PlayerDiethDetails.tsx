@@ -1,3 +1,4 @@
+import CombatLogsBuild from '@/shared/components/CombatLogsBuild';
 import Loading from '@/shared/components/Loading';
 import { UnitHealthStatus } from '@/shared/helpers/EnumHelper';
 import useTime from '@/shared/hooks/useTime';
@@ -133,11 +134,25 @@ const PlayerDiethDetails: React.FC = () => {
         loadData();
     }, [playerId]);
 
-    if (details.id <= 0 || !combatPlayer) {
+    if (!combatPlayer) {
         return (<Loading />);
     }
 
-    console.log(playerDeathCount);
+    if (playerDeath.length === 0) {
+        return (
+            <div className="general-details__container">
+                <div className="general-details__navigate">
+                    <CombatDetailsHeader
+                        details={details}
+                        combatPlayer={combatPlayer}
+                        t={t}
+                    />
+                </div>
+                <CombatLogsBuild />
+            </div>
+        );
+    }
+
     return (
         <div className="general-details__container">
             <div className="general-details__navigate">
@@ -179,7 +194,6 @@ const PlayerDiethDetails: React.FC = () => {
                 }
             </ul>
         </div>
-
     );
 }
 

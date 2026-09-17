@@ -17772,6 +17772,30 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("CombatLog");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatLogStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatLogId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatLogId");
+
+                    b.ToTable("CombatLogStatus");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
                     b.Property<int>("Id")
@@ -18579,6 +18603,17 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("CombatLog");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatLogStatus", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Aggregates.CombatLog", "CombatLog")
+                        .WithMany("Statuses")
+                        .HasForeignKey("CombatLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatLog");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
@@ -18815,6 +18850,8 @@ namespace CombatParser.Infrastructure.Migrations
             modelBuilder.Entity("CombatParser.Domain.Aggregates.CombatLog", b =>
                 {
                     b.Navigation("Combats");
+
+                    b.Navigation("Statuses");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>

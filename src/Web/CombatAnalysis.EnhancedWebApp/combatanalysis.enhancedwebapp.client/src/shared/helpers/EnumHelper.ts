@@ -40,3 +40,10 @@ export const UnitHealthStatus = {
     Decrease: 1,
     Dead: 2,
 } as const;
+
+export const CombatLogStatus = {
+    Creating: 0,
+    Created: 1,
+    Deleting: 2,
+    Deleted: 3,
+} as const;

@@ -1,33 +1,56 @@
+import { CombatLogStatus } from '@/shared/helpers/EnumHelper';
 import { faArrowDown, faArrowUp, faCircleXmark, faMagnifyingGlassChart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { CombatLogModel } from '../types/CombatLogModel';
-import CombatLogItemDiscussion from './CombatLogItemDiscussion';
 import CombatLogItemActions from './CombatLogItemActions';
+import CombatLogItemDiscussion from './CombatLogItemDiscussion';
 
 interface CombatLogItemProps {
     t: (key: string) => string;
     appUserId: string;
-    log: CombatLogModel;
+    combatLog: CombatLogModel;
     gameVersion: number;
     isAuth: boolean;
 }
 
-const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, log, gameVersion, isAuth }) => {
+const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, combatLog, gameVersion, isAuth }) => {
     const navigate = useNavigate();
 
     const [showChats, setShowChats] = useState(false);
     const [showGroupChats, setShowGroupChats] = useState(true);
     const [showPersonalChats, setShowPersonalChats] = useState(true);
 
+    const getStatus = () => {
+        const lastStatus = combatLog.statuses.at(-1);
+
+        if (lastStatus === undefined) {
+            return (<></>);
+        }
+
+        switch (lastStatus.status) {
+            case CombatLogStatus["Created"]:
+                return (<div className="combat-log-status">Created</div>);
+            case CombatLogStatus["Creating"]:
+                return (<div className="combat-log-status">Creating...</div>);
+            case CombatLogStatus["Deleting"]:
+                return (<div className="combat-log-status">Deleting...</div>);
+            case CombatLogStatus["Deleted"]:
+                return (<div className="combat-log-status">Deleted</div>);
+            default:
+                return (<></>);
+        }
+    }
+
     return (
         <div className="card">
             <ul className="list-group list-group-flush">
                 <li className="list-group-item title">
                     <div className="title__main">
-                        <div>{log.name}</div>
+                        <div>{combatLog.name}</div>
+                        {getStatus()}
                     </div>
                     <div className="actions">
                         <div className="actions__communication">
@@ -42,24 +65,27 @@ const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, log, ga
                                 t={t}
                             />
                         </div>
-                        {(appUserId === log.appUserId) &&
+                        {(appUserId === combatLog.appUserId) &&
                             <CombatLogItemActions
                                 t={t}
-                                combatLogId={log.id}
+                                combatLog={combatLog}
                             />
                         }
                     </div>
                 </li>
-                <li className="list-group-item">{format(new Date(log.date), 'MM/dd/yyyy HH:mm')}</li>
+                <li className="list-group-item">{format(new Date(combatLog.date), 'MM/dd/yyyy HH:mm')}</li>
             </ul>
-            <div className="card-body">
-                <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${log.id}&gameVersion=${gameVersion}`)}>
-                    <FontAwesomeIcon
-                        icon={faMagnifyingGlassChart}
-                    />
-                    <div>{t("Analyzing")}</div>
+            {(combatLog.statuses.at(-1)?.status === CombatLogStatus["Creating"]
+                || combatLog.statuses.at(-1)?.status === CombatLogStatus["Created"]) &&
+                <div className="card-body">
+                    <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${combatLog.id}&gameVersion=${gameVersion}`)}>
+                        <FontAwesomeIcon
+                            icon={faMagnifyingGlassChart}
+                        />
+                        <div>{t("Analyzing")}</div>
+                    </div>
                 </div>
-            </div>
+            }
             {showChats &&
                 <div className="chat-list">
                     <div className="chat-list__close">

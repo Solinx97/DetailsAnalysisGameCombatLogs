@@ -28,7 +28,7 @@ const WoWMoPCombatLogs: React.FC<CombatLogsProps> = ({ selectedLogType, gameVers
                         <GameCombatLogItem
                             t={t}
                             appUserId={user ? user.id : "0"}
-                            log={item}
+                            combatLog={item}
                             gameVersion={gameVersion}
                             isAuth={user !== null}
                         />

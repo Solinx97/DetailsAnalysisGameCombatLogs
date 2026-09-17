@@ -115,6 +115,27 @@ namespace CombatParser.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CombatLogStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CombatLogId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CombatLogStatus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CombatLogStatus_CombatLog_CombatLogId",
+                        column: x => x.CombatLogId,
+                        principalTable: "CombatLog",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BestSpecializationScore",
                 columns: table => new
                 {
@@ -2838,6 +2859,11 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "CombatLogId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CombatLogStatus_CombatLogId",
+                table: "CombatLogStatus",
+                column: "CombatLogId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CombatPlayer_CombatId",
                 table: "CombatPlayer",
                 column: "CombatId");
@@ -2960,6 +2986,9 @@ namespace CombatParser.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CombatAbility");
+
+            migrationBuilder.DropTable(
+                name: "CombatLogStatus");
 
             migrationBuilder.DropTable(
                 name: "DamageDone");

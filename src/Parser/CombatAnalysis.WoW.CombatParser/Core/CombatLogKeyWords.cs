@@ -112,7 +112,7 @@ public static class CombatLogKeyWords
 
     #region Heal done
 
-    public static string SpellHeal { get; } = "SPELL_HEAL";
+    public static string SpellHeal { get; } = "SPELL_HEAL,";
 
     public static string SpellPeriodicHeal { get; } = "SPELL_PERIODIC_HEAL";
 

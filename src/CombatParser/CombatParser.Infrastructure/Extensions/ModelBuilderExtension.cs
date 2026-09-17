@@ -4,7 +4,6 @@ using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.WoWMidnight;
 using CombatParser.Domain.Entities.WoWMoPClassic;
 using Microsoft.EntityFrameworkCore;
-using NetTopologySuite.Mathematics;
 
 namespace CombatParser.Infrastructure.Extensions;
 
@@ -73,6 +72,14 @@ internal static class ModelBuilderExtension
         {
             cl.Property(p => p.Name)
                 .HasMaxLength(CombatLog.NAME_MAX_LENGTH);
+        });
+
+        modelBuilder.Entity<CombatLogStatus>(c =>
+        {
+            c.HasOne(p => p.CombatLog)
+                .WithMany(cl => cl.Statuses)
+                .HasForeignKey(p => p.CombatLogId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Combat>(c =>

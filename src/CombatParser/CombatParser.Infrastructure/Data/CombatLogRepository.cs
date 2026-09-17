@@ -20,7 +20,7 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
         }
 
         var combatLogs = _context.Set<CombatLog>()
-            .AsNoTracking();
+            .Include(x => x.Statuses);
 
         IQueryable<CombatLog> filter = combatLogs;
         if (logType == (int)LogType.Public)
@@ -32,18 +32,19 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
             filter = combatLogs.Where(cl => cl.LogType == logType && cl.GameVersion == gameVersion && cl.AppUserId == appUserId);
         }
 
-        var result = await filter
+        var data = await filter
+            .AsNoTracking()
             .ToListAsync(cancelationToken);
 
-        return result.Count != 0 ? result : [];
+        return data;
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
+    public async Task DeleteAsync(int id)
     {
         _context.Database.SetCommandTimeout(TimeSpan.FromMinutes(CONTEXT_TIMEOUT_MINUTES));
 
         await _context.Set<CombatLog>()
             .Where(cl => cl.Id == id)
-            .ExecuteDeleteAsync(cancelationToken);
+            .ExecuteDeleteAsync();
     }
 }

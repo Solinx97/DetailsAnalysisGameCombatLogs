@@ -41,7 +41,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         _httpClient.BaseAddress = API.CombatParserApi;
     }
 
-    public async Task SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
+    public async Task SaveAsync(List<CombatModel> combats, int combatLogId, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
     {
         var cancellationToken = requestCancellationToken();
 
@@ -54,15 +54,12 @@ internal class CombatParserAPIService : ICombatParserAPIService
             {
                 var createCombat = _mapper.Map<CreateCombatModel>(combat);
 
-                createCombat.CombatLogId = combatLog.Id;
                 createCombat.GameVersion = (int)CurrentCombatParserVersion.Version;
+                createCombat.CombatLogId = combatLogId;
 
                 using var content = JsonContent.Create(createCombat);
                 using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
                 response.EnsureSuccessStatusCode();
-
-                var combatId = int.Parse(await response.Content.ReadAsStringAsync());
-                combat.Id = combatId;
 
                 uplodedCallback(combat.DungeonName, combat.Boss.Name);
 
@@ -106,6 +103,8 @@ internal class CombatParserAPIService : ICombatParserAPIService
 
         await Task.WhenAll(combatTasks);
 
+        await AddCombatLogCreatedStatusAsync(combatLogId, cancellationToken);
+
         combats.Clear();
 
         // Reduce capacity, provided to collections but not release after cleaning collection yet
@@ -116,7 +115,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
     }
 
-    public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken)
+    public async Task<int> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken)
     {
         try
         {
@@ -143,34 +142,34 @@ internal class CombatParserAPIService : ICombatParserAPIService
             var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken, true);
             response.EnsureSuccessStatusCode();
 
-            var createdCombatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>(cancellationToken);
-            ArgumentNullException.ThrowIfNull(createdCombatLog, nameof(createdCombatLog));
+            var createdCombatLogId = await response.Content.ReadFromJsonAsync<int>(cancellationToken);
 
-            return createdCombatLog;
+            return createdCombatLogId;
+
         }
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, "Some arguments is null: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
         catch (OperationCanceledException ex)
         {
             _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
     }
 
@@ -179,7 +178,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         try
         {
             foreach (var combat in combats)
-            { 
+            {
                 var boss = await LoadBossAsync(combat.Boss.GameId, combat.Boss.Difficult, useDefault ? DEFAULT_RAID_SIZE : combat.Boss.Size, cancellationToken);
                 combat.Boss = boss ?? new();
             }
@@ -193,6 +192,39 @@ internal class CombatParserAPIService : ICombatParserAPIService
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+        }
+    }
+
+    private async Task AddCombatLogCreatedStatusAsync(int combatLogId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsync($"CombatLog/addStatus/{combatLogId}?status={(int)CombatLogStatus.Created}", JsonContent.Create(new {}), cancellationToken, true);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, "Some arguments is null: {Message}", ex.Message);
+
+            throw;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            throw;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
+
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            throw;
         }
     }
 

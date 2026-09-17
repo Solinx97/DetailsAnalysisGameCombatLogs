@@ -77,6 +77,13 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatLog', id: 'LIST' }]
         }),
+        addCombatLogStatus: builder.mutation<void, { combatLogId: number, status: number }>({
+            query: ({ combatLogId, status }) => ({
+                url: `/CombatLog/addStatus/${combatLogId}?status=${status}`,
+                method: 'POST'
+            }),
+            invalidatesTags: (_result, _error, args) => [{ type: 'CombatLog', id: args.combatLogId }]
+        }),
         removeCombatLog: builder.mutation<void, number>({
             query: id => ({
                 url: `/CombatLog/${id}`,
@@ -177,6 +184,7 @@ export const GameLogsApi = createApi({
 export const {
     useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
+    useAddCombatLogStatusMutation,
     useRemoveCombatLogMutation,
     useLazyGetCombatsByCombatLogIdQuery,
     useLazyGetCombatPlayerDeathCountQuery,

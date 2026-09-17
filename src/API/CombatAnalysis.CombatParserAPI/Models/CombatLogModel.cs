@@ -20,4 +20,6 @@ public class CombatLogModel
 
     [Required]
     public string AppUserId { get; set; }
+
+    public IReadOnlyList<CombatLogStatusModel> Statuses { get; set; } = [];
 }

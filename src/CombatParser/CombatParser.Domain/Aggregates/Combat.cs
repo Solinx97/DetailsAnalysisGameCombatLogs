@@ -2,7 +2,6 @@
 using CombatParser.Domain.EntityData;
 using CombatParser.Domain.Exceptions;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Numerics;
 
 namespace CombatParser.Domain.Aggregates;
 
@@ -16,8 +15,7 @@ public class Combat
     private Combat() { }
 
     private Combat(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
-        long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, 
-        int bossId, int combatLogId)
+        long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId, int combatLogId)
     {
         DungeonName = dungeonName;
         BossHealthPercentage = bossHealthPercentage;
@@ -66,27 +64,25 @@ public class Combat
 
     public int CombatLogId { get; private set; }
 
-    public IEnumerable<CombatPlayer> CombatPlayers => _players;
+    public IReadOnlyCollection<CombatPlayer> CombatPlayers => _players.AsReadOnly();
 
-    public IEnumerable<Unit> Units => _units;
+    public IReadOnlyCollection<Unit> Units => _units.AsReadOnly();
 
     public static Combat Create(string dungeonName, double bossHealthPercentage, long damageDone, long healDone, long damageTaken,
-        long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId,
-        int combatLogId, IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<UnitData> units)
+        long resourcesRecovery, bool isWin, DateTimeOffset startDate, DateTimeOffset finishDate, int bossId, int combatLogId,
+        IReadOnlyList<CombatPlayerData> combatPlayers, IReadOnlyList<UnitData> units)
     {
         ArgumentException.ThrowIfNullOrEmpty(dungeonName, nameof(dungeonName));
         ArgumentOutOfRangeException.ThrowIfNegative(bossHealthPercentage, nameof(bossHealthPercentage));
         ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
         ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
         ArgumentOutOfRangeException.ThrowIfNegative(damageTaken, nameof(damageTaken));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(combatLogId, nameof(combatLogId));
 
         CombatException.ThrowIfLong(dungeonName);
         CombatException.ThrowIfDateIncorrect(startDate, finishDate);
 
         var combat = new Combat(dungeonName, bossHealthPercentage, damageDone, healDone, damageTaken,
-            resourcesRecovery, isWin, startDate, finishDate, bossId, 
-            combatLogId);
+            resourcesRecovery, isWin, startDate, finishDate, bossId, combatLogId);
 
         foreach (var player in combatPlayers)
         {

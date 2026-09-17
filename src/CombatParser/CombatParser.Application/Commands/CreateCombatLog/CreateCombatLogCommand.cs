@@ -8,4 +8,4 @@ public record CreateCombatLogCommand(
     string Name,
     int LogType,
     string AppUserId
-    ) : IRequest<CombatLog>;
+    ) : IRequest<int>;

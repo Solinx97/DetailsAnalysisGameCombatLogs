@@ -51,6 +51,37 @@ public class CombatLogController : ControllerBase
         }
     }
 
+    [HttpPost("addStatus/{id:int:min(1)}")]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
+    public async Task<IActionResult> AddStatus(int id, int status)
+    {
+        try
+        {
+            var responseMessage = await _httpClient.PostAsync($"CombatLog/addStatus/{id}?status={status}", JsonContent.Create(new { }));
+            responseMessage.EnsureSuccessStatusCode();
+
+            return NoContent();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            _logger.LogError(ex, "Add combat log {Id} status failed. User should be authorize to add combat log status.", id);
+
+            return Unauthorized();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            _logger.LogError(ex, "Add combat log {Id} status failed. Combat log not found.", id);
+
+            return NotFound();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Add combat log {Id} status failed. Something wrong during adding combat log status.", id);
+
+            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
+        }
+    }
+
     [HttpDelete("{id:int:min(1)}")]
     [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     public async Task<IActionResult> Delete(int id)
@@ -64,7 +95,7 @@ public class CombatLogController : ControllerBase
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
         {
-            _logger.LogError(ex, "Delete combat log {Id} failed. User should be authorize to delete combat log", id);
+            _logger.LogError(ex, "Delete combat log {Id} failed. User should be authorize to delete combat log.", id);
 
             return Unauthorized();
         }
