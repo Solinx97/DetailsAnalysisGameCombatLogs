@@ -1,7 +1,7 @@
 export type UnitPreAuraModel = {
     id: string;
-    targetGameId: string;
     gameId: number;
+    ownerGameId: string;
     name: string;
     abilityType: number;
     status: number;

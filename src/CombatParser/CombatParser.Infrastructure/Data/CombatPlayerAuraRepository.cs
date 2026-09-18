@@ -29,16 +29,6 @@ internal class CombatPlayerAuraRepository(CombatParserContextOne context) : ICom
         return data;
     }
 
-    public async Task<IEnumerable<UnitAura>> GetAurasAsync(string unitId, CancellationToken cancellationToken)
-    {
-        var data = await _context.Set<UnitAura>()
-            .AsNoTracking()
-            .Where(x => x.UnitId == unitId)
-            .ToListAsync(cancellationToken);
-
-        return data;
-    }
-
     public async Task<UnitAura?> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         var data = await _context.Set<UnitAura>()

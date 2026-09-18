@@ -1,4 +1,5 @@
 ﻿using CombatParser.Application.Queries.GetPreAuras;
+using CombatParser.Application.Queries.GetUnitPreAuras;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +13,17 @@ public class UnitPreAuraController(IMediator mediator) : ControllerBase
 
 
     [HttpGet("getByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatId, string unitId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByCombatId(int combatId, CancellationToken cancellationToken)
     {
-        var preAuras = await _mediator.Send(new GetPreAurasQuery(combatId, unitId), cancellationToken);
+        var preAuras = await _mediator.Send(new GetPreAurasQuery(combatId), cancellationToken);
+
+        return Ok(preAuras);
+    }
+
+    [HttpGet("getByUnitId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByUnitId(int combatId, string unitId, CancellationToken cancellationToken)
+    {
+        var preAuras = await _mediator.Send(new GetUnitPreAurasQuery(combatId, unitId), cancellationToken);
 
         return Ok(preAuras);
     }

@@ -10,6 +10,32 @@ namespace CombatAnalysis.WoW_5_5_4.CombatParser.Details;
 internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, DateTimeOffset combatStarted, DateTimeOffset combatFinished) 
     : WoW.CombatParser.Details.CombatDetailsManager(combatParserHelper, combatStarted, combatFinished)
 {
+    public override void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
+    {
+        var positionOwnerId = combatDataLine[2];
+        if (combatDataLine.Length <= 27 || !units.TryGetValue(positionOwnerId, out var unit))
+        {
+            return;
+        }
+
+        var pos1Index = 26;
+        var pos2Index = 27;
+
+        if (double.TryParse(combatDataLine[pos1Index], out var positionX)
+            && double.TryParse(combatDataLine[pos2Index], out var positionY))
+        {
+            var position = new UnitPosition
+            {
+                OwnerGameId = positionOwnerId,
+                X = positionX,
+                Y = positionY,
+                Time = GetTimeFromStart(combatDataLine[0])
+            };
+
+            unit.UnitPositions.Add(position);
+        }
+    }
+
     public override void GetAbsorb(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
         var absorbeDone = new HealDone

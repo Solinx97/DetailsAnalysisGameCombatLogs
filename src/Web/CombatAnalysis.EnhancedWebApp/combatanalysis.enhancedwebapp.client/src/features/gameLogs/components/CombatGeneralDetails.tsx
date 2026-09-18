@@ -109,7 +109,6 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
     return (
         <div className="details__container">
             <CombatPreAuraItem
-                unitId={combatPlayer.unitId}
                 combatId={combatId}
             />
             {(spells.length > 0 && screenSize.width > maxWidth) &&

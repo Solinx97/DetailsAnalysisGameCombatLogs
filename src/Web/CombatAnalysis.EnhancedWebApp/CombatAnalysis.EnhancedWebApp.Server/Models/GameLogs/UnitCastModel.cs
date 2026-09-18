@@ -12,7 +12,7 @@ public class UnitCastModel
 
     public TimeSpan Time { get; set; }
 
-    public TimeSpan FinishTime { get; set; }
+    public TimeSpan? FinishTime { get; set; }
 
     public string? TargetGameId { get; set; }
 

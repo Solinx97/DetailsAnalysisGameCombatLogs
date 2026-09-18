@@ -2,8 +2,6 @@
 
 public class UnitPreAura
 {
-    public int Id { get; set; }
-
     public string TargetGameId { get; set; }
 
     public int GameId { get; set; }

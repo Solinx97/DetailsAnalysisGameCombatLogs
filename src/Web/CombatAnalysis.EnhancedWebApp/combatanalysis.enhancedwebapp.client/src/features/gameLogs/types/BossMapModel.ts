@@ -6,4 +6,5 @@ export type BossMapModel = {
     x1: number;
     y0: number;
     y1: number;
+    zoom: number;
 }

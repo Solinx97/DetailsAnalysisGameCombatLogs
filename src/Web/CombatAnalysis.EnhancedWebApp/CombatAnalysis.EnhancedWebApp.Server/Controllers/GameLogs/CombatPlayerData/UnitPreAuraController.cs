@@ -19,9 +19,18 @@ public class UnitPreAuraController : ControllerBase
     }
 
     [HttpGet("getByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatId, string unitId)
+    public async Task<IActionResult> GetByCombatId(int combatId)
     {
-        var responseMessage = await _httpClient.GetAsync($"UnitPreAura/getByCombatId/{combatId}?unitId={unitId}");
+        var responseMessage = await _httpClient.GetAsync($"UnitPreAura/getByCombatId/{combatId}");
+        var preAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitPreAuraModel>>();
+
+        return Ok(preAuras);
+    }
+
+    [HttpGet("getByUnitId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByUnitId(int combatId, string unitId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"UnitPreAura/getByUnitId/{combatId}?unitId={unitId}");
         var preAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitPreAuraModel>>();
 
         return Ok(preAuras);

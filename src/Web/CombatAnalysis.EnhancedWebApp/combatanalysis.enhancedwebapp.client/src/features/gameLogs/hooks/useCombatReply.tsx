@@ -15,6 +15,7 @@ interface InstanceBounds {
     x1: number;
     y0: number;
     y1: number;
+    zoom: number;
 }
 
 interface WorldSize {
@@ -28,7 +29,6 @@ const useCombatReply = (
     combatUnits: UnitModel[] | undefined,
     colors: Map<string, string>
 ) => {
-    const zoom = 5;
     const otherElementsHeight = 250;
 
     const [currentTime, setCurrentTime] = useState(0);
@@ -38,7 +38,8 @@ const useCombatReply = (
         x0: 0,
         x1: 0,
         y0: 0,
-        y1: 0
+        y1: 0,
+        zoom: 1,
     });
     const [worldSize, setWorldSize] = useState<WorldSize>({
         width: 1,
@@ -114,8 +115,8 @@ const useCombatReply = (
                     x1: bossMap.x1,
                     y0: bossMap.y0,
                     y1: bossMap.y1,
+                    zoom: bossMap.zoom,
                 };
-
                 setInstanceBounds(receivedInstanceBounds);
                 setWorldSize({
                     width: receivedInstanceBounds.x0 - receivedInstanceBounds.x1,
@@ -157,10 +158,7 @@ const useCombatReply = (
             ctx.save();
 
             combatUnits.forEach(unit => {
-                const pos =
-                    getPosition(
-                        unit.unitPositions
-                    );
+                const pos = getPosition(unit.unitPositions);
 
                 if (pos !== null) {
                     const pixel =
@@ -275,11 +273,11 @@ const useCombatReply = (
         return {
             x:
                 centerX +
-                (x - centerX) * zoom,
+                (x - centerX) * instanceBounds.zoom,
 
             y:
                 centerY +
-                (y - centerY) * zoom
+                (y - centerY) * instanceBounds.zoom
         };
     }
 

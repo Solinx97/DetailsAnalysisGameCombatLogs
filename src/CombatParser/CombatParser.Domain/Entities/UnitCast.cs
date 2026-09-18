@@ -11,7 +11,7 @@ public class UnitCast : CombatUnitDataBase, ITime, IUnitRef
 
     private UnitCast() { }
 
-    private UnitCast(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
+    private UnitCast(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan? finishTime,
          string? targetGameId, bool isImmediatly, bool isSuccess)
     {
         Id = Guid.NewGuid().ToString();
@@ -33,7 +33,7 @@ public class UnitCast : CombatUnitDataBase, ITime, IUnitRef
 
     public TimeSpan Time { get; private set; }
 
-    public TimeSpan FinishTime { get; private set; }
+    public TimeSpan? FinishTime { get; private set; }
 
     public string? TargetGameId { get; private set; }
 
@@ -41,7 +41,7 @@ public class UnitCast : CombatUnitDataBase, ITime, IUnitRef
 
     public bool IsSuccess { get; private set; }
 
-    public static UnitCast Create(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
+    public static UnitCast Create(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan? finishTime,
          string? targetGameId, bool isImmediatly, bool isSuccess)
     {
         ArgumentException.ThrowIfNullOrEmpty(ownerGameId, nameof(ownerGameId));

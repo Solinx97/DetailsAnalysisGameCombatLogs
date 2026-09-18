@@ -87,6 +87,7 @@ const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unit, color, unitCast
     const currentNotImmediatlyCast = useMemo(() => {
         const current = notImmediatlyCasts
             .find(cast =>
+                cast.finishTime != null &&
                 currentTime >= timeToMs(cast.time) &&
                 currentTime <= timeToMs(cast.finishTime)
             );
@@ -95,7 +96,7 @@ const CombatReplyUnit: React.FC<CombatReplyItemProps> = ({ unit, color, unitCast
     }, [currentTime]);
 
     const progressNotImmediatly = useMemo(() => {
-        if (!currentNotImmediatlyCast) {
+        if (!currentNotImmediatlyCast || currentNotImmediatlyCast.finishTime == null) {
             return 0;
         }
 

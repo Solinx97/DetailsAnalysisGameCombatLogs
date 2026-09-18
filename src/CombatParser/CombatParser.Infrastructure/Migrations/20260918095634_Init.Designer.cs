@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260917155315_Init")]
+    [Migration("20260918095634_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -17170,7 +17170,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 85,
-                            BossMapId = 1,
+                            BossMapId = 15,
                             Difficult = 14,
                             GameId = 3379,
                             Name = "Нимрисса Волногон",
@@ -17179,7 +17179,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 86,
-                            BossMapId = 1,
+                            BossMapId = 15,
                             Difficult = 15,
                             GameId = 3379,
                             Name = "Нимрисса Волногон",
@@ -17188,7 +17188,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 87,
-                            BossMapId = 1,
+                            BossMapId = 16,
                             Difficult = 14,
                             GameId = 3470,
                             Name = "Нек'зали Душительница Душ",
@@ -17197,7 +17197,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 88,
-                            BossMapId = 1,
+                            BossMapId = 16,
                             Difficult = 15,
                             GameId = 3470,
                             Name = "Нек'зали Душительница Душ",
@@ -17206,7 +17206,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 89,
-                            BossMapId = 1,
+                            BossMapId = 17,
                             Difficult = 14,
                             GameId = 3497,
                             Name = "Потерявшиеся исследователи",
@@ -17215,7 +17215,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 90,
-                            BossMapId = 1,
+                            BossMapId = 17,
                             Difficult = 15,
                             GameId = 3497,
                             Name = "Потерявшиеся исследователи",
@@ -17224,7 +17224,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 91,
-                            BossMapId = 1,
+                            BossMapId = 18,
                             Difficult = 14,
                             GameId = 3420,
                             Name = "Ссзорак",
@@ -17233,7 +17233,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 92,
-                            BossMapId = 1,
+                            BossMapId = 18,
                             Difficult = 15,
                             GameId = 3420,
                             Name = "Ссзорак",
@@ -17242,7 +17242,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 93,
-                            BossMapId = 1,
+                            BossMapId = 19,
                             Difficult = 14,
                             GameId = 3445,
                             Name = "Погребенные стражи",
@@ -17251,7 +17251,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 94,
-                            BossMapId = 1,
+                            BossMapId = 19,
                             Difficult = 15,
                             GameId = 3445,
                             Name = "Погребенные стражи",
@@ -17260,7 +17260,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 95,
-                            BossMapId = 1,
+                            BossMapId = 20,
                             Difficult = 14,
                             GameId = 3455,
                             Name = "Вашник Тлетворный",
@@ -17269,7 +17269,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 96,
-                            BossMapId = 1,
+                            BossMapId = 20,
                             Difficult = 15,
                             GameId = 3455,
                             Name = "Вашник Тлетворный",
@@ -17278,7 +17278,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 97,
-                            BossMapId = 1,
+                            BossMapId = 21,
                             Difficult = 14,
                             GameId = 3421,
                             Name = "Два Клыка",
@@ -17287,7 +17287,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 98,
-                            BossMapId = 1,
+                            BossMapId = 21,
                             Difficult = 15,
                             GameId = 3421,
                             Name = "Два Клыка",
@@ -17296,7 +17296,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 99,
-                            BossMapId = 1,
+                            BossMapId = 22,
                             Difficult = 14,
                             GameId = 3429,
                             Name = "Спиральный алтарь",
@@ -17305,7 +17305,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 100,
-                            BossMapId = 1,
+                            BossMapId = 22,
                             Difficult = 15,
                             GameId = 3429,
                             Name = "Спиральный алтарь",
@@ -17314,7 +17314,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 101,
-                            BossMapId = 1,
+                            BossMapId = 23,
                             Difficult = 14,
                             GameId = 3492,
                             Name = "Ула'тек",
@@ -17323,7 +17323,7 @@ namespace CombatParser.Infrastructure.Migrations
                         new
                         {
                             Id = 102,
-                            BossMapId = 1,
+                            BossMapId = 23,
                             Difficult = 15,
                             GameId = 3492,
                             Name = "Ула'тек",
@@ -17359,6 +17359,9 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<double>("Y1")
                         .HasColumnType("float");
 
+                    b.Property<int>("Zoom")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("BossMap");
@@ -17372,7 +17375,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1000.0,
                             X1 = 550.0,
                             Y0 = 1600.0,
-                            Y1 = 500.0
+                            Y1 = 500.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17382,7 +17386,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1325.0,
                             X1 = 1000.0,
                             Y0 = 1450.0,
-                            Y1 = 150.0
+                            Y1 = 150.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17392,7 +17397,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 700.0,
                             X1 = 525.0,
                             Y0 = 1350.0,
-                            Y1 = 600.0
+                            Y1 = 600.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17402,7 +17408,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1250.0,
                             X1 = 900.0,
                             Y0 = -4530.0,
-                            Y1 = -5160.0
+                            Y1 = -5160.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17412,7 +17419,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1525.0,
                             X1 = 1300.0,
                             Y0 = -3800.0,
-                            Y1 = -5000.0
+                            Y1 = -5000.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17422,7 +17430,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1560.0,
                             X1 = 1500.0,
                             Y0 = -4430.0,
-                            Y1 = -4850.0
+                            Y1 = -4850.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17432,7 +17441,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1800.0,
                             X1 = 1575.0,
                             Y0 = -4425.0,
-                            Y1 = -5467.0
+                            Y1 = -5467.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17442,7 +17452,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1450.0,
                             X1 = 1060.0,
                             Y0 = -4555.0,
-                            Y1 = -5700.0
+                            Y1 = -5700.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17452,7 +17463,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1900.0,
                             X1 = 1720.0,
                             Y0 = -5370.0,
-                            Y1 = -5875.0
+                            Y1 = -5875.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17462,7 +17474,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1465.0,
                             X1 = 1200.0,
                             Y0 = -5375.0,
-                            Y1 = -5967.0
+                            Y1 = -5967.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17472,7 +17485,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1035.0,
                             X1 = 960.0,
                             Y0 = -5400.0,
-                            Y1 = -5867.0
+                            Y1 = -5867.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17482,7 +17496,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 665.0,
                             X1 = 500.0,
                             Y0 = 1575.0,
-                            Y1 = 675.0
+                            Y1 = 675.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17492,7 +17507,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1150.0,
                             X1 = 800.0,
                             Y0 = -3980.0,
-                            Y1 = -4900.0
+                            Y1 = -4900.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -17502,7 +17518,107 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1200.0,
                             X1 = 1060.0,
                             Y0 = -4470.0,
-                            Y1 = -5700.0
+                            Y1 = -5700.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 15,
+                            GameId = 2632,
+                            Name = "Приливный грот",
+                            X0 = 4715.0,
+                            X1 = 4600.0,
+                            Y0 = -11850.0,
+                            Y1 = -12320.0,
+                            Zoom = 3
+                        },
+                        new
+                        {
+                            Id = 16,
+                            GameId = 2606,
+                            Name = "Осада Оргриммара",
+                            X0 = 150.0,
+                            X1 = 0.0,
+                            Y0 = 476.0,
+                            Y1 = -476.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 17,
+                            GameId = 2609,
+                            Name = "Осада Оргриммара",
+                            X0 = 460.0,
+                            X1 = 0.0,
+                            Y0 = 950.0,
+                            Y1 = 0.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 18,
+                            GameId = 2609,
+                            Name = "Осада Оргриммара",
+                            X0 = 250.0,
+                            X1 = 0.0,
+                            Y0 = 850.0,
+                            Y1 = 0.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 19,
+                            GameId = 2608,
+                            Name = "Осада Оргриммара",
+                            X0 = 450.0,
+                            X1 = 0.0,
+                            Y0 = 0.0,
+                            Y1 = -725.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 20,
+                            GameId = 2608,
+                            Name = "Осада Оргриммара",
+                            X0 = 290.0,
+                            X1 = 0.0,
+                            Y0 = 0.0,
+                            Y1 = -625.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 21,
+                            GameId = 2607,
+                            Name = "Осада Оргриммара",
+                            X0 = 440.0,
+                            X1 = 0.0,
+                            Y0 = 100.0,
+                            Y1 = -100.0,
+                            Zoom = 1
+                        },
+                        new
+                        {
+                            Id = 22,
+                            GameId = 2610,
+                            Name = "Осада Оргриммара",
+                            X0 = 1090.0,
+                            X1 = 1000.0,
+                            Y0 = 580.0,
+                            Y1 = -550.0,
+                            Zoom = 10
+                        },
+                        new
+                        {
+                            Id = 23,
+                            GameId = 2610,
+                            Name = "Отравленная бездна",
+                            X0 = 1380.0,
+                            X1 = 1000.0,
+                            Y0 = 550.0,
+                            Y1 = -550.0,
+                            Zoom = 5
                         });
                 });
 
@@ -18292,7 +18408,7 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<TimeSpan>("FinishTime")
+                    b.Property<TimeSpan?>("FinishTime")
                         .HasColumnType("time");
 
                     b.Property<int>("GameSpellId")

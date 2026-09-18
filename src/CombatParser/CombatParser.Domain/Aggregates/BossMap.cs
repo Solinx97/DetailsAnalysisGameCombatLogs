@@ -8,7 +8,7 @@ public class BossMap
 
     private BossMap() { }
 
-    public BossMap(int id, int gameId, string name, double x0, double x1, double y0, double y1)
+    public BossMap(int id, int gameId, string name, double x0, double x1, double y0, double y1, int zoom)
     {
         Id = id;
         GameId = gameId;
@@ -17,6 +17,7 @@ public class BossMap
         X1 = x1;
         Y0 = y0;
         Y1 = y1;
+        Zoom = zoom;
     }
 
     public int Id { get; private set; }
@@ -33,14 +34,17 @@ public class BossMap
 
     public double Y1 { get; private set; }
 
+    public int Zoom { get; private set; }
+
     public IReadOnlyCollection<Boss> Bosses => _bosses.AsReadOnly();
 
-    public static BossMap Create(int id, int gameId, string name, double x0, double x1, double y0, double y1)
+    public static BossMap Create(int id, int gameId, string name, double x0, double x1, double y0, double y1, int zoom)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(gameId, nameof(gameId));
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(zoom, nameof(zoom));
 
-        return new BossMap(id, gameId, name, x0, x1, y0, y1);
+        return new BossMap(id, gameId, name, x0, x1, y0, y1, zoom);
     }
 }

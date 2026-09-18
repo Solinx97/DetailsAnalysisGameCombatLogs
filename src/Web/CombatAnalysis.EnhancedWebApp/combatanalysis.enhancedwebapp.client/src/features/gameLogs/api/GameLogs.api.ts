@@ -141,8 +141,8 @@ export const GameLogsApi = createApi({
             query: id => `/CombatPlayer/${id}`,
             providesTags: result => result ? [{ type: 'CombatPlayer', id: result.id }] : [],
         }),
-        getCombatByPreAura: builder.query<UnitPreAuraModel[], { combatId: number, unitId: string }>({
-            query: ({ combatId, unitId }) => `/UnitPreAura/getByCombatId/${combatId}?unitId=${unitId}`,
+        getCombatPreAuras: builder.query<UnitPreAuraModel[], number>({
+            query: combatId => `/UnitPreAura/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [
@@ -151,8 +151,18 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }]
         }),
-        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], { combatId: number, combatPlayerId: number }>({
-            query: ({ combatId, combatPlayerId }) => `/UnitAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
+        getUnitPreAuras: builder.query<UnitPreAuraModel[], { combatId: number, unitId: string }>({
+            query: ({ combatId, unitId }) => `/UnitPreAura/getByUnitId/${combatId}?unitId=${unitId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(preAura => ({ type: 'CombatPlayerAura' as const, id: preAura.id })),
+                        { type: 'CombatPlayerAura', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
+        }),
+        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], number>({
+            query: combatId => `/UnitAura/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [
@@ -198,7 +208,8 @@ export const {
     useLazyGetCombatPlayersByCombatIdQuery,
     useLazyGetCombatPlayerByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
-    useGetCombatByPreAuraQuery,
+    useGetCombatPreAurasQuery,
+    useGetUnitPreAurasQuery,
     useGetCombatUnitsByCombatIdQuery,
     useLazyGetUnitCastsByCombatUnitIdQuery,
     useLazyGetUnitPositionsByCombatIdQuery,

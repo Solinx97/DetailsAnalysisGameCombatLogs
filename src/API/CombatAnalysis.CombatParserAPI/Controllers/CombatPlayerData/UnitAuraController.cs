@@ -11,10 +11,10 @@ public class UnitAuraController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatId")]
-    public async Task<IActionResult> GetByCombatId(int combatId, string unitId, CancellationToken cancellationToken)
+    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatId, CancellationToken cancellationToken)
     {
-        var auras = await _mediator.Send(new GetAurasByCombatIdQuery(combatId, unitId), cancellationToken);
+        var auras = await _mediator.Send(new GetAurasByCombatIdQuery(combatId), cancellationToken);
 
         return Ok(auras);
     }

@@ -1,4 +1,5 @@
 import CombatReplyContext from '@/context/CombatReplyContext';
+import CombatBuild from '@/shared/components/combatLogBuild/CombatBuild';
 import useTime from '@/shared/hooks/useTime';
 import { faDeleteLeft, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -160,8 +161,27 @@ const CombatReply: React.FC = () => {
         navigate(`/general-analysis?id=${details.combatLogId}`);
     }
 
-    if (!combatUnits || isLoading) {
-        return (<div>Loading...</div>);
+    if (!combatUnits || combatUnits.length === 0 || isLoading) {
+        return (
+            <div className="reply">
+                <div className="reply__navigate">
+                    <div className="btn-shadow select-combat" onClick={selectOtherCombat}>
+                        <FontAwesomeIcon
+                            icon={faDeleteLeft}
+                        />
+                        <div>{t("SelectCombat")}</div>
+                    </div>
+                    <h5>{t("Combats")}</h5>
+                    <div className="boss-container">
+                        <div className="boss">
+                            <h5>{details.name}</h5>
+                            <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
+                        </div>
+                    </div>
+                </div>
+                <CombatBuild />
+            </div>
+        );
     }
 
     return (

@@ -154,7 +154,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         return combatStarted;
     }
 
-    protected static Combat? CreateCombat(string[] builtCombat)
+    protected Combat? CreateCombat(string[] builtCombat)
     {
         if (!builtCombat[^1].Contains(CombatLogKeyWords.EncounterEnd))
         {
@@ -234,15 +234,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         return convertToInt;
     }
 
-    protected static bool GetCombatResult(string combatFinish)
-    {
-        var data = combatFinish.Split("  ");
-        var split = data[1].Split(',');
-        var combatResult = int.Parse(split[split.Length - 1]);
-        var isWin = combatResult == 1;
-
-        return isWin;
-    }
+    protected abstract bool GetCombatResult(string combatFinish);
 
     protected static DateTimeOffset GetTime(string combatStart)
     {

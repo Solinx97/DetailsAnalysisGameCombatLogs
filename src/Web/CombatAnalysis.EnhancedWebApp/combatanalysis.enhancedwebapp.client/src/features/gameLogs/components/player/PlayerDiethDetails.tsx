@@ -1,4 +1,4 @@
-import CombatLogsBuild from '@/shared/components/CombatLogsBuild';
+import CombatPlayerBuild from '@/shared/components/combatLogBuild/CombatPlayerBuild';
 import Loading from '@/shared/components/Loading';
 import { UnitHealthStatus } from '@/shared/helpers/EnumHelper';
 import useTime from '@/shared/hooks/useTime';
@@ -148,7 +148,7 @@ const PlayerDiethDetails: React.FC = () => {
                         t={t}
                     />
                 </div>
-                <CombatLogsBuild />
+                <CombatPlayerBuild />
             </div>
         );
     }

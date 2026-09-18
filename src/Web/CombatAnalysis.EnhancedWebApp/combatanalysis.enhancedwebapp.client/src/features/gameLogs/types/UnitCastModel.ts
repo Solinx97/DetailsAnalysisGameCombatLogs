@@ -4,7 +4,7 @@ export type UnitCastModel = {
     gameSpellId: number;
     spell: string;
     time: string;
-    finishTime: string;
+    finishTime: string | null;
     targetGameId: string | null;
     isImmediatly: boolean;
     isSuccess: boolean;

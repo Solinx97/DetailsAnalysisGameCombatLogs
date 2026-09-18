@@ -60,4 +60,14 @@ internal class CombatParserService(ICombatParserHelper combatParserHelper, IFile
 
         return stats;
     }
+
+    protected override bool GetCombatResult(string combatFinish)
+    {
+        var data = combatFinish.Split("  ");
+        var split = data[1].Split(',');
+        var combatResult = int.Parse(split[^2]);
+        var isWin = combatResult == 1;
+
+        return isWin;
+    }
 }

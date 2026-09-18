@@ -25,7 +25,7 @@ const CombatAuraItem: React.FC<CombatAuraItemProps> = ({ onlyPinnedAuras, pinned
     const [showTargets, setShowTargets] = useState(false);
     const [seeBuffs, setSeeBuffs] = useState(true);
 
-    const { data: allAuras, isLoading } = useGetCombatPlayerAurasByCombatIdQuery({ combatId, combatPlayerId });
+    const { data: allAuras, isLoading } = useGetCombatPlayerAurasByCombatIdQuery(combatId);
 
     useEffect(() => {
         if (!allAuras) {

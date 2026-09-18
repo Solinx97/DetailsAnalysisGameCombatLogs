@@ -4,6 +4,5 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetAurasByCombatId;
 
 public record GetAurasByCombatIdQuery(
-    int CombatId,
-    string UnitId
+    int CombatId
     ) : IRequest<IEnumerable<UnitAuraDto>>;

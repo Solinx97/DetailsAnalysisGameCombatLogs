@@ -12,11 +12,8 @@ internal class GetAurasByCombatIdHandler(ICombatPlayerAuraRepository repository,
 
     public async Task<IEnumerable<UnitAuraDto>> Handle(GetAurasByCombatIdQuery request, CancellationToken cancellationToken)
     {
-        var combatPlayerAuras = !string.IsNullOrEmpty(request.UnitId)
-            ? await _repository.GetAurasAsync(request.UnitId, cancellationToken)
-            : await _repository.GetAurasAsync(request.CombatId, cancellationToken);
-
-        var map = _mapper.Map<IEnumerable<UnitAuraDto>>(combatPlayerAuras);
+        var combatAuras = await _repository.GetAurasAsync(request.CombatId, cancellationToken);
+        var map = _mapper.Map<IEnumerable<UnitAuraDto>>(combatAuras);
 
         return map;
     }

@@ -94,8 +94,8 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             </div>
                         </div>
                         <CombatPreAuraItem
-                            unitId={combatPlayer.unitId}
                             combatId={details.id}
+                            unitId={combatPlayer.unitId}
                         />
                         <DetailsItem
                             avgilvl={combatPlayer.averageItemLevel}

@@ -154,7 +154,6 @@ const CombatAuras: React.FC = () => {
                 </ul>
             }
             <CombatPreAuraItem
-                unitId={""}
                 combatId={combatId}
             />
             <CombatAuraItem

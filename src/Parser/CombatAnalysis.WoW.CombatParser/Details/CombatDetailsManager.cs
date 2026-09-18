@@ -52,7 +52,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         var gameSpellId = int.Parse(combatDataLine[10]);
         if (combatDataLine[1].Equals(CombatLogKeyWords.SpellCastStart))
         {
-            var unitCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], false, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+            var unitCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], false, false);
             unit.UnitCasts.Add(unitCast);
         }
         else
@@ -63,31 +63,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
 
     public abstract void GetHealth(string[] combatDataLine, ConcurrentDictionary<string, Unit> units, UnitHealthStatus status);
 
-    public void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
-    {
-        var positionOwnerId = combatDataLine[2];
-        if (combatDataLine.Length <= 25 || !units.TryGetValue(positionOwnerId, out var unit))
-        {
-            return;
-        }
-
-        var pos1Index = 26;
-        var pos2Index = 27;
-
-        if (double.TryParse(combatDataLine[pos1Index], out var positionX)
-            && double.TryParse(combatDataLine[pos2Index], out var positionY))
-        {
-            var position = new UnitPosition
-            {
-                OwnerGameId = positionOwnerId,
-                X = positionX,
-                Y = positionY,
-                Time = GetTimeFromStart(combatDataLine[0])
-            };
-
-            unit.UnitPositions.Add(position);
-        }
-    }
+    public abstract void GetPosition(string[] combatDataLine, ConcurrentDictionary<string, Unit> units);
 
     public void GetHealDone(string[] combatDataLine, ConcurrentDictionary<string, Unit> units)
     {
@@ -230,10 +206,9 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         return aura;
     }
 
-    private UnitCast CreateUnitCast(int gameSpellId, string[] combatDataLine, string startTimeCast, string finishTimeCast, bool isImmediatly, bool isSuccess)
+    private UnitCast CreateUnitCast(int gameSpellId, string[] combatDataLine, string startTimeCast, bool isImmediatly, bool isSuccess)
     {
         var startTime = GetTimeFromStart(startTimeCast);
-        var finishTime = GetTimeFromStart(finishTimeCast);
 
         var cast = new UnitCast
         {
@@ -241,7 +216,6 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
             GameSpellId = gameSpellId,
             Spell = combatDataLine[11].Trim('"'),
             Time = startTime,
-            FinishTime = finishTime,
             TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NullValue, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6],
             IsImmediatly = isImmediatly,
             IsSuccess = isSuccess,
@@ -263,7 +237,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
     private void FinishCast(int gameSpellId, string[] combatDataLine, List<UnitCast> combatPlayerCasts, bool isSuccess)
     {
         var lastStartedCast = combatPlayerCasts
-            .LastOrDefault(x => x.GameSpellId == gameSpellId && !x.IsImmediatly);
+            .FirstOrDefault(x => x.GameSpellId == gameSpellId && x.FinishTime == null && !x.IsImmediatly);
         if (lastStartedCast != null)
         {
             lastStartedCast.FinishTime = GetTimeFromStart(combatDataLine[0]);
@@ -272,7 +246,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
         else
         {
-            var instaCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], combatDataLine[0], true, isSuccess);
+            var instaCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], true, isSuccess);
             combatPlayerCasts.Add(instaCast);
         }
     }

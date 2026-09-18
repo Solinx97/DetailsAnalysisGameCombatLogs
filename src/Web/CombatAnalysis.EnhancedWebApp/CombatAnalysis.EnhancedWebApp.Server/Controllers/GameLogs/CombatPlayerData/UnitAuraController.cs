@@ -18,10 +18,10 @@ public class UnitAuraController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatId")]
-    public async Task<IActionResult> GetByCombatId(int combatId, int combatPlayerId)
+    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatId)
     {
-        var responseMessage = await _httpClient.GetAsync($"UnitAura/getByCombatId?combatId={combatId}&combatPlayerId={combatPlayerId}");
+        var responseMessage = await _httpClient.GetAsync($"UnitAura/getByCombatId/{combatId}");
         var combatAuras = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitAuraModel>>();
 
         return Ok(combatAuras);
