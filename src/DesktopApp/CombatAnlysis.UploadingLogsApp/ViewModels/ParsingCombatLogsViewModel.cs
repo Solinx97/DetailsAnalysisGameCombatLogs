@@ -6,7 +6,6 @@ using CombatAnalysis.UploadingLogsApp.Interfaces;
 using CombatAnalysis.UploadingLogsApp.Models;
 using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using CombatAnalysis.UploadingLogsApp.ViewModels.User;
-using CombatAnalysis.WoW.CombatParser.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -120,6 +119,9 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 
     [ObservableProperty]
     public partial int CurrentCombatNumber { get; set; }
+
+    [ObservableProperty]
+    public partial string UploadingInformation { get; set; }
 
     [ObservableProperty]
     public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMidnight;
@@ -321,7 +323,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
             ResponseStatus = LoadingStatus.Pending;
 
             CurrentCombatNumber = 0;
-            CombatsNumber = combats.Count;
+            CombatsNumber = combats.Count(x => x.Boss.Id > 0);
 
             await _combatParserAPIService.SaveAsync(combats, combatLogId, CombatUploaded, RequestCancelationToken);
 
@@ -346,10 +348,11 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         }
     }
 
-    private void CombatUploaded(string dungeonName, string name)
+    private void CombatUploaded(string dungeonName, string name, string uploadingInfomration)
     {
         DungeonName = dungeonName;
         Name = name;
+        UploadingInformation = uploadingInfomration;
 
         CurrentCombatNumber++;
     }

@@ -22,7 +22,6 @@ public class CombatBaseModel
     [Range(0, long.MaxValue)]
     public long DamageTaken { get; init; }
 
-    [Range(0, long.MaxValue)]
     public long ResourcesRecovery { get; init; }
 
     public bool IsWin { get; init; }

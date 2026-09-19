@@ -9,7 +9,6 @@ public class UnitHealthModel
     [Required]
     public string OwnerGameId { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
     public long CurrentHealth { get; set; }
 
     [Range(0, int.MaxValue)]

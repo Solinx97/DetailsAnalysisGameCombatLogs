@@ -6,7 +6,6 @@ using CombatParser.Application.Commands.DeleteCombatLog;
 using CombatParser.Application.Commands.UpdateCombatLog;
 using CombatParser.Application.Queries.GetByIdCombatLog;
 using CombatParser.Application.Queries.GetCombatLogsByLogType;
-using CombatParser.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,8 +72,6 @@ public class CombatLogController(IMediator mediator, IDeleteCombatLogQueue delet
     [Authorize]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-
-
         await _deleteCombatLogQueue.EnqueueAsync(new DeleteCombatLogCommand(id), cancellationToken);
 
         return Accepted();

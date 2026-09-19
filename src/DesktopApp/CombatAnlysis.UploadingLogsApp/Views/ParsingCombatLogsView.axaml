@@ -118,6 +118,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="{Binding DungeonName}" FontSize="15" Margin="0 5" Foreground="White"/>
@@ -133,6 +134,7 @@
                 <TextBlock HorizontalAlignment="Center" Text="{Binding Localization.ParsingCombatLogs[AlreadyUploaded]}" FontSize="14" FontWeight="Bold" Foreground="White"/>
                 <TextBlock HorizontalAlignment="Center" Margin="20 0" Text="{Binding Name}" FontSize="15" Foreground="White"/>
             </StackPanel>
+            <TextBlock Grid.Row="3" HorizontalAlignment="Center" Text="{Binding UploadingInformation}" Foreground="Orange" FontSize="12" Margin="0 5" />
         </Grid>
     </Grid>
 </ContentPage>

@@ -32,7 +32,6 @@ public class UnitHealth : CombatUnitDataBase, ITime, IUnitRef
     public static UnitHealth Create(string ownerGameId, long currentHealth, long maxHealth, int status, TimeSpan time)
     {
         ArgumentException.ThrowIfNullOrEmpty(ownerGameId, nameof(ownerGameId));
-        ArgumentOutOfRangeException.ThrowIfNegative(currentHealth, nameof(currentHealth));
         ArgumentOutOfRangeException.ThrowIfNegative(maxHealth, nameof(maxHealth));
 
         return new UnitHealth(ownerGameId, currentHealth, maxHealth, status, time);

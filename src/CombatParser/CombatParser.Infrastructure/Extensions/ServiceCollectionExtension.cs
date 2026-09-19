@@ -20,7 +20,11 @@ public static class ServiceCollectionExtension
     {
         services.AddDbContext<CombatParserContextOne>(options =>
         {
-            options.UseSqlServer(connectionString);
+            options.UseSqlServer(connectionString,
+                sql =>
+                {
+                    sql.CommandTimeout(600);
+                });
         });
 
         services.AddScoped<IGenericRepository<CombatLog, int>, GenericRepository<CombatLog, int>>();

@@ -23,7 +23,7 @@ namespace CombatAnalysis.UploadingLogsApp.Services;
 
 internal class CombatParserAPIService : ICombatParserAPIService
 {
-    private const int PARALLEL_COUNT = 3;
+    private const int PARALLEL_COUNT = 4;
     private const int DEFAULT_RAID_SIZE = 30;
 
     private readonly IHttpClientHelper _httpClient;
@@ -41,63 +41,16 @@ internal class CombatParserAPIService : ICombatParserAPIService
         _httpClient.BaseAddress = API.CombatParserApi;
     }
 
-    public async Task SaveAsync(List<CombatModel> combats, int combatLogId, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
+    public async Task SaveAsync(List<CombatModel> combats, int combatLogId, Action<string, string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
     {
         var cancellationToken = requestCancellationToken();
 
         using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
         var combatTasks = combats.Select(async combat =>
         {
-            await semaphore.WaitAsync(cancellationToken);
-
-            try
+            if (combat.Boss.Id > 0)
             {
-                var createCombat = _mapper.Map<CreateCombatModel>(combat);
-
-                createCombat.GameVersion = (int)CurrentCombatParserVersion.Version;
-                createCombat.CombatLogId = combatLogId;
-
-                using var content = JsonContent.Create(createCombat);
-                using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
-                response.EnsureSuccessStatusCode();
-
-                uplodedCallback(combat.DungeonName, combat.Boss.Name);
-
-                combat.ReleaseParsedData();
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                _logger.LogError(ex, "Authorization failed: {Message}", ex.Message);
-
-                combat.ReleaseParsedData();
-
-                throw;
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-                combat.ReleaseParsedData();
-
-                throw;
-            }
-            catch (OperationCanceledException ex)
-            {
-                _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
-
-                combat.ReleaseParsedData();
-
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-                combat.ReleaseParsedData();
-            }
-            finally
-            {
-                semaphore.Release();
+                await UploadingCombatAsync(semaphore, combat, combatLogId, uplodedCallback, cancellationToken);
             }
         });
 
@@ -175,23 +128,76 @@ internal class CombatParserAPIService : ICombatParserAPIService
 
     public async Task GetBossAsync(List<CombatModel> combats, bool useDefault, CancellationToken cancellationToken)
     {
+        var tasks = combats.Select(async x =>
+        {
+            await LoadBossAsync(x, useDefault ? DEFAULT_RAID_SIZE : x.Boss.Size, cancellationToken);
+        });
+
+        await Task.WhenAll(tasks);
+
+        GetBossHealthPercentage(combats);
+    }
+
+    private async Task UploadingCombatAsync(SemaphoreSlim semaphore, CombatModel combat, int combatLogId, Action<string, string, string> uplodedCallback, CancellationToken cancellationToken)
+    {
+        await semaphore.WaitAsync(cancellationToken);
+
         try
         {
-            foreach (var combat in combats)
-            {
-                var boss = await LoadBossAsync(combat.Boss.GameId, combat.Boss.Difficult, useDefault ? DEFAULT_RAID_SIZE : combat.Boss.Size, cancellationToken);
-                combat.Boss = boss ?? new();
-            }
+            var createCombat = _mapper.Map<CreateCombatModel>(combat);
 
-            GetBossHealthPercentage(combats);
+            createCombat.GameVersion = (int)CurrentCombatParserVersion.Version;
+            createCombat.CombatLogId = combatLogId;
+
+            using var content = JsonContent.Create(createCombat);
+            using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
+            response.EnsureSuccessStatusCode();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "");
+
+            combat.ReleaseParsedData();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            _logger.LogError(ex, "Authorization failed: {Message}", ex.Message);
+
+            combat.ReleaseParsedData();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "Authorization failed");
+
+            throw;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            combat.ReleaseParsedData();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, $"HTTP request error");
+
+            throw;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
+
+            combat.ReleaseParsedData();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "Request was canceled by client");
+
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "An unexpected error occurred");
+
+            combat.ReleaseParsedData();
+        }
+        finally
+        {
+            semaphore.Release();
         }
     }
 
@@ -228,14 +234,33 @@ internal class CombatParserAPIService : ICombatParserAPIService
         }
     }
 
-    private async Task<BossModel?> LoadBossAsync(int gameBossId, int difficult, int groupSize, CancellationToken cancellationToken)
+    private async Task LoadBossAsync(CombatModel combat, int groupSize, CancellationToken cancellationToken)
     {
-        var response = await _httpClient.GetAsync($"Boss?gameBossId={gameBossId}&difficult={difficult}&groupSize={groupSize}", cancellationToken);
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var response = await _httpClient.GetAsync($"Boss?gameBossId={combat.Boss.GameId}&difficult={combat.Boss.Difficult}&groupSize={groupSize}", cancellationToken);
+            response.EnsureSuccessStatusCode();
 
-        var boss = await response.Content.ReadFromJsonAsync<BossModel>(cancellationToken: cancellationToken);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var boss = await response.Content.ReadFromJsonAsync<BossModel>(cancellationToken: cancellationToken);
+                combat.Boss = boss ?? new() { Name = "[NO_DATA]" };
+            }
+            else if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                combat.Boss = new() { Name = "[NO_DATA]" };
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-        return boss;
+            combat.Boss = new() { Name = "[NO_DATA]" };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+        }
     }
 
     private static string CreateCombatLogName(List<string> dungeonNames)
