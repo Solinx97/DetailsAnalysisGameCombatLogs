@@ -47,3 +47,14 @@ export const CombatLogStatus = {
     Deleting: 2,
     Deleted: 3,
 } as const;
+
+export const DashboardValueType = {
+    Value: 0,
+    AverageValue: 1,
+    MaxValue: 2,
+    MinValue: 3,
+    ValuePerSecond: 4,
+    AverageValuePerSecond: 5,
+    MaxValuePerSecond: 6,
+    MinValuePerSecond: 7,
+} as const;

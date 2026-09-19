@@ -1,8 +1,9 @@
 ﻿using CombatAnalysis.CombatParserAPI.Consts;
+using CombatParser.Application.Queries.Dashboards.GetDamage;
 using CombatParser.Application.Queries.Dashboards.GetDamageSpells;
-using CombatParser.Application.Queries.Dashboards.GetDPS;
+using CombatParser.Application.Queries.Dashboards.GetDamageTaken;
+using CombatParser.Application.Queries.Dashboards.GetHeal;
 using CombatParser.Application.Queries.Dashboards.GetHealSpells;
-using CombatParser.Application.Queries.Dashboards.GetHPS;
 using CombatParser.Application.Queries.Dashboards.GetPotions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,25 +16,40 @@ public class DashboardController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getDPS/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDPS(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken)
+    [HttpGet("getDamage/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDamage(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
     {
-        var dashboard = await _mediator.Send(new GetDPSQuery(
+        var dashboard = await _mediator.Send(new GetDamageQuery(
             combatLogId, 
             combatId, 
-            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName
+            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName,
+            valueType
             ), cancellationToken);
 
         return Ok(dashboard);
     }
 
-    [HttpGet("getHPS/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetHPS(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken)
+    [HttpGet("getHeal/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetHeal(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
     {
-        var dashboard = await _mediator.Send(new GetHPSQuery(
+        var dashboard = await _mediator.Send(new GetHealQuery(
             combatLogId,
             combatId,
-            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName
+            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName,
+            valueType
+            ), cancellationToken);
+
+        return Ok(dashboard);
+    }
+
+    [HttpGet("getDamageTaken/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetDamageTaken(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
+    {
+        var dashboard = await _mediator.Send(new GetDamageTakenQuery(
+            combatLogId,
+            combatId,
+            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName,
+            valueType
             ), cancellationToken);
 
         return Ok(dashboard);

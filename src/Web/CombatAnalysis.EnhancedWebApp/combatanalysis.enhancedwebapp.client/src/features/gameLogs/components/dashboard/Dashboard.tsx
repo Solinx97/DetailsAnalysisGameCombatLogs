@@ -1,9 +1,10 @@
 import Loading from '@/shared/components/Loading';
 import { NoneValue } from '@/shared/helpers/ConstHelpers';
+import { DashboardValueType } from '@/shared/helpers/EnumHelper';
 import React, { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Select from 'react-select';
-import { useGetUniqueCombatsByCombatLogIdQuery, useGetUniqueCombatPlayerNamesQuery } from '../../api/GameLogs.api';
+import { useGetUniqueCombatPlayerNamesQuery, useGetUniqueCombatsByCombatLogIdQuery } from '../../api/GameLogs.api';
 import type { CombatModel } from '../../types/CombatModel';
 import DashboardItem from './DashboardItem';
 
@@ -11,11 +12,13 @@ import './Dashboard.scss';
 
 interface DashboardItemValue {
     requestName: string;
+    valueType: number;
     name: string;
 }
 
 interface DashboardItemModel {
     requestName: string;
+    valueType: number;
     name: string;
 }
 
@@ -33,10 +36,32 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
     const { t } = useTranslation('combatDetails/dashboard');
 
     const dashboards: DashboardItemValue[] = [
-        { requestName: "getDPS", name: t("AverageDPS") },
-        { requestName: "getHPS", name: t("AverageHPS") },
-        { requestName: "getDamageSpells", name: t("OverallDamageSpells") },
-        { requestName: "getHealSpells", name: t("OverallHealSpells") },
+        { requestName: "getDamage", valueType: DashboardValueType.Value, name: t("Damage") },
+        { requestName: "getDamage", valueType: DashboardValueType.AverageValue, name: t("AverageDamage") },
+        { requestName: "getDamage", valueType: DashboardValueType.MaxValue, name: t("MaxDamage") },
+        { requestName: "getDamage", valueType: DashboardValueType.MinValue, name: t("MinDamage") },
+        { requestName: "getDamage", valueType: DashboardValueType.ValuePerSecond, name: t("DPS") },
+        { requestName: "getDamage", valueType: DashboardValueType.AverageValuePerSecond, name: t("AverageDPS") },
+        { requestName: "getDamage", valueType: DashboardValueType.MaxValuePerSecond, name: t("MaxDPS") },
+        { requestName: "getDamage", valueType: DashboardValueType.MinValuePerSecond, name: t("MinDPS") },
+        { requestName: "getHeal", valueType: DashboardValueType.Value, name: t("Heal") },
+        { requestName: "getHeal", valueType: DashboardValueType.AverageValue, name: t("AverageHeal") },
+        { requestName: "getHeal", valueType: DashboardValueType.MaxValue, name: t("MaxHeal") },
+        { requestName: "getHeal", valueType: DashboardValueType.MinValue, name: t("MinHeal") },
+        { requestName: "getHeal", valueType: DashboardValueType.ValuePerSecond, name: t("HPS") },
+        { requestName: "getHeal", valueType: DashboardValueType.AverageValuePerSecond, name: t("AverageHPS") },
+        { requestName: "getHeal", valueType: DashboardValueType.MaxValuePerSecond, name: t("MaxHPS") },
+        { requestName: "getHeal", valueType: DashboardValueType.MinValuePerSecond, name: t("MinHPS") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.Value, name: t("DamageTaken") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.AverageValue, name: t("AverageDamageTaken") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.MaxValue, name: t("MaxDamageTaken") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.MinValue, name: t("MinDamageTaken") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.ValuePerSecond, name: t("DTPS") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.AverageValuePerSecond, name: t("AverageDTPS") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.MaxValuePerSecond, name: t("MaxDTPS") },
+        { requestName: "getDamageTaken", valueType: DashboardValueType.MinValuePerSecond, name: t("MinDTPS") },
+        { requestName: "getDamageSpells", valueType: 0, name: t("OverallDamageSpells") },
+        { requestName: "getHealSpells", valueType: 0, name: t("OverallHealSpells") },
     ];
 
     const [uniqueBossesOptions, setUniqueBossesOptions] = useState<Option[]>([]);
@@ -90,7 +115,7 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
     }, [allUniquePlayers]);
 
     useEffect(() => {
-        if (!allUniqueCombats  || uniqueBossesValue === undefined || uniqueBossesValue === null) {
+        if (!allUniqueCombats || uniqueBossesValue === undefined || uniqueBossesValue === null) {
             return;
         }
 
@@ -147,11 +172,12 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
         return values;
     }
 
-    const addDashboard = (requestName: string, name: string) => {
+    const addDashboard = (requestName: string, valueType: number, name: string) => {
         setSelectedDashboards(prev => [
             ...prev,
             {
                 requestName,
+                valueType,
                 name
             }
         ]);
@@ -205,7 +231,7 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
                 <div>{t("AvailableDashboards")}</div>
                 <ul className="dashboard-title-list">
                     {dashboards.map((item, index) => (
-                        <li key={index} onClick={() => addDashboard(item.requestName, item.name)}>{item.name}</li>
+                        <li key={index} onClick={() => addDashboard(item.requestName, item.valueType, item.name)}>{item.name}</li>
                     ))
                     }
                 </ul>
@@ -216,6 +242,7 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
                         <DashboardItem
                             setCloseDashboardItem={() => closeDashboard(item)}
                             requestName={item.requestName}
+                            valueType={item.valueType}
                             combatLogId={combatLogId}
                             combatId={selectedCombatId}
                             unitName={selectedUnitName}

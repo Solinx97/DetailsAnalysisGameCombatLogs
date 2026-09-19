@@ -2,5 +2,6 @@
 
 public record DashboardItem(
     string ValueName,
-    string Value
+    string Value,
+    int UnitType
     );

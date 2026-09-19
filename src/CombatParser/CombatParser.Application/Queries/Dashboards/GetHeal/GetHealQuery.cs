@@ -1,10 +1,11 @@
 ﻿using CombatParser.Application.DTOs.Dashboard;
 using MediatR;
 
-namespace CombatParser.Application.Queries.Dashboards.GetHPS;
+namespace CombatParser.Application.Queries.Dashboards.GetHeal;
 
-public record GetHPSQuery(
+public record GetHealQuery(
     int CombatLogId,
     int CombatId,
-    string UnitName
+    string UnitName,
+    int ValueType
     ) : IRequest<DashboardDto>;

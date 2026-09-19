@@ -110,8 +110,8 @@ export const GameLogsApi = createApi({
         getCombatPlayerDeath: builder.query<CombatPlayerDeathModel[], { unitId: string, skipCount: number }>({
             query: ({ unitId, skipCount }) => `/CombatPlayer/getPlayerDeath/${unitId}?skipCount=${skipCount}`,
         }),
-        getDashboard: builder.query<DashboardModel, { dahsboardName: string, combatLogId: number, combatId: number, unitName: string }>({
-            query: ({ dahsboardName, combatLogId, combatId, unitName }) => `/Dashboard/${dahsboardName}/${combatLogId}?combatId=${combatId}&unitName=${unitName}`
+        getDashboard: builder.query<DashboardModel, { dahsboardName: string, combatLogId: number, combatId: number, unitName: string, valueType: number }>({
+            query: ({ dahsboardName, combatLogId, combatId, unitName, valueType }) => `/Dashboard/${dahsboardName}/${combatLogId}?combatId=${combatId}&unitName=${unitName}&valueType=${valueType}`
         }),
         getCombatById: builder.query<CombatModel, number>({
             query: id => `/Combat/${id}`,
