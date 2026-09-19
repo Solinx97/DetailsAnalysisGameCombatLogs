@@ -14,6 +14,18 @@ internal class CombatPlayerRepository(CombatParserContextOne context) : ICombatP
 {
     private readonly CombatParserContextOne _context = context;
 
+    public async Task<IEnumerable<string>> GetUniquePlayerNames(int combatLogId, CancellationToken cancellationToken)
+    {
+        var combatPlayerNames = await _context.Set<CombatPlayer>()
+            .Where(c => c.Combat.CombatLogId == combatLogId)
+            .AsNoTracking()
+            .Select(x => x.Player.Username)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
+        return combatPlayerNames;
+    }
+
     public async Task<IEnumerable<CombatPlayer>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken)
     {
         var combatPlayers = await _context.Set<CombatPlayer>()

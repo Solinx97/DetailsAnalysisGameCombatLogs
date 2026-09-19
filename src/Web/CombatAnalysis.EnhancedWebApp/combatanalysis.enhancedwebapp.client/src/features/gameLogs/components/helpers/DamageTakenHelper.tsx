@@ -1,5 +1,6 @@
-﻿import { DamageModificationType } from '@/shared/helpers/EnumHelper';
-import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark, faShield } from '@fortawesome/free-solid-svg-icons';
+﻿import { NoneValue } from '@/shared/helpers/ConstHelpers';
+import { DamageModificationType } from '@/shared/helpers/EnumHelper';
+import { faCopy, faFire, faFlask, faHands, faPooStorm, faShield, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
@@ -19,15 +20,12 @@ interface DamageTakenHelperProps {
 }
 
 const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ unitId, pageSize, t }) => {
-    const NONE_VALUE = "NONE";
-    const ZERO_TIME_VALUE = "00:00:00";
-
     const { getTimeWithoutMs } = useTime();
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
-
+    const [selectedFilter, setSelectedFilter] = useState({ target: NoneValue.NONE_VALUE.toString(), creator: NoneValue.NONE_VALUE.toString(), spell: NoneValue.NONE_VALUE.toString(), from: NoneValue.ZERO_TIME_VALUE.toString(), to: NoneValue.ZERO_TIME_VALUE.toString() });
+    
     const { data: count, isLoading: countIsLoading } = useCountDamageTakenQuery(
         { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );

@@ -1,6 +1,6 @@
-import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useTime from '@/shared/hooks/useTime';
+import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faLocationCrosshairs, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -91,7 +91,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                 </div>
                 <ul className="stats">
                     <li className="list-group-item">
-                        <div>{t("DamageDone")}</div>
+                        <div>{t("Damage")}</div>
                         <FontAwesomeIcon
                             icon={faKhanda}
                             className="list-group-item__player-statistic-item"
@@ -100,7 +100,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                         <div>{getValueShortName(selectedCombat.damageDone)}</div>
                     </li>
                     <li className="list-group-item">
-                        <div>{t("HealDone")}</div>
+                        <div>{t("Healing")}</div>
                         <FontAwesomeIcon
                             icon={faPlusCircle}
                             className="list-group-item__player-statistic-item"

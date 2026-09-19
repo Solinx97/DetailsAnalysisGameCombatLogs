@@ -7,6 +7,7 @@ using CombatParser.Application.Queries.GetCombatPlayersByCombatId;
 using CombatParser.Application.Queries.GetPlayerDeath;
 using CombatParser.Application.Queries.GetPlayerDeathCount;
 using CombatParser.Application.Queries.GetPlayerStats;
+using CombatParser.Application.Queries.GetUniquePlayerNames;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,14 @@ public class CombatPlayerController(IMediator mediator, IMapper mapper) : Contro
 {
     private readonly IMediator _mediator = mediator;
     private readonly IMapper _mapper = mapper;
+
+    [HttpGet("getUniquePlayerNames/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetUniquePlayerNames(int combatLogId, CancellationToken cancellationToken)
+    {
+        var combatPlayerNames = await _mediator.Send(new GetUniquePlayerNamesQuery(combatLogId), cancellationToken);
+
+        return Ok(combatPlayerNames);
+    }
 
     [HttpGet("getByCombatId/{combatId:int:min(1)}")]
     public async Task<IActionResult> GetByCombatId(int combatId, CancellationToken cancellationToken)

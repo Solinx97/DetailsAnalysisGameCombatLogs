@@ -1,7 +1,8 @@
+import useTime from '@/shared/hooks/useTime';
 import { faHourglassStart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { CombatModel } from "../types/CombatModel";
 import { useState, type Dispatch, type SetStateAction } from 'react';
+import type { CombatModel } from "../types/CombatModel";
 
 interface GeneralAnalysisCombatsProps {
     uniqueCombats: CombatModel[];
@@ -13,12 +14,7 @@ const GeneralAnalysisCombats: React.FC<GeneralAnalysisCombatsProps> = ({ uniqueC
     const lastCombat = uniqueCombats[uniqueCombats.length - 1];
     const [showAll, setShowAll] = useState<boolean>(false);
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const formated = `${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
-
-        return formated;
-    }
+    const { formatDate } = useTime();
 
     const getCombatDuration = (duration: string) => duration.substring(3);
 
@@ -60,37 +56,34 @@ const GeneralAnalysisCombats: React.FC<GeneralAnalysisCombatsProps> = ({ uniqueC
                             <div>+</div>
                             <div className="show-all-combats__count">{uniqueCombats.length}</div>
                         </li>
-
                     }
                 </>
             }
             {(uniqueCombats.length > 1 && showAll) &&
-                <>
-                    {uniqueCombats.map((combat, index) => (
-                        <li key={combat.id} className={`card__${combat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(index)}>
-                            <div className="combat-number">{index + 1}</div>
-                            <div className="combat-time">
-                                <div className="combat-time__range">
-                                    <div>
-                                        <div>{formatDate(combat.startDate)}</div>
-                                    </div>
-                                    <div>-</div>
-                                    <div>
-                                        <div>{formatDate(combat.finishDate)}</div>
-                                    </div>
+                uniqueCombats.map((combat, index) => (
+                    <li key={combat.id} className={`card__${combat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(index)}>
+                        <div className="combat-number">{index + 1}</div>
+                        <div className="combat-time">
+                            <div className="combat-time__range">
+                                <div>
+                                    <div>{formatDate(combat.startDate)}</div>
                                 </div>
-                                <div className="combat-time__lasts">
-                                    <div>{getCombatDuration(combat.duration)}</div>
-                                    <FontAwesomeIcon
-                                        icon={faHourglassStart}
-                                        className="list-group-item__duration"
-                                        title={t("Duration") || ""}
-                                    />
+                                <div>-</div>
+                                <div>
+                                    <div>{formatDate(combat.finishDate)}</div>
                                 </div>
                             </div>
-                        </li>
-                    ))}
-                </>
+                            <div className="combat-time__lasts">
+                                <div>{getCombatDuration(combat.duration)}</div>
+                                <FontAwesomeIcon
+                                    icon={faHourglassStart}
+                                    className="list-group-item__duration"
+                                    title={t("Duration") || ""}
+                                />
+                            </div>
+                        </div>
+                    </li>
+                ))
             }
         </ul>
     );

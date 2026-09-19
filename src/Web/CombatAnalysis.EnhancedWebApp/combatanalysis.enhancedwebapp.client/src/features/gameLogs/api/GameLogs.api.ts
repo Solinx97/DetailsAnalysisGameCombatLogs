@@ -101,23 +101,17 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'Combat', id: 'LIST' }]
         }),
+        getUniqueCombatsByCombatLogId: builder.query<Map<string, CombatModel[]>, number>({
+            query: combatLogId => `/Combat/getUniquByCombatLogId/${combatLogId}`,
+        }),
         getCombatPlayerDeathCount: builder.query<number, string>({
             query: unitId => `/CombatPlayer/getPlayerDeathCount/${unitId}`,
         }),
         getCombatPlayerDeath: builder.query<CombatPlayerDeathModel[], { unitId: string, skipCount: number }>({
             query: ({ unitId, skipCount }) => `/CombatPlayer/getPlayerDeath/${unitId}?skipCount=${skipCount}`,
         }),
-        getCombatsDashboard: builder.query<DashboardModel[], number>({
-            query: combatLogId => `/Combat/getDashboards/${combatLogId}`
-        }),
-        getCombatsDamageSpells: builder.query<Map<string, number>, number>({
-            query: combatLogId => `/Combat/getDamageSpells/${combatLogId}`
-        }),
-        getCombatsHealSpells: builder.query<Map<string, number>, number>({
-            query: combatLogId => `/Combat/getHealSpells/${combatLogId}`
-        }),
-        getPotions: builder.query<Map<string, number>, number>({
-            query: combatLogId => `/Combat/getPotions/${combatLogId}`
+        getDashboard: builder.query<DashboardModel, { dahsboardName: string, combatLogId: number, combatId: number, unitName: string }>({
+            query: ({ dahsboardName, combatLogId, combatId, unitName }) => `/Dashboard/${dahsboardName}/${combatLogId}?combatId=${combatId}&unitName=${unitName}`
         }),
         getCombatById: builder.query<CombatModel, number>({
             query: id => `/Combat/${id}`,
@@ -136,6 +130,9 @@ export const GameLogsApi = createApi({
                         { type: 'CombatPlayer', id: 'LIST' },
                     ]
                     : [{ type: 'CombatPlayer', id: 'LIST' }]
+        }),
+        getUniqueCombatPlayerNames: builder.query<string[], number>({
+            query: combatLogId => `/CombatPlayer/getUniquePlayerNames/${combatLogId}`,
         }),
         getCombatPlayerById: builder.query<CombatPlayerModel, number>({
             query: id => `/CombatPlayer/${id}`,
@@ -197,15 +194,15 @@ export const {
     useAddCombatLogStatusMutation,
     useRemoveCombatLogMutation,
     useLazyGetCombatsByCombatLogIdQuery,
+    useGetUniqueCombatsByCombatLogIdQuery,
+    useLazyGetUniqueCombatsByCombatLogIdQuery,
     useLazyGetCombatPlayerDeathCountQuery,
     useLazyGetCombatPlayerDeathQuery,
-    useGetCombatsDashboardQuery,
-    useGetCombatsDamageSpellsQuery,
-    useGetCombatsHealSpellsQuery,
-    useGetPotionsQuery,
+    useGetDashboardQuery,
     useLazyGetCombatByIdQuery,
     useLazyGetBossMapByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,
+    useGetUniqueCombatPlayerNamesQuery,
     useLazyGetCombatPlayerByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
     useGetCombatPreAurasQuery,

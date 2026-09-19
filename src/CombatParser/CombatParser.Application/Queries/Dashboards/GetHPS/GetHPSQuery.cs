@@ -1,9 +1,9 @@
 ﻿using CombatParser.Application.DTOs.Dashboard;
 using MediatR;
 
-namespace CombatParser.Application.Queries.Dashboards.GetDamageSpells;
+namespace CombatParser.Application.Queries.Dashboards.GetHPS;
 
-public record GetDamageSpellsQuery(
+public record GetHPSQuery(
     int CombatLogId,
     int CombatId,
     string UnitName

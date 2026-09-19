@@ -2,12 +2,9 @@
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Application.Commands.CreateCombat;
-using CombatParser.Application.Queries.Dashboards.GetDamageSpells;
-using CombatParser.Application.Queries.Dashboards.GetDashboard;
-using CombatParser.Application.Queries.Dashboards.GetHealSpells;
-using CombatParser.Application.Queries.Dashboards.GetPotions;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
+using CombatParser.Application.Queries.GetUniquCombatsByCombatLogId;
 using CombatParser.Domain.EntityData;
 using CombatParser.Domain.EntityData.WoWMidnight;
 using CombatParser.Domain.EntityData.WoWMoPClassic;
@@ -44,36 +41,12 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         return Ok(combats);
     }
 
-    [HttpGet("getDashboards/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDashboards(int combatLogId, CancellationToken cancellationToken)
+    [HttpGet("getUniquByCombatLogId/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetUniqueByCombatLogId(int combatLogId, CancellationToken cancellationToken)
     {
-        var dashboards = await _mediator.Send(new GetDashboardQuery(combatLogId), cancellationToken);
+        var uniqueCombats = await _mediator.Send(new GetUniquCombatsByCombatLogIdQuery(combatLogId), cancellationToken);
 
-        return Ok(dashboards);
-    }
-
-    [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDamageSpells(int combatLogId, CancellationToken cancellationToken)
-    {
-        var spells = await _mediator.Send(new GetDamageSpellsQuery(combatLogId), cancellationToken);
-
-        return Ok(spells);
-    }
-
-    [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetHealSpells(int combatLogId, CancellationToken cancellationToken)
-    {
-        var spells = await _mediator.Send(new GetHealSpellsQuery(combatLogId), cancellationToken);
-
-        return Ok(spells);
-    }
-
-    [HttpGet("getPotions/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetPotions(int combatLogId, CancellationToken cancellationToken)
-    {
-        var potions = await _mediator.Send(new GetPotionsQuery(combatLogId), cancellationToken);
-
-        return Ok(potions);
+        return Ok(uniqueCombats);
     }
 
     [HttpPost]

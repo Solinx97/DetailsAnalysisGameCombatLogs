@@ -1,8 +1,8 @@
 {
   "DPS": "DPS",
   "HPS": "HPS",
-  "HealDone": "Heal done",
-  "DamageDone": "Damage done",
+  "Healing": "Healing",
+  "Damage": "Damage",
   "DamageTaken": "Damage taken",
   "ResourcesRecovery": "Resources recovery",
   "Deaths": "Deaths",

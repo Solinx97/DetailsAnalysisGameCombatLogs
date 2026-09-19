@@ -1,6 +1,6 @@
-﻿namespace CombatParser.Domain.DTOs;
+﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public record CombatPlayerPreAuraDto(
+public record PreAuraEnchanced(
     string Id,
     string OwnerGameId,
     int GameId,

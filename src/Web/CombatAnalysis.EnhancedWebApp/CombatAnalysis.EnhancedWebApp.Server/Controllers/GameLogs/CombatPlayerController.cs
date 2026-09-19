@@ -21,6 +21,15 @@ public class CombatPlayerController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
+    [HttpGet("getUniquePlayerNames/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetUniquePlayerNames(int combatLogId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/getUniquePlayerNames/{combatLogId}");
+        var combatPlayerNames = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<string>>();
+
+        return Ok(combatPlayerNames);
+    }
+
     [HttpGet("getByCombatId/{combatId:int:min(1)}")]
     public async Task<IActionResult> GetByCombatId(int combatId)
     {

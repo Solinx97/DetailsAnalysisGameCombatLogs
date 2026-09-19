@@ -1,10 +1,10 @@
 ﻿using CombatParser.Application.DTOs.Dashboard;
 using MediatR;
 
-namespace CombatParser.Application.Queries.Dashboards.GetDamageSpells;
+namespace CombatParser.Application.Queries.Dashboards.GetDPS;
 
-public record GetDamageSpellsQuery(
+public record GetDPSQuery(
     int CombatLogId,
     int CombatId,
-    string UnitName
+    string unitName
     ) : IRequest<DashboardDto>;

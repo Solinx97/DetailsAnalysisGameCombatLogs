@@ -2,9 +2,11 @@
 
 public interface IDashboardRepository
 {
-    Task<Entities.Dashboard.Dashboard[]> GetAsync(int combatLogId, CancellationToken cancellationToken);
+    Task<Entities.Dashboard.Dashboard> GetDamagePerSecondAsync(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken);
 
-    Task<Dictionary<string, int>> GetDamageSpellsAsync(int combatLogId, CancellationToken cancellationToken);
+    Task<Entities.Dashboard.Dashboard> GetHealPerSecondAsync(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken);
 
-    Task<Dictionary<string, long>> GetHealSpellsAsync(int combatLogId, CancellationToken cancellationToken);
+    Task<Entities.Dashboard.Dashboard> GetDamageSpellsAsync(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken);
+
+    Task<Entities.Dashboard.Dashboard> GetHealSpellsAsync(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken);
 }

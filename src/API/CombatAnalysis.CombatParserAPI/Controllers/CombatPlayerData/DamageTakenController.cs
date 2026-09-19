@@ -1,4 +1,5 @@
-﻿using CombatParser.Application.Queries.DamageDone.DamageTaken.CountDamageTaken;
+﻿using CombatAnalysis.CombatParserAPI.Consts;
+using CombatParser.Application.Queries.DamageDone.DamageTaken.CountDamageTaken;
 using CombatParser.Application.Queries.DamageDone.DamageTaken.GetCombatPlayerChart;
 using CombatParser.Application.Queries.DamageDone.DamageTaken.GetDamageTakens;
 using CombatParser.Application.Queries.DamageDone.DamageTaken.GetUniqueDamageTakenCreators;
@@ -12,8 +13,6 @@ namespace CombatAnalysis.CombatParserAPI.Controllers.CombatPlayerData;
 [ApiController]
 public class DamageTakenController(IMediator mediator) : ControllerBase
 {
-    private const string NONE_VALUE = "NONE";
-    private const string ZERO_TIME_VALUE = "00:00:00";
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("count")]
@@ -21,11 +20,11 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
     {
         var count = await _mediator.Send(new CountDamageTakenQuery(
             unitId,
-            target.Equals(NONE_VALUE) ? string.Empty : target,
-            creator.Equals(NONE_VALUE) ? string.Empty : creator,
-            spell.Equals(NONE_VALUE) ? string.Empty : spell,
-            from.Equals(ZERO_TIME_VALUE) ? string.Empty : from,
-            to.Equals(ZERO_TIME_VALUE) ? string.Empty : to
+            target.Equals(NoneValue.NONE_VALUE) ? string.Empty : target,
+            creator.Equals(NoneValue.NONE_VALUE) ? string.Empty : creator,
+            spell.Equals(NoneValue.NONE_VALUE) ? string.Empty : spell,
+            from.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : from,
+            to.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : to
             ), cancellationToken);
 
         return Ok(count);
@@ -37,11 +36,11 @@ public class DamageTakenController(IMediator mediator) : ControllerBase
         var damageTakens = await _mediator.Send(new GetDamageTakensQuery(
             unitId,
             combatId,
-            target.Equals(NONE_VALUE) ? string.Empty : target,
-            creator.Equals(NONE_VALUE) ? string.Empty : creator,
-            spell.Equals(NONE_VALUE) ? string.Empty : spell,
-            from.Equals(ZERO_TIME_VALUE) ? string.Empty : from,
-            to.Equals(ZERO_TIME_VALUE) ? string.Empty : to,
+            target.Equals(NoneValue.NONE_VALUE) ? string.Empty : target,
+            creator.Equals(NoneValue.NONE_VALUE) ? string.Empty : creator,
+            spell.Equals(NoneValue.NONE_VALUE) ? string.Empty : spell,
+            from.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : from,
+            to.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : to,
             page,
             pageSize
             ), cancellationToken);

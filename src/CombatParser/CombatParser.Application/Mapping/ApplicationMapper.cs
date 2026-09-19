@@ -28,7 +28,7 @@ public class ApplicationMapper : Profile
         CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayer>().ReverseMap();
         CreateMap<UnitPreAuraDto, UnitPreAura>().ReverseMap();
-        CreateMap<Domain.DTOs.CombatPlayerPreAuraDto, UnitPreAuraDto>().ReverseMap();
+        CreateMap<PreAuraEnchanced, UnitPreAuraDto>().ReverseMap();
         CreateMap<CombatPlayerDeathDto, CombatPlayerDeath>().ReverseMap();
         CreateMap<UnitAuraDto, UnitAura>().ReverseMap();
         CreateMap<UnitDto, Unit>().ReverseMap();
@@ -55,5 +55,6 @@ public class ApplicationMapper : Profile
 
         CreateMap<ChartGenericDto, ChartGeneric>().ReverseMap();
         CreateMap<DashboardDto, Dashboard>().ReverseMap();
+        CreateMap<DashboardItemDto, DashboardItem>().ReverseMap();
     }
 }

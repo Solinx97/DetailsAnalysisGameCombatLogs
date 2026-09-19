@@ -1,86 +1,73 @@
-import DashboardContext from '@/context/DashboardContext';
 import useNumber from '@/shared/hooks/useNumber';
 import React, { useEffect, useState } from 'react';
-import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { DashboardModel } from '../../types/dashboard/DashboardModel';
-import { CombatUnitType } from '@/shared/helpers/EnumHelper';
+import { useGetDashboardQuery } from '../../api/GameLogs.api';
+import type { DashboardItemModel } from '../../types/dashboard/DashboardItemModel';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface DashboardItemProps {
-    dashboards: DashboardModel[];
-    item: ReactNode;
+    requestName: string;
+    combatLogId: number;
+    combatId: number;
+    unitName: string;
     name: string;
+    setCloseDashboardItem: () => void;
 }
 
-const DashboardItem: React.FC<DashboardItemProps> = ({ dashboards, item, name }) => {
+const DashboardItem: React.FC<DashboardItemProps> = ({ requestName, combatLogId, combatId, unitName, name, setCloseDashboardItem }) => {
     const minCount = 3;
 
     const { t } = useTranslation('combatDetails/dashboard');
 
-    const [onlyPlayers, setOnlyPlayers] = useState(false);
-    const [contentSize, setContentSize] = useState(minCount);
-    const [dashboardsSize, setDashboardsSize] = useState(dashboards.length);
-    const [filter, setFilter] = useState(-1);
-    const [filteredDashboardItem, setFilteredDashboardItem] = useState<DashboardModel[]>([]);
-
     const { formatNumber } = useNumber();
 
-    const compare = (boardA: DashboardModel, boardB: DashboardModel): number => {
-        const keys: (keyof DashboardModel)[] = ['averageDPS', 'averageHPS', 'deathCount'];
-        const key = keys[filter < 0 ? 0 : filter];
+    const { data: dashboard, isLoading } = useGetDashboardQuery({ dahsboardName: requestName, combatLogId, combatId, unitName });
 
-        if (boardA[key] > boardB[key]) {
-            return -1;
-        }
-        if (boardA[key] < boardB[key]) {
-            return 1;
-        }
-
-        return 0;
-    }
+    const [onlyPlayers, setOnlyPlayers] = useState(false);
+    const [contentSize, setContentSize] = useState(minCount);
+    const [dashboardItems, setDashboardItems] = useState<DashboardItemModel[]>([]);
 
     useEffect(() => {
-        if (!dashboards) {
+        if (!dashboard) {
             return;
         }
 
-        if (onlyPlayers) {
-            const result = Array.from([...dashboards].sort(compare).filter(x => x.type === CombatUnitType["Player"]).slice(0, contentSize));
-            setFilteredDashboardItem([...result]);
-        }
-        else {
-            const result = Array.from([...dashboards].sort(compare).slice(0, contentSize));
-            setFilteredDashboardItem([...result]);
-        }
-    }, [filter, contentSize, onlyPlayers, dashboards]);
+        setDashboardItems(dashboard.items.slice(0, contentSize));
+    }, [dashboard, contentSize]);
+
+    if (isLoading || !dashboard) {
+        return (<div>Loading...</div>);
+    }
 
     return (
-        <DashboardContext.Provider
-            value={{
-                dashboards: filteredDashboardItem,
-                dashboardsSize: dashboardsSize,
-                setDashboardsSize: setDashboardsSize,
-                contentSize: contentSize,
-                setContentSize: setContentSize,
-                formatNumber: formatNumber,
-                compare: compare,
-                setFilter: setFilter,
-                filter: filter,
-                onlyPlayers: onlyPlayers
-            }}
-        >
-            <li className="item">
-                <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setOnlyPlayers((item) => !item)} />
-                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{onlyPlayers ? t("AnyUnits") : t("OnlyPlayers")}</label>
-                </div>
-                <div className="header">{name}</div>
-                <span className="content">{item}</span>
-                <div className="extend" onClick={() => setContentSize(contentSize === minCount ? dashboardsSize : minCount)}>
-                    {contentSize === minCount ? t("More") : t("Less")}
-                </div>
-            </li>
-        </DashboardContext.Provider>
+        <>
+            <div className="form-check form-switch">
+                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setOnlyPlayers((item) => !item)} />
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{onlyPlayers ? t("AnyUnits") : t("OnlyPlayers")}</label>
+            </div>
+            <div className="header">
+                <div>{name}</div>
+                <FontAwesomeIcon
+                    className="close"
+                    icon={faClose}
+                    onClick={setCloseDashboardItem}
+                />
+            </div>
+            <span className="content">
+                <ul className="details">
+                    {dashboardItems.map((item, index) => (
+                        <li key={index} className="details-item">
+                            <div>{item.valueName}</div>
+                            <div>{formatNumber(item.value)}</div>
+                        </li>
+                    ))}
+                </ul>
+            </span>
+            <div className="extend" onClick={() => setContentSize(contentSize === minCount ? dashboard.items.length : minCount)}>
+                {contentSize === minCount ? t("More") : t("Less")}
+            </div>
+        </>
     );
 }
 

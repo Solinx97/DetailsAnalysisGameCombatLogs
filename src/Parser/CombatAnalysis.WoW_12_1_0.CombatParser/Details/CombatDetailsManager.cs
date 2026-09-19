@@ -41,7 +41,7 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, Date
         var absorbeDone = new HealDone
         {
             GameSpellId = int.Parse(combatDataLine[^6]),
-            Spell = combatDataLine[^4].Trim('"'),
+            Spell = combatDataLine[^5].Trim('"'),
             Time = GetTimeFromStart(combatDataLine[0]),
             Overheal = 0,
             ModificationType = (int)ModificationType.Absorb,

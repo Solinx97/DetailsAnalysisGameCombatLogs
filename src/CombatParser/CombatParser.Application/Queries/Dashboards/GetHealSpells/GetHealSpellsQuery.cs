@@ -1,7 +1,10 @@
-﻿using MediatR;
+﻿using CombatParser.Application.DTOs.Dashboard;
+using MediatR;
 
 namespace CombatParser.Application.Queries.Dashboards.GetHealSpells;
 
 public record GetHealSpellsQuery(
-    int CombatLogId
-    ) : IRequest<Dictionary<string, long>>;
+    int CombatLogId,
+    int CombatId,
+    string UnitName
+    ) : IRequest<DashboardDto>;

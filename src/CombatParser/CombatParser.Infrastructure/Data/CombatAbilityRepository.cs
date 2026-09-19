@@ -1,6 +1,5 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
-using CombatParser.Domain.DTOs;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Infrastructure.Enums;
@@ -77,7 +76,7 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
         return potions;
     }
 
-    public async Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<PreAuraEnchanced>> GetByPreAuraAsync(int combatId, CancellationToken cancellationToken)
     {
         var preAuras = await (
             from ability in _context.Set<CombatAbility>().AsNoTracking()
@@ -93,13 +92,13 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
 
             where combatEntity.Id == combatId
 
-            select new CombatPlayerPreAuraDto(preAura.Id, unit.GameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, unit.Id)
+            select new PreAuraEnchanced(preAura.Id, unit.GameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, unit.Id)
         ).Distinct().ToListAsync(cancellationToken);
 
         return preAuras;
     }
 
-    public async Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, string unitId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<PreAuraEnchanced>> GetByPreAuraAsync(int combatId, string unitId, CancellationToken cancellationToken)
     {
         var preAuras = await (
             from ability in _context.Set<CombatAbility>().AsNoTracking()
@@ -116,7 +115,7 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
             where combatEntity.Id == combatId
                 && preAura.UnitId == unitId
 
-            select new CombatPlayerPreAuraDto(preAura.Id, unit.GameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, unit.Id)
+            select new PreAuraEnchanced(preAura.Id, unit.GameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, unit.Id)
         ).Distinct().ToListAsync(cancellationToken);
 
         return preAuras;
