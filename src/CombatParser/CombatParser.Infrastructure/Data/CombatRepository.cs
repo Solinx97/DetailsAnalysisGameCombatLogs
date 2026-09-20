@@ -66,7 +66,7 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
             .Where(c => c.CombatLogId == combatLogId)
             .Include(c => c.Boss)
             .GroupBy(c => c.Boss.Name)
-            .ToDictionaryAsync(g => g.Key, g => g.Select(x => x), cancellationToken);
+            .ToDictionaryAsync(g => g.Key, g => g.Select(x => x).OrderBy(c => c.FinishDate).AsEnumerable(), cancellationToken);
 
         return combats;
     }

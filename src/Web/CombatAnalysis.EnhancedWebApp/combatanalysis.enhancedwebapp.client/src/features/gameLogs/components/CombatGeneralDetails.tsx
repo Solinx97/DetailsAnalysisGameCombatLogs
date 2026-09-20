@@ -110,6 +110,7 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
         <div className="details__container">
             <CombatPreAuraItem
                 combatId={combatId}
+                unitId={combatPlayer.unitId}
             />
             {(spells.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-switch">
