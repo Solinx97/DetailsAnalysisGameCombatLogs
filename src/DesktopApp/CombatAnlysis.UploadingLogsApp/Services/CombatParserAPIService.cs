@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CombatAnalysis.UploadingLogsApp.Consts;
+﻿using CombatAnalysis.UploadingLogsApp.Consts;
 using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Extensions;
@@ -29,26 +28,24 @@ internal class CombatParserAPIService : ICombatParserAPIService
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger<CombatParserAPIService> _logger;
     private readonly IMemoryCache _memoryCache;
-    private readonly IMapper _mapper;
 
-    public CombatParserAPIService(IHttpClientHelper httpClient, ILogger<CombatParserAPIService> logger, IMemoryCache memoryCache, IMapper mapper)
+    public CombatParserAPIService(IHttpClientHelper httpClient, ILogger<CombatParserAPIService> logger, IMemoryCache memoryCache)
     {
         _httpClient = httpClient;
         _logger = logger;
         _memoryCache = memoryCache;
-        _mapper = mapper;
 
         _httpClient.BaseAddress = API.CombatParserApi;
     }
 
-    public async Task SaveAsync(List<CombatModel> combats, int combatLogId, Action<string, string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
+    public async Task SaveAsync(List<CreateCombatModel> combats, int combatLogId, Action<string, string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
     {
         var cancellationToken = requestCancellationToken();
 
         using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
         var combatTasks = combats.Select(async combat =>
         {
-            if (combat.Boss.Id > 0)
+            if (combat.IsSupported && combat.IsSelected)
             {
                 await UploadingCombatAsync(semaphore, combat, combatLogId, uplodedCallback, cancellationToken);
             }
@@ -68,7 +65,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
     }
 
-    public async Task<int> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken)
+    public async Task<int> SaveCombatLogAsync(List<CreateCombatModel> combats, LogType logType, CancellationToken cancellationToken)
     {
         try
         {
@@ -126,7 +123,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         }
     }
 
-    public async Task GetBossAsync(List<CombatModel> combats, bool useDefault, CancellationToken cancellationToken)
+    public async Task GetBossAsync(List<CreateCombatModel> combats, bool useDefault, CancellationToken cancellationToken)
     {
         var tasks = combats.Select(async x =>
         {
@@ -138,18 +135,16 @@ internal class CombatParserAPIService : ICombatParserAPIService
         GetBossHealthPercentage(combats);
     }
 
-    private async Task UploadingCombatAsync(SemaphoreSlim semaphore, CombatModel combat, int combatLogId, Action<string, string, string> uplodedCallback, CancellationToken cancellationToken)
+    private async Task UploadingCombatAsync(SemaphoreSlim semaphore, CreateCombatModel combat, int combatLogId, Action<string, string, string> uplodedCallback, CancellationToken cancellationToken)
     {
         await semaphore.WaitAsync(cancellationToken);
 
         try
         {
-            var createCombat = _mapper.Map<CreateCombatModel>(combat);
+            combat.GameVersion = (int)CurrentCombatParserVersion.Version;
+            combat.CombatLogId = combatLogId;
 
-            createCombat.GameVersion = (int)CurrentCombatParserVersion.Version;
-            createCombat.CombatLogId = combatLogId;
-
-            using var content = JsonContent.Create(createCombat);
+            using var content = JsonContent.Create(combat);
             using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
             response.EnsureSuccessStatusCode();
 
@@ -277,7 +272,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         return combatLogDungeonName.ToString();
     }
 
-    private static void GetBossHealthPercentage(List<CombatModel> combats)
+    private static void GetBossHealthPercentage(List<CreateCombatModel> combats)
     {
         foreach (var item in combats)
         {

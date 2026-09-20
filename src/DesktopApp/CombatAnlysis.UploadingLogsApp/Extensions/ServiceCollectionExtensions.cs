@@ -1,14 +1,16 @@
-﻿using CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
-using CombatAnalysis.WoW_12_1_0.CombatParser.Extensions;
-using CombatAnalysis.UploadingLogsApp.Core;
+﻿using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Helpers;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
+using CombatAnalysis.UploadingLogsApp.Interfaces.Data;
 using CombatAnalysis.UploadingLogsApp.Interfaces.Security;
 using CombatAnalysis.UploadingLogsApp.Mapping;
 using CombatAnalysis.UploadingLogsApp.Security;
 using CombatAnalysis.UploadingLogsApp.Services;
+using CombatAnalysis.UploadingLogsApp.Services.Data;
 using CombatAnalysis.UploadingLogsApp.ViewModels;
 using CombatAnalysis.UploadingLogsApp.ViewModels.User;
+using CombatAnalysis.WoW_12_1_0.CombatParser.Extensions;
+using CombatAnalysis.WoW_5_5_4.CombatParser.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -30,6 +32,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IFileDialogService, FileDialogService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<ICombatService, CombatService>();
 
         services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
@@ -51,6 +54,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<LoginViewModel>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<ParsingCombatLogsViewModel>();
+        services.AddSingleton<SelectCombatsViewModel>();
 
         var provider = services.BuildServiceProvider();
 

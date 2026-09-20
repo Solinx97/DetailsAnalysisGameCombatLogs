@@ -71,6 +71,33 @@ namespace CombatAnalysis.UploadingLogsApp.Localizations.Resources.ParsingCombatL
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select other file.
+        /// </summary>
+        internal static string BackToParsing {
+            get {
+                return ResourceManager.GetString("BackToParsing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Boss name.
+        /// </summary>
+        internal static string BossName {
+            get {
+                return ResourceManager.GetString("BossName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check all.
+        /// </summary>
+        internal static string CheckAll {
+            get {
+                return ResourceManager.GetString("CheckAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Combat log uploading failed.
         /// </summary>
         internal static string CombatLogUploadingFailed {
@@ -80,11 +107,29 @@ namespace CombatAnalysis.UploadingLogsApp.Localizations.Resources.ParsingCombatL
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        internal static string Comment {
+            get {
+                return ResourceManager.GetString("Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connect more.
         /// </summary>
         internal static string ConnectMore {
             get {
                 return ResourceManager.GetString("ConnectMore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dungeon name.
+        /// </summary>
+        internal static string DungeonName {
+            get {
+                return ResourceManager.GetString("DungeonName", resourceCulture);
             }
         }
         
@@ -143,6 +188,24 @@ namespace CombatAnalysis.UploadingLogsApp.Localizations.Resources.ParsingCombatL
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        internal static string Select {
+            get {
+                return ResourceManager.GetString("Select", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select combats to upload.
+        /// </summary>
+        internal static string SelectCombatsToUpload {
+            get {
+                return ResourceManager.GetString("SelectCombatsToUpload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select file.
         /// </summary>
         internal static string SelectFile {
@@ -152,11 +215,38 @@ namespace CombatAnalysis.UploadingLogsApp.Localizations.Resources.ParsingCombatL
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show only supported.
+        /// </summary>
+        internal static string ShowOnlySupported {
+            get {
+                return ResourceManager.GetString("ShowOnlySupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type of logs.
         /// </summary>
         internal static string TypeOfLogs {
             get {
                 return ResourceManager.GetString("TypeOfLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uncheck all.
+        /// </summary>
+        internal static string UncheckAll {
+            get {
+                return ResourceManager.GetString("UncheckAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading selected.
+        /// </summary>
+        internal static string UploadingSelected {
+            get {
+                return ResourceManager.GetString("UploadingSelected", resourceCulture);
             }
         }
         

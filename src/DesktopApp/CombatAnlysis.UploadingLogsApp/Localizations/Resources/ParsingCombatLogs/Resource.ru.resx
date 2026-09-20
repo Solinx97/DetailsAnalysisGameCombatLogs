@@ -156,4 +156,34 @@
   <data name="FileIncorrect" xml:space="preserve">
     <value>Файл некорректный. Пожалуйста, проверьте файл или версию игру</value>
   </data>
+  <data name="SelectCombatsToUpload" xml:space="preserve">
+    <value>Выберите сражения для загрузки</value>
+  </data>
+  <data name="ShowOnlySupported" xml:space="preserve">
+    <value>Показать только доступные для загрузки сражения</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Выбрать</value>
+  </data>
+  <data name="DungeonName" xml:space="preserve">
+    <value>Имя подземелья</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Комментарий</value>
+  </data>
+  <data name="CheckAll" xml:space="preserve">
+    <value>Выбрать все</value>
+  </data>
+  <data name="UncheckAll" xml:space="preserve">
+    <value>Снять все</value>
+  </data>
+  <data name="UploadingSelected" xml:space="preserve">
+    <value>Загрузить выбранное</value>
+  </data>
+  <data name="BossName" xml:space="preserve">
+    <value>Название сражения</value>
+  </data>
+  <data name="BackToParsing" xml:space="preserve">
+    <value>Выбрать другой файл</value>
+  </data>
 </root>

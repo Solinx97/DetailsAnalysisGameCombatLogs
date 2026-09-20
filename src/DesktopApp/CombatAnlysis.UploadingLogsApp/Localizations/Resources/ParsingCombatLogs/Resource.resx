@@ -156,4 +156,34 @@
   <data name="FileIncorrect" xml:space="preserve">
     <value>File incorrect. Please, check log file or selected game version</value>
   </data>
+  <data name="SelectCombatsToUpload" xml:space="preserve">
+    <value>Select combats to upload</value>
+  </data>
+  <data name="ShowOnlySupported" xml:space="preserve">
+    <value>Show only supported</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="DungeonName" xml:space="preserve">
+    <value>Dungeon name</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="CheckAll" xml:space="preserve">
+    <value>Check all</value>
+  </data>
+  <data name="UncheckAll" xml:space="preserve">
+    <value>Uncheck all</value>
+  </data>
+  <data name="UploadingSelected" xml:space="preserve">
+    <value>Uploading selected</value>
+  </data>
+  <data name="BossName" xml:space="preserve">
+    <value>Boss name</value>
+  </data>
+  <data name="BackToParsing" xml:space="preserve">
+    <value>Select other file</value>
+  </data>
 </root>

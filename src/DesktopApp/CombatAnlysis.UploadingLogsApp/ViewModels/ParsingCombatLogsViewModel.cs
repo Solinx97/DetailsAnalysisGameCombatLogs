@@ -3,17 +3,15 @@ using CombatAnalysis.UploadingLogsApp.Consts;
 using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
+using CombatAnalysis.UploadingLogsApp.Interfaces.Data;
 using CombatAnalysis.UploadingLogsApp.Models;
 using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
-using CombatAnalysis.UploadingLogsApp.ViewModels.User;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,6 +19,7 @@ namespace CombatAnalysis.UploadingLogsApp.ViewModels;
 
 public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 {
+    private readonly ICombatService _combatService;
     private readonly IMapper _mapper;
     private readonly AppState _appState;
     private readonly IFileDialogService _fileDialogService;
@@ -37,13 +36,14 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     {
     }
 
-    public ParsingCombatLogsViewModel(IMapper mapper, AppState appState, IFileDialogService fileDialogService, INavigationService navigationService,
+    public ParsingCombatLogsViewModel(IMapper mapper, AppState appState, IFileDialogService fileDialogService, INavigationService navigationService, ICombatService combatService,
         WoW_5_5_4.CombatParser.Interfaces.ICombatParserService wow_5_5_4_Parser, WoW_12_1_0.CombatParser.Interfaces.ICombatParserService wow_12_1_0_Parser, ICombatParserAPIService combatParserAPIService)
     {
         _mapper = mapper;
         _appState = appState;
         _fileDialogService = fileDialogService;
         _navigationService = navigationService;
+        _combatService = combatService;
         _wow_5_5_4_Parser = wow_5_5_4_Parser;
         _wow_12_1_0_Parser = wow_12_1_0_Parser;
         _combatParserAPIService = combatParserAPIService;
@@ -63,9 +63,6 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 
     [ObservableProperty]
     public partial bool IsParsing { get; set; }
-
-    [ObservableProperty]
-    public partial bool CombatLogUploadingFailed { get; set; }
 
     [ObservableProperty]
     public partial bool FileIsCorrect { get; set; } = true;
@@ -97,31 +94,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     }
 
     [ObservableProperty]
-    public partial LoadingStatus ResponseStatus { get; set; }
-
-    [ObservableProperty]
-    public partial int CombatsNumber { get; set; }
-
-    [ObservableProperty]
     public partial bool ShowConnectMore { get; set; }
-
-    [ObservableProperty]
-    public partial bool UploadingInProgress { get; set; }
-
-    [ObservableProperty]
-    public partial bool UploadingStatusShow { get; set; }
-
-    [ObservableProperty]
-    public partial string DungeonName { get; set; }
-
-    [ObservableProperty]
-    public partial string Name { get; set; }
-
-    [ObservableProperty]
-    public partial int CurrentCombatNumber { get; set; }
-
-    [ObservableProperty]
-    public partial string UploadingInformation { get; set; }
 
     [ObservableProperty]
     public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMidnight;
@@ -166,14 +139,11 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     [RelayCommand]
     public async Task OpenPlayerAnalysis()
     {
-        CombatLogUploadingFailed = false;
         _appState.AllowLogout = false;
 
         await ProcessUploadingCombatLogsAsync(CombatLogPaths.ToList() ?? []);
 
         _appState.AllowLogout = true;
-
-        _ = Task.Delay(TimeSpan.FromSeconds(20)).ContinueWith((task) => UploadingStatusShow = false);
     }
 
     [RelayCommand]
@@ -186,14 +156,6 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     }
 
     #endregion
-
-    private static CancellationToken RequestCancelationToken()
-    {
-        var cancellationTokenSource = new CancellationTokenSource();
-        var token = cancellationTokenSource.Token;
-
-        return token;
-    }
 
     private void CombatLogPathsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
@@ -224,15 +186,12 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     {
         var tasks = combatLogPathes.Select(async combatLogPath =>
         {
-            switch (CurrentCombatParserVersion.Version)
+            return CurrentCombatParserVersion.Version switch
             {
-                case CombatParserVersion.WoWMoPClassic:
-                    return await _wow_5_5_4_Parser.FileCheckAsync(combatLogPath);
-                case CombatParserVersion.WoWMidnight:
-                    return await _wow_12_1_0_Parser.FileCheckAsync(combatLogPath);
-                default:
-                    return false;
-            }
+                CombatParserVersion.WoWMoPClassic => await _wow_5_5_4_Parser.FileCheckAsync(combatLogPath),
+                CombatParserVersion.WoWMidnight => await _wow_12_1_0_Parser.FileCheckAsync(combatLogPath),
+                _ => false,
+            };
         });
 
         var result =  await Task.WhenAll(tasks);
@@ -247,15 +206,15 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         IsParsing = true;
 
         var combats = await PrepareCombatDataAsync(combatLogPathes);
-        if (combats.Count > 0)
-        {
-            await UploadingCombatLogAsync(combats);
-        }
+        _combatService.Combats = combats;
+        _combatService.LogType = LogType;
 
         IsParsing = false;
+
+        await _navigationService.NavigateTo<SelectCombatsViewModel>();
     }
 
-    private async Task<List<CombatModel>> PrepareCombatDataAsync(List<string> combatLogPaths)
+    private async Task<List<CreateCombatModel>> PrepareCombatDataAsync(List<string> combatLogPaths)
     {
         _cts = new CancellationTokenSource();
 
@@ -271,15 +230,15 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         return combats;
     }
 
-    private async Task<List<CombatModel>> SelectParserVersionAsync(List<string> combatLogPaths)
+    private async Task<List<CreateCombatModel>> SelectParserVersionAsync(List<string> combatLogPaths)
     {
-        var combats = new List<CombatModel>();
+        var combats = new List<CreateCombatModel>();
         switch (CurrentCombatParserVersion.Version)
         {
             case CombatParserVersion.WoWMoPClassic:
                 await Task.Run(() => _wow_5_5_4_Parser.ParseAsync(combatLogPaths, _cts.Token));
 
-                combats = _mapper.Map<List<CombatModel>>(_wow_5_5_4_Parser.Combats);
+                combats = _mapper.Map<List<CreateCombatModel>>(_wow_5_5_4_Parser.Combats);
                 await _combatParserAPIService.GetBossAsync(combats, false, _cts.Token);
 
                 _wow_5_5_4_Parser.Clear();
@@ -287,7 +246,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
             case CombatParserVersion.WoWMidnight:
                 await Task.Run(() => _wow_12_1_0_Parser.ParseAsync(combatLogPaths, _cts.Token));
 
-                combats = _mapper.Map<List<CombatModel>>(_wow_12_1_0_Parser.Combats);
+                combats = _mapper.Map<List<CreateCombatModel>>(_wow_12_1_0_Parser.Combats);
                 await _combatParserAPIService.GetBossAsync(combats, true, _cts.Token);
 
                 _wow_12_1_0_Parser.Clear();
@@ -297,63 +256,5 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
         }
 
         return combats;
-    }
-
-    private async Task UploadingCombatLogAsync(List<CombatModel> combats)
-    {
-        try
-        {
-            var createdCombatLogId = await _combatParserAPIService.SaveCombatLogAsync(combats, LogType, CancellationToken.None);
-
-            UploadingStatusShow = true;
-
-            await SaveCombatsAsync(createdCombatLogId, combats);
-        }
-        catch (Exception)
-        {
-            CombatLogUploadingFailed = true;
-        }
-    }
-
-    private async Task SaveCombatsAsync(int combatLogId, List<CombatModel> combats)
-    {
-        try
-        {
-            UploadingInProgress = true;
-            ResponseStatus = LoadingStatus.Pending;
-
-            CurrentCombatNumber = 0;
-            CombatsNumber = combats.Count(x => x.Boss.Id > 0);
-
-            await _combatParserAPIService.SaveAsync(combats, combatLogId, CombatUploaded, RequestCancelationToken);
-
-            ResponseStatus = LoadingStatus.Successful;
-            UploadingInProgress = false;
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            _appState.Logout();
-
-            ResponseStatus = LoadingStatus.Failed;
-            IsParsing = false;
-            UploadingInProgress = false;
-
-            await _navigationService.NavigateTo<LoginViewModel>();
-        }
-        catch (Exception)
-        {
-            ResponseStatus = LoadingStatus.Failed;
-            IsParsing = false;
-            UploadingInProgress = false;
-        }
-    }
-
-    private void CombatUploaded(string dungeonName, string name, string uploadingInfomration)
-    {
-        DungeonName = dungeonName;
-        Name = name;
-        UploadingInformation = uploadingInfomration;
-
-        CurrentCombatNumber++;
     }
 }

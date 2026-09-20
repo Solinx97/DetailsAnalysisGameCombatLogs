@@ -17,6 +17,7 @@ internal class CombatAnalysisMapper : Profile
         CreateMap<PlayerModel, Player>().ReverseMap();
         CreateMap<BossModel, Boss>().ReverseMap();
         CreateMap<CombatModel, Combat>().ReverseMap();
+        CreateMap<CreateCombatModel, Combat>().ReverseMap();
 
         CreateMap<UnitModel, Unit>().ReverseMap();
         CreateMap<UnitInfoModel, UnitInfo>().ReverseMap();

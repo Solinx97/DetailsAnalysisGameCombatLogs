@@ -31,12 +31,20 @@ const DashboardItem: React.FC<DashboardItemProps> = ({ requestName, valueType, c
     const [dashboardItems, setDashboardItems] = useState<DashboardItemModel[]>([]);
 
     useEffect(() => {
-        if (!dashboard) {
+        if (!dashboard || onlyPlayers) {
             return;
         }
 
         setDashboardItems(dashboard.items.slice(0, contentSize));
-    }, [dashboard, contentSize]);
+    }, [onlyPlayers, dashboard, contentSize]);
+
+    useEffect(() => {
+        if (!dashboard || !onlyPlayers) {
+            return;
+        }
+
+        setDashboardItems(dashboard.items.filter(x => x.unitType === CombatUnitType["Player"]).slice(0, contentSize));
+    }, [onlyPlayers, dashboard, contentSize]);
 
     if (isLoading || !dashboard) {
         return (<div>Loading...</div>);

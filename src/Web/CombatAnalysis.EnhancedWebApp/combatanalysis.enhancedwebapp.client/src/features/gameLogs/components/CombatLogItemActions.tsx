@@ -5,20 +5,44 @@ import { useAddCombatLogStatusMutation, useRemoveCombatLogMutation } from '../ap
 import type { CombatLogModel } from '../types/CombatLogModel';
 
 const CombatLogItemActions: React.FC<{ t: (key: string) => string, combatLog: CombatLogModel }> = ({ t, combatLog }) => {
-    const [addCombatLogStatus] = useAddCombatLogStatusMutation();
+    const [updateCombatLogStatus] = useAddCombatLogStatusMutation();
     const [removeLog] = useRemoveCombatLogMutation();
 
-    const removeHandle = async () => {
-        if (combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleting"]) {
+    const updateStatusAsync = async () => {
+        if (combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleting"]
+            || combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleted"]) {
             return;
         }
 
         try {
-            await addCombatLogStatus({ combatLogId: combatLog.id, status: CombatLogStatus["Deleting"] }).unwrap();
+            await updateCombatLogStatus({ combatLogId: combatLog.id, status: CombatLogStatus["Deleting"] }).unwrap();
+        } catch (error) {
+            console.error("Failed to update combat log status:", error);
+        }
+    }
+
+    const removeCombatLogAsync = async () => {
+        if (combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleting"]
+            || combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleted"]) {
+            return;
+        }
+
+        try {
+            await updateCombatLogStatus({ combatLogId: combatLog.id, status: CombatLogStatus["Deleting"] }).unwrap();
             await removeLog(combatLog.id).unwrap();
         } catch (error) {
             console.error("Failed to remove combat log:", error);
         }
+    }
+
+    const removeHandle = async () => {
+        if (combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleting"]
+            || combatLog.statuses.at(-1)?.status === CombatLogStatus["Deleted"]) {
+            return;
+        }
+
+        await updateStatusAsync();
+        await removeCombatLogAsync();
     }
 
     return (
