@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../../shared/components/Loading';
-import { useLazyGetUniqueCombatsByCombatLogIdQuery } from '../api/GameLogs.api';
+import { useLazyGetUniqueCombatsQuery } from '../api/GameLogs.api';
 import type { CombatModel } from '../types/CombatModel';
 import PersonalTabs from './PersonalTabs';
 import GeneralAnalysisItems from './GeneralAnalysisItems';
@@ -20,7 +20,7 @@ const GeneralAnalysis: React.FC = () => {
     const [combatLogId, setCombatLogId] = useState<number>(0);
     const [allUniqueCombats, setAllUniqueCombats] = useState<Map<string, CombatModel[]>>(new Map());
 
-    const [getUniqueCombatsByCombatLogId] = useLazyGetUniqueCombatsByCombatLogIdQuery();
+    const [getUniqueCombatsByCombatLogId] = useLazyGetUniqueCombatsQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -59,7 +59,7 @@ const GeneralAnalysis: React.FC = () => {
                 tabs={[
                     {
                         id: 0,
-                        header: t("Dashboard"),
+                        header: t("Explorer"),
                         content: <Dashboard
                             combatLogId={combatLogId}
                         />

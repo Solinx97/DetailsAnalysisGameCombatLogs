@@ -47,12 +47,12 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, Date
             ModificationType = (int)ModificationType.Absorb,
         };
 
-        if (int.TryParse(combatDataLine[^2], out var amountOfHeal))
+        if (int.TryParse(combatDataLine[^3], out var amountOfHeal))
         {
             absorbeDone.Value = amountOfHeal;
         };
 
-        ApplyUnits(combatDataLine, absorbeDone, units, 10, 2);
+        ApplyUnits(combatDataLine, absorbeDone, units, combatDataLine.Length - 10, 6);
 
         if (units.TryGetValue(absorbeDone.CreatorGameId, out var creatorUnit))
         {

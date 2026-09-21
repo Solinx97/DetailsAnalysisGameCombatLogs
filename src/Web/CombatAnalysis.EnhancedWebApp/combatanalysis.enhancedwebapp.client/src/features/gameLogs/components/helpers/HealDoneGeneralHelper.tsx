@@ -117,9 +117,9 @@ const HealDoneGeneralHelper: React.FC<HealDoneGeneralHelperProps> = ({ generalDa
     return (
         <>
             <li className="player-general-data-details__inherit">
-                <div>
+                <h5>
                     {t("Total")}: {getValueShortName(combatPlayer.unit.unitInfo.healDone)}
-                </div>
+                </h5>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}

@@ -1,6 +1,6 @@
 ﻿import { NoneValue } from '@/shared/helpers/ConstHelpers';
 import { DamageModificationType } from '@/shared/helpers/EnumHelper';
-import { faFire, faFlask } from '@fortawesome/free-solid-svg-icons';
+import { faFire, faBatteryEmpty } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
@@ -97,11 +97,11 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ unitId, pageSize, getUs
                                             className="crit"
                                         />
                                     }
-                                    {(item.value === item.overheal) &&
+                                    {(item.value - item.overheal === 0) &&
                                         <FontAwesomeIcon
-                                            icon={faFlask}
+                                            icon={faBatteryEmpty}
                                             title={t("AllToOverHeal")}
-                                            className="overvalue"
+                                            color="orange"
                                         />
                                     }
                                 </div>
@@ -110,12 +110,12 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ unitId, pageSize, getUs
                                 {getTimeWithoutMs(item.time)}
                             </li>
                             <li className="extra-details">
-                                {(item.value === item.overheal)
+                                {(item.value - item.overheal === 0)
                                     ? <div className="value-equal-zero">
                                         <div>0</div>
                                         <div className="overvalue">({item.value})</div>
                                     </div>
-                                    : <div className={item.modificationType === DamageModificationType["Crit"] ? 'crit' : ''}>{item.value}</div>
+                                    : <div className={item.modificationType === DamageModificationType["Crit"] ? 'crit' : ''}>{item.value - item.overheal}</div>
                                 }
                             </li>
                             <li>

@@ -12,7 +12,7 @@ internal class GetHealSpellsHandler(IDashboardRepository repository, IMapper map
 
     public async Task<DashboardDto> Handle(GetHealSpellsQuery request, CancellationToken cancellationToken)
     {
-        var dashboard = await _repository.GetHealSpellsAsync(request.CombatLogId, request.CombatId, request.UnitName, cancellationToken);
+        var dashboard = await _repository.GetHealSpellsAsync(request.CombatLogId, request.BossName, request.CombatId, cancellationToken);
         var map = _mapper.Map<DashboardDto>(dashboard);
 
         return map;

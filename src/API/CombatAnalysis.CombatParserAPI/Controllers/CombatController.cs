@@ -41,8 +41,8 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         return Ok(combats);
     }
 
-    [HttpGet("getUniquByCombatLogId/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetUniqueByCombatLogId(int combatLogId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueCombats/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetUniqueCombats(int combatLogId, CancellationToken cancellationToken)
     {
         var uniqueCombats = await _mediator.Send(new GetUniquCombatsByCombatLogIdQuery(combatLogId), cancellationToken);
 

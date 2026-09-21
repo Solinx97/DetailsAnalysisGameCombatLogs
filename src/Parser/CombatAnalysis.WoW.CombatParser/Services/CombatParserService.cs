@@ -70,6 +70,8 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         {
             logger.LogError(ex, "Request was canceled by client: {Message}", ex.Message);
             Clear();
+
+            throw;
         }
     }
 
@@ -334,7 +336,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
         unitInfo.DamageDone += unit.DamageDones.Sum(x => x.Value);
         unitInfo.DamageTaken += unit.DamageTakens.Sum(x => x.Value);
-        unitInfo.HealDone += unit.HealDones.Sum(x => x.Value);
+        unitInfo.HealDone += unit.HealDones.Sum(x => x.Value - x.Overheal);
         unitInfo.ResourcesRecovery += unit.ResourceRecoveries.Sum(x => x.Value);
     }
 

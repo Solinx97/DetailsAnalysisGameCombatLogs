@@ -129,7 +129,14 @@ $mobile-max-width: 425px;
                     .details-item {
                         display: flex;
                         justify-content: space-between;
-                        gap: 50px;
+                        align-items: center;
+                        gap: 30px;
+
+                        .type {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
                     }
                 }
             }
@@ -176,10 +183,35 @@ $mobile-max-width: 425px;
         display: flex;
         align-items: center;
         gap: 50px;
+        font-size: 0.9em;
 
-        .options {
-            min-width: 200px;
-            color: black;
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            &__extented {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+
+                .actions {
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-around;
+                    font-size: 0.9em;
+
+                    button {
+                        border-radius: 10px;
+                    }
+                }
+            }
+
+            .options {
+                min-width: 230px;
+                color: black;
+            }
         }
     }
 

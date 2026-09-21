@@ -1,7 +1,6 @@
 ﻿using CombatAnalysis.CombatParserAPI.Consts;
 using CombatParser.Application.Queries.Dashboards.GetDamage;
 using CombatParser.Application.Queries.Dashboards.GetDamageSpells;
-using CombatParser.Application.Queries.Dashboards.GetDamageTaken;
 using CombatParser.Application.Queries.Dashboards.GetHeal;
 using CombatParser.Application.Queries.Dashboards.GetHealSpells;
 using CombatParser.Application.Queries.Dashboards.GetPotions;
@@ -17,12 +16,14 @@ public class DashboardController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getDamage/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDamage(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetDamage(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
         var dashboard = await _mediator.Send(new GetDamageQuery(
-            combatLogId, 
-            combatId, 
-            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName,
+            combatLogId,
+            bossName.Equals(NoneValue.NONE_VALUE) ? string.Empty : bossName,
+            combatId,
+            creatorName.Equals(NoneValue.NONE_VALUE) ? string.Empty : creatorName,
+            targetName.Equals(NoneValue.NONE_VALUE) ? string.Empty : targetName,
             valueType
             ), cancellationToken);
 
@@ -30,25 +31,14 @@ public class DashboardController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("getHeal/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetHeal(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetHeal(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
         var dashboard = await _mediator.Send(new GetHealQuery(
             combatLogId,
+            bossName.Equals(NoneValue.NONE_VALUE) ? string.Empty : bossName,
             combatId,
-            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName,
-            valueType
-            ), cancellationToken);
-
-        return Ok(dashboard);
-    }
-
-    [HttpGet("getDamageTaken/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDamageTaken(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
-    {
-        var dashboard = await _mediator.Send(new GetDamageTakenQuery(
-            combatLogId,
-            combatId,
-            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName,
+            creatorName.Equals(NoneValue.NONE_VALUE) ? string.Empty : creatorName,
+            targetName.Equals(NoneValue.NONE_VALUE) ? string.Empty : targetName,
             valueType
             ), cancellationToken);
 
@@ -56,24 +46,24 @@ public class DashboardController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDamageSpells(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetDamageSpells(int combatLogId, string bossName, int combatId, CancellationToken cancellationToken)
     {
         var dashboard = await _mediator.Send(new GetDamageSpellsQuery(
             combatLogId,
-            combatId,
-            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName
+            bossName.Equals(NoneValue.NONE_VALUE) ? string.Empty : bossName,
+            combatId
             ), cancellationToken);
 
         return Ok(dashboard);
     }
 
     [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetHealSpells(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetHealSpells(int combatLogId, string bossName, int combatId, CancellationToken cancellationToken)
     {
         var spells = await _mediator.Send(new GetHealSpellsQuery(
             combatLogId,
-            combatId,
-            unitName.Equals(NoneValue.NONE_VALUE) ? string.Empty : unitName
+            bossName.Equals(NoneValue.NONE_VALUE) ? string.Empty : bossName,
+            combatId
             ), cancellationToken);
 
         return Ok(spells);

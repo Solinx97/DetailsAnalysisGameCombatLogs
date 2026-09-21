@@ -42,7 +42,6 @@ public class HealDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
     {
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
         ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
         ArgumentOutOfRangeException.ThrowIfNegative(overheal, nameof(overheal));
 

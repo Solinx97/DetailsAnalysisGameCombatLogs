@@ -13,7 +13,6 @@ public class HealDoneModel : CombatUnitBase
     [Required]
     public string Spell { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
     public int Value { get; set; }
 
     [Range(0, int.MaxValue)]

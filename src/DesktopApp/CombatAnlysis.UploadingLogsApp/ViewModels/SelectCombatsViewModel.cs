@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,7 +42,10 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
     public partial LoadingStatus ResponseStatus { get; set; }
 
     [ObservableProperty]
-    public partial int CombatsNumber { get; set; }
+    public partial int CurrentCombatNumber { get; set; } = 0;
+
+    [ObservableProperty]
+    public partial int CombatsNumber { get; set; } = 1;
 
     [ObservableProperty]
     public partial bool UploadingInProgress { get; set; }
@@ -56,9 +60,6 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
     public partial string Name { get; set; }
 
     [ObservableProperty]
-    public partial int CurrentCombatNumber { get; set; }
-
-    [ObservableProperty]
     public partial string UploadingInformation { get; set; }
 
     #endregion
@@ -68,7 +69,7 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
     {
         await UploadingCombatLogAsync([.. Combats]);
 
-        _combatService.Clear();
+        Clear();
 
         _ = Task.Delay(TimeSpan.FromSeconds(20)).ContinueWith((task) => UploadingStatusShow = false);
     }
@@ -141,7 +142,7 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
             ResponseStatus = LoadingStatus.Pending;
 
             CurrentCombatNumber = 0;
-            CombatsNumber = combats.Count(x => x.IsSupported && x.IsSelected);
+            CombatsNumber = combats.Count;
 
             await _combatParserAPIService.SaveAsync(combats, combatLogId, CombatUploaded, RequestCancelationToken);
 
@@ -171,5 +172,40 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
         UploadingInformation = uploadingInfomration;
 
         CurrentCombatNumber++;
+    }
+
+    private void Clear()
+    {
+        _combatService.Clear();
+
+        foreach (var combat in Combats)
+        {
+            ClearCombat(combat);
+        }
+
+        Combats.Clear();
+
+        // Call GC to collect and release LOH right now
+        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
+    }
+
+    private static void ClearCombat(CreateCombatModel combat)
+    {
+        foreach (var unit in combat.Units)
+        {
+            unit.UnitCasts.Clear();
+            unit.UnitPositions.Clear();
+            unit.UnitHealthes.Clear();
+            unit.Auras.Clear();
+            unit.PreAuras.Clear();
+            unit.DamageDones.Clear();
+            unit.DamageTakens.Clear();
+            unit.HealDones.Clear();
+            unit.ResourceRecoveries.Clear();
+        }
+
+        combat.CombatPlayers.Clear();
+        combat.Units.Clear();
     }
 }

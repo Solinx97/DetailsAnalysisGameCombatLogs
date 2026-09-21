@@ -129,13 +129,13 @@ internal class UnitInfoRepository<TModel>(CombatParserContextOne context) : IUni
              {
                  GameSpellId = x.Key,
                  Spell = x.Select(y => y.Spell).First(),
-                 Value = x.Sum(y => y.Value),
+                 Value = x.Sum(y => y.Value - y.Overheal),
                  CritCount = x.Count(y =>
                      y.ModificationType == (int)ModificationType.Crit),
                  Count = x.Count(),
-                 Min = x.Min(y => y.Value),
-                 Max = x.Max(y => y.Value),
-                 Average = x.Average(y => y.Value)
+                 Min = x.Min(y => y.Value - y.Overheal),
+                 Max = x.Max(y => y.Value - y.Overheal),
+                 Average = x.Average(y => y.Value - y.Overheal)
              })
             .ToListAsync(cancellationToken);
 

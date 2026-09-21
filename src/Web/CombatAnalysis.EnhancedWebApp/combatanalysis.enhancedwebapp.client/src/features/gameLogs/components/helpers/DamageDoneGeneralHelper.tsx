@@ -151,9 +151,9 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowPets")}</label>
                     </div>
                 </div>
-                <div>
+                <h5>
                     {t("Total")}: {getValueShortName(totalDamage)}
-                </div>
+                </h5>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}

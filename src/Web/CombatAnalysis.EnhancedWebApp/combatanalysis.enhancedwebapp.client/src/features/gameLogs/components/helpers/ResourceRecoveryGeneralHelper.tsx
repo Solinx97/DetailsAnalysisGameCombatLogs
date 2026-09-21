@@ -106,9 +106,9 @@ const ResourceRecoveryGeneralHelper: React.FC<ResourceRecoveryGeneralHelperProps
     return (
         <>
             <li className="player-general-data-details__inherit">
-                <div>
+                <h5>
                     {t("Total")}: {getValueShortName(combatPlayer.unit.unitInfo.resourcesRecovery)}
-                </div>
+                </h5>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}

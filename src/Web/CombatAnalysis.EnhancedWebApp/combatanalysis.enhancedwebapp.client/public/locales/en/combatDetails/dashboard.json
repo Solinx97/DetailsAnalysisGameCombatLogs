@@ -19,7 +19,7 @@
   "AverageHPS": "Average HPS",
   "MaxHPS": "Max HPS",
   "MinHPS": "Min HPS",
-  "DamageTaken": "Heal",
+  "DamageTaken": "Damage taken",
   "AverageDamageTaken": "Average damage taken",
   "MaxDamageTaken": "Max damage taken",
   "MinDamageTaken": "Min damage taken",
@@ -34,7 +34,9 @@
   "Less": "Less",
   "OverallByRaid": "Overall by raid",
   "OverallEfficiencyPotionsUsed": "Overall efficiency potions used",
-  "OnlyPlayers": "See only players",
-  "AnyUnits": "See any units",
-  "AvailableDashboards": "Available dashboards"
+  "Players": "Players",
+  "Any": "Any units",
+  "AvailableDashboards": "Available dashboards",
+  "Creator": "Creator",
+  "Target": "Target"
 }

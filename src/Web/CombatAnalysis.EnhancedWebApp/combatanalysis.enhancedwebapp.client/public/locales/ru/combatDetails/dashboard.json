@@ -34,7 +34,9 @@
   "Less": "Меньше",
   "OverallByRaid": "Итоговая информация по рейду",
   "OverallEfficiencyPotionsUsed": "Общее значение использованых боевых зелий",
-  "OnlyPlayers": "Показывать только игроков",
-  "AnyUnits": "Показывать любые цели",
-  "AvailableDashboards": "Доступные данные для обзора"
+  "Players": "Игроки",
+  "Any": "Любые цели",
+  "AvailableDashboards": "Доступные данные для обзора",
+  "Creator": "Источник",
+  "Target": "Цель"
 }

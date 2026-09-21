@@ -5,6 +5,6 @@ namespace CombatParser.Application.Queries.Dashboards.GetDamageSpells;
 
 public record GetDamageSpellsQuery(
     int CombatLogId,
-    int CombatId,
-    string UnitName
+    string BossName,
+    int CombatId
     ) : IRequest<DashboardDto>;

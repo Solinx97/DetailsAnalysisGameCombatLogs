@@ -30,8 +30,6 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 
     private CancellationTokenSource _cts = new();
 
-    private bool _processAborted;
-
     public ParsingCombatLogsViewModel()
     {
     }
@@ -149,10 +147,7 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
     [RelayCommand]
     public void CancelParsing()
     {
-        _processAborted = true;
         _cts?.Cancel();
-
-        IsParsing = false;
     }
 
     #endregion
@@ -184,34 +179,41 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 
     private async Task ProcessUploadingCombatLogsAsync(List<string> combatLogPathes)
     {
-        var tasks = combatLogPathes.Select(async combatLogPath =>
+        try
         {
-            return CurrentCombatParserVersion.Version switch
+            var tasks = combatLogPathes.Select(async combatLogPath =>
             {
-                CombatParserVersion.WoWMoPClassic => await _wow_5_5_4_Parser.FileCheckAsync(combatLogPath),
-                CombatParserVersion.WoWMidnight => await _wow_12_1_0_Parser.FileCheckAsync(combatLogPath),
-                _ => false,
-            };
-        });
+                return CurrentCombatParserVersion.Version switch
+                {
+                    CombatParserVersion.WoWMoPClassic => await _wow_5_5_4_Parser.FileCheckAsync(combatLogPath),
+                    CombatParserVersion.WoWMidnight => await _wow_12_1_0_Parser.FileCheckAsync(combatLogPath),
+                    _ => false,
+                };
+            });
 
-        var result =  await Task.WhenAll(tasks);
+            var result = await Task.WhenAll(tasks);
 
-        FileIsCorrect = result.All(x => x);
-        if (result.Any(x => !x))
-        {
-            _ = Task.Delay(TimeSpan.FromSeconds(20)).ContinueWith((task) => FileIsCorrect = true);
-            return;
+            FileIsCorrect = result.All(x => x);
+            if (result.Any(x => !x))
+            {
+                _ = Task.Delay(TimeSpan.FromSeconds(20)).ContinueWith((task) => FileIsCorrect = true);
+                return;
+            }
+
+            IsParsing = true;
+
+            var combats = await PrepareCombatDataAsync(combatLogPathes);
+            _combatService.Combats = combats;
+            _combatService.LogType = LogType;
+
+            IsParsing = false;
+
+            await _navigationService.NavigateTo<SelectCombatsViewModel>();
         }
-
-        IsParsing = true;
-
-        var combats = await PrepareCombatDataAsync(combatLogPathes);
-        _combatService.Combats = combats;
-        _combatService.LogType = LogType;
-
-        IsParsing = false;
-
-        await _navigationService.NavigateTo<SelectCombatsViewModel>();
+        catch (OperationCanceledException)
+        {
+            IsParsing = false;
+        }
     }
 
     private async Task<List<CreateCombatModel>> PrepareCombatDataAsync(List<string> combatLogPaths)
@@ -220,12 +222,6 @@ public partial class ParsingCombatLogsViewModel : LocalizationViewModel
 
         WoW.CombatParser.Consts.API.CombatParserApi = API.CombatParserApi;
         var combats = await SelectParserVersionAsync(combatLogPaths);
-
-        if (_processAborted)
-        {
-            _processAborted = false;
-            return [];
-        }
 
         return combats;
     }

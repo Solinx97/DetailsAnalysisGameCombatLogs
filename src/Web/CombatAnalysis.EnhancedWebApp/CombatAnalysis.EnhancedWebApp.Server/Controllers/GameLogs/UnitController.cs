@@ -26,4 +26,13 @@ public class UnitController : ControllerBase
 
         return Ok(units);
     }
+
+    [HttpGet("getUniqueUnitNames/{combatLogId:int:min(0)}")]
+    public async Task<IActionResult> GetUniqueUnitNames(int combatLogId, string bossName)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Unit/getUniqueUnitNames/{combatLogId}?bossName={bossName}");
+        var uniqueNames = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UniqueUnitNameModel>>();
+
+        return Ok(uniqueNames);
+    }
 }

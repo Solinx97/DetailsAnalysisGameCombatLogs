@@ -12,7 +12,7 @@ internal class GetDamageSpellsHandler(IDashboardRepository repository, IMapper m
 
     public async Task<DashboardDto> Handle(GetDamageSpellsQuery request, CancellationToken cancellationToken)
     {
-        var dashboard = await _repository.GetDamageSpellsAsync(request.CombatLogId, request.CombatId, request.UnitName, cancellationToken);
+        var dashboard = await _repository.GetDamageSpellsAsync(request.CombatLogId, request.BossName, request.CombatId, cancellationToken);
         var map = _mapper.Map<DashboardDto>(dashboard);
 
         return map;

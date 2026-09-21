@@ -78,7 +78,9 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
             Value = value,
             Overheal = overheal,
             Time = GetTimeFromStart(combatDataLine[0]),
-            ModificationType = isCrit ? (int)ModificationType.Crit : (int)ModificationType.Normal,
+            ModificationType = isCrit 
+                ? (int)ModificationType.Crit 
+                : (int)ModificationType.Normal
         };
 
         ApplyUnits(combatDataLine, healDone, units, 2, 6);

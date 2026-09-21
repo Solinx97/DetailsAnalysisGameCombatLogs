@@ -34,6 +34,15 @@ const GameCombatLogs: React.FC = () => {
                 tabs={[
                     {
                         id: 0,
+                        header: t("WoW Midnight"),
+                        content: <WoWMidnightCombatLogs
+                            selectedLogType={selectedLogType}
+                            gameVersion={GAME_VERSION.WoWMidnight}
+                            t={t}
+                        />
+                    },
+                    {
+                        id: 1,
                         header: t("WoW MoP"),
                         content: <WoWMoPCombatLogs
                             selectedLogType={selectedLogType}
@@ -41,15 +50,6 @@ const GameCombatLogs: React.FC = () => {
                             t={t}
                         />
                     },
-                    {
-                        id: 1,
-                        header: t("WoW Midnight"),
-                        content: <WoWMidnightCombatLogs
-                            selectedLogType={selectedLogType}
-                            gameVersion={GAME_VERSION.WoWMidnight}
-                            t={t}
-                        />
-                    }
                 ]}
                 tabsClassName={"charts"}
             />

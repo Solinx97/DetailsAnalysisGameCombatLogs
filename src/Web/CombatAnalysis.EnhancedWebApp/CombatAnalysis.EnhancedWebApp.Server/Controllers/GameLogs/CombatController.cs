@@ -27,10 +27,10 @@ public class CombatController : ControllerBase
         return Ok(combats);
     }
 
-    [HttpGet("getUniquByCombatLogId/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetUniquByCombatLogId(int combatLogId)
+    [HttpGet("getUniqueCombats/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetUniqueCombats(int combatLogId)
     {
-        var responseMessage = await _httpClient.GetAsync($"Combat/getUniquByCombatLogId/{combatLogId}");
+        var responseMessage = await _httpClient.GetAsync($"Combat/getUniqueCombats/{combatLogId}");
         var uniqueCombats = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, IEnumerable<CombatModel>>>();
 
         return Ok(uniqueCombats);

@@ -1,9 +1,11 @@
 ﻿using CombatParser.Domain.Aggregates;
+using CombatParser.Domain.Data;
 using CombatParser.Domain.Data.Dashboard;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Domain.Entities.Dashboard;
 using CombatParser.Domain.Enums;
+using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,29 +15,20 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<Domain.Entities.Dashboard.Dashboard> GetDamageAsync(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
+    public async Task<Domain.Entities.Dashboard.Dashboard> GetDamageAsync(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
-        var generalQuery = GetQuery(combatLogId, combatId, unitName);
-        var query = generalQuery
-            .Join(
-                _context.Set<UnitHealth>(),
-                x => x.Id,
-                u => u.UnitId,
-                (x, u) => new DashboardValue
-                {
-                    BossName = x.Combat.Boss.Name,
-                    Name = x.Name,
-                    UnitType = x.Type,
-                    Value = x.UnitInfo.DamageDone,
-                    Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(
-                        EF.Functions,
-                        x.Combat.StartDate,
-                        x.Combat.FinishDate)
-                })
-                .Where(x => x.Value > 0 && x.Duration > 0)
-                .AsNoTracking();
+        var generalQuery = GetQuery(combatLogId, bossName, combatId);
+        var queryValues = generalQuery
+                .SelectMany(x => x.DamageDones
+                                .Where(x => (string.IsNullOrEmpty(creatorName) || x.Unit.Name == creatorName)
+                                    && (string.IsNullOrEmpty(targetName) || x.Target.Name == targetName)),
+                            (x, y) => new DashboardQuery<DamageDone>
+                            {
+                                Unit = x,
+                                Value = y
+                            });
 
-        var dashboardItems = await AppValueTypeAsync(query, unitName, valueType, cancellationToken);
+        var dashboardItems = await GatDashboardItemsQuery(queryValues, bossName, creatorName, targetName, valueType, cancellationToken);
 
         var items = dashboardItems
             .OrderByDescending(x => x.Value)
@@ -45,28 +38,25 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
         return dashboard;
     }
 
-    public async Task<Domain.Entities.Dashboard.Dashboard> GetHealAsync(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
+    public async Task<Domain.Entities.Dashboard.Dashboard> GetHealAsync(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
-        var generalQuery = GetQuery(combatLogId, combatId, unitName);
-        var query = generalQuery
-             .Join(_context.Set<UnitHealth>(),
-                    x => x.Id,
-                    u => u.UnitId,
-                    (x, u) => new DashboardValue
+        var generalQuery = GetQuery(combatLogId, bossName, combatId);
+        var queryValues = generalQuery
+                .SelectMany(x => x.HealDones
+                                .Where(x => (string.IsNullOrEmpty(creatorName) || x.Unit.Name == creatorName)
+                                    && (string.IsNullOrEmpty(targetName) || x.Target.Name == targetName)),
+                    (x, y) => new DashboardQuery<HealDone>
                     {
-                        Name = x.Name,
-                        BossName = x.Combat.Boss.Name,
-                        UnitType = x.Type,
-                        Value = x.UnitInfo.HealDone,
-                        Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(
-                            EF.Functions,
-                            x.Combat.StartDate,
-                            x.Combat.FinishDate)
-                    })
-            .Where(x => x.Value > 0 && x.Duration > 0)
-            .AsNoTracking();
+                        Unit = x,
+                        Value = y
+                    });
 
-        var dashboardItems = await AppValueTypeAsync(query, unitName, valueType, cancellationToken);
+        if (!string.IsNullOrEmpty(targetName))
+        {
+            queryValues = queryValues.Where(x => x.Value.Target.Name == targetName);
+        }
+
+        var dashboardItems = await GatDashboardItemsQuery(queryValues, bossName, creatorName, targetName, valueType, cancellationToken);
 
         var items = dashboardItems
             .OrderByDescending(x => x.Value)
@@ -76,41 +66,9 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
         return dashboard;
     }
 
-    public async Task<Domain.Entities.Dashboard.Dashboard> GetDamageTakenAsync(int combatLogId, int combatId, string unitName, int valueType, CancellationToken cancellationToken)
+    public async Task<Domain.Entities.Dashboard.Dashboard> GetDamageSpellsAsync(int combatLogId, string bossName, int combatId, CancellationToken cancellationToken)
     {
-        var generalQuery = GetQuery(combatLogId, combatId, unitName);
-        var query = generalQuery
-            .Join(
-                _context.Set<UnitHealth>(),
-                x => x.Id,
-                u => u.UnitId,
-                (x, u) => new DashboardValue
-                {
-                    BossName = x.Combat.Boss.Name,
-                    Name = x.Name,
-                    UnitType = x.Type,
-                    Value = x.UnitInfo.DamageTaken,
-                    Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(
-                        EF.Functions,
-                        x.Combat.StartDate,
-                        x.Combat.FinishDate)
-                })
-                .Where(x => x.Value > 0 && x.Duration > 0)
-                .AsNoTracking();
-
-        var dashboardItems = await AppValueTypeAsync(query, unitName, valueType, cancellationToken);
-
-        var items = dashboardItems
-            .OrderByDescending(x => x.Value)
-            .Select(x => new DashboardItem(x.ValueName, x.Value.ToString(), x.UnitType))
-            .ToList();
-        var dashboard = new Domain.Entities.Dashboard.Dashboard(0, items);
-        return dashboard;
-    }
-
-    public async Task<Domain.Entities.Dashboard.Dashboard> GetDamageSpellsAsync(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken)
-    {
-        var query = GetQuery(combatLogId, combatId, unitName);
+        var query = GetQuery(combatLogId, bossName, combatId);
 
         var dashboardItems = await query
             .Join(_context.Set<DamageDone>(),
@@ -125,7 +83,7 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
             .GroupBy(x => x.Spell)
             .Select(g => new DashboardItemNumber(
                     g.Key,
-                    g.Sum(x => x.Value),
+                    g.Sum(x => (long)x.Value),
                     g.Select(x => x.Type).First()))
             .ToListAsync(cancellationToken);
 
@@ -137,9 +95,9 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
         return dashboard;
     }
 
-    public async Task<Domain.Entities.Dashboard.Dashboard> GetHealSpellsAsync(int combatLogId, int combatId, string unitName, CancellationToken cancellationToken)
+    public async Task<Domain.Entities.Dashboard.Dashboard> GetHealSpellsAsync(int combatLogId, string bossName, int combatId, CancellationToken cancellationToken)
     {
-        var query = GetQuery(combatLogId, combatId, unitName);
+        var query = GetQuery(combatLogId, bossName, combatId);
 
         var dashboardItems = await query
             .Join(_context.Set<HealDone>(),
@@ -154,7 +112,7 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
             .GroupBy(x => x.Spell)
             .Select(g => new DashboardItemNumber(
                     g.Key,
-                    g.Sum(x => x.Value),
+                    g.Sum(x => (long)x.Value),
                     g.Select(x => x.Type).First()))
             .ToListAsync(cancellationToken);
 
@@ -166,33 +124,60 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
         return dashboard;
     }
 
-    private IQueryable<Unit> GetQuery(int combatLogId, int combatId, string unitName)
+    private IQueryable<Unit> GetQuery(int combatLogId, string bossName, int combatId)
     {
         var query = _context.Set<Combat>()
-            .AsQueryable();
-        if (combatId > 0)
-        {
-            query = query.Where(x => x.CombatLogId == combatLogId && x.Id == combatId);
-        }
-        else
-        {
-            query = query.Where(x => x.CombatLogId == combatLogId);
-        }
-
-        var queryUnits = query
+            .Where(x => x.CombatLogId == combatLogId
+                        && (combatId <= 0 || x.Id == combatId)
+                        && (string.IsNullOrEmpty(bossName) || x.Boss.Name == bossName))
             .Join(_context.Set<Unit>(),
                 x => x.Id,
                 u => u.CombatId,
                 (x, u) => u);
-        if (!string.IsNullOrEmpty(unitName))
-        {
-            queryUnits = queryUnits.Where(x => x.Name == unitName);
-        }
 
-        return queryUnits;
+        return query;
     }
 
-    private static async Task<List<DashboardItemNumber>> AppValueTypeAsync(IQueryable<DashboardValue> query, string unitName, int valueType, CancellationToken cancellationToken)
+    private static async Task<List<DashboardItemNumber>> GatDashboardItemsQuery<TModel>(IQueryable<DashboardQuery<TModel>> queryValues, string bossName, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
+        where TModel : class, IGeneralEntity, ICombatUnitRefs, IUnitTargetRefs
+    {
+        var query = queryValues
+                .GroupBy(x => new
+                {
+                    x.Unit.Id,
+                    x.Unit.Name,
+                    CreatorName = x.Value.Unit.Name,
+                    TargetName = x.Value.Target.Name,
+                    x.Unit.Type,
+                    BossName = x.Unit.Combat.Boss.Name,
+                    x.Unit.Combat.StartDate,
+                    x.Unit.Combat.FinishDate
+                })
+                .Select(x => new DashboardValue
+                {
+                    CreatorName = x.Key.CreatorName,
+                    TargetName = x.Key.TargetName,
+
+                    Name = x.Key.Name,
+                    BossName = x.Key.BossName,
+                    UnitType = x.Key.Type,
+
+                    Value = x.Sum(y => y.Value.Value),
+
+                    Duration = SqlServerDbFunctionsExtensions.DateDiffSecond(
+                            EF.Functions,
+                            x.Key.StartDate,
+                            x.Key.FinishDate)
+                })
+                .Where(x => x.Value > 0 && x.Duration > 0)
+                .AsNoTracking();
+
+        var dashboardItems = await AppValueTypeAsync(query, bossName, creatorName, targetName, valueType, cancellationToken);
+
+        return dashboardItems;
+    }
+
+    private static async Task<List<DashboardItemNumber>> AppValueTypeAsync(IQueryable<DashboardValue> query, string bossName, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
         if (!Enum.IsDefined(typeof(DashboardValueType), valueType))
         {
@@ -201,9 +186,10 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
 
         var valueTypeEnum = (DashboardValueType)valueType;
 
-        var grouping = query.GroupBy(x => string.IsNullOrEmpty(unitName)
-                    ? x.Name
-                    : x.BossName);
+        var grouping = query.GroupBy(x =>
+            !string.IsNullOrEmpty(creatorName) ? x.TargetName :
+            !string.IsNullOrEmpty(targetName) ? x.CreatorName :
+            x.Name);
 
         var result = valueTypeEnum switch
         {

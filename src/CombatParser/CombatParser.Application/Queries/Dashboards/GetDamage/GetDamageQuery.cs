@@ -5,7 +5,9 @@ namespace CombatParser.Application.Queries.Dashboards.GetDamage;
 
 public record GetDamageQuery(
     int CombatLogId,
+    string BossName,
     int CombatId,
-    string UnitName,
+    string CreatorName,
+    string TargetName,
     int ValueType
     ) : IRequest<DashboardDto>;
