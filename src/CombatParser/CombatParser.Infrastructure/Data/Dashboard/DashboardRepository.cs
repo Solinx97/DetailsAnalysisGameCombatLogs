@@ -28,7 +28,7 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
                                 Value = y
                             });
 
-        var dashboardItems = await GatDashboardItemsQuery(queryValues, bossName, creatorName, targetName, valueType, cancellationToken);
+        var dashboardItems = await GatDashboardItemsQuery(queryValues, creatorName, targetName, valueType, cancellationToken);
 
         var items = dashboardItems
             .OrderByDescending(x => x.Value)
@@ -56,7 +56,7 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
             queryValues = queryValues.Where(x => x.Value.Target.Name == targetName);
         }
 
-        var dashboardItems = await GatDashboardItemsQuery(queryValues, bossName, creatorName, targetName, valueType, cancellationToken);
+        var dashboardItems = await GatDashboardItemsQuery(queryValues, creatorName, targetName, valueType, cancellationToken);
 
         var items = dashboardItems
             .OrderByDescending(x => x.Value)
@@ -138,7 +138,7 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
         return query;
     }
 
-    private static async Task<List<DashboardItemNumber>> GatDashboardItemsQuery<TModel>(IQueryable<DashboardQuery<TModel>> queryValues, string bossName, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
+    private static async Task<List<DashboardItemNumber>> GatDashboardItemsQuery<TModel>(IQueryable<DashboardQuery<TModel>> queryValues, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
         where TModel : class, IGeneralEntity, ICombatUnitRefs, IUnitTargetRefs
     {
         var query = queryValues
@@ -172,12 +172,12 @@ internal class DashboardRepository(CombatParserContextOne context) : IDashboardR
                 .Where(x => x.Value > 0 && x.Duration > 0)
                 .AsNoTracking();
 
-        var dashboardItems = await AppValueTypeAsync(query, bossName, creatorName, targetName, valueType, cancellationToken);
+        var dashboardItems = await AppValueTypeAsync(query, creatorName, targetName, valueType, cancellationToken);
 
         return dashboardItems;
     }
 
-    private static async Task<List<DashboardItemNumber>> AppValueTypeAsync(IQueryable<DashboardValue> query, string bossName, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
+    private static async Task<List<DashboardItemNumber>> AppValueTypeAsync(IQueryable<DashboardValue> query, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
         if (!Enum.IsDefined(typeof(DashboardValueType), valueType))
         {
