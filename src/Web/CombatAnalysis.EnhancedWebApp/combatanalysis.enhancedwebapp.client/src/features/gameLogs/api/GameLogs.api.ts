@@ -107,8 +107,11 @@ export const GameLogsApi = createApi({
         getCombatPlayerDeathCount: builder.query<number, string>({
             query: unitId => `/CombatPlayer/getPlayerDeathCount/${unitId}`,
         }),
-        getCombatPlayerDeath: builder.query<CombatPlayerDeathModel[], { unitId: string, skipCount: number }>({
-            query: ({ unitId, skipCount }) => `/CombatPlayer/getPlayerDeath/${unitId}?skipCount=${skipCount}`,
+        getWhenCombatPlayerDeath: builder.query<string, { unitId: string, skipCount: number }>({
+            query: ({ unitId, skipCount }) => `/CombatPlayer/getWhenPlayerDeath/${unitId}?skipCount=${skipCount}`,
+        }),
+        getCombatPlayerDeath: builder.query<CombatPlayerDeathModel[], { unitId: string, whenDied: string }>({
+            query: ({ unitId, whenDied }) => `/CombatPlayer/getPlayerDeath/${unitId}?whenDied=${whenDied}`,
         }),
         getDashboard: builder.query<DashboardModel, { dahsboardName: string, combatLogId: number, combatId: number, unitName: string, valueType: number }>({
             query: ({ dahsboardName, combatLogId, combatId, unitName, valueType }) => `/Dashboard/${dahsboardName}/${combatLogId}?combatId=${combatId}&unitName=${unitName}&valueType=${valueType}`
@@ -182,6 +185,9 @@ export const GameLogsApi = createApi({
         getUnitsHealthByCombatId: builder.query<Map<string, UnitHealthModel[]>, number>({
             query: combatId => `/UnitHealth/getByCombatId/${combatId}`,
         }),
+        getUnitsHealthByInterval: builder.query<UnitHealthModel[], { unitId: string, whenDied: string }>({
+            query: ({ unitId: combatId, whenDied }) => `/UnitHealth/getBeforeDied/${combatId}?whenDied=${whenDied}`,
+        }),
         getPlayerStatsByCombatPlayerId: builder.query<WoWMoPClassicPlayerStatsModel | WoWMidnightPlayerStatsModel, { combatPlayerId: number, gameVersion: number }>({
             query: ({ combatPlayerId, gameVersion }) => `/CombatPlayer/getPlayerStats/${combatPlayerId}?gameVersion=${gameVersion}`,
         }),
@@ -197,6 +203,7 @@ export const {
     useGetUniqueCombatsByCombatLogIdQuery,
     useLazyGetUniqueCombatsByCombatLogIdQuery,
     useLazyGetCombatPlayerDeathCountQuery,
+    useLazyGetWhenCombatPlayerDeathQuery,
     useLazyGetCombatPlayerDeathQuery,
     useGetDashboardQuery,
     useLazyGetCombatByIdQuery,
@@ -211,5 +218,6 @@ export const {
     useLazyGetUnitCastsByCombatUnitIdQuery,
     useLazyGetUnitPositionsByCombatIdQuery,
     useLazyGetUnitsHealthByCombatIdQuery,
+    useLazyGetUnitsHealthByIntervalQuery,
     useGetPlayerStatsByCombatPlayerIdQuery,
 } = GameLogsApi;

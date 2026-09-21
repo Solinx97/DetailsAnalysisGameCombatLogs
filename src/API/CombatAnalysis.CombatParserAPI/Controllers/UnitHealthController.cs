@@ -1,4 +1,5 @@
-﻿using CombatParser.Application.Queries.GetUnitsHealth;
+﻿using CombatParser.Application.Queries.CombatPlayer.GetPlayerHealthesBeforeDied;
+using CombatParser.Application.Queries.GetUnitsHealth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,5 +17,13 @@ public class UnitHealthController(IMediator mediator) : ControllerBase
         var unitsHealth = await _mediator.Send(new GetUnitsHealthQuery(combatId), cancellationToken);
 
         return Ok(unitsHealth);
+    }
+
+    [HttpGet("getBeforeDied/{unitId}")]
+    public async Task<IActionResult> GetBeforeDied(string unitId, string whenDied, CancellationToken cancellationToken)
+    {
+        var unitsHealthBeforePlayerDied = await _mediator.Send(new GetPlayerHealthesBeforeDiedQuery(unitId, whenDied), cancellationToken);
+
+        return Ok(unitsHealthBeforePlayerDied);
     }
 }

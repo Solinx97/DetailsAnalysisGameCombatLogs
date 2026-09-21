@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Application.Commands.CreatePlayer;
-using CombatParser.Application.Queries.GetPlayerByGameId;
+using CombatParser.Application.Queries.CombatPlayer.GetPlayerByGameId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

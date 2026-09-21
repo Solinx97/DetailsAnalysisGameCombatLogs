@@ -1,7 +1,5 @@
 ﻿using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities;
-using CombatParser.Domain.Entities.CombatPlayerData;
-using CombatParser.Domain.Enums;
 using CombatParser.Infrastructure.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,8 +32,8 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
     public async Task<IEnumerable<UnitPosition>> GetPositionsAsync(string combatUnitId, CancellationToken cancellationToken)
     {
         var data = await _context.Set<UnitPosition>()
-                    .AsNoTracking()
                     .Where(x => x.UnitId == combatUnitId)
+                    .AsNoTracking()
                     .ToListAsync(cancellationToken);
 
         return data;
@@ -44,8 +42,8 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
     public async Task<IEnumerable<UnitCast>> GetCastsAsync(string combatUnitId, CancellationToken cancellationToken)
     {
         var data = await _context.Set<UnitCast>()
-                    .AsNoTracking()
                     .Where(x => x.UnitId == combatUnitId)
+                    .AsNoTracking()
                     .ToListAsync(cancellationToken);
 
         return data;
@@ -53,27 +51,42 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
 
     public async Task<IDictionary<string, List<UnitHealth>>> GetUnitsHealthAsync(int combatId, CancellationToken cancellationToken)
     {
-        var data = await _context.Set<Unit>()
-                    .Join(_context.Set<UnitHealth>(),
-                        x => x.Id,
-                        y => y.UnitId,
-                        (x, y) => new
-                        {
-                            CombatId = x.CombatId,
-                            GameId = x.GameId,
-                            Time = y.Time,
-                            Health = y
-                        })
+        var data = await _context.Set<UnitHealth>()
+                    .Where(x => x.Unit.CombatId == combatId)
                     .AsNoTracking()
-                    .Where(x => x.CombatId == combatId)
-                    .GroupBy(x => x.GameId)
+                    .GroupBy(x => x.Unit.GameId)
                     .ToDictionaryAsync(
                         x => x.Key,
                         x => x
                             .OrderBy(y => y.Time)
-                            .Select(y => y.Health)
                             .ToList(),
                         cancellationToken);
+
+        return data;
+    }
+
+    public async Task<List<UnitHealth>> GetUnitsHealthByIntervalAsync(string unitId, string from, string to, CancellationToken cancellationToken)
+    {
+        var query = _context.Set<UnitHealth>()
+                    .AsQueryable();
+
+        if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
+        {
+            var fromTime = TimeSpan.Parse(from);
+            var toTime = TimeSpan.Parse(to);
+
+            query = query.Where(x => x.UnitId == unitId && x.Time >= fromTime && x.Time <= toTime);
+        }
+        else
+        {
+            query = query.Where(x => x.UnitId == unitId);
+        }
+
+        var data = await query
+                    .AsNoTracking()
+                    .OrderBy(x => x.Time)
+                    .Reverse()
+                    .ToListAsync(cancellationToken);
 
         return data;
     }

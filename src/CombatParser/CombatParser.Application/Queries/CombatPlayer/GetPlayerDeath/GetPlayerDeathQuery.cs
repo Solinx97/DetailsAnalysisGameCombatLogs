@@ -1,9 +1,9 @@
 ﻿using CombatParser.Application.DTOs.CombatPlayerData;
 using MediatR;
 
-namespace CombatParser.Application.Queries.GetPlayerDeath;
+namespace CombatParser.Application.Queries.CombatPlayer.GetPlayerDeath;
 
 public record GetPlayerDeathQuery(
     string UnitId,
-    int SkipCount
+    string WhenDied
     ) : IRequest<IEnumerable<CombatPlayerDeathDto>>;

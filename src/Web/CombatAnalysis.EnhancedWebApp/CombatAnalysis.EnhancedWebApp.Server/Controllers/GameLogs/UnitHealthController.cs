@@ -26,4 +26,13 @@ public class UnitHealthController : ControllerBase
 
         return Ok(unitsHealth);
     }
+
+    [HttpGet("getBeforeDied/{unitId}")]
+    public async Task<IActionResult> GetBeforeDied(string unitId, string whenDied)
+    {
+        var responseMessage = await _httpClient.GetAsync($"UnitHealth/getBeforeDied/{unitId}?whenDied={whenDied}");
+        var unitsHealthBeforePlayerDied = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitHealthModel>>();
+
+        return Ok(unitsHealthBeforePlayerDied);
+    }
 }

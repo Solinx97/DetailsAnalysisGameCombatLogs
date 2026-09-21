@@ -4,7 +4,7 @@ using CombatParser.Domain.Data;
 using CombatParser.Domain.Entities.WoWMoPClassic;
 using MediatR;
 
-namespace CombatParser.Application.Queries.GetCombatPlayerStatById;
+namespace CombatParser.Application.Queries.CombatPlayer.GetCombatPlayerStatById;
 
 internal class GetCombatPlayerStatByIdHandler(IGenericRepository<WoWMoPClassicPlayerStats, int> repository, IMapper mapper) : IRequestHandler<GetCombatPlayerStatByIdQuery, IPlayerStatsDto>
 {

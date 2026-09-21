@@ -2,10 +2,11 @@
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models.WoWMidnight;
 using CombatAnalysis.CombatParserAPI.Models.WoWMoPClassic;
-using CombatParser.Application.Queries.GetCombatPlayerById;
-using CombatParser.Application.Queries.GetCombatPlayersByCombatId;
-using CombatParser.Application.Queries.GetPlayerDeath;
-using CombatParser.Application.Queries.GetPlayerDeathCount;
+using CombatParser.Application.Queries.CombatPlayer.GetCombatPlayerById;
+using CombatParser.Application.Queries.CombatPlayer.GetCombatPlayersByCombatId;
+using CombatParser.Application.Queries.CombatPlayer.GetPlayerDeath;
+using CombatParser.Application.Queries.CombatPlayer.GetPlayerDeathCount;
+using CombatParser.Application.Queries.CombatPlayer.GetWhenPlayerDeath;
 using CombatParser.Application.Queries.GetPlayerStats;
 using CombatParser.Application.Queries.GetUniquePlayerNames;
 using MediatR;
@@ -66,10 +67,18 @@ public class CombatPlayerController(IMediator mediator, IMapper mapper) : Contro
         return Ok(playerDeathCount);
     }
 
-    [HttpGet("getPlayerDeath/{unitId}")]
-    public async Task<IActionResult> GetPlayerDeath(string unitId, int skipCount, CancellationToken cancellationToken)
+    [HttpGet("getWhenPlayerDeath/{unitId}")]
+    public async Task<IActionResult> GetWhenPlayerDeath(string unitId, int skipCount, CancellationToken cancellationToken)
     {
-        var playerDeath = await _mediator.Send(new GetPlayerDeathQuery(unitId, skipCount), cancellationToken);
+        var whenPlayerDeath = await _mediator.Send(new GetWhenPlayerDeathQuery(unitId, skipCount), cancellationToken);
+
+        return Ok(whenPlayerDeath);
+    }
+
+    [HttpGet("getPlayerDeath/{unitId}")]
+    public async Task<IActionResult> GetPlayerDeath(string unitId, string whenDied, CancellationToken cancellationToken)
+    {
+        var playerDeath = await _mediator.Send(new GetPlayerDeathQuery(unitId, whenDied), cancellationToken);
 
         return Ok(playerDeath);
     }

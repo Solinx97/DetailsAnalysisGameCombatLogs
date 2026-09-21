@@ -15,45 +15,61 @@
         }
 
         .selected {
-            box-shadow: 2px 2px 2px 2px green;
+            box-shadow: 2px 2px green;
         }
     }
 }
 
 .death-history {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
-    gap: 20px;
+    gap: 25px;
 
-    &__history {
+    &__information,
+    &__health {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: 20px;
-        cursor: default;
 
-        .value {
+        .history {
             display: flex;
-            gap: 30px;
-            padding: 10px 20px;
-            border-radius: 25px;
-        }
+            align-items: center;
+            gap: 20px;
+            cursor: default;
 
-        .increase {
-            box-shadow: 2px 2px green;
-        }
+            .value {
+                display: flex;
+                gap: 30px;
+                padding: 10px 20px;
+                border-radius: 25px;
+                box-shadow: 2px 2px white;
+            }
 
-        .decrease {
-            box-shadow: 2px 2px orange;
-        }
+            .increase {
+                box-shadow: 2px 2px green;
+            }
 
-        .health-bar {
-            display: flex;
-            justify-content: center;
-            padding: 10px 20px;
-            border-radius: 25px;
-            box-shadow: 1px 1px 1px 1px white;
+            .decrease {
+                box-shadow: 2px 2px orange;
+            }
+
+            .health-bar {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 25px;
+                gap: 15px;
+
+                &__procentage {
+                    font-size: 0.8em;
+                }
+
+                &__value {
+                    padding: 10px 20px;
+                    border-radius: 25px;
+                }
+            }
         }
     }
 }

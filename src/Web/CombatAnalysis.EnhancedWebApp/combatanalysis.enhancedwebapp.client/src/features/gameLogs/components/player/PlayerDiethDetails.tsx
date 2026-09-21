@@ -2,7 +2,7 @@ import CombatPlayerBuild from '@/shared/components/combatLogBuild/CombatPlayerBu
 import Loading from '@/shared/components/Loading';
 import { UnitHealthStatus } from '@/shared/helpers/EnumHelper';
 import useTime from '@/shared/hooks/useTime';
-import { faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faSkull, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,10 +10,13 @@ import {
     useLazyGetCombatPlayerByIdQuery,
     useLazyGetCombatPlayerDeathCountQuery,
     useLazyGetCombatPlayerDeathQuery,
+    useLazyGetUnitsHealthByIntervalQuery,
+    useLazyGetWhenCombatPlayerDeathQuery,
 } from '../../api/GameLogs.api';
 import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import type { CombatPlayerDeathModel } from '../../types/CombatPlayerDeathModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
+import type { UnitHealthModel } from '../../types/UnitHealthModel';
 import CombatDetailsHeader from '../details/CombatDetailsHeader';
 
 import './PlayerDiethDetails.scss';
@@ -32,16 +35,20 @@ const PlayerDiethDetails: React.FC = () => {
         gameVersion: -1
     });
     const [playerId, setPlayerId] = useState<number>(0);
-    const [combatPlayer, setCombatPlayer] = useState<CombatPlayerModel | null>(null);
+    const [combatPlayer, setCombatPlayer] = useState<CombatPlayerModel>();
     const [unitId, setUnitId] = useState<string>("0");
     const [selectedPlayerDeathCount, setSelectedPlayerDeathCount] = useState<number>(0);
     const [playerDeathCount, setPlayerDeathCount] = useState<number>(0);
+    const [whenPlayerDeath, setWhenPlayerDeath] = useState<string>("");
     const [playerDeath, setPlayerDeath] = useState<CombatPlayerDeathModel[]>([]);
+    const [playerHealth, setPlayerHealth] = useState<UnitHealthModel[]>([]);
 
     const { getTimeWithoutMs } = useTime();
 
     const [getCombatPlayerDeathCount] = useLazyGetCombatPlayerDeathCountQuery();
+    const [getWhenCombatPlayerDeath] = useLazyGetWhenCombatPlayerDeathQuery();
     const [getCombatPlayerDeath] = useLazyGetCombatPlayerDeathQuery();
+    const [getUnitHealthBeforeInterval] = useLazyGetUnitsHealthByIntervalQuery();
     const [getCombatPlayerById] = useLazyGetCombatPlayerByIdQuery();
 
     useEffect(() => {
@@ -101,11 +108,11 @@ const PlayerDiethDetails: React.FC = () => {
 
         const loadData = async () => {
             try {
-                const [death] = await Promise.all([
-                    getCombatPlayerDeath({ unitId, skipCount: selectedPlayerDeathCount }).unwrap(),
+                const [whenDeath] = await Promise.all([
+                    getWhenCombatPlayerDeath({ unitId, skipCount: selectedPlayerDeathCount }).unwrap(),
                 ]);
 
-                setPlayerDeath(death);
+                setWhenPlayerDeath(whenDeath);
             } catch (e) {
                 console.error(e);
             }
@@ -134,11 +141,33 @@ const PlayerDiethDetails: React.FC = () => {
         loadData();
     }, [playerId]);
 
+    useEffect(() => {
+        if (!combatPlayer || whenPlayerDeath === "") {
+            return;
+        }
+
+        const loadData = async () => {
+            try {
+                const [death, playerHealth] = await Promise.all([
+                    getCombatPlayerDeath({ unitId, whenDied: whenPlayerDeath }).unwrap(),
+                    getUnitHealthBeforeInterval({ unitId: combatPlayer.unitId, whenDied: whenPlayerDeath }).unwrap(),
+                ]);
+
+                setPlayerDeath(death);
+                setPlayerHealth(playerHealth);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        loadData();
+    }, [combatPlayer, whenPlayerDeath]);
+
     if (!combatPlayer) {
         return (<Loading />);
     }
 
-    if (playerDeath.length === 0) {
+    if (!combatPlayer || playerDeath.length === 0 || playerHealth.length === 0) {
         return (
             <div className="general-details__container">
                 <div className="general-details__navigate">
@@ -172,27 +201,45 @@ const PlayerDiethDetails: React.FC = () => {
                     }
                 </ul>
             </div>
-
-            <ul className="death-history">
-                {playerDeath.map((health, index) => (
-                    <li key={index} className="death-history__history">
-                        {index === 0 &&
+            <div className="death-history">
+                <ul className="death-history__information">
+                    {playerDeath.map((item, index) => (
+                        <li key={index} className="history">
+                            {index === 0 &&
+                                <FontAwesomeIcon
+                                    icon={faSkull}
+                                    color="red"
+                                />
+                            }
+                            <span>{getTimeWithoutMs(item.time)}</span>
+                            <div className="value">
+                                <span>{item.spell}</span>
+                                <span>{item.value}</span>
+                            </div>
+                        </li>
+                    ))
+                    }
+                </ul>
+                <ul className="death-history__health">
+                    {playerHealth.slice(0, playerDeath.length).map((item, index) => (
+                        <li key={index} className="history">
                             <FontAwesomeIcon
-                                icon={faSkull}
-                                color="red"
+                                icon={faArrowRight}
+                                color={`${item.status === UnitHealthStatus["Increase"] ? 'green' : 'orange'}`}
                             />
-                        }
-                        <span>{getTimeWithoutMs(health.time)}</span>
-                        <div>{health.status === UnitHealthStatus["Increase"] ? '+' : '-'}</div>
-                        <div className={`value ${health.status === UnitHealthStatus["Increase"] ? 'increase' : 'decrease'}`}>
-                            <span>{health.spell}</span>
-                            <span>{health.value}</span>
-                        </div>
-                        <div className="health-bar">{health.currentHealth}/{health.maxHealth}</div>
-                    </li>
-                ))
-                }
-            </ul>
+                            <div className="health-bar">
+                                <div className={`health-bar__value ${item.status === UnitHealthStatus["Increase"] ? 'increase' : 'decrease'}`}>{item.currentHealth} / {item.maxHealth}</div>
+                                <div className="health-bar__procentage">
+                                    {item.maxHealth > 0
+                                        ? `${((item.currentHealth / item.maxHealth) * 100).toFixed(2)}%`
+                                        : '0%'}
+                                </div>
+                            </div>
+                        </li>
+                    ))
+                    }
+                </ul>
+            </div>
         </div>
     );
 }

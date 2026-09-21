@@ -4,7 +4,7 @@ public record CombatPlayerDeath(
     TimeSpan Time,
     string Name,
     string Spell,
-    int Value,
+    long Value,
     long CurrentHealth,
     long MaxHealth,
     int Status,

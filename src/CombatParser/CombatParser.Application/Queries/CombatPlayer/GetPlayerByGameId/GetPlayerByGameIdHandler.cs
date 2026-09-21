@@ -3,7 +3,7 @@ using CombatParser.Application.DTOs;
 using CombatParser.Domain.Data;
 using MediatR;
 
-namespace CombatParser.Application.Queries.GetPlayerByGameId;
+namespace CombatParser.Application.Queries.CombatPlayer.GetPlayerByGameId;
 
 internal class GetPlayerByGameIdHandler(IPlayerRepository repository, IMapper mapper) : IRequestHandler<GetPlayerByGameIdQuery, PlayerDto>
 {

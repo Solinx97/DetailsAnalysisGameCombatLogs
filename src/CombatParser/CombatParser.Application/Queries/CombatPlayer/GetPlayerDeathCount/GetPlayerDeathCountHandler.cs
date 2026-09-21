@@ -1,7 +1,7 @@
 ﻿using CombatParser.Domain.Data;
 using MediatR;
 
-namespace CombatParser.Application.Queries.GetPlayerDeathCount;
+namespace CombatParser.Application.Queries.CombatPlayer.GetPlayerDeathCount;
 
 internal class GetPlayerDeathCountHandler(ICombatPlayerRepository repository) : IRequestHandler<GetPlayerDeathCountQuery, int>
 {

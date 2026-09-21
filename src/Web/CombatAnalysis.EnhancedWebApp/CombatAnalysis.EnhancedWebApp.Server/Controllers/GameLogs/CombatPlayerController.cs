@@ -71,10 +71,19 @@ public class CombatPlayerController : ControllerBase
         return Ok(playerDeathCount);
     }
 
-    [HttpGet("getPlayerDeath/{unitId}")]
-    public async Task<IActionResult> GetPlayerDeath(string unitId, int skipCount)
+    [HttpGet("getWhenPlayerDeath/{unitId}")]
+    public async Task<IActionResult> GetWhenPlayerDeath(string unitId, int skipCount)
     {
-        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/getPlayerDeath/{unitId}?skipCount={skipCount}");
+        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/getWhenPlayerDeath/{unitId}?skipCount={skipCount}");
+        var whenPlayerDeath = await responseMessage.Content.ReadFromJsonAsync<TimeSpan?>();
+
+        return Ok(whenPlayerDeath);
+    }
+
+    [HttpGet("getPlayerDeath/{unitId}")]
+    public async Task<IActionResult> GetPlayerDeath(string unitId, string whenDied)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/getPlayerDeath/{unitId}?whenDied={whenDied}");
         var playerDeath = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerDeathModel>>();
 
         return Ok(playerDeath);

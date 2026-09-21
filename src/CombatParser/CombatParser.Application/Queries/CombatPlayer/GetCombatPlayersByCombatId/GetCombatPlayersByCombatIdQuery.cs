@@ -1,7 +1,7 @@
 ﻿using CombatParser.Application.DTOs;
 using MediatR;
 
-namespace CombatParser.Application.Queries.GetCombatPlayersByCombatId;
+namespace CombatParser.Application.Queries.CombatPlayer.GetCombatPlayersByCombatId;
 
 public record GetCombatPlayersByCombatIdQuery(
     int CombatId

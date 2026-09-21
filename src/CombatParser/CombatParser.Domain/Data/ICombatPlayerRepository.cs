@@ -16,5 +16,7 @@ public interface ICombatPlayerRepository
 
     Task<int> GetPlayerDeathCountAsync(string unitId, CancellationToken cancellationToken);
 
-    Task<List<CombatPlayerDeath>> GetPlayerDeathAsync(string unitId, int skipCount, CancellationToken cancellationToken);
+    Task<TimeSpan?> GetWhenPlayerDeathAsync(string unitId, int skipCount, CancellationToken cancellationToken);
+
+    Task<List<CombatPlayerDeath>> GetPlayerDeathAsync(string unitId, string whenDied, CancellationToken cancellationToken);
 }
