@@ -14,6 +14,8 @@ public interface IHttpClientHelper
 
     Task<HttpResponseMessage> GetAsync(string requestAddress);
 
+    Task<HttpResponseMessage> GetAsync(string requestAddress, CancellationToken cancellationToken);
+
     Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content);
 
     Task<HttpResponseMessage> PatchAsync(string requestUri, JsonContent content);

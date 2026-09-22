@@ -210,6 +210,7 @@ export const {
     useLazyGetWhenCombatPlayerDeathQuery,
     useLazyGetCombatPlayerDeathQuery,
     useGetDashboardQuery,
+    useLazyGetDashboardQuery,
     useLazyGetCombatByIdQuery,
     useLazyGetBossMapByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,

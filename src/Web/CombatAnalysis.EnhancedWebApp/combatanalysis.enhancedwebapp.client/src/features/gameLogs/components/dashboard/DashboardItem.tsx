@@ -5,8 +5,9 @@ import { faClose, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetDashboardQuery } from '../../api/GameLogs.api';
+import { useLazyGetDashboardQuery } from '../../api/GameLogs.api';
 import type { DashboardItemModel } from '../../types/dashboard/DashboardItemModel';
+import type { DashboardModel } from '../../types/dashboard/DashboardModel';
 
 interface DashboardItemProps {
     requestName: string;
@@ -17,10 +18,11 @@ interface DashboardItemProps {
     creatorName: string,
     targetName: string;
     name: string;
+    refetch: Object | null;
     setCloseDashboardItem: () => void;
 }
 
-const DashboardItem: React.FC<DashboardItemProps> = ({ requestName, valueType, combatLogId, bossName, combatId, creatorName, targetName, name, setCloseDashboardItem }) => {
+const DashboardItem: React.FC<DashboardItemProps> = ({ requestName, valueType, combatLogId, bossName, combatId, creatorName, targetName, name, refetch, setCloseDashboardItem }) => {
     const minCount = 5;
 
     const { t } = useTranslation('combatDetails/dashboard');
@@ -28,11 +30,21 @@ const DashboardItem: React.FC<DashboardItemProps> = ({ requestName, valueType, c
     const { formatNumber } = useNumber();
     const { removeServerName } = useCombatLogs();
 
-    const { data: dashboard, isLoading, isFetching } = useGetDashboardQuery({ dahsboardName: requestName, combatLogId, bossName, combatId, creatorName, targetName, valueType });
+    const [useGetDashboard] = useLazyGetDashboardQuery();
 
+    const [dashboard, setDashboard] = useState<DashboardModel | null>(null);
     const [onlyPlayers, setOnlyPlayers] = useState(false);
     const [contentSize, setContentSize] = useState(minCount);
     const [dashboardItems, setDashboardItems] = useState<DashboardItemModel[]>([]);
+
+    useEffect(() => {
+        loadAsync();
+    }, []);
+
+    useEffect(() => {
+        setDashboard(null);
+        loadAsync();
+    }, [refetch]);
 
     useEffect(() => {
         if (!dashboard || onlyPlayers || dashboard.items.length === 0) {
@@ -50,8 +62,50 @@ const DashboardItem: React.FC<DashboardItemProps> = ({ requestName, valueType, c
         setDashboardItems(dashboard.items.filter(x => x.unitType === CombatUnitType["Player"]).slice(0, contentSize));
     }, [onlyPlayers, dashboard, contentSize]);
 
-    if (isLoading || !dashboard || isFetching) {
-        return (<div>Loading...</div>);
+    const loadAsync = async () => {
+        try {
+            const receivedDashboard = await useGetDashboard({ dahsboardName: requestName, combatLogId, bossName, combatId, creatorName, targetName, valueType }).unwrap();
+            setDashboard(receivedDashboard);
+            setDashboardItems(receivedDashboard.items);
+        } catch (error) {
+            console.error("Failed to fetch dashboard:", error);
+        }
+    }
+
+    if (!dashboard) {
+        return (
+            <>
+                <div className="header">
+                    <div>{name}</div>
+                    <FontAwesomeIcon
+                        className="close"
+                        icon={faClose}
+                        onClick={setCloseDashboardItem}
+                    />
+                </div>
+                <span className="content">
+                    Loading...
+                </span>
+            </>
+        );
+    }
+
+    if (dashboardItems.length === 0) {
+        return (
+            <>
+                <div className="header">
+                    <div>{name}</div>
+                    <FontAwesomeIcon
+                        className="close"
+                        icon={faClose}
+                        onClick={setCloseDashboardItem}
+                    />
+                </div>
+                <span>
+                    {t("NoData")}
+                </span>
+            </>
+        );
     }
 
     return (

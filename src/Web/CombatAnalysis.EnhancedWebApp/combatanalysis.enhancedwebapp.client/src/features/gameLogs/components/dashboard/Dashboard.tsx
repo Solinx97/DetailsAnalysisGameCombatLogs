@@ -44,7 +44,7 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
 
     const [selectedDashboards, setSelectedDashboards] = useState<DashboardItemModel[]>([]);
     
-    const { filtersDOM, bossesValue, combatsValue, creatorsValue, targetsValue } = useDashboardFilters(combatLogId);
+    const { filtersDOM, bossesValue, combatsValue, creatorsValue, targetsValue, refetch } = useDashboardFilters(combatLogId);
 
     const addDashboard = (requestName: string, valueType: number, name: string) => {
         setSelectedDashboards(prev => [
@@ -82,7 +82,6 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
                 {selectedDashboards.map((item, index) => (
                     <li key={index} className="item">
                         <DashboardItem
-                            setCloseDashboardItem={() => closeDashboard(item)}
                             requestName={item.requestName}
                             valueType={item.valueType}
                             combatLogId={combatLogId}
@@ -91,6 +90,8 @@ const Dashboard: React.FC<{ combatLogId: number }> = ({ combatLogId }) => {
                             creatorName={creatorsValue}
                             targetName={targetsValue}
                             name={item.name}
+                            setCloseDashboardItem={() => closeDashboard(item)}
+                            refetch={refetch}
                         />
                     </li>
                 ))

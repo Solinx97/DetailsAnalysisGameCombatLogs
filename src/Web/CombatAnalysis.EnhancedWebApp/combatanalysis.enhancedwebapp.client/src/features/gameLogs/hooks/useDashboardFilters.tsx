@@ -1,11 +1,13 @@
 import { NoneValue } from '@/shared/helpers/ConstHelpers';
+import { CombatUnitType } from '@/shared/helpers/EnumHelper';
 import useCombatLogs from '@/shared/hooks/useCombatLogs';
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Select from 'react-select';
 import { useGetUniqueCombatsQuery, useGetUniqueUnitsNameQuery } from '../api/GameLogs.api';
 import type { CombatModel } from '../types/CombatModel';
-import { CombatUnitType } from '@/shared/helpers/EnumHelper';
 
 type Option = {
     value: string;
@@ -23,10 +25,13 @@ interface DashboardFiltersData {
     combatsValue: number;
     creatorsValue: string;
     targetsValue: string;
+    refetch: Object | null;
 }
 
 const useDashboardFilters = (combatLogId: number): DashboardFiltersData => {
     const { t } = useTranslation('combatDetails/dashboard');
+
+    const [refetch, setRefetch] = useState<Object | null>(null);
 
     const [bossesOptions, setBossesOptions] = useState<Option[]>([]);
     const [bossesValue, setBossesValue] = useState<Option | null>(bossesOptions[0]);
@@ -265,58 +270,67 @@ const useDashboardFilters = (combatLogId: number): DashboardFiltersData => {
 
     const filtersDOM = (): React.ReactNode => {
         return (
-            <div className="dashboard__filter">
-                <div className="filter-item">
-                    <div>{t("Boss")}</div>
-                    <Select<Option>
-                        className="options"
-                        options={bossesOptions}
-                        value={bossesValue}
-                        onChange={(selected) => setBossesValue(selected)}
-                    />
-                </div>
-                <div className="filter-item">
-                    <div>{t("Combat")}</div>
-                    <Select<OptionNumber>
-                        className="options"
-                        options={combatsOptions}
-                        value={combatsValue}
-                        onChange={(selected) => setCombatsValue(selected)}
-                    />
-                </div>
-                <div className="filter-item">
-                    <div className="filter-item__extented">
-                        <div>{t("Creator")}</div>
-                        <div className="actions">
-                            <button onClick={() => setCreatorType(0)}>any</button>
-                            <button onClick={() => setCreatorType(1)}>ally</button>
-                            <button onClick={() => setCreatorType(2)}>enemy</button>
-                        </div>
+            <>
+                <div className="dashboard__filter">
+                    <div className="filter-item">
+                        <div>{t("Boss")}</div>
+                        <Select<Option>
+                            className="options"
+                            options={bossesOptions}
+                            value={bossesValue}
+                            onChange={(selected) => setBossesValue(selected)}
+                        />
                     </div>
-                    <Select<Option>
-                        className="options"
-                        options={creatorsOptions}
-                        value={creatorsValue}
-                        onChange={(selected) => setCreatorsValue(selected)}
-                    />
-                </div>
-                <div className="filter-item">
-                    <div className="filter-item__extented">
-                        <div>{t("Target")}</div>
-                        <div className="actions">
-                            <button onClick={() => setTargetType(0)}>any</button>
-                            <button onClick={() => setTargetType(1)}>ally</button>
-                            <button onClick={() => setTargetType(2)}>enemy</button>
-                        </div>
+                    <div className="filter-item">
+                        <div>{t("Combat")}</div>
+                        <Select<OptionNumber>
+                            className="options"
+                            options={combatsOptions}
+                            value={combatsValue}
+                            onChange={(selected) => setCombatsValue(selected)}
+                        />
                     </div>
-                    <Select<Option>
-                        className="options"
-                        options={targetsOptions}
-                        value={targetsValue}
-                        onChange={(selected) => setTargetsValue(selected)}
-                    />
+                    <div className="filter-item">
+                        <div className="filter-item__extented">
+                            <div>{t("Creator")}</div>
+                            <div className="actions">
+                                <button onClick={() => setCreatorType(0)}>any</button>
+                                <button onClick={() => setCreatorType(1)}>ally</button>
+                                <button onClick={() => setCreatorType(2)}>enemy</button>
+                            </div>
+                        </div>
+                        <Select<Option>
+                            className="options"
+                            options={creatorsOptions}
+                            value={creatorsValue}
+                            onChange={(selected) => setCreatorsValue(selected)}
+                        />
+                    </div>
+                    <div className="filter-item">
+                        <div className="filter-item__extented">
+                            <div>{t("Target")}</div>
+                            <div className="actions">
+                                <button onClick={() => setTargetType(0)}>any</button>
+                                <button onClick={() => setTargetType(1)}>ally</button>
+                                <button onClick={() => setTargetType(2)}>enemy</button>
+                            </div>
+                        </div>
+                        <Select<Option>
+                            className="options"
+                            options={targetsOptions}
+                            value={targetsValue}
+                            onChange={(selected) => setTargetsValue(selected)}
+                        />
+                    </div>
                 </div>
-            </div>
+                <div className="btn-shadow"
+                    onClick={() => setRefetch({})}>
+                    <FontAwesomeIcon
+                        icon={faRefresh}
+                    />
+                    <div>{t("Update")}</div>
+                </div>
+            </>
         );
     }
 
@@ -326,6 +340,7 @@ const useDashboardFilters = (combatLogId: number): DashboardFiltersData => {
         combatsValue: !combatsValue ? 0 : combatsValue.value,
         creatorsValue: !creatorsValue ? NoneValue.NONE_VALUE : creatorsValue.value,
         targetsValue: !targetsValue ? NoneValue.NONE_VALUE : targetsValue.value,
+        refetch,
     };
 }
 

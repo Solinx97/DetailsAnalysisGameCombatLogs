@@ -43,6 +43,13 @@ internal class HttpClientHelper : IHttpClientHelper
         return result;
     }
 
+    public async Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
+    {
+        var result = await _client.GetAsync($"{APIUrl}{BaseAddressApi}{requestUri}", cancellationToken);
+
+        return result;
+    }
+
     public async Task<HttpResponseMessage> PutAsync(string requestUri, JsonContent content)
     {
         var result = await _client.PutAsync($"{APIUrl}{BaseAddressApi}{requestUri}", content);

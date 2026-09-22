@@ -2,139 +2,99 @@
 
 public static class CombatLogKeyWords
 {
-    #region Hash
-
-    public static string PlayerHash { get; } = "0x512";
-
-    public static string PlayerHash1 { get; } = "0x514";
-
-    public static string PlayerHash2 { get; } = "0x511";
-
-    public static string BossHash { get; } = "0x10a48";
-
-    public static string BossHash1 { get; } = "0xa48";
-
-    #endregion
-
     #region Common
 
     public static TimeSpan MinCombatDuration { get; } = TimeSpan.Parse("00:00:20");
 
-    public static string NullValue { get; } = "nil";
+    public const string NULL_VALUE = "nil";
 
-    public static string CombatLogVersion { get; } = "COMBAT_LOG_VERSION";
+    public const string COMBAT_LOG_VERSION = "COMBAT_LOG_VERSION";
 
-    public static string EncounterStart { get; } = "ENCOUNTER_START";
+    public const string ENCOUNTER_START = "ENCOUNTER_START";
 
-    public static string EncounterEnd { get; } = "ENCOUNTER_END";
+    public const string ENCOUNTER_END = "ENCOUNTER_END";
 
-    public static string ZoneChange { get; } = "ZONE_CHANGE";
+    public const string ZONE_CHANGE = "ZONE_CHANGE";
 
-    public static string CombatantInfo { get; } = "COMBATANT_INFO";
+    public const string COMBATANT_INFO = "COMBATANT_INFO";
 
-    public static string SpellSummon { get; } = "SPELL_SUMMON";
+    public const string SPELL_SUMMON = "SPELL_SUMMON";
 
-    public static string UnitDied { get; } = "UNIT_DIED";
+    public const string UNIT_DIED = "UNIT_DIED";
 
-    public static string Creature { get; } = "Creature";
+    public const string CREATURE = "Creature";
 
-    public static string Pet { get; } = "Pet";
+    public const string PET = "Pet";
 
-    public static string Vehicle { get; } = "Vehicle";
+    public const string VEHICLE = "Vehicle";
 
-    public static string Player { get; } = "Player";
+    public const string PLAYER = "Player";
 
     #endregion
 
     #region Casts
 
-    public static string SpellCastStart { get; } = "SPELL_CAST_START";
+    public const string SPELL_CAST_START = "SPELL_CAST_START";
 
-    public static string SpellCastSuccess { get; } = "SPELL_CAST_SUCCESS";
-
-    public static string SpellCastFailed { get; } = "SPELL_CAST_FAILED";
+    public const string SPELL_CAST_SUCCESS = "SPELL_CAST_SUCCESS";
 
     #endregion
 
     #region Auras
 
-    public static string AuraApplied { get; } = "SPELL_AURA_APPLIED";
+    public const string SPELL_AURA_APPLIED = "SPELL_AURA_APPLIED";
 
-    public static string AuraRemoved { get; } = "SPELL_AURA_REMOVED";
+    public const string SPELL_AURA_APPLIED_DOSE = "SPELL_AURA_APPLIED_DOSE";
 
-    public static string AuraAppliedDose { get; } = "SPELL_AURA_APPLIED_DOSE";
-
-    public static string AuraRemovedDose { get; } = "SPELL_AURA_REMOVED_DOSE";
-
-    public static string Debuff { get; } = "DEBUFF";
+    public const string DEBUFF = "DEBUFF";
 
     #endregion
 
     #region Damage done
 
-    public static string SpellDamage { get; } = "SPELL_DAMAGE";
+    public const string SPELL_DAMAGE = "SPELL_DAMAGE";
 
-    public static string SwingDamage { get; } = "SWING_DAMAGE,";
+    public const string SWING_DAMAGE = "SWING_DAMAGE,";
 
-    public static string SpellPeriodicDamage { get; } = "SPELL_PERIODIC_DAMAGE";
+    public const string SPELL_PERIODIC_DAMAGE = "SPELL_PERIODIC_DAMAGE";
 
-    public static string RangeDamage { get; } = "RANGE_DAMAGE";
+    public const string SWING_DAMAGE_LANDED = "SWING_DAMAGE_LANDED";
 
-    public static string SwingDamageLanded { get; } = "SWING_DAMAGE_LANDED";
+    public const string MELEE = "Melee";
 
-    public static string Melee { get; } = "Melee";
+    public const string SINGLE_TARGET = "ST";
 
-    public static string IsSingleTarget { get; } = "ST";
+    public const string AOE = "AOE";
 
-    public static string IsAOETarget { get; } = "AOE";
-
-    public static string IsCrit { get; } = "1";
+    public const string CRIT = "1";
 
     #endregion
 
     #region Tank ability
 
-    public static string Resist { get; } = "RESIST";
+    public const string RESIST = "RESIST";
 
-    public static string Immune { get; } = "IMMUNE";
+    public const string IMMUNE = "IMMUNE";
 
-    public static string Parry { get; } = "PARRY";
+    public const string PARRY = "PARRY";
 
-    public static string Dodge { get; } = "DODGE";
+    public const string DODGE = "DODGE";
 
-    public static string Miss { get; } = "MISS";
+    public const string MISS = "MISS";
 
-    public static string Absorb { get; } = "ABSORB";
+    public const string ABSORB = "ABSORB";
 
-    public static string IsCrushing { get; } = "1";
-
-    #endregion
-
-    #region Heal done
-
-    public static string SpellHeal { get; } = "SPELL_HEAL,";
-
-    public static string SpellPeriodicHeal { get; } = "SPELL_PERIODIC_HEAL";
-
-    public static string SpellAbsorbed { get; } = "SPELL_ABSORBED";
-
-    #endregion
-
-    #region Resources recovery
-
-    public static string SpellPeriodicEnergize { get; } = "SPELL_PERIODIC_ENERGIZE";
-
-    public static string SpellEnergize { get; } = "SPELL_ENERGIZE";
+    public const string CRUSHING = "1";
 
     #endregion
 
     #region Damage missed
 
-    public static string SwingMissed { get; } = "SWING_MISSED";
+    public const string SWING_MISSED = "SWING_MISSED";
 
-    public static string DamageShieldMissed { get; } = "DAMAGE_SHIELD_MISSED";
+    public const string DAMAGE_SHIELD_MISSED = "DAMAGE_SHIELD_MISSED";
 
-    public static string SpellMissed { get; } = "SPELL_MISSED";
+    public const string SPELL_MISSED = "SPELL_MISSED";
 
     #endregion
 }

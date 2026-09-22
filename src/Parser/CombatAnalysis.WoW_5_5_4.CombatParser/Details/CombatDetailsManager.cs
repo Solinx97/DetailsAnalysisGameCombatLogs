@@ -68,7 +68,7 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, Date
             return;
         }
 
-        if (combatDataLine[1].Equals(CombatLogKeyWords.SwingDamageLanded)
+        if (combatDataLine[1].Equals(CombatLogKeyWords.SWING_DAMAGE_LANDED)
             && long.TryParse(combatDataLine[12], out var currentHealth)
             && long.TryParse(combatDataLine[13], out var maxHealth))
         {

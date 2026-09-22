@@ -37,7 +37,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             return false;
         }
 
-        var isCombatLogFile = line.Contains(CombatLogKeyWords.CombatLogVersion);
+        var isCombatLogFile = line.Contains(CombatLogKeyWords.COMBAT_LOG_VERSION);
         if (!isCombatLogFile)
         {
             return false;
@@ -105,18 +105,18 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
     private async Task<bool> ProcessLine(string line, StringBuilder combatData, bool combatStarted, ConcurrentDictionary<string, Unit> units)
     {
-        if (line.Contains(CombatLogKeyWords.SpellSummon))
+        if (line.Contains(CombatLogKeyWords.SPELL_SUMMON))
         {
             var combatDataLine = _combatParserHelper.SplitCombatData(line);
             _combatParserHelper.ParseUnits(units, combatDataLine[6], combatDataLine[7], combatDataLine[8], combatDataLine[2]);
         }
         
-        if (line.Contains(CombatLogKeyWords.ZoneChange))
+        if (line.Contains(CombatLogKeyWords.ZONE_CHANGE))
         {
             ZoneName(line);
         }
        
-        if (line.Contains(CombatLogKeyWords.EncounterStart))
+        if (line.Contains(CombatLogKeyWords.ENCOUNTER_START))
         {
             // If during combat player can be disconnected, lagged or some bugs, end of combat (encounter_end) can be not writed in log file.
             // If not find end of combat, parsing will continue and get information from next combat as current combat information.
@@ -133,7 +133,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
             return false;
         }
 
-        if (line.Contains(CombatLogKeyWords.EncounterEnd))
+        if (line.Contains(CombatLogKeyWords.ENCOUNTER_END))
         {
             combatStarted = false;
 
@@ -158,7 +158,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
 
     protected Combat? CreateCombat(string[] builtCombat)
     {
-        if (!builtCombat[^1].Contains(CombatLogKeyWords.EncounterEnd))
+        if (!builtCombat[^1].Contains(CombatLogKeyWords.ENCOUNTER_END))
         {
             return null;
         }
@@ -284,7 +284,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
     protected async Task<CombatPlayer[]> GetCombatPlayers(string[] data, string duration, DateTimeOffset start, DateTimeOffset finish, CombatDetails combatDetails)
     {
         var combatInformations = data
-            .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
+            .Where(info => info.Contains(CombatLogKeyWords.COMBATANT_INFO))
             .ToArray();
 
         combatDetails.Calculate(data, start, finish);
@@ -363,7 +363,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         for (var i = 1; i < combatData.Length; i++)
         {
             var data = combatData[i].Split(',');
-            if (!combatData[i].Contains(CombatLogKeyWords.CombatantInfo)
+            if (!combatData[i].Contains(CombatLogKeyWords.COMBATANT_INFO)
                 && gamePlayerId == data[1])
             {
                 var dirtyUsername = data[2];

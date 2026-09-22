@@ -30,10 +30,10 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
 
         var gameAuraId = int.Parse(combatDataLine[10]);
-        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraApplied) || combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose))
+        if (combatDataLine[1].Equals(CombatLogKeyWords.SPELL_AURA_APPLIED) || combatDataLine[1].Equals(CombatLogKeyWords.SPELL_AURA_APPLIED_DOSE))
         {
             var aura = CreateCombatAura(combatDataLine, combatDataLine[0], string.Empty, units);
-            if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[^1], out var stacks))
+            if (combatDataLine[1].Equals(CombatLogKeyWords.SPELL_AURA_APPLIED_DOSE) && int.TryParse(combatDataLine[^1], out var stacks))
             {
                 aura.Stacks = stacks;
             }
@@ -62,7 +62,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
 
         var gameSpellId = int.Parse(combatDataLine[10]);
-        if (combatDataLine[1].Equals(CombatLogKeyWords.SpellCastStart))
+        if (combatDataLine[1].Equals(CombatLogKeyWords.SPELL_CAST_START))
         {
             var unitCast = CreateUnitCast(gameSpellId, combatDataLine, combatDataLine[0], false, false);
             unit.UnitCasts.Add(unitCast);
@@ -77,7 +77,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
         else
         {
-            FinishCast(gameSpellId, combatDataLine, unit, combatDataLine[1].Equals(CombatLogKeyWords.SpellCastSuccess));
+            FinishCast(gameSpellId, combatDataLine, unit, combatDataLine[1].Equals(CombatLogKeyWords.SPELL_CAST_SUCCESS));
         }
     }
 
@@ -90,7 +90,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         int.TryParse(combatDataLine[^4], out var value);
         int.TryParse(combatDataLine[^3], out var overheal);
 
-        var isCrit = combatDataLine[^1].Contains(CombatLogKeyWords.IsCrit);
+        var isCrit = combatDataLine[^1].Contains(CombatLogKeyWords.CRIT);
         var healDone = new HealDone
         {
             GameSpellId = int.Parse(combatDataLine[10]),
@@ -148,10 +148,10 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
     {
         var spell = string.Empty;
         var isAutoAttack = false;
-        if (string.Equals(combatDataLine[1] + ',', CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(combatDataLine[1] + ',', CombatLogKeyWords.SWING_DAMAGE, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SWING_MISSED, StringComparison.OrdinalIgnoreCase))
         {
-            spell += CombatLogKeyWords.Melee;
+            spell += CombatLogKeyWords.MELEE;
             isAutoAttack = true;
         }
         else
@@ -161,13 +161,13 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
 
         int.TryParse(isAutoAttack ? combatDataLine[^10] : combatDataLine[^11], out var value);
 
-        var isAbsorbed = string.Equals(combatDataLine[^4], CombatLogKeyWords.Absorb, StringComparison.OrdinalIgnoreCase);
-        var hasTypeOfTarget = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsSingleTarget + '\r', StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[^1], CombatLogKeyWords.IsAOETarget + '\r', StringComparison.OrdinalIgnoreCase);
+        var isAbsorbed = string.Equals(combatDataLine[^4], CombatLogKeyWords.ABSORB, StringComparison.OrdinalIgnoreCase);
+        var hasTypeOfTarget = string.Equals(combatDataLine[^1], CombatLogKeyWords.SINGLE_TARGET + '\r', StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[^1], CombatLogKeyWords.AOE + '\r', StringComparison.OrdinalIgnoreCase);
 
         if (!isAbsorbed && hasTypeOfTarget)
         {
-            isAbsorbed = string.Equals(combatDataLine[^5], CombatLogKeyWords.Absorb, StringComparison.OrdinalIgnoreCase);
+            isAbsorbed = string.Equals(combatDataLine[^5], CombatLogKeyWords.ABSORB, StringComparison.OrdinalIgnoreCase);
         }
 
         var damageType = GetDamageType(combatDataLine);
@@ -239,7 +239,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
             GameSpellId = gameSpellId,
             Spell = combatDataLine[11].Trim('"'),
             Time = startTime,
-            TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NullValue, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6],
+            TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NULL_VALUE, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6],
             IsImmediatly = isImmediatly,
             IsSuccess = isSuccess,
         };
@@ -268,7 +268,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         {
             var lastStartedCast = stack.Pop();
             lastStartedCast.FinishTime = GetTimeFromStart(combatDataLine[0]);
-            lastStartedCast.TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NullValue, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6];
+            lastStartedCast.TargetGameId = combatDataLine[7].Equals(CombatLogKeyWords.NULL_VALUE, StringComparison.OrdinalIgnoreCase) ? null : combatDataLine[6];
             lastStartedCast.IsSuccess = isSuccess;
 
             if (stack.Count == 0)
@@ -287,26 +287,26 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
     {
         if (combatDataLine[2].Equals(combatDataLine[6]))
         {
-            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            if (combatDataLine[13].Contains(CombatLogKeyWords.DEBUFF))
             {
                 return AuraType.MyselfDebuff;
             }
 
             return AuraType.MyselfBuff;
         }
-        else if (combatDataLine[6].StartsWith(CombatLogKeyWords.Pet))
+        else if (combatDataLine[6].StartsWith(CombatLogKeyWords.PET))
         {
-            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            if (combatDataLine[13].Contains(CombatLogKeyWords.DEBUFF))
             {
                 return AuraType.PetDebuff;
             }
 
             return AuraType.PetBuff;
         }
-        else if (combatDataLine[2].StartsWith(CombatLogKeyWords.Player)
-            && combatDataLine[6].StartsWith(CombatLogKeyWords.Creature))
+        else if (combatDataLine[2].StartsWith(CombatLogKeyWords.PLAYER)
+            && combatDataLine[6].StartsWith(CombatLogKeyWords.CREATURE))
         {
-            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            if (combatDataLine[13].Contains(CombatLogKeyWords.DEBUFF))
             {
                 return AuraType.EnemyDebuff;
             }
@@ -315,7 +315,7 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
         }
         else
         {
-            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            if (combatDataLine[13].Contains(CombatLogKeyWords.DEBUFF))
             {
                 return AuraType.AllyDebuff;
             }
@@ -326,11 +326,11 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
 
     private static AuraCreatorType SelectAuraCreatorType(string creatorId, ConcurrentDictionary<string, Unit> units)
     {
-        if (creatorId.Contains(CombatLogKeyWords.Player))
+        if (creatorId.Contains(CombatLogKeyWords.PLAYER))
         {
             return AuraCreatorType.Player;
         }
-        else if (creatorId.Contains(CombatLogKeyWords.Pet))
+        else if (creatorId.Contains(CombatLogKeyWords.PET))
         {
             return AuraCreatorType.Pet;
         }
@@ -358,30 +358,30 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
 
     private static ModificationType GetDamageModification(string[] combatDataLine, bool isAbsorbed)
     {
-        var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
+        var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.CRUSHING, StringComparison.OrdinalIgnoreCase);
 
         var index = -1;
         if (isAbsorbed)
         {
             index = combatDataLine.Length - 4;
         }
-        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.DAMAGE_SHIELD_MISSED, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SPELL_MISSED, StringComparison.OrdinalIgnoreCase))
         {
             index = combatDataLine.Length - 3;
         }
-        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SWING_MISSED, StringComparison.OrdinalIgnoreCase))
         {
             index = combatDataLine.Length - 2;
         }
 
-        var isCrit = string.Equals(combatDataLine[^4], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
+        var isCrit = string.Equals(combatDataLine[^4], CombatLogKeyWords.CRIT, StringComparison.OrdinalIgnoreCase);
 
-        var isParry = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
-        var isDodge = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
-        var isMiss = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
-        var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
-        var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+        var isParry = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.PARRY, StringComparison.OrdinalIgnoreCase);
+        var isDodge = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.DODGE, StringComparison.OrdinalIgnoreCase);
+        var isMiss = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.MISS, StringComparison.OrdinalIgnoreCase);
+        var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.RESIST, StringComparison.OrdinalIgnoreCase);
+        var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.IMMUNE, StringComparison.OrdinalIgnoreCase);
 
         var damageModificationType = isCrushing ? ModificationType.Crushing : ModificationType.Normal;
         damageModificationType = isCrit ? ModificationType.Crit : damageModificationType;
@@ -398,17 +398,17 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
     private static DamageType GetDamageType(string[] combatDataLine)
     {
         var damageType = DamageType.ST;
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellPeriodicDamage, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SPELL_PERIODIC_DAMAGE, StringComparison.OrdinalIgnoreCase))
         {
             damageType = DamageType.Periodic;
         }
-        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsSingleTarget, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SPELL_DAMAGE, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(combatDataLine[^1], CombatLogKeyWords.SINGLE_TARGET, StringComparison.OrdinalIgnoreCase))
         {
             damageType = DamageType.ST;
         }
-        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellDamage, StringComparison.OrdinalIgnoreCase)
-            && string.Equals(combatDataLine[^1], CombatLogKeyWords.IsAOETarget, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatDataLine[1], CombatLogKeyWords.SPELL_DAMAGE, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(combatDataLine[^1], CombatLogKeyWords.AOE, StringComparison.OrdinalIgnoreCase))
         {
             damageType = DamageType.AOE;
         }
@@ -429,15 +429,15 @@ public abstract class CombatDetailsManager(ICombatParserHelper combatParserHelpe
 
             mitigated = realDamage - value - absorb;
         }
-        else if (!string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(combatDataLine[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(combatDataLine[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
+        else if (!string.Equals(combatDataLine[1], CombatLogKeyWords.SWING_MISSED, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(combatDataLine[1], CombatLogKeyWords.SPELL_MISSED, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(combatDataLine[1], CombatLogKeyWords.DAMAGE_SHIELD_MISSED, StringComparison.OrdinalIgnoreCase))
         {
             int.TryParse(combatDataLine[^5], out absorb);
             int.TryParse(combatDataLine[^6], out blocked);
             int.TryParse(combatDataLine[^7], out resist);
 
-            if (string.Equals(combatDataLine[1] + ',', CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(combatDataLine[1] + ',', CombatLogKeyWords.SWING_DAMAGE, StringComparison.OrdinalIgnoreCase))
             {
                 int.TryParse(combatDataLine[^5], out absorb);
                 int.TryParse(combatDataLine[^8], out overkill);

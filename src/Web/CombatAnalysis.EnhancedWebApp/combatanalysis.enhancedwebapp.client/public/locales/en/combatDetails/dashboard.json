@@ -38,5 +38,7 @@
   "Any": "Any units",
   "AvailableDashboards": "Available dashboards",
   "Creator": "Creator",
-  "Target": "Target"
+  "Target": "Target",
+  "Update": "Update",
+  "NoData": "No data"
 }

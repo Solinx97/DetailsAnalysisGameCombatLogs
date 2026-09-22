@@ -28,19 +28,19 @@ internal class CombatParserHelper : ICombatParserHelper
     public Unit ParseUnits(ConcurrentDictionary<string, Unit> units, string gameId, string name, string unitHash, string? creatorGameId = null)
     {
         var type = CombatUnitType.EnemyCreature;
-        if (gameId.Contains(CombatLogKeyWords.Creature) && creatorGameId != null && creatorGameId.Contains(CombatLogKeyWords.Player))
+        if (gameId.Contains(CombatLogKeyWords.CREATURE) && creatorGameId != null && creatorGameId.Contains(CombatLogKeyWords.PLAYER))
         {
             type = CombatUnitType.PlayerCreature;
         }
-        else if (gameId.Contains(CombatLogKeyWords.Vehicle))
+        else if (gameId.Contains(CombatLogKeyWords.VEHICLE))
         {
             type = CombatUnitType.Vehicle;
         }
-        else if (gameId.Contains(CombatLogKeyWords.Player))
+        else if (gameId.Contains(CombatLogKeyWords.PLAYER))
         {
             type = CombatUnitType.Player;
         }
-        else if (gameId.Contains(CombatLogKeyWords.Pet))
+        else if (gameId.Contains(CombatLogKeyWords.PET))
         {
             type = CombatUnitType.Pet;
         }

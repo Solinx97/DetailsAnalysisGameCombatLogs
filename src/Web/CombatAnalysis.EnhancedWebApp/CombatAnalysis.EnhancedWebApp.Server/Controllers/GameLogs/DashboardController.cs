@@ -19,46 +19,46 @@ public class DashboardController : ControllerBase
     }
 
     [HttpGet("getDamage/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDamage(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType)
+    public async Task<IActionResult> GetDamage(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
-        var responseMessag = await _httpClient.GetAsync($"Dashboard/getDamage/{combatLogId}?bossName={bossName}&combatId={combatId}&creatorName={creatorName}&targetName={targetName}&valueType={valueType}");
-        var dashboard = await responseMessag.Content.ReadFromJsonAsync<DashboardModel>();
+        var responseMessage = await _httpClient.GetAsync($"Dashboard/getDamage/{combatLogId}?bossName={bossName}&combatId={combatId}&creatorName={creatorName}&targetName={targetName}&valueType={valueType}", cancellationToken);
+        var dashboard = await responseMessage.Content.ReadFromJsonAsync<DashboardModel>(cancellationToken);
 
         return Ok(dashboard);
     }
 
     [HttpGet("getHeal/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetHeal(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType)
+    public async Task<IActionResult> GetHeal(int combatLogId, string bossName, int combatId, string creatorName, string targetName, int valueType, CancellationToken cancellationToken)
     {
-        var responseMessag = await _httpClient.GetAsync($"Dashboard/getHeal/{combatLogId}?bossName={bossName}&combatId={combatId}&creatorName={creatorName}&targetName={targetName}&valueType={valueType}");
-        var dashboard = await responseMessag.Content.ReadFromJsonAsync<DashboardModel>();
+        var responseMessage = await _httpClient.GetAsync($"Dashboard/getHeal/{combatLogId}?bossName={bossName}&combatId={combatId}&creatorName={creatorName}&targetName={targetName}&valueType={valueType}", cancellationToken);
+        var dashboard = await responseMessage.Content.ReadFromJsonAsync<DashboardModel>(cancellationToken);
 
         return Ok(dashboard);
     }
 
     [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDamageSpells(int combatLogId, string bossName, int combatId)
+    public async Task<IActionResult> GetDamageSpells(int combatLogId, string bossName, int combatId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Dashboard/getDamageSpells/{combatLogId}?bossName={bossName}&combatId={combatId}");
-        var dashboard = await responseMessage.Content.ReadFromJsonAsync<DashboardModel>();
+        var responseMessage = await _httpClient.GetAsync($"Dashboard/getDamageSpells/{combatLogId}?bossName={bossName}&combatId={combatId}", cancellationToken);
+        var dashboard = await responseMessage.Content.ReadFromJsonAsync<DashboardModel>(cancellationToken);
 
         return Ok(dashboard);
     }
 
     [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetHealSpells(int combatLogId, string bossName, int combatId)
+    public async Task<IActionResult> GetHealSpells(int combatLogId, string bossName, int combatId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Dashboard/getHealSpells/{combatLogId}?bossName={bossName}&combatId={combatId}");
-        var spells = await responseMessage.Content.ReadFromJsonAsync<DashboardModel>();
+        var responseMessage = await _httpClient.GetAsync($"Dashboard/getHealSpells/{combatLogId}?bossName={bossName}&combatId={combatId}", cancellationToken);
+        var spells = await responseMessage.Content.ReadFromJsonAsync<DashboardModel>(cancellationToken);
 
         return Ok(spells);
     }
 
     [HttpGet("getPotions/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetPotions(int combatLogId)
+    public async Task<IActionResult> GetPotions(int combatLogId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Dashboard/getPotions/{combatLogId}");
-        var potions = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+        var responseMessage = await _httpClient.GetAsync($"Dashboard/getPotions/{combatLogId}", cancellationToken);
+        var potions = await responseMessage.Content.ReadFromJsonAsync<Dictionary<string, int>>(cancellationToken);
 
         return Ok(potions);
     }
