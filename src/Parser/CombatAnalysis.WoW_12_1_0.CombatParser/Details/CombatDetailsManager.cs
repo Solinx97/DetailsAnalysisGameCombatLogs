@@ -68,14 +68,12 @@ internal class CombatDetailsManager(ICombatParserHelper combatParserHelper, Date
             return;
         }
 
-        if (combatDataLine[1].Equals(CombatLogKeyWords.SwingDamageLanded)
+        if ((combatDataLine[1].Equals(CombatLogKeyWords.SwingDamageLanded)
             && long.TryParse(combatDataLine[12], out var currentHealth)
             && long.TryParse(combatDataLine[13], out var maxHealth))
-        {
-            AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0], status);
-        }
-        else if (long.TryParse(combatDataLine[15], out currentHealth)
-            && long.TryParse(combatDataLine[16], out maxHealth))
+            ||
+            (long.TryParse(combatDataLine[15], out currentHealth)
+            && long.TryParse(combatDataLine[16], out maxHealth)))
         {
             AddUnitHealth(unit, ownerId, currentHealth, maxHealth, combatDataLine[0], status);
         }

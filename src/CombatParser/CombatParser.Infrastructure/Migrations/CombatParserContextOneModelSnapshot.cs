@@ -16405,6 +16405,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.HasIndex("BossMapId");
 
+                    b.HasIndex("Name");
+
                     b.ToTable("Boss");
 
                     b.HasData(
@@ -18384,7 +18386,7 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -18396,6 +18398,8 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CombatId");
+
+                    b.HasIndex("Name");
 
                     b.ToTable("Unit");
                 });

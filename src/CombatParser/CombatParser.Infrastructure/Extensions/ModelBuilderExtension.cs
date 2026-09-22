@@ -17,9 +17,13 @@ internal static class ModelBuilderExtension
 
         modelBuilder.Entity<BossMap>().HasData(MigrationBuilderExtension.GenerateMaps());
 
-        modelBuilder.Entity<Boss>()
-            .Property(b => b.Id)
-            .ValueGeneratedOnAdd();
+        modelBuilder.Entity<Boss>(b =>
+        {
+            b.Property(b => b.Id)
+                .ValueGeneratedOnAdd();
+
+            b.HasIndex(x => x.Name);
+        });
 
         modelBuilder.Entity<Boss>().HasData(MigrationBuilderExtension.GenerateBosses());
 
@@ -49,15 +53,17 @@ internal static class ModelBuilderExtension
 
         modelBuilder.Entity<Unit>(u =>
         {
+            u.HasIndex(x => x.Name);
+
             u.Property(p => p.GameId)
                 .HasMaxLength(Unit.GAMEID_MAX_LENGTH);
 
-            u.HasOne(u => u.Combat)
+            u.HasOne(p => p.Combat)
                 .WithMany(c => c.Units)
                 .HasForeignKey(u => u.CombatId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            u.HasOne(x => x.UnitInfo)
+            u.HasOne(p => p.UnitInfo)
                 .WithOne()
                 .HasForeignKey<UnitInfo>(x => x.UnitId)
                 .OnDelete(DeleteBehavior.Cascade);

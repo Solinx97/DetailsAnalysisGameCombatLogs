@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WoW.CombatParser.Entities.CombatPlayerData;
+using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WoW.CombatParser.Entities;
 
@@ -16,21 +17,21 @@ public class Unit
 
     public UnitInfo UnitInfo { get; set; } = new();
 
-    public List<UnitHealth> UnitHealthes { get; set; } = [];
+    public ConcurrentBag<UnitHealth> UnitHealthes { get; set; } = [];
+
+    public ConcurrentBag<DamageDone> DamageDones { get; set; } = [];
+
+    public ConcurrentBag<DamageDone> DamageTakens { get; set; } = [];
+
+    public ConcurrentBag<HealDone> HealDones { get; set; } = [];
+
+    public ConcurrentBag<ResourceRecovery> ResourceRecoveries { get; set; } = [];
+
+    public List<UnitPreAura> PreAuras { get; set; } = [];
 
     public List<UnitCast> UnitCasts { get; set; } = [];
 
     public List<UnitPosition> UnitPositions { get; set; } = [];
 
-    public List<UnitPreAura> PreAuras { get; set; } = [];
-
     public List<UnitAura> Auras { get; set; } = [];
-
-    public List<DamageDone> DamageDones { get; set; } = [];
-
-    public List<DamageDone> DamageTakens { get; set; } = [];
-
-    public List<HealDone> HealDones { get; set; } = [];
-
-    public List<ResourceRecovery> ResourceRecoveries { get; set; } = [];
 }

@@ -206,7 +206,7 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     GameId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UnitHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     CreatorGameId = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -2859,6 +2859,11 @@ namespace CombatParser.Infrastructure.Migrations
                 column: "BossMapId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Boss_Name",
+                table: "Boss",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Combat_BossId",
                 table: "Combat",
                 column: "BossId");
@@ -2933,6 +2938,11 @@ namespace CombatParser.Infrastructure.Migrations
                 name: "IX_Unit_CombatId",
                 table: "Unit",
                 column: "CombatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Unit_Name",
+                table: "Unit",
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UnitAura_TargetId",

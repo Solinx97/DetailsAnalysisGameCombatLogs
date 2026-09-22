@@ -299,7 +299,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         var playersId = combatPlayers.Select(x => x.Player.GameId).ToArray();
         foreach (var combatPlayerUnit in combatDetails.Units.Values)
         {
-            FillUnitInfo(combatPlayerUnit, combatDetails.Units);
+            ApplyUnitInfo(combatPlayerUnit, combatDetails.Units);
         }
 
         return combatPlayers;
@@ -322,7 +322,7 @@ public abstract class CombatParserService(ICombatParserHelper combatParserHelper
         }
     }
 
-    private static void FillUnitInfo(Unit unit, ConcurrentDictionary<string, Unit> units)
+    private static void ApplyUnitInfo(Unit unit, ConcurrentDictionary<string, Unit> units)
     {
         UnitInfo unitInfo;
         if (unit.CreatorGameId != null && units.TryGetValue(unit.CreatorGameId, out var creatorUnit))

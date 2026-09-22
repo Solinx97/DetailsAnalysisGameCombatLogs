@@ -38,33 +38,6 @@ internal class CombatParserAPIService : ICombatParserAPIService
         _httpClient.BaseAddress = API.CombatParserApi;
     }
 
-    public async Task SaveAsync(List<CreateCombatModel> combats, int combatLogId, Action<string, string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
-    {
-        var cancellationToken = requestCancellationToken();
-
-        using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
-        var combatTasks = combats.Select(async combat =>
-        {
-            if (combat.IsSupported && combat.IsSelected)
-            {
-                await UploadingCombatAsync(semaphore, combat, combatLogId, uplodedCallback, cancellationToken);
-            }
-        });
-
-        await Task.WhenAll(combatTasks);
-
-        await AddCombatLogCreatedStatusAsync(combatLogId, cancellationToken);
-
-        combats.Clear();
-
-        // Reduce capacity, provided to collections but not release after cleaning collection yet
-        combats.TrimExcess();
-
-        // Call GC to collect and release LOH right now
-        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
-    }
-
     public async Task<int> SaveCombatLogAsync(List<CreateCombatModel> combats, LogType logType, CancellationToken cancellationToken)
     {
         try
@@ -121,6 +94,34 @@ internal class CombatParserAPIService : ICombatParserAPIService
 
             throw;
         }
+    }
+
+
+    public async Task SaveAsync(List<CreateCombatModel> combats, int combatLogId, Action<string, string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
+    {
+        var cancellationToken = requestCancellationToken();
+
+        using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
+        var combatTasks = combats.Select(async combat =>
+        {
+            if (combat.IsSupported && combat.IsSelected)
+            {
+                await UploadingCombatAsync(semaphore, combat, combatLogId, uplodedCallback, cancellationToken);
+            }
+        });
+
+        await Task.WhenAll(combatTasks);
+
+        await AddCombatLogCreatedStatusAsync(combatLogId, cancellationToken);
+
+        combats.Clear();
+
+        // Reduce capacity, provided to collections but not release after cleaning collection yet
+        combats.TrimExcess();
+
+        // Call GC to collect and release LOH right now
+        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
     }
 
     public async Task GetBossAsync(List<CreateCombatModel> combats, bool useDefault, CancellationToken cancellationToken)

@@ -69,14 +69,14 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
     {
         await UploadingCombatLogAsync([.. Combats]);
 
-        Clear();
-
         _ = Task.Delay(TimeSpan.FromSeconds(20)).ContinueWith((task) => UploadingStatusShow = false);
     }
 
     [RelayCommand]
     public async Task BackToParsing()
     {
+        Clear();
+
         await _navigationService.NavigateTo<ParsingCombatLogsViewModel>();
     }
 
@@ -153,6 +153,7 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
         {
             _appState.Logout();
 
+            UploadingInformation = "Authorization failed";
             ResponseStatus = LoadingStatus.Failed;
             UploadingInProgress = false;
 
@@ -160,6 +161,7 @@ public partial class SelectCombatsViewModel(INavigationService navigationService
         }
         catch (Exception)
         {
+            UploadingInformation = "Unexpected error";
             ResponseStatus = LoadingStatus.Failed;
             UploadingInProgress = false;
         }

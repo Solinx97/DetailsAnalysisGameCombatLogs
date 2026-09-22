@@ -62,11 +62,15 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
 
     public async Task<Dictionary<string, IEnumerable<Combat>>> GetUniqueByCombatLogIdAsync(int combatLogId, CancellationToken cancellationToken)
     {
-        var combats = await _context.Set<Combat>()
+        var combats = (await _context.Set<Combat>()
             .Where(c => c.CombatLogId == combatLogId)
             .Include(c => c.Boss)
+            .OrderBy(c => c.FinishDate)
+            .ToListAsync(cancellationToken))
             .GroupBy(c => c.Boss.Name)
-            .ToDictionaryAsync(g => g.Key, g => g.Select(x => x).OrderBy(c => c.FinishDate).AsEnumerable(), cancellationToken);
+            .ToDictionary(
+                g => g.Key,
+                g => g.AsEnumerable());
 
         return combats;
     }
