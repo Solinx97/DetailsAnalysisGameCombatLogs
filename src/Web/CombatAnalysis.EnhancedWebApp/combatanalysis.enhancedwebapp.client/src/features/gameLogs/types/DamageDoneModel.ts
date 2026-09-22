@@ -1,12 +1,19 @@
+import type { UnitModel } from './UnitModel';
+
 export type DamageDoneModel = {
-    id: number;
+    id: string;
     spell: string;
     value: number;
     time: string;
-    creator: string;
-    target: string;
+    unit: UnitModel;
+    target: UnitModel;
+    modificationType: number;
     damageType: number;
-    isPeriodicDamage: boolean;
-    isPet: boolean;
-    combatPlayerId: number;
+    resisted: number;
+    absorbed: number;
+    blocked: number;
+    realDamage: number;
+    overkill: number;
+    mitigated: number;
+    unitId: string;
 }

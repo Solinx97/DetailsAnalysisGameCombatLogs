@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Enums;
 using MediatR;
 
 namespace CombatParser.Application.Queries.DamageDone.GetUniqueDamageSpells;
@@ -9,7 +10,8 @@ internal class GetUniqueDamageSpellsHandler(IGeneralRepository<Domain.Entities.C
 
     public async Task<IEnumerable<string>> Handle(GetUniqueDamageSpellsQuery request, CancellationToken cancellationToken)
     {
-        var spells = await _repository.GetUniqueSpellsAsync(request.CombatPlayerId, cancellationToken);
+        var creatorTypes = new int[] { (int)CombatUnitType.PlayerCreature, (int)CombatUnitType.Player };
+        var spells = await _repository.GetUniqueTargetSpellsByCreatorIdAsync(request.UnitId, cancellationToken, creatorTypes);
 
         return spells;
     }

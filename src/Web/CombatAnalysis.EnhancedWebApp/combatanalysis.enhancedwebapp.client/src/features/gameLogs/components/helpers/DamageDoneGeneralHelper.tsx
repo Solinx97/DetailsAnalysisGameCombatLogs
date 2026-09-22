@@ -21,7 +21,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
     const [showPets, setShowPets] = useState(true);
     const [hideColumns, setHideColumns] = useState<string[]>([]);
     const [data, setData] = useState<DamageDoneGeneralModel[] | null | undefined>(generalData);
-    const [totalDamage, setTotalDamage] = useState(combatPlayer.damageDone);
+    const [totalDamage, setTotalDamage] = useState(combatPlayer.unit.unitInfo.damageDone);
 
     useEffect(() => {
         if (!generalData) {
@@ -151,9 +151,9 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowPets")}</label>
                     </div>
                 </div>
-                <div>
+                <h5>
                     {t("Total")}: {getValueShortName(totalDamage)}
-                </div>
+                </h5>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}
@@ -165,7 +165,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         </li>
                         <li className="amount">
                             <span>{getValueShortName(item.value)}</span>
-                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.damageDone)}%</span>
+                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.unit.unitInfo.damageDone)}%</span>
                         </li>
                         {!hideColumns.includes("Average") &&
                             <li>

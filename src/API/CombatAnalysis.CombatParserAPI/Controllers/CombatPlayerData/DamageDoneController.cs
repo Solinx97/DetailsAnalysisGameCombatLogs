@@ -1,4 +1,5 @@
-﻿using CombatParser.Application.Queries.DamageDone.CountDamage;
+﻿using CombatAnalysis.CombatParserAPI.Consts;
+using CombatParser.Application.Queries.DamageDone.CountDamage;
 using CombatParser.Application.Queries.DamageDone.GetCombatPlayerChart;
 using CombatParser.Application.Queries.DamageDone.GetDamages;
 using CombatParser.Application.Queries.DamageDone.GetGenericChart;
@@ -13,35 +14,33 @@ namespace CombatAnalysis.CombatParserAPI.Controllers.CombatPlayerData;
 [ApiController]
 public class DamageDoneController(IMediator mediator) : ControllerBase
 {
-    private const string NONE_VALUE = "NONE";
-    private const string ZERO_TIME_VALUE = "00:00:00";
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("count")]
-    public async Task<IActionResult> Count(int combatPlayerId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
+    public async Task<IActionResult> Count(string unitId, string target, string creator, string spell, string from, string to, CancellationToken cancellationToken)
     {
         var count = await _mediator.Send(new CountDamageQuery(
-            combatPlayerId,
-            target.Equals(NONE_VALUE) ? string.Empty : target,
-            creator.Equals(NONE_VALUE) ? string.Empty : creator, 
-            spell.Equals(NONE_VALUE) ? string.Empty : spell, 
-            from.Equals(ZERO_TIME_VALUE) ? string.Empty : from, 
-            to.Equals(ZERO_TIME_VALUE) ? string.Empty : to
+            unitId,
+            target.Equals(NoneValue.NONE_VALUE) ? string.Empty : target,
+            creator.Equals(NoneValue.NONE_VALUE) ? string.Empty : creator, 
+            spell.Equals(NoneValue.NONE_VALUE) ? string.Empty : spell, 
+            from.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : from, 
+            to.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : to
             ), cancellationToken);
 
         return Ok(count);
     }
 
     [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll(int combatPlayerId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(string unitId, string target, string creator, string spell, string from, string to, int page, int pageSize, CancellationToken cancellationToken)
     {
         var damages = await _mediator.Send(new GetDamagesQuery(
-            combatPlayerId,
-            target.Equals(NONE_VALUE) ? string.Empty : target,
-            creator.Equals(NONE_VALUE) ? string.Empty : creator,
-            spell.Equals(NONE_VALUE) ? string.Empty : spell,
-            from.Equals(ZERO_TIME_VALUE) ? string.Empty : from,
-            to.Equals(ZERO_TIME_VALUE) ? string.Empty : to,
+            unitId,
+            target.Equals(NoneValue.NONE_VALUE) ? string.Empty : target,
+            creator.Equals(NoneValue.NONE_VALUE) ? string.Empty : creator,
+            spell.Equals(NoneValue.NONE_VALUE) ? string.Empty : spell,
+            from.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : from,
+            to.Equals(NoneValue.ZERO_TIME_VALUE) ? string.Empty : to,
             page,
             pageSize
             ), cancellationToken);
@@ -49,10 +48,10 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
         return Ok(damages);
     }
 
-    [HttpGet("getCombatPlayerChart/{combatPlayerId}")]
-    public async Task<IActionResult> GetCombatPlayerChart(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUnitChart/{unitId}")]
+    public async Task<IActionResult> GetUnitChart(string unitId, CancellationToken cancellationToken)
     {
-        var damages = await _mediator.Send(new GetCombatPlayerChartQuery(combatPlayerId), cancellationToken);
+        var damages = await _mediator.Send(new GetCombatPlayerChartQuery(unitId), cancellationToken);
 
         return Ok(damages);
     }
@@ -65,18 +64,18 @@ public class DamageDoneController(IMediator mediator) : ControllerBase
         return Ok(damages);
     }
 
-    [HttpGet("getUniqueTargets/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueTargets(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueTargets/{unitId}")]
+    public async Task<IActionResult> GetUniqueTargets(string unitId, CancellationToken cancellationToken)
     {
-        var uniqueTargets = await _mediator.Send(new GetUniqueDamageTargetsQuery(combatPlayerId), cancellationToken);
+        var uniqueTargets = await _mediator.Send(new GetUniqueDamageTargetsQuery(unitId), cancellationToken);
 
         return Ok(uniqueTargets);
     }
 
-    [HttpGet("getUniqueSpells/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueSpells/{unitId}")]
+    public async Task<IActionResult> GetUniqueSpells(string unitId, CancellationToken cancellationToken)
     {
-        var uniqueSpells = await _mediator.Send(new GetUniqueDamageSpellsQuery(combatPlayerId), cancellationToken);
+        var uniqueSpells = await _mediator.Send(new GetUniqueDamageSpellsQuery(unitId), cancellationToken);
 
         return Ok(uniqueSpells);
     }

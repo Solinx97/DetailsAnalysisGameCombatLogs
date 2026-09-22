@@ -106,9 +106,9 @@ const ResourceRecoveryGeneralHelper: React.FC<ResourceRecoveryGeneralHelperProps
     return (
         <>
             <li className="player-general-data-details__inherit">
-                <div>
-                    {t("Total")}: {getValueShortName(combatPlayer.resourcesRecovery)}
-                </div>
+                <h5>
+                    {t("Total")}: {getValueShortName(combatPlayer.unit.unitInfo.resourcesRecovery)}
+                </h5>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}
@@ -120,7 +120,7 @@ const ResourceRecoveryGeneralHelper: React.FC<ResourceRecoveryGeneralHelperProps
                         </li>
                         <li className="amount">
                             <span>{getValueShortName(item.value)}</span>
-                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.resourcesRecovery)}%</span>
+                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.unit.unitInfo.resourcesRecovery)}%</span>
                         </li>
                         {!hideColumns.includes("Average") &&
                             <li>

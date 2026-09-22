@@ -2,7 +2,7 @@
 
 public class HealDoneModel
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -14,13 +14,11 @@ public class HealDoneModel
 
     public string Time { get; set; }
 
-    public string Creator { get; set; }
+    public UnitModel Unit { get; set; } = new();
 
-    public string Target { get; set; }
+    public UnitModel Target { get; set; } = new();
 
-    public bool IsCrit { get; set; }
+    public int ModificationType { get; set; }
 
-    public bool IsAbsorbed { get; set; }
-
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; }
 }

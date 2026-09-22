@@ -1,59 +1,26 @@
-import { faFlask, faHourglass, faAppleWhole, faVial, faBolt } from '@fortawesome/free-solid-svg-icons';
+import { faAppleWhole, faBolt, faFlask, faHourglass, faVial } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
-import type { CombatPlayerPreAuraModel } from '../../types/CombatPlayerPreAuraModel';
-import { useGetCombatByPreAuraQuery } from '../../api/GameLogs.api';
-import Loading from '@/shared/components/Loading';
+import { useGetCombatPreAurasQuery, useGetUnitPreAurasQuery } from '../../api/GameLogs.api';
 
 interface CombatPreAuraItemProps {
-    combatPlayerId: number;
     combatId: number;
+    unitId?: string;
 }
 
-const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, combatId }) => {
-    const [combatPlayerPreAuras, setCombatPlayerPreAuras] = useState<CombatPlayerPreAuraModel[]>([]);
-
-    const { data: allPreAuras, isLoading } = useGetCombatByPreAuraQuery({ combatPlayerId, combatId });
-
-    useEffect(() => {
-        if (!allPreAuras) {
-            return;
-        }
-
-        makeCreatorAurasMap();
-    }, [allPreAuras]);
-
-    const makeCreatorAurasMap = () => {
-        let unique: CombatPlayerPreAuraModel[] = [];
-        const selectedCombatPlayerPreAuras = allPreAuras!.filter(x => x.combatPlayerId === combatPlayerId);
-
-        if (selectedCombatPlayerPreAuras.length > 0) {
-            unique = [...new Map(
-                selectedCombatPlayerPreAuras.map(item => [item.name, item])
-            ).values()];
-            setCombatPlayerPreAuras(unique);
-        } else {
-            unique = [...new Map(
-                allPreAuras!.map(item => [item.name, item])
-            ).values()];
-        }
-
-        setCombatPlayerPreAuras(unique);
-    }
-
-    if (isLoading) {
-        return (
-            <div>
-                <Loading />
-            </div>
-        );
+const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatId, unitId }) => {
+     const { data: allPreAuras, isLoading } = unitId !== undefined 
+                                                ? useGetUnitPreAurasQuery({ combatId, unitId })
+                                                :  useGetCombatPreAurasQuery(combatId);
+ 
+    if (isLoading || !allPreAuras) {
+        return (<></>);
     }
 
     return (
         <div className="creator-pre-auras">
             <ul className="creator-pre-auras__content">
-                {combatPlayerPreAuras.map((value) => (
-                    <li key={value.id} className="creator-pre-auras pre-aura-item">
+                {allPreAuras.map((value) => (
+                    <li key={value.id} className="creator-pre-auras pre-aura-item" title={value.name}>
                         {value.abilityType === 1 &&
                             <FontAwesomeIcon
                                 icon={faVial}
@@ -79,7 +46,6 @@ const CombatPreAuraItem: React.FC<CombatPreAuraItemProps> = ({ combatPlayerId, c
                                 icon={faBolt}
                             />
                         }
-                        <div>{value.name}</div>
                     </li>
                 ))}
             </ul>

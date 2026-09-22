@@ -9,13 +9,13 @@ public class HealDoneScoreViewModel : BasicCombatPlayerViewModel
         Players = parameter;
         _defaultPlayers = parameter;
 
-        BestValue = Players.Max(p => p.HealDone);
+        BestValue = Players.Max(p => p.Unit.UnitInfo.HealDone);
 
-        var value = Players.Average(x => x.HealDone);
+        var value = Players.Average(x => x.Unit.UnitInfo.HealDone);
         AverageValue = double.Round(value, 2);
         AverageVPS = Players.Average(x => x.HealDonePerSecond);
 
-        TotalValue = Players.Sum(x => x.HealDone);
+        TotalValue = Players.Sum(x => x.Unit.UnitInfo.HealDone);
         TotalVPS = Players.Sum(x => x.HealDonePerSecond);
 
         ValueType = 1;
@@ -30,6 +30,6 @@ public class HealDoneScoreViewModel : BasicCombatPlayerViewModel
             return;
         }
 
-        Players = [.. Players.OrderByDescending(p => p.HealDone)];
+        Players = [.. Players.OrderByDescending(p => p.Unit.UnitInfo.HealDone)];
     }
 }

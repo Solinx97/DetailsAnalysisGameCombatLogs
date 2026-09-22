@@ -5,8 +5,8 @@ import { GameLogsApi } from './GameLogs.api';
 
 export const HealDoneApi = GameLogsApi.injectEndpoints({
     endpoints: builder => ({
-        getHealDoneByCombatPlayerId: builder.query<HealDoneModel[], { combatPlayerId: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, page, pageSize }) => `/HealDone/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
+        getHealDoneByCombatPlayerId: builder.query<HealDoneModel[], { unitId: string, page: number, pageSize: number }>({
+            query: ({ unitId, page, pageSize }) => `/HealDone/getByUnitId?unitId=${unitId}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -15,11 +15,11 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'HealDone', id: 'LIST' }]
         }),
-        countHealDone: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
-            query: ({ combatPlayerId, target, creator, spell, from, to }) => `/HealDone/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
+        countHealDone: builder.query<number, { unitId: string, target: string, creator: string, spell: string, from: string, to: string }>({
+            query: ({ unitId, target, creator, spell, from, to }) => `/HealDone/count?unitId=${unitId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getAllHealDone: builder.query<HealDoneModel[], { combatPlayerId: number, creator: string, target: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/HealDone/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
+        getAllHealDone: builder.query<HealDoneModel[], { unitId: string, creator: string, target: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+            query: ({ unitId, target, creator, spell, from, to, page, pageSize }) => `/HealDone/getAll?unitId=${unitId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -28,17 +28,17 @@ export const HealDoneApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'HealDone', id: 'LIST' }]
         }),
-        getCombatPlayerChartHealDone: builder.query<ChartModel[], number>({
-            query: combatPlayerId => `/HealDone/getCombatPlayerChart/${combatPlayerId}`
+        getCombatPlayerChartHealDone: builder.query<ChartModel[], string>({
+            query: unitId => `/HealDone/getUnitChart/${unitId}`
         }),
         getGenericChartHealDone: builder.query<Map<string, ChartModel[]>, number>({
             query: combatId => `/HealDone/getGenericChart/${combatId}`
         }),
-        getHealDoneUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
-            query: ({ combatPlayerId, filter }) => `/HealDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
+        getHealDoneUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
+            query: ({ unitId, filter }) => `/HealDone/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,
         }),
-        getHealDoneGeneralByCombatPlayerId: builder.query<HealDoneGeneralModel[], number>({
-            query: combatPlayerId => `/HealDoneGeneral/getByCombatPlayerId/${combatPlayerId}`,
+        getHealDoneGeneralByUnitId: builder.query<HealDoneGeneralModel[], { unitId: string, combatId: number }>({
+            query: ({ unitId, combatId }) => `/HealDoneGeneral/getByUnitId/${unitId}?combatId=${combatId}`,
             providesTags: result =>
                 result
                     ? [
@@ -56,7 +56,7 @@ export const {
     useGetHealDoneUniqueFilterValuesQuery,
     useGetAllHealDoneQuery,
     useGetCombatPlayerChartHealDoneQuery,
-    useGetHealDoneGeneralByCombatPlayerIdQuery,
+    useGetHealDoneGeneralByUnitIdQuery,
     useGetGenericChartHealDoneQuery,
-    useLazyGetHealDoneGeneralByCombatPlayerIdQuery,
+    useLazyGetHealDoneGeneralByUnitIdQuery,
 } = HealDoneApi;

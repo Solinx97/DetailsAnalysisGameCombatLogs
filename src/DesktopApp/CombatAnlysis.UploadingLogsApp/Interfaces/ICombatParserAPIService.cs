@@ -9,9 +9,9 @@ namespace CombatAnalysis.UploadingLogsApp.Interfaces;
 
 public interface ICombatParserAPIService
 {
-    Task SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<string, string> combatUploaded, Func<CancellationToken> requestCancelationToken);
+    Task<int> SaveCombatLogAsync(List<CreateCombatModel> combats, LogType logType, CancellationToken cancellationToken);
 
-    Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken);
+    Task SaveAsync(List<CreateCombatModel> combats, int combatLogId, Action<string, string, string> combatUploaded, Func<CancellationToken> requestCancelationToken);
 
-    Task GetBossAsync(List<CombatModel> combats, CancellationToken cancellationToken);
+    Task GetBossAsync(List<CreateCombatModel> combats, bool useDefault, CancellationToken cancellationToken);
 }

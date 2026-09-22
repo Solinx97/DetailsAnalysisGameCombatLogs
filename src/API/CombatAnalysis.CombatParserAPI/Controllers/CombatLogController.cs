@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.CombatParserAPI.PartialModels;
+﻿using CombatAnalysis.CombatParserAPI.Interfaces;
+using CombatAnalysis.CombatParserAPI.PartialModels;
+using CombatParser.Application.Commands.AddCombatLogStatus;
 using CombatParser.Application.Commands.CreateCombatLog;
 using CombatParser.Application.Commands.DeleteCombatLog;
 using CombatParser.Application.Commands.UpdateCombatLog;
@@ -12,14 +14,15 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatLogController(IMediator mediator) : ControllerBase
+public class CombatLogController(IMediator mediator, IDeleteCombatLogQueue deleteCombatLogQueue) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
+    private readonly IDeleteCombatLogQueue _deleteCombatLogQueue = deleteCombatLogQueue;
 
     [HttpGet("getByLogType")]
-    public async Task<IActionResult> GetByLogType(int logType, string? appUserId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByLogType(int logType, int gameVersion, string? appUserId, CancellationToken cancellationToken)
     {
-        var combatLogs = await _mediator.Send(new GetCombatLogsByLogTypeQuery(logType, appUserId), cancellationToken);
+        var combatLogs = await _mediator.Send(new GetCombatLogsByLogTypeQuery(logType, gameVersion, appUserId), cancellationToken);
 
         return Ok(combatLogs);
     }
@@ -32,13 +35,22 @@ public class CombatLogController(IMediator mediator) : ControllerBase
         return Ok(combatLog);
     }
 
+    [HttpPost("addStatus/{id:int:min(1)}")]
+    public async Task<IActionResult> AddStatus(int id, int status, CancellationToken cancellationToken)
+    {
+        var command = new AddCombatLogStatusCommand(id, status);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateCombatLogCommand command, CancellationToken cancellationToken)
     {
-        var combatLog = await _mediator.Send(command, cancellationToken);
+        var combatLogId = await _mediator.Send(command, cancellationToken);
 
-        return Ok(combatLog);
+        return Ok(combatLogId);
     }
 
     [HttpPatch("{id:int:min(1)}")]
@@ -60,8 +72,8 @@ public class CombatLogController(IMediator mediator) : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new DeleteCombatLogCommand(id), cancellationToken);
+        await _deleteCombatLogQueue.EnqueueAsync(new DeleteCombatLogCommand(id), cancellationToken);
 
-        return NoContent();
+        return Accepted();
     }
 }

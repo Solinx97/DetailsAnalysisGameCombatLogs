@@ -21,27 +21,26 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
             PreserveInsertOrder = true
         }, cancellationToken: cancellationToken);
 
-        var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, combat.CombatPlayers, cancellationToken);
+        var units = await _context.BulkInsertUnitsAsync(combat, c => c.Units, cancellationToken);
+        var unitsByGameId = units
+            .Where(x => !string.IsNullOrEmpty(x.GameId))
+            .ToDictionary(x => x.GameId, x => x.Id);
 
-        await _context.BulkInsertCombatDataAsync(combat, c => c.Units, cancellationToken);
-        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitCasts, cancellationToken);
-        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitHeaths, cancellationToken);
-        await _context.BulkInsertCombatDataAsync(combat, c => c.UnitPositions, cancellationToken);
+        var players = await _context.BulkInsertCombatPlayersAsync(combat.Id, unitsByGameId, combat.CombatPlayers, cancellationToken);
+
+        await _context.BulkInsertUnitInfoAsync(units, cancellationToken);
+        await _context.BulkInsertCombatDataAsync(units, c => c.UnitHealthes, cancellationToken);
+        await _context.BulkInsertCombatDataAsync(units, c => c.UnitCasts, cancellationToken);
+        await _context.BulkInsertCombatDataAsync(units, c => c.UnitPositions, cancellationToken);
 
         await _context.BulkInsertCombatPlayerStatsAsync(players, cancellationToken);
         await _context.BulkInsertCombatPlayerScoresAsync(combat.BossId, players, cancellationToken);
 
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.PreAuras, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.Auras, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDones, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageDoneGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDones, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.HealDoneGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageTakens, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.DamageTakenGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveries, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.ResourceRecoveryGenerals, cancellationToken);
-        await _context.BulkInsertCombatPlayerDataAsync(players, p => p.CombatPlayerDeathes, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.PreAuras, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.Auras, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.DamageDones, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.HealDones, cancellationToken);
+        await _context.BulkInsertUnitTargetDataAsync(units, unitsByGameId, p => p.ResourceRecoveries, cancellationToken);
 
         if (combat.IsWin)
         {
@@ -57,6 +56,21 @@ internal class CombatRepository(CombatParserContextOne context) : ICombatReposit
             .Where(c => c.CombatLogId == combatLogId)
             .Include(c => c.Boss)
             .ToListAsync(cancellationToken);
+
+        return combats;
+    }
+
+    public async Task<Dictionary<string, IEnumerable<Combat>>> GetUniqueByCombatLogIdAsync(int combatLogId, CancellationToken cancellationToken)
+    {
+        var combats = (await _context.Set<Combat>()
+            .Where(c => c.CombatLogId == combatLogId)
+            .Include(c => c.Boss)
+            .OrderBy(c => c.FinishDate)
+            .ToListAsync(cancellationToken))
+            .GroupBy(c => c.Boss.Name)
+            .ToDictionary(
+                g => g.Key,
+                g => g.AsEnumerable());
 
         return combats;
     }

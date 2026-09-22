@@ -2,15 +2,19 @@
 
 public class CombatPlayerDeathDto
 {
-    public int Id { get; set; }
-
-    public string Username { get; set; }
-
-    public string LastHitSpell { get; set; }
-
-    public int LastHitValue { get; set; }
-
     public TimeSpan Time { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string Name { get; set; }
+
+    public string Spell { get; set; }
+
+    public int Value { get; set; }
+
+    public long CurrentHealth { get; set; }
+
+    public long MaxHealth { get; set; }
+
+    public int Status { get; set; }
+
+    public string UnitId { get; set; }
 }

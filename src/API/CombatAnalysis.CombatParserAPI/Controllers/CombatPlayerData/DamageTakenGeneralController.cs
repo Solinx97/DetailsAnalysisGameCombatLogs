@@ -1,4 +1,4 @@
-﻿using CombatParser.Application.Queries.GetDamageTakenGenerals;
+﻿using CombatParser.Application.Queries.GetDamageGenerals.GetDamageTakenGenerals;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +10,11 @@ public class DamageTakenGeneralController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, CancellationToken cancellationToken)
+    [HttpGet("getByUnitId/{unitId}")]
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId, CancellationToken cancellationToken)
     {
-        var damageTakenGenerals = await _mediator.Send(new GetDamageTakenGeneralsQuery(combatPlayerId), cancellationToken);
+        var damageGenerals = await _mediator.Send(new GetDamageTakenGeneralsQuery(unitId, combatId), cancellationToken);
 
-        return Ok(damageTakenGenerals);
+        return Ok(damageGenerals);
     }
 }

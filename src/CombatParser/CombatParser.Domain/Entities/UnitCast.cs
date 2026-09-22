@@ -1,20 +1,21 @@
-﻿using CombatParser.Domain.Aggregates;
+﻿using CombatParser.Domain.Entities.Base;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class UnitCast : CombatDataBase, IUnitRef, ITime
+public class UnitCast : CombatUnitDataBase, ITime, IUnitRef
 {
+    public const int OWNER_GAME_MAX_LENGTH = 128;
+    public const int GAME_SPELL_MAX_LENGTH = 128;
     public const int SPELL_MAX_LENGTH = 128;
-    public const int GAME_MAX_LENGTH = 128;
 
     private UnitCast() { }
 
-    private UnitCast(string creatorGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
-         string? targetGameId, bool isImmediatly, bool isSuccess, int combatId)
+    private UnitCast(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan? finishTime,
+         string? targetGameId, bool isImmediatly, bool isSuccess)
     {
         Id = Guid.NewGuid().ToString();
-        CreatorGameId = creatorGameId;
+        OwnerGameId = ownerGameId;
         GameSpellId = gameSpellId;
         Spell = spell;
         Time = startTime;
@@ -22,12 +23,9 @@ public class UnitCast : CombatDataBase, IUnitRef, ITime
         TargetGameId = targetGameId;
         IsImmediatly = isImmediatly;
         IsSuccess = isSuccess;
-        CombatId = combatId;
     }
 
-    public string Id { get; private set; }
-
-    public string CreatorGameId { get; private set; } = string.Empty;
+    public string OwnerGameId { get; private set; } = string.Empty;
 
     public int GameSpellId { get; private set; }
 
@@ -35,7 +33,7 @@ public class UnitCast : CombatDataBase, IUnitRef, ITime
 
     public TimeSpan Time { get; private set; }
 
-    public TimeSpan FinishTime { get; private set; }
+    public TimeSpan? FinishTime { get; private set; }
 
     public string? TargetGameId { get; private set; }
 
@@ -43,15 +41,13 @@ public class UnitCast : CombatDataBase, IUnitRef, ITime
 
     public bool IsSuccess { get; private set; }
 
-    public Combat Combat { get; private set; }
-
-    public static UnitCast Create(string creatorGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan finishTime,
-         string? targetGameId, bool isImmediatly, bool isSuccess, int combatId)
+    public static UnitCast Create(string ownerGameId, int gameSpellId, string spell, TimeSpan startTime, TimeSpan? finishTime,
+         string? targetGameId, bool isImmediatly, bool isSuccess)
     {
-        ArgumentException.ThrowIfNullOrEmpty(creatorGameId, nameof(creatorGameId));
+        ArgumentException.ThrowIfNullOrEmpty(ownerGameId, nameof(ownerGameId));
         ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
         ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
 
-        return new UnitCast(creatorGameId, gameSpellId, spell, startTime, finishTime, targetGameId, isImmediatly, isSuccess, combatId);
+        return new UnitCast(ownerGameId, gameSpellId, spell, startTime, finishTime, targetGameId, isImmediatly, isSuccess);
     }
 }

@@ -78,6 +78,18 @@ internal static class HttpClientHelperExtensions
         return result;
     }
 
+    public static async Task<HttpResponseMessage> PutAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, CancellationToken cancellationToken, bool isAuth = false)
+    {
+        if (isAuth)
+        {
+            GetAccessToken(clientHelper);
+        }
+
+        var result = await clientHelper.Client.PutAsync($"{clientHelper.BaseAddress}{clientHelper.BaseAddressApi}{requestUri}", content, cancellationToken);
+
+        return result;
+    }
+
     public static async Task<HttpResponseMessage> DeletAsync(this IHttpClientHelper clientHelper, string requestUri, string baseAddress, bool isAuth = false)
     {
         if (isAuth)

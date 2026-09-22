@@ -1,12 +1,12 @@
 ﻿import type { ChartModel } from '../types/chart/ChartModel';
-import type { DamageTakenGeneralModel } from '../types/DamageTakenGeneralModel';
-import type { DamageTakenModel } from '../types/DamageTakenModel';
+import type { DamageDoneModel } from '../types/DamageDoneModel';
 import { GameLogsApi } from './GameLogs.api';
+import type { DamageDoneGeneralModel } from '../types/DamageDoneGeneralModel';
 
 export const DamageTakenApi = GameLogsApi.injectEndpoints({
     endpoints: builder => ({
-        getDamageTakenByCombatPlayerId: builder.query<DamageTakenModel[], { combatPlayerId: number, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, page, pageSize }) => `/DamageTaken/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
+        getDamageTakenByCombatPlayerId: builder.query<DamageDoneModel[], { unitId: string, page: number, pageSize: number }>({
+            query: ({ unitId, page, pageSize }) => `/DamageTaken/getByCombatPlayerId?unitId=${unitId}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -15,11 +15,11 @@ export const DamageTakenApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageTakenGeneral', id: 'LIST' }]
         }),
-        countDamageTaken: builder.query<number, { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string }>({
-            query: ({ combatPlayerId, target, creator, spell, from, to }) => `/DamageTaken/count?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
+        countDamageTaken: builder.query<number, { unitId: string, target: string, creator: string, spell: string, from: string, to: string }>({
+            query: ({ unitId, target, creator, spell, from, to }) => `/DamageTaken/count?unitId=${unitId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}`,
         }),
-        getAllDamageTaken: builder.query<DamageTakenModel[], { combatPlayerId: number, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
-            query: ({ combatPlayerId, target, creator, spell, from, to, page, pageSize }) => `/DamageTaken/getAll?combatPlayerId=${combatPlayerId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
+        getAllDamageTaken: builder.query<DamageDoneModel[], { unitId: string, target: string, creator: string, spell: string, from: string, to: string, page: number, pageSize: number }>({
+            query: ({ unitId, target, creator, spell, from, to, page, pageSize }) => `/DamageTaken/getAll?unitId=${unitId}&target=${target}&creator=${creator}&spell=${spell}&from=${from}&to=${to}&page=${page}&pageSize=${pageSize}`,
             providesTags: result =>
                 result
                     ? [
@@ -28,21 +28,21 @@ export const DamageTakenApi = GameLogsApi.injectEndpoints({
                     ]
                     : [{ type: 'DamageTakenGeneral', id: 'LIST' }]
         }),
-        getCombatPlayerChartDamageTaken: builder.query<ChartModel[], number>({
-            query: combatPlayerId => `/DamageTaken/getCombatPlayerChart/${combatPlayerId}`
+        getCombatPlayerChartDamageTaken: builder.query<ChartModel[], string>({
+            query: unitId => `/DamageTaken/getUnitChart/${unitId}`
         }),
-        getDamageTakenUniqueFilterValues: builder.query<string[], { combatPlayerId: number, filter: string }>({
-            query: ({ combatPlayerId, filter }) => `/DamageTaken/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
+        getDamageTakenUniqueFilterValues: builder.query<string[], { unitId: string, filter: string }>({
+            query: ({ unitId, filter }) => `/DamageTaken/getUniqueFilterValues?unitId=${unitId}&filter=${filter}`,
         }),
-        getDamageTakenGeneralByCombatPlayerId: builder.query<DamageTakenGeneralModel[], number>({
-            query: combatPlayerId => `/DamageTakenGeneral/getByCombatPlayerId/${combatPlayerId}`,
+        getDamageTakenGeneralByUnitId: builder.query<DamageDoneGeneralModel[], { unitId: string, combatId: number }>({
+            query: ({ unitId, combatId }) => `/DamageTakenGeneral/getByUnitId/${unitId}?combatId=${combatId}`,
             providesTags: result =>
                 result
                     ? [
-                        ...result.map(damageTakenGeneral => ({ type: 'DamageTakenGeneral' as const, id: damageTakenGeneral.id })),
-                        { type: 'DamageTakenGeneral', id: 'LIST' },
+                        ...result.map(damageTaken => ({ type: 'DamageTaken' as const, id: damageTaken.id })),
+                        { type: 'DamageTaken', id: 'LIST' },
                     ]
-                    : [{ type: 'DamageTakenGeneral', id: 'LIST' }]
+                    : [{ type: 'DamageTaken', id: 'LIST' }]
         }),
     })
 })
@@ -54,6 +54,6 @@ export const {
     useGetDamageTakenUniqueFilterValuesQuery,
     useGetAllDamageTakenQuery,
     useGetCombatPlayerChartDamageTakenQuery,
-    useGetDamageTakenGeneralByCombatPlayerIdQuery,
-    useLazyGetDamageTakenGeneralByCombatPlayerIdQuery,
+    useGetDamageTakenGeneralByUnitIdQuery,
+    useLazyGetDamageTakenGeneralByUnitIdQuery,
 } = DamageTakenApi;

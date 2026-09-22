@@ -4,8 +4,7 @@ namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
 public class ResourceRecoveryGeneralModel
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Required]
     public int GameSpellId { get; set; }
@@ -26,6 +25,5 @@ public class ResourceRecoveryGeneralModel
 
     public double AverageValue { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
+    public string? UnitId { get; set; }
 }

@@ -2,7 +2,7 @@
 
 public class ResourceRecoveryModel
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -12,9 +12,11 @@ public class ResourceRecoveryModel
 
     public string Time { get; set; }
 
-    public string Creator { get; set; }
+    public UnitModel Unit { get; set; } = new();
 
-    public string Target { get; set; }
+    public UnitModel Target { get; set; } = new();
 
-    public int CombatPlayerId { get; set; }
+    public int ModificationType { get; set; }
+
+    public string UnitId { get; set; }
 }

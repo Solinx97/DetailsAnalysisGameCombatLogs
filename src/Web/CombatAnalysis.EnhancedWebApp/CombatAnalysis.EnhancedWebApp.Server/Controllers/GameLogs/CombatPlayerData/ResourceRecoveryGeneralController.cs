@@ -20,12 +20,12 @@ public class ResourceRecoveryGeneralController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
+    [HttpGet("getByUnitId/{unitId}")]
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"ResourceRecoveryGeneral/getByCombatPlayerId/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"ResourceRecoveryGeneral/getByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
             var resourceRecoveryGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryGeneralModel>>();

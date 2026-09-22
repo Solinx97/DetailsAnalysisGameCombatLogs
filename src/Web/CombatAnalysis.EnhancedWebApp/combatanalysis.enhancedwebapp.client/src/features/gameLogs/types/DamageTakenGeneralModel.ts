@@ -1,5 +1,5 @@
 export type DamageTakenGeneralModel = {
-    id: number;
+    id: string;
     spell: string;
     value: number;
     actualValue: number;
@@ -10,5 +10,5 @@ export type DamageTakenGeneralModel = {
     minValue: number;
     maxValue: number;
     averageValue: number;
-    combatPlayerId: number;
+    unitId: string;
 }

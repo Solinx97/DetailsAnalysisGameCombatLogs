@@ -10,7 +10,7 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
 {
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<CombatLog>> GetByLogTypeAsync(int logType, string? appUserId, CancellationToken cancelationToken)
+    public async Task<IEnumerable<CombatLog>> GetByLogTypeAsync(int logType, int gameVersion, string? appUserId, CancellationToken cancelationToken)
     {
         if (logType == (int)LogType.Private && string.IsNullOrEmpty(appUserId))
         {
@@ -18,28 +18,29 @@ internal class CombatLogRepository(CombatParserContextOne context) : GenericRepo
         }
 
         var combatLogs = _context.Set<CombatLog>()
-            .AsNoTracking();
+            .Include(x => x.Statuses);
 
         IQueryable<CombatLog> filter = combatLogs;
         if (logType == (int)LogType.Public)
         {
-            filter = combatLogs.Where(cl => cl.LogType == logType);
+            filter = combatLogs.Where(cl => cl.LogType == logType && cl.GameVersion == gameVersion);
         }
         else if (logType == (int)LogType.Private)
         {
-            filter = combatLogs.Where(cl => cl.LogType == logType && cl.AppUserId == appUserId);
+            filter = combatLogs.Where(cl => cl.LogType == logType && cl.GameVersion == gameVersion && cl.AppUserId == appUserId);
         }
 
-        var result = await filter
+        var data = await filter
+            .AsNoTracking()
             .ToListAsync(cancelationToken);
 
-        return result.Count != 0 ? result : [];
+        return data;
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
+    public async Task DeleteAsync(int id)
     {
         await _context.Set<CombatLog>()
             .Where(cl => cl.Id == id)
-            .ExecuteDeleteAsync(cancelationToken);
+            .ExecuteDeleteAsync();
     }
 }

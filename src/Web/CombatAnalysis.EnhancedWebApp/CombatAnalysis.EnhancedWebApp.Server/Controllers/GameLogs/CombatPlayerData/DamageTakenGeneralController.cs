@@ -11,24 +11,24 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.GameLogs.CombatPlayer
 public class DamageTakenGeneralController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
-    private readonly ILogger<DamageTakenGeneralController> _logger;
+    private readonly ILogger<DamageDoneGeneralController> _logger;
 
-    public DamageTakenGeneralController(IOptions<Cluster> cluster, IHttpClientHelper httpClient, ILogger<DamageTakenGeneralController> logger)
+    public DamageTakenGeneralController(IOptions<Cluster> cluster, IHttpClientHelper httpClient, ILogger<DamageDoneGeneralController> logger)
     {
         _httpClient = httpClient;
         _logger = logger;
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
+    [HttpGet("getByUnitId/{unitId}")]
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageTakenGeneral/getByCombatPlayerId/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"DamageTakenGeneral/getByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
-            var damageTakenGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageTakenGeneralModel>>();
+            var damageTakenGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
 
             return Ok(damageTakenGenerals);
         }

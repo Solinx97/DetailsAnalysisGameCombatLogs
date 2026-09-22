@@ -1,26 +1,17 @@
-﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Entities.Base;
 
-public class DamageDoneGeneral : CombatPlayerDataBase
+namespace CombatParser.Domain.Entities.CombatPlayerData;
+
+public class DamageDoneGeneral : CombatUnitDataBase
 {
     public const int SPELL_MAX_LENGTH = 128;
 
     private DamageDoneGeneral() { }
 
-    public DamageDoneGeneral(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber, 
-        int missNumber, int castNumber, int minValue, int maxValue, double averageValue,
-        bool isPet, int combatPlayerId)
+    private DamageDoneGeneral(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber, 
+        int missNumber, int castNumber, int minValue, int maxValue, double averageValue)
     {
-        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
-        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
-        ArgumentOutOfRangeException.ThrowIfNegative(damagePerSecond, nameof(damagePerSecond));
-        ArgumentOutOfRangeException.ThrowIfNegative(critNumber, nameof(critNumber));
-        ArgumentOutOfRangeException.ThrowIfNegative(missNumber, nameof(missNumber));
-        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
-        ArgumentOutOfRangeException.ThrowIfNegative(minValue, nameof(minValue));
-        ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
-        ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
-
+        Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
@@ -31,8 +22,6 @@ public class DamageDoneGeneral : CombatPlayerDataBase
         MinValue = minValue;
         MaxValue = maxValue;
         AverageValue = averageValue;
-        IsPet = isPet;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int GameSpellId { get; private set; }
@@ -55,7 +44,21 @@ public class DamageDoneGeneral : CombatPlayerDataBase
 
     public double AverageValue { get; private set; }
 
-    public bool IsPet { get; private set; }
+    public static DamageDoneGeneral Create(int gameSpellId, string spell, int value, double damagePerSecond, int critNumber,
+        int missNumber, int castNumber, int minValue, int maxValue, double averageValue)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
+        ArgumentOutOfRangeException.ThrowIfNegative(damagePerSecond, nameof(damagePerSecond));
+        ArgumentOutOfRangeException.ThrowIfNegative(critNumber, nameof(critNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(missNumber, nameof(missNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
+        ArgumentOutOfRangeException.ThrowIfNegative(minValue, nameof(minValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(maxValue, nameof(maxValue));
+        ArgumentOutOfRangeException.ThrowIfNegative(averageValue, nameof(averageValue));
 
-    public CombatPlayer CombatPlayer { get; private set; }
+        return new DamageDoneGeneral(gameSpellId, spell, value, damagePerSecond, critNumber,
+            missNumber, castNumber, minValue, maxValue, averageValue);
+    }
 }

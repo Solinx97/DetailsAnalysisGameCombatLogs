@@ -9,7 +9,7 @@ public abstract class BasicCombatPlayerViewModel : ParentTemplate<List<CombatPla
 {
     protected List<CombatPlayerModel>? _defaultPlayers;
 
-    private int _bestValue;
+    private long _bestValue;
     private CombatModel? _combat;
     private List<CombatPlayerModel>? _players;
     private CombatPlayerModel? _selectedPlayer;
@@ -19,7 +19,7 @@ public abstract class BasicCombatPlayerViewModel : ParentTemplate<List<CombatPla
     private bool _openEditMinVPS;
     private double _averageValue;
     private double _averageVPS;
-    private int _totalValue;
+    private long _totalValue;
     private double _totalVPS;
 
     public BasicCombatPlayerViewModel()
@@ -52,7 +52,7 @@ public abstract class BasicCombatPlayerViewModel : ParentTemplate<List<CombatPla
 
     #region View model properties
 
-    public int BestValue
+    public long BestValue
     {
         get { return _bestValue; }
         set
@@ -156,7 +156,7 @@ public abstract class BasicCombatPlayerViewModel : ParentTemplate<List<CombatPla
         }
     }
 
-    public int TotalValue
+    public long TotalValue
     {
         get { return _totalValue; }
         set
@@ -203,7 +203,7 @@ public abstract class BasicCombatPlayerViewModel : ParentTemplate<List<CombatPla
         Players = _defaultPlayers != null ? [.. _defaultPlayers] : [];
     }
 
-    private void FilterByMinValue(int minValue)
+    private void FilterByMinValue(long minValue)
     {
         if (_defaultPlayers == null || Players == null)
         {
@@ -214,20 +214,20 @@ public abstract class BasicCombatPlayerViewModel : ParentTemplate<List<CombatPla
         var defaultCollection = MinVPS > 0 ? Players : _defaultPlayers;
         foreach (var player in defaultCollection)
         {
-            var value = 0;
+            long value = 0;
             switch (ValueType)
             {
                 case 0:
-                    value = player.DamageDone;
+                    value = player.Unit.UnitInfo.DamageDone;
                     break;
                 case 1:
-                    value = player.HealDone;
+                    value = player.Unit.UnitInfo.HealDone;
                     break;
                 case 2:
-                    value = player.DamageTaken;
+                    value = player.Unit.UnitInfo.DamageTaken;
                     break;
                 case 3:
-                    value = player.ResourcesRecovery;
+                    value = player.Unit.UnitInfo.ResourcesRecovery;
                     break;
                 default:
                     break;

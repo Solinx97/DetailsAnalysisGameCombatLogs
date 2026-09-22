@@ -1,19 +1,35 @@
+import useTime from '@/shared/hooks/useTime';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { CombatPlayerAuraModel } from '../types/CombatPlayerAuraModel';
+import type { BossMapModel } from '../types/BossMapModel';
+import type { CombatAbilityModel } from '../types/CombatAbilityModel';
 import type { CombatLogModel } from '../types/CombatLogModel';
 import type { CombatModel } from '../types/CombatModel';
-import type { CombatPlayerModel } from '../types/CombatPlayerModel';
+import type { CombatPlayerAuraModel } from '../types/CombatPlayerAuraModel';
 import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
-import type { CombatAbilityModel } from '../types/CombatAbilityModel';
-import type { CombatPlayerPreAuraModel } from '../types/CombatPlayerPreAuraModel';
-import type { UnitPositionModel } from '../types/UnitPositionModel';
-import type { BossMapModel } from '../types/BossMapModel';
+import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { DashboardModel } from '../types/dashboard/DashboardModel';
+import type { UniqueUnitNameModel } from '../types/UniqueUnitNameModel';
 import type { UnitCastModel } from '../types/UnitCastModel';
 import type { UnitHealthModel } from '../types/UnitHealthModel';
-import type { CombatUnitModel } from '../types/CombatUnitModel';
+import type { UnitModel } from '../types/UnitModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
+import type { UnitPreAuraModel } from '../types/UnitPreAuraModel';
+import type { WoWMidnightPlayerStatsModel } from '../types/woWMidnight/WoWMidnightPlayerStatsModel';
+import type { WoWMoPClassicPlayerStatsModel } from '../types/wowMoPClassic/WoWMoPClassicPlayerStatsModel';
 
 const apiURL = '/api/v1';
+
+const setTimeToms = (units: UnitModel[]): UnitModel[] => {
+    const { timeToMs } = useTime();
+
+    return units.map(unit => ({
+        ...unit,
+        unitPositions: unit.unitPositions.map(p => ({
+            ...p,
+            timeMs: timeToMs(p.time)
+        }))
+    }));
+}
 
 export const GameLogsApi = createApi({
     reducerPath: 'combatParserAPi',
@@ -52,8 +68,8 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatAbility', id: 'LIST' }]
         }),
-        getCombatLogs: builder.query<CombatLogModel[], { logType: number, appUserId: string | null }>({
-            query: ({ logType, appUserId }) => `/CombatLog/getByLogType?logType=${logType}&appUserId=${appUserId}`,
+        getCombatLogs: builder.query<CombatLogModel[], { logType: number, gameVersion: number, appUserId: string | null }>({
+            query: ({ logType, gameVersion, appUserId }) => `/CombatLog/getByLogType?logType=${logType}&gameVersion=${gameVersion}&appUserId=${appUserId}`,
             providesTags: result =>
                 result
                     ? [
@@ -62,22 +78,19 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatLog', id: 'LIST' }]
         }),
+        addCombatLogStatus: builder.mutation<void, { combatLogId: number, status: number }>({
+            query: ({ combatLogId, status }) => ({
+                url: `/CombatLog/addStatus/${combatLogId}?status=${status}`,
+                method: 'POST'
+            }),
+            invalidatesTags: (_result, _error, args) => [{ type: 'CombatLog', id: args.combatLogId }]
+        }),
         removeCombatLog: builder.mutation<void, number>({
             query: id => ({
                 url: `/CombatLog/${id}`,
                 method: 'DELETE'
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'CombatLog', id }]
-        }),
-        getCombatPlayersDeathByCombatPlayerId: builder.query<CombatPlayerDeathModel[], number>({
-            query: combatPlayerId => `/CombatPlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(playerDeath => ({ type: 'CombatPlayerDeath' as const, id: playerDeath.id })),
-                        { type: 'CombatPlayerDeath', id: 'LIST' },
-                    ]
-                    : [{ type: 'CombatPlayerDeath', id: 'LIST' }]
         }),
         getCombatsByCombatLogId: builder.query<CombatModel[], number>({
             query: combatLogId => `/Combat/getByCombatLogId/${combatLogId}`,
@@ -89,17 +102,20 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'Combat', id: 'LIST' }]
         }),
-        getCombatsDashboard: builder.query<DashboardModel[], number>({
-            query: combatLogId => `/Combat/getDashboards/${combatLogId}`
+        getUniqueCombats: builder.query<Map<string, CombatModel[]>, number>({
+            query: combatLogId => `/Combat/getUniqueCombats/${combatLogId}`,
         }),
-        getCombatsDamageSpells: builder.query<Map<string, number>, number>({
-            query: combatLogId => `/Combat/getDamageSpells/${combatLogId}`
+        getCombatPlayerDeathCount: builder.query<number, string>({
+            query: unitId => `/CombatPlayer/getPlayerDeathCount/${unitId}`,
         }),
-        getCombatsHealSpells: builder.query<Map<string, number>, number>({
-            query: combatLogId => `/Combat/getHealSpells/${combatLogId}`
+        getWhenCombatPlayerDeath: builder.query<string, { unitId: string, skipCount: number }>({
+            query: ({ unitId, skipCount }) => `/CombatPlayer/getWhenPlayerDeath/${unitId}?skipCount=${skipCount}`,
         }),
-        getPotions: builder.query<Map<string, number>, number>({
-            query: combatLogId => `/Combat/getPotions/${combatLogId}`
+        getCombatPlayerDeath: builder.query<CombatPlayerDeathModel[], { unitId: string, whenDied: string }>({
+            query: ({ unitId, whenDied }) => `/CombatPlayer/getPlayerDeath/${unitId}?whenDied=${whenDied}`,
+        }),
+        getDashboard: builder.query<DashboardModel, { dahsboardName: string, combatLogId: number, bossName: string, combatId: number, creatorName: string, targetName: string, valueType: number }>({
+            query: ({ dahsboardName, combatLogId, bossName, combatId, creatorName, targetName, valueType }) => `/Dashboard/${dahsboardName}/${combatLogId}?bossName=${bossName}&combatId=${combatId}&creatorName=${creatorName}&targetName=${targetName}&valueType=${valueType}`
         }),
         getCombatById: builder.query<CombatModel, number>({
             query: id => `/Combat/${id}`,
@@ -119,12 +135,15 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatPlayer', id: 'LIST' }]
         }),
+        getUniqueCombatPlayerNames: builder.query<string[], number>({
+            query: combatLogId => `/CombatPlayer/getUniquePlayerNames/${combatLogId}`,
+        }),
         getCombatPlayerById: builder.query<CombatPlayerModel, number>({
             query: id => `/CombatPlayer/${id}`,
             providesTags: result => result ? [{ type: 'CombatPlayer', id: result.id }] : [],
         }),
-        getCombatByPreAura: builder.query<CombatPlayerPreAuraModel[], { combatId: number, combatPlayerId: number }>({
-            query: ({ combatId, combatPlayerId }) => `/PreAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
+        getCombatPreAuras: builder.query<UnitPreAuraModel[], number>({
+            query: combatId => `/UnitPreAura/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [
@@ -133,8 +152,18 @@ export const GameLogsApi = createApi({
                     ]
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }]
         }),
-        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], { combatId: number, combatPlayerId: number }>({
-            query: ({ combatId, combatPlayerId }) => `/CombatPlayerAura/getByCombatId?combatId=${combatId}&combatPlayerId=${combatPlayerId}`,
+        getUnitPreAuras: builder.query<UnitPreAuraModel[], { combatId: number, unitId: string }>({
+            query: ({ combatId, unitId }) => `/UnitPreAura/getByUnitId/${combatId}?unitId=${unitId}`,
+            providesTags: result =>
+                result
+                    ? [
+                        ...result.map(preAura => ({ type: 'CombatPlayerAura' as const, id: preAura.id })),
+                        { type: 'CombatPlayerAura', id: 'LIST' },
+                    ]
+                    : [{ type: 'CombatPlayerAura', id: 'LIST' }]
+        }),
+        getCombatPlayerAurasByCombatId: builder.query<CombatPlayerAuraModel[], number>({
+            query: combatId => `/UnitAura/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [
@@ -144,11 +173,15 @@ export const GameLogsApi = createApi({
                     : [{ type: 'CombatPlayerAura', id: 'LIST' }],
             keepUnusedDataFor: 0,
         }),
-        getCombatUnitsByCombatId: builder.query<CombatUnitModel[], number>({
-            query: combatId => `/CombatUnit/getByCombatId/${combatId}`,
+        getCombatUnitsByCombatId: builder.query<UnitModel[], number>({
+            query: combatId => `/Unit/getByCombatId/${combatId}`,
+            transformResponse: setTimeToms
         }),
-        getUnitCastsByCombatPlayerId: builder.query<Map<string, UnitCastModel[]>, number>({
-            query: combatId => `/UnitCast/getByCombatId/${combatId}`,
+        getUniqueUnitsName: builder.query<UniqueUnitNameModel[], { combatLogId: number, bossName: string }>({
+            query: ({ combatLogId, bossName }) => `/Unit/getUniqueUnitNames/${combatLogId}?bossName=${bossName}`,
+        }),
+        getUnitCastsByCombatUnitId: builder.query<UnitCastModel[], string>({
+            query: combatUnitId => `/UnitCast/getByCombatUnitId/${combatUnitId}`,
         }),
         getUnitPositionsByCombatId: builder.query<Map<string, UnitPositionModel[]>, number>({
             query: combatId => `/UnitPosition/getByCombatId/${combatId}`,
@@ -156,27 +189,41 @@ export const GameLogsApi = createApi({
         getUnitsHealthByCombatId: builder.query<Map<string, UnitHealthModel[]>, number>({
             query: combatId => `/UnitHealth/getByCombatId/${combatId}`,
         }),
+        getUnitsHealthByInterval: builder.query<UnitHealthModel[], { unitId: string, whenDied: string }>({
+            query: ({ unitId: combatId, whenDied }) => `/UnitHealth/getBeforeDied/${combatId}?whenDied=${whenDied}`,
+        }),
+        getPlayerStatsByCombatPlayerId: builder.query<WoWMoPClassicPlayerStatsModel | WoWMidnightPlayerStatsModel, { combatPlayerId: number, gameVersion: number }>({
+            query: ({ combatPlayerId, gameVersion }) => `/CombatPlayer/getPlayerStats/${combatPlayerId}?gameVersion=${gameVersion}`,
+        }),
     })
 })
 
 export const {
     useLazyGetCombatAbilitiesQuery,
     useGetCombatLogsQuery,
+    useAddCombatLogStatusMutation,
     useRemoveCombatLogMutation,
-    useLazyGetCombatPlayersDeathByCombatPlayerIdQuery,
     useLazyGetCombatsByCombatLogIdQuery,
-    useGetCombatsDashboardQuery,
-    useGetCombatsDamageSpellsQuery,
-    useGetCombatsHealSpellsQuery,
-    useGetPotionsQuery,
+    useGetUniqueCombatsQuery,
+    useLazyGetUniqueCombatsQuery,
+    useLazyGetCombatPlayerDeathCountQuery,
+    useLazyGetWhenCombatPlayerDeathQuery,
+    useLazyGetCombatPlayerDeathQuery,
+    useGetDashboardQuery,
+    useLazyGetDashboardQuery,
     useLazyGetCombatByIdQuery,
     useLazyGetBossMapByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,
+    useGetUniqueCombatPlayerNamesQuery,
     useLazyGetCombatPlayerByIdQuery,
     useGetCombatPlayerAurasByCombatIdQuery,
-    useGetCombatByPreAuraQuery,
-    useLazyGetCombatUnitsByCombatIdQuery,
-    useLazyGetUnitCastsByCombatPlayerIdQuery,
+    useGetCombatPreAurasQuery,
+    useGetUnitPreAurasQuery,
+    useGetCombatUnitsByCombatIdQuery,
+    useGetUniqueUnitsNameQuery,
+    useLazyGetUnitCastsByCombatUnitIdQuery,
     useLazyGetUnitPositionsByCombatIdQuery,
     useLazyGetUnitsHealthByCombatIdQuery,
+    useLazyGetUnitsHealthByIntervalQuery,
+    useGetPlayerStatsByCombatPlayerIdQuery,
 } = GameLogsApi;

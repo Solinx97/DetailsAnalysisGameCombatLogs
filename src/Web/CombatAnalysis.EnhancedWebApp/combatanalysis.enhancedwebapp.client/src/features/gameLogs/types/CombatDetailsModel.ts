@@ -6,4 +6,5 @@ export interface CombatDetailsModel {
     number: number;
     isWin: boolean;
     duration: number;
+    gameVersion: number;
 }

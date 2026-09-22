@@ -3,7 +3,7 @@
 namespace CombatParser.Application.Queries.HealDone.CountHeal;
 
 public record CountHealQuery(
-    int CombatPlayerId,
+    string UnitId,
     string Target,
     string Creator,
     string Spell,

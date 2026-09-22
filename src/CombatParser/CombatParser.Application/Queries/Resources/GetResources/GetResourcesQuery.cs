@@ -4,7 +4,7 @@ using MediatR;
 namespace CombatParser.Application.Queries.Resources.GetResources;
 
 public record GetResourcesQuery(
-    int CombatPlayerId,
+    string UnitId,
     string Target,
     string Creator,
     string Spell,

@@ -1,4 +1,5 @@
-﻿import { useEffect, useState, type JSX } from 'react';
+﻿import { NoneValue } from '@/shared/helpers/ConstHelpers';
+import { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
 import {
     useCountResourceRecoveryQuery,
@@ -9,27 +10,24 @@ import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
 interface ResourceRecoveryHelperProps {
-    combatPlayerId: number;
+    unitId: string;
     pageSize: number;
     getUserNameWithoutRealm: (username: string) => string;
     t: (key: string) => string;
 }
 
-const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
-    const NONE_VALUE = "NONE";
-    const ZERO_TIME_VALUE = "00:00:00";
-
+const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ unitId, pageSize, getUserNameWithoutRealm, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
+    const [selectedFilter, setSelectedFilter] = useState({ target: NoneValue.NONE_VALUE.toString(), creator: NoneValue.NONE_VALUE.toString(), spell: NoneValue.NONE_VALUE.toString(), from: NoneValue.ZERO_TIME_VALUE.toString(), to: NoneValue.ZERO_TIME_VALUE.toString() });
 
     const { data: count, isLoading: countIsLoading } = useCountResourceRecoveryQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
     const { data, isLoading: dataIsLoading } = useGetAllResourceRecoveryQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
 
     useEffect(() => {
@@ -74,7 +72,7 @@ const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ combatP
             <div className="player-filter-details">
                 <DetailsFilter
                     filters={["Creator", "Spell"]}
-                    combatPlayerId={combatPlayerId}
+                    unitId={unitId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
                     useGetUniqueFilterValuesQuery={useGetResourceRecoveryUniqueFilterValuesQuery}
@@ -91,7 +89,7 @@ const ResourceRecoveryHelper: React.FC<ResourceRecoveryHelperProps> = ({ combatP
                                 <div>{getTimeWithoutMs(item.time)}</div>
                             </li>
                             <li>{item.value}</li>
-                            <li>{getUserNameWithoutRealm(item.creator)}</li>
+                            <li>{getUserNameWithoutRealm(item.unit.name)}</li>
                         </ul>
                     </li>
                 ))}

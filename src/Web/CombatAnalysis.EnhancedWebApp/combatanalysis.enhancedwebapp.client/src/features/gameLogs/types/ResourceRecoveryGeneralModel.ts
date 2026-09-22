@@ -1,5 +1,5 @@
 export type ResourceRecoveryGeneralModel = {
-    id: number;
+    id: string;
     spell: string;
     resourcePerSecond: number;
     value: number;
@@ -7,5 +7,5 @@ export type ResourceRecoveryGeneralModel = {
     minValue: number;
     maxValue: number;
     averageValue: number;
-    combatPlayerId: number;
+    unitId: string;
 }

@@ -9,16 +9,16 @@ using Microsoft.EntityFrameworkCore;
 namespace CombatParser.Infrastructure.Data.Filters;
 
 internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartRepository<TModel>
-    where TModel : class, ICombatPlayerRefs, IGeneralEntity
+    where TModel : class, ICombatUnitRefs, IGeneralEntity
 {
     const int INTERVAL = 10;
     private readonly CombatParserContextOne _context = context;
 
-    public async Task<IEnumerable<ChartGeneric>> GetCombatPlayerChartAsync(int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ChartGeneric>> GetUnitChartAsync(string unitId, CancellationToken cancellationToken)
     {
         var values = await _context.Set<TModel>()
             .AsNoTracking()
-            .Where(x => x.CombatPlayerId == combatPlayerId)
+            .Where(x => x.UnitId == unitId)
             .Select(x => new
             {
                 x.Time,
@@ -44,14 +44,15 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
         var values = await _context.Set<CombatPlayer>()
             .AsNoTracking()
             .Where(x => x.CombatId == combatId)
-            .SelectMany(
-                x => _context.Set<TModel>()
-                    .Where(t => t.CombatPlayerId == x.Id),
-                (player, stat) => new
+            .Join(
+                _context.Set<TModel>(),
+                player => player.UnitId,
+                resource => resource.UnitId,
+                (player, resource) => new
                 {
                     player.Player.Username,
-                    stat.Value,
-                    stat.Time
+                    resource.Value,
+                    resource.Time
                 })
             .ToListAsync(cancellationToken);
 
@@ -60,11 +61,11 @@ internal class ChartRepository<TModel>(CombatParserContextOne context) : IChartR
             .ToDictionary(
                 g => g.Key,
                 g => g.GroupBy(x => (int)x.Time.TotalSeconds / INTERVAL)
-                      .Select(bucket => new ChartGeneric(
-                          bucket.Sum(x => x.Value),
-                          TimeSpan.FromSeconds(bucket.Key * INTERVAL)))
-                      .OrderBy(x => x.Time)
-                      .ToArray());
+                    .Select(bucket => new ChartGeneric(
+                        bucket.Sum(x => x.Value),
+                        TimeSpan.FromSeconds(bucket.Key * INTERVAL)))
+                    .OrderBy(x => x.Time)
+                    .ToArray());
 
         return allCharts;
     }

@@ -9,7 +9,7 @@ internal class CountHealHandler(IGeneralRepository<Domain.Entities.CombatPlayerD
 
     public async Task<int> Handle(CountHealQuery request, CancellationToken cancellationToken)
     {
-        var count = await _repository.CountAsync(request.CombatPlayerId, request.Target, request.Creator, request.Spell, request.From, request.To, cancellationToken);
+        var count = await _repository.CountAsync(request.UnitId, request.Target, request.Creator, request.Spell, request.From, request.To, cancellationToken);
 
         return count;
     }

@@ -1,4 +1,6 @@
-﻿import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
+﻿import { NoneValue } from '@/shared/helpers/ConstHelpers';
+import { DamageModificationType } from '@/shared/helpers/EnumHelper';
+import { faCopy, faFire, faFlask, faHands, faPooStorm, faShield, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
@@ -10,39 +12,25 @@ import {
 import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
-const damageTakenType = {
-    Normal: 0,
-    Crushing: 1,
-    Dodge: 2,
-    Parry: 3,
-    Miss: 4,
-    Resist: 5,
-    Immune: 6,
-    Absorb: 7
-};
-
 interface DamageTakenHelperProps {
-    combatPlayerId: number;
+    unitId: string;
     pageSize: number;
     getUserNameWithoutRealm?: (username: string) => string;
     t: (key: string) => string;
 }
 
-const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, pageSize, t }) => {
-    const NONE_VALUE = "NONE";
-    const ZERO_TIME_VALUE = "00:00:00";
-
+const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ unitId, pageSize, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
-
+    const [selectedFilter, setSelectedFilter] = useState({ target: NoneValue.NONE_VALUE.toString(), creator: NoneValue.NONE_VALUE.toString(), spell: NoneValue.NONE_VALUE.toString(), from: NoneValue.ZERO_TIME_VALUE.toString(), to: NoneValue.ZERO_TIME_VALUE.toString() });
+    
     const { data: count, isLoading: countIsLoading } = useCountDamageTakenQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
     const { data, isLoading: dataIsLoading } = useGetAllDamageTakenQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
 
     useEffect(() => {
@@ -59,47 +47,47 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
 
     const getIcon = (type: number): JSX.Element => {
         switch (type) {
-            case damageTakenType.Crushing:
+            case DamageModificationType.Crushing:
                 return <FontAwesomeIcon
                     icon={faFire}
                     title={t("Crushing")}
                     className="overvalue"
                 />;
-            case damageTakenType.Dodge:
+            case DamageModificationType.Dodge:
                 return <FontAwesomeIcon
                     icon={faCopy}
                     title={t("Dodge")}
                     className="overvalue"
                 />;
-            case damageTakenType.Parry:
+            case DamageModificationType.Parry:
                 return <FontAwesomeIcon
                     icon={faXmark}
                     title={t("Parry")}
                     className="overvalue"
                 />;
-            case damageTakenType.Miss:
+            case DamageModificationType.Miss:
                 return <FontAwesomeIcon
                     icon={faHands}
                     title={t("Miss")}
                     className="overvalue"
                 />;
-            case damageTakenType.Resist:
+            case DamageModificationType.Resist:
                 return <FontAwesomeIcon
                     icon={faFlask}
                     title={t("Resist")}
                     className="overvalue"
                 />;
-            case damageTakenType.Immune:
+            case DamageModificationType.Immune:
                 return <FontAwesomeIcon
                     icon={faPooStorm}
                     title={t("Immune")}
                     className="overvalue"
                 />;
-            case damageTakenType.Absorb:
+            case DamageModificationType.Absorb:
                 return <FontAwesomeIcon
-                    icon={faPooStorm}
+                    icon={faShield}
                     title={t("Absorb")}
-                    className="overvalue"
+                    className="absorb"
                 />;
             default:
                 return <></>;
@@ -135,8 +123,8 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
         <>
             <div className="player-filter-details">
                 <DetailsFilter
-                    filters={[ "Creator", "Spell" ]}
-                    combatPlayerId={combatPlayerId}
+                    filters={["Creator", "Spell"]}
+                    unitId={unitId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
                     useGetUniqueFilterValuesQuery={useGetDamageTakenUniqueFilterValuesQuery}
@@ -150,16 +138,21 @@ const DamageTakenHelper: React.FC<DamageTakenHelperProps> = ({ combatPlayerId, p
                         <ul>
                             <li>
                                 <div>{item.spell}</div>
-                                <div className="extra-details">{getIcon(item.damageTakenType)}</div>
+                                <div className="extra-details">{getIcon(item.modificationType)}</div>
                             </li>
                             <li>
                                 {getTimeWithoutMs(item.time)}
                             </li>
                             <li>
-                                {item.value}
+                                <span>{item.value}</span>
+                                {item.absorbed > 0
+                                    ? <span>(A: {item.absorbed})</span>
+                                    : item.mitigated > 0 &&
+                                        <span>(R: {item.realDamage}, M: {item.mitigated})</span>
+                                }
                             </li>
                             <li>
-                                {item.creator}
+                                {item.unit.name}
                             </li>
                         </ul>
                     </li>

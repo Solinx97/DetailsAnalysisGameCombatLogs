@@ -3,16 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetCombatPlayersDeathByCombatPlayerIdQuery } from '../api/GameLogs.api';
-import type { CombatPlayerModel } from '../types/CombatPlayerModel';
-import type { CombatPlayerDeathModel } from '../types/CombatPlayerDeathModel';
-import type { CombatDetailsModel } from '../types/CombatDetailsModel';
-import SelectedCombatChart from './SelectedCombatChart';
-import PersonalTabs from './PersonalTabs';
-import Details from './details/Details';
-import PlayerInfo from './details/PlayerInfo';
 import { useGetGenericChartDamageDoneQuery } from '../api/DamageDone.api';
+import { useLazyGetCombatPlayersByCombatIdQuery } from '../api/GameLogs.api';
 import { useGetGenericChartHealDoneQuery } from '../api/HealDone.api';
+import type { CombatDetailsModel } from '../types/CombatDetailsModel';
+import type { CombatPlayerModel } from '../types/CombatPlayerModel';
+import SelectedCombatChart from './charts/SelectedCombatChart';
+import Details from './details/Details';
+import PersonalTabs from './PersonalTabs';
 
 import './SelectedCombat.scss';
 
@@ -30,10 +28,10 @@ const SelectedCombat: React.FC = () => {
         name: '',
         number: 0,
         isWin: false,
-        duration: 0
+        duration: 0,
+        gameVersion: -1
     });
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
-    const [playersDeath, setPlayersDeath] = useState<CombatPlayerDeathModel[] | null>(null);
     const [selectedPlayers, setSelectedPlayers] = useState<CombatPlayerModel[]>([]);
     const [showCommonStatistics, setShowCommonStatistics] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
@@ -45,7 +43,6 @@ const SelectedCombat: React.FC = () => {
     };
 
     const [getCombatPlayersByCombatIdAsync] = useLazyGetCombatPlayersByCombatIdQuery();
-    const [getPlayersDeathByCombatIdAsync] = useLazyGetCombatPlayersDeathByCombatPlayerIdQuery();
 
     const filterContent = useRef<HTMLInputElement>(null);
 
@@ -58,6 +55,7 @@ const SelectedCombat: React.FC = () => {
         const number: number = parseInt(queryParams.get("number") || '0');
         const isWin: boolean = queryParams.get("isWin") === 'true';
         const duration: number = parseInt(queryParams.get("duration") || "1");
+        const gameVersion: number = parseInt(queryParams.get("gameVersion") || '-1');
 
         setDetails({
             id,
@@ -67,6 +65,7 @@ const SelectedCombat: React.FC = () => {
             number,
             isWin,
             duration,
+            gameVersion
         });
     }, []);
 
@@ -76,8 +75,7 @@ const SelectedCombat: React.FC = () => {
         }
 
         const fetchData = async () => {
-            const combatPlayersData = await getCombatPlayersAsync();
-            await getPlayersDeathAsync(combatPlayersData);
+            await getCombatPlayersAsync();
         }
 
         fetchData();
@@ -97,18 +95,9 @@ const SelectedCombat: React.FC = () => {
             return combatPlayersResult;
         } catch (error) {
             console.error("Errror to load Combat players");
-            
+
             return [];
         }
-    }
-
-    const getPlayersDeathAsync = async (players: CombatPlayerModel[]) => {
-        const deathsPromises = players.map(player => getPlayersDeathByCombatIdAsync(player.id));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const deathsResults: any[] = await Promise.all(deathsPromises);
-        const deaths: CombatPlayerDeathModel[] = deathsResults.filter(result => result.data && result.data.length > 0).map(result => result.data[0]);
-
-        setPlayersDeath(deaths);
     }
 
     const cleanSearch = () => {
@@ -146,7 +135,7 @@ const SelectedCombat: React.FC = () => {
     return (
         <div className="selected-combat__container">
             <div className="selected-combat__navigate">
-                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}`)}>
+                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}&gameVersion=${details.gameVersion}`)}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />
@@ -163,11 +152,6 @@ const SelectedCombat: React.FC = () => {
                     <div>{details.name}</div>
                     <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
                 </div>
-                {playersDeath?.length === 0 &&
-                    <div className="no-deaths">
-                        <span>{t("ZeroDeaths")}</span>
-                    </div>
-                }
             </div>
             {showSearch &&
                 <div className="mb-3 search-people">
@@ -198,7 +182,7 @@ const SelectedCombat: React.FC = () => {
                             header: t("Damage"),
                             content: <SelectedCombatChart
                                 combatPlayers={selectedPlayers}
-                                combatId={selectedPlayers[0].combatId}
+                                combatId={details.id}
                                 colors={getRandomColors(selectedPlayers.length)}
                                 useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
                             />
@@ -208,7 +192,7 @@ const SelectedCombat: React.FC = () => {
                             header: t("Healing"),
                             content: <SelectedCombatChart
                                 combatPlayers={selectedPlayers}
-                                combatId={selectedPlayers[0].combatId}
+                                combatId={details.id}
                                 colors={getRandomColors(selectedPlayers.length)}
                                 useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
                             />
@@ -217,28 +201,11 @@ const SelectedCombat: React.FC = () => {
                     tabsClassName={"charts"}
                 />
             }
-            <PersonalTabs
-                tab={0}
-                tabs={[
-                    {
-                        id: 0,
-                        header: t("Details"),
-                        content: <Details
-                            details={details}
-                            combatPlayers={selectedPlayers}
-                            getValueShortName={getValueShortName}
-                            t={t}
-                        />
-                    },
-                    {
-                        id: 1,
-                        header: t("PlayerInfo"),
-                        content: <PlayerInfo
-                            combatPlayers={selectedPlayers}
-                        />
-                    }
-                ]}
-                tabsClassName={"information"}
+            <Details
+                details={details}
+                combatPlayers={selectedPlayers}
+                getValueShortName={getValueShortName}
+                t={t}
             />
         </div>
     );

@@ -1,4 +1,6 @@
-﻿import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
+﻿import { NoneValue } from '@/shared/helpers/ConstHelpers';
+import { DamageModificationType } from '@/shared/helpers/EnumHelper';
+import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
@@ -11,38 +13,25 @@ import type { DamageDoneModel } from '../../types/DamageDoneModel';
 import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
-const damageType = {
-    Normal: 0,
-    Crit: 1,
-    Dodge: 2,
-    Parry: 3,
-    Miss: 4,
-    Resist: 5,
-    Immune: 6,
-}
-
 interface DamageDoneHelperProps {
-    combatPlayerId: number;
+    unitId: string;
     pageSize: number;
     getUserNameWithoutRealm: (username: string) => string;
     t: (key: string) => string;
 }
 
-const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
-    const NONE_VALUE = "NONE";
-    const ZERO_TIME_VALUE = "00:00:00";
-
+const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ unitId, pageSize, getUserNameWithoutRealm, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
+    const [selectedFilter, setSelectedFilter] = useState({ target: NoneValue.NONE_VALUE.toString(), creator: NoneValue.NONE_VALUE.toString(), spell: NoneValue.NONE_VALUE.toString(), from: NoneValue.ZERO_TIME_VALUE.toString(), to: NoneValue.ZERO_TIME_VALUE.toString() });
 
     const { data: count, isLoading: countIsLoading } = useCountDamageDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
     const { data, isLoading: dataIsLoading } = useGetAllDamageDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
 
     useEffect(() => {
@@ -59,37 +48,37 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
 
     const getIcon = (type: number): JSX.Element => {
         switch (type) {
-            case damageType.Crit:
+            case DamageModificationType.Crit:
                 return <FontAwesomeIcon
                     icon={faFire}
                     title={t("CritDamage")}
                     className="crit"
                 />;
-            case damageType.Dodge:
+            case DamageModificationType.Dodge:
                 return <FontAwesomeIcon
                     icon={faCopy}
                     title={t("Dodge")}
                     className="overvalue"
                 />;
-            case damageType.Parry:
+            case DamageModificationType.Parry:
                 return <FontAwesomeIcon
                     icon={faXmark}
                     title={t("Parry")}
                     className="overvalue"
                 />;
-            case damageType.Miss:
+            case DamageModificationType.Miss:
                 return <FontAwesomeIcon
                     icon={faHands}
                     title={t("Miss")}
                     className="overvalue"
                 />;
-            case damageType.Resist:
+            case DamageModificationType.Resist:
                 return <FontAwesomeIcon
                     icon={faFlask}
                     title={t("Resist")}
                     className="overvalue"
                 />;
-            case damageType.Immune:
+            case DamageModificationType.Immune:
                 return <FontAwesomeIcon
                     icon={faPooStorm}
                     title={t("Immune")}
@@ -100,11 +89,11 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         }
     }
 
-    const getClassNameByDamageType = (item: DamageDoneModel): string => {
-        if (item.damageType === 1) {
+    const getClassNameByDamageModificationType = (item: DamageDoneModel): string => {
+        if (item.modificationType === DamageModificationType['Crit']) {
             return "crit";
         }
-        else if (item.damageType > 1) {
+        else if (item.modificationType > 1) {
             return "overvalue";
         }
         else {
@@ -133,7 +122,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
         );
     }
 
-    if (countIsLoading || dataIsLoading) {
+    if (countIsLoading || dataIsLoading || !data) {
         return (<div>Loading...</div>);
     }
 
@@ -142,7 +131,7 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
             <div className="player-filter-details">
                 <DetailsFilter
                     filters={[ "Target", "Spell" ]}
-                    combatPlayerId={combatPlayerId}
+                    unitId={unitId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
                     useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}
@@ -151,18 +140,21 @@ const DamageDoneHelper: React.FC<DamageDoneHelperProps> = ({ combatPlayerId, pag
             </div>
             <ul className="player-data-details">
                 {tableTitle()}
-                {data?.map((item: DamageDoneModel) => (
+                {data.map((item) => (
                     <li className="player-data-details__item" key={item.id}>
                         <ul>
                             <li>
                                 <div>{item.spell}</div>
-                                <div className="extra-details">{getIcon(item.damageType)}</div>
+                                <div className="extra-details">{getIcon(item.modificationType)}</div>
                             </li>
                             <li>{getTimeWithoutMs(item.time)}</li>
                             <li className="extra-details">
-                                <div className={getClassNameByDamageType(item)}>{item.value}</div>
+                                {item.overkill > -1
+                                    ? <div className={getClassNameByDamageModificationType(item)}>{item.value} ({item.overkill})</div>
+                                    : <div className={getClassNameByDamageModificationType(item)}>{item.value}</div>
+                                }
                             </li>
-                            <li>{getUserNameWithoutRealm(item.target)}</li>
+                            <li>{getUserNameWithoutRealm(item.target.name)}</li>
                         </ul>
                     </li>
                 ))}

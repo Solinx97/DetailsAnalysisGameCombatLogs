@@ -12,7 +12,7 @@ internal class GetCombatPlayerChartHandler(IChartRepository<Domain.Entities.Comb
 
     public async Task<IEnumerable<ChartGenericDto>> Handle(GetCombatPlayerChartQuery request, CancellationToken cancellationToken)
     {
-        var damages = await _repository.GetCombatPlayerChartAsync(request.CombatPlayerId, cancellationToken);
+        var damages = await _repository.GetUnitChartAsync(request.UnitId, cancellationToken);
         var map = _mapper.Map<IEnumerable<ChartGenericDto>>(damages);
 
         return map;

@@ -8,5 +8,7 @@ public interface ICombatRepository
 
     Task<IEnumerable<Combat>> GetByCombatLogIdAsync(int combatLogId, CancellationToken cancellationToken);
 
+    Task<Dictionary<string, IEnumerable<Combat>>> GetUniqueByCombatLogIdAsync(int combatLogId, CancellationToken cancellationToken);
+
     Task<Combat?> GetByIdAsync(int combatId, CancellationToken cancellationToken);
 }

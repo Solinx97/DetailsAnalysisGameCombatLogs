@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
-public class HealDoneModel
+public class HealDoneModel : CombatUnitBase
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
@@ -13,7 +13,6 @@ public class HealDoneModel
     [Required]
     public string Spell { get; set; } = string.Empty;
 
-    [Range(0, int.MaxValue)]
     public int Value { get; set; }
 
     [Range(0, int.MaxValue)]
@@ -22,16 +21,7 @@ public class HealDoneModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    [Required]
-    public string Creator { get; set; } = string.Empty;
+    public int ModificationType { get; set; }
 
-    [Required]
-    public string Target { get; set; } = string.Empty;
-
-    public bool IsCrit { get; set; }
-
-    public bool IsAbsorbed { get; set; }
-
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
+    public string? UnitId { get; set; }
 }

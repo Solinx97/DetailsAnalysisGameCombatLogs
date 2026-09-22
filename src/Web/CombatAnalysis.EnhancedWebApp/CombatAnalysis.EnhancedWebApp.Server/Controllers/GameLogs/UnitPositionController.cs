@@ -18,11 +18,11 @@ public class UnitPositionController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatId)
+    [HttpGet("getByCombatUnitId/{combatUnitId}")]
+    public async Task<IActionResult> GetByCombatId(string combatUnitId)
     {
-        var responseMessage = await _httpClient.GetAsync($"UnitPosition/getByCombatId/{combatId}");
-        var unitPositions = await responseMessage.Content.ReadFromJsonAsync<IDictionary<string, IEnumerable<UnitPositionModel>>>();
+        var responseMessage = await _httpClient.GetAsync($"UnitPosition/getByCombatUnitId/{combatUnitId}");
+        var unitPositions = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UnitPositionModel>>();
 
         return Ok(unitPositions);
     }

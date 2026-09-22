@@ -1,8 +1,6 @@
 ﻿namespace CombatParser.Domain.Entities.Dashboard;
 
 public record Dashboard(
-    string Username,
-    double AverageDPS,
-    double AverageHPS, 
-    double AverageDeaths
+    int Type,
+    List<DashboardItem> Items
     );

@@ -1,9 +1,9 @@
 export type UnitPositionModel = {
     id: string;
-    creatorGameId: string;
+    ownerGameId: string;
     x: number;
     y: number;
     time: string;
-    combatId: number;
+    combatUnitId: string;
     timeMs: number;
 }

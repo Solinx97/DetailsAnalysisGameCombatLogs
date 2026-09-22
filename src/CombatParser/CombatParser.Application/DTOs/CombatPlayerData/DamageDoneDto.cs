@@ -2,7 +2,7 @@
 
 public class DamageDoneDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -12,19 +12,25 @@ public class DamageDoneDto
 
     public TimeSpan Time { get; set; }
 
-    public string Creator { get; set; }
+    public UnitDto Unit { get; set; } = new();
 
-    public string Target { get; set; }
+    public UnitDto Target { get; set; } = new();
 
-    public bool IsTargetBoss { get; set; }
+    public int ModificationType { get; set; }
 
     public int DamageType { get; set; }
 
-    public bool IsPeriodicDamage { get; set; }
+    public int Resisted { get; set; }
 
-    public bool IsSingleTarget { get; set; }
+    public int Absorbed { get; set; }
 
-    public bool IsPet { get; set; }
+    public int Blocked { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public int RealDamage { get; set; }
+
+    public int Overkill { get; set; }
+
+    public int Mitigated { get; set; }
+
+    public string UnitId { get; set; }
 }

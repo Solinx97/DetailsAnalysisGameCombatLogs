@@ -1,12 +1,12 @@
 export type UnitCastModel = {
     id: string;
-    creatorGmaeId: string;
+    ownerGmaeId: string;
     gameSpellId: number;
     spell: string;
     time: string;
-    finishTime: string;
+    finishTime: string | null;
     targetGameId: string | null;
     isImmediatly: boolean;
     isSuccess: boolean;
-    combatId: number;
+    combatUnitId: string;
 }

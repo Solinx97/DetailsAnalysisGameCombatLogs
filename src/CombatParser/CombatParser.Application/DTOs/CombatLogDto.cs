@@ -4,6 +4,8 @@ public class CombatLogDto
 {
     public int Id { get; set; }
 
+    public int GameVersion { get; set; }
+
     public string Name { get; set; }
 
     public DateTimeOffset Date { get; set; }
@@ -17,4 +19,6 @@ public class CombatLogDto
     public bool IsReady { get; set; }
 
     public string AppUserId { get; set; }
+
+    public IReadOnlyList<CombatLogStatusDto> Statuses { get; set; } = [];
 }

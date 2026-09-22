@@ -6,11 +6,11 @@ public class SpecializationScoreModel
 
     public double DamageScore { get; set; }
 
-    public int DamageDone { get; set; }
+    public long DamageDone { get; set; }
 
     public double HealScore { get; set; }
 
-    public int HealDone { get; set; }
+    public long HealDone { get; set; }
 
     public DateTimeOffset? Updated { get; set; }
 

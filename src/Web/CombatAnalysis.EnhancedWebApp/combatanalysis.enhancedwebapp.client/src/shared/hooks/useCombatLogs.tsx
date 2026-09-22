@@ -3,8 +3,8 @@ type CombatLogResult = {
 }
 
 const useCombatLogs = (): CombatLogResult => {
-    const removeServerName = (username: string): string => {
-        const fullname = username.replaceAll('"', '').split('-')[0];
+    const removeServerName = (name: string): string => {
+        const fullname = name.replaceAll('"', '').split('-')[0];
 
         return fullname;
     }

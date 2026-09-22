@@ -1,6 +1,8 @@
 {
   "DPS": "DPS",
   "HPS": "HPS",
+  "Healing": "Healing",
+  "Damage": "Damage",
   "DamageTaken": "Damage taken",
   "ResourcesRecovery": "Resources recovery",
   "Deaths": "Deaths",
@@ -29,7 +31,7 @@
   "FiltersReset": "Reset",
   "TimesReset": "Times reset",
   "SelectCombat": "Select combat",
-  "Dashboard": "Dashboard",
+  "Explorer": "Explorer",
   "Informations": "Informations",
   "Watch": "Watch"
 }

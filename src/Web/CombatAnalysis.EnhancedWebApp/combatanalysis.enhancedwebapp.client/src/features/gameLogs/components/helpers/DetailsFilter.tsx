@@ -7,14 +7,14 @@ type QueryHook<TResult, TArg> = (arg: TArg) => { data?: TResult, isLoading: bool
 
 interface DetailsFilterProps {
     filters: string[];
-    combatPlayerId: number;
+    unitId: string;
     setSelectedFilter: (value: SetStateAction<{ target: string, creator: string, spell: string, from: string, to: string }>) => void;
     selectedFilter: { target: string, creator: string, spell: string, from: string, to: string };
-    useGetUniqueFilterValuesQuery: QueryHook<string[], { combatPlayerId: number, filter: string }>;
+    useGetUniqueFilterValuesQuery: QueryHook<string[], { unitId: string, filter: string }>;
     t: (key: string) => string;
 }
 
-const DetailsFilter: React.FC<DetailsFilterProps> = ({ filters, combatPlayerId, setSelectedFilter, selectedFilter, useGetUniqueFilterValuesQuery, t }) => {
+const DetailsFilter: React.FC<DetailsFilterProps> = ({ filters, unitId, setSelectedFilter, selectedFilter, useGetUniqueFilterValuesQuery, t }) => {
     const NONE_VALUE = "NONE";
     const ZERO_TIME_VALUE = "00:00:00";
 
@@ -23,8 +23,8 @@ const DetailsFilter: React.FC<DetailsFilterProps> = ({ filters, combatPlayerId, 
     const [timeFrom, setTimeFrom] = useState(ZERO_TIME_VALUE);
     const [timeTo, setTimeTo] = useState(ZERO_TIME_VALUE);
 
-    const { data: uniqueTargets, isLoading: targetsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filters[0] });
-    const { data: uniqueSpells, isLoading: spellsIsLoading } = useGetUniqueFilterValuesQuery({ combatPlayerId, filter: filters[1] });
+    const { data: uniqueTargets, isLoading: targetsIsLoading } = useGetUniqueFilterValuesQuery({ unitId, filter: filters[0] });
+    const { data: uniqueSpells, isLoading: spellsIsLoading } = useGetUniqueFilterValuesQuery({ unitId, filter: filters[1] });
 
     const handleSelectedTarget = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
         const value = e === undefined ? NONE_VALUE : e.target.value;

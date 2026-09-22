@@ -2,13 +2,13 @@
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using CombatParser.Application.Commands.CreateCombat;
-using CombatParser.Application.Queries.Dashboards.GetDamageSpells;
-using CombatParser.Application.Queries.Dashboards.GetDashboard;
-using CombatParser.Application.Queries.Dashboards.GetHealSpells;
-using CombatParser.Application.Queries.Dashboards.GetPotions;
 using CombatParser.Application.Queries.GetByIdCombat;
 using CombatParser.Application.Queries.GetCombatsByCombatLogId;
+using CombatParser.Application.Queries.GetUniquCombatsByCombatLogId;
 using CombatParser.Domain.EntityData;
+using CombatParser.Domain.EntityData.WoWMidnight;
+using CombatParser.Domain.EntityData.WoWMoPClassic;
+using CombatParser.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,61 +41,43 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         return Ok(combats);
     }
 
-    [HttpGet("getDashboards/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDashboards(int combatLogId, CancellationToken cancellationToken)
+    [HttpGet("getUniqueCombats/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetUniqueCombats(int combatLogId, CancellationToken cancellationToken)
     {
-        var dashboards = await _mediator.Send(new GetDashboardQuery(combatLogId), cancellationToken);
+        var uniqueCombats = await _mediator.Send(new GetUniquCombatsByCombatLogIdQuery(combatLogId), cancellationToken);
 
-        return Ok(dashboards);
-    }
-
-    [HttpGet("getDamageSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetDamageSpells(int combatLogId, CancellationToken cancellationToken)
-    {
-        var spells = await _mediator.Send(new GetDamageSpellsQuery(combatLogId), cancellationToken);
-
-        return Ok(spells);
-    }
-
-    [HttpGet("getHealSpells/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetHealSpells(int combatLogId, CancellationToken cancellationToken)
-    {
-        var spells = await _mediator.Send(new GetHealSpellsQuery(combatLogId), cancellationToken);
-
-        return Ok(spells);
-    }
-
-    [HttpGet("getPotions/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetPotions(int combatLogId, CancellationToken cancellationToken)
-    {
-        var potions = await _mediator.Send(new GetPotionsQuery(combatLogId), cancellationToken);
-
-        return Ok(potions);
+        return Ok(uniqueCombats);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CombatModel combat, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateCombatModel combat, CancellationToken cancellationToken)
     {
         try
         {
             var combatPlayersData = new List<CombatParser.Domain.EntityData.CombatPlayerData>();
             foreach (var player in combat.CombatPlayers)
             {
-                var playerData = await ExtractCombatPlayerDataAsync(player, cancellationToken);
-                combatPlayersData.Add(playerData);
+                var unit = combat.Units.FirstOrDefault(x => x.GameId == player.Player.GameId);
+                if (unit != null)
+                {
+                    var playerData = await ExtractCombatPlayerDataAsync(combat.GameVersion, unit, player, cancellationToken);
+                    combatPlayersData.Add(playerData);
+                }
             }
 
-            var unitData = _mapper.Map<List<CombatUnitData>>(combat.Units);
-            var unitCastData = _mapper.Map<List<UnitCastData>>(combat.UnitCasts);
-            var unitHealthData = _mapper.Map<List<UnitHealthData>>(combat.UnitHealths);
-            var unitPositionData = _mapper.Map<List<UnitPositionData>>(combat.UnitPositions);
+            var unitsData = new List<UnitData>();
+            foreach (var item in combat.Units)
+            {
+                var unit = ExtractUnitDataAsync(item);
+                unitsData.Add(unit);
+            }
 
             var command = new CreateCombatCommand(combat.DungeonName, combat.BossHealthPercentage, combat.DamageDone, combat.HealDone, combat.DamageTaken, combat.ResourcesRecovery,
-                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitData, unitCastData, unitHealthData, unitPositionData);
+                 combat.IsWin, combat.StartDate, combat.FinishDate, combat.Boss.Id, combat.CombatLogId, combatPlayersData, unitsData);
 
-            var combatId = await _mediator.Send(command, cancellationToken);
+            await _mediator.Send(command, cancellationToken);
 
-            return Ok(combatId);
+            return NoContent();
         }
         catch (OperationCanceledException ex)
         {
@@ -111,56 +93,63 @@ public class CombatController(IMapper mapper, ILogger<CombatController> logger,
         }
     }
 
-    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(CombatPlayerModel combatPlayer, CancellationToken cancellationToken)
+    private async Task<CombatParser.Domain.EntityData.CombatPlayerData> ExtractCombatPlayerDataAsync(int gameVersion, UnitModel unit, CreateCombatPlayerModel combatPlayer, CancellationToken cancellationToken)
     {
-        var statsMap = _mapper.Map<CombatPlayerStatsData>(combatPlayer.Stats);
+        IPlayerStatsData statsMap = gameVersion switch
+        {
+            0 => _mapper.Map<WoWMoPClassicPlayerStatsData>(combatPlayer.Stats),
+            1 => _mapper.Map<WoWMidnightPlayerStatsData>(combatPlayer.Stats),
+            _ => throw new ArgumentOutOfRangeException(nameof(gameVersion))
+        };
 
-        var preAurasMap = _mapper.Map<List<CombatPlayerPreAuraData>>(combatPlayer.PreAuras);
-        var aurasMap = _mapper.Map<List<CombatPlayerAuraData>>(combatPlayer.Auras);
-        var castMap = _mapper.Map<List<UnitCastData>>(combatPlayer.Casts);
-        var damageDonesMap = _mapper.Map<List<DamageDoneData>>(combatPlayer.DamageDones);
-        var damageDoneGeneralsMap = _mapper.Map<List<DamageDoneGeneralData>>(combatPlayer.DamageDoneGenerals);
-        var healDonesMap = _mapper.Map<List<HealDoneData>>(combatPlayer.HealDones);
-        var healDoneGeneralsMap = _mapper.Map<List<HealDoneGeneralData>>(combatPlayer.HealDoneGenerals);
-        var damageTakenMap = _mapper.Map<List<DamageTakenData>>(combatPlayer.DamageTakens);
-        var damageTakenGeneralsMap = _mapper.Map<List<DamageTakenGeneralData>>(combatPlayer.DamageTakenGenerals);
-        var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(combatPlayer.ResourceRecoveries);
-        var resourceRecoveryGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralData>>(combatPlayer.ResourceRecoveryGenerals);
-        var deathsMap = _mapper.Map<List<CombatPlayerDeathData>>(combatPlayer.CombatPlayerDeathes);
-        var positionsMap = _mapper.Map<List<UnitPositionData>>(combatPlayer.CombatPlayerPositions);
+        var spellIds = unit.UnitInfo.DamageDone > unit.UnitInfo.HealDone
+            ? unit.DamageDones.Select(d => d.GameSpellId).ToArray()
+            : [.. unit.HealDones.Select(d => d.GameSpellId)];
 
-        var spellIds = combatPlayer.DamageDone > combatPlayer.HealDone
-            ? combatPlayer.DamageDones.Select(d => d.GameSpellId).ToArray()
-            : [.. combatPlayer.HealDones.Select(d => d.GameSpellId)];
-
-        await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, spellIds, cancellationToken);
+        await _scoreHelper.CreateSpecializationScoreAsync(combatPlayer, unit.UnitInfo, spellIds, cancellationToken);
         var scoreMap = _mapper.Map<SpecializationScoreData>(combatPlayer.Score);
 
         var playerData = new CombatParser.Domain.EntityData.CombatPlayerData(
             combatPlayer.AverageItemLevel,
-            combatPlayer.ResourcesRecovery,
-            combatPlayer.DamageDone,
-            combatPlayer.HealDone,
-            combatPlayer.DamageTaken,
-            combatPlayer.PlayerId,
-            combatPlayer.CombatId,
+            combatPlayer.Player.Id,
             statsMap,
             scoreMap,
-            preAurasMap,
-            aurasMap,
-            castMap,
-            damageDonesMap,
-            damageDoneGeneralsMap,
-            healDonesMap,
-            healDoneGeneralsMap,
-            damageTakenMap,
-            damageTakenGeneralsMap,
-            resourceRecoveryMap,
-            resourceRecoveryGeneralMap,
-            deathsMap,
-            positionsMap
+            combatPlayer.UnitGameId
         );
 
         return playerData;
+    }
+
+    private UnitData ExtractUnitDataAsync(UnitModel unit)
+    {
+        var unitInfoMap = _mapper.Map<UnitInfoData>(unit.UnitInfo);
+        var unitHealthesMap = _mapper.Map<List<UnitHealthData>>(unit.UnitHealthes);
+        var unitCastsMap = _mapper.Map<List<UnitCastData>>(unit.UnitCasts);
+        var unitPositionsMap = _mapper.Map<List<UnitPositionData>>(unit.UnitPositions);
+        var preAurasMap = _mapper.Map<List<UnitPreAuraData>>(unit.PreAuras);
+        var aurasMap = _mapper.Map<List<UnitAuraData>>(unit.Auras);
+        var damageDonesMap = _mapper.Map<List<DamageDoneData>>(unit.DamageDones);
+        var healDonesMap = _mapper.Map<List<HealDoneData>>(unit.HealDones);
+        var resourceRecoveryMap = _mapper.Map<List<ResourceRecoveryData>>(unit.ResourceRecoveries);
+
+        var unitData = new UnitData(
+            unit.GameId,
+            unit.Name,
+            unit.UnitHash,
+            unit.Type,
+            unit.CreatorGameId,
+            unit.CombatId,
+            unitInfoMap,
+            unitHealthesMap,
+            unitCastsMap,
+            unitPositionsMap,
+            preAurasMap,
+            aurasMap,
+            damageDonesMap,
+            healDonesMap,
+            resourceRecoveryMap
+        );
+
+        return unitData;
     }
 }

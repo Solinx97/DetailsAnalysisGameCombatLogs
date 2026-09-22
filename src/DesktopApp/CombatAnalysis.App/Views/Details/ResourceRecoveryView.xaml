@@ -182,7 +182,7 @@
                 <DataGridTemplateColumn SortMemberPath="Creator" IsReadOnly="True" MinWidth="200">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Creator}" Margin="10" FontSize="12" TextAlignment="Center" />
+                            <TextBlock Text="{Binding Path=Unit.Name}" Margin="10" FontSize="12" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>

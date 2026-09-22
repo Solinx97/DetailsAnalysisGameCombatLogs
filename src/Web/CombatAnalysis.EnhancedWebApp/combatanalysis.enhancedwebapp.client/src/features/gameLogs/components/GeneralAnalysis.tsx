@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../../shared/components/Loading';
-import { useLazyGetCombatsByCombatLogIdQuery } from '../api/GameLogs.api';
+import { useLazyGetUniqueCombatsQuery } from '../api/GameLogs.api';
 import type { CombatModel } from '../types/CombatModel';
 import PersonalTabs from './PersonalTabs';
 import GeneralAnalysisItems from './GeneralAnalysisItems';
@@ -14,56 +14,32 @@ import './GeneralAnalysis.scss';
 
 const GeneralAnalysis: React.FC = () => {
     const { t } = useTranslation('combatDetails/generalAnalysis');
-    
+
     const navigate = useNavigate();
 
     const [combatLogId, setCombatLogId] = useState<number>(0);
-    const [allUniqueCombats, setUniqueCombats] = useState<Map<string, CombatModel[]>>(new Map());
+    const [allUniqueCombats, setAllUniqueCombats] = useState<Map<string, CombatModel[]>>(new Map());
 
-    const [getCombatsByCombatLogId] = useLazyGetCombatsByCombatLogIdQuery();
+    const [getUniqueCombatsByCombatLogId] = useLazyGetUniqueCombatsQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         const id: number = parseInt(queryParams.get("id") || '0');
         setCombatLogId(id);
 
-        const getCombats = async () => {
-            await getCombatsAsync(id);
+        const loadAsync = async () => {
+            try {
+                const uniqueCombats = await getUniqueCombatsByCombatLogId(id).unwrap();
+                setAllUniqueCombats(new Map(Object.entries(uniqueCombats)));
+            } catch (error) {
+                console.error("Failed to fetch combats:", error);
+            }
         }
 
-        if (id > 0) {
-            getCombats();
-        }
+        loadAsync();
     }, []);
 
-    const getCombatsAsync = async (id: number) => {
-        try {
-            const combats = await getCombatsByCombatLogId(id).unwrap();
-            createListOfSimilarCombats(combats);
-        } catch (error) {
-            console.error("Failed to fetch combats:", error);
-        }
-    }
-
-    const createListOfSimilarCombats = (combats: CombatModel[]) => {
-        const uniqueCombatList: Map<string, CombatModel[]> = new Map();
-        const uniqueNames = new Set();
-
-        const umblockedCombatsArray = Object.assign([], combats);
-        const sortedCombats: CombatModel[] = umblockedCombatsArray.sort((a: CombatModel, b: CombatModel) => a.startDate.localeCompare(b.startDate));
-
-        sortedCombats.forEach((combat: CombatModel) => {
-            if (!uniqueNames.has(combat.boss.name)) {
-                uniqueNames.add(combat.boss.name);
-                const foundCombats: CombatModel[] = sortedCombats.filter(x => x.boss.name === combat.boss.name);
-                uniqueCombatList.set(foundCombats[0].boss.name, foundCombats);
-            }
-        });
-
-        setUniqueCombats(uniqueCombatList);
-    }
-
-    if (combatLogId === 0) {
+    if (allUniqueCombats.size === 0) {
         return (<Loading />);
     }
 
@@ -83,10 +59,9 @@ const GeneralAnalysis: React.FC = () => {
                 tabs={[
                     {
                         id: 0,
-                        header: t("Dashboard"),
+                        header: t("Explorer"),
                         content: <Dashboard
                             combatLogId={combatLogId}
-                            allUniqueCombats={allUniqueCombats}
                         />
                     },
                     {

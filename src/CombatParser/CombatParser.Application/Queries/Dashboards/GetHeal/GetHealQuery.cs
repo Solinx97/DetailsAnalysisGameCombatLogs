@@ -1,0 +1,13 @@
+﻿using CombatParser.Application.DTOs.Dashboard;
+using MediatR;
+
+namespace CombatParser.Application.Queries.Dashboards.GetHeal;
+
+public record GetHealQuery(
+    int CombatLogId,
+    string BossName,
+    int CombatId,
+    string CreatorName,
+    string TargetName,
+    int ValueType
+    ) : IRequest<DashboardDto>;

@@ -1,18 +1,17 @@
-﻿namespace CombatParser.Domain.Entities.CombatPlayerData;
+﻿using CombatParser.Domain.Entities.Base;
 
-public class ResourceRecoveryGeneral : CombatPlayerDataBase
+namespace CombatParser.Domain.Entities.CombatPlayerData;
+
+public class ResourceRecoveryGeneral : CombatUnitDataBase
 {
     public const int SPELL_MAX_LENGTH = 128;
 
     private ResourceRecoveryGeneral() { }
 
-    public ResourceRecoveryGeneral(int gameSpellId, string spell, int value, double resourcePerSecond, int castNumber,
-        int minValue, int maxValue, double averageValue, int combatPlayerId)
+    private ResourceRecoveryGeneral(int gameSpellId, string spell, int value, double resourcePerSecond, int castNumber,
+        int minValue, int maxValue, double averageValue)
     {
-        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
-        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
-
+        Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
@@ -21,7 +20,6 @@ public class ResourceRecoveryGeneral : CombatPlayerDataBase
         MinValue = minValue;
         MaxValue = maxValue;
         AverageValue = averageValue;
-        CombatPlayerId = combatPlayerId;
     }
 
     public int GameSpellId { get; private set; }
@@ -40,5 +38,14 @@ public class ResourceRecoveryGeneral : CombatPlayerDataBase
 
     public double AverageValue { get; private set; }
 
-    public CombatPlayer CombatPlayer { get; private set; }
+    public static ResourceRecoveryGeneral Create(int gameSpellId, string spell, int value, double resourcePerSecond, int castNumber,
+        int minValue, int maxValue, double averageValue)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentOutOfRangeException.ThrowIfNegative(castNumber, nameof(castNumber));
+
+        return new ResourceRecoveryGeneral(gameSpellId, spell, value, resourcePerSecond, castNumber,
+            minValue, maxValue, averageValue);
+    }
 }

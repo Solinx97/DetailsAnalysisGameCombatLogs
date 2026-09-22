@@ -1,5 +1,7 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
+using CombatParser.Domain.Entities.WoWMidnight;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Domain.Interfaces;
 using CombatParser.Infrastructure.Persistent;
 using EFCore.BulkExtensions;
@@ -9,16 +11,25 @@ namespace CombatParser.Infrastructure.Extensions;
 
 internal static class CombatParserContextOneExtension
 {
-    public static async Task BulkInsertCombatPlayerDataAsync<TModel>(this CombatParserContextOne context, List<CombatPlayer> players, Func<CombatPlayer, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatPlayerRefs
+    public static async Task BulkInsertUnitTargetDataAsync<TModel>(this CombatParserContextOne context, List<Unit> units, Dictionary<string, string> unitsByGameId, Func<Unit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatUnitRefs, IUnitTargetRefs
     {
-        var combatPlayerData = players.SelectMany(p =>
-            selector(p).Select(dd =>
+        var combatPlayerData = units.SelectMany(u  =>
+            selector(u).Select(result =>
             {
-                dd.SetCombatPlayerId(p.Id);
-                return dd;
+                if (!unitsByGameId.TryGetValue(result.TargetGameId, out var targetId))
+                {
+                    return null;
+                }
+
+                result.SetTargetUnitId(targetId);
+                result.SetUnitId(u.Id);
+
+                return result;
             }
-        )).ToList();
+        ))
+            .Where(x => x != null)
+            .ToList();
 
         if (combatPlayerData.Count > 0)
         {
@@ -26,8 +37,7 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
-        where TModel : class, ICombatRefs
+    public static async Task<List<Unit>> BulkInsertUnitsAsync(this CombatParserContextOne context, Combat combat, Func<Combat, IEnumerable<Unit>> selector, CancellationToken cancelationToken)
     {
         var combatData = selector(combat).Select(cr =>
         {
@@ -37,17 +47,61 @@ internal static class CombatParserContextOneExtension
 
         if (combatData.Count > 0)
         {
-            await context.BulkInsertAsync(combatData, cancellationToken: cancelationToken);
+            await context.BulkInsertAsync(combatData, new BulkConfig
+            {
+                SetOutputIdentity = true
+            }, cancellationToken: cancelationToken);
+        }
+
+        return combatData;
+    }
+
+    public static async Task BulkInsertCombatDataAsync<TModel>(this CombatParserContextOne context, IEnumerable<Unit> combatUnits, Func<Unit, IEnumerable<TModel>> selector, CancellationToken cancelationToken)
+        where TModel : class, ICombatUnitRefs
+    {
+        var combatUnitData = combatUnits.SelectMany(p =>
+            selector(p).Select(u =>
+            {
+                u.SetUnitId(p.Id);
+
+                return u;
+            }
+        )).ToList();
+
+        if (combatUnitData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatUnitData, cancellationToken: cancelationToken);
         }
     }
 
-    public static async Task<List<CombatPlayer>> BulkInsertCombatPlayersAsync(this CombatParserContextOne context, int combatId, IEnumerable<CombatPlayer> combatPlayers, CancellationToken cancelationToken)
+    public static async Task BulkInsertUnitInfoAsync(this CombatParserContextOne context, IEnumerable<Unit> combatUnits, CancellationToken cancelationToken)
     {
-        var players = combatPlayers.Select(cd =>
+        var combatUnitData = combatUnits.Select(p =>
         {
-            cd.SetCombatId(combatId);
+            p.UnitInfo.SetUnitId(p.Id);
 
-            return cd;
+            return p.UnitInfo;
+        }).ToList();
+
+        if (combatUnitData.Count > 0)
+        {
+            await context.BulkInsertAsync(combatUnitData, cancellationToken: cancelationToken);
+        }
+    }
+
+    public static async Task<List<CombatPlayer>> BulkInsertCombatPlayersAsync(this CombatParserContextOne context, int combatId, Dictionary<string, string> unitsByGameId, IEnumerable<CombatPlayer> combatPlayers, CancellationToken cancelationToken)
+    {
+        var players = combatPlayers.Select(cp =>
+        {
+            if (!unitsByGameId.TryGetValue(cp.UnitGameId, out var unitId))
+            {
+                return null;
+            }
+
+            cp.SetUnitId(unitId);
+            cp.SetCombatId(combatId);
+
+            return cp;
         }).ToList();
 
         if (players.Count > 0)
@@ -61,14 +115,30 @@ internal static class CombatParserContextOneExtension
         return players;
     }
 
-    public static async Task BulkInsertCombatPlayerStatsAsync(this CombatParserContextOne context, List<CombatPlayer> players, CancellationToken cancelationToken)
+    public static async Task BulkInsertCombatPlayerStatsAsync(this CombatParserContextOne context, IEnumerable<CombatPlayer> players, CancellationToken cancelationToken)
     {
-        var stats = players.Select(p =>
+        var stats = players.Select<CombatPlayer, IPlayerStats>(p =>
         {
-            var stats = p.Stats;
-            stats.SetCombatPlayerId(p.Id);
+            switch (p.Stats)
+            {
+                case WoWMoPClassicPlayerStats mop:
+                    {
+                        var stats = (WoWMoPClassicPlayerStats)p.Stats;
+                        stats.SetCombatPlayerId(p.Id);
+                        return stats;
+                    }
 
-            return stats;
+                case WoWMidnightPlayerStats midnight:
+                    {
+                        var stats = (WoWMidnightPlayerStats)p.Stats;
+                        stats.SetCombatPlayerId(p.Id);
+                        return stats;
+                    }
+
+                default:
+                    throw new InvalidOperationException(
+                        $"Unknown stats type: {p.Stats?.GetType().Name}");
+            }
         }).ToList();
 
         if (stats.Count > 0)
@@ -77,7 +147,7 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkInsertCombatPlayerScoresAsync(this CombatParserContextOne context, int bossId, List<CombatPlayer> players, CancellationToken cancelationToken)
+    public static async Task BulkInsertCombatPlayerScoresAsync(this CombatParserContextOne context, int bossId, IEnumerable<CombatPlayer> players, CancellationToken cancelationToken)
     {
         var scores = players.Select(p =>
         {
@@ -105,7 +175,7 @@ internal static class CombatParserContextOneExtension
         }
     }
 
-    public static async Task BulkUpdateBestSpecializationScoreAsync(this CombatParserContextOne context, int bossId, List<CombatPlayer> players, CancellationToken cancelationToken)
+    public static async Task BulkUpdateBestSpecializationScoreAsync(this CombatParserContextOne context, int bossId, IEnumerable<CombatPlayer> players, CancellationToken cancelationToken)
     {
         var bestScores = await context.Set<BestSpecializationScore>()
             .Where(x => x.BossId == bossId).ToListAsync(cancellationToken: cancelationToken);

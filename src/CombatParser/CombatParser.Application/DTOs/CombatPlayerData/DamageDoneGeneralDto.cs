@@ -2,7 +2,7 @@
 
 public class DamageDoneGeneralDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -24,7 +24,7 @@ public class DamageDoneGeneralDto
 
     public double AverageValue { get; set; }
 
-    public bool IsPet { get; set; }
+    public bool IsPlayerTarget { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; }
 }

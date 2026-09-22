@@ -15,4 +15,6 @@ public class BossMapDto
     public double Y0 { get; set; }
 
     public double Y1 { get; set; }
+
+    public int Zoom { get; set; }
 }

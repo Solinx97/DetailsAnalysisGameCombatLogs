@@ -4,7 +4,7 @@ namespace CombatAnalysis.Core.Models.GameLogs.CombatPlayerData;
 
 public class DamageDoneGeneralModel : IGeneralDetailsEntity
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int GameSpellId { get; set; }
 
@@ -28,5 +28,5 @@ public class DamageDoneGeneralModel : IGeneralDetailsEntity
 
     public bool IsPet { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public string UnitId { get; set; }
 }

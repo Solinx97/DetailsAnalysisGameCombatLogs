@@ -1,9 +1,9 @@
 export type UnitHealthModel = {
     id: string;
-    creatorGameId: string;
+    ownerGameId: string;
     currentHealth: number;
     maxHealth: number;
+    status: number;
     time: string;
-    isDead: boolean;
-    combatId: number;
+    combatUnitId: string;
 }

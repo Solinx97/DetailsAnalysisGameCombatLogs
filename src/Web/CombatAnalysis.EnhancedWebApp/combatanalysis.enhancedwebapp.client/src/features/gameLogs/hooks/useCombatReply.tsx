@@ -1,7 +1,9 @@
+import { CombatUnitType } from '@/shared/helpers/EnumHelper';
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import type { UnitPositionModel } from '../types/UnitPositionModel';
+import { useLazyGetBossMapByIdQuery, useLazyGetCombatByIdQuery } from '../api/GameLogs.api';
 import type { CombatModel } from '../types/CombatModel';
-import { useLazyGetCombatByIdQuery, useLazyGetBossMapByIdQuery } from '../api/GameLogs.api';
+import type { UnitModel } from '../types/UnitModel';
+import type { UnitPositionModel } from '../types/UnitPositionModel';
 
 interface Position {
     x: number;
@@ -13,6 +15,7 @@ interface InstanceBounds {
     x1: number;
     y0: number;
     y1: number;
+    zoom: number;
 }
 
 interface WorldSize {
@@ -23,10 +26,9 @@ interface WorldSize {
 const useCombatReply = (
     selectedGameId: string,
     canvasRef: RefObject<HTMLCanvasElement | null>,
-    unitPositions: Map<string, UnitPositionModel[]>,
+    combatUnits: UnitModel[] | undefined,
     colors: Map<string, string>
 ) => {
-    const zoom = 5;
     const otherElementsHeight = 250;
 
     const [currentTime, setCurrentTime] = useState(0);
@@ -36,7 +38,8 @@ const useCombatReply = (
         x0: 0,
         x1: 0,
         y0: 0,
-        y1: 0
+        y1: 0,
+        zoom: 1,
     });
     const [worldSize, setWorldSize] = useState<WorldSize>({
         width: 1,
@@ -91,7 +94,7 @@ const useCombatReply = (
             } catch (e) {
                 console.error(e);
             }
-        };
+        }
 
         loadData();
     }, [combatId]);
@@ -112,8 +115,8 @@ const useCombatReply = (
                     x1: bossMap.x1,
                     y0: bossMap.y0,
                     y1: bossMap.y1,
+                    zoom: bossMap.zoom,
                 };
-
                 setInstanceBounds(receivedInstanceBounds);
                 setWorldSize({
                     width: receivedInstanceBounds.x0 - receivedInstanceBounds.x1,
@@ -134,7 +137,7 @@ const useCombatReply = (
     useEffect(() => {
         const canvas = canvasRef.current;
 
-        if (!unitPositions || !canvas) {
+        if (!combatUnits || !canvas) {
             return;
         }
 
@@ -154,11 +157,8 @@ const useCombatReply = (
 
             ctx.save();
 
-            unitPositions.forEach((positions, unit) => {
-                const pos =
-                    getPosition(
-                        positions
-                    );
+            combatUnits.forEach(unit => {
+                const pos = getPosition(unit.unitPositions);
 
                 if (pos !== null) {
                     const pixel =
@@ -174,12 +174,12 @@ const useCombatReply = (
                         );
 
                     drawUnit(
-                        unit,
-                        unit.startsWith("Player"),
+                        unit.gameId,
+                        unit.type === CombatUnitType["Player"],
                         ctx,
                         zoomed.x,
                         zoomed.y,
-                        colors.get(unit) ?? "#000000"
+                        colors.get(unit.gameId) ?? "#000000"
                     );
                 }
 
@@ -193,7 +193,7 @@ const useCombatReply = (
         return () => {
             cancelAnimationFrame(frameIdRef.current);
         }
-    }, [unitPositions, selectedGameId, colors, view, instanceBounds]);
+    }, [combatUnits, selectedGameId, colors, view, instanceBounds]);
 
     const getPosition = (positions: UnitPositionModel[]): Position | null => {
         if (positions.length === 0) {
@@ -273,11 +273,11 @@ const useCombatReply = (
         return {
             x:
                 centerX +
-                (x - centerX) * zoom,
+                (x - centerX) * instanceBounds.zoom,
 
             y:
                 centerY +
-                (y - centerY) * zoom
+                (y - centerY) * instanceBounds.zoom
         };
     }
 

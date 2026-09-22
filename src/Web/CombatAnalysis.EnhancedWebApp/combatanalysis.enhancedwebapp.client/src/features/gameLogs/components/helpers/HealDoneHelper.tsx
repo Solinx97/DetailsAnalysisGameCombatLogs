@@ -1,4 +1,6 @@
-﻿import { faFire, faFlask } from '@fortawesome/free-solid-svg-icons';
+﻿import { NoneValue } from '@/shared/helpers/ConstHelpers';
+import { DamageModificationType } from '@/shared/helpers/EnumHelper';
+import { faFire, faBatteryEmpty } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, type JSX } from 'react';
 import useTime from '../../../../shared/hooks/useTime';
@@ -11,27 +13,24 @@ import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
 interface HealDoneHelperProps {
-    combatPlayerId: number;
+    unitId: string;
     pageSize: number;
     getUserNameWithoutRealm: (username: string) => string;
     t: (key: string) => string;
 }
 
-const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
-    const NONE_VALUE = "NONE";
-    const ZERO_TIME_VALUE = "00:00:00"
-
+const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ unitId, pageSize, getUserNameWithoutRealm, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
-    const [selectedFilter, setSelectedFilter] = useState({ target: NONE_VALUE, creator: NONE_VALUE, spell: NONE_VALUE, from: ZERO_TIME_VALUE, to: ZERO_TIME_VALUE });
+    const [selectedFilter, setSelectedFilter] = useState({ target: NoneValue.NONE_VALUE.toString(), creator: NoneValue.NONE_VALUE.toString(), spell: NoneValue.NONE_VALUE.toString(), from: NoneValue.ZERO_TIME_VALUE.toString(), to: NoneValue.ZERO_TIME_VALUE.toString() });
 
     const { data: count, isLoading: countIsLoading } = useCountHealDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to }
     );
     const { data, isLoading: dataIsLoading } = useGetAllHealDoneQuery(
-        { combatPlayerId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
+        { unitId, target: selectedFilter.target, creator: selectedFilter.creator, spell: selectedFilter.spell, from: selectedFilter.from, to: selectedFilter.to, page, pageSize }
     );
 
     useEffect(() => {
@@ -76,7 +75,7 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
             <div className="player-filter-details">
                 <DetailsFilter
                     filters={["Target", "Spell"]}
-                    combatPlayerId={combatPlayerId}
+                    unitId={unitId}
                     setSelectedFilter={setSelectedFilter}
                     selectedFilter={selectedFilter}
                     useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}
@@ -91,18 +90,18 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
                             <li>
                                 <div>{item.spell}</div>
                                 <div className="extra-details">
-                                    {item.isCrit &&
+                                    {item.modificationType === DamageModificationType["Crit"] &&
                                         <FontAwesomeIcon
                                             icon={faFire}
                                             title={t("CritHealing")}
                                             className="crit"
                                         />
                                     }
-                                    {(item.value === item.overheal) &&
+                                    {(item.value - item.overheal === 0) &&
                                         <FontAwesomeIcon
-                                            icon={faFlask}
+                                            icon={faBatteryEmpty}
                                             title={t("AllToOverHeal")}
-                                            className="overvalue"
+                                            color="orange"
                                         />
                                     }
                                 </div>
@@ -111,16 +110,16 @@ const HealDoneHelper: React.FC<HealDoneHelperProps> = ({ combatPlayerId, pageSiz
                                 {getTimeWithoutMs(item.time)}
                             </li>
                             <li className="extra-details">
-                                {(item.value === item.overheal)
+                                {(item.value - item.overheal === 0)
                                     ? <div className="value-equal-zero">
                                         <div>0</div>
                                         <div className="overvalue">({item.value})</div>
                                     </div>
-                                    : <div className={item.isCrit ? 'crit' : ''}>{item.value}</div>
+                                    : <div className={item.modificationType === DamageModificationType["Crit"] ? 'crit' : ''}>{item.value - item.overheal}</div>
                                 }
                             </li>
                             <li>
-                                {getUserNameWithoutRealm(item.target)}
+                                {getUserNameWithoutRealm(item.target.name)}
                             </li>
                         </ul>
                     </li>

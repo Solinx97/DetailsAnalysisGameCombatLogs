@@ -1,36 +1,26 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Entities.Base;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities.CombatPlayerData;
 
-public class HealDone : CombatPlayerDataBase, ITime, IGeneralEntity
+public class HealDone : CombatPlayerUnitDataBase, ITime, IGeneralEntity
 {
     public const int SPELL_MAX_LENGTH = 128;
-    public const int CREATOR_MAX_LENGTH = 128;
-    public const int TARGET_MAX_LENGTH = 128;
 
     private HealDone() { }
 
-    public HealDone(int gameSpellId, string spell, int value, TimeSpan time, string creator,
-        string target, int overheal, bool isCrit, bool isAbsorbed, int combatPlayerId)
+    private HealDone(int gameSpellId, string spell, int value, TimeSpan time,
+        int overheal, int modificationType, string targetGameId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
-        ArgumentException.ThrowIfNullOrEmpty(creator, nameof(creator));
-        ArgumentException.ThrowIfNullOrEmpty(target, nameof(target));
-        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
-        ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(value));
-        ArgumentOutOfRangeException.ThrowIfNegative(overheal, nameof(overheal));
-
+        Id = Guid.NewGuid().ToString();
         GameSpellId = gameSpellId;
         Spell = spell;
         Value = value;
         Time = time;
-        Creator = creator;
-        Target = target;
+        TargetGameId = targetGameId;
         Overheal = overheal;
-        IsCrit = isCrit;
-        IsAbsorbed = isAbsorbed;
-        CombatPlayerId = combatPlayerId;
+        ModificationType = modificationType;
     }
 
     public int GameSpellId { get; private set; }
@@ -41,15 +31,21 @@ public class HealDone : CombatPlayerDataBase, ITime, IGeneralEntity
 
     public TimeSpan Time { get; private set; }
 
-    public string Creator { get; private set; }
-
-    public string Target { get; private set; }
+    public Unit Target { get; private set; }
 
     public int Overheal { get; private set;  }
 
-    public bool IsCrit { get; private set; }
+    public int ModificationType { get; private set; }
 
-    public bool IsAbsorbed { get; private set; }
+    public static HealDone Create(int gameSpellId, string spell, int value, TimeSpan time,
+        int overheal, int modificationType, string targetGameId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spell, nameof(spell));
+        ArgumentOutOfRangeException.ThrowIfNegative(gameSpellId, nameof(gameSpellId));
+        ArgumentException.ThrowIfNullOrEmpty(targetGameId, nameof(targetGameId));
+        ArgumentOutOfRangeException.ThrowIfNegative(overheal, nameof(overheal));
 
-    public CombatPlayer CombatPlayer { get; private set; }
+        return new HealDone(gameSpellId, spell, value, time,
+            overheal, modificationType, targetGameId);
+    }
 }

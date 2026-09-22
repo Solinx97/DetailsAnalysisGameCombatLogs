@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import useCombatGeneralData from '../hooks/useCombatGeneralData';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import type { DamageDoneGeneralModel } from '../types/DamageDoneGeneralModel';
-import type { DamageTakenGeneralModel } from '../types/DamageTakenGeneralModel';
 import type { HealDoneGeneralModel } from '../types/HealDoneGeneralModel';
 import type { ResourceRecoveryGeneralModel } from '../types/ResourceRecoveryGeneralModel';
 import type { SpellsDataModel } from '../types/SpellsDataModel';
@@ -16,10 +15,11 @@ import CombatPreAuraItem from './auras/CombatPreAuraItem';
 
 interface CombatGeneralDetailsProps {
     combatPlayer: CombatPlayerModel;
+    combatId: number;
     detailsType: number;
 }
 
-const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlayer, detailsType }) => {
+const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlayer, combatId, detailsType }) => {
     const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
     const [spells, setSpells] = useState<SpellsDataModel[]>([]);
@@ -32,7 +32,7 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
         height: window.innerHeight
     };
 
-    const [getGeneralListAsync, getPlayerGeneralDetailsAsync] = useCombatGeneralData(combatPlayer, detailsType);
+    const [getGeneralListAsync, getPlayerGeneralDetailsAsync] = useCombatGeneralData(combatPlayer, combatId, detailsType);
 
     useEffect(() => {
         const getGeneralDetails = async () => {
@@ -52,7 +52,7 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
         createBarChartData(playerGeneralDetails);
     }
 
-    const createBarChartData = (combatGeneralDetailsData: DamageDoneGeneralModel[] | DamageTakenGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null) => {
+    const createBarChartData = (combatGeneralDetailsData: DamageDoneGeneralModel[] | ResourceRecoveryGeneralModel[] | HealDoneGeneralModel[] | null) => {
         if (!combatGeneralDetailsData) {
             return;
         }
@@ -75,31 +75,31 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
         switch (detailsType) {
             case 0:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("DPS")}
                     useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />
             case 1:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("HPS")}
                     useGetChartQuery={useGetCombatPlayerChartHealDoneQuery}
                 />
             case 2:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("DamageTaken")}
                     useGetChartQuery={useGetCombatPlayerChartDamageTakenQuery}
                 />
             case 3:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("ResourcesRecovery")}
                     useGetChartQuery={useGetCombatPlayerChartResourceRecoveryQuery}
                 />
             default:
                 return <CombatPlayerGenericChart
-                    combatPlayerId={combatPlayer.id}
+                    unitId={combatPlayer.unitId}
                     name={t("DPS")}
                     useGetChartQuery={useGetCombatPlayerChartDamageDoneQuery}
                 />
@@ -109,8 +109,8 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
     return (
         <div className="details__container">
             <CombatPreAuraItem
-                combatPlayerId={combatPlayer.id}
-                combatId={combatPlayer.combatId}
+                combatId={combatId}
+                unitId={combatPlayer.unitId}
             />
             {(spells.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-switch">

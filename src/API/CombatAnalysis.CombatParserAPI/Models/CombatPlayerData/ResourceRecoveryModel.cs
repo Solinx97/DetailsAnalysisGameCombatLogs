@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
-public class ResourceRecoveryModel
+public class ResourceRecoveryModel : CombatUnitBase
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
@@ -18,12 +18,7 @@ public class ResourceRecoveryModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    [Required]
-    public string Creator { get; set; } = string.Empty;
+    public int ModificationType { get; set; }
 
-    [Required]
-    public string Target { get; set; } = string.Empty;
-
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
+    public string? UnitId { get; set; }
 }

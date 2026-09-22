@@ -1,6 +1,5 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Data;
-using CombatParser.Domain.DTOs;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
 using CombatParser.Infrastructure.Enums;
@@ -24,11 +23,14 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
             from ability in _context.Set<CombatAbility>().AsNoTracking()
             where abilityTypes.Contains(ability.AbilityType)
 
-            join aura in _context.Set<CombatPlayerAura>().AsNoTracking()
+            join aura in _context.Set<UnitAura>().AsNoTracking()
                 on ability.GameId equals aura.GameAuraId
 
+            join unit in _context.Set<Unit>().AsNoTracking()
+                on aura.UnitId equals unit.Id
+
             join player in _context.Set<CombatPlayer>().AsNoTracking()
-                on aura.CombatPlayerId equals player.Id
+                on unit.Id equals player.UnitId
 
             join combatEntity in _context.Set<Combat>().AsNoTracking()
                 on player.CombatId equals combatEntity.Id
@@ -37,7 +39,7 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
 
             where (
                 (player.Id == combatPlayerId && aura.AuraType == 0)
-                || (aura.Target == combat.Player.Username && aura.AuraType == 1)
+                || (unit.Name == combat.Player.Username && aura.AuraType == 1)
             )
 
             select ability
@@ -52,14 +54,17 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
             from ability in _context.Set<CombatAbility>().AsNoTracking()
             where ability.AbilityType == (int)CombatAbilityType.EfficiencyPotion
 
-            join aura in _context.Set<CombatPlayerAura>().AsNoTracking()
+            join aura in _context.Set<UnitAura>().AsNoTracking()
                 on ability.GameId equals aura.GameAuraId
 
+            join unit in _context.Set<Unit>().AsNoTracking()
+                on aura.UnitId equals unit.Id
+
             join player in _context.Set<CombatPlayer>().AsNoTracking()
-                on aura.CombatPlayerId equals player.Id
+                on unit.Id equals player.UnitId
 
             join combatEntity in _context.Set<Combat>().AsNoTracking()
-                on player.CombatId equals combatEntity.Id
+                on unit.CombatId equals combatEntity.Id
 
             where combatEntity.CombatLogId == combatLogId
 
@@ -71,46 +76,46 @@ internal class CombatAbilityRepository(CombatParserContextOne context) : ICombat
         return potions;
     }
 
-    public async Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<PreAuraEnchanced>> GetByPreAuraAsync(int combatId, CancellationToken cancellationToken)
     {
         var preAuras = await (
             from ability in _context.Set<CombatAbility>().AsNoTracking()
 
-            join preAura in _context.Set<CombatPlayerPreAura>().AsNoTracking()
+            join preAura in _context.Set<UnitPreAura>().AsNoTracking()
                 on ability.GameId equals preAura.GameId
 
-            join player in _context.Set<CombatPlayer>().AsNoTracking()
-                on preAura.CombatPlayerId equals player.Id
+            join unit in _context.Set<Unit>().AsNoTracking()
+                on preAura.UnitId equals unit.Id
 
             join combatEntity in _context.Set<Combat>().AsNoTracking()
-                on player.CombatId equals combatEntity.Id
+                on unit.CombatId equals combatEntity.Id
 
             where combatEntity.Id == combatId
 
-            select new CombatPlayerPreAuraDto(preAura.Id, preAura.CreatorGameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, preAura.CombatPlayerId)
+            select new PreAuraEnchanced(preAura.Id, unit.GameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, unit.Id)
         ).Distinct().ToListAsync(cancellationToken);
 
         return preAuras;
     }
 
-    public async Task<IEnumerable<CombatPlayerPreAuraDto>> GetByPreAuraAsync(int combatId, int combatPlayerId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<PreAuraEnchanced>> GetByPreAuraAsync(int combatId, string unitId, CancellationToken cancellationToken)
     {
         var preAuras = await (
             from ability in _context.Set<CombatAbility>().AsNoTracking()
 
-            join preAura in _context.Set<CombatPlayerPreAura>().AsNoTracking()
+            join preAura in _context.Set<UnitPreAura>().AsNoTracking()
                 on ability.GameId equals preAura.GameId
 
-            join player in _context.Set<CombatPlayer>().AsNoTracking()
-                on preAura.CombatPlayerId equals player.Id
+            join unit in _context.Set<Unit>().AsNoTracking()
+                on preAura.UnitId equals unit.Id
 
             join combatEntity in _context.Set<Combat>().AsNoTracking()
-                on player.CombatId equals combatEntity.Id
+                on unit.CombatId equals combatEntity.Id
 
             where combatEntity.Id == combatId
-                && preAura.CombatPlayerId == combatPlayerId
+                && preAura.UnitId == unitId
 
-            select new CombatPlayerPreAuraDto(preAura.Id, preAura.CreatorGameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, preAura.CombatPlayerId)
+            select new PreAuraEnchanced(preAura.Id, unit.GameId, preAura.GameId, ability.Name, ability.AbilityType, preAura.Status, unit.Id)
         ).Distinct().ToListAsync(cancellationToken);
 
         return preAuras;

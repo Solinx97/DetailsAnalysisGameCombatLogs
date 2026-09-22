@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Enums;
 using MediatR;
 
 namespace CombatParser.Application.Queries.Resources.GetUniqueResourcesSpells;
@@ -9,7 +10,8 @@ internal class GetUniqueResourcesSpellsHandler(IGeneralRepository<Domain.Entitie
 
     public async Task<IEnumerable<string>> Handle(GetUniqueResourcesSpellsQuery request, CancellationToken cancellationToken)
     {
-        var spells = await _repository.GetUniqueSpellsAsync(request.CombatPlayerId, cancellationToken);
+        var creatorTypes = new int[] { (int)CombatUnitType.Player };
+        var spells = await _repository.GetUniqueCreatorSpellsByTargetIdAsync(request.UnitId, cancellationToken, creatorTypes);
 
         return spells;
     }

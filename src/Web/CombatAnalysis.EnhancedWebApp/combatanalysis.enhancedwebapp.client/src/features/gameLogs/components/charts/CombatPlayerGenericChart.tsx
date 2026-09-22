@@ -14,13 +14,13 @@ import type { ChartModel } from '../../types/chart/ChartModel';
 type QueryHook<TResult, TArg> = (arg: TArg) => { data?: TResult, isLoading: boolean };
 
 interface CombatPlayerGenericChartProps {
-    combatPlayerId: number;
+    unitId: string;
     name: string;
-    useGetChartQuery: QueryHook<ChartModel[], number>;
+    useGetChartQuery: QueryHook<ChartModel[], string>;
 }
 
-const CombatPlayerGenericChart: React.FC<CombatPlayerGenericChartProps> = ({ combatPlayerId, name, useGetChartQuery }) => {
-    const { data, isLoading } = useGetChartQuery(combatPlayerId);
+const CombatPlayerGenericChart: React.FC<CombatPlayerGenericChartProps> = ({ unitId, name, useGetChartQuery }) => {
+    const { data, isLoading } = useGetChartQuery(unitId);
 
     const { formatNumber } = useNumber();
 

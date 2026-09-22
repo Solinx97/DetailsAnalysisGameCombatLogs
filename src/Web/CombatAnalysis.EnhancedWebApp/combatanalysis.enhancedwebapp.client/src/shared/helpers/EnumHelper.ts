@@ -13,3 +13,48 @@ export const Reaction = {
     Like: 1,
     Dislike: 2
 } as const;
+
+export const DamageModificationType = {
+    Normal: 0,
+    Crit: 1,
+    Crushing: 2,
+    Dodge: 3,
+    Parry: 4,
+    Miss: 5,
+    Resist: 6,
+    Immune: 7,
+    Block: 8,
+    Absorb: 9,
+} as const;
+
+export const CombatUnitType = {
+    PlayerCreature: 0,
+    EnemyCreature: 1,
+    Vehicle: 2,
+    Player: 3,
+    Pet: 4,
+} as const;
+
+export const UnitHealthStatus = {
+    Increase: 0,
+    Decrease: 1,
+    Dead: 2,
+} as const;
+
+export const CombatLogStatus = {
+    Creating: 0,
+    Created: 1,
+    Deleting: 2,
+    Deleted: 3,
+} as const;
+
+export const DashboardValueType = {
+    Value: 0,
+    AverageValue: 1,
+    MaxValue: 2,
+    MinValue: 3,
+    ValuePerSecond: 4,
+    AverageValuePerSecond: 5,
+    MaxValuePerSecond: 6,
+    MinValuePerSecond: 7,
+} as const;

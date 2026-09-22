@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding AppState.AppName}"
@@ -33,17 +33,66 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             
-            <StackPanel Grid.Row="0" HorizontalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
-                    <ui:FASymbolIcon Symbol="Account" Foreground="White"
-                                  Height="25" Width="25" />
-                    <TextBlock IsVisible="{Binding !AppState.IsAuth}" Text="User" Foreground="White" HorizontalAlignment="Center" Margin="0 20" />
-                    <TextBlock IsVisible="{Binding AppState.IsAuth}" Text="{Binding AppState.User.Username}" HorizontalAlignment="Center" Margin="0 20" />
+            <StackPanel Grid.Row="0" Spacing="50" HorizontalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FASymbolIcon Symbol="Account" Foreground="White"
+                                      Height="25" Width="25" />
+                        <TextBlock IsVisible="{Binding !AppState.IsAuth}" Text="{Binding Localization.Main[User]}" Foreground="White" HorizontalAlignment="Center" Margin="0 20" />
+                        <TextBlock IsVisible="{Binding AppState.IsAuth}" Text="{Binding AppState.User.Username}" HorizontalAlignment="Center" Margin="0 20" />
+                    </StackPanel>
+
+                    <Button IsVisible="{Binding AppState.IsAuth}" IsEnabled="{Binding AppState.AllowLogout}"
+                            Foreground="White" Background="Orange" HorizontalContentAlignment="Center"
+                            Content="{Binding Localization.Main[Logout]}" Width="100" FontSize="12"
+                            Command="{Binding LogoutCommand}" />
                 </StackPanel>
-                <Button IsVisible="{Binding AppState.IsAuth}" IsEnabled="{Binding AppState.AllowLogout}"
-                        Foreground="White" Background="Green" HorizontalContentAlignment="Center"
-                        Content="Logout" Width="100" FontSize="12"
-                        Command="{Binding LogoutCommand}" />
+
+                <StackPanel IsVisible="{Binding AppState.IsAuth}" Spacing="15" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button
+                        Content="WoW: Midnight"
+                        HorizontalAlignment="Center"
+                        Command="{Binding SwitchParserVersionCommand}"
+                        CommandParameter="WoWMidnight" 
+                        Classes.selected="{Binding ParserVersion,Converter={StaticResource EnumEqualsConverter},ConverterParameter=WoWMidnight}">
+                        <Button.Styles>
+                            <Style Selector="Button.selected">
+                                <Setter Property="Foreground" Value="Orange" />
+                            </Style>
+                        </Button.Styles>
+                     </Button>
+
+                     <Button
+                        Content="WoW: Mists of Pandaria Classic"
+                        HorizontalAlignment="Center"
+                        Command="{Binding SwitchParserVersionCommand}"
+                        CommandParameter="WoWMoPClassic"
+                        Classes.selected="{Binding ParserVersion,
+                            Converter={StaticResource EnumEqualsConverter},
+                            ConverterParameter=WoWMoPClassic}"
+                        >
+                        <Button.Styles>
+                            <Style Selector="Button.selected">
+                                <Setter Property="Foreground" Value="Orange" />
+                            </Style>
+                        </Button.Styles>
+                     </Button>
+                </StackPanel>
+
+                <StackPanel Spacing="15" HorizontalAlignment="Center" VerticalAlignment="Center">
+                     <TextBlock Text="{Binding Localization.Main[Language]}" Foreground="White" />
+                     <Button
+                        Content="RU"
+                        Command="{Binding ChangeLanguageCommand}"
+                        CommandParameter="ru"
+                        HorizontalAlignment="Center" />
+
+                    <Button
+                        Content="EN"
+                        Command="{Binding ChangeLanguageCommand}"
+                        CommandParameter="en" 
+                        HorizontalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
 
             <TextBlock Grid.Row="2" Text="{Binding AppState.AppVersion}"

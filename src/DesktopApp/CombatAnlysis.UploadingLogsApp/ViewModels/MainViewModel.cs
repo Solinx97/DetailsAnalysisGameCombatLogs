@@ -2,26 +2,25 @@
 using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
-using CombatAnalysis.UploadingLogsApp.Interfaces.Security;
+using CombatAnalysis.UploadingLogsApp.Localizations;
 using CombatAnalysis.UploadingLogsApp.Services;
+using CombatAnalysis.UploadingLogsApp.ViewModels.Base;
 using CombatAnalysis.UploadingLogsApp.ViewModels.User;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.Caching.Memory;
+using System;
 
 namespace CombatAnalysis.UploadingLogsApp.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : LocalizationViewModel
 {
     private readonly INavigationService _navigationService;
-    private readonly IMemoryCache _memoryCache;
-    private readonly ISecurityStorage _securityStorage;
 
     public MainViewModel()
     {
     }
 
-    public MainViewModel(NavigationStore navigationStore, AppState appState, INavigationService navigationService,
-         IMemoryCache memoryCache, ISecurityStorage securityStorage)
+    public MainViewModel(NavigationStore navigationStore, AppState appState, INavigationService navigationService)
     {
         NavigationStore = navigationStore;
         AppState = appState;
@@ -29,8 +28,6 @@ public partial class MainViewModel : ViewModelBase
         AppState.AppVersion = AppInformation.Version;
 
         _navigationService = navigationService;
-        _memoryCache = memoryCache;
-        _securityStorage = securityStorage;
 
         _navigationService.NavigateTo<LoginViewModel>();
     }
@@ -39,19 +36,31 @@ public partial class MainViewModel : ViewModelBase
 
     public AppState AppState { get; }
 
+    #region View model properties
+
+    [ObservableProperty]
+    public partial CombatParserVersion ParserVersion { get; set; } = CombatParserVersion.WoWMidnight;
+
+    #endregion
+
     [RelayCommand]
-    public void Logout()
+    private void Logout()
     {
-        AppState.User = null;
-        AppState.IsAuth = false;
-
-        _memoryCache.Remove(nameof(MemoryCacheValue.User));
-        _memoryCache.Remove(nameof(MemoryCacheValue.Customer));
-        _memoryCache.Remove(nameof(MemoryCacheValue.AccessToken));
-        _memoryCache.Remove(nameof(MemoryCacheValue.RefreshToken));
-
-        _securityStorage.RemoveAccessToken();
+        AppState.Logout();
 
         _navigationService.NavigateTo<LoginViewModel>();
+    }
+
+    [RelayCommand]
+    private void SwitchParserVersion(string version)
+    {
+        ParserVersion = Enum.Parse<CombatParserVersion>(version);
+        CurrentCombatParserVersion.Version = ParserVersion;
+    }
+
+    [RelayCommand]
+    private static void ChangeLanguage(string language)
+    {
+        LocalizationService.Instance.SetLanguage(language);
     }
 }

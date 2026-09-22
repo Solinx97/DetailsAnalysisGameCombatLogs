@@ -3,14 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
-import type { DamageTakenGeneralModel } from '../../types/DamageTakenGeneralModel';
+import type { DamageDoneGeneralModel } from '../../types/DamageDoneGeneralModel';
 
 interface DamageTakenGeneralHelperProps {
-    generalData: DamageTakenGeneralModel[] | null;
+    generalData: DamageDoneGeneralModel[] | null;
     getProcentage: (firstValue: number, secondValue: number) => string;
     combatPlayer: CombatPlayerModel;
     getValueShortName: (value: number) => string;
-    getSpellValueProcentage: (item: DamageTakenGeneralModel, targetValue: number) => string;
+    getSpellValueProcentage: (item: DamageDoneGeneralModel, targetValue: number) => string;
 }
 
 const DamageTakenGeneralHelper: React.FC<DamageTakenGeneralHelperProps> = ({ generalData, getProcentage, combatPlayer, getValueShortName, getSpellValueProcentage }) => {
@@ -126,9 +126,9 @@ const DamageTakenGeneralHelper: React.FC<DamageTakenGeneralHelperProps> = ({ gen
     return (
         <>
             <li className="player-general-data-details__inherit">
-                <div>
-                    {t("Total")}: {getValueShortName(combatPlayer.damageTaken)}
-                </div>
+                <h5>
+                    {t("Total")}: {getValueShortName(combatPlayer.unit.unitInfo.damageTaken)}
+                </h5>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}
@@ -140,7 +140,7 @@ const DamageTakenGeneralHelper: React.FC<DamageTakenGeneralHelperProps> = ({ gen
                         </li>
                         <li className="amount">
                             <span>{getValueShortName(item.value)}</span>
-                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.damageTaken)}%</span>
+                            <span className="procentage">{getSpellValueProcentage(item, combatPlayer.unit.unitInfo.damageTaken)}%</span>
                         </li>
                         {!hideColumns.includes("Average") &&
                             <li>
@@ -148,7 +148,7 @@ const DamageTakenGeneralHelper: React.FC<DamageTakenGeneralHelperProps> = ({ gen
                             </li>
                         }
                         <li>
-                            {item.damageTakenPerSecond.toFixed(fixedNumberUntil)}
+                            {item.damagePerSecond.toFixed(fixedNumberUntil)}
                         </li>
                         {!hideColumns.includes("Count") &&
                             <li>

@@ -1,0 +1,12 @@
+﻿namespace CombatAnalysis.WoW.CombatParser.Entities;
+
+public class UnitPosition
+{
+    public string OwnerGameId { get; set; } = string.Empty;
+
+    public double X { get; set; }
+
+    public double Y { get; set; }
+
+    public TimeSpan Time { get; set; }
+}

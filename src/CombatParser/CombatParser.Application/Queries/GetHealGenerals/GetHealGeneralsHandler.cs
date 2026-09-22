@@ -6,15 +6,15 @@ using MediatR;
 
 namespace CombatParser.Application.Queries.GetHealGenerals;
 
-internal class GetHealGeneralsHandler(ICombatPlayerInfoRepository<HealDoneGeneral> repository, IMapper mapper) : IRequestHandler<GetHealGeneralsQuery, IEnumerable<HealDoneGeneralDto>>
+internal class GetHealGeneralsHandler(IUnitInfoRepository<HealDoneGeneral> repository, IMapper mapper) : IRequestHandler<GetHealGeneralsQuery, IEnumerable<HealDoneGeneralDto>>
 {
-    private readonly ICombatPlayerInfoRepository<HealDoneGeneral> _repository = repository;
+    private readonly IUnitInfoRepository<HealDoneGeneral> _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<IEnumerable<HealDoneGeneralDto>> Handle(GetHealGeneralsQuery request, CancellationToken cancellationToken)
     {
-        var damageDoneGenerals = await _repository.GetByCombatPlayerIdAsync(request.CombatPlayerId, cancellationToken);
-        var map = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(damageDoneGenerals);
+        var healDoneGenerals = await _repository.GetHealByUnitIdAsync(request.UnitId, request.CombatId, cancellationToken);
+        var map = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(healDoneGenerals);
 
         return map;
     }

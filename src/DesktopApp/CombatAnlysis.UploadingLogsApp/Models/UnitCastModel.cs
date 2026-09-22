@@ -6,7 +6,7 @@ public class UnitCastModel
 {
     public string Id { get; set; } = string.Empty;
 
-    public string CreatorGameId { get; set; } = string.Empty;
+    public string OwnerGameId { get; set; } = string.Empty;
 
     public int GameSpellId { get; set; }
 
@@ -14,7 +14,7 @@ public class UnitCastModel
 
     public TimeSpan Time { get; set; }
 
-    public TimeSpan FinishTime { get; set; }
+    public TimeSpan? FinishTime { get; set; }
 
     public string? TargetGameId { get; set; }
 
@@ -22,5 +22,5 @@ public class UnitCastModel
 
     public bool IsSuccess { get; set; }
 
-    public int CombatId { get; set; }
+    public string UnitId { get; set; } = string.Empty;
 }

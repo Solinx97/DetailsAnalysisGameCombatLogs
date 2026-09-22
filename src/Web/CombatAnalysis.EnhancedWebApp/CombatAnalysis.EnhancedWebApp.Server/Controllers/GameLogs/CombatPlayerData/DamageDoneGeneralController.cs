@@ -20,12 +20,12 @@ public class DamageDoneGeneralController : ControllerBase
         _httpClient.APIUrl = cluster.Value.CombatParser;
     }
 
-    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
+    [HttpGet("getByUnitId/{unitId}")]
+    public async Task<IActionResult> GetByUnitId(string unitId, int combatId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getByCombatPlayerId/{combatPlayerId}");
+            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getByUnitId/{unitId}?combatId={combatId}");
             response.EnsureSuccessStatusCode();
 
             var damageDoneGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();

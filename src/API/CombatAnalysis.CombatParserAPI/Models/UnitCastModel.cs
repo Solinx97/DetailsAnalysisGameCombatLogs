@@ -7,7 +7,7 @@ public class UnitCastModel
     public string Id { get; set; } = string.Empty;
 
     [Required]
-    public string CreatorGameId { get; set; } = string.Empty;
+    public string OwnerGameId { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
@@ -18,8 +18,7 @@ public class UnitCastModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    [Required]
-    public TimeSpan FinishTime { get; set; }
+    public TimeSpan? FinishTime { get; set; }
 
     public string? TargetGameId { get; set; }
 
@@ -27,6 +26,5 @@ public class UnitCastModel
 
     public bool IsSuccess { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatId { get; set; }
+    public string? CombatUnitId { get; set; }
 }

@@ -2,7 +2,5 @@
 
 public interface IDetailsEntity : IGeneralDetailsEntity
 {
-    string Creator { get; set; }
-
-    string Target { get; set; }
+    string TargetGameId { get; }
 }

@@ -4,5 +4,5 @@ using MediatR;
 namespace CombatParser.Application.Queries.Resources.GetCombatPlayerChart;
 
 public record GetCombatPlayerChartQuery(
-    int CombatPlayerId
+    string UnitId
     ) : IRequest<IEnumerable<ChartGenericDto>>;

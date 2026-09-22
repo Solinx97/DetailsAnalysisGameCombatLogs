@@ -13,6 +13,7 @@ internal class CombatDataRepository<TModel>(CombatParserContextOne context) : IC
     public async Task<IEnumerable<TModel>> GetByCombatIdAsync(int combatId, CancellationToken cancellationToken)
     {
         var data = await _context.Set<TModel>()
+            .Include(x => x.CombatId)
             .AsNoTracking()
             .Where(x => x.CombatId == combatId)
             .ToListAsync(cancellationToken);

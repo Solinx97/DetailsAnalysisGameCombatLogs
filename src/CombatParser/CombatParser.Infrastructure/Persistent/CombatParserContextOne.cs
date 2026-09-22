@@ -1,6 +1,8 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMidnight;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,47 +14,41 @@ public class CombatParserContextOne(DbContextOptions<CombatParserContextOne> opt
 
     public DbSet<Boss>? Boss { get; }
 
-    public DbSet<CombatLog>? CombatLog { get; }
-
-    public DbSet<Combat>? Combat { get; }
-
     public DbSet<BossMap>? BossMap { get; }
 
-    public DbSet<CombatUnit>? CombatUnit { get; }
+    public DbSet<CombatLog>? CombatLog { get; }
 
-    public DbSet<UnitCast>? UnitCast { get; }
+    public DbSet<CombatLogStatus>? CombatLogStatus { get; }
 
-    public DbSet<UnitHealth>? UnitHealth { get; }
-
-    public DbSet<UnitPosition>? UnitPosition { get; }
-
-    public DbSet<CombatPlayerPreAura>? CombatPlayerPreAura { get; }
-
-    public DbSet<CombatPlayerAura>? CombatPlayerAura { get; }
+    public DbSet<Combat>? Combat { get; }
 
     public DbSet<CombatAbility>? CombatAbility { get; }
 
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
-    public DbSet<DamageDone>? DamageDone { get; }
+    public DbSet<Unit>? Unit { get; }
 
-    public DbSet<DamageDoneGeneral>? DamageDoneGeneral { get; }
+    public DbSet<UnitInfo>? UnitInfo { get; }
+
+    public DbSet<UnitHealth>? UnitHealth { get; }
+
+    public DbSet<UnitCast>? UnitCast { get; }
+
+    public DbSet<UnitPosition>? UnitPosition { get; }
+
+    public DbSet<UnitPreAura>? UnitPreAura { get; }
+
+    public DbSet<UnitAura>? UnitAura { get; }
+
+    public DbSet<DamageDone>? DamageDone { get; }
 
     public DbSet<HealDone>? HealDone { get; }
 
-    public DbSet<HealDoneGeneral>? HealDoneGeneral { get; }
-
-    public DbSet<DamageTaken>? DamageTaken { get; }
-
-    public DbSet<DamageTakenGeneral>? DamageTakenGeneral { get; }
-
     public DbSet<ResourceRecovery>? ResourceRecovery { get; }
 
-    public DbSet<ResourceRecoveryGeneral>? ResourceRecoveryGeneral { get; }
+    public DbSet<WoWMoPClassicPlayerStats>? WoWMoPClassicPlayerStats { get; }
 
-    public DbSet<CombatPlayerDeath>? CombatPlayerDeath { get; }
-
-    public DbSet<CombatPlayerStats>? CombatPlayerStats { get; }
+    public DbSet<WoWMidnightPlayerStats>? WoWMidnightPlayerStats { get; }
 
     public DbSet<Specialization>? Specialization { get; }
 

@@ -3,7 +3,11 @@ a {
     color: #0366d6;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
@@ -16,19 +20,28 @@ a {
     z-index: -1;
 }
 
-#root, #root .navbar-brand, #root input, #root .card, #root .card-body {
+#root,
+#root .navbar-brand,
+#root input,
+#root .card,
+#root .card-body {
     color: white;
 }
 
-    #root input[type=text], #root input[type=email], #root input[type=password], #root input[type=number], #root input[type=date], #root textarea {
-        background: #0c192c;
-        color: white;
-        border: 1px solid #028391;
-    }
+#root input[type=text],
+#root input[type=email],
+#root input[type=password],
+#root input[type=number],
+#root input[type=date],
+#root textarea {
+    background: #0c192c;
+    color: white;
+    border: 1px solid #028391;
+}
 
-        #root input[type=text]::placeholder {
-            color: #57A6A1;
-        }
+#root input[type=text]::placeholder {
+    color: #57A6A1;
+}
 
 .card {
     background: #0c192c;
@@ -75,9 +88,9 @@ code {
     opacity: 0.5;
 }
 
-    .btn-shadow_disabled svg {
-        cursor: default;
-    }
+.btn-shadow_disabled svg {
+    cursor: default;
+}
 
 .box-shadow {
     box-shadow: 3px 3px 3px 3px gray;
@@ -100,9 +113,9 @@ code {
     gap: 15px;
 }
 
-    .preview__responsibilities .form-check-label {
-        opacity: 1 !important;
-    }
+.preview__responsibilities .form-check-label {
+    opacity: 1 !important;
+}
 
 .load-more {
     display: flex;

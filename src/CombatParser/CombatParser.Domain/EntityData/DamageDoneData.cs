@@ -5,12 +5,13 @@ public record DamageDoneData(
     string Spell,
     int Value,
     TimeSpan Time,
-    string Creator,
-    string Target,
-    bool IsTargetBoss,
+    string TargetGameId,
+    int ModificationType,
     int DamageType,
-    bool IsPeriodicDamage,
-    bool IsSingleTarget,
-    bool IsPet,
-    int CombatPlayerId
+    int Resisted,
+    int Absorbed,
+    int Blocked,
+    int RealDamage,
+    int Overkill,
+    int Mitigated
     );

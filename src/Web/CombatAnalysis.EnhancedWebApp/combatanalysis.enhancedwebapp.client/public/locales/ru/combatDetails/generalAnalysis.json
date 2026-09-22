@@ -1,7 +1,9 @@
 {
   "DPS": "УВС",
   "HPS": "ИВС",
-  "DamageTaken": "Получено урона",
+  "Healing": "Исцеление",
+  "Damage": "Урон",
+  "DamageTaken": "Полученный урон",
   "ResourcesRecovery": "Восстановлено ресурсов",
   "Deaths": "Смертей",
   "Buffs": "Усиления",
@@ -29,7 +31,7 @@
   "FiltersReset": "Сброс",
   "TimesReset": "Сброс времени",
   "SelectCombat": "Выбрать бой",
-  "Dashboard": "Обзор",
+  "Explorer": "Обзор",
   "Informations": "Информация",
   "Watch": "Посмотреть"
 }

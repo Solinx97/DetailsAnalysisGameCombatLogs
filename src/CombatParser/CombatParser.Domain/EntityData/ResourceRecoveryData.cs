@@ -5,7 +5,6 @@ public record ResourceRecoveryData(
     string Spell,
     int Value,
     TimeSpan Time,
-    string Creator,
-    string Target,
-    int CombatPlayerId
+    string TargetGameId,
+    int ModificationType
     );

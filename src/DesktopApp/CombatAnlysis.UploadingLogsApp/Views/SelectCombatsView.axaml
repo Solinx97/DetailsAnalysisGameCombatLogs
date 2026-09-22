@@ -1,0 +1,106 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CombatAnalysis.UploadingLogsApp.ViewModels"
+             x:Class="CombatAnalysis.UploadingLogsApp.Views.SelectCombatsView"
+             x:DataType="vm:SelectCombatsViewModel">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="1.2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.25*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="25" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Localization.ParsingCombatLogs[SelectCombatsToUpload]}" 
+                           FontSize="16" TextAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                <Button IsVisible="{Binding !UploadingInProgress}"
+                        Command="{Binding BackToParsingCommand}"
+                        Content="{Binding Localization.ParsingCombatLogs[BackToParsing]}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" />
+            </StackPanel>
+            <CheckBox IsChecked="{Binding ShowOnlySupported, Mode=TwoWay}"
+                      Command="{Binding SetShowOnlySupportedCommand}"
+                      CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
+                      Content="{Binding Localization.ParsingCombatLogs[ShowOnlySupported]}" />
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Combats}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="{Binding Localization.ParsingCombatLogs[Select]}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                      IsVisible="{Binding IsSupported}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="{Binding Localization.ParsingCombatLogs[DungeonName]}"
+                                    Binding="{Binding DungeonName}" />
+                <DataGridTextColumn Header="{Binding Localization.ParsingCombatLogs[BossName]}"
+                                    Binding="{Binding Boss.Name}" />
+                <DataGridTemplateColumn Header="{Binding Localization.ParsingCombatLogs[Comment]}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Not supported"
+                                       IsVisible="{Binding !IsSupported}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="20">
+            <Button Command="{Binding SetCheckAllCommand}" Content="{Binding Localization.ParsingCombatLogs[CheckAll]}" HorizontalAlignment="Center" FontSize="12" />
+            <Button Command="{Binding SetUncheckAllCommand}" Content="{Binding Localization.ParsingCombatLogs[UncheckAll]}" HorizontalAlignment="Center" FontSize="12" />
+        </StackPanel>
+
+        <Button Grid.Row="3" Grid.Column="1"
+                Command="{Binding UploadSelectedCombatsCommand}"
+                Content="{Binding Localization.ParsingCombatLogs[UploadingSelected]}"
+                HorizontalAlignment="Center" FontSize="16" />
+
+        <StackPanel Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock IsVisible="{Binding UploadingStatusShow}" Text="{Binding ResponseStatus}" FontSize="16" TextAlignment="Center" Foreground="White" />
+        </StackPanel>
+
+        <Grid Grid.Row="5" Grid.RowSpan="4" Grid.Column="1" ColumnDefinitions="Auto,*"
+              IsVisible="{Binding UploadingInProgress}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="{Binding DungeonName}" FontSize="15" Margin="0 5" Foreground="White"/>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <ProgressBar Minimum="0" Maximum="{Binding CombatsNumber}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"/>
+                <StackPanel Orientation="Horizontal" Margin="10 0">
+                    <TextBlock Text="{Binding CurrentCombatNumber}" Foreground="White" />
+                    <TextBlock Text=" / " Foreground="White"/>
+                    <TextBlock Text="{Binding CombatsNumber}" Foreground="White"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0 5" HorizontalAlignment="Center">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Localization.ParsingCombatLogs[AlreadyUploaded]}" FontSize="14" FontWeight="Bold" Foreground="White"/>
+                <TextBlock HorizontalAlignment="Center" Margin="20 0" Text="{Binding Name}" FontSize="15" Foreground="White"/>
+            </StackPanel>
+
+            <TextBlock Grid.Row="3" HorizontalAlignment="Center" Text="{Binding UploadingInformation}" Foreground="Orange" FontSize="12" Margin="0 5" />
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -3,7 +3,7 @@
 namespace CombatParser.Application.Queries.DamageDone.CountDamage;
 
 public record CountDamageQuery(
-    int CombatPlayerId,
+    string UnitId,
     string Target,
     string Creator,
     string Spell,

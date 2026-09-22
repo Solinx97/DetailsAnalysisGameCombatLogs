@@ -1,0 +1,75 @@
+.death-count {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    &__numbers {
+        display: flex;
+        gap: 10px;
+
+        .item {
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 2px 2px gray;
+            cursor: pointer;
+        }
+
+        .selected {
+            box-shadow: 2px 2px green;
+        }
+    }
+}
+
+.death-history {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 25px;
+
+    &__information,
+    &__health {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .history {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: default;
+
+            .value {
+                display: flex;
+                gap: 30px;
+                padding: 10px 20px;
+                border-radius: 25px;
+                box-shadow: 2px 2px white;
+            }
+
+            .increase {
+                box-shadow: 2px 2px green;
+            }
+
+            .decrease {
+                box-shadow: 2px 2px orange;
+            }
+
+            .health-bar {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 25px;
+                gap: 15px;
+
+                &__procentage {
+                    font-size: 0.8em;
+                }
+
+                &__value {
+                    padding: 10px 20px;
+                    border-radius: 25px;
+                }
+            }
+        }
+    }
+}

@@ -31,15 +31,7 @@ public class CombatModel
 
     public List<CombatPlayerModel> CombatPlayers { get; set; } = [];
 
-    public List<CombatUnitModel> Units { get; set; } = [];
-
-    public List<UnitCastModel> UnitCasts { get; set; } = [];
-
-    public List<UnitHealthModel> UnitHealths { get; set; } = [];
-
-    public List<UnitPositionModel> UnitPositions { get; set; } = [];
-
-    public Dictionary<string, List<string>> PetsId { get; set; } = [];
+    public List<UnitModel> Units { get; set; } = [];
 
     public string Duration
     {
@@ -49,4 +41,15 @@ public class CombatModel
     public int CombatLogId { get; set; }
 
     public BossModel Boss { get; set; }
+
+    public void ReleaseParsedData()
+    {
+        foreach (var unit in Units)
+        {
+            unit.ReleaseParsedData();
+        }
+
+        CombatPlayers.Clear();
+        Units.Clear();
+    }
 }

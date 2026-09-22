@@ -1,50 +1,29 @@
 ﻿using CombatParser.Domain.Aggregates;
 using CombatParser.Domain.Entities.CombatPlayerData;
+using CombatParser.Domain.Entities.WoWMidnight;
+using CombatParser.Domain.Entities.WoWMoPClassic;
 using CombatParser.Domain.EntityData;
+using CombatParser.Domain.EntityData.WoWMidnight;
+using CombatParser.Domain.EntityData.WoWMoPClassic;
+using CombatParser.Domain.Interfaces;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CombatParser.Domain.Entities;
 
 public class CombatPlayer : CombatDataBase
 {
-    private readonly List<CombatPlayerPreAura> _preAuras = [];
-    private readonly List<CombatPlayerAura> _auras = [];
-    private readonly List<DamageDone> _damageDones = [];
-    private readonly List<DamageDoneGeneral> _damageDoneGenerals = [];
-    private readonly List<HealDone> _healDones = [];
-    private readonly List<HealDoneGeneral> _healDoneGenerals = [];
-    private readonly List<DamageTaken> _damageTakens = [];
-    private readonly List<DamageTakenGeneral> _damageTakenGenerals = [];
-    private readonly List<ResourceRecovery> _resourceRecoveries = [];
-    private readonly List<ResourceRecoveryGeneral> _resourceRecoveryGenerals = [];
-    private readonly List<CombatPlayerDeath> _combatPlayerDeathes = [];
-
     private CombatPlayer() { }
 
-    private CombatPlayer(double averageItemLevel, int resourcesRecovery, int damageDone, int healDone, int damageTaken, 
-        string playerId, int combatId)
+    private CombatPlayer(double averageItemLevel, string playerId, string unitGameId)
     {
         AverageItemLevel = averageItemLevel;
-        ResourcesRecovery = resourcesRecovery;
-        DamageDone = damageDone;
-        HealDone = healDone;
-        DamageTaken = damageTaken;
         PlayerId = playerId;
-        CombatId = combatId;
+        UnitGameId = unitGameId;
     }
 
     public int Id { get; private set; }
 
     public double AverageItemLevel { get; private set; }
-
-    public int ResourcesRecovery { get; private set; }
-
-    public int DamageDone { get; private set; }
-
-    public int HealDone { get; private set; }
-
-    public int DamageTaken { get; private set; }
-
-    public CombatPlayerStats Stats { get; private set; }
 
     public SpecializationScore? Score { get; private set; }
 
@@ -52,200 +31,69 @@ public class CombatPlayer : CombatDataBase
 
     public string PlayerId { get; private set; } = string.Empty;
 
+    public Unit Unit { get; private set; }
+
+    public string UnitId { get; private set; } = string.Empty;
+
     public Combat Combat { get; private set; }
 
-    public IEnumerable<CombatPlayerPreAura> PreAuras => _preAuras.AsReadOnly();
+    [NotMapped]
+    public IPlayerStats Stats { get; private set; }
 
-    public IEnumerable<CombatPlayerAura> Auras => _auras.AsReadOnly();
+    [NotMapped]
+    public string UnitGameId { get; private set; } = string.Empty;
 
-    public IEnumerable<DamageDone> DamageDones => _damageDones.AsReadOnly();
+    [NotMapped]
+    public int DeathCount { get; private set; }
 
-    public IReadOnlyCollection<DamageDoneGeneral> DamageDoneGenerals => _damageDoneGenerals.AsReadOnly();
+    public void SetUnitId(string unitId)
+    {
+        UnitId = unitId;
+    }
 
-    public IReadOnlyCollection<HealDone> HealDones => _healDones.AsReadOnly();
+    public void SetDeathCount(int deathCount)
+    {
+        DeathCount = deathCount;
+    }
 
-    public IReadOnlyCollection<HealDoneGeneral> HealDoneGenerals => _healDoneGenerals.AsReadOnly();
-
-    public IReadOnlyCollection<DamageTaken> DamageTakens => _damageTakens.AsReadOnly();
-
-    public IReadOnlyCollection<DamageTakenGeneral> DamageTakenGenerals => _damageTakenGenerals.AsReadOnly();
-
-    public IReadOnlyCollection<ResourceRecovery> ResourceRecoveries => _resourceRecoveries.AsReadOnly();
-
-    public IReadOnlyCollection<ResourceRecoveryGeneral> ResourceRecoveryGenerals => _resourceRecoveryGenerals.AsReadOnly();
-
-    public IReadOnlyCollection<CombatPlayerDeath> CombatPlayerDeathes => _combatPlayerDeathes.AsReadOnly();
-
-    public static CombatPlayer Create(double averageItemLevel, int resourcesRecovery, int damageDone, int healDone, int damageTaken,
-        string playerId, int combatId, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
-        IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals,
-        IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
-        IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
+    public static CombatPlayer Create(double averageItemLevel, string playerId, IPlayerStatsData stats, SpecializationScoreData score, string unitGameId)
     {
         ArgumentException.ThrowIfNullOrEmpty(playerId, nameof(playerId));
         ArgumentOutOfRangeException.ThrowIfNegative(averageItemLevel, nameof(averageItemLevel));
-        ArgumentOutOfRangeException.ThrowIfNegative(damageDone, nameof(damageDone));
-        ArgumentOutOfRangeException.ThrowIfNegative(healDone, nameof(healDone));
-        ArgumentOutOfRangeException.ThrowIfNegative(damageTaken, nameof(damageTaken));
+        ArgumentException.ThrowIfNullOrEmpty(unitGameId, nameof(unitGameId));
 
-        var combatPlayer = new CombatPlayer(averageItemLevel, resourcesRecovery, damageDone, healDone, damageTaken, 
-            playerId, combatId);
+        var combatPlayer = new CombatPlayer(averageItemLevel, playerId, unitGameId);
 
-        AddCombatPlayerData(combatPlayer, stats, score, preAuras, auras, damageDones, damageDoneGenerals, 
-            healDones, healDoneGenerals, damageTakens, damageTakenGenerals, resourceRecoveries, 
-            resourceRecoveryGenerals, combatPlayerDeathes);
+        AddCombatPlayerData(combatPlayer, stats, score);
 
         return combatPlayer;
     }
 
-    private static void AddCombatPlayerData(CombatPlayer combatPlayer, CombatPlayerStatsData stats, SpecializationScoreData score, IReadOnlyList<CombatPlayerPreAuraData> preAuras, IReadOnlyList<CombatPlayerAuraData> auras,
-        IReadOnlyList<DamageDoneData> damageDones, IReadOnlyList<DamageDoneGeneralData> damageDoneGenerals, IReadOnlyList<HealDoneData> healDones, IReadOnlyList<HealDoneGeneralData> healDoneGenerals, 
-        IReadOnlyList<DamageTakenData> damageTakens, IReadOnlyList<DamageTakenGeneralData> damageTakenGenerals, IReadOnlyList<ResourceRecoveryData> resourceRecoveries, IReadOnlyList<ResourceRecoveryGeneralData> resourceRecoveryGenerals,
-        IReadOnlyList<CombatPlayerDeathData> combatPlayerDeathes)
+    private static void AddCombatPlayerData(CombatPlayer combatPlayer, IPlayerStatsData stats, SpecializationScoreData score)
     {
         combatPlayer.AddStats(stats);
         combatPlayer.AddSpecializationScore(score);
+    }
 
-        foreach (var preAura in preAuras)
+    private void AddStats(IPlayerStatsData stats)
+    {
+        IPlayerStats createdStats;
+        switch (stats)
         {
-            combatPlayer.AddPreAura(preAura);
+            case WoWMoPClassicPlayerStatsData mop:
+                createdStats = WoWMoPClassicPlayerStats.Create(mop.Strength, mop.Agility, mop.Intelligence, mop.Stamina, mop.Spirit,
+                    mop.Dodge, mop.Parry, mop.Block, mop.Crit, mop.Haste, mop.Hit,
+                    mop.Expertise, mop.Armor, mop.Talents);
+                break;
+            case WoWMidnightPlayerStatsData midnight:
+                createdStats = WoWMidnightPlayerStats.Create(midnight.Strength, midnight.Agility, midnight.Intelligence, midnight.Stamina,
+                    midnight.Dodge, midnight.Parry, midnight.Block, midnight.Crit, midnight.Haste, midnight.Mastery, midnight.Versality,
+                    midnight.Lifesteal, midnight.Avoidance, midnight.Movement, midnight.Armor, midnight.Talents);
+                break;
+            default:
+                throw new InvalidOperationException($"Unknown stats type: {stats?.GetType().Name}");
         }
 
-        foreach (var aura in auras)
-        {
-            combatPlayer.AddAura(aura);
-        }
-
-        foreach (var damage in damageDones)
-        {
-            combatPlayer.AddDamageDone(damage);
-        }
-
-        foreach (var damageGeneral in damageDoneGenerals)
-        {
-            combatPlayer.AddDamageDoneGeneral(damageGeneral);
-        }
-
-        foreach (var heal in healDones)
-        {
-            combatPlayer.AddHealDone(heal);
-        }
-
-        foreach (var healGeneral in healDoneGenerals)
-        {
-            combatPlayer.AddHealDoneGeneral(healGeneral);
-        }
-
-        foreach (var damageTakenDone in damageTakens)
-        {
-            combatPlayer.AddDamageTaken(damageTakenDone);
-        }
-
-        foreach (var damageTakenDoneGeneral in damageTakenGenerals)
-        {
-            combatPlayer.AddDamageTakenGeneral(damageTakenDoneGeneral);
-        }
-
-        foreach (var resourceRecovery in resourceRecoveries)
-        {
-            combatPlayer.AddResourceRecovery(resourceRecovery);
-        }
-
-        foreach (var resourceRecoveryGeneral in resourceRecoveryGenerals)
-        {
-            combatPlayer.AddResourceRecoveryGeneral(resourceRecoveryGeneral);
-        }
-
-        foreach (var combatPlayerDeath in combatPlayerDeathes)
-        {
-            combatPlayer.AddCombatPlayerDeath(combatPlayerDeath);
-        }
-    }
-
-    private void AddPreAura(CombatPlayerPreAuraData preAura)
-    {
-        var createdPreAura = new CombatPlayerPreAura(preAura.CreatorGameId, preAura.GameId, preAura.Status, preAura.CombatPlayerId);
-        _preAuras.Add(createdPreAura);
-    }
-
-    private void AddAura(CombatPlayerAuraData aura)
-    {
-        var createdAura = new CombatPlayerAura(aura.GameAuraId, aura.Name, aura.Creator, aura.Target, aura.AuraCreatorType,
-            aura.AuraType, aura.StartTime, aura.FinishTime, aura.Stacks, aura.CombatPlayerId);
-        _auras.Add(createdAura);
-    }
-
-    private void AddDamageDone(DamageDoneData damageDone)
-    {
-        var createdDamageDone = new DamageDone(damageDone.GameSpellId, damageDone.Spell, damageDone.Value, damageDone.Time, damageDone.Creator,
-            damageDone.Target, damageDone.IsTargetBoss, damageDone.DamageType, damageDone.IsPeriodicDamage, damageDone.IsSingleTarget,
-            damageDone.IsPet, damageDone.CombatPlayerId);
-        _damageDones.Add(createdDamageDone);
-    }
-
-    private void AddDamageDoneGeneral(DamageDoneGeneralData damageDoneGeneral)
-    {
-        var createdDamageDoneGeneral = new DamageDoneGeneral(damageDoneGeneral.GameSpellId, damageDoneGeneral.Spell, damageDoneGeneral.Value, damageDoneGeneral.DamagePerSecond, damageDoneGeneral.CritNumber,
-            damageDoneGeneral.MissNumber, damageDoneGeneral.CastNumber, damageDoneGeneral.MinValue, damageDoneGeneral.MaxValue, damageDoneGeneral.AverageValue,
-            damageDoneGeneral.IsPet, damageDoneGeneral.CombatPlayerId);
-        _damageDoneGenerals.Add(createdDamageDoneGeneral);
-    }
-
-    private void AddHealDone(HealDoneData healDone)
-    {
-        var createdHealDone = new HealDone(healDone.GameSpellId, healDone.Spell, healDone.Value, healDone.Time, healDone.Creator,
-            healDone.Target, healDone.Overheal, healDone.IsCrit, healDone.IsAbsorbed, healDone.CombatPlayerId);
-        _healDones.Add(createdHealDone);
-    }
-
-    private void AddHealDoneGeneral(HealDoneGeneralData healDoneGeneral)
-    {
-        var createdHealDoneGeneral = new HealDoneGeneral(healDoneGeneral.GameSpellId, healDoneGeneral.Spell, healDoneGeneral.Value, healDoneGeneral.HealPerSecond, healDoneGeneral.CritNumber,
-            healDoneGeneral.CastNumber, healDoneGeneral.MinValue, healDoneGeneral.MaxValue, healDoneGeneral.AverageValue, healDoneGeneral.CombatPlayerId);
-        _healDoneGenerals.Add(createdHealDoneGeneral);
-    }
-
-    private void AddDamageTaken(DamageTakenData damageTaken)
-    {
-        var createdDamageTaken = new DamageTaken(damageTaken.GameSpellId, damageTaken.Spell, damageTaken.Value, damageTaken.Time, damageTaken.Creator,
-            damageTaken.Target, damageTaken.DamageTakenType, damageTaken.ActualValue, damageTaken.IsPeriodicDamage, damageTaken.Resisted,
-            damageTaken.Absorbed, damageTaken.Blocked, damageTaken.RealDamage, damageTaken.Mitigated, damageTaken.CombatPlayerId);
-        _damageTakens.Add(createdDamageTaken);
-    }
-
-    private void AddDamageTakenGeneral(DamageTakenGeneralData damageTakenGeneral)
-    {
-        var createdDamageTakenGeneral = new DamageTakenGeneral(damageTakenGeneral.GameSpellId, damageTakenGeneral.Spell, damageTakenGeneral.Value, damageTakenGeneral.ActualValue, damageTakenGeneral.DamageTakenPerSecond,
-            damageTakenGeneral.MissNumber, damageTakenGeneral.CritNumber, damageTakenGeneral.CastNumber, damageTakenGeneral.MinValue, damageTakenGeneral.MaxValue,
-            damageTakenGeneral.AverageValue, damageTakenGeneral.CombatPlayerId);
-        _damageTakenGenerals.Add(createdDamageTakenGeneral);
-    }
-
-    private void AddResourceRecovery(ResourceRecoveryData resourceRecovery)
-    {
-        var createdResourceRecovery = new ResourceRecovery(resourceRecovery.GameSpellId, resourceRecovery.Spell, resourceRecovery.Value, resourceRecovery.Time, resourceRecovery.Creator,
-            resourceRecovery.Target, resourceRecovery.CombatPlayerId);
-        _resourceRecoveries.Add(createdResourceRecovery);
-    }
-
-    private void AddResourceRecoveryGeneral(ResourceRecoveryGeneralData resourceGeneral)
-    {
-        var createdResourceRecoveryGeneral = new ResourceRecoveryGeneral(resourceGeneral.GameSpellId, resourceGeneral.Spell, resourceGeneral.Value, resourceGeneral.ResourcePerSecond,
-            resourceGeneral.CastNumber, resourceGeneral.MinValue, resourceGeneral.MaxValue, resourceGeneral.AverageValue, resourceGeneral.CombatPlayerId);
-        _resourceRecoveryGenerals.Add(createdResourceRecoveryGeneral);
-    }
-
-    private void AddCombatPlayerDeath(CombatPlayerDeathData death)
-    {
-        var createdCombatPlayerDeath = new CombatPlayerDeath(death.Username, death.LastHitSpell, death.LastHitValue, death.Time, death.CombatPlayerId);
-        _combatPlayerDeathes.Add(createdCombatPlayerDeath);
-    }
-
-    private void AddStats(CombatPlayerStatsData stats)
-    {
-        var createdStats = new CombatPlayerStats(stats.Strength, stats.Agility, stats.Intelligence, stats.Stamina, stats.Spirit,
-            stats.Dodge, stats.Parry, stats.Crit, stats.Haste, stats.Hit,
-            stats.Expertise, stats.Armor, stats.Talents, stats.CombatPlayerId);
         Stats = createdStats;
     }
 
@@ -256,8 +104,8 @@ public class CombatPlayer : CombatDataBase
             return;
         }
 
-        var createdScore = new SpecializationScore(score.DamageScore, score.DamageDone, score.HealScore, score.HealDone, score.Updated,
-            score.SpecializationId, score.CombatPlayerId);
+        var createdScore = SpecializationScore.Create(score.DamageScore, score.DamageDone, score.HealScore, score.HealDone, score.Updated,
+            score.SpecializationId);
         Score = createdScore;
     }
 }

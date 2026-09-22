@@ -1,4 +1,5 @@
 using AutoMapper;
+using CombatAnalysis.CombatParserAPI.BackgroundServices;
 using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
@@ -68,6 +69,9 @@ builder.Services.AddAuthorizationBuilder()
         builder.RequireAuthenticatedUser();
         builder.RequireClaim("scope", authenticationClientOptions.Scopes.Split(','));
     });
+
+builder.Services.AddSingleton<IDeleteCombatLogQueue, DeleteCombatLogQueue>();
+builder.Services.AddHostedService<DeleteCombatLogBackgroundService>();
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 

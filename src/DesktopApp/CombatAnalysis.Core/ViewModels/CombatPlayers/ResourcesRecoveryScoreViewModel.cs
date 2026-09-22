@@ -9,13 +9,13 @@ public class ResourcesRecoveryScoreViewModel : BasicCombatPlayerViewModel
         Players = parameter;
         _defaultPlayers = parameter;
 
-        BestValue = Players.Max(p => p.ResourcesRecovery);
+        BestValue = Players.Max(p => p.Unit.UnitInfo.ResourcesRecovery);
 
-        var value = Players.Average(x => x.ResourcesRecovery);
+        var value = Players.Average(x => x.Unit.UnitInfo.ResourcesRecovery);
         AverageValue = double.Round(value, 2);
         AverageVPS = Players.Average(x => x.ResourcesRecoveryPerSecond);
 
-        TotalValue = Players.Sum(x => x.ResourcesRecovery);
+        TotalValue = Players.Sum(x => x.Unit.UnitInfo.ResourcesRecovery);
         TotalVPS = Players.Sum(x => x.ResourcesRecoveryPerSecond);
 
         ValueType = 3;
@@ -30,6 +30,6 @@ public class ResourcesRecoveryScoreViewModel : BasicCombatPlayerViewModel
             return;
         }
 
-        Players = [.. Players.OrderByDescending(p => p.ResourcesRecovery)];
+        Players = [.. Players.OrderByDescending(p => p.Unit.UnitInfo.ResourcesRecovery)];
     }
 }

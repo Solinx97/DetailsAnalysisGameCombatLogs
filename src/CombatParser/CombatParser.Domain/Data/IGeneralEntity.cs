@@ -7,8 +7,4 @@ public interface IGeneralEntity
     int Value { get; }
 
     TimeSpan Time { get; }
-
-    string Creator { get; }
-
-    string Target { get; }
 }

@@ -3,7 +3,7 @@
 namespace CombatParser.Domain.Data;
 
 public interface ICombatPlayerDataByTimeRepository<TModel>
-    where TModel : class, ICombatPlayerRefs, ITime
+    where TModel : class, ICombatUnitRefs, ITime
 {
-    Task<IEnumerable<TModel>> GetByCombatPlayerIdAsync(int combatPlayerId, CancellationToken cancellationToken);
+    Task<IEnumerable<TModel>> GetByCombatPlayerIdAsync(string unitId, CancellationToken cancellationToken);
 }

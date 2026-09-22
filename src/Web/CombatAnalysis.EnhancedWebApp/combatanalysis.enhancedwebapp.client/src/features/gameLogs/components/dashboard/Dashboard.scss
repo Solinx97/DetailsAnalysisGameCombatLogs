@@ -26,10 +26,13 @@ $mobile-max-width: 425px;
 }
 
 .dashboard {
+    position: absolute;
+    left: 4vw;
+    width: 93vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 40px;
+    gap: 20px;
 
     .closed-items {
         @include flex-center;
@@ -91,7 +94,22 @@ $mobile-max-width: 425px;
             .header {
                 display: flex;
                 justify-content: center;
+                align-items: center;
+                gap: 20px;
                 border: 2px solid gray;
+
+                .close {
+                    font-size: 0.8em;
+                    color: orange;
+                    padding: 5px;
+                    border-radius: 20px;
+                    box-shadow: 1px 1px 1px 1px gray;
+                    cursor: pointer;
+
+                    &:hover {
+                        transform: scale(1.1);
+                    }
+                }
             }
 
             .content {
@@ -111,13 +129,88 @@ $mobile-max-width: 425px;
                     .details-item {
                         display: flex;
                         justify-content: space-between;
-                        gap: 50px;
+                        align-items: center;
+                        gap: 30px;
+
+                        .type {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
                     }
                 }
             }
 
             .extend {
                 cursor: pointer;
+            }
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+
+        .dashboard-title-list {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            width: 70vw;
+
+            li {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 10px 0;
+                padding: 10px 20px;
+                box-shadow: 1px 1px 1px 1px green;
+                border-radius: 25px;
+                min-width: 150px;
+                font-size: 0.8em;
+                text-align: center;
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+        }
+    }
+
+    &__filter {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        font-size: 0.9em;
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            &__extented {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+
+                .actions {
+                    display: flex;
+                    width: 100%;
+                    justify-content: space-around;
+                    font-size: 0.9em;
+
+                    button {
+                        border-radius: 10px;
+                    }
+                }
+            }
+
+            .options {
+                min-width: 230px;
+                color: black;
             }
         }
     }

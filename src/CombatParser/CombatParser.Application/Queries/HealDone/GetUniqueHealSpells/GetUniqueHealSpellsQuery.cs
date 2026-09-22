@@ -3,5 +3,5 @@
 namespace CombatParser.Application.Queries.HealDone.GetUniqueHealSpells;
 
 public record GetUniqueHealSpellsQuery(
-    int CombatPlayerId
+    string UniId
     ) : IRequest<IEnumerable<string>>;

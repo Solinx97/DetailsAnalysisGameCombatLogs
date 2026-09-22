@@ -1,16 +1,20 @@
-﻿using CombatParser.Domain.Data.Dashboard;
+﻿using AutoMapper;
+using CombatParser.Application.DTOs.Dashboard;
+using CombatParser.Domain.Data.Dashboard;
 using MediatR;
 
 namespace CombatParser.Application.Queries.Dashboards.GetHealSpells;
 
-internal class GetHealSpellsHandler(IDashboardRepository repository) : IRequestHandler<GetHealSpellsQuery, Dictionary<string, int>>
+internal class GetHealSpellsHandler(IDashboardRepository repository, IMapper mapper) : IRequestHandler<GetHealSpellsQuery, DashboardDto>
 {
     private readonly IDashboardRepository _repository = repository;
+    private readonly IMapper _mapper = mapper;
 
-    public async Task<Dictionary<string, int>> Handle(GetHealSpellsQuery request, CancellationToken cancellationToken)
+    public async Task<DashboardDto> Handle(GetHealSpellsQuery request, CancellationToken cancellationToken)
     {
-        var spells = await _repository.GetHealSpellsAsync(request.CombatLogId, cancellationToken);
+        var dashboard = await _repository.GetHealSpellsAsync(request.CombatLogId, request.BossName, request.CombatId, cancellationToken);
+        var map = _mapper.Map<DashboardDto>(dashboard);
 
-        return spells;
+        return map;
     }
 }

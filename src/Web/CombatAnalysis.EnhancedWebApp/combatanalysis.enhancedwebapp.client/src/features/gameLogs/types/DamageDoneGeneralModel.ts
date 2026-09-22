@@ -1,5 +1,5 @@
 export type DamageDoneGeneralModel = {
-    id: number;
+    id: string;
     spell: string;
     damagePerSecond: number;
     value: number;
@@ -10,5 +10,5 @@ export type DamageDoneGeneralModel = {
     maxValue: number;
     averageValue: number;
     isPet: boolean;
-    combatPlayerId: number;
+    unitId: string;
 }

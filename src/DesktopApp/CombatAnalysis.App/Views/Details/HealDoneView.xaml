@@ -198,7 +198,7 @@
                 <DataGridTemplateColumn SortMemberPath="Target" IsReadOnly="True" MinWidth="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Target}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            <TextBlock Text="{Binding Path=Target.Name}" TextAlignment="Center" Margin="10" FontSize="12" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>

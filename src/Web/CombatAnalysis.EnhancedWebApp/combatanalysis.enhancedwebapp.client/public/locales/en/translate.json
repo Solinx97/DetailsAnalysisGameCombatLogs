@@ -6,6 +6,8 @@
   "Login": "Login",
   "Logout": "Logout",
   "Loading": "Loading...",
+  "CombatPlayerBuild": "Build player information",
+  "CombatBuild": "Build combat information",
   "Users": "Users",
   "Empty": "Empty",
   "Close": "Close",

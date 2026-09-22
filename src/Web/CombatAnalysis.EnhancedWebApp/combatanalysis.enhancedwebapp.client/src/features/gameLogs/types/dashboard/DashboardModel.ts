@@ -1,6 +1,6 @@
+import type { DashboardItemModel } from './DashboardItemModel';
+
 export type DashboardModel = {
-    username: string;
-    averageDPS: number;
-    averageHPS: number;
-    averageDeaths: number;
+    type: number;
+    items: DashboardItemModel[];
 }

@@ -1,4 +1,5 @@
 ﻿using CombatParser.Domain.Data;
+using CombatParser.Domain.Enums;
 using MediatR;
 
 namespace CombatParser.Application.Queries.HealDone.GetUniqueHealSpells;
@@ -9,7 +10,8 @@ internal class GetUniqueHealSpellsHandler(IGeneralRepository<Domain.Entities.Com
 
     public async Task<IEnumerable<string>> Handle(GetUniqueHealSpellsQuery request, CancellationToken cancellationToken)
     {
-        var spells = await _repository.GetUniqueSpellsAsync(request.CombatPlayerId, cancellationToken);
+        var targetTypes = new int[] { (int)CombatUnitType.PlayerCreature, (int)CombatUnitType.Player };
+        var spells = await _repository.GetUniqueTargetSpellsByCreatorIdAsync(request.UniId, cancellationToken, targetTypes);
 
         return spells;
     }

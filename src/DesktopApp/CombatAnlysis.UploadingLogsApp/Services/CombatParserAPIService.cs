@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.UploadingLogsApp.Consts;
+using CombatAnalysis.UploadingLogsApp.Core;
 using CombatAnalysis.UploadingLogsApp.Enums;
 using CombatAnalysis.UploadingLogsApp.Extensions;
 using CombatAnalysis.UploadingLogsApp.Interfaces;
@@ -9,8 +10,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +22,8 @@ namespace CombatAnalysis.UploadingLogsApp.Services;
 
 internal class CombatParserAPIService : ICombatParserAPIService
 {
-    private const int PARALLEL_COUNT = 3;
+    private const int PARALLEL_COUNT = 4;
+    private const int DEFAULT_RAID_SIZE = 30;
 
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger<CombatParserAPIService> _logger;
@@ -34,65 +38,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         _httpClient.BaseAddress = API.CombatParserApi;
     }
 
-    public async Task SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<string, string> uplodedCallback, Func<CancellationToken> requestCancelationToken)
-    {
-        var cancellationToken = requestCancelationToken();
-
-        using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
-
-        var combatTasks = combats.Select(async combat =>
-        {
-            await semaphore.WaitAsync(cancellationToken);
-
-            try
-            {
-                combat.CombatLogId = combatLog.Id;
-
-                using var content = JsonContent.Create(combat);
-                using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
-                response.EnsureSuccessStatusCode();
-
-                var combatId = int.Parse(await response.Content.ReadAsStringAsync());
-                combat.Id = combatId;
-
-                uplodedCallback(combat.DungeonName, combat.Boss.Name);
-
-                combat.CombatPlayers = [];
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-                combat.CombatPlayers = [];
-
-                throw;
-            }
-            catch (OperationCanceledException ex)
-            {
-                _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
-
-                combat.CombatPlayers = [];
-
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-                combat.CombatPlayers = [];
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        });
-
-        await Task.WhenAll(combatTasks);
-
-        combats = [];
-    }
-
-    public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken)
+    public async Task<int> SaveCombatLogAsync(List<CreateCombatModel> combats, LogType logType, CancellationToken cancellationToken)
     {
         try
         {
@@ -113,72 +59,204 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 Date = DateTimeOffset.UtcNow,
                 LogType = (int)logType,
                 AppUserId = user.Id,
+                GameVersion = (int)CurrentCombatParserVersion.Version,
             };
 
             var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken, true);
             response.EnsureSuccessStatusCode();
 
-            var createdCombatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>(cancellationToken);
-            ArgumentNullException.ThrowIfNull(createdCombatLog, nameof(createdCombatLog));
+            var createdCombatLogId = await response.Content.ReadFromJsonAsync<int>(cancellationToken);
 
-            return createdCombatLog;
+            return createdCombatLogId;
+
         }
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, "Some arguments is null: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
         catch (OperationCanceledException ex)
         {
             _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return new CombatLogModel();
+            throw;
         }
     }
 
-    public async Task GetBossAsync(List<CombatModel> combats, CancellationToken cancellationToken)
+
+    public async Task SaveAsync(List<CreateCombatModel> combats, int combatLogId, Action<string, string, string> uplodedCallback, Func<CancellationToken> requestCancellationToken)
     {
+        var cancellationToken = requestCancellationToken();
+
+        using var semaphore = new SemaphoreSlim(PARALLEL_COUNT);
+        var combatTasks = combats.Select(async combat =>
+        {
+            if (combat.IsSupported && combat.IsSelected)
+            {
+                await UploadingCombatAsync(semaphore, combat, combatLogId, uplodedCallback, cancellationToken);
+            }
+        });
+
+        await Task.WhenAll(combatTasks);
+
+        await AddCombatLogCreatedStatusAsync(combatLogId, cancellationToken);
+
+        combats.Clear();
+
+        // Reduce capacity, provided to collections but not release after cleaning collection yet
+        combats.TrimExcess();
+
+        // Call GC to collect and release LOH right now
+        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
+    }
+
+    public async Task GetBossAsync(List<CreateCombatModel> combats, bool useDefault, CancellationToken cancellationToken)
+    {
+        var tasks = combats.Select(async x =>
+        {
+            await LoadBossAsync(x, useDefault ? DEFAULT_RAID_SIZE : x.Boss.Size, cancellationToken);
+        });
+
+        await Task.WhenAll(tasks);
+
+        GetBossHealthPercentage(combats);
+    }
+
+    private async Task UploadingCombatAsync(SemaphoreSlim semaphore, CreateCombatModel combat, int combatLogId, Action<string, string, string> uplodedCallback, CancellationToken cancellationToken)
+    {
+        await semaphore.WaitAsync(cancellationToken);
+
         try
         {
-            foreach (var combat in combats)
-            { 
-                var boss = await LoadBossAsync(combat.Boss.GameId, combat.Boss.Difficult, combat.Boss.Size, cancellationToken);
-                combat.Boss = boss ?? new();
-            }
+            combat.GameVersion = (int)CurrentCombatParserVersion.Version;
+            combat.CombatLogId = combatLogId;
 
-            GetBossHealthPercentage(combats);
+            using var content = JsonContent.Create(combat);
+            using var response = await _httpClient.PostAsync("Combat", content, cancellationToken, true);
+            response.EnsureSuccessStatusCode();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "");
+
+            combat.ReleaseParsedData();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            _logger.LogError(ex, "Authorization failed: {Message}", ex.Message);
+
+            combat.ReleaseParsedData();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "Authorization failed");
+
+            throw;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            combat.ReleaseParsedData();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, $"HTTP request error");
+
+            throw;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
+
+            combat.ReleaseParsedData();
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "Request was canceled by client");
+
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            uplodedCallback(combat.DungeonName, combat.Boss.Name, "An unexpected error occurred");
+
+            combat.ReleaseParsedData();
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    private async Task AddCombatLogCreatedStatusAsync(int combatLogId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsync($"CombatLog/addStatus/{combatLogId}?status={(int)CombatLogStatus.Created}", JsonContent.Create(new {}), cancellationToken, true);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, "Some arguments is null: {Message}", ex.Message);
+
+            throw;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            throw;
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Request was canceled by client: {Message}", ex.Message);
+
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            throw;
+        }
+    }
+
+    private async Task LoadBossAsync(CombatModel combat, int groupSize, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"Boss?gameBossId={combat.Boss.GameId}&difficult={combat.Boss.Difficult}&groupSize={groupSize}", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var boss = await response.Content.ReadFromJsonAsync<BossModel>(cancellationToken: cancellationToken);
+                combat.Boss = boss ?? new() { Name = "[NO_DATA]" };
+            }
+            else if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                combat.Boss = new() { Name = "[NO_DATA]" };
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            combat.Boss = new() { Name = "[NO_DATA]" };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
         }
-    }
-
-    private async Task<BossModel?> LoadBossAsync(int gameBossId, int difficult, int groupSize, CancellationToken cancellationToken)
-    {
-        var response = await _httpClient.GetAsync($"Boss?gameBossId={gameBossId}&difficult={difficult}&groupSize={groupSize}", cancellationToken);
-        response.EnsureSuccessStatusCode();
-
-        var boss = await response.Content.ReadFromJsonAsync<BossModel>(cancellationToken: cancellationToken);
-
-        return boss;
     }
 
     private static string CreateCombatLogName(List<string> dungeonNames)
@@ -195,7 +273,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
         return combatLogDungeonName.ToString();
     }
 
-    private static void GetBossHealthPercentage(List<CombatModel> combats)
+    private static void GetBossHealthPercentage(List<CreateCombatModel> combats)
     {
         foreach (var item in combats)
         {
@@ -204,11 +282,11 @@ internal class CombatParserAPIService : ICombatParserAPIService
                 continue;
             }
 
-            var damageToBoss = item.CombatPlayers.Sum(x => x.DamageDoneToBoss);
-            var leftHealth = item.Boss.Health - damageToBoss;
+            var leftHealth = item.Boss.Health - 0;
             var precentage = (double)leftHealth / (double)item.Boss.Health;
 
-            item.BossHealthPercentage = precentage < 0 ? 0 : Math.Round(precentage * 100, 2);
+            //item.BossHealthPercentage = precentage < 0 ? 0 : Math.Round(precentage * 100, 2);
+            item.BossHealthPercentage = 100;
         }
     }
 }

@@ -1,5 +1,5 @@
 export type HealDoneGeneralModel = {
-    id: number;
+    id: string;
     spell: string;
     healPerSecond: number;
     value: number;
@@ -9,5 +9,5 @@ export type HealDoneGeneralModel = {
     maxValue: number;
     averageValue: number;
     isPet: boolean;
-    combatPlayerId: number;
+    unitId: string;
 }

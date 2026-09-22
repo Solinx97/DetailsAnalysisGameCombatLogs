@@ -4,5 +4,5 @@ using MediatR;
 namespace CombatParser.Application.Queries.GetUnitCasts;
 
 public record GetUnitCastsQuery(
-    int CombatId
-    ) : IRequest<IDictionary<string, IEnumerable<UnitCastDto>>>;
+    string CombatUnitId
+    ) : IRequest<IEnumerable<UnitCastDto>>;

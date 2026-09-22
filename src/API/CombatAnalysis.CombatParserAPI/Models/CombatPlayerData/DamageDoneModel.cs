@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CombatAnalysis.CombatParserAPI.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace CombatAnalysis.CombatParserAPI.Models.CombatPlayerData;
 
-public class DamageDoneModel
+public class DamageDoneModel : CombatUnitBase
 {
-    [Range(0, int.MaxValue)]
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Range(0, int.MaxValue)]
     public int GameSpellId { get; set; }
@@ -19,23 +19,23 @@ public class DamageDoneModel
     [Required]
     public TimeSpan Time { get; set; }
 
-    [Required]
-    public string Creator { get; set; } = string.Empty;
+    public int ModificationType { get; set; }
 
-    [Required]
-    public string Target { get; set; } = string.Empty;
-
-    public bool IsTargetBoss { get; set; }
-
-    [Range(0, int.MaxValue)]
     public int DamageType { get; set; }
 
-    public bool IsPeriodicDamage { get; set; }
+    public int Resisted { get; set; }
 
-    public bool IsSingleTarget { get; set; }
+    public int Absorbed { get; set; }
 
-    public bool IsPet { get; set; }
+    public int Blocked { get; set; }
 
-    [Range(0, int.MaxValue)]
-    public int CombatPlayerId { get; set; }
+    public int RealDamage { get; set; }
+
+    public int Overkill { get; set; }
+
+    public int Mitigated { get; set; }
+
+    public UnitModel? Unit { get; set; }
+
+    public string? UnitId { get; set; }
 }

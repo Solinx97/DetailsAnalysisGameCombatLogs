@@ -1,9 +1,14 @@
-﻿import { memo, useEffect, useState } from 'react';
-import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
-import DetailsItem from './DetailsItem';
+﻿import Loading from '@/shared/components/Loading';
+import { faArrowsToEye } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { memo, useEffect, useState } from 'react';
 import Select from 'react-select';
+import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
+import type { UnitInfoModel } from '../../types/UnitInfoModel';
 import CombatPreAuraItem from '../auras/CombatPreAuraItem';
+import DetailsItem from './DetailsItem';
+import PlayerParams from './PlayerParams';
 
 import '../auras/CombatAuras.scss';
 
@@ -21,6 +26,7 @@ type Option = {
 
 const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, t }) => {
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
+    const [playerStatsCombatPlayerId, setPlayerStatsCombatPlayerId] = useState(0);
 
     const sortOptions: Option[] = [
         { value: 0, label: t("Damage") },
@@ -34,14 +40,14 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
         filter();
     }, [sortingValue, combatPlayers]);
 
-    const compare = (playerA: CombatPlayerModel, playerB: CombatPlayerModel) => {
-        const keys: (keyof CombatPlayerModel)[] = ['damageDone', 'healDone', 'damageTaken', 'resourcesRecovery'];
+    const compare = (unitA: UnitInfoModel, unitB: UnitInfoModel) => {
+        const keys: (keyof UnitInfoModel)[] = ['damageDone', 'healDone', 'damageTaken', 'resourcesRecovery'];
         const key = keys[sortingValue === null ? 0 : sortingValue.value];
 
-        if (playerA[key] > playerB[key]) {
+        if (unitA[key] > unitB[key]) {
             return -1;
         }
-        if (playerA[key] < playerB[key]) {
+        else if (unitA[key] < unitB[key]) {
             return 1;
         }
 
@@ -53,11 +59,14 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
             return;
         }
 
-        setFilteredCombatPlayers([...combatPlayers].sort(compare));
+        setFilteredCombatPlayers(
+            [...combatPlayers]
+                .sort((a, b) => compare(a.unit?.unitInfo, b.unit?.unitInfo))
+        );
     }
 
     if (filteredCombatPlayers.length === 0) {
-        return (<div>Loading...</div>);
+        return (<Loading />);
     }
 
     return (
@@ -74,18 +83,36 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
             <ul className="details__content">
                 {filteredCombatPlayers?.map((combatPlayer) => (
                     <li key={combatPlayer.id} className="card">
-                        <div className="card-body">
-                            <h5 className="card-title">{combatPlayer.player.username}</h5>
+                        <div className="card-body card-title">
+                            <h5>{combatPlayer.player.username}</h5>
+                            <div className="btn-shadow"
+                                onClick={() => setPlayerStatsCombatPlayerId(combatPlayer.id)}>
+                                <FontAwesomeIcon
+                                    icon={faArrowsToEye}
+                                />
+                                <div>{t("Stats")}</div>
+                            </div>
                         </div>
                         <CombatPreAuraItem
-                            combatPlayerId={combatPlayer.id}
-                            combatId={combatPlayer.combatId}
+                            combatId={details.id}
+                            unitId={combatPlayer.unitId}
                         />
                         <DetailsItem
-                            player={combatPlayer}
+                            avgilvl={combatPlayer.averageItemLevel}
+                            playerId={combatPlayer.id}
+                            unitInfo={combatPlayer.unit.unitInfo}
                             details={details}
                             getValueShortName={getValueShortName}
+                            deathCount={combatPlayer.deathCount}
                         />
+                        {playerStatsCombatPlayerId === combatPlayer.id &&
+                            <PlayerParams
+                                t={t}
+                                combatPlayerId={combatPlayer.id}
+                                gameVersion={details.gameVersion}
+                                setPlayerStatsCombatPlayerId={setPlayerStatsCombatPlayerId}
+                            />
+                        }
                     </li>
                 ))}
             </ul>

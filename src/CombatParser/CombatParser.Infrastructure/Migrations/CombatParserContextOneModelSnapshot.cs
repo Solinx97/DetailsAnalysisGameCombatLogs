@@ -13493,6 +13493,2886 @@ namespace CombatParser.Infrastructure.Migrations
                             DamageDone = 0,
                             HealDone = 0,
                             SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1681,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1682,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1683,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1684,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1685,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1686,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1687,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1688,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1689,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1690,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1691,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1692,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1693,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1694,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1695,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1696,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1697,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1698,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1699,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1700,
+                            BossId = 85,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1701,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1702,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1703,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1704,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1705,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1706,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1707,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1708,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1709,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1710,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1711,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1712,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1713,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1714,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1715,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1716,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1717,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1718,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1719,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1720,
+                            BossId = 86,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1721,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1722,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1723,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1724,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1725,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1726,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1727,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1728,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1729,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1730,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1731,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1732,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1733,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1734,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1735,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1736,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1737,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1738,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1739,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1740,
+                            BossId = 87,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1741,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1742,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1743,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1744,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1745,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1746,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1747,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1748,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1749,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1750,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1751,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1752,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1753,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1754,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1755,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1756,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1757,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1758,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1759,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1760,
+                            BossId = 88,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1761,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1762,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1763,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1764,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1765,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1766,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1767,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1768,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1769,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1770,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1771,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1772,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1773,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1774,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1775,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1776,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1777,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1778,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1779,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1780,
+                            BossId = 89,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1781,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1782,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1783,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1784,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1785,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1786,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1787,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1788,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1789,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1790,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1791,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1792,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1793,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1794,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1795,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1796,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1797,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1798,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1799,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1800,
+                            BossId = 90,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1801,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1802,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1803,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1804,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1805,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1806,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1807,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1808,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1809,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1810,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1811,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1812,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1813,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1814,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1815,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1816,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1817,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1818,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1819,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1820,
+                            BossId = 91,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1821,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1822,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1823,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1824,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1825,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1826,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1827,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1828,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1829,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1830,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1831,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1832,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1833,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1834,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1835,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1836,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1837,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1838,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1839,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1840,
+                            BossId = 92,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1841,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1842,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1843,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1844,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1845,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1846,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1847,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1848,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1849,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1850,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1851,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1852,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1853,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1854,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1855,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1856,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1857,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1858,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1859,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1860,
+                            BossId = 93,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1861,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1862,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1863,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1864,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1865,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1866,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1867,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1868,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1869,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1870,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1871,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1872,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1873,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1874,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1875,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1876,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1877,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1878,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1879,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1880,
+                            BossId = 94,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1881,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1882,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1883,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1884,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1885,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1886,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1887,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1888,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1889,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1890,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1891,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1892,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1893,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1894,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1895,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1896,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1897,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1898,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1899,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1900,
+                            BossId = 95,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1901,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1902,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1903,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1904,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1905,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1906,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1907,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1908,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1909,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1910,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1911,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1912,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1913,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1914,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1915,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1916,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1917,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1918,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1919,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1920,
+                            BossId = 96,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1921,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1922,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1923,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1924,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1925,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1926,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1927,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1928,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1929,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1930,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1931,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1932,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1933,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1934,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1935,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1936,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1937,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1938,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1939,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1940,
+                            BossId = 97,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1941,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1942,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1943,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1944,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1945,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1946,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1947,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1948,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1949,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1950,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1951,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1952,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1953,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1954,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1955,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1956,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1957,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1958,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1959,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1960,
+                            BossId = 98,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1961,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1962,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1963,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1964,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1965,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1966,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1967,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1968,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1969,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1970,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1971,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1972,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1973,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1974,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1975,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1976,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1977,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1978,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1979,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 1980,
+                            BossId = 99,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 1981,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 1982,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 1983,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 1984,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 1985,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 1986,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 1987,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 1988,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 1989,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 1990,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 1991,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 1992,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 1993,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 1994,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 1995,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 1996,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 1997,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 1998,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 1999,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 2000,
+                            BossId = 100,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 2001,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 2002,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 2003,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 2004,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 2005,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 2006,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 2007,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 2008,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 2009,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 2010,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 2011,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 2012,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 2013,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 2014,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 2015,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 2016,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 2017,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 2018,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 2019,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 2020,
+                            BossId = 101,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
+                        },
+                        new
+                        {
+                            Id = 2021,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 1
+                        },
+                        new
+                        {
+                            Id = 2022,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 2
+                        },
+                        new
+                        {
+                            Id = 2023,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 3
+                        },
+                        new
+                        {
+                            Id = 2024,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 4
+                        },
+                        new
+                        {
+                            Id = 2025,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 5
+                        },
+                        new
+                        {
+                            Id = 2026,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 6
+                        },
+                        new
+                        {
+                            Id = 2027,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 7
+                        },
+                        new
+                        {
+                            Id = 2028,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 8
+                        },
+                        new
+                        {
+                            Id = 2029,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 9
+                        },
+                        new
+                        {
+                            Id = 2030,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 10
+                        },
+                        new
+                        {
+                            Id = 2031,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 11
+                        },
+                        new
+                        {
+                            Id = 2032,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 12
+                        },
+                        new
+                        {
+                            Id = 2033,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 13
+                        },
+                        new
+                        {
+                            Id = 2034,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 14
+                        },
+                        new
+                        {
+                            Id = 2035,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 15
+                        },
+                        new
+                        {
+                            Id = 2036,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 16
+                        },
+                        new
+                        {
+                            Id = 2037,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 17
+                        },
+                        new
+                        {
+                            Id = 2038,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 18
+                        },
+                        new
+                        {
+                            Id = 2039,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 19
+                        },
+                        new
+                        {
+                            Id = 2040,
+                            BossId = 102,
+                            DamageDone = 0,
+                            HealDone = 0,
+                            SpecializationId = 20
                         });
                 });
 
@@ -13513,9 +16393,6 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<long>("Health")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -13528,6 +16405,8 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.HasIndex("BossMapId");
 
+                    b.HasIndex("Name");
+
                     b.ToTable("Boss");
 
                     b.HasData(
@@ -13537,7 +16416,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1395,
-                            Health = 130841100L,
                             Name = "Каменные стражи",
                             Size = 10
                         },
@@ -13547,7 +16425,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1395,
-                            Health = 235513980L,
                             Name = "Каменные стражи",
                             Size = 10
                         },
@@ -13557,7 +16434,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1390,
-                            Health = 152647950L,
                             Name = "Фэн Проклятый",
                             Size = 10
                         },
@@ -13567,7 +16443,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1390,
-                            Health = 209345760L,
                             Name = "Фэн Проклятый",
                             Size = 10
                         },
@@ -13577,7 +16452,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1434,
-                            Health = 117756990L,
                             Name = "Душелов Гара'джал",
                             Size = 10
                         },
@@ -13587,7 +16461,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1434,
-                            Health = 179252307L,
                             Name = "Душелов Гара'джал",
                             Size = 10
                         },
@@ -13597,7 +16470,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1436,
-                            Health = 174454800L,
                             Name = "Призрачные короли",
                             Size = 10
                         },
@@ -13607,7 +16479,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1436,
-                            Health = 261682200L,
                             Name = "Призрачные короли",
                             Size = 10
                         },
@@ -13617,7 +16488,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1500,
-                            Health = 294392475L,
                             Name = "Элегон",
                             Size = 10
                         },
@@ -13627,7 +16497,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1500,
-                            Health = 339750723L,
                             Name = "Элегон",
                             Size = 10
                         },
@@ -13637,7 +16506,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1407,
-                            Health = 314018640L,
                             Name = "Воля императора",
                             Size = 10
                         },
@@ -13647,7 +16515,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1407,
-                            Health = 471027960L,
                             Name = "Воля императора",
                             Size = 10
                         },
@@ -13657,7 +16524,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1409,
-                            Health = 213968815L,
                             Name = "Вечные защитники",
                             Size = 10
                         },
@@ -13667,7 +16533,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1409,
-                            Health = 344082093L,
                             Name = "Вечные защитники",
                             Size = 10
                         },
@@ -13677,7 +16542,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1505,
-                            Health = 174454800L,
                             Name = "Цулон",
                             Size = 10
                         },
@@ -13687,7 +16551,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1505,
-                            Health = 279127680L,
                             Name = "Цулон",
                             Size = 10
                         },
@@ -13697,7 +16560,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1506,
-                            Health = 138168195L,
                             Name = "Лэй Ши",
                             Size = 10
                         },
@@ -13707,7 +16569,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1506,
-                            Health = 301457900L,
                             Name = "Лэй Ши",
                             Size = 10
                         },
@@ -13717,7 +16578,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1431,
-                            Health = 184704020L,
                             Name = "Ша Страха",
                             Size = 10
                         },
@@ -13727,7 +16587,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1431,
-                            Health = 544037304L,
                             Name = "Ша Страха",
                             Size = 10
                         },
@@ -13737,7 +16596,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1507,
-                            Health = 174454800L,
                             Name = "Императорский визирь Зор'лок",
                             Size = 10
                         },
@@ -13747,7 +16605,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1507,
-                            Health = 218068500L,
                             Name = "Императорский визирь Зор'лок",
                             Size = 10
                         },
@@ -13757,7 +16614,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1504,
-                            Health = 150467265L,
                             Name = "Повелитель клинков Та'як",
                             Size = 10
                         },
@@ -13767,7 +16623,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1504,
-                            Health = 196261650L,
                             Name = "Повелитель клинков Та'як",
                             Size = 10
                         },
@@ -13777,7 +16632,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1463,
-                            Health = 218068500L,
                             Name = "Гаралон",
                             Size = 10
                         },
@@ -13787,7 +16641,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1463,
-                            Health = 290759446L,
                             Name = "Гаралон",
                             Size = 10
                         },
@@ -13797,7 +16650,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1498,
-                            Health = 270404940L,
                             Name = "Повелитель ветров Мел'джарак",
                             Size = 10
                         },
@@ -13807,7 +16659,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1498,
-                            Health = 588784950L,
                             Name = "Повелитель ветров Мел'джарак",
                             Size = 10
                         },
@@ -13817,7 +16668,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1499,
-                            Health = 218068500L,
                             Name = "Ваятель янтаря Ун'сок",
                             Size = 10
                         },
@@ -13827,7 +16677,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1499,
-                            Health = 340186860L,
                             Name = "Ваятель янтаря Ун'сок",
                             Size = 10
                         },
@@ -13837,7 +16686,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1501,
-                            Health = 196261650L,
                             Name = "Великая императрица Шек'зир",
                             Size = 10
                         },
@@ -13847,7 +16695,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1501,
-                            Health = 307476585L,
                             Name = "Великая императрица Шек'зир",
                             Size = 10
                         },
@@ -13857,7 +16704,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1577,
-                            Health = 207601212L,
                             Name = "Джин'рок Разрушитель",
                             Size = 10
                         },
@@ -13867,7 +16713,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1577,
-                            Health = 317507736L,
                             Name = "Джин'рок Разрушитель",
                             Size = 10
                         },
@@ -13877,7 +16722,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1575,
-                            Health = 357632340L,
                             Name = "Хорридон",
                             Size = 10
                         },
@@ -13887,7 +16731,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1575,
-                            Health = 654205500L,
                             Name = "Хорридон",
                             Size = 10
                         },
@@ -13897,7 +16740,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1570,
-                            Health = 299538888L,
                             Name = "Совет старейшин",
                             Size = 10
                         },
@@ -13907,7 +16749,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1570,
-                            Health = 470330152L,
                             Name = "Совет старейшин",
                             Size = 10
                         },
@@ -13917,7 +16758,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1565,
-                            Health = 179999841L,
                             Name = "Тортос",
                             Size = 10
                         },
@@ -13927,7 +16767,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1565,
-                            Health = 319999818L,
                             Name = "Тортос",
                             Size = 10
                         },
@@ -13937,7 +16776,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1578,
-                            Health = 263317712L,
                             Name = "Мегера",
                             Size = 10
                         },
@@ -13947,7 +16785,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1578,
-                            Health = 342297774L,
                             Name = "Мегера",
                             Size = 10
                         },
@@ -13957,7 +16794,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1573,
-                            Health = 244236720L,
                             Name = "Цзи-Кунь",
                             Size = 10
                         },
@@ -13967,7 +16803,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1573,
-                            Health = 366355080L,
                             Name = "Цзи-Кунь",
                             Size = 10
                         },
@@ -13977,7 +16812,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1572,
-                            Health = 261682200L,
                             Name = "Дуруму Позабытый",
                             Size = 10
                         },
@@ -13987,7 +16821,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1572,
-                            Health = 392523300L,
                             Name = "Дуруму Позабытый",
                             Size = 10
                         },
@@ -13997,7 +16830,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1574,
-                            Health = 218068500L,
                             Name = "Изначалий",
                             Size = 10
                         },
@@ -14007,7 +16839,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1574,
-                            Health = 258193104L,
                             Name = "Изначалий",
                             Size = 10
                         },
@@ -14017,7 +16848,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1576,
-                            Health = 80999797L,
                             Name = "Темный Анимус",
                             Size = 10
                         },
@@ -14027,7 +16857,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1576,
-                            Health = 288000023L,
                             Name = "Темный Анимус",
                             Size = 10
                         },
@@ -14037,7 +16866,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1559,
-                            Health = 119937675L,
                             Name = "Кон Железный",
                             Size = 10
                         },
@@ -14047,7 +16875,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1559,
-                            Health = 155700909L,
                             Name = "Кон Железный",
                             Size = 10
                         },
@@ -14057,7 +16884,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1560,
-                            Health = 219812670L,
                             Name = "Небесные сестры",
                             Size = 10
                         },
@@ -14067,7 +16893,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1560,
-                            Health = 628036200L,
                             Name = "Небесные сестры",
                             Size = 10
                         },
@@ -14077,7 +16902,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1579,
-                            Health = 329283435L,
                             Name = "Лэй Шэнь",
                             Size = 10
                         },
@@ -14087,7 +16911,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1579,
-                            Health = 580498347L,
                             Name = "Лэй Шэнь",
                             Size = 10
                         },
@@ -14097,7 +16920,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 2,
                             Difficult = 3,
                             GameId = 1602,
-                            Health = 61900000L,
                             Name = "Глубиний",
                             Size = 10
                         },
@@ -14107,7 +16929,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 2,
                             Difficult = 5,
                             GameId = 1602,
-                            Health = 91500000L,
                             Name = "Глубиний",
                             Size = 10
                         },
@@ -14117,7 +16938,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 3,
                             GameId = 1598,
-                            Health = 114000000L,
                             Name = "Павшие защитники",
                             Size = 10
                         },
@@ -14127,7 +16947,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 1,
                             Difficult = 5,
                             GameId = 1598,
-                            Health = 250000000L,
                             Name = "Павшие защитники",
                             Size = 10
                         },
@@ -14137,7 +16956,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 3,
                             Difficult = 3,
                             GameId = 1624,
-                            Health = 401000000L,
                             Name = "Норусхен",
                             Size = 10
                         },
@@ -14147,7 +16965,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 3,
                             Difficult = 5,
                             GameId = 1624,
-                            Health = 702000000L,
                             Name = "Норусхен",
                             Size = 10
                         },
@@ -14157,7 +16974,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 12,
                             Difficult = 3,
                             GameId = 1604,
-                            Health = 426000000L,
                             Name = "Ша Гордыни",
                             Size = 10
                         },
@@ -14167,7 +16983,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 12,
                             Difficult = 5,
                             GameId = 1604,
-                            Health = 661000000L,
                             Name = "Ша Гордыни",
                             Size = 10
                         },
@@ -14177,7 +16992,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 4,
                             Difficult = 3,
                             GameId = 1622,
-                            Health = 139000000L,
                             Name = "Галакрас",
                             Size = 10
                         },
@@ -14187,7 +17001,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 4,
                             Difficult = 5,
                             GameId = 1622,
-                            Health = 218000000L,
                             Name = "Галакрас",
                             Size = 10
                         },
@@ -14197,7 +17010,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 13,
                             Difficult = 3,
                             GameId = 1600,
-                            Health = 451000000L,
                             Name = "Железный исполин",
                             Size = 10
                         },
@@ -14207,7 +17019,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 13,
                             Difficult = 5,
                             GameId = 1600,
-                            Health = 592000000L,
                             Name = "Железный исполин",
                             Size = 10
                         },
@@ -14217,7 +17028,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 5,
                             Difficult = 3,
                             GameId = 1606,
-                            Health = 349000000L,
                             Name = "Кор'кронские темные шаманы",
                             Size = 10
                         },
@@ -14227,7 +17037,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 5,
                             Difficult = 5,
                             GameId = 1606,
-                            Health = 654000000L,
                             Name = "Кор'кронские темные шаманы",
                             Size = 10
                         },
@@ -14237,7 +17046,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 6,
                             Difficult = 3,
                             GameId = 1603,
-                            Health = 349000000L,
                             Name = "Генерал Назгрим",
                             Size = 10
                         },
@@ -14247,7 +17055,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 6,
                             Difficult = 5,
                             GameId = 1603,
-                            Health = 523000000L,
                             Name = "Генерал Назгрим",
                             Size = 10
                         },
@@ -14257,7 +17064,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 7,
                             Difficult = 3,
                             GameId = 1595,
-                            Health = 377000000L,
                             Name = "Малкорок",
                             Size = 10
                         },
@@ -14267,7 +17073,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 7,
                             Difficult = 5,
                             GameId = 1595,
-                            Health = 630000000L,
                             Name = "Малкорок",
                             Size = 10
                         },
@@ -14277,7 +17082,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 8,
                             Difficult = 3,
                             GameId = 1594,
-                            Health = 621000000L,
                             Name = "Пандарийские трофеи",
                             Size = 10
                         },
@@ -14287,7 +17091,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 8,
                             Difficult = 5,
                             GameId = 1594,
-                            Health = 1190000000L,
                             Name = "Пандарийские трофеи",
                             Size = 10
                         },
@@ -14297,7 +17100,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 14,
                             Difficult = 3,
                             GameId = 1599,
-                            Health = 445000000L,
                             Name = "Ток Кровожадный",
                             Size = 10
                         },
@@ -14307,7 +17109,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 14,
                             Difficult = 5,
                             GameId = 1599,
-                            Health = 654000000L,
                             Name = "Ток Кровожадный",
                             Size = 10
                         },
@@ -14317,7 +17118,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 9,
                             Difficult = 3,
                             GameId = 1601,
-                            Health = 298000000L,
                             Name = "Мастер осады Черноплавс",
                             Size = 10
                         },
@@ -14327,7 +17127,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 9,
                             Difficult = 5,
                             GameId = 1601,
-                            Health = 500000000L,
                             Name = "Мастер осады Черноплавс",
                             Size = 10
                         },
@@ -14337,7 +17136,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 10,
                             Difficult = 3,
                             GameId = 1593,
-                            Health = 510000000L,
                             Name = "Идеалы клакси",
                             Size = 10
                         },
@@ -14347,7 +17145,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 10,
                             Difficult = 5,
                             GameId = 1593,
-                            Health = 1260000000L,
                             Name = "Идеалы клакси",
                             Size = 10
                         },
@@ -14357,7 +17154,6 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 11,
                             Difficult = 3,
                             GameId = 1623,
-                            Health = 161000000L,
                             Name = "Гаррош Адский Крик",
                             Size = 10
                         },
@@ -14367,9 +17163,170 @@ namespace CombatParser.Infrastructure.Migrations
                             BossMapId = 11,
                             Difficult = 5,
                             GameId = 1623,
-                            Health = 228000000L,
                             Name = "Гаррош Адский Крик",
                             Size = 10
+                        },
+                        new
+                        {
+                            Id = 85,
+                            BossMapId = 15,
+                            Difficult = 14,
+                            GameId = 3379,
+                            Name = "Нимрисса Волногон",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 86,
+                            BossMapId = 15,
+                            Difficult = 15,
+                            GameId = 3379,
+                            Name = "Нимрисса Волногон",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 87,
+                            BossMapId = 16,
+                            Difficult = 14,
+                            GameId = 3470,
+                            Name = "Нек'зали Душительница Душ",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 88,
+                            BossMapId = 16,
+                            Difficult = 15,
+                            GameId = 3470,
+                            Name = "Нек'зали Душительница Душ",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 89,
+                            BossMapId = 17,
+                            Difficult = 14,
+                            GameId = 3497,
+                            Name = "Потерявшиеся исследователи",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 90,
+                            BossMapId = 17,
+                            Difficult = 15,
+                            GameId = 3497,
+                            Name = "Потерявшиеся исследователи",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 91,
+                            BossMapId = 18,
+                            Difficult = 14,
+                            GameId = 3420,
+                            Name = "Ссзорак",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 92,
+                            BossMapId = 18,
+                            Difficult = 15,
+                            GameId = 3420,
+                            Name = "Ссзорак",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 93,
+                            BossMapId = 19,
+                            Difficult = 14,
+                            GameId = 3445,
+                            Name = "Погребенные стражи",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 94,
+                            BossMapId = 19,
+                            Difficult = 15,
+                            GameId = 3445,
+                            Name = "Погребенные стражи",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 95,
+                            BossMapId = 20,
+                            Difficult = 14,
+                            GameId = 3455,
+                            Name = "Вашник Тлетворный",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 96,
+                            BossMapId = 20,
+                            Difficult = 15,
+                            GameId = 3455,
+                            Name = "Вашник Тлетворный",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 97,
+                            BossMapId = 21,
+                            Difficult = 14,
+                            GameId = 3421,
+                            Name = "Два Клыка",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 98,
+                            BossMapId = 21,
+                            Difficult = 15,
+                            GameId = 3421,
+                            Name = "Два Клыка",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 99,
+                            BossMapId = 22,
+                            Difficult = 14,
+                            GameId = 3429,
+                            Name = "Спиральный алтарь",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 100,
+                            BossMapId = 22,
+                            Difficult = 15,
+                            GameId = 3429,
+                            Name = "Спиральный алтарь",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 101,
+                            BossMapId = 23,
+                            Difficult = 14,
+                            GameId = 3492,
+                            Name = "Ула'тек",
+                            Size = 30
+                        },
+                        new
+                        {
+                            Id = 102,
+                            BossMapId = 23,
+                            Difficult = 15,
+                            GameId = 3492,
+                            Name = "Ула'тек",
+                            Size = 30
                         });
                 });
 
@@ -14401,6 +17358,9 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<double>("Y1")
                         .HasColumnType("float");
 
+                    b.Property<int>("Zoom")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("BossMap");
@@ -14414,7 +17374,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1000.0,
                             X1 = 550.0,
                             Y0 = 1600.0,
-                            Y1 = 500.0
+                            Y1 = 500.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14424,7 +17385,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1325.0,
                             X1 = 1000.0,
                             Y0 = 1450.0,
-                            Y1 = 150.0
+                            Y1 = 150.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14434,7 +17396,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 700.0,
                             X1 = 525.0,
                             Y0 = 1350.0,
-                            Y1 = 600.0
+                            Y1 = 600.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14444,7 +17407,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1250.0,
                             X1 = 900.0,
                             Y0 = -4530.0,
-                            Y1 = -5160.0
+                            Y1 = -5160.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14454,7 +17418,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1525.0,
                             X1 = 1300.0,
                             Y0 = -3800.0,
-                            Y1 = -5000.0
+                            Y1 = -5000.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14464,7 +17429,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1560.0,
                             X1 = 1500.0,
                             Y0 = -4430.0,
-                            Y1 = -4850.0
+                            Y1 = -4850.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14474,7 +17440,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1800.0,
                             X1 = 1575.0,
                             Y0 = -4425.0,
-                            Y1 = -5467.0
+                            Y1 = -5467.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14484,7 +17451,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1450.0,
                             X1 = 1060.0,
                             Y0 = -4555.0,
-                            Y1 = -5700.0
+                            Y1 = -5700.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14494,7 +17462,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1900.0,
                             X1 = 1720.0,
                             Y0 = -5370.0,
-                            Y1 = -5875.0
+                            Y1 = -5875.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14504,7 +17473,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1465.0,
                             X1 = 1200.0,
                             Y0 = -5375.0,
-                            Y1 = -5967.0
+                            Y1 = -5967.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14514,7 +17484,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1035.0,
                             X1 = 960.0,
                             Y0 = -5400.0,
-                            Y1 = -5867.0
+                            Y1 = -5867.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14524,7 +17495,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 665.0,
                             X1 = 500.0,
                             Y0 = 1575.0,
-                            Y1 = 675.0
+                            Y1 = 675.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14534,7 +17506,8 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1150.0,
                             X1 = 800.0,
                             Y0 = -3980.0,
-                            Y1 = -4900.0
+                            Y1 = -4900.0,
+                            Zoom = 5
                         },
                         new
                         {
@@ -14544,7 +17517,107 @@ namespace CombatParser.Infrastructure.Migrations
                             X0 = 1200.0,
                             X1 = 1060.0,
                             Y0 = -4470.0,
-                            Y1 = -5700.0
+                            Y1 = -5700.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 15,
+                            GameId = 2632,
+                            Name = "Приливный грот",
+                            X0 = 4715.0,
+                            X1 = 4600.0,
+                            Y0 = -11850.0,
+                            Y1 = -12320.0,
+                            Zoom = 3
+                        },
+                        new
+                        {
+                            Id = 16,
+                            GameId = 2606,
+                            Name = "Осада Оргриммара",
+                            X0 = 150.0,
+                            X1 = 0.0,
+                            Y0 = 476.0,
+                            Y1 = -476.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 17,
+                            GameId = 2609,
+                            Name = "Осада Оргриммара",
+                            X0 = 460.0,
+                            X1 = 0.0,
+                            Y0 = 950.0,
+                            Y1 = 0.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 18,
+                            GameId = 2609,
+                            Name = "Осада Оргриммара",
+                            X0 = 250.0,
+                            X1 = 0.0,
+                            Y0 = 850.0,
+                            Y1 = 0.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 19,
+                            GameId = 2608,
+                            Name = "Осада Оргриммара",
+                            X0 = 450.0,
+                            X1 = 0.0,
+                            Y0 = 0.0,
+                            Y1 = -725.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 20,
+                            GameId = 2608,
+                            Name = "Осада Оргриммара",
+                            X0 = 290.0,
+                            X1 = 0.0,
+                            Y0 = 0.0,
+                            Y1 = -625.0,
+                            Zoom = 5
+                        },
+                        new
+                        {
+                            Id = 21,
+                            GameId = 2607,
+                            Name = "Осада Оргриммара",
+                            X0 = 440.0,
+                            X1 = 0.0,
+                            Y0 = 100.0,
+                            Y1 = -100.0,
+                            Zoom = 1
+                        },
+                        new
+                        {
+                            Id = 22,
+                            GameId = 2610,
+                            Name = "Осада Оргриммара",
+                            X0 = 1090.0,
+                            X1 = 1000.0,
+                            Y0 = 580.0,
+                            Y1 = -550.0,
+                            Zoom = 10
+                        },
+                        new
+                        {
+                            Id = 23,
+                            GameId = 2610,
+                            Name = "Отравленная бездна",
+                            X0 = 1380.0,
+                            X1 = 1000.0,
+                            Y0 = 550.0,
+                            Y1 = -550.0,
+                            Zoom = 5
                         });
                 });
 
@@ -14801,6 +17874,9 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("Date")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int>("GameVersion")
+                        .HasColumnType("int");
+
                     b.Property<int>("LogType")
                         .HasColumnType("int");
 
@@ -14812,6 +17888,30 @@ namespace CombatParser.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CombatLog");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatLogStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CombatLogId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatLogId");
+
+                    b.ToTable("CombatLogStatus");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
@@ -14828,21 +17928,13 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("CombatId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DamageDone")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DamageTaken")
-                        .HasColumnType("int");
-
-                    b.Property<int>("HealDone")
-                        .HasColumnType("int");
-
                     b.Property<string>("PlayerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ResourcesRecovery")
-                        .HasColumnType("int");
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -14850,197 +17942,21 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.HasIndex("PlayerId");
 
+                    b.HasIndex("UnitId");
+
                     b.ToTable("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerAura", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AuraCreatorType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AuraType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Creator")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<TimeSpan>("FinishTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("GameAuraId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Stacks")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Target")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("CombatPlayerAura");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerDeath", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastHitSpell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("LastHitValue")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("CombatPlayerDeath");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPreAura", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatorGameId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("CombatPlayerPreAura");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Agility")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Armor")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Crit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Dodge")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Expertise")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Haste")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Hit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Intelligence")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Parry")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Spirit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Stamina")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Strength")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Talents")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId")
-                        .IsUnique();
-
-                    b.ToTable("CombatPlayerStats");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Absorbed")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatPlayerId")
+                    b.Property<int>("Blocked")
                         .HasColumnType("int");
-
-                    b.Property<string>("Creator")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("DamageType")
                         .HasColumnType("int");
@@ -15048,129 +17964,13 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPeriodicDamage")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPet")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSingleTarget")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsTargetBoss")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Spell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("Target")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("time");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("DamageDone");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDoneGeneral", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("AverageValue")
-                        .HasColumnType("float");
-
-                    b.Property<int>("CastNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CritNumber")
-                        .HasColumnType("int");
-
-                    b.Property<double>("DamagePerSecond")
-                        .HasColumnType("float");
-
-                    b.Property<int>("GameSpellId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsPet")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MaxValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MissNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Spell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("DamageDoneGeneral");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTaken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Absorbed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ActualValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Blocked")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Creator")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("DamageTakenType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameSpellId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsPeriodicDamage")
-                        .HasColumnType("bit");
-
                     b.Property<int>("Mitigated")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ModificationType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Overkill")
                         .HasColumnType("int");
 
                     b.Property<int>("RealDamage")
@@ -15184,101 +17984,39 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("Target")
+                    b.Property<string>("TargetId")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("DamageTaken");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTakenGeneral", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActualValue")
-                        .HasColumnType("int");
-
-                    b.Property<double>("AverageValue")
-                        .HasColumnType("float");
-
-                    b.Property<int>("CastNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CritNumber")
-                        .HasColumnType("int");
-
-                    b.Property<double>("DamageTakenPerSecond")
-                        .HasColumnType("float");
-
-                    b.Property<int>("GameSpellId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaxValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MissNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Spell")
+                    b.Property<string>("UnitId")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CombatPlayerId");
+                    b.HasIndex("TargetId");
 
-                    b.ToTable("DamageTakenGeneral");
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("DamageDone");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDone", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Creator")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("GameSpellId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsAbsorbed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsCrit")
-                        .HasColumnType("bit");
+                    b.Property<int>("ModificationType")
+                        .HasColumnType("int");
 
                     b.Property<int>("Overheal")
                         .HasColumnType("int");
@@ -15288,88 +18026,38 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("Target")
+                    b.Property<string>("TargetId")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
+
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CombatPlayerId");
+                    b.HasIndex("TargetId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("HealDone");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDoneGeneral", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("AverageValue")
-                        .HasColumnType("float");
-
-                    b.Property<int>("CastNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CritNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameSpellId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("HealPerSecond")
-                        .HasColumnType("float");
-
-                    b.Property<int>("MaxValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinValue")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Spell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("HealDoneGeneral");
-                });
-
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecovery", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Creator")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("GameSpellId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ModificationType")
                         .HasColumnType("int");
 
                     b.Property<string>("Spell")
@@ -15377,66 +18065,27 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("Target")
+                    b.Property<string>("TargetId")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CombatPlayerId");
+                    b.HasIndex("TargetId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("ResourceRecovery");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("AverageValue")
-                        .HasColumnType("float");
-
-                    b.Property<int>("CastNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CombatPlayerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameSpellId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaxValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinValue")
-                        .HasColumnType("int");
-
-                    b.Property<double>("ResourcePerSecond")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Spell")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CombatPlayerId");
-
-                    b.ToTable("ResourceRecoveryGeneral");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.SpecializationScore", b =>
@@ -15478,34 +18127,77 @@ namespace CombatParser.Infrastructure.Migrations
                     b.ToTable("SpecializationScore");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatUnit", b =>
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.UnitAura", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("CombatId")
+                    b.Property<int>("AuraCreatorType")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatorGameId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AuraType")
+                        .HasColumnType("int");
 
-                    b.Property<string>("GameId")
+                    b.Property<TimeSpan>("FinishTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("GameAuraId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("UnitType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Stacks")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Username")
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("TargetId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CombatId");
+                    b.HasIndex("TargetId");
 
-                    b.ToTable("CombatUnit");
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("UnitAura");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.UnitPreAura", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TargetId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("UnitPreAura");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>
@@ -15676,7 +18368,7 @@ namespace CombatParser.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.UnitCast", b =>
+            modelBuilder.Entity("CombatParser.Domain.Entities.Unit", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -15685,14 +18377,43 @@ namespace CombatParser.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CreatorGameId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GameId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<TimeSpan>("FinishTime")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatId");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("Unit");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.UnitCast", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<TimeSpan?>("FinishTime")
                         .HasColumnType("time");
 
                     b.Property<int>("GameSpellId")
+                        .HasMaxLength(128)
                         .HasColumnType("int");
 
                     b.Property<bool>("IsImmediatly")
@@ -15700,6 +18421,11 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.Property<bool>("IsSuccess")
                         .HasColumnType("bit");
+
+                    b.Property<string>("OwnerGameId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Spell")
                         .IsRequired()
@@ -15713,9 +18439,13 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CombatId");
+                    b.HasIndex("UnitId");
 
                     b.ToTable("UnitCast");
                 });
@@ -15725,31 +18455,61 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("CombatId")
-                        .HasColumnType("int");
+                    b.Property<long>("CurrentHealth")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("CreatorGameId")
+                    b.Property<long>("MaxHealth")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OwnerGameId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<int>("CurrentHealth")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDead")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MaxHealth")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CombatId");
+                    b.HasIndex("UnitId");
 
                     b.ToTable("UnitHealth");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.UnitInfo", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<long>("DamageDone")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DamageTaken")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("HealDone")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ResourcesRecovery")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UnitId")
+                        .IsUnique();
+
+                    b.ToTable("UnitInfo");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.UnitPosition", b =>
@@ -15757,16 +18517,17 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("CombatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatorGameId")
+                    b.Property<string>("OwnerGameId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
+
+                    b.Property<string>("UnitId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("X")
                         .HasColumnType("float");
@@ -15776,9 +18537,141 @@ namespace CombatParser.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CombatId");
+                    b.HasIndex("UnitId");
 
                     b.ToTable("UnitPosition");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMidnight.WoWMidnightPlayerStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Avoidance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Block")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Crit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dodge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Haste")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Intelligence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Lifesteal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Mastery")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Movement")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Parry")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Talents")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<int>("Versality")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId")
+                        .IsUnique();
+
+                    b.ToTable("WoWMidnightPlayerStats");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMoPClassic.WoWMoPClassicPlayerStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Armor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Block")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CombatPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Crit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dodge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Expertise")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Haste")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Hit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Intelligence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Parry")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Spirit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stamina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Talents")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CombatPlayerId")
+                        .IsUnique();
+
+                    b.ToTable("WoWMoPClassicPlayerStats");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.BestSpecializationScore", b =>
@@ -15830,6 +18723,17 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("CombatLog");
                 });
 
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatLogStatus", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Aggregates.CombatLog", "CombatLog")
+                        .WithMany("Statuses")
+                        .HasForeignKey("CombatLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatLog");
+                });
+
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
@@ -15844,141 +18748,74 @@ namespace CombatParser.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Combat");
 
                     b.Navigation("Player");
-                });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerAura", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("Auras")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerDeath", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("CombatPlayerDeathes")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerPreAura", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("PreAuras")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithOne("Stats")
-                        .HasForeignKey("CombatParser.Domain.Entities.CombatPlayerData.CombatPlayerStats", "CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDone", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
                         .WithMany("DamageDones")
-                        .HasForeignKey("CombatPlayerId")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CombatPlayer");
-                });
+                    b.Navigation("Target");
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageDoneGeneral", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("DamageDoneGenerals")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTaken", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("DamageTakens")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
-                });
-
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.DamageTakenGeneral", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("DamageTakenGenerals")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDone", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
                         .WithMany("HealDones")
-                        .HasForeignKey("CombatPlayerId")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CombatPlayer");
-                });
+                    b.Navigation("Target");
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.HealDoneGeneral", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("HealDoneGenerals")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecovery", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
                         .WithMany("ResourceRecoveries")
-                        .HasForeignKey("CombatPlayerId")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CombatPlayer");
-                });
+                    b.Navigation("Target");
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.ResourceRecoveryGeneral", b =>
-                {
-                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
-                        .WithMany("ResourceRecoveryGenerals")
-                        .HasForeignKey("CombatPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CombatPlayer");
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.SpecializationScore", b =>
@@ -16000,7 +18837,45 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("Specialization");
                 });
 
-            modelBuilder.Entity("CombatParser.Domain.Entities.CombatUnit", b =>
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.UnitAura", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
+                        .WithMany("Auras")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Target");
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayerData.UnitPreAura", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
+                        .WithMany("PreAuras")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Target");
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.Unit", b =>
                 {
                     b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
                         .WithMany("Units")
@@ -16013,35 +18888,66 @@ namespace CombatParser.Infrastructure.Migrations
 
             modelBuilder.Entity("CombatParser.Domain.Entities.UnitCast", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
                         .WithMany("UnitCasts")
-                        .HasForeignKey("CombatId")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Combat");
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.UnitHealth", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
-                        .WithMany("UnitHeaths")
-                        .HasForeignKey("CombatId")
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
+                        .WithMany("UnitHealthes")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Combat");
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.UnitInfo", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.Unit", null)
+                        .WithOne("UnitInfo")
+                        .HasForeignKey("CombatParser.Domain.Entities.UnitInfo", "UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.UnitPosition", b =>
                 {
-                    b.HasOne("CombatParser.Domain.Aggregates.Combat", "Combat")
+                    b.HasOne("CombatParser.Domain.Entities.Unit", "Unit")
                         .WithMany("UnitPositions")
-                        .HasForeignKey("CombatId")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Combat");
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMidnight.WoWMidnightPlayerStats", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithOne()
+                        .HasForeignKey("CombatParser.Domain.Entities.WoWMidnight.WoWMidnightPlayerStats", "CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.WoWMoPClassic.WoWMoPClassicPlayerStats", b =>
+                {
+                    b.HasOne("CombatParser.Domain.Entities.CombatPlayer", "CombatPlayer")
+                        .WithOne()
+                        .HasForeignKey("CombatParser.Domain.Entities.WoWMoPClassic.WoWMoPClassicPlayerStats", "CombatPlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CombatPlayer");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.Boss", b =>
@@ -16058,48 +18964,19 @@ namespace CombatParser.Infrastructure.Migrations
                 {
                     b.Navigation("CombatPlayers");
 
-                    b.Navigation("UnitCasts");
-
-                    b.Navigation("UnitHeaths");
-
-                    b.Navigation("UnitPositions");
-
                     b.Navigation("Units");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Aggregates.CombatLog", b =>
                 {
                     b.Navigation("Combats");
+
+                    b.Navigation("Statuses");
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.CombatPlayer", b =>
                 {
-                    b.Navigation("Auras");
-
-                    b.Navigation("CombatPlayerDeathes");
-
-                    b.Navigation("DamageDoneGenerals");
-
-                    b.Navigation("DamageDones");
-
-                    b.Navigation("DamageTakenGenerals");
-
-                    b.Navigation("DamageTakens");
-
-                    b.Navigation("HealDoneGenerals");
-
-                    b.Navigation("HealDones");
-
-                    b.Navigation("PreAuras");
-
-                    b.Navigation("ResourceRecoveries");
-
-                    b.Navigation("ResourceRecoveryGenerals");
-
                     b.Navigation("Score");
-
-                    b.Navigation("Stats")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CombatParser.Domain.Entities.Player", b =>
@@ -16112,6 +18989,28 @@ namespace CombatParser.Infrastructure.Migrations
                     b.Navigation("BestSpecializationScores");
 
                     b.Navigation("SpecializationScores");
+                });
+
+            modelBuilder.Entity("CombatParser.Domain.Entities.Unit", b =>
+                {
+                    b.Navigation("Auras");
+
+                    b.Navigation("DamageDones");
+
+                    b.Navigation("HealDones");
+
+                    b.Navigation("PreAuras");
+
+                    b.Navigation("ResourceRecoveries");
+
+                    b.Navigation("UnitCasts");
+
+                    b.Navigation("UnitHealthes");
+
+                    b.Navigation("UnitInfo")
+                        .IsRequired();
+
+                    b.Navigation("UnitPositions");
                 });
 #pragma warning restore 612, 618
         }

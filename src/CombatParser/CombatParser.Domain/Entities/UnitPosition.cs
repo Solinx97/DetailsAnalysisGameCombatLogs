@@ -1,27 +1,24 @@
-﻿using CombatParser.Domain.Aggregates;
+﻿using CombatParser.Domain.Entities.Base;
 using CombatParser.Domain.Interfaces;
 
 namespace CombatParser.Domain.Entities;
 
-public class UnitPosition : CombatDataBase, ITime, IUnitRef
+public class UnitPosition : CombatUnitDataBase, ITime, IUnitRef
 {
-    public const int GAMEID_MAX_LENGTH = 128;
+    public const int OWNER_GAMEID_MAX_LENGTH = 128;
 
     private UnitPosition() { }
 
-    private UnitPosition(string gameId, double x, double y, TimeSpan time, int combatId)
+    private UnitPosition(string ownerGameId, double x, double y, TimeSpan time)
     {
         Id = Guid.NewGuid().ToString();
-        CreatorGameId = gameId;
+        OwnerGameId = ownerGameId;
         X = x;
         Y = y;
         Time = time;
-        CombatId = combatId;
     }
 
-    public string Id { get; private set; } = string.Empty;
-
-    public string CreatorGameId { get; private set; } = string.Empty;
+    public string OwnerGameId { get; private set; } = string.Empty;
 
     public double X { get; private set; }
 
@@ -29,13 +26,10 @@ public class UnitPosition : CombatDataBase, ITime, IUnitRef
 
     public TimeSpan Time { get; private set; }
 
-    public Combat Combat { get; private set; }
-
-    public static UnitPosition Create(string gameId, double x, double y, TimeSpan time, int combatId)
+    public static UnitPosition Create(string ownerGameId, double x, double y, TimeSpan time)
     {
-        ArgumentException.ThrowIfNullOrEmpty(gameId, nameof(gameId));
-        ArgumentOutOfRangeException.ThrowIfNegative(combatId, nameof(combatId));
+        ArgumentException.ThrowIfNullOrEmpty(ownerGameId, nameof(ownerGameId));
 
-        return new UnitPosition(gameId, x, y, time, combatId);
+        return new UnitPosition(ownerGameId, x, y, time);
     }
 }

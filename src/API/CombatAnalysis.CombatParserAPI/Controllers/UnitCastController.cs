@@ -10,11 +10,11 @@ public class UnitCastController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> GetByCombatId(int combatId, CancellationToken cancellationToken)
+    [HttpGet("getByCombatUnitId/{combatUnitId}")]
+    public async Task<IActionResult> GetByCombatId(string combatUnitId, CancellationToken cancellationToken)
     {
-        var casts = await _mediator.Send(new GetUnitCastsQuery(combatId), cancellationToken);
+        var unitCasts = await _mediator.Send(new GetUnitCastsQuery(combatUnitId), cancellationToken);
 
-        return Ok(casts);
+        return Ok(unitCasts);
     }
 }

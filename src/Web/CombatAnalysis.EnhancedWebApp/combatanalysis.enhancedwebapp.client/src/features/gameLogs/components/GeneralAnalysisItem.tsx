@@ -1,6 +1,6 @@
-import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useTime from '@/shared/hooks/useTime';
+import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faLocationCrosshairs, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -18,11 +18,18 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
 
     const navigate = useNavigate();
 
+    const [gameVersion, setgGameVersion] = useState<number>(-1);
     const [selectedCombatIndex, setSelectedCombatIndex] = useState<number>(uniqueCombats.length - 1);
     const [selectedCombat, setSelectedCombat] = useState<CombatModel>(uniqueCombats[selectedCombatIndex]);
 
     const { getTotalSeconds, formatDate } = useTime();
-    
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const version: number = parseInt(queryParams.get("gameVersion") || '-1');
+        setgGameVersion(version);
+    }, []);
+
     useEffect(() => {
         setSelectedCombat(uniqueCombats[selectedCombatIndex]);
     }, [selectedCombatIndex]);
@@ -50,7 +57,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                                 <p className="card-text">{selectedCombat.dungeonName}</p>
                             </div>
                         </div>
-                        <div className="see-reply btn-shadow" 
+                        <div className="see-reply btn-shadow"
                             onClick={() => navigate(`/general-analysis/watch?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
                             <FontAwesomeIcon
                                 icon={faLocationCrosshairs}
@@ -84,7 +91,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                 </div>
                 <ul className="stats">
                     <li className="list-group-item">
-                        <div>{t("DPS")}</div>
+                        <div>{t("Damage")}</div>
                         <FontAwesomeIcon
                             icon={faKhanda}
                             className="list-group-item__player-statistic-item"
@@ -93,7 +100,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                         <div>{getValueShortName(selectedCombat.damageDone)}</div>
                     </li>
                     <li className="list-group-item">
-                        <div>{t("HPS")}</div>
+                        <div>{t("Healing")}</div>
                         <FontAwesomeIcon
                             icon={faPlusCircle}
                             className="list-group-item__player-statistic-item"
@@ -131,7 +138,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                 </ul>
                 <div className="details">
                     <div className="btn-shadow"
-                        onClick={() => navigate(`/selected-combat?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
+                        onClick={() => navigate(`/selected-combat?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}&gameVersion=${gameVersion}`)}>
                         <FontAwesomeIcon
                             icon={faDatabase}
                         />
