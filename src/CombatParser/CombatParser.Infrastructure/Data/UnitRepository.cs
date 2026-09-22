@@ -29,11 +29,12 @@ internal class UnitRepository(CombatParserContextOne context) : IUnitRepository
         return data;
     }
 
-    public async Task<IEnumerable<UniqueUnitName>> GetUniqueNamesAsync(int combatLogId, string bossName, CancellationToken cancellationToken)
+    public async Task<IEnumerable<UniqueUnitName>> GetUniqueNamesAsync(int combatLogId, string bossName, int[] types, CancellationToken cancellationToken)
     {
         var data = await _context.Set<Unit>()
                     .Where(x => x.Combat.CombatLogId == combatLogId
-                            && (string.IsNullOrWhiteSpace(bossName) || x.Combat.Boss.Name == bossName))
+                            && (string.IsNullOrWhiteSpace(bossName) || x.Combat.Boss.Name == bossName)
+                            && types.Contains(x.Type))
                     .AsNoTracking()
                     .Select(x => new UniqueUnitName
                     {

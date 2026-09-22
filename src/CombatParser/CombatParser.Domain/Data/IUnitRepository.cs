@@ -6,7 +6,7 @@ public interface IUnitRepository
 {
     Task<IEnumerable<Unit>> GetAsync(int combatId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<UniqueUnitName>> GetUniqueNamesAsync(int combatLogId, string bossName, CancellationToken cancellationToken);
+    Task<IEnumerable<UniqueUnitName>> GetUniqueNamesAsync(int combatLogId, string bossName, int[] types, CancellationToken cancellationToken);
 
     Task<IEnumerable<UnitPosition>> GetPositionsAsync(string combatUnitId, CancellationToken cancellationToken);
 

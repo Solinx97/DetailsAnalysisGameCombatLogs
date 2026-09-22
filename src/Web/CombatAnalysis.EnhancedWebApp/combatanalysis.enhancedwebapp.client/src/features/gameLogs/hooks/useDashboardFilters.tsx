@@ -65,7 +65,9 @@ const useDashboardFilters = (combatLogId: number): DashboardFiltersData => {
                 value: item.name,
                 label: item.type === CombatUnitType["Player"]
                     ? `[p] ${removeServerName(item.name)}`
-                    : removeServerName(item.name)
+                    : item.type === CombatUnitType["Pet"]
+                        ? `-p- ${item.name}`
+                        : item.name
             })
         )
 
