@@ -13,5 +13,10 @@
   "AddFriedns": "Add users in friends and see friends activities",
   "SaveAnalyzing": "Save Combat logs",
   "ExploreAnalyzing": "Explore your or other users Combat logs",
-  "ShareAnalyzing": "Share link to Combat logs with friends"
+  "ShareAnalyzing": "Share link to Combat logs with friends",
+  "WoWExplorer": "WoW explorer",
+  "ExplorerCollections": "Explorer character collections",
+  "ExplorerCharacterGear": "Explorer character gear",
+  "ExplorerCharacterReputations": "Explorer character reputations",
+  "OtherExplorer": "And other explorer"
 }

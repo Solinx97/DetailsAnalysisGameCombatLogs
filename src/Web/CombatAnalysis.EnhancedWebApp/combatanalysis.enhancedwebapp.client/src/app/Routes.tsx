@@ -1,3 +1,7 @@
+import PlayerDiethDetails from '@/features/gameLogs/components/player/PlayerDiethDetails';
+import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
+import BattleNetAuthorizationCallback from '@/features/wowGameData/components/BattleNetAuthorizationCallback';
+import WoWGameData from '@/features/wowGameData/components/WoWGameData';
 import Chats from '../features/chat/components/Chats';
 import AllCommunities from '../features/community/components/AllCommunities';
 import SelectedCommunity from '../features/community/components/selectedCommunity/SelectedCommunity';
@@ -5,9 +9,9 @@ import UserEnvironmentCommunities from '../features/community/components/userEnv
 import Feed from '../features/feed/components/Feed';
 import CombatAuras from '../features/gameLogs/components/auras/CombatAuras';
 import CombatDetails from '../features/gameLogs/components/details/CombatDetails';
-import SelectedCombat from '../features/gameLogs/components/SelectedCombat';
 import GameCombatLogs from '../features/gameLogs/components/GameCombatLogs';
 import GeneralAnalysis from '../features/gameLogs/components/GeneralAnalysis';
+import SelectedCombat from '../features/gameLogs/components/SelectedCombat';
 import AuthorizationCallback from '../features/user/components/identity/AuthorizationCallback';
 import People from '../features/user/components/people/People';
 import SelectedUser from '../features/user/components/selectedUser/SelectedUser';
@@ -16,8 +20,6 @@ import Profile from '../features/user/components/userEnvironment/Profile';
 import UserFeed from '../features/user/components/userEnvironment/UserFeed';
 import VoiceChat from '../features/voiceChat/components/VoiceChat';
 import Home from '../shared/components/Home';
-import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
-import PlayerDiethDetails from '@/features/gameLogs/components/player/PlayerDiethDetails';
 
 type Route = {
     index?: boolean;
@@ -105,6 +107,14 @@ const AppRoutes: Route[] = [
     {
         path: '/player-dieth-details',
         element: <PlayerDiethDetails />
+    },
+    {
+        path: '/wow-game-data',
+        element: <WoWGameData />
+    },
+    {
+        path: '/wow-game-data/callback',
+        element: <BattleNetAuthorizationCallback />
     },
 ];
 

@@ -1,5 +1,7 @@
+import { BattleNetDataApi } from '@/features/wowGameData/api/BattleNetData.api';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { ChatApi } from '../features/chat/api/Chat.api';
+import groupChatUserReducer from '../features/chat/store/GroupChatUserSlice';
 import { CommunityApi } from '../features/community/api/Community.api';
 import communityMenuReducer from '../features/community/store/CommunityMenuSlice';
 import { PostApi } from '../features/feed/api/Post.api';
@@ -9,7 +11,6 @@ import { UserApi } from '../features/user/api/User.api';
 import customerReducer from '../features/user/store/CustomerSlice';
 import userPrivacyReducer from '../features/user/store/UserPrivacySlice';
 import userReducer from '../features/user/store/UserSlice';
-import groupChatUserReducer from '../features/chat/store/GroupChatUserSlice';
 import { VoiceChatApi } from '../features/voiceChat/api/VoiceChat.api';
 import authenticationMiddleware from '../middleware/authenticationMiddleware';
 
@@ -25,6 +26,7 @@ const reducers = combineReducers({
     [CommunityApi.reducerPath]: CommunityApi.reducer,
     [PostApi.reducerPath]: PostApi.reducer,
     [GameLogsApi.reducerPath]: GameLogsApi.reducer,
+    [BattleNetDataApi.reducerPath]: BattleNetDataApi.reducer,
     [NotificationApi.reducerPath]: NotificationApi.reducer,
 });
 
@@ -38,6 +40,7 @@ const Store = configureStore({
             .concat(CommunityApi.middleware)
             .concat(PostApi.middleware)
             .concat(GameLogsApi.middleware)
+            .concat(BattleNetDataApi.middleware)
             .concat(NotificationApi.middleware)
             .concat(authenticationMiddleware)
 });

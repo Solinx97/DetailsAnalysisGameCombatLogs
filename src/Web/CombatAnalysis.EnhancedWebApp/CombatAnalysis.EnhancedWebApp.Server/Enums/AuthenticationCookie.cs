@@ -6,5 +6,8 @@ public enum AuthenticationCookie
     RefreshToken,
     State,
     CodeVerifier,
-    idsrv
+    idsrv,
+    BattleNetAccessToken,
+    BattleNetAuthorizationAccessToken,
+    BattleNetState,
 }

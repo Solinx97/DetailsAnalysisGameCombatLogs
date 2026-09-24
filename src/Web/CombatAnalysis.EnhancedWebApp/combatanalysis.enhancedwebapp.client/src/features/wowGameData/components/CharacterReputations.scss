@@ -1,0 +1,110 @@
+.character {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+
+    .select-user {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+
+        .battle-net {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .status {
+                font-size: 0.65em;
+                opacity: 0.7;
+            }
+
+            .auth {
+                padding: 10px 20px;
+            }
+
+            .auth.connected {
+                box-shadow: 2px 2px green;
+            }
+
+            .auth.not-connected {
+                box-shadow: 2px 2px gray;
+                opacity: 0.75;
+            }
+
+
+
+        }
+
+        .selected-user {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .exit {
+            cursor: pointer;
+
+            &:hover {
+                transform: scale(1.25);
+            }
+        }
+    }
+
+    .reputations {
+        margin-left: 50px;
+    }
+
+    h5 {
+        margin: 0;
+    }
+}
+
+.reputations {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: default;
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .count {
+            padding: 5px;
+            border: 2px solid gray;
+            border-radius: 20px;
+        }
+    }
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    &__reputation {
+        display: flex;
+        gap: 50px;
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reputation-value {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 5px 20px;
+            box-shadow: 2px 2px green;
+            border-radius: 20px;
+        }
+    }
+}

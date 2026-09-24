@@ -147,7 +147,7 @@ public class AuthenticationController : ControllerBase
         HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.State));
         HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.CodeVerifier));
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpGet("verifyEmail")]
@@ -186,7 +186,7 @@ public class AuthenticationController : ControllerBase
 
             if (stateValue == state)
             {
-                return Ok();
+                return NoContent();
             }
 
             return BadRequest();

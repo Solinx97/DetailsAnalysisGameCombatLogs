@@ -22,6 +22,13 @@ internal class HttpClientHelper : IHttpClientHelper
         _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(scheme, parameter);
     }
 
+    public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage message)
+    {
+        var result = await _client.SendAsync(message);
+
+        return result;
+    }
+
     public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent? content)
     {
         var result = await _client.PostAsync($"{APIUrl}{BaseAddressApi}{requestUri}", content);
@@ -30,6 +37,13 @@ internal class HttpClientHelper : IHttpClientHelper
     }
 
     public async Task<HttpResponseMessage> PostAsync(string requestUri, StringContent? content)
+    {
+        var result = await _client.PostAsync($"{APIUrl}{BaseAddressApi}{requestUri}", content);
+
+        return result;
+    }
+
+    public async Task<HttpResponseMessage> PostAsync(string requestUri, FormUrlEncodedContent? content)
     {
         var result = await _client.PostAsync($"{APIUrl}{BaseAddressApi}{requestUri}", content);
 

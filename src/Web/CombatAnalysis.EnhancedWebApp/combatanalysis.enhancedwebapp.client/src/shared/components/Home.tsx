@@ -68,6 +68,7 @@ const Home: React.FC = () => {
 
     const navigateToFeed = () => navigate("/feed");
     const navigateToGameCombatLogs = () => navigate("/game-combat-logs");
+    const navigateToWoWGameData = () => navigate("/wow-game-data");
 
     return (
         <div className="home">
@@ -128,6 +129,31 @@ const Home: React.FC = () => {
                     </div>
                 </div>
                 <div className="go-to-combat-logs" data-testid="go-to-combat-logs" onClick={navigateToGameCombatLogs}>{t("Open")}</div>
+            </div>
+            <div className="home__item">
+                <div className="title">{t("WoWExplorer")}</div>
+                <div className="preview">
+                    <div className="preview__title">{t("WoWExplorer")}</div>
+                    <div className="preview__responsibilities">
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="combat-logs-reason-1" id="combat-logs-reason-1" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="combat-logs-reason-1">{t("ExplorerCollections")}</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="combat-logs-reason-2" id="combat-logs-reason-2" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="combat-logs-reason-2">{t("ExplorerCharacterGear")}</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="combat-logs-reason-3" id="combat-logs-reason-3" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="combat-logs-reason-3">{t("ExplorerCharacterReputations")}</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="combat-logs-reason-3" id="combat-logs-reason-3" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="combat-logs-reason-3">{t("OtherExplorer")}</label>
+                        </div>
+                    </div>
+                </div>
+                <div className="go-to-combat-logs" data-testid="go-to-combat-logs" onClick={navigateToWoWGameData}>{t("Open")}</div>
             </div>
             {shouldBeAuthorize &&
                 <div className="should-be-authorize" data-testid="should-be-authorize">

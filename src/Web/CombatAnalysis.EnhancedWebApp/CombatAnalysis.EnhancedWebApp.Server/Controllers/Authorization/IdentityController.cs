@@ -74,7 +74,7 @@ public class IdentityController : ControllerBase
                 Expires = DateTimeOffset.UtcNow.AddSeconds(_authentication.RefreshTokenExpiresSec),
             });
 
-            return Ok();
+            return NoContent();
         }
         catch (ArgumentNullException ex)
         {
@@ -129,7 +129,7 @@ public class IdentityController : ControllerBase
                 Expires = DateTimeOffset.UtcNow.AddSeconds(_authentication.RefreshTokenExpiresSec),
             });
 
-            return Ok();
+            return NoContent();
         }
         catch (ArgumentNullException ex)
         {

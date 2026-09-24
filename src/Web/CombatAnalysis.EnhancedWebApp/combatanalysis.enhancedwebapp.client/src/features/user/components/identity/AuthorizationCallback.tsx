@@ -8,10 +8,10 @@ import { useLazyCancelAuthorizationQuery, useLazyStateValidateQuery } from '../.
 
 import './AuthorizationCallback.scss';
 
-const unauthorizedTimeoutLimit = 4000;
-
 const AuthorizationCallback: React.FC = () => {
-    const { t } = useTranslation("identity/authorizationCallback");
+    const unauthorizedTimeoutLimit = 4000;
+
+    const { t } = useTranslation('identity/authorizationCallback');
 
     const navigate = useNavigate();
     const location = useLocation();

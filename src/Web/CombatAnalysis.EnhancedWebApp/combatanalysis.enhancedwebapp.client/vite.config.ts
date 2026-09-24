@@ -20,6 +20,14 @@ const logsEndpoints = (target: string, apiVersion: string) => {
     }
 }
 
+const battleNetDataEnpoints = (target: string, apiVersion: string) => {
+    return {
+        [`^/api/${apiVersion}/BattleNetIdentity`]: { target, secure: false },
+        [`^/api/${apiVersion}/WoWCharacter`]: { target, secure: false },
+        [`^/api/${apiVersion}/WoWUser`]: { target, secure: false },
+    }
+}
+
 const gameLogsEnpoints = (target: string, apiVersion: string) => {
     return {
         [`^/api/${apiVersion}/Boss`]: { target, secure: false },
@@ -116,6 +124,7 @@ export default defineConfig(({ mode }) => {
         server: {
             proxy: {
                 ...logsEndpoints(target, apiVersion),
+                ...battleNetDataEnpoints(target, apiVersion),
                 ...gameLogsEnpoints(target, apiVersion),
                 ...communityEndpoints(target, apiVersion),
                 ...userEndpoints(target, apiVersion),

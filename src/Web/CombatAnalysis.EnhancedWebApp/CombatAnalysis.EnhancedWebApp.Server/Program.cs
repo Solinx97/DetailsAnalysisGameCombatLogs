@@ -1,7 +1,9 @@
+using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.Attributes;
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Helpers;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+using CombatAnalysis.EnhancedWebApp.Server.Mapping;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Diagnostics;
@@ -13,9 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 builder.Services.AddScoped<RequireRefreshTokenAttribute>();
+builder.Services.AddScoped<RequireBattleNetAccessTokenAttribute>();
+builder.Services.AddScoped<RequireBattleNetAuthorizationAccessTokenAttribute>();
 
-builder.Services.Configure<Cluster>(builder.Configuration.GetSection("Cluster"));
 builder.Services.Configure<Server>(builder.Configuration.GetSection("Server"));
+builder.Services.Configure<BattleNet>(builder.Configuration.GetSection("BattleNet"));
+builder.Services.Configure<Cluster>(builder.Configuration.GetSection("Cluster"));
 builder.Services.Configure<Authentication>(builder.Configuration.GetSection("Authentication"));
 builder.Services.Configure<AuthenticationGrantType>(builder.Configuration.GetSection("Authentication:GrantType"));
 builder.Services.Configure<AuthenticationClient>(builder.Configuration.GetSection("Authentication:Client"));
@@ -24,6 +29,16 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var loggerFactory = LoggerFactory.Create(builder => { });
+
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new ProxyApiMapper());
+}, loggerFactory);
+
+var mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var server = new Server();
 builder.Configuration.Bind("Server", server);
