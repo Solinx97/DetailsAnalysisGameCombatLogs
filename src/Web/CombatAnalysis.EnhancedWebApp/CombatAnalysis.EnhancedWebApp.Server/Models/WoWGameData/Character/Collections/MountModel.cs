@@ -2,11 +2,11 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 
-public class WoWMountModel
+public class MountModel
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }
 
     [JsonPropertyName("name")]
-    public WoWGameDataValueNameModel Name { get; set; }
+    public GameDataValueNameModel Name { get; set; }
 }

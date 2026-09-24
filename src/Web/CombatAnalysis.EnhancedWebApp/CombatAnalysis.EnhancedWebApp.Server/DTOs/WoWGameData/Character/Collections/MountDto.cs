@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 
-public class WoWMountDto
+public class MountDto
 {
     public int Id { get; set; }
 

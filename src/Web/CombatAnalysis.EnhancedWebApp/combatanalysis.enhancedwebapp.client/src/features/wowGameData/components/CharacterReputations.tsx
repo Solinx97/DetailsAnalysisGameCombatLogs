@@ -1,10 +1,7 @@
-import { NoneValue } from '@/shared/helpers/ConstHelpers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyGetCharacterReputationsQuery } from '../api/BattleNetData.api';
 import type { CharacterReputationModel } from '../types/CharacterReputationModel';
-
-import './CharacterReputations.scss';
 
 const CharacterReputations: React.FC<{ username: string | undefined }> = ({ username }) => {
     const { t } = useTranslation('wowGameData');
@@ -14,17 +11,25 @@ const CharacterReputations: React.FC<{ username: string | undefined }> = ({ user
     const [getReputations] = useLazyGetCharacterReputationsQuery();
 
     useEffect(() => {
-        const getReputationsAsync = async () => {
+        if (!username || username.trim().length === 0) {
+            return;
+        }
+
+        const loadAsync = async () => {
             try {
-                const receivedReputations = await getReputations({ username: username ? username : NoneValue.NONE_VALUE, serverName: "howling-fjord", regionName: "eu" }).unwrap();
+                const receivedReputations = await getReputations({ username, serverName: "howling-fjord", regionName: "eu" }).unwrap();
                 setReputaions(receivedReputations);
             } catch (error) {
                 console.error("Failed to fetch character reputations:", error);
             }
         }
 
-        getReputationsAsync();
+        loadAsync();
     }, []);
+
+    if (!username || username.trim().length === 0) {
+        return (<div>No data</div>);
+    }
 
     if (reputaions.length === 0) {
         return (<div>Loading...</div>);
@@ -38,7 +43,7 @@ const CharacterReputations: React.FC<{ username: string | undefined }> = ({ user
             </div>
             <ul className="reputations__container">
                 {reputaions.map((rep, index) => (
-                    <li key={index} className="reputations__reputation">
+                    <li key={index} className="reputations__item">
                         <div className="item">{rep.faction.name}</div>
                         <div className="item">
                             <div className="reputation-value">

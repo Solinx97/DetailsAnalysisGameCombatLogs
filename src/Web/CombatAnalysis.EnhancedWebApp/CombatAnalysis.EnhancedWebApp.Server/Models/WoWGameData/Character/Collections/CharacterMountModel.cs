@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Coll
 public class CharacterMountModel
 {
     [JsonPropertyName("mount")]
-    public WoWMountModel Mount { get; set; }
+    public MountModel Mount { get; set; }
 
     [JsonPropertyName("is_useable")]
     public bool IsUseable { get; set; }

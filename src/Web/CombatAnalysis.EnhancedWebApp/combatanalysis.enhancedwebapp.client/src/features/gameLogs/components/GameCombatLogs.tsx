@@ -5,7 +5,6 @@ import type { RootState } from '../../../app/Store';
 import PersonalTabs from './PersonalTabs';
 import WoWMoPCombatLogs from './gameVersionLogs/WoWMoPCombatLogs';
 import WoWMidnightCombatLogs from './gameVersionLogs/WoWMidnightCombatLogs';
-import CharacterInspectation from '../../wowGameData/components/CharacterReputations';
 
 import './GameCombatLogs.scss';
 
@@ -50,13 +49,7 @@ const GameCombatLogs: React.FC = () => {
                             gameVersion={GAME_VERSION.WoWMoP}
                             t={t}
                         />
-                    },
-                    {
-                        id: 2,
-                        header: t("CharacterInspectation"),
-                        content: <CharacterInspectation
-                        />
-                    },
+                    }
                 ]}
                 tabsClassName={"charts"}
             />

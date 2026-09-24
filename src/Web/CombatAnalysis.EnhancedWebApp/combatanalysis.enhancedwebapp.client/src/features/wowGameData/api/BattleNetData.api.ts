@@ -1,6 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { CharacterReputationModel } from '../types/CharacterReputationModel';
 import type { CharacterMountModel } from '../types/CharacterMountModel';
+import type { CharacterReputationModel } from '../types/CharacterReputationModel';
+import type { WoWCharacterModel } from '../types/character/WoWCharacterModel';
+import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
+import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
 
 const apiURL = '/api/v1';
 
@@ -44,6 +47,18 @@ export const BattleNetDataApi = createApi({
         getCharacterMounts: builder.query<CharacterMountModel[], { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getMounts/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
+        getCharacterSummary: builder.query<WoWCharacterModel, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getProfileSummary/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
+        getCharacterMythicKeystone: builder.query<MythicKeystoneModel, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getMythicKeystone/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
+        getCharacterRaids: builder.query<CharacterDungeonModel, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getRaids/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
+        getCharacterDungeons: builder.query<CharacterDungeonModel, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getDungeons/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
         getUserMounts: builder.query<CharacterMountModel[], { regionName: string }>({
             query: ({ regionName }) => `/WoWUser/getMounts?regionName=${regionName}`,
         }),
@@ -60,5 +75,9 @@ export const {
     useLazyBattleNetDisconenctQuery,
     useLazyGetCharacterReputationsQuery,
     useLazyGetCharacterMountsQuery,
+    useLazyGetCharacterSummaryQuery,
+    useLazyGetCharacterMythicKeystoneQuery,
+    useLazyGetCharacterRaidsQuery,
+    useLazyGetCharacterDungeonsQuery,
     useLazyGetUserMountsQuery,
 } = BattleNetDataApi;

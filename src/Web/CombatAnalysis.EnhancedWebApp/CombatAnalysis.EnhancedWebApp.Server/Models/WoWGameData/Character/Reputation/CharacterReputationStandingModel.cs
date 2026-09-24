@@ -17,5 +17,5 @@ public class CharacterReputationStandingModel
     public int Tier { get; set; }
 
     [JsonPropertyName("name")]
-    public WoWGameDataValueNameModel Name { get; set; }
+    public GameDataValueNameModel Name { get; set; }
 }

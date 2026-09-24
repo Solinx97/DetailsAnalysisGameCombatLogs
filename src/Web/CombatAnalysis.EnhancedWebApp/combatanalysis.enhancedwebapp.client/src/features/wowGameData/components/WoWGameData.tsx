@@ -1,12 +1,15 @@
-import { faLocationCrosshairs, faUser, faPlus, faClose } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBattleNetDataAuthorizaitonMutation, useBattleNetDataTokenMutation, useIsAuthorizedQuery, useLazyBattleNetDisconenctQuery } from '../api/BattleNetData.api';
 import CharacterMounts from './CharacterMounts';
+import CharacterMythicKeystone from './CharacterMythicKeystone';
 import CharacterReputations from './CharacterReputations';
+import CharacterSummary from './CharacterSummary';
+import CharacterRaids from './CharacterRaids';
 
-import './CharacterReputations.scss';
+import './WoWGameData.scss';
 
 const WoWGameData: React.FC = () => {
     const { t } = useTranslation('wowGameData');
@@ -14,6 +17,10 @@ const WoWGameData: React.FC = () => {
     const usernameRef = useRef<HTMLInputElement | null>(null);
 
     const [username, setUsername] = useState<string | undefined>();
+    const [showSummary, setShowSummary] = useState<boolean>(false);
+    const [showMythicKeystone, setShowMythicKeystone] = useState<boolean>(false);
+    const [showRaids, setShowRaids] = useState<boolean>(false);
+    const [showDungeons, setShowDungeons] = useState<boolean>(false);
     const [showReputations, setShowReputations] = useState<boolean>(false);
     const [showMounts, setShowMounts] = useState<boolean>(false);
 
@@ -91,17 +98,59 @@ const WoWGameData: React.FC = () => {
         );
     }
 
-    if (!username) {
-        return (
-            <div className="character">
-                {selectionUser()}
-            </div>
-        );
-    }
-
     return (
         <div className="character">
             {selectionUser()}
+            <div className="btn-shadow"
+                onClick={() => setShowSummary(prev => !prev)}>
+                <FontAwesomeIcon
+                    icon={faLocationCrosshairs}
+                />
+                <div>{t("Summary")}</div>
+            </div>
+            {showSummary &&
+                <CharacterSummary
+                    username={username}
+                />
+            }
+            <div className="btn-shadow"
+                onClick={() => setShowMythicKeystone(prev => !prev)}>
+                <FontAwesomeIcon
+                    icon={faLocationCrosshairs}
+                />
+                <div>{t("MythicKeystone")}</div>
+            </div>
+            {showMythicKeystone &&
+                <CharacterMythicKeystone
+                    username={username}
+                />
+            }
+            <div className="btn-shadow"
+                onClick={() => setShowRaids(prev => !prev)}>
+                <FontAwesomeIcon
+                    icon={faLocationCrosshairs}
+                />
+                <div>{t("Raids")}</div>
+            </div>
+            {showRaids &&
+                <CharacterRaids
+                    username={username}
+                    isRaids={true}
+                />
+            }
+            <div className="btn-shadow"
+                onClick={() => setShowDungeons(prev => !prev)}>
+                <FontAwesomeIcon
+                    icon={faLocationCrosshairs}
+                />
+                <div>{t("Dungeons")}</div>
+            </div>
+            {showDungeons &&
+                <CharacterRaids
+                    username={username}
+                    isRaids={false}
+                />
+            }
             <div className="btn-shadow"
                 onClick={() => setShowReputations(prev => !prev)}>
                 <FontAwesomeIcon
