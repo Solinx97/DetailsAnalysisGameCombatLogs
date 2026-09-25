@@ -5,5 +5,5 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Myth
 public class MythicKeystoneAfixModel
 {
     [JsonPropertyName("name")]
-    public GameDataValueNameModel Name { get; set; }
+    public string Name { get; set; }
 }

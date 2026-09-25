@@ -2,12 +2,14 @@
 using CombatAnalysis.EnhancedWebApp.Server.Attributes;
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
@@ -36,7 +38,7 @@ public class WoWCharacterController : ControllerBase
     [HttpGet("getReputations/{username}")]
     public async Task<IActionResult> GetReputations(string username, string serverName, string regionName)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/reputations?namespace=profile-{regionName}");
+        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/reputations?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
         var reputations = await responseMessage.Content.ReadFromJsonAsync<CharacterReputaionsResponse>();
         if (reputations == null)
         {
@@ -50,7 +52,7 @@ public class WoWCharacterController : ControllerBase
     [HttpGet("getMounts/{username}")]
     public async Task<IActionResult> GetMounts(string username, string serverName, string regionName)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/collections/mounts?namespace=profile-{regionName}");
+        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/collections/mounts?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
         var mounts = await responseMessage.Content.ReadFromJsonAsync<CharacterMountsResponse>();
         if (mounts == null)
         {
@@ -64,7 +66,7 @@ public class WoWCharacterController : ControllerBase
     [HttpGet("getProfileSummary/{username}")]
     public async Task<IActionResult> GetProfileSummary(string username, string serverName, string regionName)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}?namespace=profile-{regionName}");
+        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
         var summary = await responseMessage.Content.ReadFromJsonAsync<CharacterModel>();
         if (summary == null)
         {
@@ -78,7 +80,7 @@ public class WoWCharacterController : ControllerBase
     [HttpGet("getMythicKeystone/{username}")]
     public async Task<IActionResult> GetMythicKeystone(string username, string serverName, string regionName)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/mythic-keystone-profile?namespace=profile-{regionName}");
+        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/mythic-keystone-profile?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
         var mythicKeystone = await responseMessage.Content.ReadFromJsonAsync<MythicKeystoneModel>();
         if (mythicKeystone == null)
         {
@@ -92,7 +94,7 @@ public class WoWCharacterController : ControllerBase
     [HttpGet("getRaids/{username}")]
     public async Task<IActionResult> GetRaids(string username, string serverName, string regionName)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/encounters/raids?namespace=profile-{regionName}");
+        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/encounters/raids?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
         var raids = await responseMessage.Content.ReadFromJsonAsync<CharacterDungeonModel>();
         if (raids == null)
         {
@@ -106,7 +108,7 @@ public class WoWCharacterController : ControllerBase
     [HttpGet("getDungeons/{username}")]
     public async Task<IActionResult> GetDungeons(string username, string serverName, string regionName)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/encounters/dungeons?namespace=profile-{regionName}");
+        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/encounters/dungeons?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
         var dungeons = await responseMessage.Content.ReadFromJsonAsync<CharacterDungeonModel>();
         if (dungeons == null)
         {
@@ -114,6 +116,20 @@ public class WoWCharacterController : ControllerBase
         }
 
         var map = _mapper.Map<CharacterDungeonDto>(dungeons);
+        return Ok(map);
+    }
+
+    [HttpGet("getAchievements/{username}")]
+    public async Task<IActionResult> GetAchievements(string username, string serverName, string regionName)
+    {
+        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/achievements?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
+        var achievements = await responseMessage.Content.ReadFromJsonAsync<CharacterAchievementsModel>();
+        if (achievements == null)
+        {
+            return BadRequest();
+        }
+
+        var map = _mapper.Map<CharacterAchievementsDto>(achievements);
         return Ok(map);
     }
 }

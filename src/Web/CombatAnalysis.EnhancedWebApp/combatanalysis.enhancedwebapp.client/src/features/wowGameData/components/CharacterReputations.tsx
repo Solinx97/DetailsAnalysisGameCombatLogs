@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyGetCharacterReputationsQuery } from '../api/BattleNetData.api';
+import { useContext, useEffect, useState } from 'react';
+import { useLazyGetCharacterReputationsQuery } from '../api/WoWCharacter.api';
 import type { CharacterReputationModel } from '../types/CharacterReputationModel';
+import WoWGameDataContext from '@/context/WoWGameDataContext';
 
-const CharacterReputations: React.FC<{ username: string | undefined }> = ({ username }) => {
-    const { t } = useTranslation('wowGameData');
+const CharacterReputations: React.FC = () => {
+    const context = useContext(WoWGameDataContext);
+
+    if (!context) {
+        throw new Error("Child must be inside WoWGameDataContext.Provider");
+    }
+
+    const { t, username, serverName, regionName } = context;
 
     const [reputaions, setReputaions] = useState<CharacterReputationModel[]>([]);
 
@@ -17,7 +23,7 @@ const CharacterReputations: React.FC<{ username: string | undefined }> = ({ user
 
         const loadAsync = async () => {
             try {
-                const receivedReputations = await getReputations({ username, serverName: "howling-fjord", regionName: "eu" }).unwrap();
+                const receivedReputations = await getReputations({ username, serverName, regionName }).unwrap();
                 setReputaions(receivedReputations);
             } catch (error) {
                 console.error("Failed to fetch character reputations:", error);

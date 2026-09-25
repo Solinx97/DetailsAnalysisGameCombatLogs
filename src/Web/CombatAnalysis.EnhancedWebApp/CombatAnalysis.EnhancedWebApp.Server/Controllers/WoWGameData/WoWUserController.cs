@@ -28,7 +28,7 @@ public class WoWUserController : ControllerBase
     [HttpGet("getMounts")]
     public async Task<IActionResult> GetMounts(string regionName)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/user/wow/collections/mounts?namespace=profile-{regionName}");
+        var responseMessage = await _httpClient.GetAsync($"profile/user/wow/collections/mounts?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
         var reputations = await responseMessage.Content.ReadFromJsonAsync<CharacterMountsResponse>();
         if (reputations == null)
         {

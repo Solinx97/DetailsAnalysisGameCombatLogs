@@ -8,5 +8,5 @@ public class DungeonModeTypeModel
     public string Type { get; set; }
 
     [JsonPropertyName("name")]
-    public GameDataValueNameModel Name { get; set; }
+    public string Name { get; set; }
 }

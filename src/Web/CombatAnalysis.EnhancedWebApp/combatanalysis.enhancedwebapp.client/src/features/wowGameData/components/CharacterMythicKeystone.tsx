@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyGetCharacterMythicKeystoneQuery } from '../api/BattleNetData.api';
+import { useContext, useEffect, useState } from 'react';
+import { useLazyGetCharacterMythicKeystoneQuery } from '../api/WoWCharacter.api';
 import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
+import WoWGameDataContext from '@/context/WoWGameDataContext';
 
-const CharacterMythicKeystone: React.FC<{ username: string | undefined }> = ({ username }) => {
-    const { t } = useTranslation('wowGameData');
+const CharacterMythicKeystone: React.FC = () => {
+    const context = useContext(WoWGameDataContext);
+
+    if (!context) {
+        throw new Error("Child must be inside WoWGameDataContext.Provider");
+    }
+
+    const { t, username, serverName, regionName } = context;
 
     const [mythicKeystone, setMythicKeystone] = useState<MythicKeystoneModel | null>(null);
 
@@ -17,7 +23,7 @@ const CharacterMythicKeystone: React.FC<{ username: string | undefined }> = ({ u
 
         const loadAsync = async () => {
             try {
-                const receivedKeyStone = await getMythicKeystone({ username, serverName: "howling-fjord", regionName: "eu" }).unwrap();
+                const receivedKeyStone = await getMythicKeystone({ username, serverName, regionName }).unwrap();
                 setMythicKeystone(receivedKeyStone);
             } catch (error) {
                 console.error("Failed to fetch character mythic stone:", error);
@@ -27,6 +33,10 @@ const CharacterMythicKeystone: React.FC<{ username: string | undefined }> = ({ u
         loadAsync();
     }, []);
 
+    if (!username || username.trim().length === 0) {
+        return (<div>No data</div>);
+    }
+    
     if (!mythicKeystone) {
         return (<div>Loading...</div>);
     }

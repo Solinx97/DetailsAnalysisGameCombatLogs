@@ -6,7 +6,7 @@
 
     .select-user {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         gap: 20px;
 
@@ -41,6 +41,18 @@
                 transform: scale(1.25);
             }
         }
+
+        .form-control {
+            width: 300px;
+        }
+
+        .filter-item {
+            width: 250px;
+
+            .options {
+                color: black;
+            }
+        }
     }
 
     .selected-user {
@@ -50,20 +62,160 @@
         gap: 20px;
     }
 
-    .reputations, .mounts, .summary, .mythic-keystone, .raids {
+    .reputations,
+    .mounts,
+    .summary,
+    .mythic-keystone,
+    .raids,
+    .achievements-category,
+    .achievements {
         margin-left: 50px;
     }
 
-    h5, h6 {
+    h5,
+    h6 {
         margin: 0;
     }
 }
 
-.reputations, .mounts, .summary, .mythic-keystone, .raids {
+.achievements {
+    display: flex;
+    gap: 50px;
+}
+
+.reputations,
+.mounts,
+.summary,
+.mythic-keystone,
+.raids,
+.achievements-category,
+.achievements {
+    &__container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+.achievements-category,
+.achievements {
+    &__item {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .name {
+            width: auto;
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reputation-value {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 5px 20px;
+            box-shadow: 2px 2px green;
+            border-radius: 20px;
+        }
+
+        .current-period {
+            display: flex;
+            gap: 25px;
+        }
+
+        .completed {
+            box-shadow: 2px 2px green;
+        }
+
+        .not-completed {
+            box-shadow: 2px 2px gray;
+            opacity: 0.7;
+        }
+    }
+}
+
+.selected-achievements {
+    &__item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        .selected-achievement {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 20px;
+
+            .description {
+                font-size: 0.8em;
+                opacity: 0.7;
+            }
+        }
+
+        .when {
+            margin-left: 50px;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+    }
+}
+
+.reputations,
+.mounts,
+.summary,
+.mythic-keystone,
+.raids,
+.achievements-category {
     display: flex;
     flex-direction: column;
     gap: 10px;
     cursor: default;
+
+    &__name {
+        display: flex;
+
+        .selected {
+            box-shadow: 2px 2px green;
+        }
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .count {
+            padding: 5px;
+            border: 2px solid gray;
+            border-radius: 20px;
+        }
+    }
+}
+
+.reputations,
+.mounts,
+.summary,
+.mythic-keystone,
+.raids {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: default;
+
+    &__name {
+        display: flex;
+
+        .selected {
+            box-shadow: 2px 2px green;
+        }
+    }
 
     &__title {
         display: flex;
@@ -77,15 +229,13 @@
         }
     }
 
-    &__container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
     &__item {
         display: flex;
-        gap: 50px;
+        gap: 20px;
+
+        .name {
+            width: auto;
+        }
 
         .item {
             display: flex;

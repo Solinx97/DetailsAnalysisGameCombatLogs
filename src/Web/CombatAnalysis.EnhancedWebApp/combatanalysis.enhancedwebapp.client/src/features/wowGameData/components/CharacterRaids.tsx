@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyGetCharacterRaidsQuery, useLazyGetCharacterDungeonsQuery } from '../api/BattleNetData.api';
+import { useContext, useEffect, useState } from 'react';
+import { useLazyGetCharacterRaidsQuery, useLazyGetCharacterDungeonsQuery } from '../api/WoWCharacter.api';
 import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
+import WoWGameDataContext from '@/context/WoWGameDataContext';
 
-const CharacterRaids: React.FC<{ username: string | undefined, isRaids: boolean }> = ({ username, isRaids }) => {
-    const { t } = useTranslation('wowGameData');
+const CharacterRaids: React.FC<{ isRaids: boolean }> = ({ isRaids }) => {
+    const context = useContext(WoWGameDataContext);
+
+    if (!context) {
+        throw new Error("Child must be inside WoWGameDataContext.Provider");
+    }
+
+    const { t, username, serverName, regionName } = context;
 
     const [dungeons, setDungeons] = useState<CharacterDungeonModel | null>(null);
 
@@ -19,7 +25,7 @@ const CharacterRaids: React.FC<{ username: string | undefined, isRaids: boolean 
 
         const loadAsync = async () => {
             try {
-                const receivedDungeons = await getDungeons({ username, serverName: "howling-fjord", regionName: "eu" }).unwrap();
+                const receivedDungeons = await getDungeons({ username, serverName, regionName }).unwrap();
                 setDungeons(receivedDungeons);
             } catch (error) {
                 console.error("Failed to fetch character dungeons:", error);
@@ -28,6 +34,10 @@ const CharacterRaids: React.FC<{ username: string | undefined, isRaids: boolean 
 
         loadAsync();
     }, []);
+    
+    if (!username || username.trim().length === 0) {
+        return (<div>No data</div>);
+    }
 
     if (!dungeons) {
         return (<div>Loading...</div>);

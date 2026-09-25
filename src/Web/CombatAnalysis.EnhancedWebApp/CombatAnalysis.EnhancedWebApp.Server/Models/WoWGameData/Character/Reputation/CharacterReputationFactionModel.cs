@@ -8,5 +8,5 @@ public class CharacterReputationFactionModel
     public int Id { get; set; }
 
     [JsonPropertyName("name")]
-    public GameDataValueNameModel Name { get; set; }
+    public string Name { get; set; }
 }

@@ -3,7 +3,9 @@ using CombatAnalysis.EnhancedWebApp.Server.Attributes;
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Helpers;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using CombatAnalysis.EnhancedWebApp.Server.Mapping;
+using CombatAnalysis.EnhancedWebApp.Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Diagnostics;
@@ -13,6 +15,7 @@ using Serilog.Events;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
+builder.Services.AddScoped<IAchivmentService, AchivmentService>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 builder.Services.AddScoped<RequireRefreshTokenAttribute>();
 builder.Services.AddScoped<RequireBattleNetAccessTokenAttribute>();

@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyGetCharacterSummaryQuery } from '../api/BattleNetData.api';
+import WoWGameDataContext from '@/context/WoWGameDataContext';
+import { useContext, useEffect, useState } from 'react';
+import { useLazyGetCharacterSummaryQuery } from '../api/WoWCharacter.api';
 import type { WoWCharacterModel } from '../types/character/WoWCharacterModel';
 
-const CharacterSummary: React.FC<{ username: string | undefined }> = ({ username }) => {
-    const { t } = useTranslation('wowGameData');
+const CharacterSummary: React.FC = () => {
+    const context = useContext(WoWGameDataContext);
+
+    if (!context) {
+        throw new Error("Child must be inside WoWGameDataContext.Provider");
+    }
+
+    const { t, username, serverName, regionName } = context;
 
     const [characterSummary, setCharacterSummary] = useState<WoWCharacterModel | null>(null);
 
@@ -17,7 +23,7 @@ const CharacterSummary: React.FC<{ username: string | undefined }> = ({ username
 
         const loadAsync = async () => {
             try {
-                const receivedSummary = await getSummary({ username, serverName: "howling-fjord", regionName: "eu" }).unwrap();
+                const receivedSummary = await getSummary({ username, serverName, regionName }).unwrap();
                 setCharacterSummary(receivedSummary);
             } catch (error) {
                 console.error("Failed to fetch character summary:", error);

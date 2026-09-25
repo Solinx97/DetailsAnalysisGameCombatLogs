@@ -2,8 +2,8 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 
-public class GameDataValueNameModel
+public class RealmsResponse
 {
-    [JsonPropertyName("ru_RU")]
-    public string Name { get; set; }
+    [JsonPropertyName("realms")]
+    public RealmModel[] Realms { get; set; }
 }

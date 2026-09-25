@@ -1,12 +1,19 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLazyGetCharacterMountsQuery } from '../api/BattleNetData.api';
+import { useContext, useEffect, useState } from 'react';
+import { useLazyGetCharacterMountsQuery } from '../api/WoWCharacter.api';
 import type { CharacterMountModel } from '../types/CharacterMountModel';
+import WoWGameDataContext from '@/context/WoWGameDataContext';
 
-const CharacterMounts: React.FC<{ username: string | undefined }> = ({ username }) => {
-    const { t } = useTranslation('wowGameData');
+const CharacterMounts: React.FC = () => {
+    const context = useContext(WoWGameDataContext);
+
+    if (!context) {
+        throw new Error("Child must be inside WoWGameDataContext.Provider");
+    }
+
+    const { t, username, serverName, regionName } = context;
 
     const [mounts, setMounts] = useState<CharacterMountModel[]>([]);
+    const [hasError, setHasError] = useState<boolean>(false);
 
     const [getMounts] = useLazyGetCharacterMountsQuery();
 
@@ -17,17 +24,18 @@ const CharacterMounts: React.FC<{ username: string | undefined }> = ({ username 
 
         const loadAsync = async () => {
             try {
-                const receivedMounts = await getMounts({ username, serverName: "howling-fjord", regionName: "eu" }).unwrap();
+                const receivedMounts = await getMounts({ username, serverName, regionName }).unwrap();
                 setMounts(receivedMounts);
             } catch (error) {
                 console.error("Failed to fetch character mounts:", error);
+                setHasError(true);
             }
         }
 
         loadAsync();
     }, []);
 
-    if (!username || username.trim().length === 0) {
+    if (!username || username.trim().length === 0 || hasError) {
         return (<div>No data</div>);
     }
 
