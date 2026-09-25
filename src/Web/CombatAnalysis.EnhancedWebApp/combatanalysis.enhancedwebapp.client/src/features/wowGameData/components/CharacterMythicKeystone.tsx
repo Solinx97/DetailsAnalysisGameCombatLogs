@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import { useLazyGetCharacterMythicKeystoneQuery } from '../api/WoWCharacter.api';
 import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import { faDashboard, faKey } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const CharacterMythicKeystone: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -36,7 +38,7 @@ const CharacterMythicKeystone: React.FC = () => {
     if (!username || username.trim().length === 0) {
         return (<div>No data</div>);
     }
-    
+
     if (!mythicKeystone) {
         return (<div>Loading...</div>);
     }
@@ -45,25 +47,29 @@ const CharacterMythicKeystone: React.FC = () => {
         <div className="mythic-keystone">
             <div className="mythic-keystone__title">
                 <h6>{t("MythicKeystone")}</h6>
+                <div className="btn-shadow">
+                    <FontAwesomeIcon
+                        icon={faDashboard}
+                    />
+                    <div>{mythicKeystone.currentMythicRating.rating.toFixed(2)}</div>
+                </div>
             </div>
-            <ul className="mythic-keystone__container">
-                <li className="mythic-keystone__item">
-                    <div className="item">{t("CurrentPeriod")}</div>
-                    <ul className="current-period">
-                        {mythicKeystone.currentPeriod.bestRuns.map((run, index) => (
-                            <li key={index}>
+            <ul className="current-period">
+                {mythicKeystone.currentPeriod.bestRuns.map((run, index) => (
+                    <li key={index} className="run">
+                        <div className="level">
+                            <div className="btn-shadow">
+                                <FontAwesomeIcon
+                                    icon={faKey}
+                                />
                                 <div>{run.level}</div>
-                                <div>{run.dungeon.name}</div>
-                                <div>{run.mythicRating.rating}</div>
-                            </li>
-                        ))
-                        }
-                    </ul>
-                </li>
-                <li className="mythic-keystone__item">
-                    <div className="item">{t("CurrentRating")}</div>
-                    <div className="item">{mythicKeystone.currentMythicRating.rating}</div>
-                </li>
+                            </div>
+                            <div>{run.mythicRating.rating.toFixed(2)}</div>
+                        </div>
+                        <div>{run.dungeon.name}</div>
+                    </li>
+                ))
+                }
             </ul>
         </div>
     );

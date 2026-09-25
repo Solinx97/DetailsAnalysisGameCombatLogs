@@ -1,3 +1,9 @@
+.count {
+    padding: 2px 10px;
+    border: 2px solid gray;
+    border-radius: 20px;
+}
+
 .character {
     display: flex;
     flex-direction: column;
@@ -67,7 +73,10 @@
     .summary,
     .mythic-keystone,
     .raids,
+    .expansion-raids,
+    .dungeon,
     .achievements-category,
+    .dungeon-encounters,
     .achievements {
         margin-left: 50px;
     }
@@ -88,6 +97,8 @@
 .summary,
 .mythic-keystone,
 .raids,
+.expansion-raids,
+.dungeon,
 .achievements-category,
 .achievements {
     &__container {
@@ -97,6 +108,46 @@
     }
 }
 
+.mythic-keystone {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    cursor: default;
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .current-period {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .level {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
+
+            .btn-shadow {
+                padding: 2px 20px;
+                box-shadow: 1px 1px white;
+            }
+        }
+
+        .run {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}
+
+.raids,
+.expansion-raids,
+.dungeon,
 .achievements-category,
 .achievements {
     &__item {
@@ -123,11 +174,6 @@
             padding: 5px 20px;
             box-shadow: 2px 2px green;
             border-radius: 20px;
-        }
-
-        .current-period {
-            display: flex;
-            gap: 25px;
         }
 
         .completed {
@@ -170,8 +216,9 @@
 .reputations,
 .mounts,
 .summary,
-.mythic-keystone,
 .raids,
+.expansion-raids,
+.dungeon,
 .achievements-category {
     display: flex;
     flex-direction: column;
@@ -190,19 +237,14 @@
         display: flex;
         align-items: center;
         gap: 20px;
-
-        .count {
-            padding: 5px;
-            border: 2px solid gray;
-            border-radius: 20px;
-        }
     }
 }
 
 .reputations,
 .mounts,
 .summary,
-.mythic-keystone,
+.expansion-raids,
+.dungeon,
 .raids {
     display: flex;
     flex-direction: column;
@@ -259,4 +301,35 @@
             gap: 25px;
         }
     }
+}
+
+.dungeon-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 10px;
+
+    &__information {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+.dungeon-encounters {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .encounter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+.expansion-raids .not-any-completed {
+    opacity: 0.5;
+    box-shadow: 2px 2px gray;
+    cursor: default;
 }

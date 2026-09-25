@@ -2,7 +2,7 @@
 
 public class DungeonInstanceDto
 {
-    public DungeonNameDto Instance { get; set; }
+    public DungeonDto Instance { get; set; }
 
     public DungeonModeDto[] Modes { get; set; }
 }

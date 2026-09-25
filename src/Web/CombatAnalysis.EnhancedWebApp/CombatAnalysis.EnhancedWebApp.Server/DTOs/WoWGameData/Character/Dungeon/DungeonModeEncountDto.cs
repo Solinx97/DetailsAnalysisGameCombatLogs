@@ -2,7 +2,7 @@
 
 public class DungeonModeEncountDto
 {
-    public DungeonNameDto Encounter { get; set; }
+    public DungeonDto Encounter { get; set; }
 
     public int CompletedCount { get; set; }
 

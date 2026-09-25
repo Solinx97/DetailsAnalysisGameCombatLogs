@@ -1,10 +1,11 @@
+import WoWGameDataContext from '@/context/WoWGameDataContext';
+import useFormatting from '@/shared/hooks/useFormatting';
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useGetAchievementsByCategoryQuery } from '../api/WoWCharacter.api';
 import { useContext, useEffect, useState } from 'react';
+import { useGetAchievementsByCategoryQuery } from '../api/WoWCharacter.api';
 import type { AchievementExtendModel } from '../types/achievements/AchievementExtendModel';
 import SelectedAchievemnt from './SelectedAchievemnt';
-import WoWGameDataContext from '@/context/WoWGameDataContext';
 
 interface SubAchievementsCategoryProps {
     categoryId: number;
@@ -19,6 +20,8 @@ const SubAchievementsCategory: React.FC<SubAchievementsCategoryProps> = ({ categ
     }
 
     const { t, username, serverName, regionName } = context;
+    
+    const { getDate } = useFormatting();
     
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
     const [selectedAchievementId, setSelectedAchievementId] = useState<number>(0);
@@ -55,15 +58,6 @@ const SubAchievementsCategory: React.FC<SubAchievementsCategoryProps> = ({ categ
 
     if (!categoryAchievements || isLoading) {
         return (<div>Loading...</div>);
-    }
-
-    const getDate = (date: string) => {
-        const parse = new Date(date);
-
-        return parse.toLocaleString('ru-RU', {
-            dateStyle: 'short',
-            timeStyle: 'short'
-        });
     }
 
     return (

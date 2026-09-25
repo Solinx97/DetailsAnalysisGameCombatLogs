@@ -2,8 +2,11 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 
-public class DungeonNameModel
+public class DungeonModel
 {
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }

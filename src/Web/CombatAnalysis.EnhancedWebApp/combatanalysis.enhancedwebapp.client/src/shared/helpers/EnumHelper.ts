@@ -58,3 +58,8 @@ export const DashboardValueType = {
     MaxValuePerSecond: 6,
     MinValuePerSecond: 7,
 } as const;
+
+export const DungeonModeType = {
+    0: "COMPLETE",
+    1: "IN_PROGRESS"
+} as const;

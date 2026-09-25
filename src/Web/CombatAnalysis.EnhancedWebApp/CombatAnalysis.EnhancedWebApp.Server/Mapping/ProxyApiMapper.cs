@@ -59,7 +59,7 @@ public class ProxyApiMapper : Profile
         CreateMap<DungeonModeModel, DungeonModeDto>();
         CreateMap<DungeonModeProgressModel, DungeonModeProgressDto>();
         CreateMap<DungeonModeTypeModel, DungeonModeTypeDto>();
-        CreateMap<DungeonNameModel, DungeonNameDto>();
+        CreateMap<DungeonModel, DungeonDto>();
 
         CreateMap<CharacterAchievementCategoryModel, CharacterAchievementCategoryDto>();
         CreateMap<CharacterAchievementCriteriaModel, CharacterAchievementCriteriaDto>();

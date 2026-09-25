@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dung
 public class DungeonModeEncountModel
 {
     [JsonPropertyName("encounter")]
-    public DungeonNameModel Encounter { get; set; }
+    public DungeonModel Encounter { get; set; }
 
     [JsonPropertyName("completed_count")]
     public int CompletedCount { get; set; }

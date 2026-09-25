@@ -2,7 +2,7 @@
 
 public class DungeonExpansionDto
 {
-    public DungeonNameDto Expansion { get; set; }
+    public DungeonDto Expansion { get; set; }
 
     public DungeonInstanceDto[] Instances { get; set; }
 }

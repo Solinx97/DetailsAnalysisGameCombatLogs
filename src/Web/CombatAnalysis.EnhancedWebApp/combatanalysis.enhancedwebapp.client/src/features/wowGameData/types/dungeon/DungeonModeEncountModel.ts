@@ -1,7 +1,7 @@
-import type { DungeonNameModel } from './DungeonNameModel';
+import type { DungeonModel } from './DungeonModel';
 
 export type DungeonModeEncountModel = {
-    encounter: DungeonNameModel;
+    encounter: DungeonModel;
     completedCount: number;
     lastKillTime: string;
 }

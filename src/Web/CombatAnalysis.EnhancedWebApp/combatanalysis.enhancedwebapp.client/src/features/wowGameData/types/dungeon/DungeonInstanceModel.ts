@@ -1,7 +1,7 @@
 import type { DungeonModeModel } from './DungeonModeModel';
-import type { DungeonNameModel } from './DungeonNameModel';
+import type { DungeonModel } from './DungeonModel';
 
 export type DungeonInstanceModel = {
-    instance: DungeonNameModel;
+    instance: DungeonModel;
     modes: DungeonModeModel[];
 }

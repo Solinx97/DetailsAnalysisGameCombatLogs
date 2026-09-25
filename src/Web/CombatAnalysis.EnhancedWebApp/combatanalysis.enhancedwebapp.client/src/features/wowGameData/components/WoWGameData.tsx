@@ -9,9 +9,9 @@ import { useBattleNetDataAuthorizaitonMutation, useBattleNetDataTokenMutation, u
 import { useLazyGetRealmsQuery } from '../api/WoWData.api';
 import type { RealmModel } from '../types/RealmModel';
 import AchievementsCategory from './AchievementsCategory';
+import CharacterDungeons from './CharacterDungeons';
 import CharacterMounts from './CharacterMounts';
 import CharacterMythicKeystone from './CharacterMythicKeystone';
-import CharacterRaids from './CharacterRaids';
 import CharacterReputations from './CharacterReputations';
 import CharacterSummary from './CharacterSummary';
 
@@ -180,7 +180,7 @@ const WoWGameData: React.FC = () => {
                     <div>{t("Raids")}</div>
                 </div>
                 {showRaids &&
-                    <CharacterRaids
+                    <CharacterDungeons
                         isRaids={true}
                     />
                 }
@@ -192,7 +192,7 @@ const WoWGameData: React.FC = () => {
                     <div>{t("Dungeons")}</div>
                 </div>
                 {showDungeons &&
-                    <CharacterRaids
+                    <CharacterDungeons
                         isRaids={false}
                     />
                 }
