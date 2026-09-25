@@ -1,8 +1,11 @@
 using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.Attributes;
 using CombatAnalysis.EnhancedWebApp.Server.Consts;
+using CombatAnalysis.EnhancedWebApp.Server.Handlers;
 using CombatAnalysis.EnhancedWebApp.Server.Helpers;
+using CombatAnalysis.EnhancedWebApp.Server.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using CombatAnalysis.EnhancedWebApp.Server.Mapping;
 using CombatAnalysis.EnhancedWebApp.Server.Services;
@@ -15,11 +18,46 @@ using Serilog.Events;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
-builder.Services.AddScoped<IAchivmentService, AchivmentService>();
+
+builder.Services.AddTransient<ExternalApiErrorHandler>();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddTransient<WoWCharacterGameDataAuthorizationHandler>();
+builder.Services.AddHttpClient<IWoWUserGameDataApiClient, WoWUserGameDataApiClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration.GetSection("BattleNet:BattleNetAPI").Value ?? "");
+})
+    .AddHttpMessageHandler<WoWCharacterGameDataAuthorizationHandler>()
+    .AddHttpMessageHandler<ExternalApiErrorHandler>();
+
+
+builder.Services.AddTransient<WoWGameDataAuthorizationHandler>();
+builder.Services.AddHttpClient<IWoWGameDataApiClient, WoWGameDataApiClient>(client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration.GetSection("BattleNet:BattleNetAPI").Value ?? "");
+    })
+    .AddHttpMessageHandler<WoWGameDataAuthorizationHandler>()
+    .AddHttpMessageHandler<ExternalApiErrorHandler>();
+
+builder.Services.AddHttpClient<IWoWCharacterGameDataApiClient, WoWCharacterGameDataApiClient>(client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration.GetSection("BattleNet:BattleNetAPI").Value ?? "");
+    })
+    .AddHttpMessageHandler<WoWGameDataAuthorizationHandler>()
+    .AddHttpMessageHandler<ExternalApiErrorHandler>();
+
+builder.Services.AddTransient<WoWGameDataAuthAuthorizationHandler>();
+builder.Services.AddHttpClient<IWoWGameDataAuthApiClient, WoWGameDataAuthApiClient>(client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration.GetSection("BattleNet:BattleNetAutAPI").Value ?? "");
+    })
+    .AddHttpMessageHandler<WoWGameDataAuthAuthorizationHandler>()
+    .AddHttpMessageHandler<ExternalApiErrorHandler>();
+
+builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 builder.Services.AddScoped<RequireRefreshTokenAttribute>();
-builder.Services.AddScoped<RequireBattleNetAccessTokenAttribute>();
-builder.Services.AddScoped<RequireBattleNetAuthorizationAccessTokenAttribute>();
 
 builder.Services.Configure<Server>(builder.Configuration.GetSection("Server"));
 builder.Services.Configure<BattleNet>(builder.Configuration.GetSection("BattleNet"));

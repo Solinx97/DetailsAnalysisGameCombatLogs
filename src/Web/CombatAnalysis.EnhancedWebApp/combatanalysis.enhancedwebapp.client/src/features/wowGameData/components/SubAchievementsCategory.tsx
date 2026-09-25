@@ -1,6 +1,6 @@
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useGetAchievementsByCategoryQuery } from '../api/WoWData.api';
+import { useGetAchievementsByCategoryQuery } from '../api/WoWCharacter.api';
 import { useContext, useEffect, useState } from 'react';
 import type { AchievementExtendModel } from '../types/achievements/AchievementExtendModel';
 import SelectedAchievemnt from './SelectedAchievemnt';

@@ -123,7 +123,7 @@ const WoWGameData: React.FC = () => {
                     <div className="battle-net">
                         <div className="status">{isAuthorized.authenticated ? 'connected' : 'not connected'}</div>
                         <div className={`auth btn-shadow ${isAuthorized.authenticated ? 'connected' : 'not-connected'}`}
-                            onClick={getAuthorizationTokenAsync}>
+                            onClick={isAuthorized.authenticated ? () => {} : getAuthorizationTokenAsync}>
                             <FontAwesomeIcon
                                 icon={isAuthorized.authenticated ? faUser : faPlus}
                             />

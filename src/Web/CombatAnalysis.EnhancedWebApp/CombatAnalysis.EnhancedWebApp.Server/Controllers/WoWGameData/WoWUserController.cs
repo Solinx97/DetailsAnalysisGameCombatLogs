@@ -1,41 +1,22 @@
 ﻿using AutoMapper;
-using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.WoWGameData;
 
-[ServiceFilter(typeof(RequireBattleNetAuthorizationAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class WoWUserController : ControllerBase
+public class WoWUserController(IWoWUserGameDataApiClient httpClient, IMapper mapper) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-    private readonly IMapper _mapper;
-
-    public WoWUserController(IOptions<BattleNet> cluster, IHttpClientHelper httpClient, IMapper mapper)
-    {
-        _mapper = mapper;
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.BattleNetAPI;
-        _httpClient.BaseAddressApi = "";
-    }
+    private readonly IWoWUserGameDataApiClient _httpClient = httpClient;
+    private readonly IMapper _mapper = mapper;
 
     [HttpGet("getMounts")]
-    public async Task<IActionResult> GetMounts(string regionName)
+    public async Task<IActionResult> GetMounts(string regionName, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"profile/user/wow/collections/mounts?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
-        var reputations = await responseMessage.Content.ReadFromJsonAsync<CharacterMountsResponse>();
-        if (reputations == null)
-        {
-            return BadRequest();
-        }
-
-        var map = _mapper.Map<CharacterMountDto[]>(reputations.Mounts);
+        var mounts = await _httpClient.GetMountsAsync(regionName, cancellationToken);
+        var map = _mapper.Map<CharacterMountDto[]>(mounts.Mounts);
         return Ok(map);
     }
 }

@@ -1,48 +1,24 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Enums;
 using CombatAnalysis.EnhancedWebApp.Server.Helpers;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Text;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.WoWGameData;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class BattleNetIdentityController : ControllerBase
+public class BattleNetIdentityController(IOptions<BattleNet> battleNet, IOptions<Authentication> authentication, IWoWGameDataAuthApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-    private readonly Authentication _authentication;
-    private readonly BattleNet _battleNet;
-
-    public BattleNetIdentityController(IOptions<BattleNet> battleNet, IOptions<Authentication> authentication, IHttpClientHelper httpClient)
-    {
-        _authentication = authentication.Value;
-        _battleNet = battleNet.Value;
-
-        _httpClient = httpClient;
-        _httpClient.APIUrl = battleNet.Value.BattleNetAutAPI;
-        _httpClient.BaseAddressApi = "";
-    }
+    private readonly IWoWGameDataAuthApiClient _httpClient = httpClient;
+    private readonly Authentication _authentication = authentication.Value;
+    private readonly BattleNet _battleNet = battleNet.Value;
 
     [HttpPost]
-    public async Task<IActionResult> GetToken()
+    public async Task<IActionResult> GetToken(CancellationToken cancellationToken)
     {
-        var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_battleNet.ClientId}:{_battleNet.clientSecret}"));
-
-        var content = new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["grant_type"] = "client_credentials"
-        });
-
-        _httpClient.AddAuthorizationHeader("Basic", credentials);
-        var responseMessage = await _httpClient.PostAsync("token", content);
-        responseMessage.EnsureSuccessStatusCode();
-
-        var token = await responseMessage.Content.ReadFromJsonAsync<BattleNetTokenResponse>();
-        ArgumentNullException.ThrowIfNull(token, nameof(token));
+        var token = await _httpClient.GetTokenAsync(cancellationToken);
 
         HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.BattleNetAccessToken), token.AccessToken, new CookieOptions
         {
@@ -57,7 +33,7 @@ public class BattleNetIdentityController : ControllerBase
     }
 
     [HttpPost("authorization")]
-    public async Task<IActionResult> AuthorizationCodeFlow()
+    public async Task<IActionResult> Authorization()
     {
         var state = PKCEHelper.GenerateCodeVerifier();
         ArgumentException.ThrowIfNullOrEmpty(state, nameof(state));
@@ -81,23 +57,9 @@ public class BattleNetIdentityController : ControllerBase
     }
 
     [HttpPost("codeExchange")]
-    public async Task<IActionResult> AuthorizationCodeExchange(string authorizationCode)
+    public async Task<IActionResult> AuthorizationCodeExchange(string authorizationCode, CancellationToken cancellationToken)
     {
-        var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_battleNet.ClientId}:{_battleNet.clientSecret}"));
-
-        var content = new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["redirect_uri"] = _battleNet.RedirectUri,
-            ["grant_type"] = "authorization_code",
-            ["code"] = authorizationCode,
-        });
-
-        _httpClient.AddAuthorizationHeader("Basic", credentials);
-        var responseMessage = await _httpClient.PostAsync("token", content);
-        responseMessage.EnsureSuccessStatusCode();
-
-        var token = await responseMessage.Content.ReadFromJsonAsync<BattleNetTokenResponse>();
-        ArgumentNullException.ThrowIfNull(token, nameof(token));
+        var token = await _httpClient.AuthorizationCodeExchangeAsync(authorizationCode, cancellationToken);
 
         HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.BattleNetAuthorizationAccessToken), token.AccessToken, new CookieOptions
         {

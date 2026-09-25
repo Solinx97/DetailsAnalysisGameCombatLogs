@@ -50,7 +50,7 @@ const CharacterSummary: React.FC = () => {
                 <li className="summary__item">
                     <div className="item">{t("Username")}</div>
                     <div className="item">{characterSummary.name}</div>
-                    <div className="item">{characterSummary.activeTitle.name}</div>
+                    <div className="item">{characterSummary.activeTitle?.name}</div>
                 </li>
                 <li className="summary__item">
                     <div className="item">{t("Gender")}</div>

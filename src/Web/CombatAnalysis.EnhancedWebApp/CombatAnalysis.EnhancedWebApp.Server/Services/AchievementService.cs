@@ -1,22 +1,18 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Services;
 
-internal class AchivmentService(IHttpClientHelper httpClient) : IAchivmentService
+internal class AchievementService(IWoWGameDataApiClient httpClient, IWoWCharacterGameDataApiClient characterHttpClient) : IAchievementService
 {
-    private readonly IHttpClientHelper _httpClient = httpClient;
+    private readonly IWoWGameDataApiClient _httpClient = httpClient;
+    private readonly IWoWCharacterGameDataApiClient _characterHttpClient = characterHttpClient;
 
-    public async Task<AchievementCategoriesModel> GetCharacterAchievementCategoryAsync(string serverName, string username, string regionName)
+    public async Task<AchievementCategoriesModel> GetCharacterAchievementCategoryAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
     {
-        var characterAchievements = await GetCharacterAchievementsAsync(serverName, username, regionName);
-        ArgumentNullException.ThrowIfNull(characterAchievements.CategoryProgress, nameof(characterAchievements.CategoryProgress));
-
-        var responseMessage = await _httpClient.GetAsync($"/data/wow/achievement-category/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}");
-        var achievementCategory = await responseMessage.Content.ReadFromJsonAsync<AchievementCategoriesModel>();
-        ArgumentNullException.ThrowIfNull(achievementCategory, nameof(achievementCategory));
+        var characterAchievements = await _characterHttpClient.GetAchievementsAsync(serverName, username, regionName, cancellationToken);
+        var achievementCategory = await _httpClient.GetAchievementCategoryAsync(regionName, cancellationToken);
 
         achievementCategory.TotalQuantity = characterAchievements.TotalQuantity;
         achievementCategory.TotalPoints = characterAchievements.TotalPoints;
@@ -36,13 +32,10 @@ internal class AchivmentService(IHttpClientHelper httpClient) : IAchivmentServic
         return achievementCategory;
     }
 
-    public async Task<AchievementSelectedCategoryModel> GetCharacterAchievementCategoryAsync(string serverName, string username, string regionName, int categoryId)
+    public async Task<AchievementSelectedCategoryModel> GetCharacterAchievementCategoryAsync(string serverName, string username, string regionName, int categoryId, CancellationToken cancellationToken)
     {
-        var characterAchievements = await GetCharacterAchievementsAsync(serverName, username, regionName);
-
-        var responseMessage = await _httpClient.GetAsync($"data/wow/achievement-category/{categoryId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}");
-        var achievementCategory = await responseMessage.Content.ReadFromJsonAsync<AchievementSelectedCategoryModel>();
-        ArgumentNullException.ThrowIfNull(achievementCategory, nameof(achievementCategory));
+        var characterAchievements = await _characterHttpClient.GetAchievementsAsync(serverName, username, regionName, cancellationToken);
+        var achievementCategory = await _httpClient.GetAchievementCategoryAsync(regionName, categoryId, cancellationToken);
 
         if (achievementCategory.Subcategories != null)
         {
@@ -55,15 +48,6 @@ internal class AchivmentService(IHttpClientHelper httpClient) : IAchivmentServic
         }
 
         return achievementCategory;
-    }
-
-    private async Task<CharacterAchievementsModel> GetCharacterAchievementsAsync(string serverName, string username, string regionName)
-    {
-        var responseMessage = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/achievements?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}");
-        var characterAchievements = await responseMessage.Content.ReadFromJsonAsync<CharacterAchievementsModel>();
-        ArgumentNullException.ThrowIfNull(characterAchievements, nameof(characterAchievements));
-
-        return characterAchievements;
     }
 
     private static void ApplyCategoryProgress(CharacterAchievementsModel characterProgress, AchievementSelectedCategoryModel selectedCategory)

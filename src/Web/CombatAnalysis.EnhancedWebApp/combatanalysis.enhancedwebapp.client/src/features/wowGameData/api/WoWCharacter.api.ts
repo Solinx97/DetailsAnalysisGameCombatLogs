@@ -1,6 +1,7 @@
 import type { CharacterMountModel } from '../types/CharacterMountModel';
 import type { CharacterReputationModel } from '../types/CharacterReputationModel';
-import type { CharacterAchievementsModel } from '../types/achievements/CharacterAchievementsModel';
+import type { AchievementCategoriesModel } from '../types/achievements/AchievementCategoriesModel';
+import type { AchievementSelectedCategoryModel } from '../types/achievements/AchievementSelectedCategoryModel';
 import type { WoWCharacterModel } from '../types/character/WoWCharacterModel';
 import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
 import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
@@ -26,8 +27,11 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
         getCharacterDungeons: builder.query<CharacterDungeonModel, { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getDungeons/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
-        getCharacterAchievements: builder.query<CharacterAchievementsModel, { username: string, serverName: string, regionName: string }>({
-            query: ({ username, serverName, regionName }) => `/WoWCharacter/getAchievements/${username}?serverName=${serverName}&regionName=${regionName}`,
+        getAchievementAllCategory: builder.query<AchievementCategoriesModel, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getAchievementCategory/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
+        getAchievementsByCategory: builder.query<AchievementSelectedCategoryModel, { categoryId: number, username: string, serverName: string, regionName: string }>({
+            query: ({ categoryId, username, serverName, regionName }) => `/WoWCharacter/getAchievementsByCategory/${categoryId}?username=${username}&serverName=${serverName}&regionName=${regionName}`,
         }),
     })
 })
@@ -39,5 +43,6 @@ export const {
     useLazyGetCharacterMythicKeystoneQuery,
     useLazyGetCharacterRaidsQuery,
     useLazyGetCharacterDungeonsQuery,
-    useLazyGetCharacterAchievementsQuery,
+    useLazyGetAchievementAllCategoryQuery,
+    useGetAchievementsByCategoryQuery,
 } = WoWCharacterApi;
