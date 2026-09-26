@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
-import { useLazyGetCharacterMythicKeystoneQuery } from '../api/WoWCharacter.api';
-import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
+import { useGetCharacterMythicKeystoneQuery } from '../api/WoWCharacter.api';
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import { faDashboard, faKey } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ResponseInformation from '@/shared/components/ResponseInformation';
 
 const CharacterMythicKeystone: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -14,33 +14,23 @@ const CharacterMythicKeystone: React.FC = () => {
 
     const { t, username, serverName, regionName } = context;
 
-    const [mythicKeystone, setMythicKeystone] = useState<MythicKeystoneModel | null>(null);
+    const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
 
-    const [getMythicKeystone] = useLazyGetCharacterMythicKeystoneQuery();
+    const { data: mythicKeystone, isLoading, error } = useGetCharacterMythicKeystoneQuery({ username, serverName, regionName },
+            {
+                skip: isSkipRequest
+            });
 
     useEffect(() => {
-        if (!username || username.trim().length === 0) {
-            return;
-        }
+        setIsSkipRequest([username, serverName].filter(x => x.trim().length > 0).length < [username, serverName].length);
+    }, [username, serverName]);
 
-        const loadAsync = async () => {
-            try {
-                const receivedKeyStone = await getMythicKeystone({ username, serverName, regionName }).unwrap();
-                setMythicKeystone(receivedKeyStone);
-            } catch (error) {
-                console.error("Failed to fetch character mythic stone:", error);
-            }
-        }
-
-        loadAsync();
-    }, []);
-
-    if (!username || username.trim().length === 0) {
-        return (<div>No data</div>);
-    }
-
-    if (!mythicKeystone) {
-        return (<div>Loading...</div>);
+    if (!mythicKeystone || isLoading || isSkipRequest || error) {
+        return (<ResponseInformation
+            error={error}
+            watchParams={[username, serverName]}
+            isLoading={!mythicKeystone || isLoading}
+        />);
     }
 
     return (

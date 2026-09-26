@@ -1,7 +1,7 @@
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 import type { MythicKeystoneBestRunModel } from './MythicKeystoneBestRunModel';
-import type { MythicKeystoneSeasonModel } from './MythicKeystoneSeasonModel';
 
 export type MythicKeystoneCurrentPeriodModel = {
-    period: MythicKeystoneSeasonModel;
+    period: WoWGameDataEntityModel;
     bestRuns: MythicKeystoneBestRunModel[];
 }

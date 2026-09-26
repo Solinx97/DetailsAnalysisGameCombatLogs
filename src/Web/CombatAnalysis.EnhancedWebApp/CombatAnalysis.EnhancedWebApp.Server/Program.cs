@@ -56,6 +56,7 @@ builder.Services.AddHttpClient<IWoWGameDataAuthApiClient, WoWGameDataAuthApiClie
     .AddHttpMessageHandler<ExternalApiErrorHandler>();
 
 builder.Services.AddScoped<IAchievementService, AchievementService>();
+builder.Services.AddScoped<IMountService, MountService>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 builder.Services.AddScoped<RequireRefreshTokenAttribute>();
 
@@ -104,6 +105,9 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/webapp.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, restrictedToMinimumLevel: LogEventLevel.Error)
     .CreateLogger();
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -124,25 +128,6 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.UseExceptionHandler(errorApp =>
-{
-    errorApp.Run(async context =>
-    {
-        context.Response.StatusCode = 500;
-        context.Response.ContentType = "application/json";
-
-        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-        var ex = exceptionHandlerPathFeature?.Error;
-
-        Log.Error(ex, "Unhandled exception occurred");
-
-        var result = new
-        {
-            message = "An unexpected error occurred. Please try again later."
-        };
-
-        await context.Response.WriteAsJsonAsync(result);
-    });
-});
+app.UseExceptionHandler();
 
 app.Run();

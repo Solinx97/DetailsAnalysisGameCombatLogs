@@ -63,3 +63,8 @@ export const DungeonModeType = {
     0: "COMPLETE",
     1: "IN_PROGRESS"
 } as const;
+
+export const CharacterEquipmentQuality = {
+    0: "EPIC",
+    1: "UNCOMMON"
+} as const;

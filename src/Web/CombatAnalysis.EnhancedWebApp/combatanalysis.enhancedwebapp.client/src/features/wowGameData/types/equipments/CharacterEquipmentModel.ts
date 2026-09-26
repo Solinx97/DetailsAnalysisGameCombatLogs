@@ -1,0 +1,42 @@
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
+import type { WoWGameDataItemDisplayModel } from '../WoWGameDataItemDisplayModel';
+import type { WoWGameDataTypeModel } from '../WoWGameDataTypeModel';
+import type { WoWGameDataValueModel } from '../WoWGameDataValueModel';
+import type { CharacterEquipmentCraftingStatModel } from './CharacterEquipmentCraftingStatModel';
+import type { CharacterEquipmentEnchantmentModel } from './CharacterEquipmentEnchantmentModel';
+import type { CharacterEquipmentRequirementsModel } from './CharacterEquipmentRequirementsModel';
+import type { CharacterEquipmentSetModel } from './CharacterEquipmentSetModel';
+import type { CharacterEquipmentSocketModel } from './CharacterEquipmentSocketModel';
+import type { CharacterEquipmentSpellModel } from './CharacterEquipmentSpellModel';
+import type { CharacterEquipmentStatModel } from './CharacterEquipmentStatModel';
+import type { CharacterEquipmentTransmogModel } from './CharacterEquipmentTransmogModel';
+
+export type CharacterEquipmentModel = {
+    item: WoWGameDataEntityModel;
+    enchantments: CharacterEquipmentEnchantmentModel[];
+    sockets: CharacterEquipmentSocketModel[];
+    slot: WoWGameDataTypeModel;
+    quantity: number;
+    context: number;
+    bonusList: number[];
+    quality: WoWGameDataTypeModel;
+    name: string;
+    modifiedAppearanceId: number;
+    itemClass: WoWGameDataEntityModel;
+    itemSubclass: WoWGameDataEntityModel;
+    inventoryType: WoWGameDataTypeModel;
+    binding: WoWGameDataTypeModel;
+    uniqueEquipped?: number;
+    armor?: CharacterEquipmentStatModel;
+    stats: CharacterEquipmentStatModel[];
+    spells?: CharacterEquipmentSpellModel[];
+    sellPrice: WoWGameDataEntityModel;
+    requirements: CharacterEquipmentRequirementsModel;
+    set: CharacterEquipmentSetModel;
+    level: WoWGameDataValueModel;
+    transmog: CharacterEquipmentTransmogModel;
+    durability: WoWGameDataValueModel;
+    isSubclassHidden?: boolean;
+    nameDescription: WoWGameDataItemDisplayModel;
+    modifiedCraftingStat?: CharacterEquipmentCraftingStatModel[];
+}

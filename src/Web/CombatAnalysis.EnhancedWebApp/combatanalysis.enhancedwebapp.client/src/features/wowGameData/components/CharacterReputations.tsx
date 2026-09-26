@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
-import { useLazyGetCharacterReputationsQuery } from '../api/WoWCharacter.api';
-import type { CharacterReputationModel } from '../types/CharacterReputationModel';
+import { useGetCharacterReputationsQuery } from '../api/WoWCharacter.api';
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import ResponseInformation from '@/shared/components/ResponseInformation';
 
 const CharacterReputations: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -12,33 +12,23 @@ const CharacterReputations: React.FC = () => {
 
     const { t, username, serverName, regionName } = context;
 
-    const [reputaions, setReputaions] = useState<CharacterReputationModel[]>([]);
+    const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
 
-    const [getReputations] = useLazyGetCharacterReputationsQuery();
+    const { data: reputaions, isLoading, error } = useGetCharacterReputationsQuery({ username, serverName, regionName },
+            {
+                skip: isSkipRequest
+            });
 
     useEffect(() => {
-        if (!username || username.trim().length === 0) {
-            return;
-        }
+        setIsSkipRequest([username, serverName].filter(x => x.trim().length > 0).length < [username, serverName].length);
+    }, [username, serverName]);
 
-        const loadAsync = async () => {
-            try {
-                const receivedReputations = await getReputations({ username, serverName, regionName }).unwrap();
-                setReputaions(receivedReputations);
-            } catch (error) {
-                console.error("Failed to fetch character reputations:", error);
-            }
-        }
-
-        loadAsync();
-    }, []);
-
-    if (!username || username.trim().length === 0) {
-        return (<div>No data</div>);
-    }
-
-    if (reputaions.length === 0) {
-        return (<div>Loading...</div>);
+    if (!reputaions || isLoading || isSkipRequest || error) {
+        return (<ResponseInformation
+            error={error}
+            watchParams={[username, serverName]}
+            isLoading={!reputaions || isLoading}
+        />);
     }
 
     return (

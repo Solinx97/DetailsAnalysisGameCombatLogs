@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achi
 public class CharacterAchievementModel
 {
     [JsonPropertyName("achievement")]
-    public AchievementModel Achievement { get; set; }
+    public WoWGameDataEntityModel Achievement { get; set; }
 
     [JsonPropertyName("criteria")]
     public CharacterAchievementCriteriaModel Criteria { get; set; }

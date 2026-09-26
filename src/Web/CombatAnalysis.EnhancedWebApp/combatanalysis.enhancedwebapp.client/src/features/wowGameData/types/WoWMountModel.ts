@@ -1,4 +1,3 @@
-export type WoWMountModel = {
-    id: string;
-    name: string;
-}
+import type { UserCollectionModel } from './UserCollectionModel';
+
+export type WoWMountModel = UserCollectionModel & {}

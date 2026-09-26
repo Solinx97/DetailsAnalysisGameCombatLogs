@@ -3,6 +3,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Dungeon;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
@@ -40,6 +41,14 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
     {
         var summary = await _httpClient.GetProfileSummaryAsync(serverName, username, regionName, cancellationToken);
         var map = _mapper.Map<CharacterDto>(summary);
+        return Ok(map);
+    }
+
+    [HttpGet("getEquipments/{username}")]
+    public async Task<IActionResult> GetEquipments(string username, string serverName, string regionName, CancellationToken cancellationToken)
+    {
+        var equipments = await _httpClient.GetEquipmentsAsync(serverName, username, regionName, cancellationToken);
+        var map = _mapper.Map<CharacterEquipmentsResponseDto>(equipments);
         return Ok(map);
     }
 

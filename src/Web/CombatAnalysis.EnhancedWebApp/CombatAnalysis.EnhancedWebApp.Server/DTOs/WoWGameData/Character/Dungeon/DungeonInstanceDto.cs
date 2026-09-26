@@ -2,7 +2,7 @@
 
 public class DungeonInstanceDto
 {
-    public DungeonDto Instance { get; set; }
+    public WoWGameDataEntityDto Instance { get; set; }
 
     public DungeonModeDto[] Modes { get; set; }
 }

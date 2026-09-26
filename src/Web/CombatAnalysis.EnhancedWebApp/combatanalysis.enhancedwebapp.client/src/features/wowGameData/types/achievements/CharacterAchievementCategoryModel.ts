@@ -1,7 +1,7 @@
-import type { AchievementModel } from './AchievementModel';
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 
 export type CharacterAchievementCategoryModel = {
-    category: AchievementModel;
+    category: WoWGameDataEntityModel;
     quantity: number;
     points: number;
 }

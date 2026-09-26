@@ -2,7 +2,7 @@
 
 public class DungeonExpansionDto
 {
-    public DungeonDto Expansion { get; set; }
+    public WoWGameDataEntityDto Expansion { get; set; }
 
     public DungeonInstanceDto[] Instances { get; set; }
 }

@@ -1,7 +1,7 @@
-import type { CharacterReputationFactionModel } from './CharacterReputationFactionModel';
 import type { CharacterReputationStandingModel } from './CharacterReputationStandingModel';
+import type { WoWGameDataEntityModel } from './WoWGameDataEntityModel';
 
 export type CharacterReputationModel = {
-    faction: CharacterReputationFactionModel;
+    faction: WoWGameDataEntityModel;
     standing: CharacterReputationStandingModel;
 }

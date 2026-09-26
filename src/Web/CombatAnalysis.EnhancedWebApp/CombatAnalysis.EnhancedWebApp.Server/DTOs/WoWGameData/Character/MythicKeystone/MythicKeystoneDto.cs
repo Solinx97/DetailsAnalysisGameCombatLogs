@@ -4,7 +4,7 @@ public class MythicKeystoneDto
 {
     public MythicKeystoneCurrentPeriodDto CurrentPeriod { get; set; }
 
-    public MythicKeystoneSeasonDto[] Seasons { get; set; }
+    public WoWGameDataEntityDto[] Seasons { get; set; }
 
     public DungeonCharacterDto Character { get; set; }
 

@@ -4,6 +4,7 @@ import type { AchievementCategoriesModel } from '../types/achievements/Achieveme
 import type { AchievementSelectedCategoryModel } from '../types/achievements/AchievementSelectedCategoryModel';
 import type { WoWCharacterModel } from '../types/character/WoWCharacterModel';
 import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
+import type { CharacterEquipmentsResponse } from '../types/equipments/CharacterEquipmentsResponse';
 import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
 import { BattleNetDataApi } from './BattleNetData.api';
 
@@ -17,6 +18,9 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
         }),
         getCharacterSummary: builder.query<WoWCharacterModel, { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getProfileSummary/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
+        getCharacterEquipments: builder.query<CharacterEquipmentsResponse, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getEquipments/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
         getCharacterMythicKeystone: builder.query<MythicKeystoneModel, { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getMythicKeystone/${username}?serverName=${serverName}&regionName=${regionName}`,
@@ -37,12 +41,13 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
 })
 
 export const {
-    useLazyGetCharacterReputationsQuery,
+    useGetCharacterReputationsQuery,
     useLazyGetCharacterMountsQuery,
-    useLazyGetCharacterSummaryQuery,
-    useLazyGetCharacterMythicKeystoneQuery,
-    useLazyGetCharacterRaidsQuery,
-    useLazyGetCharacterDungeonsQuery,
+    useGetCharacterSummaryQuery,
+    useGetCharacterEquipmentsQuery,
+    useGetCharacterMythicKeystoneQuery,
+    useGetCharacterRaidsQuery,
+    useGetCharacterDungeonsQuery,
     useLazyGetAchievementAllCategoryQuery,
     useGetAchievementsByCategoryQuery,
 } = WoWCharacterApi;

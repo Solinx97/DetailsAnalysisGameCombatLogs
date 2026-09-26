@@ -2,7 +2,7 @@
 
 public class SelectedAchievementDto
 {
-    public AchievementDto Category { get; set; }
+    public WoWGameDataEntityDto Category { get; set; }
 
     public string Name { get; set; }
 
@@ -14,7 +14,7 @@ public class SelectedAchievementDto
 
     public SelectedAchievementCriteriaDto Criteria { get; set; }
 
-    public AchievementDto NextAchievement { get; set; }
+    public WoWGameDataEntityDto NextAchievement { get; set; }
 
     public int DisplayOrder { get; set; }
 }

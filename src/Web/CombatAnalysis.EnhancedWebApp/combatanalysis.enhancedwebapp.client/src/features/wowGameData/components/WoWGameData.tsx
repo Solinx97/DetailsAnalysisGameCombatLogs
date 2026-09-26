@@ -1,5 +1,4 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
-import { NoneValue } from '@/shared/helpers/ConstHelpers';
 import { faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +13,7 @@ import CharacterMounts from './CharacterMounts';
 import CharacterMythicKeystone from './CharacterMythicKeystone';
 import CharacterReputations from './CharacterReputations';
 import CharacterSummary from './CharacterSummary';
+import CharacterEquipments from './equipments/CharacterEquipments';
 
 import './WoWGameData.scss';
 
@@ -31,8 +31,10 @@ const WoWGameData: React.FC = () => {
 
     const [servers, setServers] = useState<RealmModel[]>([]);
 
-    const [username, setUsername] = useState<string | undefined>();
+    const [username, setUsername] = useState<string>("");
+
     const [showSummary, setShowSummary] = useState<boolean>(false);
+    const [showEquipments, setShowEquipments] = useState<boolean>(false);
     const [showMythicKeystone, setShowMythicKeystone] = useState<boolean>(false);
     const [showRaids, setShowRaids] = useState<boolean>(false);
     const [showDungeons, setShowDungeons] = useState<boolean>(false);
@@ -72,7 +74,7 @@ const WoWGameData: React.FC = () => {
         const options = servers.map(
             (item) => ({
                 value: item.slug,
-                label: item.name
+                label: item.name ? item.name : ""
             })
         )
 
@@ -97,6 +99,12 @@ const WoWGameData: React.FC = () => {
         }
     }
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            setUsername(event.currentTarget.value);
+        }
+    }
+
     if (!isAuthorized || isLoading) {
         return (<div>Loading...</div>);
     }
@@ -109,7 +117,7 @@ const WoWGameData: React.FC = () => {
                         <div>{t("Username")} </div>
                         <input type="text" className="form-control" placeholder="Username" aria-label="Username"
                             ref={usernameRef}
-                            onChange={() => setUsername(usernameRef.current?.value)} />
+                            onKeyDown={handleKeyDown} />
                     </div>
                     <div className="filter-item">
                         <div>{t("Server")}</div>
@@ -123,7 +131,7 @@ const WoWGameData: React.FC = () => {
                     <div className="battle-net">
                         <div className="status">{isAuthorized.authenticated ? 'connected' : 'not connected'}</div>
                         <div className={`auth btn-shadow ${isAuthorized.authenticated ? 'connected' : 'not-connected'}`}
-                            onClick={isAuthorized.authenticated ? () => {} : getAuthorizationTokenAsync}>
+                            onClick={isAuthorized.authenticated ? () => { } : getAuthorizationTokenAsync}>
                             <FontAwesomeIcon
                                 icon={isAuthorized.authenticated ? faUser : faPlus}
                             />
@@ -162,11 +170,22 @@ const WoWGameData: React.FC = () => {
                     />
                 }
                 <div className="btn-shadow"
+                    onClick={() => setShowEquipments(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faLocationCrosshairs}
+                    />
+                    <div>{t("Equipments")}</div>
+                </div>
+                {showEquipments &&
+                    <CharacterEquipments
+                    />
+                }
+                <div className="btn-shadow"
                     onClick={() => setShowMythicKeystone(prev => !prev)}>
                     <FontAwesomeIcon
                         icon={faLocationCrosshairs}
                     />
-                    <div>{t("MythicKeystone")}</div>
+                    <div>{t("WeekMythicKeystone")}</div>
                 </div>
                 {showMythicKeystone &&
                     <CharacterMythicKeystone
@@ -236,8 +255,8 @@ const WoWGameData: React.FC = () => {
     return (
         <WoWGameDataContext.Provider value={{
             t: t,
-            username: username ? username : NoneValue.NONE_VALUE,
-            serverName: serverValue ? serverValue.value : NoneValue.NONE_VALUE,
+            username: username,
+            serverName: serverValue ? serverValue.value : " ",
             regionName: regionName
         }}>
             {charactersData()}

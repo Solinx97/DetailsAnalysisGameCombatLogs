@@ -1,13 +1,13 @@
-import type { AchievementModel } from './AchievementModel';
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 import type { SelectedAchievementCriteriaModel } from './SelectedAchievementCriteriaModel';
 
 export type SelectedAchievementModel = {
-    category: AchievementModel;
+    category: WoWGameDataEntityModel;
     name: string;
     description: string;
     points: number;
     isAccountWide: boolean;
     criteria: SelectedAchievementCriteriaModel;
-    nextAchievement: AchievementModel;
+    nextAchievement: WoWGameDataEntityModel;
     displayOrder: number;
 }

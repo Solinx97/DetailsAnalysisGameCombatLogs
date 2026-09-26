@@ -2,7 +2,7 @@
 
 public class CharacterAchievementRecentEventsDto
 {
-    public AchievementDto Achievement { get; set; }
+    public WoWGameDataEntityDto Achievement { get; set; }
 
     public DateTimeOffset Time { get; set; }
 }

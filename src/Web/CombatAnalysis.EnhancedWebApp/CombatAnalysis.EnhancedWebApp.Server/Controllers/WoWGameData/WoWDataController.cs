@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,14 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMapper mapper)
     {
         var achievement = await _httpClient.GetAchievementAsync(regionName, achievementId, cancellationToken);
         var map = _mapper.Map<SelectedAchievementDto>(achievement);
+        return Ok(map);
+    }
+
+    [HttpGet("getMount/{mountId:int:min(1)}")]
+    public async Task<IActionResult> GetMount(int mountId, string regionName, CancellationToken cancellationToken)
+    {
+        var mount = await _httpClient.GetMountAsync(regionName, mountId, cancellationToken);
+        var map = _mapper.Map<SelectedMountDto>(mount);
         return Ok(map);
     }
 }

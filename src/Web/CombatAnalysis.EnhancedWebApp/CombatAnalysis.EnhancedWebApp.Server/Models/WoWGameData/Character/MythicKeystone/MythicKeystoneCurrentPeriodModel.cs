@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Myth
 public class MythicKeystoneCurrentPeriodModel
 {
     [JsonPropertyName("period")]
-    public MythicKeystoneSeasonModel Period { get; set; }
+    public WoWGameDataEntityModel Period { get; set; }
 
     [JsonPropertyName("best_runs")]
     public MythicKeystoneBestRunModel[] BestRuns { get; set; }

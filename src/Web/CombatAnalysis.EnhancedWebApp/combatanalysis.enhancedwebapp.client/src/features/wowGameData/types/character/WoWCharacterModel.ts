@@ -1,16 +1,16 @@
-import type { WoWFactionModel } from '../WoWFactionModel';
-import type { WoWCharacterGenderModel } from './WoWCharacterGenderModel';
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 import type { WoWRealmModel } from '../WoWRealmModel';
 import type { WoWGuildModel } from '../WoWGuildModel';
 import type { WoWCharacterTitleModel } from './WoWCharacterTitleModel';
 import type { WoWCharacterRaceModel } from './WoWCharacterRaceModel';
 import type { CharacterSpecializationModel } from './CharacterSpecializationModel';
 import type { WoWCharacterClassModel } from './WoWCharacterClassModel';
+import type { WoWGameDataTypeModel } from '../WoWGameDataTypeModel';
 
 export type WoWCharacterModel = {
     name: string;
-    gender: WoWCharacterGenderModel;
-    faction: WoWFactionModel;
+    gender: WoWGameDataTypeModel;
+    faction: WoWGameDataEntityModel;
     race: WoWCharacterRaceModel;
     class: WoWCharacterClassModel;
     activeSpec: CharacterSpecializationModel;

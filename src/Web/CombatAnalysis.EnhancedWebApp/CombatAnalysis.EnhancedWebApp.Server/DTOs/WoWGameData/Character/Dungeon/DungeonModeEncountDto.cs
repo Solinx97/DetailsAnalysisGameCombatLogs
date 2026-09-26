@@ -2,7 +2,7 @@
 
 public class DungeonModeEncountDto
 {
-    public DungeonDto Encounter { get; set; }
+    public WoWGameDataEntityDto Encounter { get; set; }
 
     public int CompletedCount { get; set; }
 

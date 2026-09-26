@@ -1,11 +1,11 @@
+import type { WoWGameDataEntityModel } from "../WoWGameDataEntityModel";
 import type { DungeonCharacterModel } from "./DungeonCharacterModel";
 import type { MythicKeystoneCurrentPeriodModel } from "./MythicKeystoneCurrentPeriodModel";
 import type { MythicKeystoneRaitingModel } from "./MythicKeystoneRaitingModel";
-import type { MythicKeystoneSeasonModel } from "./MythicKeystoneSeasonModel";
 
 export type MythicKeystoneModel = {
     currentPeriod: MythicKeystoneCurrentPeriodModel;
-    seasons: MythicKeystoneSeasonModel[];
+    seasons: WoWGameDataEntityModel[];
     character: DungeonCharacterModel;
     currentMythicRating: MythicKeystoneRaitingModel;
 }

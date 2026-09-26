@@ -4,6 +4,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Dungeon;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
@@ -11,6 +12,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Reputation;
 
@@ -20,11 +22,19 @@ public class ProxyApiMapper : Profile
 {
     public ProxyApiMapper()
     {
+        CreateMap<WoWGameDataEntityModel, WoWGameDataEntityDto>();
+        CreateMap<WoWGameDataColorModel, WoWGameDataColorDto>();
+        CreateMap<WoWGameDataCurrencyDisplayModel, WoWGameDataCurrencyDisplayDto>();
+        CreateMap<WoWGameDataCurrencyModel, WoWGameDataCurrencyDto>();
+        CreateMap<WoWGameDataPlayableClassModel, WoWGameDataPlayableClassDto>();
+        CreateMap<WoWGameDataValueModel, WoWGameDataValueDto>();
+        CreateMap<WoWGameDataTypeModel, WoWGameDataTypeDto>();
+        CreateMap<WoWGameDataItemDisplayModel, WoWGameDataItemDisplayDto>();
+
         CreateMap<CharacterReputationModel, CharacterReputationDto>();
-        CreateMap<CharacterReputationFactionModel, CharacterReputationFactionDto>();
         CreateMap<CharacterReputationStandingModel, CharacterReputationStandingDto>();
 
-        CreateMap<CharacterMountModel, CharacterMountDto>();
+        CreateMap<AccountMountModel, CharacterMountDto>();
         CreateMap<MountModel, MountDto>();
 
         CreateMap<CharacterModel, CharacterDto>();
@@ -38,16 +48,27 @@ public class ProxyApiMapper : Profile
         CreateMap<FactionModel, FactionDto>();
         CreateMap<GuildModel, GuildDto>();
 
+        CreateMap<CharacterEquipmentCraftingStatModel, CharacterEquipmentCraftingStatDto>();
+        CreateMap<CharacterEquipmentModel, CharacterEquipmentDto>();
+        CreateMap<CharacterEquipmentEnchantmentModel, CharacterEquipmentEnchantmentDto>();
+        CreateMap<CharacterEquipmentRequirementsModel, CharacterEquipmentRequirementsDto>();
+        CreateMap<CharacterEquipmentSetModel, CharacterEquipmentSetDto>();
+        CreateMap<CharacterEquipmentSetEffectModel, CharacterEquipmentSetEffectDto>();
+        CreateMap<CharacterEquipmentSetItemModel, CharacterEquipmentSetItemDto>();
+        CreateMap<CharacterEquipmentSlotModel, CharacterEquipmentSlotDto>();
+        CreateMap<CharacterEquipmentSocketModel, CharacterEquipmentSocketDto>();
+        CreateMap<CharacterEquipmentSpellModel, CharacterEquipmentSpellDto>();
+        CreateMap<CharacterEquipmentsResponse, CharacterEquipmentsResponseDto>();
+        CreateMap<CharacterEquipmentStatModel, CharacterEquipmentStatDto>();
+        CreateMap<CharacterEquipmentTransmogModel, CharacterEquipmentTransmogDto>();
+
         CreateMap<MythicKeystoneModel, MythicKeystoneDto>();
         CreateMap<MythicKeystoneCurrentPeriodModel, MythicKeystoneCurrentPeriodDto>();
-        CreateMap<MythicKeystoneSeasonModel, MythicKeystoneSeasonDto>();
         CreateMap<DungeonCharacterModel, DungeonCharacterDto>();
         CreateMap<MythicKeystoneRaitingModel, MythicKeystoneRaitingDto>();
-        CreateMap<MythicKeystoneAfixModel, MythicKeystoneAfixDto>();
         CreateMap<MythicKeystoneMemberModel, MythicKeystoneMemberDto>();
         CreateMap<MythicKeystoneBestRunModel, MythicKeystoneBestRunDto>();
-        CreateMap<MythicKeystoneDungeonModel, MythicKeystoneDungeonDto>();
-        CreateMap<MythicKeystoneColorModel, MythicKeystoneColorDto>();
+        CreateMap<WoWGameDataColorModel, MythicKeystoneColorDto>();
 
         CreateMap<CharacterDungeonModel, CharacterDungeonDto>();
         CreateMap<DungeonExpansionModel, DungeonExpansionDto>();
@@ -58,8 +79,6 @@ public class ProxyApiMapper : Profile
                 opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.LastKillTimestamp)));
         CreateMap<DungeonModeModel, DungeonModeDto>();
         CreateMap<DungeonModeProgressModel, DungeonModeProgressDto>();
-        CreateMap<DungeonModeTypeModel, DungeonModeTypeDto>();
-        CreateMap<DungeonModel, DungeonDto>();
 
         CreateMap<CharacterAchievementCategoryModel, CharacterAchievementCategoryDto>();
         CreateMap<CharacterAchievementCriteriaModel, CharacterAchievementCriteriaDto>();
@@ -67,7 +86,6 @@ public class ProxyApiMapper : Profile
             .ForMember(
                 dest => dest.CompletedTime,
                 opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.CompletedTimestamp)));
-        CreateMap<AchievementModel, AchievementDto>();
         CreateMap<CharacterAchievementRecentEventsModel, CharacterAchievementRecentEventsDto>()
             .ForMember(
                 dest => dest.Time,
@@ -85,5 +103,7 @@ public class ProxyApiMapper : Profile
         CreateMap<SelectedAchievementCriteriaModel, SelectedAchievementCriteriaDto>();
 
         CreateMap<RealmModel, RealmDto>();
+
+        CreateMap<SelectedMountModel, SelectedMountDto>();
     }
 }

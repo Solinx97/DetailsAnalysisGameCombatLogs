@@ -1,7 +1,21 @@
+.mount-count {
+    display: flex;
+    gap: 10px;
+    padding: 5px 10px !important;
+}
+
 .count {
     padding: 2px 10px;
     border: 2px solid gray;
     border-radius: 20px;
+}
+
+.load-more {
+    cursor: pointer;
+
+    &:hover {
+        color: green;
+    }
 }
 
 .character {
@@ -69,8 +83,9 @@
     }
 
     .reputations,
-    .mounts,
+    .user-collection,
     .summary,
+    .equipments,
     .mythic-keystone,
     .raids,
     .expansion-raids,
@@ -87,13 +102,66 @@
     }
 }
 
+.user-collection {
+    .user-collection-details {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .selected-user-collection {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &__name {
+            display: flex;
+            gap: 20px;
+        }
+
+        .received, .not-received {
+            padding: 5px 20px;
+            border-radius: 20px;
+        }
+
+        .received {
+            box-shadow: 3px 3px green;
+        }
+
+        .not-received {
+            opacity: 0.6;
+            box-shadow: 2px 2px gray;
+        }
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-left: 50px;
+        }
+
+        .action, .how-receive {
+            display: flex;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.7em;
+        }
+
+        .how-receive .btn-shadow {
+            box-shadow: 2px 2px orange;
+            cursor: default;
+        }
+    }
+}
+
+
 .achievements {
     display: flex;
     gap: 50px;
 }
 
 .reputations,
-.mounts,
+.user-collection,
 .summary,
 .mythic-keystone,
 .raids,
@@ -214,8 +282,9 @@
 }
 
 .reputations,
-.mounts,
+.user-collection,
 .summary,
+.equipments,
 .raids,
 .expansion-raids,
 .dungeon,
@@ -241,36 +310,12 @@
 }
 
 .reputations,
-.mounts,
+.user-collection,
 .summary,
+.equipments,
 .expansion-raids,
 .dungeon,
 .raids {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    cursor: default;
-
-    &__name {
-        display: flex;
-
-        .selected {
-            box-shadow: 2px 2px green;
-        }
-    }
-
-    &__title {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-
-        .count {
-            padding: 5px;
-            border: 2px solid gray;
-            border-radius: 20px;
-        }
-    }
-
     &__item {
         display: flex;
         gap: 20px;

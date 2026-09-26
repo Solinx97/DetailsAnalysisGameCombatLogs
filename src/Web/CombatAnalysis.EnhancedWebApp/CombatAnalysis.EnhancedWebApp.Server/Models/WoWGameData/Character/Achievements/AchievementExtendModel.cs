@@ -1,14 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 
-namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
-
-public class AchievementExtendModel
+public class AchievementExtendModel : WoWGameDataEntityModel
 {
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-
     public DateTimeOffset? CompletedTime { get; set; }
 }

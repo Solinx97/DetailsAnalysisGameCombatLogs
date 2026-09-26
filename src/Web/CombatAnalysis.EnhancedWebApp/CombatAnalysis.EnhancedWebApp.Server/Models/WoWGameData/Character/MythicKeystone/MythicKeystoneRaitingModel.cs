@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Myth
 public class MythicKeystoneRaitingModel
 {
     [JsonPropertyName("color")]
-    public MythicKeystoneColorModel Color { get; set; }
+    public WoWGameDataColorModel Color { get; set; }
 
     [JsonPropertyName("rating")]
     public double Rating { get; set; }

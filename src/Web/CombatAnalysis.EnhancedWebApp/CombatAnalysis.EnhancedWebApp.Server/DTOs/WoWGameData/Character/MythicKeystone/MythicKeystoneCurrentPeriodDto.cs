@@ -2,7 +2,7 @@
 
 public class MythicKeystoneCurrentPeriodDto
 {
-    public MythicKeystoneSeasonDto Period { get; set; }
+    public WoWGameDataEntityDto Period { get; set; }
 
     public MythicKeystoneBestRunDto[] BestRuns { get; set; }
 }

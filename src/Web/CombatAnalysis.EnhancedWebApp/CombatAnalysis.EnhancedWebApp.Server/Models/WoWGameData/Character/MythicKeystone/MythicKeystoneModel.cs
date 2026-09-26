@@ -8,7 +8,7 @@ public class MythicKeystoneModel
     public MythicKeystoneCurrentPeriodModel CurrentPeriod { get; set; }
 
     [JsonPropertyName("seasons")]
-    public MythicKeystoneSeasonModel[] Seasons { get; set; }
+    public WoWGameDataEntityModel[] Seasons { get; set; }
 
     [JsonPropertyName("character")]
     public DungeonCharacterModel Character { get; set; }

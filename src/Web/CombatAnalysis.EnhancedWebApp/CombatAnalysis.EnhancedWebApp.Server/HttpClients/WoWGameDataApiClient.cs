@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.HttpClients;
 
@@ -14,6 +15,22 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         var response = await _httpClient.GetAsync($"data/wow/realm/index?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<RealmsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<MountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/mount/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<MountsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<SelectedMountModel> GetMountAsync(string regionName, int mountId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/mount/{mountId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<SelectedMountModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 

@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Repu
 public class CharacterReputationModel
 {
     [JsonPropertyName("faction")]
-    public CharacterReputationFactionModel Faction { get; set; }
+    public WoWGameDataEntityModel Faction { get; set; }
 
     [JsonPropertyName("standing")]
     public CharacterReputationStandingModel Standing { get; set; }

@@ -1,9 +1,9 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import ResponseInformation from '@/shared/components/ResponseInformation';
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
-import { useLazyGetCharacterDungeonsQuery, useLazyGetCharacterRaidsQuery } from '../api/WoWCharacter.api';
-import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
+import { useGetCharacterDungeonsQuery, useGetCharacterRaidsQuery } from '../api/WoWCharacter.api';
 import SelectedDungeonsExpantion from './SelectedDungeonsExpantion';
 
 const CharacterDungeons: React.FC<{ isRaids: boolean }> = ({ isRaids }) => {
@@ -16,36 +16,31 @@ const CharacterDungeons: React.FC<{ isRaids: boolean }> = ({ isRaids }) => {
     const { t, username, serverName, regionName } = context;
 
     const [selectedExpansionId, setSelectedExpantionId] = useState<number>(0);
-    const [dungeons, setDungeons] = useState<CharacterDungeonModel | null>(null);
     const [onlyCurrentWeekCompleted, setCurrentWeekCompleted] = useState<boolean>(false);
-    
-    const [getDungeons] = isRaids
-        ? useLazyGetCharacterRaidsQuery()
-        : useLazyGetCharacterDungeonsQuery();
+    const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
+
+    const { data: dungeons, isLoading, error } = isRaids
+        ? useGetCharacterRaidsQuery({ username, serverName, regionName },
+            {
+                skip: isSkipRequest
+            }
+        )
+        : useGetCharacterDungeonsQuery({ username, serverName, regionName },
+            {
+                skip: isSkipRequest
+            }
+        );
 
     useEffect(() => {
-        if (!username || username.trim().length === 0) {
-            return;
-        }
+        setIsSkipRequest([username, serverName].filter(x => x.trim().length > 0).length < [username, serverName].length);
+    }, [username, serverName]);
 
-        const loadAsync = async () => {
-            try {
-                const receivedDungeons = await getDungeons({ username, serverName, regionName }).unwrap();
-                setDungeons(receivedDungeons);
-            } catch (error) {
-                console.error("Failed to fetch character dungeons:", error);
-            }
-        }
-
-        loadAsync();
-    }, []);
-
-    if (!username || username.trim().length === 0) {
-        return (<div>No data</div>);
-    }
-
-    if (!dungeons) {
-        return (<div>Loading...</div>);
+    if (!dungeons || isLoading || isSkipRequest || error) {
+        return (<ResponseInformation
+            error={error}
+            watchParams={[username, serverName]}
+            isLoading={!dungeons || isLoading}
+        />);
     }
 
     return (
@@ -57,9 +52,7 @@ const CharacterDungeons: React.FC<{ isRaids: boolean }> = ({ isRaids }) => {
                 <input className="form-check-input" type="checkbox" value="" id="checkIndeterminate"
                     defaultChecked={onlyCurrentWeekCompleted}
                     onChange={() => setCurrentWeekCompleted(prev => !prev)} />
-                <label className="form-check-label" htmlFor="checkIndeterminate">
-                    {t("OnlyCurrentWeekCompleted")}
-                </label>
+                <label className="form-check-label" htmlFor="checkIndeterminate">{t("OnlyCurrentWeekCompleted")}</label>
             </div>
             <ul className="raids__container">
                 {dungeons.expansions.map((expansion, index) => (

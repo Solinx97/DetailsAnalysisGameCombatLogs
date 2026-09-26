@@ -9,24 +9,13 @@ public class ExternalApiErrorHandler(ILogger<ExternalApiErrorHandler> logger) : 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var response = await base.SendAsync(request, cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
         {
-            var body = await response.Content.ReadAsStringAsync(
-                cancellationToken);
-
-            _logger.LogWarning("External API returned {StatusCode} for {Method} {Url}. Body: {Body}",
-                (int)response.StatusCode,
-                request.Method,
-                request.RequestUri,
-                body);
-
-            throw new ExternalApiException(
-                response.StatusCode,
-                request.RequestUri,
-                body);
+            return response;
         }
 
-        return response;
+        _logger.LogWarning("External API returned {StatusCode} for {Method} {Url}", (int)response.StatusCode, request.Method, request.RequestUri);
+
+        throw new ExternalApiException(response.StatusCode, request.RequestUri);
     }
 }

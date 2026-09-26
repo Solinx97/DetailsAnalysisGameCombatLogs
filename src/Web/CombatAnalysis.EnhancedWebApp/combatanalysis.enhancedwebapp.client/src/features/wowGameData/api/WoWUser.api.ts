@@ -1,14 +1,14 @@
-import type { CharacterMountModel } from '../types/CharacterMountModel';
+import type { WoWMountModel } from '../types/WoWMountModel';
 import { BattleNetDataApi } from './BattleNetData.api';
 
 export const WoWUserApi = BattleNetDataApi.injectEndpoints({
     endpoints: builder => ({
-        getUserMounts: builder.query<CharacterMountModel[], { regionName: string }>({
+        getUserMounts: builder.query<WoWMountModel[], { regionName: string }>({
             query: ({ regionName }) => `/WoWUser/getMounts?regionName=${regionName}`,
         }),
     })
 })
 
 export const {
-    useLazyGetUserMountsQuery,
+    useGetUserMountsQuery,
 } = WoWUserApi;

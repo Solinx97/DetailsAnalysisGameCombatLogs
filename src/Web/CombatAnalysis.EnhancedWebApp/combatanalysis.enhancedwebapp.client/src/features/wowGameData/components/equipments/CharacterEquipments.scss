@@ -1,0 +1,79 @@
+.equipments__container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .equipment {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        &__inventory-type {
+            display: flex;
+
+            .inventory-type,
+            .quality {
+                font-size: 0.8em;
+                padding: 5px 20px;
+                border-radius: 25px;
+                box-shadow: 1px 1px gray;
+            }
+
+            .epic {
+                box-shadow: 1px 1px purple;
+            }
+
+            .uncommon {
+                box-shadow: 1px 1px green;
+            }
+        }
+
+        &__transmog {
+            display: flex;
+
+            .transmog {
+                font-size: 0.8em;
+                padding: 5px 20px;
+                border-radius: 25px;
+                box-shadow: 2px 2px aqua;
+            }
+        }
+
+        &__name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+
+            .level {
+                font-size: 0.8em;
+                padding: 5px 20px;
+                border-radius: 25px;
+                box-shadow: 1px 1px gray;
+            }
+        }
+
+        &__sockets,
+        &__enchantments,
+        &__spells,
+        &__set,
+        &__stats {
+            margin-left: 25px;
+
+            .socket,
+            .enchantment,
+            .set,
+            .stat {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .set {
+                .not-active {
+                    color: gray;
+                }
+            }
+        }
+    }
+}

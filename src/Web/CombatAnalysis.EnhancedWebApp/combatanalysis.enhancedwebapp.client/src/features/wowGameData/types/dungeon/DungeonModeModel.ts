@@ -1,8 +1,8 @@
 import type { DungeonModeProgressModel } from './DungeonModeProgressModel';
-import type { DungeonModeTypeModel } from './DungeonModeTypeModel';
+import type { WoWGameDataTypeModel } from '../WoWGameDataTypeModel';
 
 export type DungeonModeModel = {
-    difficulty: DungeonModeTypeModel;
-    status: DungeonModeTypeModel;
+    difficulty: WoWGameDataTypeModel;
+    status: WoWGameDataTypeModel;
     progress: DungeonModeProgressModel;
 }

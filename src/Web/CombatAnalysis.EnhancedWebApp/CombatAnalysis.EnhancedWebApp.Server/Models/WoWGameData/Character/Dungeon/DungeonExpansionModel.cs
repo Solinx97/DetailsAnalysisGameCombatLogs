@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dung
 public class DungeonExpansionModel
 {
     [JsonPropertyName("expansion")]
-    public DungeonModel Expansion { get; set; }
+    public WoWGameDataEntityModel Expansion { get; set; }
 
     [JsonPropertyName("instances")]
     public DungeonInstanceModel[] Instances { get; set; }

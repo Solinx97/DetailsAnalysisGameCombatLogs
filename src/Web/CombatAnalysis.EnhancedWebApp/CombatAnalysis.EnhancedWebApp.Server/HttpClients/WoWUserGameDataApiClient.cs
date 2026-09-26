@@ -8,11 +8,11 @@ public class WoWUserGameDataApiClient(HttpClient httpClient) : IWoWUserGameDataA
 {
     private readonly HttpClient _httpClient = httpClient;
 
-    public async Task<CharacterMountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken)
+    public async Task<AccountMountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"profile/user/wow/collections/mounts?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<CharacterMountsResponse>();
+        var result = await response.Content.ReadFromJsonAsync<AccountMountsResponse>();
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 }

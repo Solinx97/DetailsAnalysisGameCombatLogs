@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achi
 public class CharacterAchievementRecentEventsModel
 {
     [JsonPropertyName("achievement")]
-    public AchievementModel Achievement { get; set; }
+    public WoWGameDataEntityModel Achievement { get; set; }
 
     [JsonPropertyName("timestamp")]
     public long Timestamp { get; set; }

@@ -2,9 +2,9 @@
 
 public class DungeonModeDto
 {
-    public DungeonModeTypeDto Difficulty { get; set; }
+    public WoWGameDataTypeDto Difficulty { get; set; }
 
-    public DungeonModeTypeDto Status { get; set; }
+    public WoWGameDataTypeDto Status { get; set; }
 
     public DungeonModeProgressDto Progress { get; set; }
 }

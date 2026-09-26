@@ -1,5 +1,5 @@
-export type RealmModel = {
-    id: number;
-    name: string;
+import type { WoWGameDataEntityModel } from './WoWGameDataEntityModel';
+
+export type RealmModel = WoWGameDataEntityModel & {
     slug: string;
 }

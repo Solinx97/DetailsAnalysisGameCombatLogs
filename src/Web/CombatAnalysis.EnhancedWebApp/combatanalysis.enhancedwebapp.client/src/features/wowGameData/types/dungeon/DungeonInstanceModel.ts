@@ -1,7 +1,7 @@
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 import type { DungeonModeModel } from './DungeonModeModel';
-import type { DungeonModel } from './DungeonModel';
 
 export type DungeonInstanceModel = {
-    instance: DungeonModel;
+    instance: WoWGameDataEntityModel;
     modes: DungeonModeModel[];
 }

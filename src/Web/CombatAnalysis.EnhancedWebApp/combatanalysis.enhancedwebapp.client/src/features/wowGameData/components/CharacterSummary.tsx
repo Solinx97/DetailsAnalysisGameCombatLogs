@@ -1,7 +1,7 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import { useContext, useEffect, useState } from 'react';
-import { useLazyGetCharacterSummaryQuery } from '../api/WoWCharacter.api';
-import type { WoWCharacterModel } from '../types/character/WoWCharacterModel';
+import { useGetCharacterSummaryQuery } from '../api/WoWCharacter.api';
+import ResponseInformation from '@/shared/components/ResponseInformation';
 
 const CharacterSummary: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -12,33 +12,23 @@ const CharacterSummary: React.FC = () => {
 
     const { t, username, serverName, regionName } = context;
 
-    const [characterSummary, setCharacterSummary] = useState<WoWCharacterModel | null>(null);
+    const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);;
 
-    const [getSummary] = useLazyGetCharacterSummaryQuery();
+    const { data: characterSummary, isLoading, error } = useGetCharacterSummaryQuery({ username, serverName, regionName },
+        {
+            skip: isSkipRequest
+        });
 
     useEffect(() => {
-        if (!username || username.trim().length === 0) {
-            return;
-        }
+        setIsSkipRequest([username, serverName].filter(x => x.trim().length > 0).length < [username, serverName].length);
+    }, [username, serverName]);
 
-        const loadAsync = async () => {
-            try {
-                const receivedSummary = await getSummary({ username, serverName, regionName }).unwrap();
-                setCharacterSummary(receivedSummary);
-            } catch (error) {
-                console.error("Failed to fetch character summary:", error);
-            }
-        }
-
-        loadAsync();
-    }, []);
-
-    if (!username || username.trim().length === 0) {
-        return (<div>No data</div>);
-    }
-
-    if (!characterSummary) {
-        return (<div>Loading...</div>);
+    if (!characterSummary || isLoading || isSkipRequest || error) {
+        return (<ResponseInformation
+            error={error}
+            watchParams={[username, serverName]}
+            isLoading={!characterSummary || isLoading}
+        />);
     }
 
     return (

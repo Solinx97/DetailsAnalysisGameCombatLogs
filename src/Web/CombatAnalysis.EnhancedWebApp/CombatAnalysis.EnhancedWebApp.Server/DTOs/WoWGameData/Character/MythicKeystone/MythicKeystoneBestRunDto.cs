@@ -8,11 +8,11 @@ public class MythicKeystoneBestRunDto
 
     public int Level { get; set; }
 
-    public MythicKeystoneAfixDto[] Afixes { get; set; }
+    public WoWGameDataEntityDto[] Afixes { get; set; }
 
     public MythicKeystoneMemberDto[] Members { get; set; }
 
-    public MythicKeystoneDungeonDto Dungeon { get; set; }
+    public WoWGameDataEntityDto Dungeon { get; set; }
 
     public bool IsCompletedWithinTime { get; set; }
 

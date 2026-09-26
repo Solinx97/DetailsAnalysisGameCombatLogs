@@ -5,10 +5,10 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dung
 public class DungeonModeModel
 {
     [JsonPropertyName("difficulty")]
-    public DungeonModeTypeModel Difficulty { get; set; }
+    public WoWGameDataTypeModel Difficulty { get; set; }
 
     [JsonPropertyName("status")]
-    public DungeonModeTypeModel Status { get; set; }
+    public WoWGameDataTypeModel Status { get; set; }
 
     [JsonPropertyName("progress")]
     public DungeonModeProgressModel Progress { get; set; }

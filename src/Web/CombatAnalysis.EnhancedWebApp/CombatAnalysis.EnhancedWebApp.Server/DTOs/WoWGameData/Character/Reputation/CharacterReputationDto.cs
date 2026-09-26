@@ -2,7 +2,7 @@
 
 public class CharacterReputationDto
 {
-    public CharacterReputationFactionDto Faction { get; set; }
+    public WoWGameDataEntityDto Faction { get; set; }
 
     public CharacterReputationStandingDto Standing { get; set; }
 }

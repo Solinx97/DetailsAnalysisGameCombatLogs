@@ -1,5 +1,4 @@
-import type { MythicKeystoneAfixModel } from './MythicKeystoneAfixModel';
-import type { MythicKeystoneDungeonModel } from './MythicKeystoneDungeonModel';
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 import type { MythicKeystoneMemberModel } from './MythicKeystoneMemberModel';
 import type { MythicKeystoneRaitingModel } from './MythicKeystoneRaitingModel';
 
@@ -7,9 +6,9 @@ export type MythicKeystoneBestRunModel = {
     completedTimestamp: number;
     duration: number;
     level: number;
-    afixes: MythicKeystoneAfixModel[];
+    afixes: WoWGameDataEntityModel[];
     members: MythicKeystoneMemberModel[];
-    dungeon: MythicKeystoneDungeonModel;
+    dungeon: WoWGameDataEntityModel;
     isCompletedWithinTime: boolean;
     mythicRating: MythicKeystoneRaitingModel;
     mapRating: MythicKeystoneRaitingModel;

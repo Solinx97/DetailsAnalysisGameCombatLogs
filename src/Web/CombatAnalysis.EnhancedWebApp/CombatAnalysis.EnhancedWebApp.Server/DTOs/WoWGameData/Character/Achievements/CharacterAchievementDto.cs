@@ -2,7 +2,7 @@
 
 public class CharacterAchievementDto
 {
-    public AchievementDto Achievement { get; set; }
+    public WoWGameDataEntityDto Achievement { get; set; }
 
     public CharacterAchievementCriteriaDto Criteria { get; set; }
 

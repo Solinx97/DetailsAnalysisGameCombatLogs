@@ -1,8 +1,8 @@
 import type { CharacterAchievementCriteriaModel } from './CharacterAchievementCriteriaModel';
-import type { AchievementModel } from './AchievementModel';
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 
 export type CharacterAchievementModel = {
-    achievement: AchievementModel;
+    achievement: WoWGameDataEntityModel;
     criteria: CharacterAchievementCriteriaModel;
     completedTime: string;
 }

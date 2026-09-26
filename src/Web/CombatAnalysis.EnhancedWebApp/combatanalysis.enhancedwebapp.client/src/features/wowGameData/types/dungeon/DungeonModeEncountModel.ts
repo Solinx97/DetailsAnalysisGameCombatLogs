@@ -1,7 +1,7 @@
-import type { DungeonModel } from './DungeonModel';
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 
 export type DungeonModeEncountModel = {
-    encounter: DungeonModel;
+    encounter: WoWGameDataEntityModel;
     completedCount: number;
     lastKillTime: string;
 }

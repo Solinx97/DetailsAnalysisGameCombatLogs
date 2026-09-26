@@ -1,7 +1,13 @@
-import { useContext, useEffect, useState } from 'react';
-import { useLazyGetCharacterMountsQuery } from '../api/WoWCharacter.api';
-import type { CharacterMountModel } from '../types/CharacterMountModel';
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import { useContext, useEffect, useState } from 'react';
+import { useGetUserMountsQuery } from '../api/WoWUser.api';
+import type { WoWMountModel } from '../types/WoWMountModel';
+import LoadMoreCollections from './helpers/LoadMoreCollections';
+import { faLocationCrosshairs, faPlus, faQuestion } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { UserCollectionModel } from '../types/UserCollectionModel';
+import { useLazyGetMountQuery } from '../api/WoWData.api';
+import type { SelectedMountModel } from '../types/collections/SelectedMountModel';
 
 const CharacterMounts: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -10,56 +16,121 @@ const CharacterMounts: React.FC = () => {
         throw new Error("Child must be inside WoWGameDataContext.Provider");
     }
 
-    const { t, username, serverName, regionName } = context;
+    const { t, regionName } = context;
 
-    const [mounts, setMounts] = useState<CharacterMountModel[]>([]);
-    const [hasError, setHasError] = useState<boolean>(false);
+    const [mounts, setMounts] = useState<WoWMountModel[]>([]);
+    const [mount, setMount] = useState<SelectedMountModel | undefined>();
+    const [accountMountCount, setAccountMountCount] = useState<number>(0);
+    const [onlyNotReceived, setOnlyNotReceived] = useState<boolean>(false);
 
-    const [getMounts] = useLazyGetCharacterMountsQuery();
+    const { data: allMounts, isLoading } = useGetUserMountsQuery({ regionName });
+    
+    const [getMount] = useLazyGetMountQuery();
 
     useEffect(() => {
-        if (!username || username.trim().length === 0) {
+        if (!allMounts) {
             return;
         }
 
-        const loadAsync = async () => {
-            try {
-                const receivedMounts = await getMounts({ username, serverName, regionName }).unwrap();
-                setMounts(receivedMounts);
-            } catch (error) {
-                console.error("Failed to fetch character mounts:", error);
-                setHasError(true);
-            }
+        setMounts(allMounts);
+
+        setAccountMountCount(allMounts.filter(x => x.isReceived).length);
+    }, [allMounts]);
+
+    useEffect(() => {
+        if (!allMounts) {
+            return;
         }
 
-        loadAsync();
-    }, []);
+        if (onlyNotReceived) {
+            setMounts(allMounts.filter(x => !x.isReceived));
+        }
+        else {
+            setMounts(allMounts);
+        }
+    }, [onlyNotReceived, allMounts]);
 
-    if (!username || username.trim().length === 0 || hasError) {
-        return (<div>No data</div>);
+    const getMountAsync = async (mountId: number) => {
+        try {
+            if (mount && mount.id === mountId) {
+                setMount(undefined);
+                return;
+            }
+
+            const receivedMount = await getMount({ mountId, regionName }).unwrap();
+            setMount(receivedMount);
+        } catch (error) {
+            console.error("Failed to fetch mount by id:", error);
+        }
     }
 
-    if (!mounts || mounts.length === 0) {
+    const getMountInfo = (item: UserCollectionModel) => {
+        if (!mount || mount.id !== item.id) {
+            return (<></>);
+        }
+
+        return (
+            <div className="details">
+                <div>{mount.description}</div>
+                <div className="how-receive">
+                    <div className="btn-shadow">
+                        <FontAwesomeIcon
+                            icon={faQuestion}
+                        />
+                        <div>{mount.source?.name}</div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!mounts || isLoading) {
         return (<div>Loading...</div>);
     }
 
-    return (
-        <div className="mounts">
-            <div className="mounts__title">
-                <h6>{t("Mounts")}:</h6>
-                <h6 className="count">{mounts.length}</h6>
+    const getItem = (item: UserCollectionModel) => {
+        return (
+            <div className="selected-user-collection">
+                <div className="selected-user-collection__name">
+                    <div className="action btn-shadow"
+                        onClick={() => getMountAsync(item.id)}>
+                        <FontAwesomeIcon
+                            icon={mount && mount.id === item.id ? faLocationCrosshairs : faPlus}
+                            color={mount && mount.id === item.id ? 'green' : 'white'}
+                        />
+                    </div>
+                    <div className={`${item.isReceived ? 'received' : 'not-received'}`}>
+                        <div className="item">{item.name}</div>
+                    </div>
+                </div>
+                {getMountInfo(item)}
             </div>
-            <ul className="mounts__container">
-                {mounts.map((mount, index) => (
-                    <li key={index} className="mounts__item">
-                        <div className="item">{mount.mount.name}</div>
-                        {mount.isUsable &&
-                            <div className="item">Usable</div>
-                        }
-                    </li>
-                ))
-                }
-            </ul>
+        );
+    }
+
+    return (
+        <div className="user-collection">
+            <div className="user-collection__title">
+                <h6>{t("Mounts")}:</h6>
+                <h6 className="user-collection-count count">
+                    <span>{accountMountCount}</span>
+                    <span>/</span>
+                    <span>{mounts.length}</span>
+                </h6>
+            </div>
+            <div className="user-collection-details">
+                <h6 className="count">{mounts.length - mounts.length}</h6>
+                <div className="form-check">
+                    <input className="form-check-input" type="checkbox" value="" id="checkIndeterminate"
+                        defaultChecked={onlyNotReceived}
+                        onChange={() => setOnlyNotReceived(prev => !prev)} />
+                    <label className="form-check-label" htmlFor="checkIndeterminate">{t("OnlyNotReceived")}</label>
+                </div>
+            </div>
+            <LoadMoreCollections
+                collection={mounts}
+                getItem={getItem}
+            />
         </div>
     );
 }

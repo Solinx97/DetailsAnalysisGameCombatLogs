@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achi
 public class SelectedAchievementModel
 {
     [JsonPropertyName("category")]
-    public AchievementModel Category { get; set; }
+    public WoWGameDataEntityModel Category { get; set; }
 
     [JsonPropertyName("name")]
     public string Name { get; set; }
@@ -23,7 +23,7 @@ public class SelectedAchievementModel
     public SelectedAchievementCriteriaModel Criteria { get; set; }
 
     [JsonPropertyName("next_achievement")]
-    public AchievementModel NextAchievement { get; set; }
+    public WoWGameDataEntityModel NextAchievement { get; set; }
 
     [JsonPropertyName("display_order")]
     public int DisplayOrder { get; set; }

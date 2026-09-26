@@ -14,13 +14,13 @@ public class MythicKeystoneBestRunModel
     public int Level { get; set; }
 
     [JsonPropertyName("keystone_affixes")]
-    public MythicKeystoneAfixModel[] Afixes { get; set; }
+    public WoWGameDataEntityModel[] Afixes { get; set; }
 
     [JsonPropertyName("members")]
     public MythicKeystoneMemberModel[] Members { get; set; }
 
     [JsonPropertyName("dungeon")]
-    public MythicKeystoneDungeonModel Dungeon { get; set; }
+    public WoWGameDataEntityModel Dungeon { get; set; }
 
     [JsonPropertyName("is_completed_within_time")]
     public bool IsCompletedWithinTime { get; set; }

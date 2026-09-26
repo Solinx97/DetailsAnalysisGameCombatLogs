@@ -2,7 +2,7 @@
 
 public class CharacterAchievementCategoryDto
 {
-    public AchievementDto Category { get; set; }
+    public WoWGameDataEntityDto Category { get; set; }
 
     public int Quantity { get; set; }
 

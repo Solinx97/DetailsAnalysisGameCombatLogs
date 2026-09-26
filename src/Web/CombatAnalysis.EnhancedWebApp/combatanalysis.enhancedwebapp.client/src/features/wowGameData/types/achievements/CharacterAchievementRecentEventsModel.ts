@@ -1,6 +1,6 @@
-import type { AchievementModel } from './AchievementModel';
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 
 export type CharacterAchievementRecentEventsModel = {
-    achievement: AchievementModel;
+    achievement: WoWGameDataEntityModel;
     time: string;
 }

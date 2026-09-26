@@ -4,6 +4,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Reputation;
 
@@ -25,15 +26,15 @@ public class WoWCharacterGameDataApiClient(HttpClient httpClient) : IWoWCharacte
     {
         var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/reputations?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
         
-        var result = await response.Content.ReadFromJsonAsync<CharacterReputaionsResponse>();
+        var result = await response.Content.ReadFromJsonAsync<CharacterReputaionsResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<CharacterMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
+    public async Task<AccountMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/collections/mounts?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<CharacterMountsResponse>();
+        var result = await response.Content.ReadFromJsonAsync<AccountMountsResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
@@ -41,31 +42,39 @@ public class WoWCharacterGameDataApiClient(HttpClient httpClient) : IWoWCharacte
     {
         var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<CharacterModel>();
+        var result = await response.Content.ReadFromJsonAsync<CharacterModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<CharacterEquipmentsResponse> GetEquipmentsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/equipment?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<CharacterEquipmentsResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
     public async Task<MythicKeystoneModel> GetMythicKeystoneAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
     {
-        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/mythic-keystone-profile?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/mythic-keystone-profile?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<MythicKeystoneModel>();
+        var result = await response.Content.ReadFromJsonAsync<MythicKeystoneModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
     public async Task<CharacterDungeonModel> GetRaidsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
     {
-        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/encounters/raids?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/encounters/raids?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<CharacterDungeonModel>();
+        var result = await response.Content.ReadFromJsonAsync<CharacterDungeonModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
     public async Task<CharacterDungeonModel> GetDungeonsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
     {
-        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.ToLower()}/encounters/dungeons?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/encounters/dungeons?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<CharacterDungeonModel>();
+        var result = await response.Content.ReadFromJsonAsync<CharacterDungeonModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 }

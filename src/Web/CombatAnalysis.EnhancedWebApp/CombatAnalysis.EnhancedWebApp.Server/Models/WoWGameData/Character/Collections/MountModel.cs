@@ -9,4 +9,6 @@ public class MountModel
 
     [JsonPropertyName("name")]
     public string Name { get; set; }
+
+    public bool IsReceived { get; set; }
 }
