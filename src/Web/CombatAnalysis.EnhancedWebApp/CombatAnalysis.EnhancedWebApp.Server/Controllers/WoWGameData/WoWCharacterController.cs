@@ -40,7 +40,7 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
     public async Task<IActionResult> GetProfileSummary(string username, string serverName, string regionName, CancellationToken cancellationToken)
     {
         var summary = await _httpClient.GetProfileSummaryAsync(serverName, username, regionName, cancellationToken);
-        var map = _mapper.Map<CharacterDto>(summary);
+        var map = _mapper.Map<CharacterSummaryDto>(summary);
         return Ok(map);
     }
 

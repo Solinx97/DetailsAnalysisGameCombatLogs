@@ -3,8 +3,8 @@ import useFormatting from '@/shared/hooks/useFormatting';
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
-import { useGetAchievementsByCategoryQuery } from '../api/WoWCharacter.api';
-import type { AchievementExtendModel } from '../types/achievements/AchievementExtendModel';
+import { useGetAchievementsByCategoryQuery } from '../../api/WoWCharacter.api';
+import type { AchievementExtendModel } from '../../types/achievements/AchievementExtendModel';
 import SelectedAchievemnt from './SelectedAchievemnt';
 
 interface SubAchievementsCategoryProps {

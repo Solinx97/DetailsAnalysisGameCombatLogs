@@ -38,11 +38,11 @@ public class WoWCharacterGameDataApiClient(HttpClient httpClient) : IWoWCharacte
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<CharacterModel> GetProfileSummaryAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
+    public async Task<CharacterSummaryModel> GetProfileSummaryAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<CharacterModel>(cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<CharacterSummaryModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 

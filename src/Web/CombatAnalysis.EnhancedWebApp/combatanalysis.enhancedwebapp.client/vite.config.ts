@@ -24,7 +24,7 @@ const battleNetDataEnpoints = (target: string, apiVersion: string) => {
     return {
         [`^/api/${apiVersion}/BattleNetIdentity`]: { target, secure: false },
         [`^/api/${apiVersion}/WoWCharacter`]: { target, secure: false },
-        [`^/api/${apiVersion}/WoWUser`]: { target, secure: false },
+        [`^/api/${apiVersion}/WoWAccount`]: { target, secure: false },
         [`^/api/${apiVersion}/WoWData`]: { target, secure: false },
     }
 }

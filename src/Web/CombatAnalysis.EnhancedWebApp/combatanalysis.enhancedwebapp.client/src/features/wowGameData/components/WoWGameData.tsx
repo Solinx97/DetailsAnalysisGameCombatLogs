@@ -1,4 +1,5 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import type { OptionMode } from '@/shared/types/OptionMode';
 import { faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
@@ -7,20 +8,16 @@ import Select from 'react-select';
 import { useBattleNetDataAuthorizaitonMutation, useBattleNetDataTokenMutation, useIsAuthorizedQuery, useLazyBattleNetDisconenctQuery } from '../api/BattleNetData.api';
 import { useLazyGetRealmsQuery } from '../api/WoWData.api';
 import type { RealmModel } from '../types/RealmModel';
-import AchievementsCategory from './AchievementsCategory';
+import AccountCharacters from './account/AccountCharacters';
+import CharacterMounts from './account/CharacterMounts';
+import AchievementsCategory from './achievements/AchievementsCategory';
 import CharacterDungeons from './CharacterDungeons';
-import CharacterMounts from './CharacterMounts';
 import CharacterMythicKeystone from './CharacterMythicKeystone';
 import CharacterReputations from './CharacterReputations';
 import CharacterSummary from './CharacterSummary';
 import CharacterEquipments from './equipments/CharacterEquipments';
 
 import './WoWGameData.scss';
-
-type Option = {
-    value: string;
-    label: string;
-}
 
 const WoWGameData: React.FC = () => {
     const regionName = "eu";
@@ -33,6 +30,7 @@ const WoWGameData: React.FC = () => {
 
     const [username, setUsername] = useState<string>("");
 
+    const [showCharacters, setShowCharacters] = useState<boolean>(false);
     const [showSummary, setShowSummary] = useState<boolean>(false);
     const [showEquipments, setShowEquipments] = useState<boolean>(false);
     const [showMythicKeystone, setShowMythicKeystone] = useState<boolean>(false);
@@ -42,8 +40,8 @@ const WoWGameData: React.FC = () => {
     const [showReputations, setShowReputations] = useState<boolean>(false);
     const [showMounts, setShowMounts] = useState<boolean>(false);
 
-    const [serversOptions, setServersOptions] = useState<Option[]>([]);
-    const [serverValue, setServerValue] = useState<Option | null>(serversOptions[0]);
+    const [serversOptions, setServersOptions] = useState<OptionMode[]>([]);
+    const [serverValue, setServerValue] = useState<OptionMode | null>(serversOptions[0]);
 
     const { data: isAuthorized, isLoading, refetch } = useIsAuthorizedQuery();
 
@@ -117,11 +115,12 @@ const WoWGameData: React.FC = () => {
                         <div>{t("Username")} </div>
                         <input type="text" className="form-control" placeholder="Username" aria-label="Username"
                             ref={usernameRef}
-                            onKeyDown={handleKeyDown} />
+                            onKeyDown={handleKeyDown}
+                            defaultValue={username} />
                     </div>
                     <div className="filter-item">
                         <div>{t("Server")}</div>
-                        <Select<Option>
+                        <Select<OptionMode>
                             className="options"
                             options={serversOptions}
                             value={serverValue}
@@ -158,6 +157,17 @@ const WoWGameData: React.FC = () => {
         return (
             <div className="character">
                 {selectionUser()}
+                <div className="btn-shadow"
+                    onClick={() => setShowCharacters(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faLocationCrosshairs}
+                    />
+                    <div>{t("Characters")}</div>
+                </div>
+                {showCharacters &&
+                    <AccountCharacters
+                    />
+                }
                 <div className="btn-shadow"
                     onClick={() => setShowSummary(prev => !prev)}>
                     <FontAwesomeIcon
@@ -256,6 +266,8 @@ const WoWGameData: React.FC = () => {
         <WoWGameDataContext.Provider value={{
             t: t,
             username: username,
+            setUsername: setUsername,
+            setServerName: setServerValue,
             serverName: serverValue ? serverValue.value : " ",
             regionName: regionName
         }}>

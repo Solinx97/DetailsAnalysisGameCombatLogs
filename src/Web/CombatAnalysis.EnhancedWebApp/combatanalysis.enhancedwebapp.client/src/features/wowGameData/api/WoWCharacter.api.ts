@@ -2,7 +2,7 @@ import type { CharacterMountModel } from '../types/CharacterMountModel';
 import type { CharacterReputationModel } from '../types/CharacterReputationModel';
 import type { AchievementCategoriesModel } from '../types/achievements/AchievementCategoriesModel';
 import type { AchievementSelectedCategoryModel } from '../types/achievements/AchievementSelectedCategoryModel';
-import type { WoWCharacterModel } from '../types/character/WoWCharacterModel';
+import type { WoWCharacterSummaryModel } from '../types/character/WoWCharacterSummaryModel';
 import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
 import type { CharacterEquipmentsResponse } from '../types/equipments/CharacterEquipmentsResponse';
 import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
@@ -16,7 +16,7 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
         getCharacterMounts: builder.query<CharacterMountModel[], { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getMounts/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
-        getCharacterSummary: builder.query<WoWCharacterModel, { username: string, serverName: string, regionName: string }>({
+        getCharacterSummary: builder.query<WoWCharacterSummaryModel, { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getProfileSummary/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
         getCharacterEquipments: builder.query<CharacterEquipmentsResponse, { username: string, serverName: string, regionName: string }>({

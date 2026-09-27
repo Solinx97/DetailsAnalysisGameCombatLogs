@@ -16,7 +16,7 @@ public interface IWoWCharacterGameDataApiClient
 
     Task<AccountMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
-    Task<CharacterModel> GetProfileSummaryAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
+    Task<CharacterSummaryModel> GetProfileSummaryAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
     Task<CharacterEquipmentsResponse> GetEquipmentsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 

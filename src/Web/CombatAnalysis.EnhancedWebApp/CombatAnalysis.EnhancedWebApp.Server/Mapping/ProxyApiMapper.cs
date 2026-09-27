@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
@@ -8,6 +9,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
@@ -37,7 +39,7 @@ public class ProxyApiMapper : Profile
         CreateMap<AccountMountModel, CharacterMountDto>();
         CreateMap<MountModel, MountDto>();
 
-        CreateMap<CharacterModel, CharacterDto>();
+        CreateMap<CharacterSummaryModel, CharacterSummaryDto>();
 
         CreateMap<CharacterRaceModel, CharacterRaceDto>();
         CreateMap<CharacterClassModel, CharacterClassDto>();
@@ -105,5 +107,16 @@ public class ProxyApiMapper : Profile
         CreateMap<RealmModel, RealmDto>();
 
         CreateMap<SelectedMountModel, SelectedMountDto>();
+
+        CreateMap<WoWAccountRespone, WoWAccountResponseDto>();
+        CreateMap<WoWAccountModel, WoWAccountDto>()
+            .ForMember(
+                dest => dest.Characters,
+                opt => opt.MapFrom(src =>
+                    src.Characters.GroupBy(x => x.Realm.Name)
+                                    .ToDictionary(
+                                        g => g.Key,
+                                        g => g.ToArray())));
+        CreateMap<CharacterModel, CharacterDto>();
     }
 }

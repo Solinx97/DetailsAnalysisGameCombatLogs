@@ -2,7 +2,7 @@ import logger from '@/utils/Logger';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useBattleNetDataCodeExchangeMutation, useLazyBattleNetDataStateValidateQuery } from '../api/BattleNetData.api';
+import { useBattleNetDataCodeExchangeMutation, useLazyBattleNetDataStateValidateQuery } from '../../api/BattleNetData.api';
 
 const BattleNetAuthorizationCallback: React.FC = () => {
     const unauthorizedTimeoutLimit = 4000;

@@ -1,6 +1,6 @@
 import PlayerDiethDetails from '@/features/gameLogs/components/player/PlayerDiethDetails';
 import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
-import BattleNetAuthorizationCallback from '@/features/wowGameData/components/BattleNetAuthorizationCallback';
+import BattleNetAuthorizationCallback from '@/features/wowGameData/components/auth/BattleNetAuthorizationCallback';
 import WoWGameData from '@/features/wowGameData/components/WoWGameData';
 import Chats from '../features/chat/components/Chats';
 import AllCommunities from '../features/community/components/AllCommunities';

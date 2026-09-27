@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
 
-public class CharacterDto
+public class CharacterSummaryDto
 {
     public string Name { get; set; }
 

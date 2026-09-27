@@ -1,6 +1,6 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import { useContext } from 'react';
-import { useGetAchievementQuery } from '../api/WoWData.api';
+import { useGetAchievementQuery } from '../../api/WoWData.api';
 
 interface SelectedAchievemntProps {
     achievementId: number;

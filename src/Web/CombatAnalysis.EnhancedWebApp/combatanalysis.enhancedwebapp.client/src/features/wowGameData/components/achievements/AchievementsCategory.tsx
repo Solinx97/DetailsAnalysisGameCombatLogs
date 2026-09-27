@@ -2,8 +2,8 @@ import WoWGameDataContext from '@/context/WoWGameDataContext';
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
-import { useLazyGetAchievementAllCategoryQuery } from '../api/WoWCharacter.api';
-import type { AchievementCategoriesModel } from '../types/achievements/AchievementCategoriesModel';
+import { useLazyGetAchievementAllCategoryQuery } from '../../api/WoWCharacter.api';
+import type { AchievementCategoriesModel } from '../../types/achievements/AchievementCategoriesModel';
 import SubAchievementsCategory from './SubAchievementsCategory';
 
 const AchievementsCategory: React.FC = () => {

@@ -24,7 +24,7 @@ builder.Services.AddTransient<ExternalApiErrorHandler>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<WoWCharacterGameDataAuthorizationHandler>();
-builder.Services.AddHttpClient<IWoWUserGameDataApiClient, WoWUserGameDataApiClient>(client =>
+builder.Services.AddHttpClient<IWoWAccountGameDataApiClient, WoWAccountGameDataApiClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration.GetSection("BattleNet:BattleNetAPI").Value ?? "");
 })

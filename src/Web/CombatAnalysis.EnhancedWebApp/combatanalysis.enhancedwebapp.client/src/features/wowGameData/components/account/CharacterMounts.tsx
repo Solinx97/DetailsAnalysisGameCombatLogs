@@ -1,13 +1,13 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
-import { useContext, useEffect, useState } from 'react';
-import { useGetUserMountsQuery } from '../api/WoWUser.api';
-import type { WoWMountModel } from '../types/WoWMountModel';
-import LoadMoreCollections from './helpers/LoadMoreCollections';
 import { faLocationCrosshairs, faPlus, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { UserCollectionModel } from '../types/UserCollectionModel';
-import { useLazyGetMountQuery } from '../api/WoWData.api';
-import type { SelectedMountModel } from '../types/collections/SelectedMountModel';
+import { useContext, useEffect, useState } from 'react';
+import { useGetAccountMountsQuery } from '../../api/WoWAccount.api';
+import { useLazyGetMountQuery } from '../../api/WoWData.api';
+import type { SelectedMountModel } from '../../types/collections/SelectedMountModel';
+import type { UserCollectionModel } from '../../types/UserCollectionModel';
+import type { WoWMountModel } from '../../types/WoWMountModel';
+import LoadMoreCollections from '../helpers/LoadMoreCollections';
 
 const CharacterMounts: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -23,7 +23,7 @@ const CharacterMounts: React.FC = () => {
     const [accountMountCount, setAccountMountCount] = useState<number>(0);
     const [onlyNotReceived, setOnlyNotReceived] = useState<boolean>(false);
 
-    const { data: allMounts, isLoading } = useGetUserMountsQuery({ regionName });
+    const { data: allMounts, isLoading } = useGetAccountMountsQuery({ regionName });
     
     const [getMount] = useLazyGetMountQuery();
 

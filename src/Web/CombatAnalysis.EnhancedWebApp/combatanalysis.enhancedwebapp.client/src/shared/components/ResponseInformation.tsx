@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 interface ResponseErorrInformationProps {
     error: FetchBaseQueryError | SerializedError | undefined;
-    watchParams: string[];
+    watchParams?: string[];
     isLoading?: boolean;
 }
 
@@ -13,7 +13,9 @@ const ResponseInformation: React.FC<ResponseErorrInformationProps> = ({ error, w
     const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
 
     useEffect(() => {
-        setIsSkipRequest(watchParams.filter(x => x.trim().length > 0).length < watchParams.length);
+        if (watchParams) {
+            setIsSkipRequest(watchParams.filter(x => x.trim().length > 0).length < watchParams.length);
+        }
     }, watchParams);
 
     if (isSkipRequest) {

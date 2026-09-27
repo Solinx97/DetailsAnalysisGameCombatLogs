@@ -7,7 +7,7 @@ import type { CharacterSpecializationModel } from './CharacterSpecializationMode
 import type { WoWCharacterClassModel } from './WoWCharacterClassModel';
 import type { WoWGameDataTypeModel } from '../WoWGameDataTypeModel';
 
-export type WoWCharacterModel = {
+export type WoWCharacterSummaryModel = {
     name: string;
     gender: WoWGameDataTypeModel;
     faction: WoWGameDataEntityModel;

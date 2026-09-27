@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 
-public class CharacterModel
+public class CharacterSummaryModel
 {
     [JsonPropertyName("name")]
     public string Name { get; set; }
