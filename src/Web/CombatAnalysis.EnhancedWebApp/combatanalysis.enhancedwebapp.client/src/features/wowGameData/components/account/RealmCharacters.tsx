@@ -10,7 +10,7 @@ const RealmCharacters: React.FC<{ characters: Map<string, CharacterModel[]> }> =
     return (
         <ul className="servers">
             {Object.entries(characters).map(([key, characters]: [string, CharacterModel[]]) => (
-                <li>
+                <li key={key}>
                     <div className="btn-shadow"
                         onClick={() => setSelectedRealm(prev => prev === key ? "0" : key)}>
                         <FontAwesomeIcon

@@ -1,12 +1,13 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import ResponseInformation from '@/shared/components/ResponseInformation';
+import { faKey, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useState } from 'react';
 import { useGetMythicKeystoneLeaderboardQuery } from '../../api/WoWData.api';
 import type { MythicKeystoneDungeonLeaderboardModel } from '../../types/mythicKeystone/MythicKeystoneDungeonLeaderboardModel';
 import MythicKeystoneLeaderboardDungeon from './MythicKeystoneLeaderboardDungeon';
-import { faKey } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import useFormatting from '@/shared/hooks/useFormatting';
 import './Dungeons.scss';
 
 const MythicKeystoneLeaderboard: React.FC<{ connectedRealmId: number, periodId: number }> = ({ connectedRealmId, periodId }) => {
@@ -17,6 +18,8 @@ const MythicKeystoneLeaderboard: React.FC<{ connectedRealmId: number, periodId: 
     }
 
     const { t, username, serverName, regionName } = context;
+
+    const { getDate } = useFormatting();
 
     const [selectedDungeon, setSelectedDungeon] = useState<string>("");
 
@@ -45,9 +48,21 @@ const MythicKeystoneLeaderboard: React.FC<{ connectedRealmId: number, periodId: 
                                 />
                                 <div>{leaderboard.leadingGroups[0].keystoneLevel}</div>
                             </div>
-                            <div>{leaderboard.leadingGroups[0].mythicRating.rating.toFixed(2)}</div>
+                            <div className="special">{leaderboard.leadingGroups[0].mythicRating.rating.toFixed(2)}</div>
+                            <div className="key-level special">{t("PeriodStartAt")}</div>
+                            <div className="special">{getDate(leaderboard.periodStartTime)}</div>
+                            <div className="key-level special">{t("PeriodEndAt")}</div>
+                            <div className="special">{getDate(leaderboard.periodEndTime)}</div>
                         </div>
-                        <div onClick={() => setSelectedDungeon(prev => prev === leaderboard.name ? "" : leaderboard.name)}>{leaderboard.name}</div>
+                        <div className="dungeon-name">
+                            <div className="btn-shadow"
+                                onClick={() => setSelectedDungeon(prev => prev === leaderboard.name ? "" : leaderboard.name)}>
+                                <FontAwesomeIcon
+                                    icon={faLocationCrosshairs}
+                                />
+                                <div>{leaderboard.name}</div>
+                            </div>
+                        </div>
                         {selectedDungeon === leaderboard.name &&
                             <MythicKeystoneLeaderboardDungeon
                                 groups={leaderboard.leadingGroups}

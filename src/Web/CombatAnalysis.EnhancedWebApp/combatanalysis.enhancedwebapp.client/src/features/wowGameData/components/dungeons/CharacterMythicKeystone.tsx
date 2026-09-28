@@ -60,7 +60,7 @@ const CharacterMythicKeystone: React.FC = () => {
                     <FontAwesomeIcon
                         icon={faDashboard}
                     />
-                    <div>{mythicKeystone.currentMythicRating.rating.toFixed(2)}</div>
+                    <div>{mythicKeystone?.currentMythicRating.rating.toFixed(2)}</div>
                 </div>
             </div>
             <ul className="current-period">

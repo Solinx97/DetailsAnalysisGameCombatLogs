@@ -76,8 +76,20 @@ public class ProxyApiMapper : Profile
 
         CreateMap<MythicKeystoneDungeonLeaderboardAfixModel, MythicKeystoneDungeonLeaderboardAfixDto>();
         CreateMap<MythicKeystoneDungeonLeaderboardGroupMemberModel, MythicKeystoneDungeonLeaderboardGroupMemberDto>();
-        CreateMap<MythicKeystoneDungeonLeaderboardGroupModel, MythicKeystoneDungeonLeaderboardGroupDto>();
-        CreateMap<MythicKeystoneDungeonLeaderboardModel, MythicKeystoneDungeonLeaderboardDto>();
+        CreateMap<MythicKeystoneDungeonLeaderboardGroupModel, MythicKeystoneDungeonLeaderboardGroupDto>()
+            .ForMember(
+                dest => dest.Duration,
+                opt => opt.MapFrom(src => TimeSpan.FromMilliseconds(src.Duration)))
+            .ForMember(
+                dest => dest.CompletedTime,
+                opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.CompletedTimestamp)));
+        CreateMap<MythicKeystoneDungeonLeaderboardModel, MythicKeystoneDungeonLeaderboardDto>()
+            .ForMember(
+                dest => dest.PeriodStartTime,
+                opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.PeriodStartTimestamp)))
+            .ForMember(
+                dest => dest.PeriodEndTime,
+                opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.PeriodEndTimestamp)));
 
         CreateMap<CharacterDungeonModel, CharacterDungeonDto>();
         CreateMap<DungeonExpansionModel, DungeonExpansionDto>();
@@ -120,7 +132,7 @@ public class ProxyApiMapper : Profile
             .ForMember(
                 dest => dest.Characters,
                 opt => opt.MapFrom(src =>
-                    src.Characters.GroupBy(x => x.Realm.Name)
+                    src.Characters.GroupBy(x => x.Realm.Name!)
                                     .ToDictionary(
                                         g => g.Key,
                                         g => g.ToArray())));

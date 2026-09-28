@@ -1,6 +1,6 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import type { OptionMode } from '@/shared/types/OptionMode';
-import { faClose, faLocationCrosshairs, faPlus, faUser, faArrowsSpin, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsSpin, faCheck, faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +11,9 @@ import type { WoWRealmModel } from '../types/WoWRealmModel';
 import AccountCharacters from './account/AccountCharacters';
 import CharacterMounts from './account/CharacterMounts';
 import AchievementsCategory from './achievements/AchievementsCategory';
+import CharacterReputations from './CharacterReputations';
 import CharacterDungeons from './dungeons/CharacterDungeons';
 import CharacterMythicKeystone from './dungeons/CharacterMythicKeystone';
-import CharacterReputations from './CharacterReputations';
 import CharacterEquipments from './equipments/CharacterEquipments';
 
 import './WoWGameData.scss';
@@ -291,6 +291,7 @@ const WoWGameData: React.FC = () => {
         <WoWGameDataContext.Provider value={{
             t: t,
             username: username,
+            serversOptions: serversOptions,
             setUsername: setUsername,
             setServerName: setServerValue,
             serverName: serverValue ? serverValue.value : " ",

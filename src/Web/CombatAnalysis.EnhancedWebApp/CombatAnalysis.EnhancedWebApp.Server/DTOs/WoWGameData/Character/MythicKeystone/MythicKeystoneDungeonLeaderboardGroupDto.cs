@@ -4,9 +4,9 @@ public class MythicKeystoneDungeonLeaderboardGroupDto
 {
     public int Ranking { get; set; }
 
-    public long Duration { get; set; }
+    public TimeSpan Duration { get; set; }
 
-    public long CompletedTimestamp { get; set; }
+    public DateTimeOffset CompletedTime { get; set; }
 
     public int KeystoneLevel { get; set; }
 

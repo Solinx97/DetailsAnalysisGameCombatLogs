@@ -325,3 +325,28 @@
         }
     }
 }
+
+.select-character {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .character {
+        box-shadow: 2px 2px white;
+        border-radius: 20px;
+        padding: 5px 20px;
+        cursor: default;
+    }
+
+    .selected {
+        box-shadow: 2px 2px green;
+    }
+
+    svg {
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.25);
+        }
+    }
+}

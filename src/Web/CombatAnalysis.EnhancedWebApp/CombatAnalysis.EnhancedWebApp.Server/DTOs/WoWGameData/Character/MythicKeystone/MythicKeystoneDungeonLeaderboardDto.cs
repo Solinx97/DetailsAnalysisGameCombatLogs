@@ -6,9 +6,9 @@ public class MythicKeystoneDungeonLeaderboardDto
 
     public int Period { get; set; }
 
-    public long PeriodStartTimestamp { get; set; }
+    public DateTimeOffset PeriodStartTime { get; set; }
 
-    public long PeriodEndTimestamp { get; set; }
+    public DateTimeOffset PeriodEndTime { get; set; }
 
     public MythicKeystoneDungeonLeaderboardGroupDto[] LeadingGroups { get; set; }
 

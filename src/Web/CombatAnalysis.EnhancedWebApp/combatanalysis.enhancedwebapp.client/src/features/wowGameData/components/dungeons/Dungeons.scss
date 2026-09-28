@@ -16,6 +16,41 @@
     }
 }
 
+.mythic-keystone-leaderboard__dungeon {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-left: 50px;
+
+    .details {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .members {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 3px 3px olivedrab;
+        border-radius: 25px;
+        padding: 15px 0 !important;
+
+
+        .select-character {
+            margin-left: 25px;
+        }
+    }
+
+    .load-more {
+        cursor: pointer;
+
+        &:hover {
+            color: green;
+        }
+    }
+}
+
 .mythic-keystone-leaderboard, .mythic-keystone {
     display: flex;
     flex-direction: column;
@@ -37,12 +72,21 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
+
+            .key-level {
+                box-shadow: 2px 2px green;
+            }
 
             .btn-shadow {
                 padding: 2px 20px;
                 box-shadow: 1px 1px white;
             }
+        }
+
+        .dungeon-name {
+            display: flex;
+            margin-left: 25px;
         }
 
         .run {

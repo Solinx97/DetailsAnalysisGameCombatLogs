@@ -5,8 +5,8 @@ import type { MythicKeystoneDungeonLeaderboardGroupModel } from './MythicKeyston
 export type MythicKeystoneDungeonLeaderboardModel = {
     map: WoWGameDataEntityModel;
     period: number;
-    periodStartTimestamp: number;
-    periodEndTimestamp: number;
+    periodStartTime: string;
+    periodEndTime: string;
     leadingGroups: MythicKeystoneDungeonLeaderboardGroupModel[];
     afixes: MythicKeystoneDungeonLeaderboardAfixModel[];
     mapChallengeModeId: number;
