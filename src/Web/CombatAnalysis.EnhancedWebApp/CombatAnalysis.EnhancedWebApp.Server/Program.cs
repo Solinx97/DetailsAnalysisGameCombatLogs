@@ -57,6 +57,7 @@ builder.Services.AddHttpClient<IWoWGameDataAuthApiClient, WoWGameDataAuthApiClie
 
 builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<IMountService, MountService>();
+builder.Services.AddScoped<IMythicKeystoneService, MythicKeystoneService>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 builder.Services.AddScoped<RequireRefreshTokenAttribute>();
 

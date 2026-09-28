@@ -2,7 +2,7 @@
 
 public class CharacterDto : WoWGameDataEntityDto
 {
-    public RealmDto Realm { get; set; }
+    public WoWRealmDto Realm { get; set; }
 
     public WoWGameDataEntityDto PlayableClass { get; set; }
 

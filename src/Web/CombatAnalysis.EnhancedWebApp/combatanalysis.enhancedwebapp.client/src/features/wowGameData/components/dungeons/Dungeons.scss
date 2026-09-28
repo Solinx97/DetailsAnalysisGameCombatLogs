@@ -1,0 +1,183 @@
+.mythic-keystone-leaderboard,
+.mythic-keystone,
+.raids,
+.expansion-raids,
+.dungeon {
+    &__container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+.mythic-keystone {
+    .leaderboard {
+        display: flex;
+    }
+}
+
+.mythic-keystone-leaderboard, .mythic-keystone {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    cursor: default;
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .current-period {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .level {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
+
+            .btn-shadow {
+                padding: 2px 20px;
+                box-shadow: 1px 1px white;
+            }
+        }
+
+        .run {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}
+
+.raids,
+.expansion-raids,
+.dungeon {
+    &__item {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .name {
+            width: auto;
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reputation-value {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 5px 20px;
+            box-shadow: 2px 2px green;
+            border-radius: 20px;
+        }
+
+        .completed {
+            box-shadow: 2px 2px green;
+        }
+
+        .not-completed {
+            box-shadow: 2px 2px gray;
+            opacity: 0.7;
+        }
+    }
+}
+
+.raids,
+.expansion-raids,
+.dungeon {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: default;
+
+    &__name {
+        display: flex;
+
+        .selected {
+            box-shadow: 2px 2px green;
+        }
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+}
+
+.expansion-raids,
+.dungeon,
+.raids {
+    &__item {
+        display: flex;
+        gap: 20px;
+
+        .name {
+            width: auto;
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reputation-value {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 5px 20px;
+            box-shadow: 2px 2px green;
+            border-radius: 20px;
+        }
+
+        .current-period {
+            display: flex;
+            gap: 25px;
+        }
+    }
+}
+
+.dungeon-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 10px;
+
+    &__information {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+.dungeon-encounters {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .encounter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+.expansion-raids .not-any-completed {
+    opacity: 0.5;
+    box-shadow: 2px 2px gray;
+    cursor: default;
+}

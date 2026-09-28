@@ -5,6 +5,7 @@ import type { AchievementSelectedCategoryModel } from '../types/achievements/Ach
 import type { WoWCharacterSummaryModel } from '../types/character/WoWCharacterSummaryModel';
 import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
 import type { CharacterEquipmentsResponse } from '../types/equipments/CharacterEquipmentsResponse';
+import type { CharacterStatsModel } from '../types/equipments/CharacterStatsModel';
 import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
 import { BattleNetDataApi } from './BattleNetData.api';
 
@@ -21,6 +22,9 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
         }),
         getCharacterEquipments: builder.query<CharacterEquipmentsResponse, { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getEquipments/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
+        getCharacterStats: builder.query<CharacterStatsModel, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getStats/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
         getCharacterMythicKeystone: builder.query<MythicKeystoneModel, { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getMythicKeystone/${username}?serverName=${serverName}&regionName=${regionName}`,
@@ -45,6 +49,7 @@ export const {
     useLazyGetCharacterMountsQuery,
     useGetCharacterSummaryQuery,
     useGetCharacterEquipmentsQuery,
+    useGetCharacterStatsQuery,
     useGetCharacterMythicKeystoneQuery,
     useGetCharacterRaidsQuery,
     useGetCharacterDungeonsQuery,

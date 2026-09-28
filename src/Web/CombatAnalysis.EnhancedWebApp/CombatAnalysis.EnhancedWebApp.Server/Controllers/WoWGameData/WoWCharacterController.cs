@@ -52,6 +52,14 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
         return Ok(map);
     }
 
+    [HttpGet("getStats/{username}")]
+    public async Task<IActionResult> GetStats(string username, string serverName, string regionName, CancellationToken cancellationToken)
+    {
+        var equipments = await _httpClient.GetStatsAsync(serverName, username, regionName, cancellationToken);
+        var map = _mapper.Map<CharacterStatsDto>(equipments);
+        return Ok(map);
+    }
+
     [HttpGet("getMythicKeystone/{username}")]
     public async Task<IActionResult> GetMythicKeystone(string username, string serverName, string regionName, CancellationToken cancellationToken)
     {

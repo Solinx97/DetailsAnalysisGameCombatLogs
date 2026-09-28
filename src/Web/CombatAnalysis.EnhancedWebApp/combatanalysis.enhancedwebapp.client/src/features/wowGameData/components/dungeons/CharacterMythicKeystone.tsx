@@ -1,9 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
-import { useGetCharacterMythicKeystoneQuery } from '../api/WoWCharacter.api';
 import WoWGameDataContext from '@/context/WoWGameDataContext';
-import { faDashboard, faKey } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ResponseInformation from '@/shared/components/ResponseInformation';
+import { faDashboard, faKey, faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useContext, useEffect, useState } from 'react';
+import { useGetCharacterMythicKeystoneQuery } from '../../api/WoWCharacter.api';
+import MythicKeystoneLeaderboard from './MythicKeystoneLeaderboard';
+
+import './Dungeons.scss';
 
 const CharacterMythicKeystone: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -15,11 +18,12 @@ const CharacterMythicKeystone: React.FC = () => {
     const { t, username, serverName, regionName } = context;
 
     const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
+    const [showLeaderboard, setShowLeaderborad] = useState<boolean>(false);
 
     const { data: mythicKeystone, isLoading, error } = useGetCharacterMythicKeystoneQuery({ username, serverName, regionName },
-            {
-                skip: isSkipRequest
-            });
+        {
+            skip: isSkipRequest
+        });
 
     useEffect(() => {
         setIsSkipRequest([username, serverName].filter(x => x.trim().length > 0).length < [username, serverName].length);
@@ -35,8 +39,23 @@ const CharacterMythicKeystone: React.FC = () => {
 
     return (
         <div className="mythic-keystone">
+            <div className="leaderboard">
+                <div className="btn-shadow"
+                    onClick={() => setShowLeaderborad(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={showLeaderboard ? faLocationCrosshairs : faPlus}
+                    />
+                    <div>{t("Leaderboard")}</div>
+                </div>
+            </div>
+            {showLeaderboard &&
+                <MythicKeystoneLeaderboard
+                    connectedRealmId={mythicKeystone.character.realm.id}
+                    periodId={mythicKeystone.currentPeriod.period.id}
+                />
+            }
             <div className="mythic-keystone__title">
-                <h6>{t("MythicKeystone")}</h6>
+                <h6>{t("MythicKeystoneRaiting")}</h6>
                 <div className="btn-shadow">
                     <FontAwesomeIcon
                         icon={faDashboard}

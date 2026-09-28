@@ -1,8 +1,8 @@
 import useFormatting from '@/shared/hooks/useFormatting';
 import { faCalendarWeek } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { DungeonModeEncountModel } from '../types/dungeon/DungeonModeEncountModel';
 import { useEffect, useState } from 'react';
+import type { DungeonModeEncountModel } from '../../types/dungeon/DungeonModeEncountModel';
 
 const SelectedDungeonEncounter: React.FC<{ encounters: DungeonModeEncountModel[], onlyCurrentWeekCompleted: boolean }> = ({ encounters, onlyCurrentWeekCompleted }) => {
     const { getDate, getPreviousDayOfWeek } = useFormatting();

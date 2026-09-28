@@ -90,8 +90,8 @@ const CharacterMounts: React.FC = () => {
 
     const getItem = (item: UserCollectionModel) => {
         return (
-            <div className="selected-user-collection">
-                <div className="selected-user-collection__name">
+            <div className="selected-character-collection">
+                <div className="selected-character-collection__name">
                     <div className="action btn-shadow"
                         onClick={() => getMountAsync(item.id)}>
                         <FontAwesomeIcon
@@ -109,16 +109,16 @@ const CharacterMounts: React.FC = () => {
     }
 
     return (
-        <div className="user-collection">
-            <div className="user-collection__title">
+        <div className="character-collection">
+            <div className="character-collection__title">
                 <h6>{t("Mounts")}:</h6>
-                <h6 className="user-collection-count count">
+                <h6 className="character-collection-count count">
                     <span>{accountMountCount}</span>
                     <span>/</span>
                     <span>{mounts.length}</span>
                 </h6>
             </div>
-            <div className="user-collection-details">
+            <div className="character-collection-details">
                 <h6 className="count">{mounts.length - mounts.length}</h6>
                 <div className="form-check">
                     <input className="form-check-input" type="checkbox" value="" id="checkIndeterminate"

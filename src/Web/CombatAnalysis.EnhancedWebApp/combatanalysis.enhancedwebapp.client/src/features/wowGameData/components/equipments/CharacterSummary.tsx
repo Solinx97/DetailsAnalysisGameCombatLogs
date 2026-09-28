@@ -1,7 +1,7 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
-import { useContext, useEffect, useState } from 'react';
-import { useGetCharacterSummaryQuery } from '../api/WoWCharacter.api';
 import ResponseInformation from '@/shared/components/ResponseInformation';
+import { useContext, useEffect, useState } from 'react';
+import { useGetCharacterSummaryQuery } from '../../api/WoWCharacter.api';
 
 const CharacterSummary: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -33,51 +33,54 @@ const CharacterSummary: React.FC = () => {
 
     return (
         <div className="summary">
-            <div className="summary__title">
-                <h6>{t("Summary")}</h6>
-            </div>
             <ul className="summary__container">
-                <li className="summary__item">
-                    <div className="item">{t("Username")}</div>
-                    <div className="item">{characterSummary.name}</div>
-                    <div className="item">{characterSummary.activeTitle?.name}</div>
-                </li>
-                <li className="summary__item">
-                    <div className="item">{t("Gender")}</div>
+                <li className="summary__item special">
                     <div className="item">{characterSummary.gender.name}</div>
                 </li>
-                <li className="summary__item">
-                    <div className="item">{t("Race")}</div>
+                <li className="summary__item special">
                     <div className="item">{characterSummary.race.name}</div>
                 </li>
-                <li className="summary__item">
-                    <div className="item">{t("Class")}</div>
+                <li className="summary__item special">
                     <div className="item">{characterSummary.class.name}</div>
                 </li>
-                <li className="summary__item">
-                    <div className="item">{t("ActiveSpec")}</div>
+                <li className="summary__item special">
                     <div className="item">{characterSummary.activeSpec.name}</div>
                 </li>
-                <li className="summary__item">
-                    <div className="item">{t("Realm")}</div>
-                    <div className="item">{characterSummary.realm.name}</div>
-                </li>
-                <li className="summary__item">
-                    <div className="item">{t("Guild")}</div>
-                    <div className="item">{characterSummary.guild?.name}</div>
-                </li>
-                <li className="summary__item">
-                    <div className="item">{t("Level")}</div>
-                    <div className="item">{characterSummary.level}</div>
-                </li>
-                <li className="summary__item">
+            </ul>
+            {characterSummary.guild &&
+                <ul className="summary__container">
+                    <li className="summary__item special category">
+                        <div className="item">{t("Guild")}</div>
+                    </li>
+                    <li className="summary__item special">
+                        <div className="item">{characterSummary.guild.name}</div>
+                    </li>
+                    <li className="summary__item special">
+                        <div className="item">{characterSummary.guild.faction.name}</div>
+                    </li>
+                    <li className="summary__item special">
+                        <div className="item">{characterSummary.guild.realm.name}</div>
+                    </li>
+                </ul>
+            }
+            <ul className="summary__container">
+                <li className="summary__item special category">
                     <div className="item">{t("AchievementPoints")}</div>
+                </li>
+                <li className="summary__item special">
                     <div className="item">{characterSummary.achievementPoints}</div>
                 </li>
-                <li className="summary__item">
+                <li className="summary__item special category">
                     <div className="item">{t("EquippedItemLevel")}</div>
+                </li>
+                <li className="summary__item special">
                     <div className="item">{characterSummary.equippedItemLevel}</div>
                 </li>
+            </ul>
+            <ul className="summary__container">
+                <li className="summary__item username">{characterSummary.name}{characterSummary.activeTitle ? ` (${characterSummary.activeTitle?.name})` : ''}</li>
+                <li className="summary__item special">{characterSummary.realm.name} </li>
+                <li className="summary__item special">{characterSummary.level}</li>
             </ul>
         </div>
     );

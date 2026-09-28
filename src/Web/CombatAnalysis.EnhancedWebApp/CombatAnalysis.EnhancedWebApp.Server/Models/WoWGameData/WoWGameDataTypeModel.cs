@@ -8,5 +8,5 @@ public class WoWGameDataTypeModel
     public string Type { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }

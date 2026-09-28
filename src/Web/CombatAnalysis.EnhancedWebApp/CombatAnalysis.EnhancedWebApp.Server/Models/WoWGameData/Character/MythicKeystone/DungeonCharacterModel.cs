@@ -2,11 +2,8 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 
-public class DungeonCharacterModel
+public class DungeonCharacterModel : WoWGameDataEntityModel
 {
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-
     [JsonPropertyName("realm")]
-    public RealmModel Realm { get; set; }
+    public WoWRealmModel Realm { get; set; }
 }

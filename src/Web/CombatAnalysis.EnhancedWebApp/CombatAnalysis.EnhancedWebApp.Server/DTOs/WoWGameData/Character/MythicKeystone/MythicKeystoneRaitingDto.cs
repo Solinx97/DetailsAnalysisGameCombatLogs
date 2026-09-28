@@ -2,7 +2,7 @@
 
 public class MythicKeystoneRaitingDto
 {
-    public MythicKeystoneColorDto Color { get; set; }
+    public WoWGameDataColorDto Color { get; set; }
 
     public double Rating { get; set; }
 }

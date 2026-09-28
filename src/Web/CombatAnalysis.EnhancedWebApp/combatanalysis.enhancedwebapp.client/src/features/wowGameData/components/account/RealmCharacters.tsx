@@ -17,6 +17,7 @@ const RealmCharacters: React.FC<{ characters: Map<string, CharacterModel[]> }> =
                             icon={faLocationCrosshairs}
                         />
                         <div>{key}</div>
+                        <div className="count">{characters.length}</div>
                     </div>
                     {selectedRealm === key &&
                         <SelectedRealmCharacters

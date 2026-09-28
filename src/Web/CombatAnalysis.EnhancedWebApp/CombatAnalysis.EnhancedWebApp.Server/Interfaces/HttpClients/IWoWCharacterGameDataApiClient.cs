@@ -20,6 +20,8 @@ public interface IWoWCharacterGameDataApiClient
 
     Task<CharacterEquipmentsResponse> GetEquipmentsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
+    Task<CharacterStatsModel> GetStatsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
+
     Task<MythicKeystoneModel> GetMythicKeystoneAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
     Task<CharacterDungeonModel> GetRaidsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);

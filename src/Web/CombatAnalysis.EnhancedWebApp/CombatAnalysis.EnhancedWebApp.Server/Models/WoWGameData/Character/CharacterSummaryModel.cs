@@ -14,7 +14,7 @@ public class CharacterSummaryModel
     public FactionModel Faction { get; set; }
 
     [JsonPropertyName("race")]
-    public CharacterRaceModel Race { get; set; }
+    public WoWGameDataEntityModel Race { get; set; }
 
     [JsonPropertyName("character_class")]
     public CharacterClassModel Class { get; set; }
@@ -23,7 +23,7 @@ public class CharacterSummaryModel
     public CharacterSpecializationModel ActiveSpec { get; set; }
 
     [JsonPropertyName("realm")]
-    public RealmModel Realm { get; set; }
+    public WoWRealmModel Realm { get; set; }
 
     [JsonPropertyName("guild")]
     public GuildModel Guild { get; set; }

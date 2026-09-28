@@ -1,8 +1,6 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 
-public class DungeonCharacterDto
+public class DungeonCharacterDto : WoWGameDataEntityDto
 {
-    public string Name { get; set; }
-
-    public RealmDto Realm { get; set; }
+    public WoWRealmDto Realm { get; set; }
 }

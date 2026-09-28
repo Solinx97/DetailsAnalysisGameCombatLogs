@@ -3,8 +3,10 @@ import ResponseInformation from '@/shared/components/ResponseInformation';
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
-import { useGetCharacterDungeonsQuery, useGetCharacterRaidsQuery } from '../api/WoWCharacter.api';
+import { useGetCharacterDungeonsQuery, useGetCharacterRaidsQuery } from '../../api/WoWCharacter.api';
 import SelectedDungeonsExpantion from './SelectedDungeonsExpantion';
+
+import './Dungeons.scss';
 
 const CharacterDungeons: React.FC<{ isRaids: boolean }> = ({ isRaids }) => {
     const context = useContext(WoWGameDataContext);

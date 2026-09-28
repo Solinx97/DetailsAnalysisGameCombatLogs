@@ -1,9 +1,9 @@
-import type { RealmModel } from '../RealmModel';
+import type { WoWRealmModel } from '../WoWRealmModel';
 import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 import type { WoWGameDataTypeModel } from '../WoWGameDataTypeModel';
 
 export type CharacterModel = WoWGameDataEntityModel & {
-    realm: RealmModel;
+    realm: WoWRealmModel;
     playableClass: WoWGameDataEntityModel;
     playableRace: WoWGameDataEntityModel;
     gender: WoWGameDataTypeModel;

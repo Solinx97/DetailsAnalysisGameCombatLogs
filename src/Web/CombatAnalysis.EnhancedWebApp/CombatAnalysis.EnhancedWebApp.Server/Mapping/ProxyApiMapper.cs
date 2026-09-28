@@ -41,12 +41,11 @@ public class ProxyApiMapper : Profile
 
         CreateMap<CharacterSummaryModel, CharacterSummaryDto>();
 
-        CreateMap<CharacterRaceModel, CharacterRaceDto>();
         CreateMap<CharacterClassModel, CharacterClassDto>();
         CreateMap<CharacterSpecializationModel, CharacterSpecializationDto>();
         CreateMap<CharacterGenderModel, CharacterGenderDto>();
         CreateMap<CharacterTitleModel, CharacterTitleDto>();
-        CreateMap<RealmModel, RealmDto>();
+        CreateMap<WoWRealmModel, WoWRealmDto>();
         CreateMap<FactionModel, FactionDto>();
         CreateMap<GuildModel, GuildDto>();
 
@@ -64,13 +63,21 @@ public class ProxyApiMapper : Profile
         CreateMap<CharacterEquipmentStatModel, CharacterEquipmentStatDto>();
         CreateMap<CharacterEquipmentTransmogModel, CharacterEquipmentTransmogDto>();
 
+        CreateMap<CharacterStatsModel, CharacterStatsDto>();
+        CreateMap<CharacterStatPowerRatingModel, CharacterStatPowerRatingDto>();
+        CreateMap<CharacterStatPowerModel, CharacterStatPowerDto>();
+
         CreateMap<MythicKeystoneModel, MythicKeystoneDto>();
         CreateMap<MythicKeystoneCurrentPeriodModel, MythicKeystoneCurrentPeriodDto>();
         CreateMap<DungeonCharacterModel, DungeonCharacterDto>();
         CreateMap<MythicKeystoneRaitingModel, MythicKeystoneRaitingDto>();
         CreateMap<MythicKeystoneMemberModel, MythicKeystoneMemberDto>();
         CreateMap<MythicKeystoneBestRunModel, MythicKeystoneBestRunDto>();
-        CreateMap<WoWGameDataColorModel, MythicKeystoneColorDto>();
+
+        CreateMap<MythicKeystoneDungeonLeaderboardAfixModel, MythicKeystoneDungeonLeaderboardAfixDto>();
+        CreateMap<MythicKeystoneDungeonLeaderboardGroupMemberModel, MythicKeystoneDungeonLeaderboardGroupMemberDto>();
+        CreateMap<MythicKeystoneDungeonLeaderboardGroupModel, MythicKeystoneDungeonLeaderboardGroupDto>();
+        CreateMap<MythicKeystoneDungeonLeaderboardModel, MythicKeystoneDungeonLeaderboardDto>();
 
         CreateMap<CharacterDungeonModel, CharacterDungeonDto>();
         CreateMap<DungeonExpansionModel, DungeonExpansionDto>();
@@ -104,7 +111,7 @@ public class ProxyApiMapper : Profile
         CreateMap<SelectedAchievementModel, SelectedAchievementDto>();
         CreateMap<SelectedAchievementCriteriaModel, SelectedAchievementCriteriaDto>();
 
-        CreateMap<RealmModel, RealmDto>();
+        CreateMap<WoWRealmModel, WoWRealmDto>();
 
         CreateMap<SelectedMountModel, SelectedMountDto>();
 

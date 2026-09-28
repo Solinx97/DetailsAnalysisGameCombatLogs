@@ -1,9 +1,9 @@
+import useFormatting from '@/shared/hooks/useFormatting';
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useState } from 'react';
-import type { DungeonInstanceModel } from '../types/dungeon/DungeonInstanceModel';
+import type { DungeonInstanceModel } from '../../types/dungeon/DungeonInstanceModel';
 import SelectedDungeon from './SelectedDungeon';
-import useFormatting from '@/shared/hooks/useFormatting';
 
 const SelectedDungeonsExpantion: React.FC<{ instances: DungeonInstanceModel[], onlyCurrentWeekCompleted: boolean }> = ({ instances, onlyCurrentWeekCompleted }) => {
     const [selectedInstanceId, setSelectedInstanceId] = useState<number>(0);

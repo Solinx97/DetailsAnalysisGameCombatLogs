@@ -1,79 +1,120 @@
-.equipments__container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.equipments {
+    &__character-information {
+        display: flex;
+        gap: 50px;
+    }
 
-    .equipment {
+    &__container {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 15px;
 
-        &__inventory-type {
+        .equipment {
             display: flex;
+            flex-direction: column;
+            gap: 5px;
 
-            .inventory-type,
-            .quality {
-                font-size: 0.8em;
-                padding: 5px 20px;
-                border-radius: 25px;
-                box-shadow: 1px 1px gray;
-            }
-
-            .epic {
-                box-shadow: 1px 1px purple;
-            }
-
-            .uncommon {
-                box-shadow: 1px 1px green;
-            }
-        }
-
-        &__transmog {
-            display: flex;
-
-            .transmog {
-                font-size: 0.8em;
-                padding: 5px 20px;
-                border-radius: 25px;
-                box-shadow: 2px 2px aqua;
-            }
-        }
-
-        &__name {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-
-            .level {
-                font-size: 0.8em;
-                padding: 5px 20px;
-                border-radius: 25px;
-                box-shadow: 1px 1px gray;
-            }
-        }
-
-        &__sockets,
-        &__enchantments,
-        &__spells,
-        &__set,
-        &__stats {
-            margin-left: 25px;
-
-            .socket,
-            .enchantment,
-            .set,
-            .stat {
+            &__inventory-type {
                 display: flex;
-                align-items: center;
-                gap: 15px;
-            }
 
-            .set {
-                .not-active {
-                    color: gray;
+                .epic {
+                    box-shadow: 1px 1px purple;
+                }
+
+                .uncommon {
+                    box-shadow: 1px 1px green;
                 }
             }
+
+            &__transmog {
+                display: flex;
+
+                .transmog {
+                    font-size: 0.8em;
+                    padding: 5px 20px;
+                    border-radius: 25px;
+                    box-shadow: 2px 2px aqua;
+                }
+            }
+
+            &__name {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 10px 0;
+            }
+
+            &__sockets,
+            &__enchantments,
+            &__spells,
+            &__set,
+            &__stats {
+                margin-left: 25px;
+
+                .socket,
+                .enchantment,
+                .set,
+                .stat {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
+
+                .set {
+                    .not-active {
+                        color: gray;
+                    }
+                }
+            }
+        }
+    }
+
+    .selected {
+        box-shadow: 2px 2px green;
+    }
+}
+
+.summary {
+    display: flex;
+    flex-direction: column;
+
+    &__container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .category {
+            box-shadow: 2px 2px green;
+        }
+
+        .username {
+            font-size: 1.1em;
+        }
+    }
+}
+
+.character-stats {
+    &__container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    &__power {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        width: 100%;
+
+        .stat-name {
+            font-size: 1em;
+        }
+
+        .power-type {
+            opacity: 0.6;
+            font-size: 0.9em;
+            min-width: 150px;
         }
     }
 }

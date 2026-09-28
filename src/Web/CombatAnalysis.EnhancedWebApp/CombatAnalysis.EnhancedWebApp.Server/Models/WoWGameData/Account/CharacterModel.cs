@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account;
 public class CharacterModel : WoWGameDataEntityModel
 {
     [JsonPropertyName("realm")]
-    public RealmModel Realm { get; set; }
+    public WoWRealmModel Realm { get; set; }
 
     [JsonPropertyName("playable_class")]
     public WoWGameDataEntityModel PlayableClass { get; set; }

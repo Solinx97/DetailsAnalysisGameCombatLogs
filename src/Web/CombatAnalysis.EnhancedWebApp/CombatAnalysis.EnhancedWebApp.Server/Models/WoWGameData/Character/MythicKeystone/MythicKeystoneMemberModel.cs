@@ -8,10 +8,10 @@ public class MythicKeystoneMemberModel
     public DungeonCharacterModel Character { get; set; }
 
     [JsonPropertyName("specialization")]
-    public CharacterSpecializationModel Specialization { get; set; }
+    public WoWGameDataEntityModel Specialization { get; set; }
 
     [JsonPropertyName("race")]
-    public CharacterRaceModel Race { get; set; }
+    public WoWGameDataEntityModel Race { get; set; }
 
     [JsonPropertyName("equipped_item_level")]
     public int EquippedItemLevel { get; set; }

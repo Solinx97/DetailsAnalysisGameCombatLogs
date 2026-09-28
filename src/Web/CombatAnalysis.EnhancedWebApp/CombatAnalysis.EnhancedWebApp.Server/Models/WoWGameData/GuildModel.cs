@@ -8,7 +8,7 @@ public class GuildModel
     public string Name { get; set; }
 
     [JsonPropertyName("realm")]
-    public RealmModel Realm { get; set; }
+    public WoWRealmModel Realm { get; set; }
 
     [JsonPropertyName("faction")]
     public FactionModel Faction { get; set; }

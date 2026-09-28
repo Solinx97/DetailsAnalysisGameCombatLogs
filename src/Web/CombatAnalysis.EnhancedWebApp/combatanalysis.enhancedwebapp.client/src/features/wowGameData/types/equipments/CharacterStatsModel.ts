@@ -1,0 +1,45 @@
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
+import type { CharacterStatPowerModel } from './CharacterStatPowerModel';
+import type { CharacterStatPowerRatingModel } from './CharacterStatPowerRatingModel';
+
+export type CharacterStatsModel = {
+    health: number;
+    power: number;
+    powerType: WoWGameDataEntityModel;
+    speed: CharacterStatPowerRatingModel;
+    strength: CharacterStatPowerModel;
+    agility: CharacterStatPowerModel;
+    intellect: CharacterStatPowerModel;
+    stamina: CharacterStatPowerModel;
+    meleeCrit: CharacterStatPowerRatingModel;
+    meleeHaste: CharacterStatPowerRatingModel;
+    mastery: CharacterStatPowerRatingModel;
+    bonusArmor: number;
+    lifesteal: CharacterStatPowerRatingModel;
+    versatility: number;
+    versatilityDamageDoneBonus: number;
+    versatilityHealingDoneBonus: number;
+    versatilityDamageTakenBonus: number;
+    avoidance: CharacterStatPowerRatingModel;
+    attackPower: number;
+    mainHandDamageMin: number;
+    mainHandDamageMax: number;
+    mainHandSpeed: number;
+    mainHandDps: number;
+    offHandDamageMin: number;
+    offHandDamageMax: number;
+    offHandSpeed: number;
+    offHandDps: number;
+    spellPower: number;
+    spellPenetration: number;
+    spellCrit: CharacterStatPowerRatingModel;
+    manaRegen: number;
+    manaRegenCombat: number;
+    armor: CharacterStatPowerModel;
+    dodge: CharacterStatPowerRatingModel;
+    parry: CharacterStatPowerRatingModel;
+    block: CharacterStatPowerRatingModel;
+    rangedCrit: CharacterStatPowerRatingModel;
+    rangedHaste: CharacterStatPowerRatingModel;
+    spellHaste: CharacterStatPowerRatingModel;
+}

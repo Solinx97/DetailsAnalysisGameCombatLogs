@@ -10,6 +10,13 @@
     border-radius: 20px;
 }
 
+.special {
+    font-size: 0.8em;
+    padding: 5px 20px;
+    border-radius: 20px;
+    box-shadow: 2px 2px gray;
+}
+
 .load-more {
     cursor: pointer;
 
@@ -18,73 +25,85 @@
     }
 }
 
-.character {
+.account {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
 
-    .select-user {
+    &__character {
         display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
 
-        .battle-net {
+        .select-character {
             display: flex;
-            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
+            gap: 20px;
 
-            .status {
-                font-size: 0.65em;
-                opacity: 0.7;
+            .battle-net {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .status {
+                    font-size: 0.65em;
+                    opacity: 0.7;
+                }
+
+                .auth {
+                    padding: 10px 20px;
+                }
+
+                .auth.connected {
+                    box-shadow: 2px 2px green;
+                }
+
+                .auth.not-connected {
+                    box-shadow: 2px 2px gray;
+                    opacity: 0.75;
+                }
+
+                .actions {
+                    display: flex;
+                    align-items: center;
+                    gap: 25px;
+                }
             }
 
-            .auth {
-                padding: 10px 20px;
+            .exit {
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.25);
+                }
             }
 
-            .auth.connected {
-                box-shadow: 2px 2px green;
+            .form-control {
+                width: 300px;
             }
 
-            .auth.not-connected {
-                box-shadow: 2px 2px gray;
-                opacity: 0.75;
+            .filter-item {
+                width: 250px;
+
+                .options {
+                    color: black;
+                }
             }
         }
 
-        .exit {
-            cursor: pointer;
-
-            &:hover {
-                transform: scale(1.25);
-            }
+        .selected-character {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
         }
-
-        .form-control {
-            width: 300px;
-        }
-
-        .filter-item {
-            width: 250px;
-
-            .options {
-                color: black;
-            }
-        }
-    }
-
-    .selected-user {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
     }
 
     .reputations,
-    .user-collection,
-    .summary,
+    .character-collection,
     .equipments,
     .mythic-keystone,
     .raids,
@@ -102,14 +121,25 @@
     }
 }
 
-.user-collection {
-    .user-collection-details {
+.account-data {
+    display: flex;
+    gap: 15px;
+
+    .auth .btn-shadow {
+        font-size: 0.8em;
+        box-shadow: 1px 1px gray;
+        cursor: default;
+    }
+}
+
+.character-collection {
+    .character-collection-details {
         display: flex;
         align-items: center;
         gap: 20px;
     }
 
-    .selected-user-collection {
+    .selected-character-collection {
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -119,7 +149,8 @@
             gap: 20px;
         }
 
-        .received, .not-received {
+        .received,
+        .not-received {
             padding: 5px 20px;
             border-radius: 20px;
         }
@@ -140,7 +171,8 @@
             margin-left: 50px;
         }
 
-        .action, .how-receive {
+        .action,
+        .how-receive {
             display: flex;
             border-radius: 20px;
             padding: 2px 8px;
@@ -154,19 +186,13 @@
     }
 }
 
-
 .achievements {
     display: flex;
     gap: 50px;
 }
 
 .reputations,
-.user-collection,
-.summary,
-.mythic-keystone,
-.raids,
-.expansion-raids,
-.dungeon,
+.character-collection,
 .achievements-category,
 .achievements {
     &__container {
@@ -176,46 +202,6 @@
     }
 }
 
-.mythic-keystone {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    cursor: default;
-
-    &__title {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .current-period {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-
-        .level {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 20px;
-
-            .btn-shadow {
-                padding: 2px 20px;
-                box-shadow: 1px 1px white;
-            }
-        }
-
-        .run {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-    }
-}
-
-.raids,
-.expansion-raids,
-.dungeon,
 .achievements-category,
 .achievements {
     &__item {
@@ -282,12 +268,8 @@
 }
 
 .reputations,
-.user-collection,
-.summary,
+.character-collection,
 .equipments,
-.raids,
-.expansion-raids,
-.dungeon,
 .achievements-category {
     display: flex;
     flex-direction: column;
@@ -310,12 +292,8 @@
 }
 
 .reputations,
-.user-collection,
-.summary,
-.equipments,
-.expansion-raids,
-.dungeon,
-.raids {
+.character-collection,
+.equipments {
     &__item {
         display: flex;
         gap: 20px;
@@ -346,35 +324,4 @@
             gap: 25px;
         }
     }
-}
-
-.dungeon-details {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-    gap: 10px;
-
-    &__information {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-}
-
-.dungeon-encounters {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-    .encounter {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-}
-
-.expansion-raids .not-any-completed {
-    opacity: 0.5;
-    box-shadow: 2px 2px gray;
-    cursor: default;
 }

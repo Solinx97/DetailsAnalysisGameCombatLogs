@@ -42,6 +42,7 @@ const AccountCharacters: React.FC = () => {
                                 icon={faLocationCrosshairs}
                             />
                             <div>{t("Account")}: {index + 1}</div>
+                            <div className="count">{Object.entries(account.characters).reduce((total, [, characters]) => total + characters.length, 0)}</div>
                         </div>
                         {selectedAccountId === account.id &&
                             <RealmCharacters

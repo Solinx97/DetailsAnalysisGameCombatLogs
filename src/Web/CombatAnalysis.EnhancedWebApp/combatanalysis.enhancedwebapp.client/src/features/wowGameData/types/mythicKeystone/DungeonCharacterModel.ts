@@ -1,6 +1,6 @@
+import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
 import type { WoWRealmModel } from '../WoWRealmModel';
 
-export type DungeonCharacterModel = {
-    name: string;
+export type DungeonCharacterModel = WoWGameDataEntityModel & {
     realm: WoWRealmModel;
 }

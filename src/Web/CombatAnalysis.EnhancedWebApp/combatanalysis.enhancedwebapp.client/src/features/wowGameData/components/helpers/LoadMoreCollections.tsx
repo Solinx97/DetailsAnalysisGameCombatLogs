@@ -21,9 +21,9 @@ const LoadMoreCollections: React.FC<{ collection: UserCollectionModel[], getItem
     }, [collection, size]);
 
     return (
-        <ul className="user-collection__container">
+        <ul className="character-collection__container">
             {filteredCollection.map((item, index) => (
-                <li key={index} className="user-collection__item">
+                <li key={index} className="character-collection__item">
                     {getItem(item)}
                 </li>
             ))

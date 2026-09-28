@@ -4,7 +4,7 @@ import useFormatting from '@/shared/hooks/useFormatting';
 import { faChartSimple, faFlagCheckered, faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useState } from 'react';
-import type { DungeonModeModel } from '../types/dungeon/DungeonModeModel';
+import type { DungeonModeModel } from '../../types/dungeon/DungeonModeModel';
 import SelectedDungeonEncounter from './SelectedDungeonEncounter';
 
 const SelectedDungeon: React.FC<{ 

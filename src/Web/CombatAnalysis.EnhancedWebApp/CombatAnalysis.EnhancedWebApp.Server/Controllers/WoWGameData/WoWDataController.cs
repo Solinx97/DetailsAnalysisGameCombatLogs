@@ -3,22 +3,24 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.WoWGameData;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class WoWDataController(IWoWGameDataApiClient httpClient, IMapper mapper) : ControllerBase
+public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystoneService service, IMapper mapper) : ControllerBase
 {
     private readonly IWoWGameDataApiClient _httpClient = httpClient;
+    private readonly IMythicKeystoneService _service = service;
     private readonly IMapper _mapper = mapper;
 
     [HttpGet("getRealms/{regionName}")]
     public async Task<IActionResult> GetRealms(string regionName, CancellationToken cancellationToken)
     {
         var realms = await _httpClient.GetRealmsAsync(regionName, cancellationToken);
-        var map = _mapper.Map<RealmDto[]>(realms.Realms);
+        var map = _mapper.Map<WoWRealmDto[]>(realms.Realms);
         return Ok(map);
     }
 
@@ -36,5 +38,12 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMapper mapper)
         var mount = await _httpClient.GetMountAsync(regionName, mountId, cancellationToken);
         var map = _mapper.Map<SelectedMountDto>(mount);
         return Ok(map);
+    }
+
+    [HttpGet("getMythicKeystoneLeaderboard/{connectedRealmId:int:min(1)}")]
+    public async Task<IActionResult> GetMythicKeystoneLeaderboard(int connectedRealmId, int periodId, string regionName, CancellationToken cancellationToken)
+    {
+        var mythicKeystoneLeaderboard = await _service.GetMythicKeystoneLeaderboardAsync(connectedRealmId, periodId, regionName, cancellationToken);
+        return Ok(mythicKeystoneLeaderboard);
     }
 }

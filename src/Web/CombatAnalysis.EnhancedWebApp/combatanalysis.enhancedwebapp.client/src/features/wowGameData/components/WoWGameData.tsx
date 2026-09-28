@@ -1,20 +1,19 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import type { OptionMode } from '@/shared/types/OptionMode';
-import { faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faLocationCrosshairs, faPlus, faUser, faArrowsSpin, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Select from 'react-select';
 import { useBattleNetDataAuthorizaitonMutation, useBattleNetDataTokenMutation, useIsAuthorizedQuery, useLazyBattleNetDisconenctQuery } from '../api/BattleNetData.api';
 import { useLazyGetRealmsQuery } from '../api/WoWData.api';
-import type { RealmModel } from '../types/RealmModel';
+import type { WoWRealmModel } from '../types/WoWRealmModel';
 import AccountCharacters from './account/AccountCharacters';
 import CharacterMounts from './account/CharacterMounts';
 import AchievementsCategory from './achievements/AchievementsCategory';
-import CharacterDungeons from './CharacterDungeons';
-import CharacterMythicKeystone from './CharacterMythicKeystone';
+import CharacterDungeons from './dungeons/CharacterDungeons';
+import CharacterMythicKeystone from './dungeons/CharacterMythicKeystone';
 import CharacterReputations from './CharacterReputations';
-import CharacterSummary from './CharacterSummary';
 import CharacterEquipments from './equipments/CharacterEquipments';
 
 import './WoWGameData.scss';
@@ -26,12 +25,11 @@ const WoWGameData: React.FC = () => {
 
     const usernameRef = useRef<HTMLInputElement | null>(null);
 
-    const [servers, setServers] = useState<RealmModel[]>([]);
+    const [servers, setServers] = useState<WoWRealmModel[]>([]);
 
     const [username, setUsername] = useState<string>("");
 
     const [showCharacters, setShowCharacters] = useState<boolean>(false);
-    const [showSummary, setShowSummary] = useState<boolean>(false);
     const [showEquipments, setShowEquipments] = useState<boolean>(false);
     const [showMythicKeystone, setShowMythicKeystone] = useState<boolean>(false);
     const [showRaids, setShowRaids] = useState<boolean>(false);
@@ -109,8 +107,8 @@ const WoWGameData: React.FC = () => {
 
     const selectionUser = () => {
         return (
-            <div className="character">
-                <div className="select-user">
+            <div className="account__character">
+                <div className="select-character">
                     <div>
                         <div>{t("Username")} </div>
                         <input type="text" className="form-control" placeholder="Username" aria-label="Username"
@@ -129,24 +127,26 @@ const WoWGameData: React.FC = () => {
                     </div>
                     <div className="battle-net">
                         <div className="status">{isAuthorized.authenticated ? 'connected' : 'not connected'}</div>
-                        <div className={`auth btn-shadow ${isAuthorized.authenticated ? 'connected' : 'not-connected'}`}
-                            onClick={isAuthorized.authenticated ? () => { } : getAuthorizationTokenAsync}>
-                            <FontAwesomeIcon
-                                icon={isAuthorized.authenticated ? faUser : faPlus}
-                            />
-                            <div>{t("BattleNet")}</div>
+                        <div className="actions">
+                            <div className={`auth btn-shadow ${isAuthorized.authenticated ? 'connected' : 'not-connected'}`}
+                                onClick={isAuthorized.authenticated ? () => { } : getAuthorizationTokenAsync}>
+                                <FontAwesomeIcon
+                                    icon={isAuthorized.authenticated ? faUser : faPlus}
+                                />
+                                <div>{t("BattleNet")}</div>
+                            </div>
+                            {isAuthorized.authenticated &&
+                                <div className="exit" onClick={battleNetDisconnect}>
+                                    <FontAwesomeIcon
+                                        icon={faClose}
+                                    />
+                                </div>
+                            }
                         </div>
                     </div>
-                    {isAuthorized.authenticated &&
-                        <div className="exit" onClick={battleNetDisconnect}>
-                            <FontAwesomeIcon
-                                icon={faClose}
-                            />
-                        </div>
-                    }
                 </div>
-                <div className="selected-user">
-                    <div>{t("SelectedUser")}: </div>
+                <div className="selected-character">
+                    <div>{t("SelectedCharacter")}: </div>
                     <h5>{username}</h5>
                 </div>
             </div>
@@ -155,28 +155,64 @@ const WoWGameData: React.FC = () => {
 
     const charactersData = () => {
         return (
-            <div className="character">
+            <div className="account">
                 {selectionUser()}
-                <div className="btn-shadow"
-                    onClick={() => setShowCharacters(prev => !prev)}>
-                    <FontAwesomeIcon
-                        icon={faLocationCrosshairs}
-                    />
-                    <div>{t("Characters")}</div>
+                <div className="account-data">
+                    <div className="btn-shadow"
+                        onClick={() => setShowCharacters(prev => !prev)}>
+                        <FontAwesomeIcon
+                            icon={faLocationCrosshairs}
+                        />
+                        <div>{t("Characters")}</div>
+                    </div>
+                    <div className="auth">
+                        {isAuthorized.authenticated
+                            ? <FontAwesomeIcon
+                                icon={faCheck}
+                                color="green"
+                            />
+                            : <div className="btn-shadow"
+                                onClick={() => setShowCharacters(prev => !prev)}>
+                                <FontAwesomeIcon
+                                    icon={faArrowsSpin}
+                                    color="orange"
+                                />
+                                <div>{t("MustConnectBattleNet")}</div>
+                            </div>
+                        }
+                    </div>
                 </div>
                 {showCharacters &&
                     <AccountCharacters
                     />
                 }
-                <div className="btn-shadow"
-                    onClick={() => setShowSummary(prev => !prev)}>
-                    <FontAwesomeIcon
-                        icon={faLocationCrosshairs}
-                    />
-                    <div>{t("Summary")}</div>
+                <div className="account-data">
+                    <div className="btn-shadow"
+                        onClick={() => setShowMounts(prev => !prev)}>
+                        <FontAwesomeIcon
+                            icon={faLocationCrosshairs}
+                        />
+                        <div>{t("Mounts")}</div>
+                    </div>
+                    <div className="auth">
+                        {isAuthorized.authenticated
+                            ? <FontAwesomeIcon
+                                icon={faCheck}
+                                color="green"
+                            />
+                            : <div className="btn-shadow"
+                                onClick={() => setShowCharacters(prev => !prev)}>
+                                <FontAwesomeIcon
+                                    icon={faArrowsSpin}
+                                    color="orange"
+                                />
+                                <div>{t("MustConnectBattleNet")}</div>
+                            </div>
+                        }
+                    </div>
                 </div>
-                {showSummary &&
-                    <CharacterSummary
+                {showMounts &&
+                    <CharacterMounts
                     />
                 }
                 <div className="btn-shadow"
@@ -184,7 +220,7 @@ const WoWGameData: React.FC = () => {
                     <FontAwesomeIcon
                         icon={faLocationCrosshairs}
                     />
-                    <div>{t("Equipments")}</div>
+                    <div>{t("Summary")}</div>
                 </div>
                 {showEquipments &&
                     <CharacterEquipments
@@ -245,17 +281,6 @@ const WoWGameData: React.FC = () => {
                 </div>
                 {showReputations &&
                     <CharacterReputations
-                    />
-                }
-                <div className="btn-shadow"
-                    onClick={() => setShowMounts(prev => !prev)}>
-                    <FontAwesomeIcon
-                        icon={faLocationCrosshairs}
-                    />
-                    <div>{t("Mounts")}</div>
-                </div>
-                {showMounts &&
-                    <CharacterMounts
                     />
                 }
             </div>

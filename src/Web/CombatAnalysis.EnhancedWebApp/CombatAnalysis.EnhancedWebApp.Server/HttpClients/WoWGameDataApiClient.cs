@@ -3,6 +3,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.HttpClients;
 
@@ -55,6 +56,22 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         var response = await _httpClient.GetAsync($"data/wow/achievement/{achievementId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<SelectedAchievementModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<MythicKeystoneLeaderboardModel> GetMythicKeystoneLeaderboardAsync(int connectedRealmId, string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/connected-realm/{connectedRealmId}/mythic-leaderboard/index?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<MythicKeystoneLeaderboardModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<MythicKeystoneDungeonLeaderboardModel> GetMythicDungeonKeystoneLeaderboardAsync(int connectedRealmId, long dungeonId, int periodId, string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/connected-realm/{connectedRealmId}/mythic-leaderboard/{dungeonId}/period/{periodId}?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<MythicKeystoneDungeonLeaderboardModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 }

@@ -8,13 +8,13 @@ public class CharacterSummaryDto
 
     public FactionDto Faction { get; set; }
 
-    public CharacterRaceDto Race { get; set; }
+    public WoWGameDataEntityDto Race { get; set; }
 
     public CharacterClassDto Class { get; set; }
 
     public CharacterSpecializationDto ActiveSpec { get; set; }
 
-    public RealmDto Realm { get; set; }
+    public WoWRealmDto Realm { get; set; }
 
     public GuildDto Guild { get; set; }
 
