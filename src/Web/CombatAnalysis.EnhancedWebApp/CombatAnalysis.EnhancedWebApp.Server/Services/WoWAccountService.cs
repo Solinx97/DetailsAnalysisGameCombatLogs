@@ -4,15 +4,15 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collecti
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Services;
 
-public class MountService(IWoWGameDataApiClient httpClient, IWoWAccountGameDataApiClient userHttpClient) : IMountService
+public class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGameDataApiClient accountHttpClient) : IWoWAccountService
 {
     private readonly IWoWGameDataApiClient _httpClient = httpClient;
-    private readonly IWoWAccountGameDataApiClient _userHttpClient = userHttpClient;
+    private readonly IWoWAccountGameDataApiClient _accountHttpClient = accountHttpClient;
 
     public async Task<MountModel[]> GetAccountMountsAsync(string regionName, CancellationToken cancellationToken)
     {
         var allMounts = await _httpClient.GetMountsAsync(regionName, cancellationToken);
-        var userMounts = await _userHttpClient.GetMountsAsync(regionName, cancellationToken);
+        var userMounts = await _accountHttpClient.GetMountsAsync(regionName, cancellationToken);
 
         MountModel[] mounts = [.. allMounts.Mounts.Select(x =>
         {

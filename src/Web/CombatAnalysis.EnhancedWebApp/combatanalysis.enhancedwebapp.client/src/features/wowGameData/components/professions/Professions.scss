@@ -1,0 +1,24 @@
+.character-professions,
+.character-profession-tiers,
+.character-profession-recipes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 50px;
+
+    &__professions,
+    &__tiers {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .profession,
+    .tier {
+        display: flex;
+    }
+}
+
+.character-profession-tiers, .character-profession-recipes {
+    margin-top: 10px;
+}

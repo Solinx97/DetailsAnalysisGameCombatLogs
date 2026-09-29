@@ -1,4 +1,5 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import ResponseInformation from '@/shared/components/ResponseInformation';
 import { faLocationCrosshairs, faPlus, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
@@ -23,7 +24,7 @@ const CharacterMounts: React.FC = () => {
     const [accountMountCount, setAccountMountCount] = useState<number>(0);
     const [onlyNotReceived, setOnlyNotReceived] = useState<boolean>(false);
 
-    const { data: allMounts, isLoading } = useGetAccountMountsQuery({ regionName });
+    const { data: allMounts, isLoading, error } = useGetAccountMountsQuery({ regionName });
     
     const [getMount] = useLazyGetMountQuery();
 
@@ -84,8 +85,11 @@ const CharacterMounts: React.FC = () => {
         );
     }
 
-    if (!mounts || isLoading) {
-        return (<div>Loading...</div>);
+    if (!allMounts || isLoading || error) {
+        return (<ResponseInformation
+            error={error}
+            isLoading={!allMounts || isLoading}
+        />);
     }
 
     const getItem = (item: UserCollectionModel) => {

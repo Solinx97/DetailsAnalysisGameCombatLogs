@@ -5,6 +5,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collection
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
@@ -97,6 +98,14 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
     {
         var category = await _achivmentService.GetCharacterAchievementCategoryAsync(serverName, username, regionName, categoryId, cancellationToken);
         var map = _mapper.Map<AchievementSelectedCategoryDto>(category);
+        return Ok(map);
+    }
+
+    [HttpGet("getProfessions/{username}")]
+    public async Task<IActionResult> GetProfessions(string username, string serverName, string regionName, CancellationToken cancellationToken)
+    {
+        var professions = await _httpClient.GetProfessionsAsync(serverName, username, regionName, cancellationToken);
+        var map = _mapper.Map<CharacterProfessionsResponseDto>(professions);
         return Ok(map);
     }
 }

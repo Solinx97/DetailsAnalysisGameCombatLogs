@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 
-public interface IMountService
+public interface IWoWAccountService
 {
     Task<MountModel[]> GetAccountMountsAsync(string regionName, CancellationToken cancellationToken);
 }

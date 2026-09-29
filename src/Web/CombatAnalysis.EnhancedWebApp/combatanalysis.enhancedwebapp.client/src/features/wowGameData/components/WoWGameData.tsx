@@ -15,6 +15,7 @@ import CharacterReputations from './CharacterReputations';
 import CharacterDungeons from './dungeons/CharacterDungeons';
 import CharacterMythicKeystone from './dungeons/CharacterMythicKeystone';
 import CharacterEquipments from './equipments/CharacterEquipments';
+import CharacterProfessions from './professions/CharacterProfessions';
 
 import './WoWGameData.scss';
 
@@ -37,6 +38,7 @@ const WoWGameData: React.FC = () => {
     const [showAchievements, setShowAchievements] = useState<boolean>(false);
     const [showReputations, setShowReputations] = useState<boolean>(false);
     const [showMounts, setShowMounts] = useState<boolean>(false);
+    const [showProfessions, setShowProfessions] = useState<boolean>(false);
 
     const [serversOptions, setServersOptions] = useState<OptionMode[]>([]);
     const [serverValue, setServerValue] = useState<OptionMode | null>(serversOptions[0]);
@@ -281,6 +283,17 @@ const WoWGameData: React.FC = () => {
                 </div>
                 {showReputations &&
                     <CharacterReputations
+                    />
+                }
+                <div className="btn-shadow"
+                    onClick={() => setShowProfessions(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faLocationCrosshairs}
+                    />
+                    <div>{t("Professions")}</div>
+                </div>
+                {showProfessions &&
+                    <CharacterProfessions
                     />
                 }
             </div>

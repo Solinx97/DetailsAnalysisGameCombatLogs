@@ -7,6 +7,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collection
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account;
@@ -16,6 +17,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collecti
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Reputation;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Mapping;
@@ -137,5 +139,9 @@ public class ProxyApiMapper : Profile
                                         g => g.Key,
                                         g => g.ToArray())));
         CreateMap<CharacterModel, CharacterDto>();
+
+        CreateMap<CharacterProfessionsResponse, CharacterProfessionsResponseDto>();
+        CreateMap<CharacterProfessionTierModel, CharacterProfessionTierDto>();
+        CreateMap<CharacterProfessionModel, CharacterProfessionDto>();
     }
 }

@@ -7,6 +7,7 @@ import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonMod
 import type { CharacterEquipmentsResponse } from '../types/equipments/CharacterEquipmentsResponse';
 import type { CharacterStatsModel } from '../types/equipments/CharacterStatsModel';
 import type { MythicKeystoneModel } from '../types/mythicKeystone/MythicKeystoneModel';
+import type { CharacterProfessionsResponse } from '../types/professions/CharacterProfessionsResponse';
 import { BattleNetDataApi } from './BattleNetData.api';
 
 export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
@@ -41,6 +42,9 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
         getAchievementsByCategory: builder.query<AchievementSelectedCategoryModel, { categoryId: number, username: string, serverName: string, regionName: string }>({
             query: ({ categoryId, username, serverName, regionName }) => `/WoWCharacter/getAchievementsByCategory/${categoryId}?username=${username}&serverName=${serverName}&regionName=${regionName}`,
         }),
+        getProfessions: builder.query<CharacterProfessionsResponse, { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getProfessions/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
     })
 })
 
@@ -55,4 +59,5 @@ export const {
     useGetCharacterDungeonsQuery,
     useLazyGetAchievementAllCategoryQuery,
     useGetAchievementsByCategoryQuery,
+    useGetProfessionsQuery,
 } = WoWCharacterApi;

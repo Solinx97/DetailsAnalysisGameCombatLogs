@@ -9,16 +9,16 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.WoWGameData;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class WoWAccountController(IMountService service, IWoWAccountGameDataApiClient userHttpClient, IMapper mapper) : ControllerBase
+public class WoWAccountController(IWoWAccountService service, IWoWAccountGameDataApiClient accountHttpClient, IMapper mapper) : ControllerBase
 {
-    private readonly IMountService _service = service;
-    private readonly IWoWAccountGameDataApiClient _userHttpClient = userHttpClient;
+    private readonly IWoWAccountService _service = service;
+    private readonly IWoWAccountGameDataApiClient _accountHttpClient = accountHttpClient;
     private readonly IMapper _mapper = mapper;
 
     [HttpGet("getCharacters")]
     public async Task<IActionResult> GetCharacters(string regionName, CancellationToken cancellationToken)
     {
-        var accountCharacters = await _userHttpClient.GetCharactersAsync(regionName, cancellationToken);
+        var accountCharacters = await _accountHttpClient.GetCharactersAsync(regionName, cancellationToken);
         var map = _mapper.Map<WoWAccountResponseDto>(accountCharacters);
         return Ok(map);
     }

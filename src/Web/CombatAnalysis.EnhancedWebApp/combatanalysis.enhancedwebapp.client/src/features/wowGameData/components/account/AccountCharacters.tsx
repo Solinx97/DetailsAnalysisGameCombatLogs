@@ -36,13 +36,15 @@ const AccountCharacters: React.FC = () => {
             <ul className="accounts">
                 {characters.wowAccounts.map((account, index) => (
                     <li className="accounts__account" key={index}>
-                        <div className="btn-shadow"
-                            onClick={() => setSelectedAccountId(prev => prev === account.id ? 0 : account.id)}>
-                            <FontAwesomeIcon
-                                icon={faLocationCrosshairs}
-                            />
-                            <div>{t("Account")}: {index + 1}</div>
-                            <div className="count">{Object.entries(account.characters).reduce((total, [, characters]) => total + characters.length, 0)}</div>
+                        <div className="name">
+                            <div className="btn-shadow"
+                                onClick={() => setSelectedAccountId(prev => prev === account.id ? 0 : account.id)}>
+                                <FontAwesomeIcon
+                                    icon={faLocationCrosshairs}
+                                />
+                                <div>{t("Account")}: {index + 1}</div>
+                                <div className="count">{Object.entries(account.characters).reduce((total, [, characters]) => total + characters.length, 0)}</div>
+                            </div>
                         </div>
                         {selectedAccountId === account.id &&
                             <RealmCharacters

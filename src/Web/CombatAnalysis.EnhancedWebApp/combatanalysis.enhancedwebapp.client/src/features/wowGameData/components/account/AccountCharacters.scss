@@ -4,6 +4,30 @@
     margin-left: 50px;
 }
 
+.accounts, .servers {
+    .name {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .load-professions {
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.25);
+        }
+    }
+}
+
+.server-characters {
+    &__character {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
 .account-characters {
     display: flex;
     flex-direction: column;
@@ -30,5 +54,21 @@
     .servers,
     .server-characters {
         margin-top: 10px;
+    }
+}
+
+.selected-realm-character-professions {
+    display: flex;
+
+    .professions {
+        display: flex;
+    }
+
+    .profession-type {
+        box-shadow: 2px 2px green;
+    }
+
+    .no-any-professions {
+        opacity: 0.6;
     }
 }

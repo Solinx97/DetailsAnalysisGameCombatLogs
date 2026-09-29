@@ -4,6 +4,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collecti
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Reputation;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
@@ -27,4 +28,6 @@ public interface IWoWCharacterGameDataApiClient
     Task<CharacterDungeonModel> GetRaidsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
     Task<CharacterDungeonModel> GetDungeonsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
+
+    Task<CharacterProfessionsResponse> GetProfessionsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 }
