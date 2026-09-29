@@ -1,8 +1,8 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.HttpClients;
@@ -19,19 +19,35 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<MountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken)
+    public async Task<WoWMountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"data/wow/mount/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<MountsResponse>(cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<WoWMountsResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<SelectedMountModel> GetMountAsync(string regionName, int mountId, CancellationToken cancellationToken)
+    public async Task<SelectedWoWAccountCollectionItemModel> GetMountAsync(string regionName, int mountId, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"data/wow/mount/{mountId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<SelectedMountModel>(cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<SelectedWoWAccountCollectionItemModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<WoWPetsResponse> GetPetsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/pet/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWPetsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<SelectedWoWAccountCollectionItemModel> GetPetAsync(string regionName, int petId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/pet/{petId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<SelectedWoWAccountCollectionItemModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
@@ -72,6 +88,14 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         var response = await _httpClient.GetAsync($"data/wow/connected-realm/{connectedRealmId}/mythic-leaderboard/{dungeonId}/period/{periodId}?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<MythicKeystoneDungeonLeaderboardModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<WoWTokenModel> GetWoWTokenAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/token/index?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWTokenModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 }

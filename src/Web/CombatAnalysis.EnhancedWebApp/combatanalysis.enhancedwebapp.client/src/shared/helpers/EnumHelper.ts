@@ -68,3 +68,8 @@ export const CharacterEquipmentQuality = {
     0: "EPIC",
     1: "UNCOMMON"
 } as const;
+
+export const WoWAccountCollectionType = {
+    MOUNT: 0,
+    PET: 1
+} as const;

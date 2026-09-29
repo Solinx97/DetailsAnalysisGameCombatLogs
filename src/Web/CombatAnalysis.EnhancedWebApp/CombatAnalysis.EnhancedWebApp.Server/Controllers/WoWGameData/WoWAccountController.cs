@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account;
-using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +26,13 @@ public class WoWAccountController(IWoWAccountService service, IWoWAccountGameDat
     public async Task<IActionResult> GetMounts(string regionName, CancellationToken cancellationToken)
     {
         var mounts = await _service.GetAccountMountsAsync(regionName, cancellationToken);
-        var map = _mapper.Map<MountDto[]>(mounts);
-        return Ok(map);
+        return Ok(mounts);
+    }
+
+    [HttpGet("getPets")]
+    public async Task<IActionResult> GetPets(string regionName, CancellationToken cancellationToken)
+    {
+        var pets = await _service.GetAccountPetsAsync(regionName, cancellationToken);
+        return Ok(pets);
     }
 }

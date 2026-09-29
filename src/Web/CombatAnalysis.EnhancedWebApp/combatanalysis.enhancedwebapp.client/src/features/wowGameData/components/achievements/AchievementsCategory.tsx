@@ -1,9 +1,9 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import ResponseInformation from '@/shared/components/ResponseInformation';
 import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useContext, useEffect, useState } from 'react';
-import { useLazyGetAchievementAllCategoryQuery } from '../../api/WoWCharacter.api';
-import type { AchievementCategoriesModel } from '../../types/achievements/AchievementCategoriesModel';
+import { useContext, useState } from 'react';
+import { useGetAchievementAllCategoryQuery } from '../../api/WoWCharacter.api';
 import SubAchievementsCategory from './SubAchievementsCategory';
 
 const AchievementsCategory: React.FC = () => {
@@ -15,38 +15,18 @@ const AchievementsCategory: React.FC = () => {
 
     const { t, username, serverName, regionName } = context;
 
-    const [achievementAllCategory, setAchievementAllCategory] = useState<AchievementCategoriesModel>();
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
     const [onlyNotCompleted, setOnlyNotCompleted] = useState<boolean>(false);
 
-    const [getAchievements] = useLazyGetAchievementAllCategoryQuery();
+    const { data: achievementAllCategory, isLoading, error } = useGetAchievementAllCategoryQuery({ username, serverName, regionName });
 
-    useEffect(() => {
-        if (!username || username.trim().length === 0) {
-            return;
-        }
-
-        const loadAsync = async () => {
-            try {
-                const receivedAchievementAllCategory = await getAchievements({ username, serverName, regionName }).unwrap();
-                setAchievementAllCategory(receivedAchievementAllCategory);
-            } catch (error) {
-                console.error("Failed to fetch character mounts:", error);
-            }
-        }
-
-        loadAsync();
-    }, []);
-
-    if (!username || username.trim().length === 0) {
-        return (<div>No data</div>);
+    if (!achievementAllCategory || isLoading || error) {
+        return (<ResponseInformation
+            error={error}
+            watchParams={[username, serverName]}
+            isLoading={!achievementAllCategory || isLoading}
+        />);
     }
-
-
-    if (!achievementAllCategory) {
-        return (<div>Loading...</div>);
-    }
-
     return (
         <div className="achievements-category">
             <div className="achievements-category__title">

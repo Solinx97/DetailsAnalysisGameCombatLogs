@@ -1,8 +1,8 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
@@ -31,11 +31,11 @@ public class WoWCharacterGameDataApiClient(HttpClient httpClient) : IWoWCharacte
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<AccountMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
+    public async Task<WoWAccountMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/collections/mounts?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<AccountMountsResponse>(cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<WoWAccountMountsResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 

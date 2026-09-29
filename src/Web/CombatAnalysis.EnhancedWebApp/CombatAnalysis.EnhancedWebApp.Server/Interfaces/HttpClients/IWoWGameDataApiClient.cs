@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
@@ -9,9 +9,13 @@ public interface IWoWGameDataApiClient
 {
     Task<RealmsResponse> GetRealmsAsync(string regionName, CancellationToken cancellationToken);
 
-    Task<MountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken);
+    Task<WoWMountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken);
 
-    Task<SelectedMountModel> GetMountAsync(string regionName, int mountId, CancellationToken cancellationToken);
+    Task<SelectedWoWAccountCollectionItemModel> GetMountAsync(string regionName, int mountId, CancellationToken cancellationToken);
+
+    Task<WoWPetsResponse> GetPetsAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<SelectedWoWAccountCollectionItemModel> GetPetAsync(string regionName, int petId, CancellationToken cancellationToken);
 
     Task<AchievementCategoriesModel> GetAchievementCategoryAsync(string regionName, CancellationToken cancellationToken);
 
@@ -22,4 +26,6 @@ public interface IWoWGameDataApiClient
     Task<MythicKeystoneLeaderboardModel> GetMythicKeystoneLeaderboardAsync(int connectedRealmId, string regionName, CancellationToken cancellationToken);
 
     Task<MythicKeystoneDungeonLeaderboardModel> GetMythicDungeonKeystoneLeaderboardAsync(int connectedRealmId, long dungeonId, int periodId, string regionName, CancellationToken cancellationToken);
+
+    Task<WoWTokenModel> GetWoWTokenAsync(string regionName, CancellationToken cancellationToken);
 }

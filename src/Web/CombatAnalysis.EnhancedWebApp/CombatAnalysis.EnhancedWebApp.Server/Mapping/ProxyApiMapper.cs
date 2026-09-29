@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
@@ -11,9 +11,9 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Profession
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
@@ -38,8 +38,7 @@ public class ProxyApiMapper : Profile
         CreateMap<CharacterReputationModel, CharacterReputationDto>();
         CreateMap<CharacterReputationStandingModel, CharacterReputationStandingDto>();
 
-        CreateMap<AccountMountModel, CharacterMountDto>();
-        CreateMap<MountModel, MountDto>();
+        CreateMap<WoWAccountMountModel, WoWAccountCollectionItemDto>();
 
         CreateMap<CharacterSummaryModel, CharacterSummaryDto>();
 
@@ -127,7 +126,7 @@ public class ProxyApiMapper : Profile
 
         CreateMap<WoWRealmModel, WoWRealmDto>();
 
-        CreateMap<SelectedMountModel, SelectedMountDto>();
+        CreateMap<SelectedWoWAccountCollectionItemModel, SelectedWoWAccountCollectionItemDto>();
 
         CreateMap<WoWAccountRespone, WoWAccountResponseDto>();
         CreateMap<WoWAccountModel, WoWAccountDto>()
@@ -143,5 +142,12 @@ public class ProxyApiMapper : Profile
         CreateMap<CharacterProfessionsResponse, CharacterProfessionsResponseDto>();
         CreateMap<CharacterProfessionTierModel, CharacterProfessionTierDto>();
         CreateMap<CharacterProfessionModel, CharacterProfessionDto>();
+
+        CreateMap<WoWTokenModel, WoWTokenDto>()
+            .ForMember(
+                dest => dest.LastUpdatedTime,
+                opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.LastUpdatedTimestamp)));
+
+        CreateMap<WoWAccountPetStatModel, WoWAccountPetStatDto>();
     }
 }

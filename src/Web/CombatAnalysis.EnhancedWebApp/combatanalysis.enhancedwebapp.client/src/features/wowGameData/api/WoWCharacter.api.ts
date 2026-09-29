@@ -1,4 +1,3 @@
-import type { CharacterMountModel } from '../types/CharacterMountModel';
 import type { CharacterReputationModel } from '../types/CharacterReputationModel';
 import type { AchievementCategoriesModel } from '../types/achievements/AchievementCategoriesModel';
 import type { AchievementSelectedCategoryModel } from '../types/achievements/AchievementSelectedCategoryModel';
@@ -14,9 +13,6 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
     endpoints: builder => ({
         getCharacterReputations: builder.query<CharacterReputationModel[], { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getReputations/${username}?serverName=${serverName}&regionName=${regionName}`,
-        }),
-        getCharacterMounts: builder.query<CharacterMountModel[], { username: string, serverName: string, regionName: string }>({
-            query: ({ username, serverName, regionName }) => `/WoWCharacter/getMounts/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
         getCharacterSummary: builder.query<WoWCharacterSummaryModel, { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getProfileSummary/${username}?serverName=${serverName}&regionName=${regionName}`,
@@ -50,14 +46,13 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
 
 export const {
     useGetCharacterReputationsQuery,
-    useLazyGetCharacterMountsQuery,
     useGetCharacterSummaryQuery,
     useGetCharacterEquipmentsQuery,
     useGetCharacterStatsQuery,
     useGetCharacterMythicKeystoneQuery,
     useGetCharacterRaidsQuery,
     useGetCharacterDungeonsQuery,
-    useLazyGetAchievementAllCategoryQuery,
+    useGetAchievementAllCategoryQuery,
     useGetAchievementsByCategoryQuery,
     useGetProfessionsQuery,
 } = WoWCharacterApi;

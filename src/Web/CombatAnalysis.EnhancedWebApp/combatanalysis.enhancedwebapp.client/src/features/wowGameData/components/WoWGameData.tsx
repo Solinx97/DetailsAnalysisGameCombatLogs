@@ -1,4 +1,5 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
+import { WoWAccountCollectionType } from '@/shared/helpers/EnumHelper';
 import type { OptionMode } from '@/shared/types/OptionMode';
 import { faArrowsSpin, faCheck, faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,13 +10,14 @@ import { useBattleNetDataAuthorizaitonMutation, useBattleNetDataTokenMutation, u
 import { useLazyGetRealmsQuery } from '../api/WoWData.api';
 import type { WoWRealmModel } from '../types/WoWRealmModel';
 import AccountCharacters from './account/AccountCharacters';
-import CharacterMounts from './account/CharacterMounts';
+import AccountCollections from './account/AccountCollections';
 import AchievementsCategory from './achievements/AchievementsCategory';
 import CharacterReputations from './CharacterReputations';
 import CharacterDungeons from './dungeons/CharacterDungeons';
 import CharacterMythicKeystone from './dungeons/CharacterMythicKeystone';
 import CharacterEquipments from './equipments/CharacterEquipments';
 import CharacterProfessions from './professions/CharacterProfessions';
+import WoWToken from './WoWToken';
 
 import './WoWGameData.scss';
 
@@ -38,6 +40,7 @@ const WoWGameData: React.FC = () => {
     const [showAchievements, setShowAchievements] = useState<boolean>(false);
     const [showReputations, setShowReputations] = useState<boolean>(false);
     const [showMounts, setShowMounts] = useState<boolean>(false);
+    const [showPets, setShowPets] = useState<boolean>(false);
     const [showProfessions, setShowProfessions] = useState<boolean>(false);
 
     const [serversOptions, setServersOptions] = useState<OptionMode[]>([]);
@@ -159,6 +162,7 @@ const WoWGameData: React.FC = () => {
         return (
             <div className="account">
                 {selectionUser()}
+                <WoWToken />
                 <div className="account-data">
                     <div className="btn-shadow"
                         onClick={() => setShowCharacters(prev => !prev)}>
@@ -173,8 +177,7 @@ const WoWGameData: React.FC = () => {
                                 icon={faCheck}
                                 color="green"
                             />
-                            : <div className="btn-shadow"
-                                onClick={() => setShowCharacters(prev => !prev)}>
+                            : <div className="btn-shadow">
                                 <FontAwesomeIcon
                                     icon={faArrowsSpin}
                                     color="orange"
@@ -202,8 +205,7 @@ const WoWGameData: React.FC = () => {
                                 icon={faCheck}
                                 color="green"
                             />
-                            : <div className="btn-shadow"
-                                onClick={() => setShowCharacters(prev => !prev)}>
+                            : <div className="btn-shadow">
                                 <FontAwesomeIcon
                                     icon={faArrowsSpin}
                                     color="orange"
@@ -214,7 +216,37 @@ const WoWGameData: React.FC = () => {
                     </div>
                 </div>
                 {showMounts &&
-                    <CharacterMounts
+                    <AccountCollections
+                        colelctionType={WoWAccountCollectionType["MOUNT"]}
+                    />
+                }
+                <div className="account-data">
+                    <div className="btn-shadow"
+                        onClick={() => setShowPets(prev => !prev)}>
+                        <FontAwesomeIcon
+                            icon={faLocationCrosshairs}
+                        />
+                        <div>{t("Pets")}</div>
+                    </div>
+                    <div className="auth">
+                        {isAuthorized.authenticated
+                            ? <FontAwesomeIcon
+                                icon={faCheck}
+                                color="green"
+                            />
+                            : <div className="btn-shadow">
+                                <FontAwesomeIcon
+                                    icon={faArrowsSpin}
+                                    color="orange"
+                                />
+                                <div>{t("MustConnectBattleNet")}</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                {showPets &&
+                    <AccountCollections
+                        colelctionType={WoWAccountCollectionType["PET"]}
                     />
                 }
                 <div className="btn-shadow"

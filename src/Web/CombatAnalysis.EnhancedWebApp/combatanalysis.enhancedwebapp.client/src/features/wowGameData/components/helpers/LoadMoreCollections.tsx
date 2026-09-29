@@ -1,8 +1,8 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import React, { useContext, useEffect, useState } from 'react';
-import type { UserCollectionModel } from '../../types/UserCollectionModel';
+import type { WoWAccountCollectionItemModel } from '../../types/collections/WoWAccountCollectionItemModel';
 
-const LoadMoreCollections: React.FC<{ collection: UserCollectionModel[], getItem(item: UserCollectionModel): React.ReactElement }> = ({ collection, getItem }) => {
+const LoadMoreCollections: React.FC<{ collection: WoWAccountCollectionItemModel[], getItem(item: WoWAccountCollectionItemModel): React.ReactElement }> = ({ collection, getItem }) => {
     const pageSize = 50;
 
     const context = useContext(WoWGameDataContext);
@@ -14,7 +14,7 @@ const LoadMoreCollections: React.FC<{ collection: UserCollectionModel[], getItem
     const { t } = context;
 
     const [size, setSize] = useState<number>(pageSize);
-    const [filteredCollection, setFilteredCollection] = useState<UserCollectionModel[]>([]);
+    const [filteredCollection, setFilteredCollection] = useState<WoWAccountCollectionItemModel[]>([]);
 
     useEffect(() => {
         setFilteredCollection(collection.slice(0, size));

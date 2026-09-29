@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,15 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
     public async Task<IActionResult> GetMount(int mountId, string regionName, CancellationToken cancellationToken)
     {
         var mount = await _httpClient.GetMountAsync(regionName, mountId, cancellationToken);
-        var map = _mapper.Map<SelectedMountDto>(mount);
+        var map = _mapper.Map<SelectedWoWAccountCollectionItemDto>(mount);
+        return Ok(map);
+    }
+
+    [HttpGet("getPet/{petId:int:min(1)}")]
+    public async Task<IActionResult> GetPet(int petId, string regionName, CancellationToken cancellationToken)
+    {
+        var pet = await _httpClient.GetPetAsync(regionName, petId, cancellationToken);
+        var map = _mapper.Map<SelectedWoWAccountCollectionItemDto>(pet);
         return Ok(map);
     }
 
@@ -45,5 +53,13 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
     {
         var mythicKeystoneLeaderboard = await _service.GetMythicKeystoneLeaderboardAsync(connectedRealmId, periodId, regionName, cancellationToken);
         return Ok(mythicKeystoneLeaderboard);
+    }
+
+    [HttpGet("getWoWToken/{regionName}")]
+    public async Task<IActionResult> GetWoWToken(string regionName, CancellationToken cancellationToken)
+    {
+        var token = await _httpClient.GetWoWTokenAsync(regionName, cancellationToken);
+        var map = _mapper.Map<WoWTokenDto>(token);
+        return Ok(map);
     }
 }

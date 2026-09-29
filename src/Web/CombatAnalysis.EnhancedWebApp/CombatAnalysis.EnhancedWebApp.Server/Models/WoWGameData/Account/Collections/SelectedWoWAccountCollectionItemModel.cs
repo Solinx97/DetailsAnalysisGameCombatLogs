@@ -1,15 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
+namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
-public class SelectedMountModel
+public class SelectedWoWAccountCollectionItemModel : WoWGameDataEntityModel
 {
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-
     [JsonPropertyName("description")]
     public string Description { get; set; }
 

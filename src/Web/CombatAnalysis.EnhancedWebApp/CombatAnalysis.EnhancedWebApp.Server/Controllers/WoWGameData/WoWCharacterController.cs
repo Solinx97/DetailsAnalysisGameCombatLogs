@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
@@ -33,7 +33,7 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
     public async Task<IActionResult> GetMounts(string username, string serverName, string regionName, CancellationToken cancellationToken)
     {
         var mounts = await _httpClient.GetMountsAsync(serverName, username, regionName, cancellationToken);
-        var map = _mapper.Map<CharacterMountDto[]>(mounts.Mounts);
+        var map = _mapper.Map<WoWAccountCollectionItemDto[]>(mounts.Mounts);
         return Ok(map);
     }
 

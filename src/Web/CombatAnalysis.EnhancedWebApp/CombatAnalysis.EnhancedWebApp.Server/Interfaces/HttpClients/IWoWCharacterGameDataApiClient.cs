@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
@@ -15,7 +15,7 @@ public interface IWoWCharacterGameDataApiClient
 
     Task<CharacterReputaionsResponse> GetReputationsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
-    Task<AccountMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
+    Task<WoWAccountMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
     Task<CharacterSummaryModel> GetProfileSummaryAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 

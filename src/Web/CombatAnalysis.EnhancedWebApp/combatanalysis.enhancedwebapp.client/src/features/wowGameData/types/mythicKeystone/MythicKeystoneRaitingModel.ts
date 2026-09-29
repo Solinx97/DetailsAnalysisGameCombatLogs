@@ -1,6 +1,6 @@
-import type { MythicKeystoneColorModel } from './MythicKeystoneColorModel';
+import type { WoWGameDataColorModel } from '../WoWGameDataColorModel';
 
 export type MythicKeystoneRaitingModel = {
-    color: MythicKeystoneColorModel;
+    color: WoWGameDataColorModel;
     rating: number;
 }
