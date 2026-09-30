@@ -10,4 +10,8 @@ public interface IWoWAccountGameDataApiClient
     Task<WoWAccountMountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken);
 
     Task<WoWAccountPetsResponse> GetPetsAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<WoWAccountToysResponse> GetToysAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<WoWAccountTransmogResponse> GetTransmogsAsync(string regionName, CancellationToken cancellationToken);
 }

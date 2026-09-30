@@ -2,13 +2,13 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
-public class WoWAccountPetModel
+public class WoWAccountPetModel : IWoWCollectionItemModel
 {
     [JsonPropertyName("id")]
     public long Id { get; set; }
 
     [JsonPropertyName("species")]
-    public WoWGameDataEntityModel Species { get; set; }
+    public WoWGameDataEntityModel Item { get; set; }
 
     [JsonPropertyName("level")]
     public int Level { get; set; }

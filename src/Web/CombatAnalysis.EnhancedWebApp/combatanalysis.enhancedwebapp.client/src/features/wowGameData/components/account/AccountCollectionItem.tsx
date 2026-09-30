@@ -4,9 +4,9 @@ import { WoWAccountCollectionType } from '@/shared/helpers/EnumHelper';
 import { faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext } from 'react';
-import { useGetMountQuery, useGetPetQuery } from '../../api/WoWData.api';
+import { useGetMountQuery, useGetPetQuery, useGetToyQuery } from '../../api/WoWData.api';
 
-const AccountCollectionItem: React.FC<{ colelctionType: number, colelctionId: number }> = ({ colelctionType, colelctionId }) => {
+const AccountCollectionItem: React.FC<{ collectionType: number, colelctionId: number }> = ({ collectionType, colelctionId }) => {
     const context = useContext(WoWGameDataContext);
 
     if (!context) {
@@ -15,26 +15,59 @@ const AccountCollectionItem: React.FC<{ colelctionType: number, colelctionId: nu
 
     const { regionName } = context;
 
-    const { data: collectionItemInfo, isLoading, error } = colelctionType === WoWAccountCollectionType["MOUNT"]
-        ? useGetMountQuery({ mountId: colelctionId, regionName })
-        : useGetPetQuery({ petId: colelctionId, regionName });
+    const mountCollectionItemInfoQuery = useGetMountQuery({ mountId: colelctionId, regionName },
+        {
+            skip: collectionType !== WoWAccountCollectionType.MOUNT,
+        }
+    );
+    const petCollectionItemInfoQuery = useGetPetQuery({ petId: colelctionId, regionName },
+        {
+            skip: collectionType !== WoWAccountCollectionType.PET,
+        }
+    );
+    const toyCollectionItemInfoQuery = useGetToyQuery({ toyId: colelctionId, regionName },
+        {
+            skip: collectionType !== WoWAccountCollectionType.TOY,
+        }
+    );
 
-    if (!collectionItemInfo || isLoading || error) {
+    const collectionItemInfoItems =
+        collectionType === WoWAccountCollectionType.MOUNT
+            ? mountCollectionItemInfoQuery.data
+            : collectionType === WoWAccountCollectionType.PET
+                ? petCollectionItemInfoQuery.data
+                : toyCollectionItemInfoQuery.data;
+
+    const isLoading =
+        collectionType === WoWAccountCollectionType.MOUNT
+            ? mountCollectionItemInfoQuery.isLoading
+            : collectionType === WoWAccountCollectionType.PET
+                ? petCollectionItemInfoQuery.isLoading
+                : toyCollectionItemInfoQuery.isLoading;
+
+    const error =
+        collectionType === WoWAccountCollectionType.MOUNT
+            ? mountCollectionItemInfoQuery.error
+            : collectionType === WoWAccountCollectionType.PET
+                ? petCollectionItemInfoQuery.error
+                : toyCollectionItemInfoQuery.error;
+
+    if (!collectionItemInfoItems || isLoading || error) {
         return (<ResponseInformation
             error={error}
-            isLoading={!collectionItemInfo || isLoading}
+            isLoading={!collectionItemInfoItems || isLoading}
         />);
     }
 
     return (
         <div className="details">
-            <div>{collectionItemInfo.description}</div>
+            <div>{collectionItemInfoItems.description}</div>
             <div className="how-receive">
                 <div className="btn-shadow">
                     <FontAwesomeIcon
                         icon={faQuestion}
                     />
-                    <div>{collectionItemInfo.source?.name}</div>
+                    <div>{collectionItemInfoItems.source?.name}</div>
                 </div>
             </div>
         </div>

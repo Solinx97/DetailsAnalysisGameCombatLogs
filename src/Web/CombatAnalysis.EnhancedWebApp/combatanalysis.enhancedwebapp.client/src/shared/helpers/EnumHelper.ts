@@ -71,5 +71,11 @@ export const CharacterEquipmentQuality = {
 
 export const WoWAccountCollectionType = {
     MOUNT: 0,
-    PET: 1
+    PET: 1,
+    TOY: 2,
+} as const;
+
+export const WoWAccountTransmogType = {
+    SET: 0,
+    SLOT: 1,
 } as const;

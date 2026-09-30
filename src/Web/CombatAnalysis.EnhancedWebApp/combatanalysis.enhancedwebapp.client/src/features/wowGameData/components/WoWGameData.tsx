@@ -11,6 +11,7 @@ import { useLazyGetRealmsQuery } from '../api/WoWData.api';
 import type { WoWRealmModel } from '../types/WoWRealmModel';
 import AccountCharacters from './account/AccountCharacters';
 import AccountCollections from './account/AccountCollections';
+import AccountTransmogs from './account/AccountTransmogs';
 import AchievementsCategory from './achievements/AchievementsCategory';
 import CharacterReputations from './CharacterReputations';
 import CharacterDungeons from './dungeons/CharacterDungeons';
@@ -41,6 +42,8 @@ const WoWGameData: React.FC = () => {
     const [showReputations, setShowReputations] = useState<boolean>(false);
     const [showMounts, setShowMounts] = useState<boolean>(false);
     const [showPets, setShowPets] = useState<boolean>(false);
+    const [showToys, setShowToys] = useState<boolean>(false);
+    const [showTransmogs, setShowTransmogs] = useState<boolean>(false);
     const [showProfessions, setShowProfessions] = useState<boolean>(false);
 
     const [serversOptions, setServersOptions] = useState<OptionMode[]>([]);
@@ -158,11 +161,9 @@ const WoWGameData: React.FC = () => {
         );
     }
 
-    const charactersData = () => {
+    const accountData = () => {
         return (
-            <div className="account">
-                {selectionUser()}
-                <WoWToken />
+            <>
                 <div className="account-data">
                     <div className="btn-shadow"
                         onClick={() => setShowCharacters(prev => !prev)}>
@@ -249,6 +250,73 @@ const WoWGameData: React.FC = () => {
                         collectionType={WoWAccountCollectionType["PET"]}
                     />
                 }
+                <div className="account-data">
+                    <div className="btn-shadow"
+                        onClick={() => setShowToys(prev => !prev)}>
+                        <FontAwesomeIcon
+                            icon={faLocationCrosshairs}
+                        />
+                        <div>{t("Toys")}</div>
+                    </div>
+                    <div className="auth">
+                        {isAuthorized.authenticated
+                            ? <FontAwesomeIcon
+                                icon={faCheck}
+                                color="green"
+                            />
+                            : <div className="btn-shadow">
+                                <FontAwesomeIcon
+                                    icon={faArrowsSpin}
+                                    color="orange"
+                                />
+                                <div>{t("MustConnectBattleNet")}</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                {showToys &&
+                    <AccountCollections
+                        collectionType={WoWAccountCollectionType["TOY"]}
+                    />
+                }
+                <div className="account-data">
+                    <div className="btn-shadow"
+                        onClick={() => setShowTransmogs(prev => !prev)}>
+                        <FontAwesomeIcon
+                            icon={faLocationCrosshairs}
+                        />
+                        <div>{t("Transmogs")}</div>
+                    </div>
+                    <div className="auth">
+                        {isAuthorized.authenticated
+                            ? <FontAwesomeIcon
+                                icon={faCheck}
+                                color="green"
+                            />
+                            : <div className="btn-shadow">
+                                <FontAwesomeIcon
+                                    icon={faArrowsSpin}
+                                    color="orange"
+                                />
+                                <div>{t("MustConnectBattleNet")}</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                {showTransmogs &&
+                    <AccountTransmogs
+                    />
+                }
+            </>
+        );
+    }
+
+    const charactersData = () => {
+        return (
+            <div className="account">
+                {selectionUser()}
+                <WoWToken />
+                {accountData()}
                 <div className="btn-shadow"
                     onClick={() => setShowEquipments(prev => !prev)}>
                     <FontAwesomeIcon

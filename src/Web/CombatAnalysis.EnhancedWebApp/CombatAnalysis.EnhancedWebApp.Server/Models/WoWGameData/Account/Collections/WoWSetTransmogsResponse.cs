@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
-public class WoWPetsResponse : IWoWCollectionResponse
+public class WoWSetTransmogsResponse : IWoWCollectionResponse
 {
-    [JsonPropertyName("pets")]
+    [JsonPropertyName("appearance_sets")]
     public WoWGameDataEntityModel[] Items { get; set; }
 }

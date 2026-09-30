@@ -1,5 +1,6 @@
 import type { SelectedAchievementModel } from '../types/achievements/SelectedAchievementModel';
 import type { SelectedWoWAccountCollectionItemModel } from '../types/collections/SelectedWoWAccountCollectionItemModel';
+import type { SelectedWoWAccountToyItemModel } from '../types/collections/SelectedWoWAccountToyItemModel';
 import type { MythicKeystoneLeaderboardModel } from '../types/mythicKeystone/MythicKeystoneLeaderboardModel';
 import type { WoWRealmModel } from '../types/WoWRealmModel';
 import type { WoWTokenModel } from '../types/WoWTokenModel';
@@ -19,6 +20,9 @@ export const WoWDataApi = BattleNetDataApi.injectEndpoints({
         getPet: builder.query<SelectedWoWAccountCollectionItemModel, { petId: number, regionName: string }>({
             query: ({ petId, regionName }) => `/WoWData/getPet/${petId}?regionName=${regionName}`,
         }),
+        getToy: builder.query<SelectedWoWAccountToyItemModel, { toyId: number, regionName: string }>({
+            query: ({ toyId, regionName }) => `/WoWData/getToy/${toyId}?regionName=${regionName}`,
+        }),
         getMythicKeystoneLeaderboard: builder.query<MythicKeystoneLeaderboardModel, { connectedRealmId: number, periodId: number, regionName: string }>({
             query: ({ connectedRealmId, periodId, regionName }) => `/WoWData/getMythicKeystoneLeaderboard/${connectedRealmId}?periodId=${periodId}&regionName=${regionName}`,
         }),
@@ -33,6 +37,7 @@ export const {
     useGetAchievementQuery,
     useGetMountQuery,
     useGetPetQuery,
+    useGetToyQuery,
     useGetMythicKeystoneLeaderboardQuery,
     useGetWoWTokenQuery,
 } = WoWDataApi;

@@ -35,4 +35,25 @@ public class WoWAccountController(IWoWAccountService service, IWoWAccountGameDat
         var pets = await _service.GetAccountPetsAsync(regionName, cancellationToken);
         return Ok(pets);
     }
+
+    [HttpGet("getToys")]
+    public async Task<IActionResult> GetToys(string regionName, CancellationToken cancellationToken)
+    {
+        var toys = await _service.GetAccountToysAsync(regionName, cancellationToken);
+        return Ok(toys);
+    }
+
+    [HttpGet("getSetTransmogs")]
+    public async Task<IActionResult> GetSetTransmogs(string regionName, CancellationToken cancellationToken)
+    {
+        var setTransmogs = await _service.GetAccountSetTransmogsAsync(regionName, cancellationToken);
+        return Ok(setTransmogs);
+    }
+
+    [HttpGet("getSlotTransmogs")]
+    public async Task<IActionResult> GetSlotTransmogs(string regionName, CancellationToken cancellationToken)
+    {
+        var slotTransmogs = await _service.GetAccountSlotTransmogsAsync(regionName, cancellationToken);
+        return Ok(slotTransmogs);
+    }
 }

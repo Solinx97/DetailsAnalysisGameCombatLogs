@@ -1,9 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
-public class WoWMountsResponse
+public class WoWMountsResponse : IWoWCollectionResponse
 {
     [JsonPropertyName("mounts")]
-    public WoWGameDataEntityModel[] Mounts { get; set; }
+    public WoWGameDataEntityModel[] Items { get; set; }
 }

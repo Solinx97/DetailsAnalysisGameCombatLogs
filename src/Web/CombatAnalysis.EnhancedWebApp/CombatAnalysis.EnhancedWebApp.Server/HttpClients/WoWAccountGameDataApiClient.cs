@@ -21,7 +21,7 @@ public class WoWAccountGameDataApiClient(HttpClient httpClient) : IWoWAccountGam
     {
         var response = await _httpClient.GetAsync($"profile/user/wow/collections/mounts?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<WoWAccountMountsResponse>();
+        var result = await response.Content.ReadFromJsonAsync<WoWAccountMountsResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
@@ -29,7 +29,23 @@ public class WoWAccountGameDataApiClient(HttpClient httpClient) : IWoWAccountGam
     {
         var response = await _httpClient.GetAsync($"profile/user/wow/collections/pets?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<WoWAccountPetsResponse>();
+        var result = await response.Content.ReadFromJsonAsync<WoWAccountPetsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<WoWAccountToysResponse> GetToysAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"profile/user/wow/collections/toys?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWAccountToysResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<WoWAccountTransmogResponse> GetTransmogsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"profile/user/wow/collections/transmogs?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWAccountTransmogResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 }

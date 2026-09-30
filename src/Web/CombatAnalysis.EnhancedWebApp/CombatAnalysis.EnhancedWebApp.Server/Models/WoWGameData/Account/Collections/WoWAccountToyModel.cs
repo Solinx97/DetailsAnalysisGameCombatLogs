@@ -2,9 +2,9 @@
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
-public class WoWAccountMountModel : IWoWCollectionItemModel
+public class WoWAccountToyModel : IWoWCollectionItemModel
 {
-    [JsonPropertyName("mount")]
+    [JsonPropertyName("toy")]
     public WoWGameDataEntityModel Item { get; set; }
 
     [JsonPropertyName("is_favorite")]

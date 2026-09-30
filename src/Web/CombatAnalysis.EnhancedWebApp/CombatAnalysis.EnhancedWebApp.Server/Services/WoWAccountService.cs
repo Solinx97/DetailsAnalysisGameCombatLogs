@@ -3,6 +3,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Services;
 
@@ -17,9 +18,9 @@ public class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGame
         var allMounts = await _httpClient.GetMountsAsync(regionName, cancellationToken);
         var acoountMounts = await _accountHttpClient.GetMountsAsync(regionName, cancellationToken);
 
-        WoWAccountCollectionItemDto[] mounts = [.. allMounts.Mounts.Select(x =>
+        WoWAccountCollectionItemDto[] mounts = [.. allMounts.Items.Select(x =>
         {
-            var mount = acoountMounts.Mounts.FirstOrDefault(y => y.Mount.Id == x.Id);
+            var mount = acoountMounts.Mounts.FirstOrDefault(y => y.Item.Id == x.Id);
 
             var result = new WoWAccountCollectionItemDto {
                 Item = _mapper.Map<WoWGameDataEntityDto>(x),
@@ -33,7 +34,33 @@ public class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGame
             return result;
         })];
 
-        return mounts;
+        var orderByFavorite = mounts.OrderByDescending(x => x.Info != null && x.Info.IsFavorite).ToArray();
+        return orderByFavorite;
+    }
+
+    public async Task<WoWAccountCollectionItemDto[]> GetAccountToysAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var allToys = await _httpClient.GetToysAsync(regionName, cancellationToken);
+        var acoountToys = await _accountHttpClient.GetToysAsync(regionName, cancellationToken);
+
+        WoWAccountCollectionItemDto[] toys = [.. allToys.Items.Select(x =>
+        {
+            var toy = acoountToys.Toys.FirstOrDefault(y => y.Item.Id == x.Id);
+
+            var result = new WoWAccountCollectionItemDto {
+                Item = _mapper.Map<WoWGameDataEntityDto>(x),
+                Info = toy != null
+                    ? new WoWAccountCollectionItemInfoDto {
+                        IsFavorite =  toy.IsFavorite,
+                    }
+                    : null
+            };
+
+            return result;
+        })];
+
+        var orderByFavorite = toys.OrderByDescending(x => x.Info != null && x.Info.IsFavorite).ToArray();
+        return orderByFavorite;
     }
 
     public async Task<WoWAccountCollectionItemDto[]> GetAccountPetsAsync(string regionName, CancellationToken cancellationToken)
@@ -41,9 +68,9 @@ public class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGame
         var allPets = await _httpClient.GetPetsAsync(regionName, cancellationToken);
         var accountPets = await _accountHttpClient.GetPetsAsync(regionName, cancellationToken);
 
-        WoWAccountCollectionItemDto[] pets = [.. allPets.Pets.Select(x =>
+        WoWAccountCollectionItemDto[] pets = [.. allPets.Items.Select(x =>
         {
-            var pet = accountPets.Pets.FirstOrDefault(y => y.Species.Id == x.Id);
+            var pet = accountPets.Pets.FirstOrDefault(y => y.Item.Id == x.Id);
 
             var result = new WoWAccountCollectionItemDto {
                 Item = _mapper.Map<WoWGameDataEntityDto>(x),
@@ -61,6 +88,72 @@ public class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGame
             return result;
         })];
 
-        return pets;
+        var orderByFavorite = pets.OrderByDescending(x => x.Info != null && x.Info.IsFavorite).ToArray();
+        return orderByFavorite;
+    }
+
+    public async Task<WoWAccountCollectionItemDto[]> GetAccountSetTransmogsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var allSetTransmogs = await _httpClient.GetSetsTransmogsAsync(regionName, cancellationToken);
+        var acoountTransmogs = await _accountHttpClient.GetTransmogsAsync(regionName, cancellationToken);
+
+        WoWAccountCollectionItemDto[] setTransmogs = [.. allSetTransmogs.Items.Select(x =>
+        {
+            var transmog = acoountTransmogs.AppearanceSets.FirstOrDefault(y => y.Id == x.Id);
+
+            var result = new WoWAccountCollectionItemDto {
+                Item = _mapper.Map<WoWGameDataEntityDto>(x),
+                Info = transmog != null
+                    ? new WoWAccountCollectionItemInfoDto()
+                    : null
+            };
+
+            return result;
+        })];
+
+        return setTransmogs;
+    }
+
+    public async Task<Dictionary<string, WoWAccountCollectionItemDto[]>> GetAccountSlotTransmogsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<string, WoWAccountCollectionItemDto[]>();
+
+        var acoountTransmogs = await _accountHttpClient.GetTransmogsAsync(regionName, cancellationToken);
+        var slots = acoountTransmogs.Slots.Select(x => x.Slot.Type).ToList();
+        foreach (var item in slots)
+        {
+            var slotTransmogs = await GetAccountSlotTransmogsByTypeAsync(acoountTransmogs, regionName, item, cancellationToken);
+            result.TryAdd(item, slotTransmogs);
+        }
+
+        return result;
+    }
+
+    private async Task<WoWAccountCollectionItemDto[]> GetAccountSlotTransmogsByTypeAsync(WoWAccountTransmogResponse acoountTransmogs, string regionName, string slotType, CancellationToken cancellationToken)
+    {
+        var allSlotTransmogs = await _httpClient.GetSlotTransmogsAsync(regionName, slotType, cancellationToken);
+
+        WoWAccountCollectionItemDto[] slotTransmogs = [.. allSlotTransmogs.Items.Select(x =>
+        {
+            var transmogSlot = acoountTransmogs.Slots.FirstOrDefault(y => y.Slot.Type == slotType);
+            if (transmogSlot == null) {
+                return new WoWAccountCollectionItemDto {
+                    Item = _mapper.Map<WoWGameDataEntityDto>(x)
+                };
+            }
+
+            var transmog = transmogSlot.Appearances.FirstOrDefault(y => y.Id == x.Id);
+
+            var result = new WoWAccountCollectionItemDto {
+                Item = _mapper.Map<WoWGameDataEntityDto>(x),
+                Info = transmog != null
+                    ? new WoWAccountCollectionItemInfoDto()
+                    : null
+            };
+
+            return result;
+        })];
+
+        return slotTransmogs;
     }
 }

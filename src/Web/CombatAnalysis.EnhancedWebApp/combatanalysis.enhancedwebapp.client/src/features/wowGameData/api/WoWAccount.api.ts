@@ -10,14 +10,26 @@ export const WoWAccountApi = BattleNetDataApi.injectEndpoints({
         getAccountMounts: builder.query<WoWAccountCollectionItemModel[], { regionName: string }>({
             query: ({ regionName }) => `/WoWAccount/getMounts?regionName=${regionName}`,
         }),
+        getAccountToys: builder.query<WoWAccountCollectionItemModel[], { regionName: string }>({
+            query: ({ regionName }) => `/WoWAccount/getToys?regionName=${regionName}`,
+        }),
         getAccountPets: builder.query<WoWAccountCollectionItemModel[], { regionName: string }>({
             query: ({ regionName }) => `/WoWAccount/getPets?regionName=${regionName}`,
+        }),
+        getAccountSetTransmogs: builder.query<WoWAccountCollectionItemModel[], { regionName: string }>({
+            query: ({ regionName }) => `/WoWAccount/getSetTransmogs?regionName=${regionName}`,
+        }),
+        getAccountSlotTransmogs: builder.query<Map<string, WoWAccountCollectionItemModel[]>, { regionName: string }>({
+            query: ({ regionName }) => `/WoWAccount/getSlotTransmogs?regionName=${regionName}`,
         }),
     })
 })
 
 export const {
     useGetAccountCharactersQuery,
+    useGetAccountToysQuery,
     useGetAccountMountsQuery,
     useGetAccountPetsQuery,
+    useGetAccountSetTransmogsQuery,
+    useGetAccountSlotTransmogsQuery,
 } = WoWAccountApi;

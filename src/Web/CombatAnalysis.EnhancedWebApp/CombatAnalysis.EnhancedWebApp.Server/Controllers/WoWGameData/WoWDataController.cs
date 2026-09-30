@@ -48,6 +48,14 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
         return Ok(map);
     }
 
+    [HttpGet("getToy/{toyId:int:min(1)}")]
+    public async Task<IActionResult> GetToy(int toyId, string regionName, CancellationToken cancellationToken)
+    {
+        var toy = await _httpClient.GetToyAsync(regionName, toyId, cancellationToken);
+        var map = _mapper.Map<SelectedWoWAccountToyItemDto>(toy);
+        return Ok(map);
+    }
+
     [HttpGet("getMythicKeystoneLeaderboard/{connectedRealmId:int:min(1)}")]
     public async Task<IActionResult> GetMythicKeystoneLeaderboard(int connectedRealmId, int periodId, string regionName, CancellationToken cancellationToken)
     {

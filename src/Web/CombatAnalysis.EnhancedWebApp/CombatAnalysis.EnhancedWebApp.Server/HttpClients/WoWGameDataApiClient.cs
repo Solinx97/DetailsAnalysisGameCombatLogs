@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Consts;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
@@ -19,7 +20,7 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<WoWMountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken)
+    public async Task<IWoWCollectionResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"data/wow/mount/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
@@ -35,7 +36,7 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<WoWPetsResponse> GetPetsAsync(string regionName, CancellationToken cancellationToken)
+    public async Task<IWoWCollectionResponse> GetPetsAsync(string regionName, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"data/wow/pet/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
@@ -46,6 +47,46 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
     public async Task<SelectedWoWAccountCollectionItemModel> GetPetAsync(string regionName, int petId, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"data/wow/pet/{petId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<SelectedWoWAccountCollectionItemModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<IWoWCollectionResponse> GetToysAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/toy/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWToysResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<SelectedWoWAccountToyItemModel> GetToyAsync(string regionName, int toyId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/toy/{toyId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<SelectedWoWAccountToyItemModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<IWoWCollectionResponse> GetSetsTransmogsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/item-appearance/set/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWSetTransmogsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<IWoWCollectionResponse> GetSlotTransmogsAsync(string regionName, string slotType, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/item-appearance/slot/{slotType}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWSlotTransmogsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<SelectedWoWAccountCollectionItemModel> GetTransmogAsync(string regionName, int transmogId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/item-appearance/{transmogId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<SelectedWoWAccountCollectionItemModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");

@@ -1,71 +1,26 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
-import ResponseInformation from '@/shared/components/ResponseInformation';
 import { WoWAccountCollectionType } from '@/shared/helpers/EnumHelper';
-import { faLocationCrosshairs, faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faLocationCrosshairs, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
-import { useGetAccountMountsQuery, useGetAccountPetsQuery, useGetAccountToysQuery } from '../../api/WoWAccount.api';
 import type { WoWAccountCollectionItemModel } from '../../types/collections/WoWAccountCollectionItemModel';
 import type { WoWAccountPetInfoModel } from '../../types/collections/WoWAccountPetInfoModel';
 import LoadMoreCollections from '../helpers/LoadMoreCollections';
-import AccountCollectionItem from './AccountCollectionItem';
 import AccountPet from './AccountPet';
 
-const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionType }) => {
+const AccountTransmogSlot: React.FC<{ allCollectionItems: WoWAccountCollectionItemModel[] }> = ({ allCollectionItems }) => {
     const context = useContext(WoWGameDataContext);
 
     if (!context) {
         throw new Error("Child must be inside WoWGameDataContext.Provider");
     }
 
-    const { t, regionName } = context;
+    const { t } = context;
 
     const [collectionItems, setCollectionItems] = useState<WoWAccountCollectionItemModel[]>([]);
     const [accountCollectionItemsCount, setAccountCollectionItemsCount] = useState<number>(0);
     const [onlyNotReceived, setOnlyNotReceived] = useState<boolean>(false);
     const [collectionItemInfoId, seCollectionItemInfoId] = useState<number>(0);
-
-    const mountsQuery = useGetAccountMountsQuery(
-        { regionName },
-        {
-            skip: collectionType !== WoWAccountCollectionType.MOUNT,
-        }
-    );
-
-    const petsQuery = useGetAccountPetsQuery(
-        { regionName },
-        {
-            skip: collectionType !== WoWAccountCollectionType.PET,
-        }
-    );
-
-    const toysQuery = useGetAccountToysQuery(
-        { regionName },
-        {
-            skip: collectionType !== WoWAccountCollectionType.TOY,
-        }
-    );
-
-    const allCollectionItems =
-        collectionType === WoWAccountCollectionType.MOUNT
-            ? mountsQuery.data
-            : collectionType === WoWAccountCollectionType.PET
-                ? petsQuery.data
-                : toysQuery.data;
-
-    const isLoading =
-        collectionType === WoWAccountCollectionType.MOUNT
-            ? mountsQuery.isLoading
-            : collectionType === WoWAccountCollectionType.PET
-                ? petsQuery.isLoading
-                : toysQuery.isLoading;
-
-    const error =
-        collectionType === WoWAccountCollectionType.MOUNT
-            ? mountsQuery.error
-            : collectionType === WoWAccountCollectionType.PET
-                ? petsQuery.error
-                : toysQuery.error;
 
     useEffect(() => {
         if (!allCollectionItems) {
@@ -90,13 +45,6 @@ const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionTy
         }
     }, [onlyNotReceived, allCollectionItems]);
 
-    if (!allCollectionItems || isLoading || error) {
-        return (<ResponseInformation
-            error={error}
-            isLoading={!allCollectionItems || isLoading}
-        />);
-    }
-
     const getItem = (item: WoWAccountCollectionItemModel) => {
         return (
             <div className="selected-collection-item">
@@ -110,18 +58,10 @@ const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionTy
                     </div>
                     <div className={`name ${item.info !== null ? 'received' : 'not-received'}`}>
                         <div className="item">{item.item.name}</div>
-                        <FontAwesomeIcon
-                            icon={faStar}
-                            color={item.info?.isFavorite ? 'white' : 'gray'}
-                        />
                     </div>
                 </div>
                 {collectionItemInfoId === item.item.id &&
                     <>
-                        <AccountCollectionItem
-                            collectionType={collectionType}
-                            colelctionId={item.item.id}
-                        />
                         {(item.info && item.info.type === WoWAccountCollectionType.PET) &&
                             <AccountPet
                                 petInfo={item.info as WoWAccountPetInfoModel}
@@ -136,7 +76,7 @@ const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionTy
     return (
         <div className="account-collection">
             <div className="account-collection__title">
-                <h6>{t("CollectionCount")}:</h6>
+                <h6>{t("TransmogSlots")}:</h6>
                 {onlyNotReceived
                     ? <h6 className="account-collection-count count">
                         <span>{collectionItems.length}</span>
@@ -164,4 +104,4 @@ const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionTy
     );
 }
 
-export default AccountCollections;
+export default AccountTransmogSlot;

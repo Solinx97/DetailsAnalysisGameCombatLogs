@@ -127,6 +127,7 @@ public class ProxyApiMapper : Profile
         CreateMap<WoWRealmModel, WoWRealmDto>();
 
         CreateMap<SelectedWoWAccountCollectionItemModel, SelectedWoWAccountCollectionItemDto>();
+        CreateMap<SelectedWoWAccountToyItemModel, SelectedWoWAccountToyItemDto>();
 
         CreateMap<WoWAccountRespone, WoWAccountResponseDto>();
         CreateMap<WoWAccountModel, WoWAccountDto>()

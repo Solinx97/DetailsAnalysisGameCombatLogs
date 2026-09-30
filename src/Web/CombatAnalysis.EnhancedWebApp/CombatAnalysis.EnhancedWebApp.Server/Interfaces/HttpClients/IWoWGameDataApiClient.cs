@@ -9,13 +9,23 @@ public interface IWoWGameDataApiClient
 {
     Task<RealmsResponse> GetRealmsAsync(string regionName, CancellationToken cancellationToken);
 
-    Task<WoWMountsResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken);
+    Task<IWoWCollectionResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken);
 
     Task<SelectedWoWAccountCollectionItemModel> GetMountAsync(string regionName, int mountId, CancellationToken cancellationToken);
 
-    Task<WoWPetsResponse> GetPetsAsync(string regionName, CancellationToken cancellationToken);
+    Task<IWoWCollectionResponse> GetPetsAsync(string regionName, CancellationToken cancellationToken);
 
     Task<SelectedWoWAccountCollectionItemModel> GetPetAsync(string regionName, int petId, CancellationToken cancellationToken);
+
+    Task<IWoWCollectionResponse> GetToysAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<SelectedWoWAccountToyItemModel> GetToyAsync(string regionName, int toyId, CancellationToken cancellationToken);
+
+    Task<IWoWCollectionResponse> GetSetsTransmogsAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<IWoWCollectionResponse> GetSlotTransmogsAsync(string regionName, string slotType, CancellationToken cancellationToken);
+
+    Task<SelectedWoWAccountCollectionItemModel> GetTransmogAsync(string regionName, int transmogId, CancellationToken cancellationToken);
 
     Task<AchievementCategoriesModel> GetAchievementCategoryAsync(string regionName, CancellationToken cancellationToken);
 
