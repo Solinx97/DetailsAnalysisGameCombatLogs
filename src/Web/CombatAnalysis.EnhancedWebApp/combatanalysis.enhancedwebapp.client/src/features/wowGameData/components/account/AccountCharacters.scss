@@ -4,7 +4,8 @@
     margin-left: 50px;
 }
 
-.accounts, .servers {
+.accounts,
+.servers {
     .name {
         display: flex;
         align-items: center;
@@ -70,5 +71,87 @@
 
     .no-any-professions {
         opacity: 0.6;
+    }
+}
+
+.account-collection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .account-collection-details {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .selected-collection-item {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &__name {
+            display: flex;
+            gap: 20px;
+        }
+
+        .received,
+        .not-received {
+            padding: 5px 20px;
+            border-radius: 20px;
+        }
+
+        .received {
+            box-shadow: 3px 3px green;
+        }
+
+        .not-received {
+            opacity: 0.6;
+            box-shadow: 2px 2px gray;
+        }
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-left: 50px;
+        }
+
+        .action,
+        .how-receive {
+            display: flex;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.7em;
+        }
+
+        .how-receive .btn-shadow {
+            box-shadow: 2px 2px orange;
+            cursor: default;
+        }
+
+        .pet-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-left: 50px;
+
+            &__category {
+                display: flex;
+                gap: 5px;
+            }
+        }
     }
 }

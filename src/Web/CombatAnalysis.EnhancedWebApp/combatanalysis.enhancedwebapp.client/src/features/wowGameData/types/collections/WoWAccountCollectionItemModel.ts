@@ -1,7 +1,8 @@
 import type { WoWGameDataEntityModel } from '../WoWGameDataEntityModel';
-import type { WoWAccountCollectionInfoModel } from './WoWAccountCollectionInfoModel';
+import type { WoWAccountCollectionItemInfoModel } from './WoWAccountCollectionItemInfoModel';
+import type { WoWAccountPetInfoModel } from './WoWAccountPetInfoModel';
 
 export type WoWAccountCollectionItemModel = {
     item: WoWGameDataEntityModel;
-    info: WoWAccountCollectionInfoModel;
+    info?: WoWAccountCollectionItemInfoModel | WoWAccountPetInfoModel;
 }

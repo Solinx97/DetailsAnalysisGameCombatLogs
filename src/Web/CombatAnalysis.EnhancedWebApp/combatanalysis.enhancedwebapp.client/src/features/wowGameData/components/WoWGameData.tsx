@@ -217,7 +217,7 @@ const WoWGameData: React.FC = () => {
                 </div>
                 {showMounts &&
                     <AccountCollections
-                        colelctionType={WoWAccountCollectionType["MOUNT"]}
+                        collectionType={WoWAccountCollectionType["MOUNT"]}
                     />
                 }
                 <div className="account-data">
@@ -246,7 +246,7 @@ const WoWGameData: React.FC = () => {
                 </div>
                 {showPets &&
                     <AccountCollections
-                        colelctionType={WoWAccountCollectionType["PET"]}
+                        collectionType={WoWAccountCollectionType["PET"]}
                     />
                 }
                 <div className="btn-shadow"

@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 
-public class WoWAccountPetInfoDto : WoWAccountCollectionInfoDto
+public class WoWAccountPetInfoDto : WoWAccountCollectionItemInfoDto
 {
     public long Id { get; set; }
 

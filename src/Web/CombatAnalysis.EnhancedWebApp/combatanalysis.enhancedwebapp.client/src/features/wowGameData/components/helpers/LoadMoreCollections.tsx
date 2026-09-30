@@ -21,9 +21,9 @@ const LoadMoreCollections: React.FC<{ collection: WoWAccountCollectionItemModel[
     }, [collection, size]);
 
     return (
-        <ul className="character-collection__container">
+        <ul className="account-collection__container">
             {filteredCollection.map((item, index) => (
-                <li key={index} className="character-collection__item">
+                <li key={index} className="account-collection__item">
                     {getItem(item)}
                 </li>
             ))

@@ -8,8 +8,10 @@ import type { WoWAccountCollectionItemModel } from '../../types/collections/WoWA
 import LoadMoreCollections from '../helpers/LoadMoreCollections';
 import { WoWAccountCollectionType } from '@/shared/helpers/EnumHelper';
 import AccountCollectionItem from './AccountCollectionItem';
+import AccountPet from './AccountPet';
+import type { WoWAccountPetInfoModel } from '../../types/collections/WoWAccountPetInfoModel';
 
-const AccountCollections: React.FC<{ colelctionType: number }> = ({ colelctionType }) => {
+const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionType }) => {
     const context = useContext(WoWGameDataContext);
 
     if (!context) {
@@ -23,9 +25,34 @@ const AccountCollections: React.FC<{ colelctionType: number }> = ({ colelctionTy
     const [onlyNotReceived, setOnlyNotReceived] = useState<boolean>(false);
     const [collectionItemInfoId, seCollectionItemInfoId] = useState<number>(0);
 
-    const { data: allCollectionItems, isLoading, error } = colelctionType === WoWAccountCollectionType["MOUNT"]
-        ? useGetAccountMountsQuery({ regionName })
-        : useGetAccountPetsQuery({ regionName });
+    const mountsQuery = useGetAccountMountsQuery(
+        { regionName },
+        {
+            skip: collectionType !== WoWAccountCollectionType.MOUNT,
+        }
+    );
+
+    const petsQuery = useGetAccountPetsQuery(
+        { regionName },
+        {
+            skip: collectionType !== WoWAccountCollectionType.PET,
+        }
+    );
+
+    const allCollectionItems =
+        collectionType === WoWAccountCollectionType.MOUNT
+            ? mountsQuery.data
+            : petsQuery.data;
+
+    const isLoading =
+        collectionType === WoWAccountCollectionType.MOUNT
+            ? mountsQuery.isLoading
+            : petsQuery.isLoading;
+
+    const error =
+        collectionType === WoWAccountCollectionType.MOUNT
+            ? mountsQuery.error
+            : petsQuery.error;
 
     useEffect(() => {
         if (!allCollectionItems) {
@@ -59,8 +86,8 @@ const AccountCollections: React.FC<{ colelctionType: number }> = ({ colelctionTy
 
     const getItem = (item: WoWAccountCollectionItemModel) => {
         return (
-            <div className="selected-character-collection">
-                <div className="selected-character-collection__name">
+            <div className="selected-collection-item">
+                <div className="selected-collection-item__name">
                     <div className="action btn-shadow"
                         onClick={() => seCollectionItemInfoId(prev => prev === item.item.id ? 0 : item.item.id)}>
                         <FontAwesomeIcon
@@ -73,37 +100,38 @@ const AccountCollections: React.FC<{ colelctionType: number }> = ({ colelctionTy
                     </div>
                 </div>
                 {collectionItemInfoId === item.item.id &&
-                    <AccountCollectionItem
-                        colelctionType={colelctionType}
-                        colelctionId={item.item.id}
-                    />
+                    <>
+                        <AccountCollectionItem
+                            colelctionType={collectionType}
+                            colelctionId={item.item.id}
+                        />
+                        {(item.info && item.info.type === WoWAccountCollectionType.PET) &&
+                            <AccountPet
+                                petInfo={item.info as WoWAccountPetInfoModel}
+                            />
+                        }
+                    </>
                 }
             </div>
         );
     }
 
     return (
-        <div className="character-collection">
-            <div className="character-collection__title">
+        <div className="account-collection">
+            <div className="account-collection__title">
                 <h6>{t("Mounts")}:</h6>
                 {onlyNotReceived
-                    ? <h6 className="character-collection-count count">
+                    ? <h6 className="account-collection-count count">
                         <span>{collectionItems.length}</span>
                     </h6>
-                    : <h6 className="character-collection-count count">
+                    : <h6 className="account-collection-count count">
                         <span>{accountMountCount}</span>
                         <span>/</span>
                         <span>{collectionItems.length}</span>
                     </h6>
                 }
-                <h6 className="character-collection-count count">
-                    <span>{accountMountCount}</span>
-                    <span>/</span>
-                    <span>{collectionItems.length}</span>
-                </h6>
             </div>
-            <div className="character-collection-details">
-                <h6 className="count">{collectionItems.length - collectionItems.length}</h6>
+            <div className="account-collection-details">
                 <div className="form-check">
                     <input className="form-check-input" type="checkbox" value="" id="checkIndeterminate"
                         defaultChecked={onlyNotReceived}

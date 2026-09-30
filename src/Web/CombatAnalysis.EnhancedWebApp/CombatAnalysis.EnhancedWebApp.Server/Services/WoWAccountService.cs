@@ -24,7 +24,7 @@ public class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGame
             var result = new WoWAccountCollectionItemDto {
                 Item = _mapper.Map<WoWGameDataEntityDto>(x),
                 Info = mount != null
-                    ? new WoWAccountPetInfoDto {
+                    ? new WoWAccountCollectionItemInfoDto {
                         IsFavorite =  mount.IsFavorite,
                     }
                     : null

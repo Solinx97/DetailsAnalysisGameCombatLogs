@@ -4,5 +4,5 @@ public class WoWAccountCollectionItemDto
 {
     public WoWGameDataEntityDto Item { get; set; }
 
-    public WoWAccountCollectionInfoDto? Info { get; set; }
+    public WoWAccountCollectionItemInfoDto? Info { get; set; }
 }

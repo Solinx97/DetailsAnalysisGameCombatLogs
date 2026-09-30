@@ -17,6 +17,10 @@
     box-shadow: 2px 2px gray;
 }
 
+.special-name {
+    box-shadow: 2px 2px green;
+}
+
 .load-more {
     cursor: pointer;
 
@@ -132,67 +136,12 @@
     }
 }
 
-.character-collection {
-    .character-collection-details {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .selected-character-collection {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        &__name {
-            display: flex;
-            gap: 20px;
-        }
-
-        .received,
-        .not-received {
-            padding: 5px 20px;
-            border-radius: 20px;
-        }
-
-        .received {
-            box-shadow: 3px 3px green;
-        }
-
-        .not-received {
-            opacity: 0.6;
-            box-shadow: 2px 2px gray;
-        }
-
-        .details {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-left: 50px;
-        }
-
-        .action,
-        .how-receive {
-            display: flex;
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.7em;
-        }
-
-        .how-receive .btn-shadow {
-            box-shadow: 2px 2px orange;
-            cursor: default;
-        }
-    }
-}
-
 .achievements {
     display: flex;
     gap: 50px;
 }
 
 .reputations,
-.character-collection,
 .achievements-category,
 .achievements {
     &__container {
@@ -268,7 +217,6 @@
 }
 
 .reputations,
-.character-collection,
 .equipments,
 .achievements-category {
     display: flex;
@@ -292,7 +240,6 @@
 }
 
 .reputations,
-.character-collection,
 .equipments {
     &__item {
         display: flex;

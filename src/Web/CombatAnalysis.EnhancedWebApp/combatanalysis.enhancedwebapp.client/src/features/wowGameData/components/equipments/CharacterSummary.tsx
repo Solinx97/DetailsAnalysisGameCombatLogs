@@ -49,7 +49,7 @@ const CharacterSummary: React.FC = () => {
             </ul>
             {characterSummary.guild &&
                 <ul className="summary__container">
-                    <li className="summary__item special category">
+                    <li className="summary__item special special-name">
                         <div className="item">{t("Guild")}</div>
                     </li>
                     <li className="summary__item special">
@@ -64,13 +64,13 @@ const CharacterSummary: React.FC = () => {
                 </ul>
             }
             <ul className="summary__container">
-                <li className="summary__item special category">
+                <li className="summary__item special special-name">
                     <div className="item">{t("AchievementPoints")}</div>
                 </li>
                 <li className="summary__item special">
                     <div className="item">{characterSummary.achievementPoints}</div>
                 </li>
-                <li className="summary__item special category">
+                <li className="summary__item special special-name">
                     <div className="item">{t("EquippedItemLevel")}</div>
                 </li>
                 <li className="summary__item special">
