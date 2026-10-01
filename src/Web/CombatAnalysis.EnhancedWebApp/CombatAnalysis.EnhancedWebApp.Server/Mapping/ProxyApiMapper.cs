@@ -68,12 +68,17 @@ public class ProxyApiMapper : Profile
         CreateMap<CharacterStatPowerRatingModel, CharacterStatPowerRatingDto>();
         CreateMap<CharacterStatPowerModel, CharacterStatPowerDto>();
 
-        CreateMap<MythicKeystoneModel, MythicKeystoneDto>();
+        CreateMap<MythicKeystoneModel, MythicKeystoneDto>()
+            .ForMember(
+                dest => dest.Seasons,
+                opt => opt.MapFrom(src => src.Seasons.OrderBy(x => x.Id).ToList()));
         CreateMap<MythicKeystoneCurrentPeriodModel, MythicKeystoneCurrentPeriodDto>();
-        CreateMap<DungeonCharacterModel, DungeonCharacterDto>();
+        CreateMap<WoWGameDataCharacterModel, WoWGameDataCharacterDto>();
         CreateMap<MythicKeystoneRaitingModel, MythicKeystoneRaitingDto>();
         CreateMap<MythicKeystoneMemberModel, MythicKeystoneMemberDto>();
         CreateMap<MythicKeystoneBestRunModel, MythicKeystoneBestRunDto>();
+
+        CreateMap<MythicKeystoneSeasonModel, MythicKeystoneSeasonDto>();
 
         CreateMap<MythicKeystoneDungeonLeaderboardAfixModel, MythicKeystoneDungeonLeaderboardAfixDto>();
         CreateMap<MythicKeystoneDungeonLeaderboardGroupMemberModel, MythicKeystoneDungeonLeaderboardGroupMemberDto>();
@@ -114,6 +119,13 @@ public class ProxyApiMapper : Profile
                 opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.Timestamp)));
         CreateMap<CharacterAchievementsModel, CharacterAchievementsDto>();
         CreateMap<AchievementCategoriesModel, AchievementCategoriesDto>();
+
+        CreateMap<CharacterAchievementStatisticsCategoryModel, CharacterAchievementStatisticsCategoryDto>();
+        CreateMap<CharacterAchievementStatisticsSubCategoryModel, CharacterAchievementStatisticsSubCategoryDto>();
+        CreateMap<CharacterAchievementStatisticModel, CharacterAchievementStatisticDto>()
+            .ForMember(
+                dest => dest.LastUpdatedTime,
+                opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.LastUpdatedTimestamp)));
 
         CreateMap<AchievementSelectedCategoryModel, AchievementSelectedCategoryDto>();
         CreateMap<AchievementSelectedCategoryFactionModel, AchievementSelectedCategoryFactionDto>();

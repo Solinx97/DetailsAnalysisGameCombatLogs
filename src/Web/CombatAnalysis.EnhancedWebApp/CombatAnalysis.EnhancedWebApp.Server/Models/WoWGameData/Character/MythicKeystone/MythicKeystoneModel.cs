@@ -11,7 +11,7 @@ public class MythicKeystoneModel
     public WoWGameDataEntityModel[] Seasons { get; set; }
 
     [JsonPropertyName("character")]
-    public DungeonCharacterModel Character { get; set; }
+    public WoWGameDataCharacterModel Character { get; set; }
 
     [JsonPropertyName("current_mythic_rating")]
     public MythicKeystoneRaitingModel CurrentMythicRating { get; set; }

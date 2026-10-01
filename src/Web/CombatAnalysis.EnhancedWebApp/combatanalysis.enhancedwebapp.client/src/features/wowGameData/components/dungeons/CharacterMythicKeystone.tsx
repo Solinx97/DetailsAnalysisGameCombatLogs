@@ -7,6 +7,7 @@ import { useGetCharacterMythicKeystoneQuery } from '../../api/WoWCharacter.api';
 import MythicKeystoneLeaderboard from './MythicKeystoneLeaderboard';
 
 import './Dungeons.scss';
+import CharacterMythicKeystoneSeason from './CharacterMythicKeystoneSeason';
 
 const CharacterMythicKeystone: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -19,6 +20,8 @@ const CharacterMythicKeystone: React.FC = () => {
 
     const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
     const [showLeaderboard, setShowLeaderborad] = useState<boolean>(false);
+    const [selectedSeasonId, setSelectedSeasonId] = useState<number>(0);
+    const [selectedSeasonIndex, setSelectedSeasonIndex] = useState<number>(0);
 
     const { data: mythicKeystone, isLoading, error } = useGetCharacterMythicKeystoneQuery({ username, serverName, regionName },
         {
@@ -37,8 +40,36 @@ const CharacterMythicKeystone: React.FC = () => {
         />);
     }
 
+    const seasonsHandle = (seasonId: number, index: number) => {
+        setSelectedSeasonId(prev => prev === seasonId ? 0 : seasonId);
+        setSelectedSeasonIndex(index);
+    }
+
     return (
         <div className="mythic-keystone">
+            <ul className="seasons">
+                {mythicKeystone.seasons.map((season, index) => (
+                    <li key={season.id} className="season">
+                        <div className="btn-shadow"
+                            onClick={() => seasonsHandle(season.id, index)}>
+                            <FontAwesomeIcon
+                                icon={selectedSeasonId === season.id ? faLocationCrosshairs : faPlus}
+                            />
+                            <div>{t("Season")} {index} {season.id}</div>
+                        </div>
+                    </li>
+                ))
+                }
+            </ul>
+            {selectedSeasonId > 0 &&
+                <>
+                    <div>{t("Season")} {selectedSeasonIndex}</div>
+                    <CharacterMythicKeystoneSeason
+                        seasonId={selectedSeasonId}
+                    />
+                </>
+
+            }
             <div className="leaderboard">
                 <div className="btn-shadow"
                     onClick={() => setShowLeaderborad(prev => !prev)}>
@@ -63,23 +94,26 @@ const CharacterMythicKeystone: React.FC = () => {
                     <div>{mythicKeystone?.currentMythicRating.rating.toFixed(2)}</div>
                 </div>
             </div>
-            <ul className="current-period">
-                {mythicKeystone.currentPeriod.bestRuns.map((run, index) => (
-                    <li key={index} className="run">
-                        <div className="level">
-                            <div className="btn-shadow">
-                                <FontAwesomeIcon
-                                    icon={faKey}
-                                />
-                                <div>{run.level}</div>
+            {mythicKeystone.currentPeriod.bestRuns.length === 0
+                ? <div>{t("NoAnyKeyFinishedYet")}</div>
+                : <ul className="current-period">
+                    {mythicKeystone.currentPeriod.bestRuns.map((run, index) => (
+                        <li key={index} className="run">
+                            <div className="level">
+                                <div className="btn-shadow">
+                                    <FontAwesomeIcon
+                                        icon={faKey}
+                                    />
+                                    <div>{run.level}</div>
+                                </div>
+                                <div>{run.mythicRating.rating.toFixed(2)}</div>
                             </div>
-                            <div>{run.mythicRating.rating.toFixed(2)}</div>
-                        </div>
-                        <div>{run.dungeon.name}</div>
-                    </li>
-                ))
-                }
-            </ul>
+                            <div>{run.dungeon.name}</div>
+                        </li>
+                    ))
+                    }
+                </ul>
+            }
         </div>
     );
 }

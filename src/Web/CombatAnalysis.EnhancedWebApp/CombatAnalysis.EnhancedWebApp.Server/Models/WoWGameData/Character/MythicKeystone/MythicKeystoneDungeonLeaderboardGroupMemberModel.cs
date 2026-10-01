@@ -5,7 +5,7 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Myth
 public class MythicKeystoneDungeonLeaderboardGroupMemberModel
 {
     [JsonPropertyName("profile")]
-    public DungeonCharacterModel Character { get; set; }
+    public WoWGameDataCharacterModel Character { get; set; }
 
     [JsonPropertyName("faction")]
     public WoWGameDataTypeModel Faction { get; set; }

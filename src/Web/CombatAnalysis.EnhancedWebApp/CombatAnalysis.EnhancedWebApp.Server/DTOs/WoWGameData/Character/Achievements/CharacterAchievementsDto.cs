@@ -1,6 +1,4 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
-
-namespace CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
+﻿namespace CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
 
 public class CharacterAchievementsDto
 {
@@ -14,5 +12,5 @@ public class CharacterAchievementsDto
 
     public CharacterAchievementRecentEventsDto[] RecentEvents { get; set; }
 
-    public DungeonCharacterDto Character { get; set; }
+    public WoWGameDataCharacterDto Character { get; set; }
 }

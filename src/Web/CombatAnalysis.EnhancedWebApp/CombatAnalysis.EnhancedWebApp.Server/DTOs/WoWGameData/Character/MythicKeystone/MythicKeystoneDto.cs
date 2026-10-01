@@ -6,7 +6,7 @@ public class MythicKeystoneDto
 
     public WoWGameDataEntityDto[] Seasons { get; set; }
 
-    public DungeonCharacterDto Character { get; set; }
+    public WoWGameDataCharacterDto Character { get; set; }
 
     public MythicKeystoneRaitingDto CurrentMythicRating { get; set; }
 }

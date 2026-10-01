@@ -1,5 +1,6 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import ResponseInformation from '@/shared/components/ResponseInformation';
+import useFormatting from '@/shared/hooks/useFormatting';
 import { faKey, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useState } from 'react';
@@ -7,7 +8,6 @@ import { useGetMythicKeystoneLeaderboardQuery } from '../../api/WoWData.api';
 import type { MythicKeystoneDungeonLeaderboardModel } from '../../types/mythicKeystone/MythicKeystoneDungeonLeaderboardModel';
 import MythicKeystoneLeaderboardDungeon from './MythicKeystoneLeaderboardDungeon';
 
-import useFormatting from '@/shared/hooks/useFormatting';
 import './Dungeons.scss';
 
 const MythicKeystoneLeaderboard: React.FC<{ connectedRealmId: number, periodId: number }> = ({ connectedRealmId, periodId }) => {

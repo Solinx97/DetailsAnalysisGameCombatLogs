@@ -13,6 +13,8 @@ public interface IWoWCharacterGameDataApiClient
 {
     Task<CharacterAchievementsModel> GetAchievementsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
+    Task<CharacterAchievementStatisticsResponse> GetAchievementStatisticsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
+
     Task<CharacterReputaionsResponse> GetReputationsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
     Task<WoWAccountMountsResponse> GetMountsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
@@ -24,6 +26,8 @@ public interface IWoWCharacterGameDataApiClient
     Task<CharacterStatsModel> GetStatsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 
     Task<MythicKeystoneModel> GetMythicKeystoneAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
+
+    Task<MythicKeystoneSeasonModel> GetMythicKeystoneSeasonAsync(string serverName, int seasonId, string username, string regionName, CancellationToken cancellationToken);
 
     Task<CharacterDungeonModel> GetRaidsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken);
 

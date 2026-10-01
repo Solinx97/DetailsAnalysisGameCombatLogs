@@ -11,7 +11,16 @@
 }
 
 .mythic-keystone {
-    .leaderboard {
+    .season, .leaderboard {
+        display: flex;
+    }
+
+    .seasons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .rating {
         display: flex;
     }
 }

@@ -11,8 +11,8 @@ import { useLazyGetRealmsQuery } from '../api/WoWData.api';
 import type { WoWRealmModel } from '../types/WoWRealmModel';
 import AccountCharacters from './account/AccountCharacters';
 import AccountCollections from './account/AccountCollections';
-import AccountTransmogs from './account/AccountTransmogs';
 import AchievementsCategory from './achievements/AchievementsCategory';
+import AchievementsStatistics from './achievements/AchievementsStatistics';
 import CharacterReputations from './CharacterReputations';
 import CharacterDungeons from './dungeons/CharacterDungeons';
 import CharacterMythicKeystone from './dungeons/CharacterMythicKeystone';
@@ -34,6 +34,7 @@ const WoWGameData: React.FC = () => {
     const [username, setUsername] = useState<string>("");
 
     const [showCharacters, setShowCharacters] = useState<boolean>(false);
+    const [showStatistics, setShowStatistics] = useState<boolean>(false);
     const [showEquipments, setShowEquipments] = useState<boolean>(false);
     const [showMythicKeystone, setShowMythicKeystone] = useState<boolean>(false);
     const [showRaids, setShowRaids] = useState<boolean>(false);
@@ -43,7 +44,6 @@ const WoWGameData: React.FC = () => {
     const [showMounts, setShowMounts] = useState<boolean>(false);
     const [showPets, setShowPets] = useState<boolean>(false);
     const [showToys, setShowToys] = useState<boolean>(false);
-    const [showTransmogs, setShowTransmogs] = useState<boolean>(false);
     const [showProfessions, setShowProfessions] = useState<boolean>(false);
 
     const [serversOptions, setServersOptions] = useState<OptionMode[]>([]);
@@ -280,8 +280,7 @@ const WoWGameData: React.FC = () => {
                     />
                 }
                 <div className="account-data">
-                    <div className="btn-shadow"
-                        onClick={() => setShowTransmogs(prev => !prev)}>
+                    <div className="btn-shadow_disabled">
                         <FontAwesomeIcon
                             icon={faLocationCrosshairs}
                         />
@@ -303,10 +302,6 @@ const WoWGameData: React.FC = () => {
                         }
                     </div>
                 </div>
-                {showTransmogs &&
-                    <AccountTransmogs
-                    />
-                }
             </>
         );
     }
@@ -317,6 +312,17 @@ const WoWGameData: React.FC = () => {
                 {selectionUser()}
                 <WoWToken />
                 {accountData()}
+                <div className="btn-shadow"
+                    onClick={() => setShowStatistics(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faLocationCrosshairs}
+                    />
+                    <div>{t("Statistics")}</div>
+                </div>
+                {showStatistics &&
+                    <AchievementsStatistics
+                    />
+                }
                 <div className="btn-shadow"
                     onClick={() => setShowEquipments(prev => !prev)}>
                     <FontAwesomeIcon
@@ -333,7 +339,7 @@ const WoWGameData: React.FC = () => {
                     <FontAwesomeIcon
                         icon={faLocationCrosshairs}
                     />
-                    <div>{t("WeekMythicKeystone")}</div>
+                    <div>{t("MythicKeystone")}</div>
                 </div>
                 {showMythicKeystone &&
                     <CharacterMythicKeystone

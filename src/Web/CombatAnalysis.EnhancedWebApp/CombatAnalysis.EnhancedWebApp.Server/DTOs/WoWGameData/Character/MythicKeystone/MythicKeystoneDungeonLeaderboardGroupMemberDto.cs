@@ -2,7 +2,7 @@
 
 public class MythicKeystoneDungeonLeaderboardGroupMemberDto
 {
-    public DungeonCharacterDto Character { get; set; }
+    public WoWGameDataCharacterDto Character { get; set; }
 
     public WoWGameDataTypeDto Faction { get; set; }
 

@@ -69,6 +69,14 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
         return Ok(map);
     }
 
+    [HttpGet("getMythicKeystoneSeason/{username}")]
+    public async Task<IActionResult> GetMythicKeystoneSeason(string username, int seasonId, string serverName, string regionName, CancellationToken cancellationToken)
+    {
+        var mythicKeystoneSeason = await _httpClient.GetMythicKeystoneSeasonAsync(serverName, seasonId, username, regionName, cancellationToken);
+        var map = _mapper.Map<MythicKeystoneSeasonDto>(mythicKeystoneSeason);
+        return Ok(map);
+    }
+
     [HttpGet("getRaids/{username}")]
     public async Task<IActionResult> GetRaids(string username, string serverName, string regionName, CancellationToken cancellationToken)
     {
@@ -85,8 +93,8 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
         return Ok(map);
     }
 
-    [HttpGet("getAchievementCategory/{username}")]
-    public async Task<IActionResult> GetAchievementCategory(string username, string serverName, string regionName, CancellationToken cancellationToken)
+    [HttpGet("getAchievementsCategory/{username}")]
+    public async Task<IActionResult> GetAchievementsCategory(string username, string serverName, string regionName, CancellationToken cancellationToken)
     {
         var categories = await _achivmentService.GetCharacterAchievementCategoryAsync(serverName, username, regionName, cancellationToken);
         var map = _mapper.Map<AchievementCategoriesDto>(categories);
@@ -98,6 +106,14 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
     {
         var category = await _achivmentService.GetCharacterAchievementCategoryAsync(serverName, username, regionName, categoryId, cancellationToken);
         var map = _mapper.Map<AchievementSelectedCategoryDto>(category);
+        return Ok(map);
+    }
+
+    [HttpGet("getAchievementsStatisticsCategory/{username}")]
+    public async Task<IActionResult> GetAchievementsStatisticsCategory(string username, string serverName, string regionName, CancellationToken cancellationToken)
+    {
+        var statistics = await _httpClient.GetAchievementStatisticsAsync(serverName, username, regionName, cancellationToken);
+        var map = _mapper.Map<CharacterAchievementStatisticsCategoryDto[]>(statistics.Categories);
         return Ok(map);
     }
 

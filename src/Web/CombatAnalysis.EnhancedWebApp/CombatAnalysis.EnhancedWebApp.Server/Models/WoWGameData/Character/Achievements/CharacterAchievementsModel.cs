@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 
@@ -21,5 +20,5 @@ public class CharacterAchievementsModel
     public CharacterAchievementRecentEventsModel[] RecentEvents { get; set; }
 
     [JsonPropertyName("character")]
-    public DungeonCharacterModel Character { get; set; }
+    public WoWGameDataCharacterModel Character { get; set; }
 }

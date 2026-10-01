@@ -114,6 +114,7 @@
     .expansion-raids,
     .dungeon,
     .achievements-category,
+    .achievements-statistics-category,
     .dungeon-encounters,
     .achievements {
         margin-left: 50px;
@@ -136,14 +137,7 @@
     }
 }
 
-.achievements {
-    display: flex;
-    gap: 50px;
-}
-
-.reputations,
-.achievements-category,
-.achievements {
+.reputations {
     &__container {
         display: flex;
         flex-direction: column;
@@ -151,74 +145,8 @@
     }
 }
 
-.achievements-category,
-.achievements {
-    &__item {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-
-        .name {
-            width: auto;
-        }
-
-        .item {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .reputation-value {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 5px 20px;
-            box-shadow: 2px 2px green;
-            border-radius: 20px;
-        }
-
-        .completed {
-            box-shadow: 2px 2px green;
-        }
-
-        .not-completed {
-            box-shadow: 2px 2px gray;
-            opacity: 0.7;
-        }
-    }
-}
-
-.selected-achievements {
-    &__item {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-
-        .selected-achievement {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 20px;
-
-            .description {
-                font-size: 0.8em;
-                opacity: 0.7;
-            }
-        }
-
-        .when {
-            margin-left: 50px;
-            font-size: 0.8em;
-            opacity: 0.7;
-        }
-    }
-}
-
 .reputations,
-.equipments,
-.achievements-category {
+.equipments {
     display: flex;
     flex-direction: column;
     gap: 10px;

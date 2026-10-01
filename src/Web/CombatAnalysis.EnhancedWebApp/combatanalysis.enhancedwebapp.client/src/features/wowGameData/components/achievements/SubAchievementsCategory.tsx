@@ -9,7 +9,7 @@ import SelectedAchievemnt from './SelectedAchievemnt';
 
 interface SubAchievementsCategoryProps {
     categoryId: number;
-    onlyNotCompleted: boolean;
+    onlyNotCompleted?: boolean;
 }
 
 const SubAchievementsCategory: React.FC<SubAchievementsCategoryProps> = ({ categoryId, onlyNotCompleted }) => {

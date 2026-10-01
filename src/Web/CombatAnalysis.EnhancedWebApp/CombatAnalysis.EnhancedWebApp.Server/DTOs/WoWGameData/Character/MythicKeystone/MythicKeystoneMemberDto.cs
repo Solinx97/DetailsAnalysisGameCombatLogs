@@ -2,7 +2,7 @@
 
 public class MythicKeystoneMemberDto
 {
-    public DungeonCharacterDto Character { get; set; }
+    public WoWGameDataCharacterDto Character { get; set; }
 
     public WoWGameDataEntityDto Specialization { get; set; }
 

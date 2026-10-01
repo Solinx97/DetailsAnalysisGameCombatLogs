@@ -6,6 +6,8 @@ import { useContext, useState } from 'react';
 import { useGetAchievementAllCategoryQuery } from '../../api/WoWCharacter.api';
 import SubAchievementsCategory from './SubAchievementsCategory';
 
+import './Achievements.scss';
+
 const AchievementsCategory: React.FC = () => {
     const context = useContext(WoWGameDataContext);
 
