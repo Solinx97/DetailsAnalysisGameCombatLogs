@@ -4,10 +4,11 @@ import { faDashboard, faKey, faLocationCrosshairs, faPlus } from '@fortawesome/f
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
 import { useGetCharacterMythicKeystoneQuery } from '../../api/WoWCharacter.api';
+import CharacterMythicKeystoneSeason from './CharacterMythicKeystoneSeason';
 import MythicKeystoneLeaderboard from './MythicKeystoneLeaderboard';
+import SelectedMythicKeystoneDungeon from './SelectedMythicKeystoneDungeon';
 
 import './Dungeons.scss';
-import CharacterMythicKeystoneSeason from './CharacterMythicKeystoneSeason';
 
 const CharacterMythicKeystone: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -21,7 +22,7 @@ const CharacterMythicKeystone: React.FC = () => {
     const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
     const [showLeaderboard, setShowLeaderborad] = useState<boolean>(false);
     const [selectedSeasonId, setSelectedSeasonId] = useState<number>(0);
-    const [selectedSeasonIndex, setSelectedSeasonIndex] = useState<number>(0);
+    const [selectedDungeon, setSelectedDungeon] = useState<string | undefined>("");
 
     const { data: mythicKeystone, isLoading, error } = useGetCharacterMythicKeystoneQuery({ username, serverName, regionName },
         {
@@ -40,22 +41,21 @@ const CharacterMythicKeystone: React.FC = () => {
         />);
     }
 
-    const seasonsHandle = (seasonId: number, index: number) => {
+    const seasonsHandle = (seasonId: number) => {
         setSelectedSeasonId(prev => prev === seasonId ? 0 : seasonId);
-        setSelectedSeasonIndex(index);
     }
 
     return (
         <div className="mythic-keystone">
             <ul className="seasons">
-                {mythicKeystone.seasons.map((season, index) => (
+                {mythicKeystone.seasons.map(season => (
                     <li key={season.id} className="season">
                         <div className="btn-shadow"
-                            onClick={() => seasonsHandle(season.id, index)}>
+                            onClick={() => seasonsHandle(season.id)}>
                             <FontAwesomeIcon
                                 icon={selectedSeasonId === season.id ? faLocationCrosshairs : faPlus}
                             />
-                            <div>{t("Season")} {index} {season.id}</div>
+                            <div>{t("Season")} {season.id}</div>
                         </div>
                     </li>
                 ))
@@ -63,12 +63,11 @@ const CharacterMythicKeystone: React.FC = () => {
             </ul>
             {selectedSeasonId > 0 &&
                 <>
-                    <div>{t("Season")} {selectedSeasonIndex}</div>
+                    <div>{t("Season")} {selectedSeasonId}</div>
                     <CharacterMythicKeystoneSeason
                         seasonId={selectedSeasonId}
                     />
                 </>
-
             }
             <div className="leaderboard">
                 <div className="btn-shadow"
@@ -106,9 +105,22 @@ const CharacterMythicKeystone: React.FC = () => {
                                     />
                                     <div>{run.level}</div>
                                 </div>
-                                <div>{run.mythicRating.rating.toFixed(2)}</div>
+                                <div className="special">{run.mythicRating.rating.toFixed(2)}</div>
                             </div>
-                            <div>{run.dungeon.name}</div>
+                            <div className="dungeon-name">
+                                <div className="btn-shadow"
+                                    onClick={() => setSelectedDungeon(prev => prev === run.dungeon.name ? "" : run.dungeon.name)}>
+                                    <FontAwesomeIcon
+                                        icon={faLocationCrosshairs}
+                                    />
+                                    <div>{run.dungeon.name}</div>
+                                </div>
+                            </div>
+                            {selectedDungeon === run.dungeon.name &&
+                                <SelectedMythicKeystoneDungeon
+                                    run={run}
+                                />
+                            }
                         </li>
                     ))
                     }

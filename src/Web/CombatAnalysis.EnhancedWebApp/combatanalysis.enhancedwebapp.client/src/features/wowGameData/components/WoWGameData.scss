@@ -34,6 +34,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
+    margin-bottom: 25px;
 
     &__character {
         display: flex;
@@ -207,14 +208,14 @@
     gap: 10px;
 
     .character {
-        box-shadow: 2px 2px white;
+        box-shadow: 3px 3px #FFFF;
         border-radius: 20px;
         padding: 5px 20px;
         cursor: default;
     }
 
     .selected {
-        box-shadow: 2px 2px green;
+        box-shadow: 3px 3px #10e38f;
     }
 
     svg {

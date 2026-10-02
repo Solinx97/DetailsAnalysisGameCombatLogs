@@ -73,6 +73,7 @@ export const WoWAccountCollectionType = {
     MOUNT: 0,
     PET: 1,
     TOY: 2,
+    DECOR: 3,
 } as const;
 
 export const WoWAccountTransmogType = {

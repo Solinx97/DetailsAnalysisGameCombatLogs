@@ -4,6 +4,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Decor;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.HttpClients;
@@ -87,6 +88,22 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
     public async Task<SelectedWoWAccountCollectionItemModel> GetTransmogAsync(string regionName, int transmogId, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"data/wow/item-appearance/{transmogId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<SelectedWoWAccountCollectionItemModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<IWoWCollectionResponse> GetDecorsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/decor/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<WoWDecorsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<SelectedWoWAccountCollectionItemModel> GetDecorAsync(string regionName, int decorId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/decor/{decorId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<SelectedWoWAccountCollectionItemModel>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");

@@ -23,6 +23,9 @@ export const WoWDataApi = BattleNetDataApi.injectEndpoints({
         getToy: builder.query<SelectedWoWAccountToyItemModel, { toyId: number, regionName: string }>({
             query: ({ toyId, regionName }) => `/WoWData/getToy/${toyId}?regionName=${regionName}`,
         }),
+        getDecor: builder.query<SelectedWoWAccountToyItemModel, { decorId: number, regionName: string }>({
+            query: ({ decorId, regionName }) => `/WoWData/getDecor/${decorId}?regionName=${regionName}`,
+        }),
         getMythicKeystoneLeaderboard: builder.query<MythicKeystoneLeaderboardModel, { connectedRealmId: number, periodId: number, regionName: string }>({
             query: ({ connectedRealmId, periodId, regionName }) => `/WoWData/getMythicKeystoneLeaderboard/${connectedRealmId}?periodId=${periodId}&regionName=${regionName}`,
         }),
@@ -38,6 +41,7 @@ export const {
     useGetMountQuery,
     useGetPetQuery,
     useGetToyQuery,
+    useGetDecorQuery,
     useGetMythicKeystoneLeaderboardQuery,
     useGetWoWTokenQuery,
 } = WoWDataApi;

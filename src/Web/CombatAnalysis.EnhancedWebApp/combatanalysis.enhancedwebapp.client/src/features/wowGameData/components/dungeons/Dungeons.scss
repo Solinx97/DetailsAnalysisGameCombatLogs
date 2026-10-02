@@ -11,7 +11,9 @@
 }
 
 .mythic-keystone {
-    .season, .leaderboard {
+
+    .season,
+    .leaderboard {
         display: flex;
     }
 
@@ -22,6 +24,28 @@
 
     .rating {
         display: flex;
+    }
+
+    .dungeon-members {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-left: 50px;
+
+        &__member {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 5px;
+
+            .equipments {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                margin: 0;
+            }
+        }
     }
 }
 
@@ -60,7 +84,8 @@
     }
 }
 
-.mythic-keystone-leaderboard, .mythic-keystone {
+.mythic-keystone-leaderboard,
+.mythic-keystone {
     display: flex;
     flex-direction: column;
     gap: 15px;

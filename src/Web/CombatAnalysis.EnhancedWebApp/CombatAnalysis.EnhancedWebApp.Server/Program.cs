@@ -11,7 +11,6 @@ using CombatAnalysis.EnhancedWebApp.Server.Mapping;
 using CombatAnalysis.EnhancedWebApp.Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Diagnostics;
 using Serilog;
 using Serilog.Events;
 
@@ -57,6 +56,7 @@ builder.Services.AddHttpClient<IWoWGameDataAuthApiClient, WoWGameDataAuthApiClie
 
 builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<IWoWAccountService, WoWAccountService>();
+builder.Services.AddScoped<IWoWCharacterService, WoWCharacterService>();
 builder.Services.AddScoped<IMythicKeystoneService, MythicKeystoneService>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 builder.Services.AddScoped<RequireRefreshTokenAttribute>();

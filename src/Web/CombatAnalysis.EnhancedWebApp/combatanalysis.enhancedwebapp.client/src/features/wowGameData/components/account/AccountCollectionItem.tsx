@@ -4,7 +4,7 @@ import { WoWAccountCollectionType } from '@/shared/helpers/EnumHelper';
 import { faQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext } from 'react';
-import { useGetMountQuery, useGetPetQuery, useGetToyQuery } from '../../api/WoWData.api';
+import { useGetDecorQuery, useGetMountQuery, useGetPetQuery, useGetToyQuery } from '../../api/WoWData.api';
 
 const AccountCollectionItem: React.FC<{ collectionType: number, colelctionId: number }> = ({ collectionType, colelctionId }) => {
     const context = useContext(WoWGameDataContext);
@@ -30,27 +30,38 @@ const AccountCollectionItem: React.FC<{ collectionType: number, colelctionId: nu
             skip: collectionType !== WoWAccountCollectionType.TOY,
         }
     );
+    const decorCollectionItemInfoQuery = useGetDecorQuery({ decorId: colelctionId, regionName },
+        {
+            skip: collectionType !== WoWAccountCollectionType.DECOR,
+        }
+    );
 
     const collectionItemInfoItems =
         collectionType === WoWAccountCollectionType.MOUNT
             ? mountCollectionItemInfoQuery.data
             : collectionType === WoWAccountCollectionType.PET
                 ? petCollectionItemInfoQuery.data
-                : toyCollectionItemInfoQuery.data;
+                : collectionType === WoWAccountCollectionType.TOY
+                    ? toyCollectionItemInfoQuery.data
+                    : decorCollectionItemInfoQuery.data;
 
     const isLoading =
         collectionType === WoWAccountCollectionType.MOUNT
             ? mountCollectionItemInfoQuery.isLoading
             : collectionType === WoWAccountCollectionType.PET
                 ? petCollectionItemInfoQuery.isLoading
-                : toyCollectionItemInfoQuery.isLoading;
+                : collectionType === WoWAccountCollectionType.TOY
+                    ? toyCollectionItemInfoQuery.isLoading
+                    : decorCollectionItemInfoQuery.isLoading;
 
     const error =
         collectionType === WoWAccountCollectionType.MOUNT
             ? mountCollectionItemInfoQuery.error
             : collectionType === WoWAccountCollectionType.PET
                 ? petCollectionItemInfoQuery.error
-                : toyCollectionItemInfoQuery.error;
+                : collectionType === WoWAccountCollectionType.TOY
+                    ? toyCollectionItemInfoQuery.error
+                    : decorCollectionItemInfoQuery.error;
 
     if (!collectionItemInfoItems || isLoading || error) {
         return (<ResponseInformation

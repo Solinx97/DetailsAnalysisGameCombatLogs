@@ -3,6 +3,7 @@ import type { AchievementCategoriesModel } from '../types/achievements/Achieveme
 import type { AchievementSelectedCategoryModel } from '../types/achievements/AchievementSelectedCategoryModel';
 import type { CharacterAchievementStatisticsCategoryModel } from '../types/achievements/CharacterAchievementStatisticsCategoryModel';
 import type { WoWCharacterSummaryModel } from '../types/character/WoWCharacterSummaryModel';
+import type { WoWAccountCollectionItemModel } from '../types/collections/WoWAccountCollectionItemModel';
 import type { CharacterDungeonModel } from '../types/dungeon/CharacterDungeonModel';
 import type { MythicKeystoneSeasonModel } from '../types/dungeon/MythicKeystoneSeasonModel';
 import type { CharacterEquipmentsResponse } from '../types/equipments/CharacterEquipmentsResponse';
@@ -49,6 +50,9 @@ export const WoWCharacterApi = BattleNetDataApi.injectEndpoints({
         getAchievementsStatistics: builder.query<CharacterAchievementStatisticsCategoryModel[], { username: string, serverName: string, regionName: string }>({
             query: ({ username, serverName, regionName }) => `/WoWCharacter/getAchievementsStatisticsCategory/${username}?serverName=${serverName}&regionName=${regionName}`,
         }),
+        getDecors: builder.query<WoWAccountCollectionItemModel[], { username: string, serverName: string, regionName: string }>({
+            query: ({ username, serverName, regionName }) => `/WoWCharacter/getDecors/${username}?serverName=${serverName}&regionName=${regionName}`,
+        }),
     })
 })
 
@@ -65,4 +69,5 @@ export const {
     useGetAchievementsByCategoryQuery,
     useGetProfessionsQuery,
     useGetAchievementsStatisticsQuery,
+    useGetDecorsQuery,
 } = WoWCharacterApi;

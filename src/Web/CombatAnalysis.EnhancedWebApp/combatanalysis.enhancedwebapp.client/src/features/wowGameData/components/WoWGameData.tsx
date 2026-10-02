@@ -34,6 +34,7 @@ const WoWGameData: React.FC = () => {
     const [username, setUsername] = useState<string>("");
 
     const [showCharacters, setShowCharacters] = useState<boolean>(false);
+    const [showDecors, setShowDecors] = useState<boolean>(false);
     const [showStatistics, setShowStatistics] = useState<boolean>(false);
     const [showEquipments, setShowEquipments] = useState<boolean>(false);
     const [showMythicKeystone, setShowMythicKeystone] = useState<boolean>(false);
@@ -219,6 +220,7 @@ const WoWGameData: React.FC = () => {
                 {showMounts &&
                     <AccountCollections
                         collectionType={WoWAccountCollectionType["MOUNT"]}
+                        isAllowInfo={true}
                     />
                 }
                 <div className="account-data">
@@ -248,6 +250,7 @@ const WoWGameData: React.FC = () => {
                 {showPets &&
                     <AccountCollections
                         collectionType={WoWAccountCollectionType["PET"]}
+                        isAllowInfo={true}
                     />
                 }
                 <div className="account-data">
@@ -277,6 +280,7 @@ const WoWGameData: React.FC = () => {
                 {showToys &&
                     <AccountCollections
                         collectionType={WoWAccountCollectionType["TOY"]}
+                        isAllowInfo={true}
                     />
                 }
                 <div className="account-data">
@@ -312,6 +316,19 @@ const WoWGameData: React.FC = () => {
                 {selectionUser()}
                 <WoWToken />
                 {accountData()}
+                <div className="btn-shadow"
+                    onClick={() => setShowDecors(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faLocationCrosshairs}
+                    />
+                    <div>{t("Decors")}</div>
+                </div>
+                {showDecors &&
+                    <AccountCollections
+                        collectionType={WoWAccountCollectionType["DECOR"]}
+                        isAllowInfo={false}
+                    />
+                }
                 <div className="btn-shadow"
                     onClick={() => setShowStatistics(prev => !prev)}>
                     <FontAwesomeIcon

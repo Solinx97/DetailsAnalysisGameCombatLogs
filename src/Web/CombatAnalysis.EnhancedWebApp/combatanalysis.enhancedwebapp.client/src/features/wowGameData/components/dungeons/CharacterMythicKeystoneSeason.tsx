@@ -1,9 +1,10 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import ResponseInformation from '@/shared/components/ResponseInformation';
-import { faKey, faDashboard } from '@fortawesome/free-solid-svg-icons';
+import { faDashboard, faKey, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
 import { useGetCharacterMythicKeystoneSeasonQuery } from '../../api/WoWCharacter.api';
+import SelectedMythicKeystoneDungeon from './SelectedMythicKeystoneDungeon';
 
 const CharacterMythicKeystoneSeason: React.FC<{ seasonId: number }> = ({ seasonId }) => {
     const context = useContext(WoWGameDataContext);
@@ -15,6 +16,7 @@ const CharacterMythicKeystoneSeason: React.FC<{ seasonId: number }> = ({ seasonI
     const { t, username, serverName, regionName } = context;
 
     const [isSkipRequest, setIsSkipRequest] = useState<boolean>(false);
+    const [selectedDungeon, setSelectedDungeon] = useState<string | undefined>("");
 
     const { data: mythicKeystoneSeason, isLoading, error } = useGetCharacterMythicKeystoneSeasonQuery({ username, seasonId, serverName, regionName },
         {
@@ -55,9 +57,22 @@ const CharacterMythicKeystoneSeason: React.FC<{ seasonId: number }> = ({ seasonI
                                     />
                                     <div>{run.level}</div>
                                 </div>
-                                <div>{run.mythicRating.rating.toFixed(2)}</div>
+                                <div className="special">{run.mythicRating.rating.toFixed(2)}</div>
                             </div>
-                            <div>{run.dungeon.name}</div>
+                            <div className="dungeon-name">
+                                <div className="btn-shadow"
+                                    onClick={() => setSelectedDungeon(prev => prev === run.dungeon.name ? "" : run.dungeon.name)}>
+                                    <FontAwesomeIcon
+                                        icon={faLocationCrosshairs}
+                                    />
+                                    <div>{run.dungeon.name}</div>
+                                </div>
+                            </div>
+                            {selectedDungeon === run.dungeon.name &&
+                                <SelectedMythicKeystoneDungeon
+                                    run={run}
+                                />
+                            }
                         </li>
                     ))
                     }

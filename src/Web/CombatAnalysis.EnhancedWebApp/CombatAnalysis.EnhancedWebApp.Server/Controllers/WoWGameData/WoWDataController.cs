@@ -56,6 +56,14 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
         return Ok(map);
     }
 
+    [HttpGet("getDecor/{decorId:int:min(1)}")]
+    public async Task<IActionResult> GetDecor(int decorId, string regionName, CancellationToken cancellationToken)
+    {
+        var decor = await _httpClient.GetDecorAsync(regionName, decorId, cancellationToken);
+        var map = _mapper.Map<SelectedWoWAccountCollectionItemDto>(decor);
+        return Ok(map);
+    }
+
     [HttpGet("getMythicKeystoneLeaderboard/{connectedRealmId:int:min(1)}")]
     public async Task<IActionResult> GetMythicKeystoneLeaderboard(int connectedRealmId, int periodId, string regionName, CancellationToken cancellationToken)
     {

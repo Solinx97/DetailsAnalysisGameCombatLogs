@@ -5,20 +5,21 @@ import { faLocationCrosshairs, faPlus, faStar } from '@fortawesome/free-solid-sv
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext, useEffect, useState } from 'react';
 import { useGetAccountMountsQuery, useGetAccountPetsQuery, useGetAccountToysQuery } from '../../api/WoWAccount.api';
+import { useGetDecorsQuery } from '../../api/WoWCharacter.api';
 import type { WoWAccountCollectionItemModel } from '../../types/collections/WoWAccountCollectionItemModel';
 import type { WoWAccountPetInfoModel } from '../../types/collections/WoWAccountPetInfoModel';
 import LoadMoreCollections from '../helpers/LoadMoreCollections';
 import AccountCollectionItem from './AccountCollectionItem';
 import AccountPet from './AccountPet';
 
-const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionType }) => {
+const AccountCollections: React.FC<{ collectionType: number, isAllowInfo: boolean }> = ({ collectionType, isAllowInfo }) => {
     const context = useContext(WoWGameDataContext);
 
     if (!context) {
         throw new Error("Child must be inside WoWGameDataContext.Provider");
     }
 
-    const { t, regionName } = context;
+    const { t, username, serverName, regionName } = context;
 
     const [collectionItems, setCollectionItems] = useState<WoWAccountCollectionItemModel[]>([]);
     const [accountCollectionItemsCount, setAccountCollectionItemsCount] = useState<number>(0);
@@ -46,26 +47,39 @@ const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionTy
         }
     );
 
+    const decorsQuery = useGetDecorsQuery(
+        { username, serverName, regionName },
+        {
+            skip: collectionType !== WoWAccountCollectionType.DECOR,
+        }
+    );
+
     const allCollectionItems =
         collectionType === WoWAccountCollectionType.MOUNT
             ? mountsQuery.data
             : collectionType === WoWAccountCollectionType.PET
                 ? petsQuery.data
-                : toysQuery.data;
+                : collectionType === WoWAccountCollectionType.TOY
+                    ? toysQuery.data
+                    : decorsQuery.data;
 
     const isLoading =
         collectionType === WoWAccountCollectionType.MOUNT
             ? mountsQuery.isLoading
             : collectionType === WoWAccountCollectionType.PET
                 ? petsQuery.isLoading
-                : toysQuery.isLoading;
+                : collectionType === WoWAccountCollectionType.TOY
+                    ? toysQuery.isLoading
+                    : decorsQuery.isLoading;
 
     const error =
         collectionType === WoWAccountCollectionType.MOUNT
             ? mountsQuery.error
             : collectionType === WoWAccountCollectionType.PET
                 ? petsQuery.error
-                : toysQuery.error;
+                : collectionType === WoWAccountCollectionType.TOY
+                    ? toysQuery.error
+                    : decorsQuery.error;
 
     useEffect(() => {
         if (!allCollectionItems) {
@@ -101,13 +115,15 @@ const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionTy
         return (
             <div className="selected-collection-item">
                 <div className="selected-collection-item__name">
-                    <div className="action btn-shadow"
-                        onClick={() => seCollectionItemInfoId(prev => prev === item.item.id ? 0 : item.item.id)}>
-                        <FontAwesomeIcon
-                            icon={collectionItemInfoId === item.item.id ? faLocationCrosshairs : faPlus}
-                            color={collectionItemInfoId === item.item.id ? 'green' : 'white'}
-                        />
-                    </div>
+                    {isAllowInfo &&
+                        <div className="action btn-shadow"
+                            onClick={() => seCollectionItemInfoId(prev => prev === item.item.id ? 0 : item.item.id)}>
+                            <FontAwesomeIcon
+                                icon={collectionItemInfoId === item.item.id ? faLocationCrosshairs : faPlus}
+                                color={collectionItemInfoId === item.item.id ? 'green' : 'white'}
+                            />
+                        </div>
+                    }
                     <div className={`name ${item.info !== null ? 'received' : 'not-received'}`}>
                         <div className="item">{item.item.name}</div>
                         <FontAwesomeIcon
@@ -116,7 +132,7 @@ const AccountCollections: React.FC<{ collectionType: number }> = ({ collectionTy
                         />
                     </div>
                 </div>
-                {collectionItemInfoId === item.item.id &&
+                {(isAllowInfo && collectionItemInfoId === item.item.id) &&
                     <>
                         <AccountCollectionItem
                             collectionType={collectionType}

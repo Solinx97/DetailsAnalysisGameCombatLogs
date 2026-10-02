@@ -27,6 +27,10 @@ public interface IWoWGameDataApiClient
 
     Task<SelectedWoWAccountCollectionItemModel> GetTransmogAsync(string regionName, int transmogId, CancellationToken cancellationToken);
 
+    Task<IWoWCollectionResponse> GetDecorsAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<SelectedWoWAccountCollectionItemModel> GetDecorAsync(string regionName, int decorId, CancellationToken cancellationToken);
+
     Task<AchievementCategoriesModel> GetAchievementCategoryAsync(string regionName, CancellationToken cancellationToken);
 
     Task<AchievementSelectedCategoryModel> GetAchievementCategoryAsync(string regionName, int categoryId, CancellationToken cancellationToken);

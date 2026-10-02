@@ -7,6 +7,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,11 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.WoWGameData;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, IAchievementService achivmentService, IMapper mapper) : ControllerBase
+public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, IAchievementService achivmentService, IWoWCharacterService characterService, IMapper mapper) : ControllerBase
 {
     private readonly IWoWCharacterGameDataApiClient _httpClient = httpClient;
     private readonly IAchievementService _achivmentService = achivmentService;
+    private readonly IWoWCharacterService _characterService = characterService;
     private readonly IMapper _mapper = mapper;
 
     [HttpGet("getReputations/{username}")]
@@ -123,5 +125,12 @@ public class WoWCharacterController(IWoWCharacterGameDataApiClient httpClient, I
         var professions = await _httpClient.GetProfessionsAsync(serverName, username, regionName, cancellationToken);
         var map = _mapper.Map<CharacterProfessionsResponseDto>(professions);
         return Ok(map);
+    }
+
+    [HttpGet("getDecors/{username}")]
+    public async Task<IActionResult> GetDecors(string username, string serverName, string regionName, CancellationToken cancellationToken)
+    {
+        var decors = await _characterService.GetDecorsAsync(regionName, serverName, username, cancellationToken);
+        return Ok(decors);
     }
 }

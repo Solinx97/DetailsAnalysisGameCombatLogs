@@ -38,7 +38,7 @@ const Character: React.FC<{ character: DungeonCharacterModel  }> = ({ character 
             <div className={`character ${username === character.name ? 'selected' : ''}`}>{character.name}</div>
             <FontAwesomeIcon
                 icon={username === character.name ? faCheck : faPlus}
-                color={username === character.name ? 'green' : 'white'}
+                color={username === character.name ? '#10e38f' : '#fffff'}
                 onClick={() => selectCharacterHandle(character)}
             />
         </div>

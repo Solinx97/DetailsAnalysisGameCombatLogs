@@ -3,6 +3,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Decor;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Dungeon;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipments;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
@@ -108,6 +109,14 @@ public class WoWCharacterGameDataApiClient(HttpClient httpClient) : IWoWCharacte
         var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/professions?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<CharacterProfessionsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<CharacterDecorsResponse> GetDecorsAsync(string serverName, string username, string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"profile/wow/character/{serverName}/{username.Trim().ToLower()}/collections/decor?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<CharacterDecorsResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 }

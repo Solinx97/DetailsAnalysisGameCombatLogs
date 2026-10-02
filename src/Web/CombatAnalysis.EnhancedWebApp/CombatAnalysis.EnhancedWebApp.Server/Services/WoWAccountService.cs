@@ -7,7 +7,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collection
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Services;
 
-public class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGameDataApiClient accountHttpClient, IMapper mapper) : IWoWAccountService
+internal class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGameDataApiClient accountHttpClient, IMapper mapper) : IWoWAccountService
 {
     private readonly IWoWGameDataApiClient _httpClient = httpClient;
     private readonly IWoWAccountGameDataApiClient _accountHttpClient = accountHttpClient;

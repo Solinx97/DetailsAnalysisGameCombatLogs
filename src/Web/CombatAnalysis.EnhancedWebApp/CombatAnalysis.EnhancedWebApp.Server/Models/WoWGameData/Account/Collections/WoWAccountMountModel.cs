@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
