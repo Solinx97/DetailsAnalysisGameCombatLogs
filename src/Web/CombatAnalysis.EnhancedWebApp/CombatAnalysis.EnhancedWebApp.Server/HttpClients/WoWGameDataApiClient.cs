@@ -6,6 +6,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collection
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Decor;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Data;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.HttpClients;
 
@@ -18,6 +19,14 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         var response = await _httpClient.GetAsync($"data/wow/realm/index?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<RealmsResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<SearchItemResponse> SearchItemAsync(string regionName, string name, string orderBy, int page, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/search/item?namespace=static-{regionName}&name.{WoWDataLocale.Locale}={name}&orderby={orderBy}:desc&_page={page}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<SearchItemResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
@@ -154,6 +163,14 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         var response = await _httpClient.GetAsync($"data/wow/token/index?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<WoWTokenModel>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<AuctionResponse> GetAuctionHouseCommoditiesAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/auctions/commodities?namespace=dynamic-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<AuctionResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 }

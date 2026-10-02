@@ -1,9 +1,8 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
-import { useGetWoWTokenQuery } from '../api/WoWData.api';
-import { useContext } from 'react';
 import ResponseInformation from '@/shared/components/ResponseInformation';
-import type { WoWTokenModel } from '../types/WoWTokenModel';
 import useFormatting from '@/shared/hooks/useFormatting';
+import { useContext } from 'react';
+import { useGetWoWTokenQuery } from '../api/WoWData.api';
 
 const WoWToken: React.FC = () => {
     const context = useContext(WoWGameDataContext);
@@ -17,12 +16,11 @@ const WoWToken: React.FC = () => {
     
     const { data: token, isLoading, error } = useGetWoWTokenQuery({ regionName });
 
-    const getPrice = (token: WoWTokenModel) => {
-        const price = token.price;
+    const getPrice = (price: number) => {
         const onlyGoldPrice = price / 10000;
 
         return (
-            <div>{t("Price")}: {onlyGoldPrice / 1000} {t("Gold")}</div>
+            <div>{t("Price")}: {onlyGoldPrice / 1000}g {price.toString().slice(-4, -2)}s {price.toString().slice(-2)}c</div>
         );
     }
 
@@ -37,7 +35,7 @@ const WoWToken: React.FC = () => {
         <div>
             <h6>{t("WoWToken")} ({regionName}):</h6>
             <div>{t("LastUpdatedAt")}: {getDate(token.lastUpdatedTime)}</div>
-            <div>{getPrice(token)}</div>
+            <div>{getPrice(token.price)}</div>
         </div>
     );
 }

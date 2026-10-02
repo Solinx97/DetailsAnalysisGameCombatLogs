@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 
-namespace CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+namespace CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 
 public interface IWoWCharacterService
 {

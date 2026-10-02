@@ -2,6 +2,7 @@
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Achievements;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Data;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,11 @@ namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.WoWGameData;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystoneService service, IMapper mapper) : ControllerBase
+public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystoneService service, IWoWItemService itemService, IMapper mapper) : ControllerBase
 {
     private readonly IWoWGameDataApiClient _httpClient = httpClient;
     private readonly IMythicKeystoneService _service = service;
+    private readonly IWoWItemService _itemService = itemService;
     private readonly IMapper _mapper = mapper;
 
     [HttpGet("getRealms/{regionName}")]
@@ -21,6 +23,14 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
     {
         var realms = await _httpClient.GetRealmsAsync(regionName, cancellationToken);
         var map = _mapper.Map<WoWRealmDto[]>(realms.Realms);
+        return Ok(map);
+    }
+
+    [HttpGet("searchItem/{name}")]
+    public async Task<IActionResult> SearchItem(string name, string orderBy, int page, string regionName, CancellationToken cancellationToken)
+    {
+        var item = await _httpClient.SearchItemAsync(regionName, name, orderBy, page, cancellationToken);
+        var map = _mapper.Map<SearchItemResponseDto>(item);
         return Ok(map);
     }
 
@@ -77,5 +87,12 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
         var token = await _httpClient.GetWoWTokenAsync(regionName, cancellationToken);
         var map = _mapper.Map<WoWTokenDto>(token);
         return Ok(map);
+    }
+
+    [HttpGet("getAuction/{regionName}")]
+    public async Task<IActionResult> GetAuction(string regionName, int itemId, CancellationToken cancellationToken)
+    {
+        var auction = await _itemService.GetAuctionAsync(regionName, itemId, cancellationToken);
+        return Ok(auction);
     }
 }

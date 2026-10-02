@@ -2,11 +2,10 @@
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
-using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Services;
 
-public class MythicKeystoneService(IWoWGameDataApiClient httpClient, IMapper mapper) : IMythicKeystoneService
+internal class MythicKeystoneService(IWoWGameDataApiClient httpClient, IMapper mapper) : IMythicKeystoneService
 {
     private readonly IWoWGameDataApiClient _httpClient = httpClient;
     private readonly IMapper _mapper = mapper;

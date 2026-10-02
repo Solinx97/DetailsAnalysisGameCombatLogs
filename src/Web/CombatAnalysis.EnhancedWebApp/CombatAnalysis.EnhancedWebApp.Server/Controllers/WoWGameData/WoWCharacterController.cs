@@ -7,7 +7,6 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;

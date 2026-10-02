@@ -7,6 +7,7 @@ interface WoWGameDataContextValue {
     setUsername: Dispatch<SetStateAction<string>>;
     serversOptions: OptionMode[];
     serverName: string;
+    serverId: number;
     setServerName: Dispatch<SetStateAction<OptionMode | null>>;
     regionName: string;
 }

@@ -2,12 +2,15 @@
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Achievements;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Data;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 
 public interface IWoWGameDataApiClient
 {
     Task<RealmsResponse> GetRealmsAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<SearchItemResponse> SearchItemAsync(string regionName, string name, string orderBy, int page, CancellationToken cancellationToken);
 
     Task<IWoWCollectionResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken);
 
@@ -42,4 +45,6 @@ public interface IWoWGameDataApiClient
     Task<MythicKeystoneDungeonLeaderboardModel> GetMythicDungeonKeystoneLeaderboardAsync(int connectedRealmId, long dungeonId, int periodId, string regionName, CancellationToken cancellationToken);
 
     Task<WoWTokenModel> GetWoWTokenAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<AuctionResponse> GetAuctionHouseCommoditiesAsync(string regionName, CancellationToken cancellationToken);
 }

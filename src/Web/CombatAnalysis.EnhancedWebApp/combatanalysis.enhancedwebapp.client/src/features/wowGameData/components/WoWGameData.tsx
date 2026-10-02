@@ -19,6 +19,7 @@ import CharacterMythicKeystone from './dungeons/CharacterMythicKeystone';
 import CharacterEquipments from './equipments/CharacterEquipments';
 import CharacterProfessions from './professions/CharacterProfessions';
 import WoWToken from './WoWToken';
+import SearchItem from './items/SearchItem';
 
 import './WoWGameData.scss';
 
@@ -46,6 +47,7 @@ const WoWGameData: React.FC = () => {
     const [showPets, setShowPets] = useState<boolean>(false);
     const [showToys, setShowToys] = useState<boolean>(false);
     const [showProfessions, setShowProfessions] = useState<boolean>(false);
+    const [showSearchItems, setShowSearchItems] = useState<boolean>(false);
 
     const [serversOptions, setServersOptions] = useState<OptionMode[]>([]);
     const [serverValue, setServerValue] = useState<OptionMode | null>(serversOptions[0]);
@@ -78,7 +80,7 @@ const WoWGameData: React.FC = () => {
 
         const options = servers.map(
             (item) => ({
-                value: item.slug,
+                value: `${item.slug}#${item.id}`,
                 label: item.name ? item.name : ""
             })
         )
@@ -310,11 +312,30 @@ const WoWGameData: React.FC = () => {
         );
     }
 
+    const items = () => {
+        return (
+            <>
+                <div className="btn-shadow"
+                    onClick={() => setShowSearchItems(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faLocationCrosshairs}
+                    />
+                    <div>{t("SearchItem")}</div>
+                </div>
+                {showSearchItems &&
+                    <SearchItem
+                    />
+                }
+            </>
+        );
+    }
+
     const charactersData = () => {
         return (
             <div className="account">
                 {selectionUser()}
                 <WoWToken />
+                {items()}
                 {accountData()}
                 <div className="btn-shadow"
                     onClick={() => setShowDecors(prev => !prev)}>
@@ -430,7 +451,8 @@ const WoWGameData: React.FC = () => {
             serversOptions: serversOptions,
             setUsername: setUsername,
             setServerName: setServerValue,
-            serverName: serverValue ? serverValue.value : " ",
+            serverName: serverValue ? serverValue.value.split('#')[0] : " ",
+            serverId: serverValue ? parseInt(serverValue.value.split('#')[1]) : 0,
             regionName: regionName
         }}>
             {charactersData()}

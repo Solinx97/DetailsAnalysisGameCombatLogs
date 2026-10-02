@@ -9,6 +9,7 @@ using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Equipments
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Reputation;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Data;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
@@ -19,6 +20,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Equipmen
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.MythicKeystone;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Professions;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Character.Reputation;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Data;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Mapping;
 
@@ -26,6 +28,13 @@ public class ProxyApiMapper : Profile
 {
     public ProxyApiMapper()
     {
+        CreateMap<SearchItemResponse, SearchItemResponseDto>();
+        CreateMap<SearchItemModel, SearchItemDto>();
+        CreateMap<SearchItemDataModel, SearchItemDataDto>()
+            .ForMember(
+                dest => dest.Name,
+                opt => opt.MapFrom(src => src.Name.RU));
+
         CreateMap<WoWGameDataEntityModel, WoWGameDataEntityDto>();
         CreateMap<WoWGameDataColorModel, WoWGameDataColorDto>();
         CreateMap<WoWGameDataCurrencyDisplayModel, WoWGameDataCurrencyDisplayDto>();
@@ -161,6 +170,8 @@ public class ProxyApiMapper : Profile
                 dest => dest.LastUpdatedTime,
                 opt => opt.MapFrom(src => DateTimeOffset.FromUnixTimeMilliseconds(src.LastUpdatedTimestamp)));
 
-        CreateMap<WoWAccountPetStatModel, WoWAccountPetStatDto>();
+        CreateMap<WoWGameDataEntityModel, WoWGameDataEntityDto>();
+
+        CreateMap<AuctionModel, AuctionDto>();
     }
 }

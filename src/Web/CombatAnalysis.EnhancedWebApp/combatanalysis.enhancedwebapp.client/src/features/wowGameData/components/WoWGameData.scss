@@ -226,3 +226,79 @@
         }
     }
 }
+
+.auction {
+    &__item {
+        display: flex;
+        gap: 40px;
+
+        .auction-count {
+            display: flex;
+            gap: 10px;
+        }
+    }
+}
+
+.search-item {
+    &__result {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .special {
+            cursor: pointer;
+        }
+    }
+
+    &__search {
+        display: flex;
+        align-items: flex-start;
+        gap: 50px;
+
+        .search {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 400px;
+        }
+    }
+
+    &__selected {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    &__content {
+        display: flex;
+        gap: 125px;
+
+        .item-names {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 10px;
+
+            &__name {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .select {
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .auction {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            &__name {
+                display: flex;
+            }
+        }
+    }
+}

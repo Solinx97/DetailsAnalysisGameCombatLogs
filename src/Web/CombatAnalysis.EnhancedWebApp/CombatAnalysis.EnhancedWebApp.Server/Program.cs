@@ -58,6 +58,7 @@ builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<IWoWAccountService, WoWAccountService>();
 builder.Services.AddScoped<IWoWCharacterService, WoWCharacterService>();
 builder.Services.AddScoped<IMythicKeystoneService, MythicKeystoneService>();
+builder.Services.AddScoped<IWoWItemService, WoWItemService>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 builder.Services.AddScoped<RequireRefreshTokenAttribute>();
 

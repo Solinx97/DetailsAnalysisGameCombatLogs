@@ -2,8 +2,8 @@
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character.Decors;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Services;
 
