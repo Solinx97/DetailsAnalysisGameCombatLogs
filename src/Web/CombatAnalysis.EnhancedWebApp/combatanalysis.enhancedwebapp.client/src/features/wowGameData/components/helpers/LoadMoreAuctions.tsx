@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import type { AuctionModel } from '../../types/auction/AuctionModel';
 
 const LoadMoreAuctions: React.FC<{ auctions: AuctionModel[] }> = ({ auctions }) => {
-    const pageSize = 50;
+    const pageSize = 25;
 
     const context = useContext(WoWGameDataContext);
 
@@ -29,9 +29,9 @@ const LoadMoreAuctions: React.FC<{ auctions: AuctionModel[] }> = ({ auctions }) 
     }
 
     return (
-        <ul>
+        <ul className="auction__items">
             {filteredAuctions.map(auction => (
-                <li key={auction.id} className="auction__item">
+                <li key={auction.id} className="item">
                     <div>{getPrice(auction.unitPrice)}</div>
                     <div className="auction-count">
                         <div>{t("Count")}:</div>

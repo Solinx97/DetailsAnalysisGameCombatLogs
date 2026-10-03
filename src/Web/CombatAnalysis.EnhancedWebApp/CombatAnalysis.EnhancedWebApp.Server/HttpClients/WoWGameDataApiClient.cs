@@ -22,9 +22,54 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
-    public async Task<SearchItemResponse> SearchItemAsync(string regionName, string name, string orderBy, int page, CancellationToken cancellationToken)
+    public async Task<ItemClassesResponse> GetItemClassesAsync(string regionName, CancellationToken cancellationToken)
     {
-        var response = await _httpClient.GetAsync($"data/wow/search/item?namespace=static-{regionName}&name.{WoWDataLocale.Locale}={name}&orderby={orderBy}:desc&_page={page}", cancellationToken);
+        var response = await _httpClient.GetAsync($"data/wow/item-class/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<ItemClassesResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<ItemSubClassesResponse> GetItemSubClassesAsync(string regionName, int itemClassId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/item-class/{itemClassId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<ItemSubClassesResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
+    public async Task<SearchItemResponse> SearchItemAsync(string regionName, string name, string orderBy, int itemClassId, int itemSubClassId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var url = $"data/wow/search/item" +
+            $"?namespace=static-{regionName}" +
+            $"&name.{WoWDataLocale.Locale}={name}" +
+            $"&orderby={orderBy}:desc" +
+            $"&_page={page}" +
+            $"&_pageSize={pageSize}";
+        if (itemClassId >= 0)
+        {
+            url = $"data/wow/search/item" +
+                $"?namespace=static-{regionName}" +
+                $"&name.{WoWDataLocale.Locale}={name}" +
+                $"&item_class.id={itemClassId}" +
+                $"&orderby={orderBy}:desc" +
+                $"&_page={page}" +
+                $"&_pageSize={pageSize}";
+
+            if (itemSubClassId >= 0)
+            {
+                url = $"data/wow/search/item" +
+                    $"?namespace=static-{regionName}" +
+                    $"&name.{WoWDataLocale.Locale}={name}" +
+                    $"&item_class.id={itemClassId}" +
+                    $"&item_subclass.id={itemSubClassId}" +
+                    $"&orderby={orderBy}:desc" +
+                    $"&_page={page}" +
+                    $"&_pageSize={pageSize}";
+            }
+        }
+
+        var response = await _httpClient.GetAsync(url, cancellationToken);
 
         var result = await response.Content.ReadFromJsonAsync<SearchItemResponse>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");

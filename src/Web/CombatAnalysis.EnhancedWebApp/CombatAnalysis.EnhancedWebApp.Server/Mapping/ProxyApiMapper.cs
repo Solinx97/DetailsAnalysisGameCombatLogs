@@ -33,7 +33,16 @@ public class ProxyApiMapper : Profile
         CreateMap<SearchItemDataModel, SearchItemDataDto>()
             .ForMember(
                 dest => dest.Name,
-                opt => opt.MapFrom(src => src.Name.RU));
+                opt => opt.MapFrom(src => src.Name.RU))
+            .ForMember(
+                dest => dest.ItemClass,
+                opt => opt.MapFrom(src => new WoWGameDataEntityDto { Name = src.ItemClass.Name.RU, Id = src.ItemClass.Id }))
+            .ForMember(
+                dest => dest.ItemSubclass,
+                opt => opt.MapFrom(src => new WoWGameDataEntityDto { Name = src.ItemSubclass.Name.RU, Id = src.ItemSubclass.Id }))
+            .ForMember(
+                dest => dest.Quality,
+                opt => opt.MapFrom(src => new WoWGameDataTypeDto { Name = src.Quality.Name.RU, Type = src.Quality.Type }));
 
         CreateMap<WoWGameDataEntityModel, WoWGameDataEntityDto>();
         CreateMap<WoWGameDataColorModel, WoWGameDataColorDto>();
@@ -88,6 +97,8 @@ public class ProxyApiMapper : Profile
         CreateMap<MythicKeystoneBestRunModel, MythicKeystoneBestRunDto>();
 
         CreateMap<MythicKeystoneSeasonModel, MythicKeystoneSeasonDto>();
+
+        CreateMap<WoWAccountPetStatModel, WoWAccountPetStatDto>();
 
         CreateMap<MythicKeystoneDungeonLeaderboardAfixModel, MythicKeystoneDungeonLeaderboardAfixDto>();
         CreateMap<MythicKeystoneDungeonLeaderboardGroupMemberModel, MythicKeystoneDungeonLeaderboardGroupMemberDto>();

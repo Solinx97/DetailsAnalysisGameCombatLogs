@@ -8,6 +8,12 @@ public class SearchItemDataDto : WoWGameDataEntityDto
 
     public long SellPrice { get; set; }
 
+    public WoWGameDataEntityDto ItemClass { get; set; }
+
+    public WoWGameDataEntityDto ItemSubclass { get; set; }
+
+    public WoWGameDataTypeDto Quality { get; set; }
+
     public bool IsEquippable { get; set; }
 
     public int PurchaseQuantity { get; set; }

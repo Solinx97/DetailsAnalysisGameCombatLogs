@@ -1,6 +1,6 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import { WoWAccountCollectionType } from '@/shared/helpers/EnumHelper';
-import type { OptionMode } from '@/shared/types/OptionMode';
+import type { OptionModel } from '@/shared/types/OptionModel';
 import { faArrowsSpin, faCheck, faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
@@ -49,8 +49,8 @@ const WoWGameData: React.FC = () => {
     const [showProfessions, setShowProfessions] = useState<boolean>(false);
     const [showSearchItems, setShowSearchItems] = useState<boolean>(false);
 
-    const [serversOptions, setServersOptions] = useState<OptionMode[]>([]);
-    const [serverValue, setServerValue] = useState<OptionMode | null>(serversOptions[0]);
+    const [serversOptions, setServersOptions] = useState<OptionModel[]>([]);
+    const [serverValue, setServerValue] = useState<OptionModel | null>(serversOptions[0]);
 
     const { data: isAuthorized, isLoading, refetch } = useIsAuthorizedQuery();
 
@@ -129,7 +129,7 @@ const WoWGameData: React.FC = () => {
                     </div>
                     <div className="filter-item">
                         <div>{t("Server")}</div>
-                        <Select<OptionMode>
+                        <Select<OptionModel>
                             className="options"
                             options={serversOptions}
                             value={serverValue}

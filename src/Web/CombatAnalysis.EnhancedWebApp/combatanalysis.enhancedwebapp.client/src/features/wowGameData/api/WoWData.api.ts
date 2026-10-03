@@ -4,6 +4,7 @@ import type { SelectedWoWAccountCollectionItemModel } from '../types/collections
 import type { SelectedWoWAccountToyItemModel } from '../types/collections/SelectedWoWAccountToyItemModel';
 import type { MythicKeystoneLeaderboardModel } from '../types/mythicKeystone/MythicKeystoneLeaderboardModel';
 import type { SearchItemResponse } from '../types/SearchItemResponse';
+import type { WoWGameDataEntityModel } from '../types/WoWGameDataEntityModel';
 import type { WoWRealmModel } from '../types/WoWRealmModel';
 import type { WoWTokenModel } from '../types/WoWTokenModel';
 import { BattleNetDataApi } from './BattleNetData.api';
@@ -13,8 +14,14 @@ export const WoWDataApi = BattleNetDataApi.injectEndpoints({
         getRealms: builder.query<WoWRealmModel[], { regionName: string }>({
             query: ({ regionName }) => `/WoWData/getRealms/${regionName}`,
         }),
-        searchItem: builder.query<SearchItemResponse, { name: string, orderBy: string, page: number, regionName: string }>({
-            query: ({ name, orderBy, page, regionName }) => `/WoWData/searchItem/${name}?orderBy=${orderBy}&page=${page}&regionName=${regionName}`,
+        getItemClasses: builder.query<WoWGameDataEntityModel[], { regionName: string }>({
+            query: ({ regionName }) => `/WoWData/getItemClasses/${regionName}`,
+        }),
+        getItemSubClasses: builder.query<WoWGameDataEntityModel[], { regionName: string, itemClassId: number }>({
+            query: ({ regionName, itemClassId }) => `/WoWData/getItemSubClasses/${regionName}?itemClassId=${itemClassId}`,
+        }),
+        searchItem: builder.query<SearchItemResponse, { name: string, regionName: string, orderBy: string, itemClassId: number, itemSubClassId: number, page: number, pageSize: number }>({
+            query: ({ name, regionName, orderBy, itemClassId, itemSubClassId, page, pageSize }) => `/WoWData/searchItem/${name}?regionName=${regionName}&orderBy=${orderBy}&itemClassId=${itemClassId}&itemSubClassId=${itemSubClassId}&page=${page}&pageSize=${pageSize}`,
         }),
         getAchievement: builder.query<SelectedAchievementModel, { achievementId: number, regionName: string }>({
             query: ({ achievementId, regionName }) => `/WoWData/getAchievement/${achievementId}?regionName=${regionName}`,
@@ -45,6 +52,8 @@ export const WoWDataApi = BattleNetDataApi.injectEndpoints({
 
 export const {
     useLazyGetRealmsQuery,
+    useGetItemClassesQuery,
+    useGetItemSubClassesQuery,
     useSearchItemQuery,
     useGetAchievementQuery,
     useGetMountQuery,

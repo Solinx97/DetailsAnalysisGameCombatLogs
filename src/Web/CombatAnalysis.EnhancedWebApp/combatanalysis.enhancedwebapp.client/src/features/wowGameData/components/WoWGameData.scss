@@ -29,6 +29,14 @@
     }
 }
 
+.filter-item {
+    width: 250px;
+
+    .options {
+        color: black;
+    }
+}
+
 .account {
     display: flex;
     flex-direction: column;
@@ -88,14 +96,6 @@
 
             .form-control {
                 width: 300px;
-            }
-
-            .filter-item {
-                width: 250px;
-
-                .options {
-                    color: black;
-                }
             }
         }
 
@@ -228,13 +228,22 @@
 }
 
 .auction {
-    &__item {
+    &__items {
         display: flex;
-        gap: 40px;
+        flex-direction: column;
+        gap: 5px;
+        max-height: 500px;
+        overflow-y: auto;
 
-        .auction-count {
+        .item {
             display: flex;
-            gap: 10px;
+            gap: 40px;
+            padding: 0 10px;
+
+            .auction-count {
+                display: flex;
+                gap: 10px;
+            }
         }
     }
 }
@@ -259,7 +268,24 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
-            width: 400px;
+
+            .filters {
+                display: flex;
+                gap: 50px;
+                width: 100%;
+            }
+
+            .select-item {
+                flex: 2;
+            }
+
+            .select-item-class {
+                flex: 1;
+            }
+
+            .filter-item {
+                min-width: 150px;
+            }
         }
     }
 
@@ -271,7 +297,8 @@
 
     &__content {
         display: flex;
-        gap: 125px;
+        flex-direction: column;
+        gap: 5px;
 
         .item-names {
             display: flex;
@@ -282,22 +309,26 @@
 
             &__name {
                 display: flex;
-                align-items: center;
-                gap: 10px;
+                align-items: flex-start;
+                gap: 15px;
 
                 .select {
                     cursor: pointer;
                 }
-            }
-        }
 
-        .auction {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+                .name {
+                    display: flex;
+                    flex-direction: column;
+                }
 
-            &__name {
-                display: flex;
+                .details {
+                    display: flex;
+                    gap: 5px;
+
+                    .category {
+                        display: flex;
+                    }
+                }
             }
         }
     }

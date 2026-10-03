@@ -13,6 +13,15 @@ public class SearchItemDataModel : WoWGameDataEntityModel
     [JsonPropertyName("sell_price")]
     public long SellPrice { get; set; }
 
+    [JsonPropertyName("item_class")]
+    public SearchItemClassModel ItemClass { get; set; }
+
+    [JsonPropertyName("item_subclass")]
+    public SearchItemClassModel ItemSubclass { get; set; }
+
+    [JsonPropertyName("quality")]
+    public SearchItemQualityModel Quality { get; set; }
+
     [JsonPropertyName("is_equippable")]
     public bool IsEquippable { get; set; }
 

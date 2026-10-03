@@ -1,4 +1,4 @@
-export type OptionMode = {
+export type OptionModel = {
     value: string;
     label: string;
 }

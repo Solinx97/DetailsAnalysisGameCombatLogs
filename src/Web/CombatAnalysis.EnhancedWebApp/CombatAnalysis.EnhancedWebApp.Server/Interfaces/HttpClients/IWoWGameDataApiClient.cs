@@ -10,7 +10,11 @@ public interface IWoWGameDataApiClient
 {
     Task<RealmsResponse> GetRealmsAsync(string regionName, CancellationToken cancellationToken);
 
-    Task<SearchItemResponse> SearchItemAsync(string regionName, string name, string orderBy, int page, CancellationToken cancellationToken);
+    Task<ItemClassesResponse> GetItemClassesAsync(string regionName, CancellationToken cancellationToken);
+
+    Task<ItemSubClassesResponse> GetItemSubClassesAsync(string regionName, int itemClassId, CancellationToken cancellationToken);
+
+    Task<SearchItemResponse> SearchItemAsync(string regionName, string name, string orderBy, int itemClassId, int itemSubClassId, int page, int pageSize, CancellationToken cancellationToken);
 
     Task<IWoWCollectionResponse> GetMountsAsync(string regionName, CancellationToken cancellationToken);
 

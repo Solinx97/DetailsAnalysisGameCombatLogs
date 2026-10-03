@@ -26,11 +26,27 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
         return Ok(map);
     }
 
-    [HttpGet("searchItem/{name}")]
-    public async Task<IActionResult> SearchItem(string name, string orderBy, int page, string regionName, CancellationToken cancellationToken)
+    [HttpGet("getItemClasses/{regionName}")]
+    public async Task<IActionResult> GetItemClasses(string regionName, CancellationToken cancellationToken)
     {
-        var item = await _httpClient.SearchItemAsync(regionName, name, orderBy, page, cancellationToken);
-        var map = _mapper.Map<SearchItemResponseDto>(item);
+        var itemClasses = await _httpClient.GetItemClassesAsync(regionName, cancellationToken);
+        var map = _mapper.Map<WoWGameDataEntityDto[]>(itemClasses.ItemClasses);
+        return Ok(map);
+    }
+
+    [HttpGet("getItemSubClasses/{regionName}")]
+    public async Task<IActionResult> GetItemSubClasses(string regionName, int itemClassId, CancellationToken cancellationToken)
+    {
+        var itemSubClasses = await _httpClient.GetItemSubClassesAsync(regionName, itemClassId, cancellationToken);
+        var map = _mapper.Map<WoWGameDataEntityDto[]>(itemSubClasses.ItemSubClasses);
+        return Ok(map);
+    }
+
+    [HttpGet("searchItem/{name}")]
+    public async Task<IActionResult> SearchItem(string name, string regionName, string orderBy, int itemClassId, int itemSubClassId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var items = await _httpClient.SearchItemAsync(regionName, name, orderBy, itemClassId, itemSubClassId, page, pageSize, cancellationToken);
+        var map = _mapper.Map<SearchItemResponseDto>(items);
         return Ok(map);
     }
 
