@@ -42,6 +42,8 @@ public interface IWoWGameDataApiClient
 
     Task<AchievementSelectedCategoryModel> GetAchievementCategoryAsync(string regionName, int categoryId, CancellationToken cancellationToken);
 
+    Task<AchievementResponse> GetAchievementsAsync(string regionName, CancellationToken cancellationToken);
+
     Task<SelectedAchievementModel> GetAchievementAsync(string regionName, int achievementId, CancellationToken cancellationToken);
 
     Task<MythicKeystoneLeaderboardModel> GetMythicKeystoneLeaderboardAsync(int connectedRealmId, string regionName, CancellationToken cancellationToken);

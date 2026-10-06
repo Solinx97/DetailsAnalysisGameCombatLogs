@@ -1,10 +1,11 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
-import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext } from 'react';
+import type { CharacterModel } from '../types/account/CharacterModel';
 import type { DungeonCharacterModel } from '../types/mythicKeystone/DungeonCharacterModel';
 
-const Character: React.FC<{ character: DungeonCharacterModel  }> = ({ character }) => {
+const Character: React.FC<{ character: CharacterModel | DungeonCharacterModel }> = ({ character }) => {
     const context = useContext(WoWGameDataContext);
 
     if (!context) {
@@ -13,7 +14,7 @@ const Character: React.FC<{ character: DungeonCharacterModel  }> = ({ character 
 
     const { username, serversOptions, setUsername, setServerName } = context;
 
-    const selectCharacterHandle = (character: DungeonCharacterModel) => {
+    const selectCharacterHandle = (character: CharacterModel | DungeonCharacterModel) => {
         let selectedUsername = ""
         let selectedServerSlug = "";
         let selectedServerName = "";
@@ -35,7 +36,7 @@ const Character: React.FC<{ character: DungeonCharacterModel  }> = ({ character 
 
     return (
         <div className="select-character">
-            <div className={`character ${username === character.name ? 'selected' : ''}`}>{character.name}</div>
+            <div className={`character ${username === character.name ? 'selected' : ''}`}>{character.name} ({'level' in character ? character.level : ''})</div>
             <FontAwesomeIcon
                 icon={username === character.name ? faCheck : faPlus}
                 color={username === character.name ? '#10e38f' : '#fffff'}

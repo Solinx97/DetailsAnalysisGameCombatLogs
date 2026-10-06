@@ -1,12 +1,11 @@
 import WoWGameDataContext from '@/context/WoWGameDataContext';
 import { WoWAccountCollectionType } from '@/shared/helpers/EnumHelper';
 import type { OptionModel } from '@/shared/types/OptionModel';
-import { faArrowsSpin, faCheck, faClose, faLocationCrosshairs, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsSpin, faCheck, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Select from 'react-select';
-import { useBattleNetDataAuthorizaitonMutation, useBattleNetDataTokenMutation, useIsAuthorizedQuery, useLazyBattleNetDisconenctQuery } from '../api/BattleNetData.api';
+import { useBattleNetDataTokenMutation } from '../api/BattleNetData.api';
 import { useLazyGetRealmsQuery } from '../api/WoWData.api';
 import type { WoWRealmModel } from '../types/WoWRealmModel';
 import AccountCharacters from './account/AccountCharacters';
@@ -17,17 +16,18 @@ import CharacterReputations from './CharacterReputations';
 import CharacterDungeons from './dungeons/CharacterDungeons';
 import CharacterMythicKeystone from './dungeons/CharacterMythicKeystone';
 import CharacterEquipments from './equipments/CharacterEquipments';
+import SearchItem from './items/SearchItem';
 import CharacterProfessions from './professions/CharacterProfessions';
 import WoWToken from './WoWToken';
-import SearchItem from './items/SearchItem';
 
-import './WoWGameData.scss';
+interface WoWGameDataDetailsProps {
+    regionName: string;
+    getAuthorizationTokenAsync: () => Promise<void>;
+    isAuthorized: boolean;
+    t: (key: string) => string;
+}
 
-const WoWGameData: React.FC = () => {
-    const regionName = "eu";
-
-    const { t } = useTranslation('wowGameData');
-
+const WoWGameDataDetails: React.FC<WoWGameDataDetailsProps> = ({ regionName, getAuthorizationTokenAsync, isAuthorized, t }) => {
     const usernameRef = useRef<HTMLInputElement | null>(null);
 
     const [servers, setServers] = useState<WoWRealmModel[]>([]);
@@ -52,11 +52,7 @@ const WoWGameData: React.FC = () => {
     const [serversOptions, setServersOptions] = useState<OptionModel[]>([]);
     const [serverValue, setServerValue] = useState<OptionModel | null>(serversOptions[0]);
 
-    const { data: isAuthorized, isLoading, refetch } = useIsAuthorizedQuery();
-
     const [getToken] = useBattleNetDataTokenMutation();
-    const [getAuthorization] = useBattleNetDataAuthorizaitonMutation();
-    const [disconnect] = useLazyBattleNetDisconenctQuery();
     const [getRealms] = useLazyGetRealmsQuery();
 
     useEffect(() => {
@@ -88,32 +84,10 @@ const WoWGameData: React.FC = () => {
         setServersOptions(options);
     }, [servers]);
 
-    const getAuthorizationTokenAsync = async () => {
-        try {
-            const authUri = await getAuthorization().unwrap();
-            window.location.href = authUri.uri;
-        } catch (error) {
-            console.error("Failed authorization to battle net account:", error);
-        }
-    }
-
-    const battleNetDisconnect = async () => {
-        try {
-            await disconnect().unwrap();
-            await refetch().unwrap();
-        } catch (error) {
-            console.error("Failed authorization to battle net account:", error);
-        }
-    }
-
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             setUsername(event.currentTarget.value);
         }
-    }
-
-    if (!isAuthorized || isLoading) {
-        return (<div>Loading...</div>);
     }
 
     const selectionUser = () => {
@@ -136,30 +110,31 @@ const WoWGameData: React.FC = () => {
                             onChange={(selected) => setServerValue(selected)}
                         />
                     </div>
-                    <div className="battle-net">
-                        <div className="status">{isAuthorized.authenticated ? 'connected' : 'not connected'}</div>
-                        <div className="actions">
-                            <div className={`auth btn-shadow ${isAuthorized.authenticated ? 'connected' : 'not-connected'}`}
-                                onClick={isAuthorized.authenticated ? () => { } : getAuthorizationTokenAsync}>
-                                <FontAwesomeIcon
-                                    icon={isAuthorized.authenticated ? faUser : faPlus}
-                                />
-                                <div>{t("BattleNet")}</div>
-                            </div>
-                            {isAuthorized.authenticated &&
-                                <div className="exit" onClick={battleNetDisconnect}>
-                                    <FontAwesomeIcon
-                                        icon={faClose}
-                                    />
-                                </div>
-                            }
-                        </div>
-                    </div>
                 </div>
                 <div className="selected-character">
                     <div>{t("SelectedCharacter")}: </div>
                     <h5>{username}</h5>
                 </div>
+            </div>
+        );
+    }
+
+    const checkAuthForAccountData = () => {
+        return (
+            <div className="auth">
+                {isAuthorized
+                    ? <FontAwesomeIcon
+                        icon={faCheck}
+                        color="green"
+                    />
+                    : <div className="btn-shadow" title={t("MustConnectBattleNet")}
+                        onClick={getAuthorizationTokenAsync}>
+                        <FontAwesomeIcon
+                            icon={faArrowsSpin}
+                            color="orange"
+                        />
+                    </div>
+                }
             </div>
         );
     }
@@ -175,21 +150,7 @@ const WoWGameData: React.FC = () => {
                         />
                         <div>{t("Characters")}</div>
                     </div>
-                    <div className="auth">
-                        {isAuthorized.authenticated
-                            ? <FontAwesomeIcon
-                                icon={faCheck}
-                                color="green"
-                            />
-                            : <div className="btn-shadow">
-                                <FontAwesomeIcon
-                                    icon={faArrowsSpin}
-                                    color="orange"
-                                />
-                                <div>{t("MustConnectBattleNet")}</div>
-                            </div>
-                        }
-                    </div>
+                    {checkAuthForAccountData()}
                 </div>
                 {showCharacters &&
                     <AccountCharacters
@@ -203,21 +164,7 @@ const WoWGameData: React.FC = () => {
                         />
                         <div>{t("Mounts")}</div>
                     </div>
-                    <div className="auth">
-                        {isAuthorized.authenticated
-                            ? <FontAwesomeIcon
-                                icon={faCheck}
-                                color="green"
-                            />
-                            : <div className="btn-shadow">
-                                <FontAwesomeIcon
-                                    icon={faArrowsSpin}
-                                    color="orange"
-                                />
-                                <div>{t("MustConnectBattleNet")}</div>
-                            </div>
-                        }
-                    </div>
+                    {checkAuthForAccountData()}
                 </div>
                 {showMounts &&
                     <AccountCollections
@@ -233,21 +180,7 @@ const WoWGameData: React.FC = () => {
                         />
                         <div>{t("Pets")}</div>
                     </div>
-                    <div className="auth">
-                        {isAuthorized.authenticated
-                            ? <FontAwesomeIcon
-                                icon={faCheck}
-                                color="green"
-                            />
-                            : <div className="btn-shadow">
-                                <FontAwesomeIcon
-                                    icon={faArrowsSpin}
-                                    color="orange"
-                                />
-                                <div>{t("MustConnectBattleNet")}</div>
-                            </div>
-                        }
-                    </div>
+                    {checkAuthForAccountData()}
                 </div>
                 {showPets &&
                     <AccountCollections
@@ -263,21 +196,7 @@ const WoWGameData: React.FC = () => {
                         />
                         <div>{t("Toys")}</div>
                     </div>
-                    <div className="auth">
-                        {isAuthorized.authenticated
-                            ? <FontAwesomeIcon
-                                icon={faCheck}
-                                color="green"
-                            />
-                            : <div className="btn-shadow">
-                                <FontAwesomeIcon
-                                    icon={faArrowsSpin}
-                                    color="orange"
-                                />
-                                <div>{t("MustConnectBattleNet")}</div>
-                            </div>
-                        }
-                    </div>
+                    {checkAuthForAccountData()}
                 </div>
                 {showToys &&
                     <AccountCollections
@@ -292,21 +211,7 @@ const WoWGameData: React.FC = () => {
                         />
                         <div>{t("Transmogs")}</div>
                     </div>
-                    <div className="auth">
-                        {isAuthorized.authenticated
-                            ? <FontAwesomeIcon
-                                icon={faCheck}
-                                color="green"
-                            />
-                            : <div className="btn-shadow">
-                                <FontAwesomeIcon
-                                    icon={faArrowsSpin}
-                                    color="orange"
-                                />
-                                <div>{t("MustConnectBattleNet")}</div>
-                            </div>
-                        }
-                    </div>
+                    {checkAuthForAccountData()}
                 </div>
             </>
         );
@@ -460,4 +365,4 @@ const WoWGameData: React.FC = () => {
     );
 }
 
-export default WoWGameData;
+export default WoWGameDataDetails;

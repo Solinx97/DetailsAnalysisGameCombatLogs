@@ -26,6 +26,14 @@ public class WoWDataController(IWoWGameDataApiClient httpClient, IMythicKeystone
         return Ok(map);
     }
 
+    [HttpGet("getAchievements/{regionName}")]
+    public async Task<IActionResult> GetAchievements(string regionName, CancellationToken cancellationToken)
+    {
+        var achievements = await _httpClient.GetAchievementsAsync(regionName, cancellationToken);
+        var map = _mapper.Map<WoWGameDataEntityDto[]>(achievements);
+        return Ok(map);
+    }
+
     [HttpGet("getItemClasses/{regionName}")]
     public async Task<IActionResult> GetItemClasses(string regionName, CancellationToken cancellationToken)
     {

@@ -179,6 +179,14 @@ public class WoWGameDataApiClient(HttpClient httpClient) : IWoWGameDataApiClient
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 
+    public async Task<AchievementResponse> GetAchievementsAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"data/wow/achievement/index?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
+
+        var result = await response.Content.ReadFromJsonAsync<AchievementResponse>(cancellationToken);
+        return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
+    }
+
     public async Task<SelectedAchievementModel> GetAchievementAsync(string regionName, int achievementId, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"data/wow/achievement/{achievementId}?namespace=static-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);

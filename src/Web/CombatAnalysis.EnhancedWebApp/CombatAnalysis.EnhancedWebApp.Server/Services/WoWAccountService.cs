@@ -1,17 +1,44 @@
 ﻿using AutoMapper;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account;
 using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Account.Collections;
+using CombatAnalysis.EnhancedWebApp.Server.DTOs.WoWGameData.Character;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
+using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account;
 using CombatAnalysis.EnhancedWebApp.Server.Models.WoWGameData.Account.Collections;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Services;
 
-internal class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGameDataApiClient accountHttpClient, IMapper mapper) : IWoWAccountService
+internal class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWCharacterGameDataApiClient characterHttpClient, IWoWAccountGameDataApiClient accountHttpClient, IWoWCharacterService service, IMapper mapper) : IWoWAccountService
 {
+    private const int EXPANSION_MAX_LEVEL = 90;
+
     private readonly IWoWGameDataApiClient _httpClient = httpClient;
+    private readonly IWoWCharacterGameDataApiClient _characterHttpClient = characterHttpClient;
     private readonly IWoWAccountGameDataApiClient _accountHttpClient = accountHttpClient;
+    private readonly IWoWCharacterService _service = service;
     private readonly IMapper _mapper = mapper;
+
+    public async Task<WoWAccountResponseDto> GetCharactersAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var accountCharacters = await _accountHttpClient.GetCharactersAsync(regionName, cancellationToken);
+        var map = _mapper.Map<WoWAccountResponseDto>(accountCharacters);
+        foreach (var account in map.WowAccounts)
+        {
+            account.Characters = account.Characters.ToDictionary(x => x.Key, x => x.Value.OrderByDescending(c => c.Level).ToArray());
+        }
+
+        return map;
+    }
+
+    public async Task<CharacterModel[]> GetCharactersListAsync(string regionName, CancellationToken cancellationToken)
+    {
+        var accountCharacters = await _accountHttpClient.GetCharactersAsync(regionName, cancellationToken);
+        var characters = accountCharacters.WowAccounts.SelectMany(x => x.Characters).OrderByDescending(x => x.Level).ToArray();
+
+        return characters;
+    }
 
     public async Task<WoWAccountCollectionItemDto[]> GetAccountMountsAsync(string regionName, CancellationToken cancellationToken)
     {
@@ -155,5 +182,60 @@ internal class WoWAccountService(IWoWGameDataApiClient httpClient, IWoWAccountGa
         })];
 
         return slotTransmogs;
+    }
+
+    public async Task<AccountDetailsDto> GetAccountDashboardAsync(string regionName, string serverName, string characterName, CancellationToken cancellationToken)
+    {
+        var characterSummary = await _characterHttpClient.GetProfileSummaryAsync(serverName, characterName, regionName, cancellationToken);
+
+        var mythicKeystone = await _characterHttpClient.GetMythicKeystoneAsync(serverName, characterName, regionName, cancellationToken);
+
+        var allAchievements = await _httpClient.GetAchievementsAsync(regionName, cancellationToken);
+        var characterAchievements = await _characterHttpClient.GetAchievementsAsync(serverName, characterName, regionName, cancellationToken);
+
+        var allMounts = await _httpClient.GetMountsAsync(regionName, cancellationToken);
+        var acoountMounts = await _accountHttpClient.GetMountsAsync(regionName, cancellationToken);
+
+        var allToys = await _httpClient.GetToysAsync(regionName, cancellationToken);
+        var acoountToys = await _accountHttpClient.GetToysAsync(regionName, cancellationToken);
+
+        var allPets = await _httpClient.GetPetsAsync(regionName, cancellationToken);
+        var accountPets = await _accountHttpClient.GetPetsAsync(regionName, cancellationToken);
+
+        var allSetTransmogs = await _httpClient.GetSetsTransmogsAsync(regionName, cancellationToken);
+        var acoountTransmogs = await _accountHttpClient.GetTransmogsAsync(regionName, cancellationToken);
+
+        var slotsTransmogs = await GetAccountSlotTransmogsAsync(regionName, cancellationToken);
+
+        var accountCharacters = await _accountHttpClient.GetCharactersAsync(regionName, cancellationToken);
+
+        var characters = accountCharacters.WowAccounts.SelectMany(x => x.Characters);;
+
+        var allDecors = await _httpClient.GetDecorsAsync(regionName, cancellationToken);
+        var decors = await _service.GetDecorsAsync(regionName, serverName, characterName, cancellationToken);
+
+        var details = new AccountDetailsDto
+        {
+            Summary = _mapper.Map<CharacterSummaryDto>(characterSummary),
+            MythicKeystoneRating = mythicKeystone.CurrentMythicRating == null ? 0 : mythicKeystone.CurrentMythicRating.Rating,
+            AchievementsReceived = characterAchievements.TotalQuantity,
+            AchievementsCount = allAchievements.Achievements.Length,
+            MountsReceived = acoountMounts.Mounts.Length,
+            MountsCount = allMounts.Items.Length,
+            ToysReceived = acoountToys.Toys.Length,
+            ToysCount = allToys.Items.Length,
+            PetsReceived = accountPets.Pets.Length,
+            PetsCount = allPets.Items.Length,
+            DecorsReceived = decors.Length,
+            DecorsCount = allDecors.Items.Length,
+            SetTransmogsReceived = acoountTransmogs.AppearanceSets.Length,
+            SetTransmogsCount = allSetTransmogs.Items.Length,
+            TransmogsReceived = slotsTransmogs.Sum(x => x.Value.Where(y => y.Info != null).Count()),
+            TransmogsCount = slotsTransmogs.Sum(x => x.Value.Length),
+            CharactersCount = characters.Count(),
+            MaxLevelCharactersCount = characters.Where(x => x.Level == EXPANSION_MAX_LEVEL).Count()
+        };
+
+        return details;
     }
 }

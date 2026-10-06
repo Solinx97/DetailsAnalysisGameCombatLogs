@@ -1,7 +1,7 @@
 import PlayerDiethDetails from '@/features/gameLogs/components/player/PlayerDiethDetails';
 import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
 import BattleNetAuthorizationCallback from '@/features/wowGameData/components/auth/BattleNetAuthorizationCallback';
-import WoWGameData from '@/features/wowGameData/components/WoWGameData';
+import SelectWoWGameData from '@/features/wowGameData/components/SelectWoWGameData';
 import Chats from '../features/chat/components/Chats';
 import AllCommunities from '../features/community/components/AllCommunities';
 import SelectedCommunity from '../features/community/components/selectedCommunity/SelectedCommunity';
@@ -110,7 +110,7 @@ const AppRoutes: Route[] = [
     },
     {
         path: '/wow-game-data',
-        element: <WoWGameData />
+        element: <SelectWoWGameData />
     },
     {
         path: '/wow-game-data/callback',
