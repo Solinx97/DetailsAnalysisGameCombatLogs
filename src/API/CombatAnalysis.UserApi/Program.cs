@@ -13,6 +13,9 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// For testing secrets
+builder.Configuration.AddUserSecrets<Program>();
+
 var databasePropsOptions = new DatabaseProps();
 builder.Configuration.Bind("Database", databasePropsOptions);
 

@@ -50,8 +50,7 @@ export const UserApi = createApi({
                     : [{ type: 'Customer', id: 'LIST' }]
         }),
         authentication: builder.query<AppUserModel, void>({
-            query: () => '/Authentication',
-            providesTags: result => result ? [{ type: 'RequestToConnect', id: result.id }] : []
+            query: () => '/Authentication'
         }),
         authorization: builder.query<{ uri: string }, string>({
             query: identityPath => `/Authentication/authorization?identityPath=${identityPath}`,

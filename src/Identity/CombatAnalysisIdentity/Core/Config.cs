@@ -40,8 +40,8 @@ internal class Config
                 ClientId = "web-app",
                 AllowedGrantTypes = GrantTypes.Code,
 
-                RedirectUris = { "http://localhost:5173/callback" },
-                PostLogoutRedirectUris = { "http://localhost:5173/" },
+                RedirectUris = { "http://localhost:5173/callback", "https://8j1f2ql7-5173.euw.devtunnels.ms/callback" },
+                PostLogoutRedirectUris = { "http://localhost:5173/", "https://8j1f2ql7-5173.euw.devtunnels.ms/" },
 
                 RequirePkce = true,
                 RequireClientSecret = false,

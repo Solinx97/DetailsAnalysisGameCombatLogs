@@ -12,6 +12,7 @@ using CombatAnalysisIdentity.Services;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Configuration;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -19,6 +20,19 @@ using StackExchange.Redis;
 using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedHost |
+        ForwardedHeaders.XForwardedProto;
+
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+// For testing secrets
+builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.Configure<Cluster>(builder.Configuration.GetSection("API"));
 builder.Services.Configure<Authentication>(builder.Configuration.GetSection("Authentication"));
@@ -102,6 +116,9 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
+
 app.InitializeIdentity();
 
 if (!app.Environment.IsDevelopment())

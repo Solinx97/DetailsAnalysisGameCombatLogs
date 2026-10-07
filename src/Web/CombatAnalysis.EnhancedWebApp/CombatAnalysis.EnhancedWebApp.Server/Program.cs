@@ -16,6 +16,9 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// For testing secrets
+builder.Configuration.AddUserSecrets<Program>();
+
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
 builder.Services.AddTransient<ExternalApiErrorHandler>();
@@ -112,17 +115,13 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthorization();
 
