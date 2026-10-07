@@ -72,8 +72,6 @@ internal class NotificationService(IGenericRepository<Notification, int> reposit
 
     private static void CheckParams(NotificationDto item)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(item.Id, 1, nameof(item.Id));
-
         ArgumentException.ThrowIfNullOrEmpty(item.InitiatorId, nameof(item.InitiatorId));
         ArgumentException.ThrowIfNullOrEmpty(item.RecipientId, nameof(item.RecipientId));
 

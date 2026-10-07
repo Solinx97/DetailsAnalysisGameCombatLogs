@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Infrastructure.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20251004104606_Prod")]
-    partial class Prod
+    [Migration("20261007190721_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.16")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -117,8 +117,8 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("Time")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -194,8 +194,8 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("Time")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");

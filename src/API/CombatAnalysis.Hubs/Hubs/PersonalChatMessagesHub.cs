@@ -40,8 +40,10 @@ public class PersonalChatMessagesHub : Hub
         {
             ArgumentOutOfRangeException.ThrowIfLessThan(chatId, 1, nameof(chatId));
 
-            var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
-            ArgumentException.ThrowIfNullOrEmpty(refreshToken, nameof(refreshToken));
+            if (Context.User?.Identity?.IsAuthenticated != true)
+            {
+                throw new HubException("User is not authenticated.");
+            }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
         }

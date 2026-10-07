@@ -17,6 +17,9 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// For testing secrets
+builder.Configuration.AddUserSecrets<Program>();
+
 builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("Kafka"));
 builder.Services.Configure<Hubs>(builder.Configuration.GetSection("Hubs"));
 

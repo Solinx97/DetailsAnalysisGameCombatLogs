@@ -58,7 +58,6 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="InitialCreate.sql" />
     <None Include="CombatAnalysis.Chat.publish.xml" />
   </ItemGroup>
 </Project>

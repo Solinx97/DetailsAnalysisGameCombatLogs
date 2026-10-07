@@ -27,9 +27,6 @@ public class PersonalChatUnreadMessageHub : Hub
         {
             ArgumentOutOfRangeException.ThrowIfLessThan(chatId, 1, nameof(chatId));
 
-            var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
-            ArgumentNullException.ThrowIfNullOrEmpty(refreshToken, nameof(refreshToken));
-
             await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
         }
         catch (ArgumentOutOfRangeException ex)

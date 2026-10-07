@@ -39,9 +39,6 @@ public class GroupChatMessagesHub : Hub
         {
             ArgumentOutOfRangeException.ThrowIfZero(chatId, nameof(chatId));
 
-            var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
-            ArgumentException.ThrowIfNullOrEmpty(refreshToken, nameof(refreshToken));
-
             await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
 
             _logger.LogInformation("Clients {Clients} in Group chat message Hub", Clients);

@@ -27,9 +27,6 @@ public class PersonalChatHub : Hub
         {
             ArgumentNullException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
-            var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
-            ArgumentNullException.ThrowIfNullOrEmpty(refreshToken, nameof(refreshToken));
-
             await Groups.AddToGroupAsync(Context.ConnectionId, appUserId);
         }
         catch (ArgumentNullException ex)

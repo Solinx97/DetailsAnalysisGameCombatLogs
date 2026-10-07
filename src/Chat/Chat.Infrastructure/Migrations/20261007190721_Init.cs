@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Chat.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Prod : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,7 +61,7 @@ namespace Chat.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Time = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     MarkedType = table.Column<int>(type: "int", nullable: false),
@@ -133,7 +133,7 @@ namespace Chat.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Time = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     MarkedType = table.Column<int>(type: "int", nullable: false),
