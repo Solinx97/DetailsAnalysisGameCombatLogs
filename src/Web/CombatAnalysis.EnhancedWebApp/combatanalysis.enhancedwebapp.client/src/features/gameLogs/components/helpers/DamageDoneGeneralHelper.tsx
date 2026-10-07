@@ -56,14 +56,14 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
         return (
             <li className="player-general-data-details__title" key="0">
                 <ul>
-                    <li>
+                    <li className="title-item">
                         {t("Spell")}
                     </li>
-                    <li>
+                    <li className="title-item">
                         {t("Total")}
                     </li>
                     {!hideColumns.includes("Average") &&
-                        <li className="allow-hide-column">
+                        <li className="allow-hide-column title-item">
                             {t("Average")}
                             <FontAwesomeIcon
                                 icon={faXmark}
@@ -72,11 +72,11 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                             />
                         </li>
                     }
-                    <li>
+                    <li className="title-item">
                         {t("DPS")}
                     </li>
                     {!hideColumns.includes("Count") &&
-                        <li className="allow-hide-column">
+                        <li className="allow-hide-column title-item">
                             {t("Count")}
                             <FontAwesomeIcon
                                 icon={faXmark}
@@ -86,7 +86,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         </li>
                     }
                     {!hideColumns.includes("Crit") &&
-                        <li className="allow-hide-column">
+                        <li className="allow-hide-column title-item">
                             {t("Crit")}, %
                             <FontAwesomeIcon
                                 icon={faXmark}
@@ -96,7 +96,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         </li>
                     }
                     {!hideColumns.includes("Miss") &&
-                        <li className="allow-hide-column">
+                        <li className="allow-hide-column title-item">
                             {t("Miss")}, %
                             <FontAwesomeIcon
                                 icon={faXmark}
@@ -106,7 +106,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         </li>
                     }
                     {!hideColumns.includes("Max") &&
-                        <li className="allow-hide-column">
+                        <li className="allow-hide-column title-item">
                             {t("Max")}
                             <FontAwesomeIcon
                                 icon={faXmark}
@@ -116,7 +116,7 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         </li>
                     }
                     {!hideColumns.includes("Min") &&
-                        <li className="allow-hide-column">
+                        <li className="allow-hide-column title-item">
                             {t("Min")}
                             <FontAwesomeIcon
                                 icon={faXmark}
@@ -151,9 +151,9 @@ const DamageDoneGeneralHelper: React.FC<DamageDoneGeneralHelperProps> = ({ gener
                         <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowPets")}</label>
                     </div>
                 </div>
-                <h5>
+                <h6>
                     {t("Total")}: {getValueShortName(totalDamage)}
-                </h5>
+                </h6>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}

@@ -16,7 +16,7 @@ $padding-medium: 5px;
 $z-index-high: 100;
 $background-dark: #0c192c;
 $font-family-comic: 'Comic Sans MS';
-$mobile-max-width: 425px;
+$mobile-max-width: 393px;
 
 a.navbar-brand {
     display: flex;
@@ -43,10 +43,8 @@ a.navbar-brand {
         .brand {
             display: flex;
             align-items: center;
-
-            svg {
-                cursor: pointer;
-            }
+            min-width: 150px;
+            cursor: pointer;
         }
     }
 }
@@ -93,7 +91,8 @@ a.navbar-brand {
     align-items: center;
     gap: $gap-large;
 
-    &__login, &__registration {
+    &__login,
+    &__registration {
         padding: $padding-small;
         border-radius: $border-radius;
         text-align: center;
@@ -121,22 +120,29 @@ a.navbar-brand {
     align-items: center;
     gap: $gap-large;
 
-    .username {
-        font-weight: bold;
-        font-family: $font-family-comic;
+    .information {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+
+        .username {
+            font-weight: bold;
+            font-family: $font-family-comic;
+        }
     }
 
     &__logout {
         padding: $padding-small;
         border-radius: $border-radius;
         text-align: center;
-        margin: 0 $gap-small;
         box-shadow: $box-shadow-tertiary;
         cursor: pointer;
     }
 }
 
-.authorized svg, .authorization svg {
+.authorized svg,
+.authorization svg {
     cursor: pointer;
 }
 
@@ -210,6 +216,7 @@ a.navbar-brand {
         .brand-container {
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
             gap: 5px;
         }
@@ -220,12 +227,13 @@ a.navbar-brand {
         flex-direction: column;
         gap: $gap-medium;
 
-        &__login, &__registration {
+        &__login,
+        &__registration {
             padding: $padding-small;
             border-radius: $border-radius;
             margin: 0 $gap-small;
             cursor: pointer;
-            
+
             &:hover {
                 transform: scale(1.025);
             }
@@ -354,7 +362,8 @@ a.navbar-brand {
             overflow-y: auto;
         }
 
-        &__empty, .notification-message {
+        &__empty,
+        .notification-message {
             display: flex;
             align-items: center;
             gap: 15px;

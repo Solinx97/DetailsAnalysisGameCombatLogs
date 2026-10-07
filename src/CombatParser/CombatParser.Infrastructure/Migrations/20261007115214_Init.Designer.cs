@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CombatParser.Infrastructure.Migrations
 {
     [DbContext(typeof(CombatParserContextOne))]
-    [Migration("20260922055903_Init")]
+    [Migration("20261007115214_Init")]
     partial class Init
     {
         /// <inheritdoc />

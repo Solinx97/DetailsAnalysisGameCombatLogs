@@ -104,7 +104,7 @@
 
         &__name {
             display: flex;
-            gap: 20px;
+            gap: 10px;
         }
 
         .name {
@@ -112,7 +112,7 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .received,
         .not-received {
             padding: 5px 20px;
@@ -135,9 +135,16 @@
             margin-left: 50px;
         }
 
-        .action,
+        .action {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .how-receive {
             display: flex;
+            justify-content: center;
+            align-items: center;
             border-radius: 20px;
             padding: 2px 8px;
             font-size: 0.7em;

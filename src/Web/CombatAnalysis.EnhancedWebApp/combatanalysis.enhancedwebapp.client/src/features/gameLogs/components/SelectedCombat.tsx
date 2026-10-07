@@ -133,80 +133,82 @@ const SelectedCombat: React.FC = () => {
     }
 
     return (
-        <div className="selected-combat__container">
-            <div className="selected-combat__navigate">
-                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}&gameVersion=${details.gameVersion}`)}>
-                    <FontAwesomeIcon
-                        icon={faDeleteLeft}
-                    />
-                    <div>{t("SelectCombat")}</div>
-                </div>
-                <h5>{t("Players")}</h5>
-                <div className="btn-shadow search-icon" onClick={() => setShowSearch((item) => !item)}>
-                    <FontAwesomeIcon
-                        icon={showSearch ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
-                    />
-                    <div>{t("Search")}</div>
-                </div>
-                <div className="boss">
-                    <div>{details.name}</div>
-                    <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
-                </div>
-            </div>
-            {showSearch &&
-                <div className="mb-3 search-people">
-                    <label htmlFor="inputUsername" className="form-label">{t("SearchPlayer")}</label>
-                    <div className="add-new-people__search-input">
-                        <input type="text" className="form-control" placeholder={t("TypeUsername") || ""} id="inputUsername"
-                            ref={filterContent} onChange={handlerSearch} />
+        <div className="selected-combat">
+            <div className="selected-combat__container">
+                <div className="selected-combat__navigate">
+                    <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}&gameVersion=${details.gameVersion}`)}>
                         <FontAwesomeIcon
-                            icon={faXmark}
-                            title={t("Clean") || ""}
-                            onClick={cleanSearch}
+                            icon={faDeleteLeft}
                         />
+                        <div>{t("SelectCombat")}</div>
+                    </div>
+                    <h5>{t("Players")}</h5>
+                    <div className="btn-shadow search-icon" onClick={() => setShowSearch((item) => !item)}>
+                        <FontAwesomeIcon
+                            icon={showSearch ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
+                        />
+                        <div>{t("Search")}</div>
+                    </div>
+                    <div className="boss">
+                        <div>{details.name}</div>
+                        <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
                     </div>
                 </div>
-            }
-            {(combatPlayers.length > 0 && screenSize.width > maxWidth) &&
-                <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowCommonStatistics((item) => !item)} />
-                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{showCommonStatistics ? t("HideCommonStatistics") : t("ShowCommonStatistics")}</label>
-                </div>
-            }
-            {showCommonStatistics &&
-                <PersonalTabs
-                    tab={0}
-                    tabs={[
-                        {
-                            id: 0,
-                            header: t("Damage"),
-                            content: <SelectedCombatChart
-                                combatPlayers={selectedPlayers}
-                                combatId={details.id}
-                                colors={getRandomColors(selectedPlayers.length)}
-                                useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
+                {showSearch &&
+                    <div className="mb-3 search-people">
+                        <label htmlFor="inputUsername" className="form-label">{t("SearchPlayer")}</label>
+                        <div className="add-new-people__search-input">
+                            <input type="text" className="form-control" placeholder={t("TypeUsername") || ""} id="inputUsername"
+                                ref={filterContent} onChange={handlerSearch} />
+                            <FontAwesomeIcon
+                                icon={faXmark}
+                                title={t("Clean") || ""}
+                                onClick={cleanSearch}
                             />
-                        },
-                        {
-                            id: 1,
-                            header: t("Healing"),
-                            content: <SelectedCombatChart
-                                combatPlayers={selectedPlayers}
-                                combatId={details.id}
-                                colors={getRandomColors(selectedPlayers.length)}
-                                useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
-                            />
-                        }
-                    ]}
-                    tabsClassName={"charts"}
+                        </div>
+                    </div>
+                }
+                {(combatPlayers.length > 0 && screenSize.width > maxWidth) &&
+                    <div className="form-check form-switch">
+                        <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowCommonStatistics((item) => !item)} />
+                        <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{showCommonStatistics ? t("HideCommonStatistics") : t("ShowCommonStatistics")}</label>
+                    </div>
+                }
+                {showCommonStatistics &&
+                    <PersonalTabs
+                        tab={0}
+                        tabs={[
+                            {
+                                id: 0,
+                                header: t("Damage"),
+                                content: <SelectedCombatChart
+                                    combatPlayers={selectedPlayers}
+                                    combatId={details.id}
+                                    colors={getRandomColors(selectedPlayers.length)}
+                                    useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
+                                />
+                            },
+                            {
+                                id: 1,
+                                header: t("Healing"),
+                                content: <SelectedCombatChart
+                                    combatPlayers={selectedPlayers}
+                                    combatId={details.id}
+                                    colors={getRandomColors(selectedPlayers.length)}
+                                    useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
+                                />
+                            }
+                        ]}
+                        tabsClassName={"charts"}
+                    />
+                }
+                <Details
+                    details={details}
+                    combatPlayers={selectedPlayers}
+                    getValueShortName={getValueShortName}
+                    t={t}
                 />
-            }
-            <Details
-                details={details}
-                combatPlayers={selectedPlayers}
-                getValueShortName={getValueShortName}
-                t={t}
-            />
+            </div>
         </div>
     );
 }

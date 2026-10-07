@@ -116,12 +116,14 @@ const AccountCollections: React.FC<{ collectionType: number, isAllowInfo: boolea
             <div className="selected-collection-item">
                 <div className="selected-collection-item__name">
                     {isAllowInfo &&
-                        <div className="action btn-shadow"
-                            onClick={() => seCollectionItemInfoId(prev => prev === item.item.id ? 0 : item.item.id)}>
-                            <FontAwesomeIcon
-                                icon={collectionItemInfoId === item.item.id ? faLocationCrosshairs : faPlus}
-                                color={collectionItemInfoId === item.item.id ? 'green' : 'white'}
-                            />
+                        <div className="action">
+                            <div className="btn-shadow"
+                                onClick={() => seCollectionItemInfoId(prev => prev === item.item.id ? 0 : item.item.id)}>
+                                <FontAwesomeIcon
+                                    icon={collectionItemInfoId === item.item.id ? faLocationCrosshairs : faPlus}
+                                    color={collectionItemInfoId === item.item.id ? 'green' : 'white'}
+                                />
+                            </div>
                         </div>
                     }
                     <div className={`name ${item.info !== null ? 'received' : 'not-received'}`}>

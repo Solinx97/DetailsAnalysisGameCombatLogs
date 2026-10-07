@@ -59,15 +59,17 @@ const AccountDashboard: React.FC<AccountDashboardProps> = ({ regionName, getAuth
     }
 
     return (
-        <div>
-            <div className="filter-item">
-                <div>{t("Character")}</div>
-                <Select<OptionModel>
-                    className="options"
-                    options={charactersOptions}
-                    value={characterValue}
-                    onChange={(selected) => setCharacterValue(selected)}
-                />
+        <div className="account-dashboard">
+            <div className="filters">
+                <div className="filter-item">
+                    <div>{t("Character")}</div>
+                    <Select<OptionModel>
+                        className="options"
+                        options={charactersOptions}
+                        value={characterValue}
+                        onChange={(selected) => setCharacterValue(selected)}
+                    />
+                </div>
             </div>
             {characterValue &&
                 <AccountDashboardItems

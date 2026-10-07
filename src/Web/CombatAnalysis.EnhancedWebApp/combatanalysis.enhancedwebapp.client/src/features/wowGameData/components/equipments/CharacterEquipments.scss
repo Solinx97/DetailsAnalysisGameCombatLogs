@@ -1,3 +1,5 @@
+$mobile-max-width: 393px;
+
 .equipments {
     &__character-information {
         display: flex;
@@ -16,7 +18,12 @@
 
             &__inventory-type {
                 display: flex;
+                align-items: center;
 
+                .special {
+                    text-align: center;
+                }
+                
                 .epic {
                     box-shadow: 1px 1px purple;
                 }
@@ -111,6 +118,14 @@
             opacity: 0.6;
             font-size: 0.9em;
             min-width: 150px;
+        }
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .equipment {
+        &__inventory-type {
+            align-items: center;
         }
     }
 }

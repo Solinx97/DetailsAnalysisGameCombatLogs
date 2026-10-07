@@ -1,4 +1,4 @@
-﻿$mobile-max-width: 425px;
+﻿$mobile-max-width: 393px;
 
 .main-information {
     width: 45vw;
@@ -220,6 +220,10 @@
 
 @media (max-width: $mobile-max-width) {
     .main-information {
-        width: 95vw;
+        width: 92vw;
+
+        &__container {
+            font-size: 0.8em;
+        }
     }
 }

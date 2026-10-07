@@ -126,9 +126,9 @@ const DamageTakenGeneralHelper: React.FC<DamageTakenGeneralHelperProps> = ({ gen
     return (
         <>
             <li className="player-general-data-details__inherit">
-                <h5>
+                <h6>
                     {t("Total")}: {getValueShortName(combatPlayer.unit.unitInfo.damageTaken)}
-                </h5>
+                </h6>
                 {hideColumns.length > 0 && hiddenColumns()}
             </li>
             {tableTitle()}

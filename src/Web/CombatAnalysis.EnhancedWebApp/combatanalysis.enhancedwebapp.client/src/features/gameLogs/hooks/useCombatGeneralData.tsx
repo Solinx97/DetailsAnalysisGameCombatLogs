@@ -50,7 +50,7 @@ const useCombatGeneralData = (combatPlayer: CombatPlayerModel, combatId: number,
             return `${thousands.toFixed(fixedNumberUntil)} K`;
         }
 
-        return `${value}`;
+        return `${value.toFixed(2)}`;
     }
 
     const getGeneralListAsync = async (): Promise<JSX.Element> => {

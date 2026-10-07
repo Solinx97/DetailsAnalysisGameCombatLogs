@@ -53,7 +53,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                         <div className={`status combat-title__${selectedCombat.isWin ? 'win' : 'lose'}`}>
                             <div className="combat-number">{selectedCombatIndex + 1}</div>
                             <div className="card-body">
-                                <h5 className="card-title">{selectedCombat.boss.name}</h5>
+                                <h6 className="card-title"><strong>{selectedCombat.boss.name}</strong></h6>
                                 <p className="card-text">{selectedCombat.dungeonName}</p>
                             </div>
                         </div>
@@ -89,44 +89,46 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                         </div>
                     </div>
                 </div>
-                <ul className="stats">
-                    <li className="list-group-item">
-                        <div>{t("Damage")}</div>
-                        <FontAwesomeIcon
-                            icon={faKhanda}
-                            className="list-group-item__player-statistic-item"
-                            title={t("Damage") || ""}
-                        />
-                        <div>{getValueShortName(selectedCombat.damageDone)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <div>{t("Healing")}</div>
-                        <FontAwesomeIcon
-                            icon={faPlusCircle}
-                            className="list-group-item__player-statistic-item"
-                            title={t("Healing") || ""}
-                        />
-                        <div>{getValueShortName(selectedCombat.healDone)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <div>{t("DamageTaken")}</div>
-                        <FontAwesomeIcon
-                            icon={faShieldHalved}
-                            className="list-group-item__player-statistic-item"
-                            title={t("DamageTaken") || ""}
-                        />
-                        <div>{getValueShortName(selectedCombat.damageTaken)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <div>{t("ResourcesRecovery")}</div>
-                        <FontAwesomeIcon
-                            icon={faBolt}
-                            className="list-group-item__player-statistic-item"
-                            title={t("ResourcesRecovery") || ""}
-                        />
-                        <div>{getValueShortName(selectedCombat.resourcesRecovery)}</div>
-                    </li>
-                    <li className="list-group-item buffs"
+                <div className="combat-information">
+                    <ul className="combat-information__stats">
+                        <li className="list-group-item">
+                            <div>{t("Damage")}</div>
+                            <FontAwesomeIcon
+                                icon={faKhanda}
+                                className="list-group-item__player-statistic-item"
+                                title={t("Damage") || ""}
+                            />
+                            <div>{getValueShortName(selectedCombat.damageDone)}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <div>{t("Healing")}</div>
+                            <FontAwesomeIcon
+                                icon={faPlusCircle}
+                                className="list-group-item__player-statistic-item"
+                                title={t("Healing") || ""}
+                            />
+                            <div>{getValueShortName(selectedCombat.healDone)}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <div>{t("DamageTaken")}</div>
+                            <FontAwesomeIcon
+                                icon={faShieldHalved}
+                                className="list-group-item__player-statistic-item"
+                                title={t("DamageTaken") || ""}
+                            />
+                            <div>{getValueShortName(selectedCombat.damageTaken)}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <div>{t("ResourcesRecovery")}</div>
+                            <FontAwesomeIcon
+                                icon={faBolt}
+                                className="list-group-item__player-statistic-item"
+                                title={t("ResourcesRecovery") || ""}
+                            />
+                            <div>{getValueShortName(selectedCombat.resourcesRecovery)}</div>
+                        </li>
+                    </ul>
+                    <div className="list-group-item combat-information__buffs"
                         onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>
                         <FontAwesomeIcon
                             icon={faCircleNodes}
@@ -134,8 +136,8 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                             title={t("Buffs") || ""}
                         />
                         <div>{t("Buffs")}</div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
                 <div className="details">
                     <div className="btn-shadow"
                         onClick={() => navigate(`/selected-combat?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}&gameVersion=${gameVersion}`)}>

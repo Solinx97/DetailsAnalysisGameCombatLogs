@@ -107,21 +107,23 @@ const CombatGeneralDetails: React.FC<CombatGeneralDetailsProps> = ({ combatPlaye
     }
 
     return (
-        <div className="details__container">
-            <CombatPreAuraItem
-                combatId={combatId}
-                unitId={combatPlayer.unitId}
-            />
-            {(spells.length > 0 && screenSize.width > maxWidth) &&
-                <div className="form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGenericChart((item) => !item)} defaultChecked={showGenericChart} />
-                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
-                </div>
-            }
-            {showGenericChart && getChart()}
-            <ul className="player-general-data-details">
-                {playerDataDetailsRender}
-            </ul>
+        <div className="details">
+            <div className="details__container">
+                <CombatPreAuraItem
+                    combatId={combatId}
+                    unitId={combatPlayer.unitId}
+                />
+                {(spells.length > 0 && screenSize.width > maxWidth) &&
+                    <div className="form-switch">
+                        <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGenericChart((item) => !item)} defaultChecked={showGenericChart} />
+                        <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
+                    </div>
+                }
+                {showGenericChart && getChart()}
+                <ul className="player-general-data-details">
+                    {playerDataDetailsRender}
+                </ul>
+            </div>
         </div>
     );
 }

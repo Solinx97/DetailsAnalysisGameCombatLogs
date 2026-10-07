@@ -99,44 +99,46 @@ const CombatDetails: React.FC = () => {
     }
 
     return (
-        <div className="general-details__container">
-            <div className="general-details__navigate">
-                <CombatDetailsHeader
-                    details={details}
-                    combatPlayer={combatPlayer}
-                    t={t}
-                />
-                <div className="details-type">{getDetailsTypeName()}</div>
-                <ul className="types">
-                    <li className="nav-item">
-                        <div className={`btn-shadow ${tabIndex === 0 ? "active" : ""}`} onClick={() => setTabIndex(0)}>
-                            <FontAwesomeIcon
-                                icon={faSitemap}
-                            />
-                            <div>{t("CommonInform")}</div>
-                        </div>
-                    </li>
-                    <li className="nav-item">
-                        <div className={`btn-shadow ${tabIndex === 1 ? "active" : ""}`} onClick={() => setTabIndex(1)}>
-                            <FontAwesomeIcon
-                                icon={faCalendarDay}
-                            />
-                            <div>{t("DetailsInform")}</div>
-                        </div>
-                    </li>
-                </ul>
+        <div className="general-details">
+            <div className="general-details__container">
+                <div className="general-details__navigate">
+                    <CombatDetailsHeader
+                        details={details}
+                        combatPlayer={combatPlayer}
+                        t={t}
+                    />
+                    <div className="details-type">{getDetailsTypeName()}</div>
+                    <ul className="types">
+                        <li className="nav-item">
+                            <div className={`btn-shadow ${tabIndex === 0 ? "active" : ""}`} onClick={() => setTabIndex(0)}>
+                                <FontAwesomeIcon
+                                    icon={faSitemap}
+                                />
+                                <div>{t("CommonInform")}</div>
+                            </div>
+                        </li>
+                        <li className="nav-item">
+                            <div className={`btn-shadow ${tabIndex === 1 ? "active" : ""}`} onClick={() => setTabIndex(1)}>
+                                <FontAwesomeIcon
+                                    icon={faCalendarDay}
+                                />
+                                <div>{t("DetailsInform")}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                {tabIndex === 0
+                    ? <CombatGeneralDetails
+                        combatPlayer={combatPlayer}
+                        combatId={details.id}
+                        detailsType={details.detailsType}
+                    />
+                    : <CombatMoreDetails
+                        unitId={combatPlayer.unitId}
+                        detailsType={details.detailsType}
+                    />
+                }
             </div>
-            {tabIndex === 0
-                ? <CombatGeneralDetails
-                    combatPlayer={combatPlayer}
-                    combatId={details.id}
-                    detailsType={details.detailsType}
-                />
-                : <CombatMoreDetails
-                    unitId={combatPlayer.unitId}
-                    detailsType={details.detailsType}
-                />
-            }
         </div>
     );
 }

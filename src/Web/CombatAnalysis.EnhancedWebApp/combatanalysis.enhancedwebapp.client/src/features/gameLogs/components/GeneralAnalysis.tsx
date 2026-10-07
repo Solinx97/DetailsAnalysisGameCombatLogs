@@ -44,37 +44,39 @@ const GeneralAnalysis: React.FC = () => {
     }
 
     return (
-        <div className="general-analysis__container">
-            <div className="general-analysis__navigate">
-                <div className="btn-shadow select-logs" onClick={() => navigate("/game-combat-logs")}>
-                    <FontAwesomeIcon
-                        icon={faDeleteLeft}
-                    />
-                    <div>{t("Logs")}</div>
+        <div className="general-analysis">
+            <div className="general-analysis__container">
+                <div className="general-analysis__navigate">
+                    <div className="btn-shadow select-logs" onClick={() => navigate("/game-combat-logs")}>
+                        <FontAwesomeIcon
+                            icon={faDeleteLeft}
+                        />
+                        <div>{t("Logs")}</div>
+                    </div>
+                    <h5>{t("Combats")}</h5>
                 </div>
-                <h5>{t("Combats")}</h5>
+                <PersonalTabs
+                    tab={1}
+                    tabs={[
+                        {
+                            id: 0,
+                            header: t("Explorer"),
+                            content: <Dashboard
+                                combatLogId={combatLogId}
+                            />
+                        },
+                        {
+                            id: 1,
+                            header: t("Informations"),
+                            content: <GeneralAnalysisItems
+                                allUniqueCombats={allUniqueCombats}
+                                combatLogId={combatLogId}
+                            />
+                        }
+                    ]}
+                    tabsClassName={"charts"}
+                />
             </div>
-            <PersonalTabs
-                tab={1}
-                tabs={[
-                    {
-                        id: 0,
-                        header: t("Explorer"),
-                        content: <Dashboard
-                            combatLogId={combatLogId}
-                        />
-                    },
-                    {
-                        id: 1,
-                        header: t("Informations"),
-                        content: <GeneralAnalysisItems
-                            allUniqueCombats={allUniqueCombats}
-                            combatLogId={combatLogId}
-                        />
-                    }
-                ]}
-                tabsClassName={"charts"}
-            />
         </div>
     );
 }

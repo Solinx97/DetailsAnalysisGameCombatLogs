@@ -5,7 +5,7 @@ $background-dark: #135D66;
 $background-light: #496989;
 $combat-win: green;
 $combat-lose: red;
-$mobile-max-width: 425px;
+$mobile-max-width: 393px;
 
 @mixin box-shadow($type: 'standard') {
     @if $type =='standard' {
@@ -146,12 +146,20 @@ $mobile-max-width: 425px;
                         }
                     }
 
-                    .stats {
+                    .combat-information {
                         display: flex;
                         justify-content: space-around;
-                        margin: 5px 0;
+                        align-items: center;
+                        margin: 0 30px;
 
-                        .buffs {
+                        &__stats {
+                            display: flex;
+                            justify-content: space-around;
+                            width: 100%;
+                            margin: 5px 0;
+                        }
+
+                        &__buffs {
                             padding: 5px 20px;
                             border-radius: 25px;
                             box-shadow: 2px 2px 2px 2px orange;
@@ -306,6 +314,8 @@ ul {
 
 @media (max-width: $mobile-max-width) {
     .general-analysis {
+        font-size: 0.7em;
+
         &__container {
             .card {
                 box-shadow: none;
@@ -325,6 +335,11 @@ ul {
                     &__ready {
                         display: none;
                     }
+                }
+
+                .combat-information {
+                    display: flex;
+                    flex-direction: column;
                 }
             }
         }

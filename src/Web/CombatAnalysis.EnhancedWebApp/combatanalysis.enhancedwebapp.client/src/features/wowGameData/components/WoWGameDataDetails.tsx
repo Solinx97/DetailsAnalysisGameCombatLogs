@@ -94,7 +94,7 @@ const WoWGameDataDetails: React.FC<WoWGameDataDetailsProps> = ({ regionName, get
         return (
             <div className="account__character">
                 <div className="select-character">
-                    <div>
+                    <div className="filter-item">
                         <div>{t("Username")} </div>
                         <input type="text" className="form-control" placeholder="Username" aria-label="Username"
                             ref={usernameRef}

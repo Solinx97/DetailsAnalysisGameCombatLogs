@@ -1,4 +1,6 @@
-﻿.recharts-tooltip-wrapper {
+﻿$mobile-max-width: 393px;
+
+.recharts-tooltip-wrapper {
     background: transparent;
     z-index: 9999 !important;
 }
@@ -303,6 +305,18 @@
 
         button {
             font-size: 13px;
+        }
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .selected-combat {
+        font-size: 0.8em;
+
+        .details {
+            &__item {
+                gap: 20px;
+            }
         }
     }
 }

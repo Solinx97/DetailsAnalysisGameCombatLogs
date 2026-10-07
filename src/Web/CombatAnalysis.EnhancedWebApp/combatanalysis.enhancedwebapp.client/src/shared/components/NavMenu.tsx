@@ -89,9 +89,11 @@ const NavMenu: React.FC = () => {
                                     <Search
                                         t={t}
                                     />
-                                    <Notification />
-                                    <div className="username">{me?.username}</div>
-                                    <div className="authorized__logout" onClick={handleLogoutClick}>{t("Logout")}</div>
+                                    <div className="information">
+                                        <Notification />
+                                        <div className="username">{me?.username}</div>
+                                        <div className="authorized__logout" onClick={handleLogoutClick}>{t("Logout")}</div>
+                                    </div>
                                 </div>
                                 : <div className="authorization">
                                     <div className="authorization__login" onClick={handleLoginClick}>{t("Login")}</div>
