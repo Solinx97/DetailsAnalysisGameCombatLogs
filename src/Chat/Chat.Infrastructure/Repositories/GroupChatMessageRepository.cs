@@ -1,8 +1,7 @@
 ﻿using Chat.Domain.Consts;
 using Chat.Domain.Entities;
+using Chat.Domain.Entities.Events;
 using Chat.Domain.Repositories;
-using Chat.Infrastructure.Exceptions;
-using Chat.Infrastructure.Outbox.Events;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -18,12 +17,12 @@ internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessa
         await _context.GroupChatMessage
                      .AddAsync(message, cancelationToken);
 
-        var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, message.GroupChatUserId, message.Message);
+        var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, message.GroupChatUserId, message.Username, message.Message);
         var outbox = new OutboxMessage
         {
             Id = @event.EventId,
-            Topic = KafkaTopics.PERSONAL_CHAT_MESSAGE,
-            Key = message.GroupChatId.ToString(),
+            Topic = KafkaTopics.GROUP_CHAT_MESSAGE,
+            Key = message.GroupChatId.Value.ToString(),
             Payload = JsonSerializer.Serialize(@event)
         };
 
@@ -35,7 +34,7 @@ internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessa
     {
         var messages = await _context.GroupChatMessage
                     .AsNoTracking()
-                    .Where(m => m.GroupChatId == chatId)
+                    .Where(m => m.GroupChatId.Equals(chatId))
                     .OrderBy(m => m.Time)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
@@ -44,38 +43,11 @@ internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessa
         return messages;
     }
 
-    public async Task<IEnumerable<GroupChatMessage>> GetAllAsync(CancellationToken cancelationToken)
-    {
-        var collection = await _context.GroupChatMessage
-            .AsNoTracking()
-            .ToListAsync(cancelationToken);
-
-        return collection;
-    }
-
-    public async Task<GroupChatMessage> GetByIdAsync(int id, CancellationToken cancelationToken)
-    {
-        var entity = await _context.GroupChatMessage
-            .SingleOrDefaultAsync(g => g.Id.Equals(id), cancelationToken)
-                        ?? throw new EntityNotFoundException(typeof(GroupChatMessage), id);
-
-        return entity;
-    }
-
     public async Task<int> CountAsync(int chatId, CancellationToken cancelationToken)
     {
         var count = await _context.GroupChatMessage
-                     .CountAsync(c => c.GroupChatId == chatId, cancelationToken);
+                     .CountAsync(c => c.GroupChatId.Equals(chatId), cancelationToken);
 
         return count;
-    }
-
-    public async Task DeleteAsync(Guid id, CancellationToken cancelationToken)
-    {
-        var entity = await _context.GroupChatMessage
-            .SingleOrDefaultAsync(g => g.Id.Equals(id), cancelationToken)
-                    ?? throw new EntityNotFoundException(typeof(GroupChatMessage), id);
-
-        _context.GroupChatMessage.Remove(entity);
     }
 }

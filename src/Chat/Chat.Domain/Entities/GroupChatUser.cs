@@ -10,15 +10,11 @@ public class GroupChatUser : IRepositoryEntity<GroupChatUserId>
 
     private GroupChatUser() { }
 
-    public GroupChatUser(string id, string username, int chatId, UserId appUserId, int unreadMessages = 0)
+    private GroupChatUser(string username, UserId appUserId, int unreadMessages = 0)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(username.Length, USERNAME_MAX_LENGTH, nameof(username));
-
-        Id = id;
+        Id = Guid.NewGuid();
         Username = username;
         UnreadMessages = unreadMessages;
-        GroupChatId = chatId;
         AppUserId = appUserId;
     }
 
@@ -35,6 +31,14 @@ public class GroupChatUser : IRepositoryEntity<GroupChatUserId>
     public UserId AppUserId { get; private set; }
 
     public GroupChat GroupChat { get; private set; } = null!;
+
+    public static GroupChatUser Create(string username, UserId appUserId, int unreadMessages)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(username.Length, USERNAME_MAX_LENGTH, nameof(username));
+
+        return new GroupChatUser(username, appUserId, unreadMessages);
+    }
 
     public void MarkAsRead(GroupChatMessageId? messageId)
     {

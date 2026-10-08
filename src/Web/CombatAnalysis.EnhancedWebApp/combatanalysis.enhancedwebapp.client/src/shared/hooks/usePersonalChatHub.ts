@@ -13,7 +13,7 @@ const usePersonalChatHub = (
     personalChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
     personalChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
 ) => {
-    const personalChatHubURL = `${APP_CONFIG.hubs.url}${APP_CONFIG.hubs.personalChat}`;
+    const personalChatHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChat}`;
     const personalChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChatMessages}`;
     const personalChatUnreadMessagesHubURL = `${APP_CONFIG.hubs.url}${APP_CONFIG.hubs.personalChatUnreadMessage}`;
 

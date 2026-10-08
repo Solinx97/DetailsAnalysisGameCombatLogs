@@ -3,13 +3,12 @@ import { ChatApi } from './Chat.api';
 
 export const PersonalChatApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
-        createPersonalChatAsync: builder.mutation<PersonalChatModel, PersonalChatModel>({
+        createPersonalChatAsync: builder.mutation<void, PersonalChatModel>({
             query: personalChat => ({
                 body: personalChat,
                 url: '/PersonalChat',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'PersonalChat', id: result.id }] : [],
         }),
         updatePersonalChatAsync: builder.mutation<void, { id: number, personalChat: PersonalChatModel }>({
             query: ({ id, personalChat }) => ({

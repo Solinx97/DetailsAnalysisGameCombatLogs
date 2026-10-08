@@ -3,5 +3,4 @@
 public record GroupChatPatch(
         int Id,
         string? Name,
-        string? OwnerId
-);
+        string? OwnerId);

@@ -1,5 +1,5 @@
 export type GroupChatUserModel = {
-    id?: string;
+    id: string;
     username: string;
     unreadMessages: number;
     lastReadMessageId?: number;

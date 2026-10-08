@@ -20,5 +20,5 @@ public class PersonalChatMessageDto
 
     public int PersonalChatId { get; set; }
 
-    public string AppUserId { get; set; } = string.Empty;
+    public Guid AppUserId { get; set; }
 }

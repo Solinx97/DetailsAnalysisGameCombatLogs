@@ -1,18 +1,8 @@
 ﻿using Chat.Domain.Aggregates;
-using Chat.Domain.Entities;
-using Chat.Domain.ValueObjects;
 
 namespace Chat.Domain.Repositories;
 
-public interface IGroupChatRepository : IGenericRepository<GroupChat, GroupChatId>
+public interface IGroupChatRepository
 {
-    Task UpdateNameAsync(int chatId, string newName);
-
-    Task PassOwnerAsync(int chatId, UserId ownerId);
-
-    Task<GroupChatRules?> AddRulesAsync(GroupChatRules rules);
-
-    Task RemoveRulesAsync(int chatId);
-
-    Task UpdateRulesAsync(GroupChatRules updateRules);
+    Task AddAsync(GroupChat chat, CancellationToken cancelationToken);
 }

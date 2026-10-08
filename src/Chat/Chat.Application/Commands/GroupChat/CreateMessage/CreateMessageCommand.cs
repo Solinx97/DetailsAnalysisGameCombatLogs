@@ -6,5 +6,5 @@ public record CreateMessageCommand(
     string Username,
     string Message,
     int ChatId,
-    string GroupChatUserId
+    Guid GroupChatUserId
     ) : IRequest;

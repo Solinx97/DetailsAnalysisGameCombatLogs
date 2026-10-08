@@ -2,19 +2,14 @@
 
 public record GroupChatUserId
 {
-    public GroupChatUserId(string value)
+    public GroupChatUserId(Guid value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("GroupChatUserId cannot be empty");
-        }
-
         Value = value;
     }
 
-    public string Value { get; }
+    public Guid Value { get; }
 
-    public static implicit operator string(GroupChatUserId id) => id.Value;
+    public static implicit operator Guid(GroupChatUserId id) => id.Value;
 
-    public static implicit operator GroupChatUserId(string value) => new(value);
+    public static implicit operator GroupChatUserId(Guid value) => new(value);
 }

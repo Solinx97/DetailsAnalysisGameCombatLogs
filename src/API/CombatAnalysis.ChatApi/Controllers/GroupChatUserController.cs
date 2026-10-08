@@ -30,8 +30,8 @@ public class GroupChatUserController(IGroupChatUserService chatUserService, IMap
         return Ok(groupChatUsers);
     }
 
-    [HttpGet("{id:minlength(8)}")]
-    public async Task<IActionResult> GetById(string id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
     {
         try
         {
@@ -54,7 +54,7 @@ public class GroupChatUserController(IGroupChatUserService chatUserService, IMap
     }
 
     [HttpGet("findByAppUserId")]
-    public async Task<IActionResult> FindByAppUserId([Required] [Range(1, int.MaxValue)] int chatId, [Required] string appUserId)
+    public async Task<IActionResult> FindByAppUserId([Required] [Range(1, int.MaxValue)] int chatId, [Required] Guid appUserId)
     {
         try
         {
@@ -76,8 +76,8 @@ public class GroupChatUserController(IGroupChatUserService chatUserService, IMap
         }
     }
 
-    [HttpGet("findAllByAppUserId/{appUserId:minlength(8)}")]
-    public async Task<IActionResult> FindAllByAppUserId(string appUserId)
+    [HttpGet("findAllByAppUserId/{appUserId}")]
+    public async Task<IActionResult> FindAllByAppUserId(Guid appUserId)
     {
         var groupChatUsers = await _chatUserService.FindAllByAppUserIdAsync(appUserId);
 
@@ -117,8 +117,8 @@ public class GroupChatUserController(IGroupChatUserService chatUserService, IMap
         }
     }
 
-    [HttpPatch("{id:minlength(8)}")]
-    public async Task<IActionResult> PartialUpdate(string id, [FromBody] GroupChatUserPatch groupChatUser)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> PartialUpdate(Guid id, [FromBody] GroupChatUserPatch groupChatUser)
     {
         try
         {
@@ -158,8 +158,8 @@ public class GroupChatUserController(IGroupChatUserService chatUserService, IMap
         }
     }
 
-    [HttpDelete("{id:minlength(8)}")]
-    public async Task<IActionResult> Delete(string id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {

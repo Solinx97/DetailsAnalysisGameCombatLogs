@@ -64,7 +64,6 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
             await chatHub.connectToPersonalChatMessagesAsync(chat.id);
 
             chatHub.subscribeToPersonalChatMessages((message: PersonalChatMessageModel) => {
-                console.log(message);
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByPersonalChatId',

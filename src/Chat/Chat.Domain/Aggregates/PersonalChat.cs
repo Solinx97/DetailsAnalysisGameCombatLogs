@@ -11,7 +11,7 @@ public class PersonalChat : IRepositoryEntity<PersonalChatId>
 
     private PersonalChat() { }
 
-    public PersonalChat(UserId initiatorId, UserId companionId, int initiatorUnreadMessages = 0, int companionUnreadMessages = 0)
+    private PersonalChat(UserId initiatorId, UserId companionId, int initiatorUnreadMessages = 0, int companionUnreadMessages = 0)
     {
         InitiatorId = initiatorId;
         CompanionId = companionId;
@@ -30,6 +30,11 @@ public class PersonalChat : IRepositoryEntity<PersonalChatId>
     public int CompanionUnreadMessages { get; private set; }
 
     public IReadOnlyCollection<PersonalChatMessage> Messages => _messages.AsReadOnly();
+
+    public static PersonalChat Create(UserId initiatorId, UserId companionId)
+    {
+        return new PersonalChat(initiatorId, companionId, 0, 0);
+    }
 
     public void UpdateInitiatorUnreadMessageCount(int count)
     {

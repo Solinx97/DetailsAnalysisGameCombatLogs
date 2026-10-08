@@ -1,14 +1,14 @@
 ﻿using Chat.Domain.Enums.GroupChatRules;
+using Chat.Domain.Interfaces;
 using Chat.Domain.ValueObjects;
 
 namespace Chat.Domain.Entities;
 
-public class GroupChatRules
+public class GroupChatRules : IRepositoryEntity<GroupChatRulesId>
 {
     private GroupChatRules() { }
 
-    public GroupChatRules(int chatId, 
-        InvitePeopleRestrictions invitePeople = InvitePeopleRestrictions.Anyone, 
+    private GroupChatRules(InvitePeopleRestrictions invitePeople = InvitePeopleRestrictions.Anyone, 
         RemovePeopleRestrictions removePeople = RemovePeopleRestrictions.Anyone,
         PinMessageRestrictions pinMessage = PinMessageRestrictions.Anyone,
         AnnouncementsRestrictions announcements = AnnouncementsRestrictions.Anyone)
@@ -17,7 +17,6 @@ public class GroupChatRules
         RemovePeople = removePeople;
         PinMessage = pinMessage;
         Announcements = announcements;
-        GroupChatId = chatId;
     }
 
     public GroupChatRulesId Id { get; private set; }
@@ -31,6 +30,14 @@ public class GroupChatRules
     public AnnouncementsRestrictions Announcements { get; private set; }
 
     public GroupChatId GroupChatId { get; private set; }
+
+    public static GroupChatRules Create(InvitePeopleRestrictions invitePeople,
+        RemovePeopleRestrictions removePeople,
+        PinMessageRestrictions pinMessage,
+        AnnouncementsRestrictions announcements)
+    {
+        return new GroupChatRules(invitePeople, removePeople, pinMessage, announcements);
+    }
 
     public void Update(InvitePeopleRestrictions invitePeople,
         RemovePeopleRestrictions removePeople,

@@ -12,7 +12,7 @@ public class PersonalChatMessagesHub(ILogger<PersonalChatMessagesHub> logger) : 
     {
         try
         {
-            ArgumentOutOfRangeException.ThrowIfLessThan(chatId, 1, nameof(chatId));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(chatId, nameof(chatId));
 
             if (Context.User?.Identity?.IsAuthenticated != true)
             {
@@ -134,5 +134,15 @@ public class PersonalChatMessagesHub(ILogger<PersonalChatMessagesHub> logger) : 
         {
             _logger.LogError(ex, "Leave from room failed. Parameter '{ParamName}' was incorrect.", ex.ParamName);
         }
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        if (exception != null)
+        {
+            _logger.LogError(exception, exception.Message);
+        }
+
+        return base.OnDisconnectedAsync(exception);
     }
 }

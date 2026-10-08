@@ -2,20 +2,15 @@
 
 public record UserId
 {
-    public UserId(string value)
+    public UserId(Guid value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("UserId cannot be empty");
-        }
-
         Value = value;
     }
 
-    public string Value { get; }
+    public Guid Value { get; }
 
-    public static implicit operator string(UserId id) => id.Value;
+    public static implicit operator Guid(UserId id) => id.Value;
 
 
-    public static implicit operator UserId(string value) => new(value);
+    public static implicit operator UserId(Guid value) => new(value);
 }

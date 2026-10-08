@@ -1,10 +1,11 @@
-﻿using Chat.Infrastructure.Interfaces;
+﻿using Chat.Domain.Interfaces;
 
-namespace Chat.Infrastructure.Outbox.Events;
+namespace Chat.Domain.Entities.Events;
 
 public record GroupChatMessageCreatedEvent(
     Guid EventId,
     Guid MessageId,
     int ChatId,
-    string SenderId,
+    Guid SenderId,
+    string Username,
     string Message) : IIntegrationEvent;

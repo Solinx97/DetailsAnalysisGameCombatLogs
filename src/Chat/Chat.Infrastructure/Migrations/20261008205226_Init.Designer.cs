@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Infrastructure.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20261008162901_Init")]
+    [Migration("20261008205226_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -38,9 +38,8 @@ namespace Chat.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("OwnerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -55,16 +54,14 @@ namespace Chat.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CompanionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("CompanionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CompanionUnreadMessages")
                         .HasColumnType("int");
 
-                    b.Property<string>("InitiatorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("InitiatorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("InitiatorUnreadMessages")
                         .HasColumnType("int");
@@ -79,9 +76,8 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -97,9 +93,8 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<int>("GroupChatId")
                         .HasColumnType("int");
 
-                    b.Property<string>("GroupChatUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("GroupChatUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsEdited")
                         .HasColumnType("bit");
@@ -135,12 +130,11 @@ namespace Chat.Infrastructure.Migrations
 
             modelBuilder.Entity("Chat.Domain.Entities.GroupChatUser", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("GroupChatId")
                         .HasColumnType("int");
@@ -204,9 +198,8 @@ namespace Chat.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsEdited")
                         .HasColumnType("bit");

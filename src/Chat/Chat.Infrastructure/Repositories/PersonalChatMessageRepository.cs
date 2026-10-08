@@ -1,8 +1,8 @@
 ﻿using Chat.Domain.Consts;
 using Chat.Domain.Entities;
+using Chat.Domain.Entities.Events;
 using Chat.Domain.Repositories;
 using Chat.Infrastructure.Exceptions;
-using Chat.Infrastructure.Outbox.Events;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -23,7 +23,7 @@ internal class PersonalChatMessageRepository(ChatContext context) : IPersonalCha
         {
             Id = @event.EventId,
             Topic = KafkaTopics.PERSONAL_CHAT_MESSAGE,
-            Key = message.PersonalChatId.ToString(),
+            Key = message.PersonalChatId.Value.ToString(),
             Payload = JsonSerializer.Serialize(@event)
         };
 

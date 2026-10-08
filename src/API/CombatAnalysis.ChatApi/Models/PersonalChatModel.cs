@@ -8,13 +8,13 @@ public class PersonalChatModel
     public int Id { get; set; }
 
     [Required]
-    public string InitiatorId { get; set; } = string.Empty;
+    public Guid InitiatorId { get; set; }
 
     [Range(0, int.MaxValue)]
     public int InitiatorUnreadMessages { get; set; }
 
     [Required]
-    public string CompanionId { get; set; } = string.Empty;
+    public Guid CompanionId { get; set; }
 
     [Range(0, int.MaxValue)]
     public int CompanionUnreadMessages { get; set; }

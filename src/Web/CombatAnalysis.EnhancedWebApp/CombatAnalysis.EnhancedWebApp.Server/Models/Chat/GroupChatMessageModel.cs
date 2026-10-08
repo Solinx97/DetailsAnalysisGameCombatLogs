@@ -1,7 +1,7 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.Chat;
 
 public record GroupChatMessageModel(
-    int Id,
+    string Id,
     string Username,
     string Message,
     DateTimeOffset Time,
@@ -10,6 +10,5 @@ public record GroupChatMessageModel(
     int MarkedType,
     bool IsEdited,
     int GroupChatId,
-    string GroupChatUserId,
-    string AppUserId
+    string GroupChatUserId
     );

@@ -4,14 +4,14 @@ import { ChatApi } from './Chat.api';
 
 export const GroupChatMessageApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
-        createGroupChatMessage: builder.mutation<GroupChatMessageModel, GroupChatMessageModel>({
+        createGroupChatMessage: builder.mutation<void, GroupChatMessageModel>({
             query: message => ({
                 body: message,
                 url: '/GroupChatMessage',
                 method: 'POST'
             }),
         }),
-        partialUpdateGroupChatMessage: builder.mutation<void, { id: number, message: ChatMessagePatch }>({
+        partialUpdateGroupChatMessage: builder.mutation<void, { id: string, message: ChatMessagePatch }>({
             query: ({ id, message }) => ({
                 body: message,
                 url: `/GroupChatMessage/${id}`,

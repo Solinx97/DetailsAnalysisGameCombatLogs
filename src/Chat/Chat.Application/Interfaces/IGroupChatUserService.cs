@@ -3,7 +3,7 @@ using Chat.Domain.ValueObjects;
 
 namespace Chat.Application.Interfaces;
 
-public interface IGroupChatUserService : IService<GroupChatUserDto, string>
+public interface IGroupChatUserService : IService<GroupChatUserDto, Guid>
 {
     Task UpdateChatUserAsync(GroupChatUserId id,
                                 GroupChatMessageId? lastMessageId = null,
@@ -11,7 +11,7 @@ public interface IGroupChatUserService : IService<GroupChatUserDto, string>
 
     Task<IEnumerable<GroupChatUserDto>> FindAllAsync(int chatId);
 
-    Task<GroupChatUserDto> FindByAppUserIdAsync(int chatId, string appUserId);
+    Task<GroupChatUserDto> FindByAppUserIdAsync(int chatId, Guid appUserId);
 
-    Task<IEnumerable<GroupChatUserDto>> FindAllByAppUserIdAsync(string appUserId);
+    Task<IEnumerable<GroupChatUserDto>> FindAllByAppUserIdAsync(Guid appUserId);
 }

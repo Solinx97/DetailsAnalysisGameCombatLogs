@@ -21,7 +21,7 @@ export const ChatApi = createApi({
     endpoints: builder => ({
         getMessagesByGroupChatId: builder.query<GroupChatMessageModel[], { chatId: number, page: number, pageSize: number }>({
             query: ({ chatId, page, pageSize }) => ({
-                url: `/GroupChatMessage/getByChatId?chatId=${chatId}&page=${page}&pageSize=${pageSize}`,
+                url: `/GroupChatMessage/getByChatId/${chatId}?page=${page}&pageSize=${pageSize}`,
             }),
             transformResponse: (response: GroupChatMessageModel[]) => response.reverse(),
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.chatId}`,

@@ -1,165 +1,60 @@
-﻿using AutoMapper;
-using Chat.Application.DTOs;
-using Chat.Application.Interfaces;
-using Chat.Domain.Exceptions;
-using Chat.Infrastructure.Exceptions;
-using CombatAnalysis.ChatAPI.Core;
+﻿using Chat.Application.Commands.PersonalChat.CreateChat;
+using Chat.Application.Commands.PersonalChat.DeleteChat;
+using Chat.Application.Queries.GroupChat.GetById;
+using Chat.Application.Queries.PersonalChat.GetByUserId;
+using Chat.Application.Queries.PersonalChat.IsChatExist;
 using CombatAnalysis.ChatAPI.Models;
-using CombatAnalysis.ChatAPI.Patches;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.ChatAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-[AllowAnonymous]
-public class PersonalChatController(IPersonalChatService chatService, IMapper mapper, ILogger<PersonalChatController> logger) : ControllerBase
+[Authorize]
+public class PersonalChatController(IMediator mediator) : ControllerBase
 {
-    private readonly IPersonalChatService _chatService = chatService;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<PersonalChatController> _logger = logger;
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var result = await _chatService.GetAllAsync();
-
-        return Ok(result);
-    }
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var personalChat = await _chatService.GetByIdAsync(id);
+        var chat = await _mediator.Send(new GetByIdQuery(id), cancellationToken);
 
-            return Ok(personalChat);
-        }
-        catch (PersonalChatNotFoundException ex)
-        {
-            _logger.LogWarning("Get personal chat {Id} failed. Personal chat not found.", ex.PersonalChatId);
-
-            return this.ExtractDomainCode(ex.Code);
-        }
-        catch (DomainException ex)
-        {
-            _logger.LogError(ex, "Get personal chat {Id} failed. Something wrong during extracting personal chat.", id);
-
-            return this.ExtractDomainCode(ex.Code);
-        }
+        return Ok(chat);
     }
 
-    [HttpGet("getByUserId/{userId:minlength(8)}")]
-    public async Task<IActionResult> GetByUserId(string userId)
+    [HttpGet("getByUserId/{userId}")]
+    public async Task<IActionResult> GetByUserId(Guid userId, CancellationToken cancellationToken)
     {
-        try
-        {
-            var personalChats = await _chatService.GetByUserIdAsync(userId);
+        var chats = await _mediator.Send(new GetByUserIdQuery(userId), cancellationToken);
 
-            return Ok(personalChats);
-        }
-        catch (PersonalChatNotFoundException ex)
-        {
-            _logger.LogWarning("Get personal chats by user {Id} failed. Personal chat not found.", userId);
+        return Ok(chats);
+    }
 
-            return this.ExtractDomainCode(ex.Code);
-        }
-        catch (DomainException ex)
-        {
-            _logger.LogError(ex, "Get personal chat by user {Id} failed. Something wrong during extracting personal chat.", userId);
+    [HttpGet("isExist")]
+    public async Task<IActionResult> IsChatExist(Guid initiatorId, Guid companionId, CancellationToken cancellationToken)
+    {
+        var chats = await _mediator.Send(new IsChatExistQuery(initiatorId, companionId), cancellationToken);
 
-            return this.ExtractDomainCode(ex.Code);
-        }
+        return Ok(chats);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] PersonalChatModel personalChat)
+    public async Task<IActionResult> Create([FromBody] PersonalChatModel personalChat, CancellationToken cancellationToken)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid PersonalChat create received: {@PersonalChat}", personalChat);
+        var command = new CreateChatCommand(personalChat.InitiatorId, personalChat.CompanionId);
+        await _mediator.Send(command, cancellationToken);
 
-                return ValidationProblem(ModelState);
-            }
-
-            var map = _mapper.Map<PersonalChatDto>(personalChat);
-            var createdPersonalChat = await _chatService.CreateAsync(map);
-
-            return Ok(createdPersonalChat);
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to create personal chat.");
-
-            return StatusCode(500, "Internal server error.");
-        }
-    }
-
-    [HttpPatch("{id:int:min(1)}")]
-    public async Task<IActionResult> PartialUpdate(int id, [FromBody] PersonalChatPatch chat)
-    {
-        try
-        {
-            if (id != chat.Id)
-            {
-                return BadRequest("Route ID and body ID do not match.");
-            }
-
-            await _chatService.UpdateChatAsync(chat.Id, chat.InitiatorUnreadMessages, chat.CompanionUnreadMessages);
-
-            return NoContent();
-        }
-        catch (EntityNotFoundException ex)
-        {
-            _logger.LogWarning("Update personal chat {Id} failed. Entity '{Entity}' ({EntityId}) not found.", id, nameof(ex.EntityType), ex.EntityId);
-
-            return this.ExtractDomainCode(ex.Code);
-        }
-        catch (DomainException ex)
-        {
-            _logger.LogError(ex, "Update personal chat {Id} failed. Something wrong during updaring personal chat.", id);
-
-            return this.ExtractDomainCode(ex.Code);
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-        }
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _chatService.DeleteAsync(id);
+        await _mediator.Send(new DeleteChatCommand(id), cancellationToken);
 
-            return NoContent();
-        }
-        catch (EntityNotFoundException ex)
-        {
-            _logger.LogWarning("Delete personal chat {Id} failed. Entity '{Entity}' ({EntityId}) not found.", id, nameof(ex.EntityType), ex.EntityId);
-
-            return this.ExtractDomainCode(ex.Code);
-        }
-        catch (DomainException ex)
-        {
-            _logger.LogError(ex, "Delete personal chat {Id} failed. Something wrong during deleting personal chat.", id);
-
-            return this.ExtractDomainCode(ex.Code);
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-        }
+        return NoContent();
     }
 }

@@ -18,21 +18,21 @@ internal class GroupChatUserRepository(ChatContext context) : GenericRepository<
         return users;
     }
 
-    public async Task<IEnumerable<GroupChatUser>> FindAllByAppUserIdAsync(string appUserId)
+    public async Task<IEnumerable<GroupChatUser>> FindAllByAppUserIdAsync(Guid appUserId)
     {
         var users = await _context.GroupChatUser
                             .AsNoTracking()
-                            .Where(user => user.AppUserId == appUserId)
+                            .Where(user => user.AppUserId.Equals(appUserId))
                             .ToListAsync();
 
         return users;
     }
 
-    public async Task<GroupChatUser?> FindByAppUserIdAsync(int chatId, string appUserId)
+    public async Task<GroupChatUser?> FindByAppUserIdAsync(int chatId, Guid appUserId)
     {
         var user = await _context.GroupChatUser
                             .AsNoTracking()
-                            .FirstOrDefaultAsync(user => user.AppUserId == appUserId && user.GroupChatId == chatId);
+                            .FirstOrDefaultAsync(user => user.AppUserId.Equals(appUserId) && user.GroupChatId == chatId);
 
         return user;
     }

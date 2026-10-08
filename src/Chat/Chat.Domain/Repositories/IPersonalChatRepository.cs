@@ -1,13 +1,12 @@
 ﻿using Chat.Domain.Aggregates;
-using Chat.Domain.ValueObjects;
 
 namespace Chat.Domain.Repositories;
 
-public interface IPersonalChatRepository : IGenericRepository<PersonalChat, PersonalChatId>
+public interface IPersonalChatRepository
 {
-    Task<IEnumerable<PersonalChat>> GetByUserIdAsync(string userId);
+    Task AddAsync(PersonalChat chat, CancellationToken cancelationToken);
 
-    Task UpdateInitiatorUnreadMessageCountAsync(int chatId, int count);
+    Task<IEnumerable<PersonalChat>> GetByUserIdAsync(Guid userId, CancellationToken cancelationToken);
 
-    Task UpdateCompanionUnreadMessageCountAsync(int chatId, int count);
+    Task<bool> IsExistAsync(Guid initiatorId, Guid companionId, CancellationToken cancelationToken);
 }

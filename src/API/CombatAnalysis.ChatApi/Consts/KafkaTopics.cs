@@ -1,16 +1,16 @@
 ﻿namespace CombatAnalysis.ChatAPI.Consts;
 
-public static class KafkaTopics
+public class KafkaTopics
 {
-    public static string PersonalChatMessage { get; } = "personal-chat-message";
+    public const string PERSONAL_CHAT_MESSAGE = "personal-chat-message";
 
-    public static string PersonalChat { get; } = "personal-chat";
+    public const string PERSONAL_CHAT = "personal-chat";
 
-    public static string GroupChat { get; } = "group-chat";
+    public const string GROUP_CHAT = "group-chat";
 
-    public static string GroupChatMember { get; } = "group-chat-member";
+    public const string GROUP_CHAT_MEMBER = "group-chat-member";
 
-    public static string GroupChatMessage { get; } = "group-chat-message";
+    public const string GROUP_CHAT_MESSAGE = "group-chat-message";
 
-    public static string GroupChatUnreadMessage { get; } = "group-chat-unread-message";
+    public const string GROUP_CHAT_UNREAD_MESSAGE = "group-chat-unread-message";
 }

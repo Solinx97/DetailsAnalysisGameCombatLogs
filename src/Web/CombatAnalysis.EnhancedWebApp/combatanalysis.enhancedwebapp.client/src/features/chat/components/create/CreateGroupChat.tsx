@@ -1,8 +1,10 @@
 import type { RootState } from '@/app/Store';
-import { useChatHub } from '@/shared/hooks/useChatHub';
+import logger from '@/utils/Logger';
 import { useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useCreateGroupChatMutation } from '../../api/GroupChat.api';
+import type { CreateGroupChatModel } from '../../types/CreateGroupChatModel';
 import ChatRulesItem from './ChatRulesItem';
 
 import './Create.scss';
@@ -17,8 +19,6 @@ const payload = {
 const CreateGroupChat: React.FC<{ setShowCreateGroupChat: (value: SetStateAction<boolean>) => void; }> = ({ setShowCreateGroupChat }) => {
     const { t } = useTranslation('communication/create');
 
-    const chatHub = useChatHub();
-
     const me = useSelector((state: RootState) => state.user.value);
 
     const chatNameRef = useRef<HTMLInputElement | null>(null);
@@ -30,38 +30,28 @@ const CreateGroupChat: React.FC<{ setShowCreateGroupChat: (value: SetStateAction
     const [announcements, setAnnouncements] = useState(1);
     const [isCreating, setIsCreating] = useState(false);
 
+    const [createGroupChat] = useCreateGroupChatMutation();
+
     const createGroupChatAsync = async () => {
-        if (!chatHub || !me) {
+        if (!me || !chatNameRef.current) {
             return;
         }
 
-        const groupChat = {
-            id: 0,
-            name: chatNameRef.current?.value,
-            ownerId: me.id
-        };
+        try {
+            const groupChat: CreateGroupChatModel = {
+                name: chatNameRef.current.value,
+                ownerUsername: me.username,
+                invitePeopleRule: invitePeople,
+                removePeopleRule: removePeople,
+                pinMessageRule: pinMessage,
+                announcementsRule: announcements,
+                ownerId: me.id
+            };
 
-        const groupChatUser = {
-            id: " ",
-            username: me.username,
-            appUserId: me.id
-        };
-
-        const groupChatRules = {
-            id: 0,
-            invitePeople: invitePeople,
-            removePeople: removePeople,
-            pinMessage: pinMessage,
-            announcements: announcements,
-        };
-
-        const container = {
-            groupChat,
-            groupChatUser,
-            groupChatRules
-        };
-
-        await chatHub.groupChatHubConnectionRef.current?.invoke("CreateGroupChat", container);
+            await createGroupChat(groupChat).unwrap();
+        } catch (error) {
+            logger.error("Failed to create group chat:", error);
+        }
     }
 
     const handleCreateNewGroupChatAsync = async () => {
@@ -105,7 +95,7 @@ const CreateGroupChat: React.FC<{ setShowCreateGroupChat: (value: SetStateAction
                 />
             </div>
             <div className="actions">
-                <div className={`btn-shadow create ${chatName.length > 0 ? '' : 'can-not-finish'}`} onClick={chatName.length > 0 ? handleCreateNewGroupChatAsync : () => {}}>{t("Create")}</div>
+                <div className={`btn-shadow create ${chatName.length > 0 ? '' : 'can-not-finish'}`} onClick={chatName.length > 0 ? handleCreateNewGroupChatAsync : () => { }}>{t("Create")}</div>
                 <div className="btn-shadow" onClick={() => setShowCreateGroupChat(false)}>{t("Cancel")}</div>
             </div>
             {isCreating &&

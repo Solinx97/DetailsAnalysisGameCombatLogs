@@ -5,9 +5,9 @@ using MediatR;
 
 namespace Chat.Application.Queries.GroupChat.GetMessagesByChatId;
 
-internal class GetMessagesByChatIdHandler(IPersonalChatMessageRepository repository, IMapper mapper) : IRequestHandler<GetMessagesByChatIdQuery, IEnumerable<GroupChatMessageDto>>
+internal class GetMessagesByChatIdHandler(IGroupChatMessageRepository repository, IMapper mapper) : IRequestHandler<GetMessagesByChatIdQuery, IEnumerable<GroupChatMessageDto>>
 {
-    private readonly IPersonalChatMessageRepository _repository = repository;
+    private readonly IGroupChatMessageRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<IEnumerable<GroupChatMessageDto>> Handle(GetMessagesByChatIdQuery request, CancellationToken cancellationToken)

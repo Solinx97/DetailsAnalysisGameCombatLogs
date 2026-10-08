@@ -22,7 +22,7 @@ public class GroupChatMessageDto
 
     public int GroupChatId { get; set; }
 
-    public string GroupChatUserId { get; set; } = string.Empty;
+    public Guid GroupChatUserId { get; set; }
 
-    public string AppUserId { get; set; } = string.Empty;
+    public Guid AppUserId { get; set; }
 }

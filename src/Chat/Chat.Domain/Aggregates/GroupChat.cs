@@ -15,11 +15,8 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
 
     private GroupChat() { }
 
-    public GroupChat(string name, UserId ownerId)
+    private GroupChat(string name, UserId ownerId)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(name.Length, NAME_MAX_LENGTH, nameof(name));
-
         Name = name;
         OwnerId = ownerId;
     }
@@ -35,6 +32,33 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
     public IReadOnlyCollection<GroupChatMessage> Messages => _messages.AsReadOnly();
 
     public IReadOnlyCollection<GroupChatUser> Users => _users.AsReadOnly();
+
+    public static GroupChat Create(string name, string ownerUsername, UserId ownerId,
+        int invitePeople, int removePeople, int pinMessage, int announcements)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(name.Length, NAME_MAX_LENGTH, nameof(name));
+
+        var chat = new GroupChat(name, ownerId);
+        chat.AddUser(ownerUsername, ownerId);
+        chat.AddRules((InvitePeopleRestrictions)invitePeople, (RemovePeopleRestrictions)removePeople, (PinMessageRestrictions)pinMessage, (AnnouncementsRestrictions)announcements);
+
+        return chat;
+    }
+
+    public void AddUser(string username, UserId appUserId)
+    {
+        var user = GroupChatUser.Create(username, appUserId, 0);
+        _users.Add(user);
+    }
+
+    public void AddRules(InvitePeopleRestrictions invitePeople = InvitePeopleRestrictions.Anyone,
+        RemovePeopleRestrictions removePeople = RemovePeopleRestrictions.Anyone,
+        PinMessageRestrictions pinMessage = PinMessageRestrictions.Anyone,
+        AnnouncementsRestrictions announcements = AnnouncementsRestrictions.Anyone)
+    {
+        Rules = GroupChatRules.Create(invitePeople, removePeople, pinMessage, announcements);
+    }
 
     public void EnsureUserIsMember(GroupChatUser user)
     {
@@ -73,28 +97,19 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         }
     }
 
-    public void AddRules(int chatId,
-        InvitePeopleRestrictions invitePeople = InvitePeopleRestrictions.Anyone,
-        RemovePeopleRestrictions removePeople = RemovePeopleRestrictions.Anyone,
-        PinMessageRestrictions pinMessage = PinMessageRestrictions.Anyone,
-        AnnouncementsRestrictions announcements = AnnouncementsRestrictions.Anyone)
-    {
-        Rules = new GroupChatRules(chatId, invitePeople, removePeople, pinMessage, announcements);
-    }
-
     public void RemoveRules()
     {
         Rules = null;
     }
 
-    public void UpdateRules(InvitePeopleRestrictions invitePeople,
-        RemovePeopleRestrictions removePeople,
-        PinMessageRestrictions pinMessage,
-        AnnouncementsRestrictions announcements)
+    public void UpdateRules(int invitePeople,
+        int removePeople,
+        int pinMessage,
+        int announcements)
     {
         ArgumentNullException.ThrowIfNull(Rules, nameof(Rules));
 
-        Rules.Update(invitePeople, removePeople, pinMessage, announcements);
+        Rules.Update((InvitePeopleRestrictions)invitePeople, (RemovePeopleRestrictions)removePeople, (PinMessageRestrictions)pinMessage, (AnnouncementsRestrictions)announcements);
     }
 
     public void RemoveMessage(Guid messageId)

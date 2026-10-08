@@ -117,9 +117,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddSignalR()
         .AddJsonProtocol();
 
+builder.Services.AddHostedService<PersonalChatConsumer>();
 builder.Services.AddHostedService<PersonalChatMessageConsumer>();
-//builder.Services.AddHostedService<GroupChatConsumer>();
-//builder.Services.AddHostedService<GroupChatMemberConsumer>();
+builder.Services.AddHostedService<GroupChatConsumer>();
 builder.Services.AddHostedService<GroupChatMessageConsumer>();
 
 builder.Services.AddHostedService<OutboxWorker>();
@@ -182,7 +182,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<PersonalChatHub>(HubPatterns.PERSONAL_CHAT);
 app.MapHub<PersonalChatMessagesHub>(HubPatterns.PERSONAL_CHAT_MESSAGE);
+app.MapHub<GroupChatHub>(HubPatterns.GROUP_CHAT);
 app.MapHub<GroupChatMessagesHub>(HubPatterns.GROUP_CHAT_MESSAGE);
 
 app.UseSwagger();

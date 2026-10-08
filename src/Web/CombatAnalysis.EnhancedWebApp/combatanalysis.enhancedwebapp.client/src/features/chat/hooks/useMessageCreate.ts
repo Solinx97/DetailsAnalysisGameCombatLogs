@@ -33,7 +33,7 @@ const useMessageCreate = () => {
     const createGrouplMessageAsync = async (initiatorId: string, initiatorUsername: string, message: string, chatId: number) => {
         try {
             const groupChatMessage: GroupChatMessageModel = {
-                id: 0,
+                id: "",
                 username: initiatorUsername,
                 message: message,
                 time: new Date(),

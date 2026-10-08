@@ -96,12 +96,10 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<PersonalChatHub>(HubPatterns.PersonalChat);
 app.MapHub<PersonalChatUnreadMessageHub>(HubPatterns.PersonalChatUnreadMessage);
-app.MapHub<GroupChatHub>(HubPatterns.GroupChat);
 app.MapHub<GroupChatUnreadMessageHub>(HubPatterns.GroupChatUnreadMessage);
 app.MapHub<VoiceChatHub>(HubPatterns.VoiceChat);
-app.MapHub<NotificationHub>(HubPatterns.Notification); ;
+app.MapHub<NotificationHub>(HubPatterns.Notification);
 
 app.UseHttpsRedirection();
 

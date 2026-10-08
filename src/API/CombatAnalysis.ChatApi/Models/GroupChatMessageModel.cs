@@ -14,5 +14,5 @@ public record GroupChatMessageModel(
     [Range((int)MessageMarkedType.None, (int)MessageMarkedType.Emotions)] MessageMarkedType MarkedType,
     [Required] bool IsEdited,
     [Range(1, int.MaxValue)] int GroupChatId,
-    [Required] string GroupChatUserId
+    [Required] Guid GroupChatUserId
     );

@@ -1,4 +1,6 @@
 import type { RootState } from '@/app/Store';
+import type { PersonalChatModel } from '@/features/chat/types/PersonalChatModel';
+import logger from '@/utils/Logger';
 import { faCircleXmark, faCommentDots, faPersonCircleQuestion, faSquarePlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
@@ -6,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useChatHub } from '../../../shared/hooks/useChatHub';
-import { useLazyIsExistQuery } from '../../chat/api/PersonalChat.api';
+import { useCreatePersonalChatAsyncMutation, useLazyIsExistQuery } from '../../chat/api/PersonalChat.api';
 import { useGetUserByIdQuery } from '../api/Account.api';
 import { useFindFriendByUserIdQuery } from '../api/Friend.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../api/RequestToConnect.api';
@@ -47,6 +49,8 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
 
     const { data: myFriends, isLoading } = useFindFriendByUserIdQuery(myself?.id ?? "");
 
+    const [createPersonalChat] = useCreatePersonalChatAsyncMutation();
+
     const checkExistOfChatsAsync = async (targetUser: AppUserModel) => {
         if (!myself) {
             return;
@@ -57,7 +61,7 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
     }
 
     const createChatAsync = async (targetUser: AppUserModel) => {
-        if (!chatHub) {
+        if (!chatHub || !myself) {
             return;
         }
 
@@ -75,7 +79,19 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
             navigate("/chats");
         });
 
-        await chatHub.personalChatHubConnectionRef.current?.invoke("CreateChat", myself?.id, targetUser.id);
+        try {
+            const chat: PersonalChatModel = {
+                id: 0,
+                initiatorId: myself.id,
+                initiatorUnreadMessages: 0,
+                companionId: targetUser.id,
+                companionUnreadMessages: 0,
+            };
+
+            await createPersonalChat(chat).unwrap();
+        } catch (error) {
+            logger.error("Failed to create personal chat:", error);
+        }
     }
 
     const checkIfRequestExistAsync = async (targetUserId: string) => {
@@ -169,11 +185,11 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
                             onClick={async () => await createChatAsync(person)}
                         />
                     </li>
-                    <li title={(isFriend() ? t("AlreadyFriend") : t("RequestToConnect"))|| ""}>
+                    <li title={(isFriend() ? t("AlreadyFriend") : t("RequestToConnect")) || ""}>
                         <FontAwesomeIcon
                             icon={isFriend() ? faUserPlus : faUserPlus}
                             className={`${isFriend() ? "user-friend" : ""}`}
-                            onClick={isFriend() ? () => {} : async () => await createRequestToConnectAsync(person)}
+                            onClick={isFriend() ? () => { } : async () => await createRequestToConnectAsync(person)}
                         />
                     </li>
                     <li title={t("InviteToCommunity") || ""}>

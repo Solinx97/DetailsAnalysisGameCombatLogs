@@ -4,5 +4,5 @@ public class VoiceChatDto
 {
     public string Id { get; set; }
 
-    public string AppUserId { get; set; }
+    public Guid AppUserId { get; set; }
 }

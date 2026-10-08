@@ -5,6 +5,6 @@ namespace CombatAnalysis.ChatAPI.Patches;
 
 public record GroupChatPatch(
     [Required] int Id,
-    [StringLength(GroupChat.NAME_MAX_LENGTH, MinimumLength = 1)] string? Name,
+    [StringLength(GroupChat.NAME_MAX_LENGTH, MinimumLength = 1)] string Name,
     string? OwnerId
 );

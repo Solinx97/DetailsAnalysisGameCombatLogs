@@ -14,5 +14,5 @@ public record PersonalChatMessageModel(
     [Range((int)MessageMarkedType.None, (int)MessageMarkedType.Emotions)] MessageMarkedType MarkedType,
     [Required] bool IsEdited,
     [Range(1, int.MaxValue)] int PersonalChatId,
-    [Required] string AppUserId
+    [Required] Guid AppUserId
     );

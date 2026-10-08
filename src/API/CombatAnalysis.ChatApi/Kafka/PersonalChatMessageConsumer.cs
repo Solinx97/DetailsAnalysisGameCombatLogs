@@ -1,7 +1,7 @@
 ﻿using Chat.Application.Consts;
 using Chat.Application.DTOs;
+using Chat.Domain.Entities.Events;
 using Chat.Infrastructure.Exceptions;
-using Chat.Infrastructure.Outbox.Events;
 using CombatAnalysis.ChatAPI.Consts;
 using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
@@ -13,7 +13,7 @@ using System.Text.Json;
 namespace CombatAnalysis.ChatAPI.Kafka;
 
 public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger<PersonalChatMessageConsumer> logger, IHubContext<PersonalChatMessagesHub> hubContext) 
-    : KafkaConsumerBase(kafkaSettings, KafkaTopics.PersonalChatMessage, logger)
+    : KafkaConsumerBase(kafkaSettings, KafkaTopics.PERSONAL_CHAT_MESSAGE, logger)
 {
     private readonly ILogger<PersonalChatMessageConsumer> _logger = logger;
     private readonly IHubContext<PersonalChatMessagesHub> _hubContext = hubContext;
@@ -28,7 +28,7 @@ public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, 
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, "Consume Personal Chat Message data (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PersonalChatMessage, ex.ParamName);
+            _logger.LogError(ex, "Consume Personal Chat Message data (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PERSONAL_CHAT_MESSAGE, ex.ParamName);
         }
     }
 
@@ -40,19 +40,19 @@ public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, 
             ArgumentNullException.ThrowIfNull(@event, nameof(@event));
 
             var message = new PersonalChatMessageDto { Id = @event.MessageId, Message = @event.Message, PersonalChatId = @event.ChatId, AppUserId = @event.SenderId };
-            await _hubContext.Clients.Group(message.PersonalChatId.ToString()).SendAsync("ReceiveMessage", message, cancellationToken);
+            await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, "Create personal chat message from Kafka Consumer (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PersonalChatMessage, ex.ParamName);
+            _logger.LogError(ex, "Create personal chat message from Kafka Consumer (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PERSONAL_CHAT_MESSAGE, ex.ParamName);
         }
         catch (EntityNotFoundException ex)
         {
-            _logger.LogWarning("Update personal chat from Kafka Consumer (topic: {Topic}) failed. Personal chat {Id} not found.", KafkaTopics.PersonalChatMessage, ex.EntityId);
+            _logger.LogWarning("Update personal chat from Kafka Consumer (topic: {Topic}) failed. Personal chat {Id} not found.", KafkaTopics.PERSONAL_CHAT_MESSAGE, ex.EntityId);
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            _logger.LogError(ex, "Update personal chat from Kafka Consumer (topic: {Topic}) failed. Personal chat not found or modified.", KafkaTopics.PersonalChatMessage);
+            _logger.LogError(ex, "Update personal chat from Kafka Consumer (topic: {Topic}) failed. Personal chat not found or modified.", KafkaTopics.PERSONAL_CHAT_MESSAGE);
         }
     }
 }

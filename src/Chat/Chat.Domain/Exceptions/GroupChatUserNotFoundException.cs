@@ -2,7 +2,7 @@
 
 namespace Chat.Domain.Exceptions;
 
-public class GroupChatUserNotFoundException(string userId) : DomainException($"Chat user with Id '{userId}' was not found.", ExceptionCode.NotFound)
+public class GroupChatUserNotFoundException(Guid userId) : DomainException($"Chat user with Id '{userId}' was not found.", ExceptionCode.NotFound)
 {
-    public string UserId { get; } = userId;
+    public Guid UserId { get; } = userId;
 }

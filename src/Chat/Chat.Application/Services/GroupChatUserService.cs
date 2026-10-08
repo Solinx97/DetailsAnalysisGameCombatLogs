@@ -22,7 +22,7 @@ internal class GroupChatUserService(IGenericRepository<GroupChat, GroupChatId> c
         var chat = await _chatRepository.GetByIdAsync(createUser.GroupChatId)
                             ?? throw new GroupChatNotFoundException(createUser.GroupChatId);
 
-        var groupChatUser = new GroupChatUser(createUser.Id, createUser.Username, chat.Id, createUser.AppUserId);
+        var groupChatUser = GroupChatUser.Create(createUser.Username, createUser.AppUserId, 0);
 
         var createdUser = await _repository.CreateAsync(groupChatUser);
 
@@ -48,7 +48,7 @@ internal class GroupChatUserService(IGenericRepository<GroupChat, GroupChatId> c
         await _repository.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(Guid id)
     {
         await _repository.DeleteAsync(id);
     }
@@ -60,7 +60,7 @@ internal class GroupChatUserService(IGenericRepository<GroupChat, GroupChatId> c
         return allData.ToDTOCollection(_mapper);
     }
 
-    public async Task<GroupChatUserDto> GetByIdAsync(string id)
+    public async Task<GroupChatUserDto> GetByIdAsync(Guid id)
     {
         var result = await _repository.GetByIdAsync(id) 
                 ?? throw new GroupChatUserNotFoundException(id);
@@ -75,15 +75,15 @@ internal class GroupChatUserService(IGenericRepository<GroupChat, GroupChatId> c
         return users.ToDTOCollection(_mapper);
     }
 
-    public async Task<GroupChatUserDto> FindByAppUserIdAsync(int chatId, string appUserId)
+    public async Task<GroupChatUserDto> FindByAppUserIdAsync(int chatId, Guid appUserId)
     {
         var user = await _repository.FindByAppUserIdAsync(chatId, appUserId)
-                ?? throw new GroupChatUserNotFoundException(string.Empty);
+                ?? throw new GroupChatUserNotFoundException(appUserId);
 
         return user.ToDTO(_mapper);
     }
 
-    public async Task<IEnumerable<GroupChatUserDto>> FindAllByAppUserIdAsync(string appUserId)
+    public async Task<IEnumerable<GroupChatUserDto>> FindAllByAppUserIdAsync(Guid appUserId)
     {
         var users = await _repository.FindAllByAppUserIdAsync(appUserId);
 

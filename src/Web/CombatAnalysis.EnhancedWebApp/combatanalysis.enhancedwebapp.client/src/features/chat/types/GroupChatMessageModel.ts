@@ -1,5 +1,5 @@
 export type GroupChatMessageModel = {
-    id: number;
+    id: string;
     username: string;
     message: string;
     time: Date;

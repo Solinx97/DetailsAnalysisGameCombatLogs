@@ -72,7 +72,7 @@ builder.Services.AddAuthorizationBuilder()
     });
 
 builder.Services.AddTransient<IChatHubHelper, ChatHubHelper>();
-builder.Services.AddHostedService<PersonalChatMessageNotificationConsumer>();
+//builder.Services.AddHostedService<PersonalChatMessageNotificationConsumer>();
 builder.Services.AddHostedService<NotificationConsumer>();
 
 builder.Services.AddControllers();

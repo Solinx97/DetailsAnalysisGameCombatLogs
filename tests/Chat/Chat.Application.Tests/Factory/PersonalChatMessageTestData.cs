@@ -21,7 +21,7 @@ internal static class PersonalChatMessageTestData
             username: username ?? "check",
             message: message ?? "test message",
             chatId: chatId ?? 1,
-            appUserId: appUserId ?? "uid-1"
+            appUserId: appUserId ?? Guid.NewGuid()
         );
 
         return entity;
@@ -45,7 +45,7 @@ internal static class PersonalChatMessageTestData
             Message = message ?? "test message",
             Time = DateTimeOffset.UtcNow,
             PersonalChatId = chatId ?? 1,
-            AppUserId = appUserId ?? "uid-1",
+            AppUserId = appUserId ?? Guid.NewGuid(),
             Status = status ?? MessageStatus.Sent,
             Type = type ?? MessageType.Default,
             MarkedType = markedType ?? MessageMarkedType.None,
@@ -65,7 +65,7 @@ internal static class PersonalChatMessageTestData
                 username: $"chat-{i}",
                 message: $"test message {i}",
                 chatId: i + 1,
-                appUserId: $"uid-{i}"
+                appUserId: Guid.NewGuid()
             );
         }
 
@@ -86,7 +86,7 @@ internal static class PersonalChatMessageTestData
                 Message = $"test message {i}",
                 Time = DateTimeOffset.UtcNow,
                 PersonalChatId = 1,
-                AppUserId =  $"uid-1-{i}",
+                AppUserId =  Guid.NewGuid(),
                 Status = MessageStatus.Sent,
                 Type = MessageType.Default,
                 MarkedType = MessageMarkedType.None,

@@ -13,7 +13,7 @@ internal static class VoiceChatTestData
     {
         var entity = new VoiceChat(
             id: id ?? "uid-1",
-            appUserId: appUserId ?? "uid-2"
+            appUserId: appUserId ?? Guid.NewGuid()
         );
 
         return entity;
@@ -27,7 +27,7 @@ internal static class VoiceChatTestData
         var entity = new VoiceChatDto
         {
             Id = id ?? "uid-1",
-            AppUserId = appUserId ?? "uid-2"
+            AppUserId = appUserId ?? Guid.NewGuid()
         };
 
         return entity;
@@ -42,7 +42,7 @@ internal static class VoiceChatTestData
         {
             collection[i] = new VoiceChat(
                 id: $"uid-{i}",
-                appUserId: $"uid-1-{i}"
+                appUserId: Guid.NewGuid()
             );
         }
 
@@ -59,7 +59,7 @@ internal static class VoiceChatTestData
             collection[i] = new VoiceChatDto
             {
                 Id = $"uid-{i}",
-                AppUserId = $"uid-1-{i}",
+                AppUserId = Guid.NewGuid(),
             };
         }
 

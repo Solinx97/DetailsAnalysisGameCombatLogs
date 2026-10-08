@@ -1,7 +1,7 @@
 ﻿import Store, { type RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import { ChatMessageType } from '@/shared/helpers/EnumHelper';
+import { ChatMessageType, MessageStatus } from '@/shared/helpers/EnumHelper';
 import { useChatHub } from '@/shared/hooks/useChatHub';
 import logger from '@/utils/Logger';
 import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
@@ -64,6 +64,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
             await chatHub.connectToGroupChatMessagesAsync(chat.id);
 
             chatHub.subscribeToGroupChatMessages((message: GroupChatMessageModel) => {
+                console.log(5)
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByGroupChatId',
@@ -85,7 +86,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                             if (message && messagePatch) {
                                 const updatedMessage = Object.assign({}, message);
                                 updatedMessage.message = messagePatch.message ?? "";
-                                updatedMessage.status = messagePatch.status ?? "Sent";
+                                updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"]
                                 updatedMessage.markedType = messagePatch.markedType ?? 0;
 
                                 Object.assign(message, updatedMessage);

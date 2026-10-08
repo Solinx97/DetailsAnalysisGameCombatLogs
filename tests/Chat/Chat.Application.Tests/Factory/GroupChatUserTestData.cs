@@ -14,11 +14,9 @@ internal static class GroupChatUserTestData
         int? unreadMessages = null
     )
     {
-        var entity = new GroupChatUser(
-            id: id ?? "uid-1",
+        var entity = GroupChatUser.Create(
             username: username ?? "check",
-            chatId: chatId ?? 1,
-            appUserId: appUserId ?? "uid-1-1",
+            appUserId: appUserId ?? Guid.NewGuid(),
             unreadMessages: unreadMessages ?? 0
         );
 
@@ -29,19 +27,18 @@ internal static class GroupChatUserTestData
         string? id = null,
         string? username = null,
         int? unreadMessages = null,
-        int? lastReadMessageId = null,
         int? chatId = null,
         UserId? appUserId = null
     )
     {
         var entity = new GroupChatUserDto
         {
-            Id = id ?? "uid-1",
+            Id = Guid.NewGuid(),
             Username = username ?? "check",
             UnreadMessages = unreadMessages ?? 0,
-            LastReadMessageId = lastReadMessageId ?? 1,
+            LastReadMessageId = Guid.NewGuid(),
             GroupChatId = chatId ?? 1,
-            AppUserId = appUserId ?? "uid-2"
+            AppUserId = appUserId ?? Guid.NewGuid()
         };
 
         return entity;
@@ -54,11 +51,9 @@ internal static class GroupChatUserTestData
         var collection = new GroupChatUser[size];
         for (var i = 0; i < size; i++)
         {
-            collection[i] = new GroupChatUser(
-                id: $"uid-{i}",
+            collection[i] = GroupChatUser.Create(
                 username: $"check-{i}",
-                chatId: 1 + i,
-                appUserId: $"uid-1-{i}",
+                appUserId: Guid.NewGuid(),
                 unreadMessages: 0 + i
             );
         }
@@ -75,12 +70,12 @@ internal static class GroupChatUserTestData
         {
             collection[i] = new GroupChatUserDto
             {
-                Id = $"uid-{i}",
+                Id = Guid.NewGuid(),
                 Username = $"check-{i}",
                 UnreadMessages = 0 + i,
                 LastReadMessageId = null,
                 GroupChatId = 1 + i,
-                AppUserId = $"uid-1-{i}"
+                AppUserId = Guid.NewGuid()
             };
         }
 

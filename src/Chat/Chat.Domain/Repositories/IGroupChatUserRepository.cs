@@ -7,7 +7,7 @@ public interface IGroupChatUserRepository : IGenericRepository<GroupChatUser, Gr
 {
     Task<IEnumerable<GroupChatUser>> FindAllAsync(int chatId);
 
-    Task<IEnumerable<GroupChatUser>> FindAllByAppUserIdAsync(string appUserId);
+    Task<IEnumerable<GroupChatUser>> FindAllByAppUserIdAsync(Guid appUserId);
 
-    Task<GroupChatUser?> FindByAppUserIdAsync(int chatId, string appUserId);
+    Task<GroupChatUser?> FindByAppUserIdAsync(int chatId, Guid appUserId);
 }
