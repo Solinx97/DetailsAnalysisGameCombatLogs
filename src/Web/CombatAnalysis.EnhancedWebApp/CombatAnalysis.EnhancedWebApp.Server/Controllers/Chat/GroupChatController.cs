@@ -112,7 +112,7 @@ public class GroupChatController : ControllerBase
     {
         try
         {
-            var responseMessage = await _httpClient.DeletAsync($"GroupChat/{id}");
+            var responseMessage = await _httpClient.DeleteAsync($"GroupChat/{id}");
             responseMessage.EnsureSuccessStatusCode();
 
             return NoContent();

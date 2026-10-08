@@ -1,18 +1,18 @@
-﻿using Chat.Domain.DTOs;
-using Chat.Domain.Entities;
-using Chat.Domain.ValueObjects;
+﻿using Chat.Domain.Entities;
 
 namespace Chat.Domain.Repositories;
 
-public interface IGroupChatMessageRepository : IGenericRepository<GroupChatMessage, GroupChatMessageId>
+public interface IGroupChatMessageRepository
 {
-    Task<IEnumerable<GroupChatMessageDto>> GetByChatIdAsync(int chatId, int page, int pageSize);
+    Task AddAsync(GroupChatMessage message, CancellationToken cancelationToken);
 
-    Task ReadMessagesLessThanAsync(int chatId, int messageId);
+    Task<IEnumerable<GroupChatMessage>> GetAllAsync(CancellationToken cancelationToken);
 
-    Task<int> CountReadUnreadMessagesAsync(int chatId, int chatMessageId, int lastReadMessageId);
+    Task<GroupChatMessage> GetByIdAsync(int id, CancellationToken cancelationToken);
 
-    Task<int> CountReadUnreadMessagesAsync(int chatId, int chatMessageId);
+    Task<IEnumerable<GroupChatMessage>> GetByChatIdAsync(int chatId, int page, int pageSize, CancellationToken cancelationToken);
 
-    Task<int> CountByChatIdAsync(int chatId);
+    Task<int> CountAsync(int chatId, CancellationToken cancelationToken);
+
+    Task DeleteAsync(Guid id, CancellationToken cancelationToken);
 }

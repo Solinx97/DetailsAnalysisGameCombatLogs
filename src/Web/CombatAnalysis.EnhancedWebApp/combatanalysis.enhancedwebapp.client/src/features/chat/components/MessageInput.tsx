@@ -1,14 +1,10 @@
-import { useChatHub } from '@/shared/hooks/useChatHub';
+import { ChatMessageType } from '@/shared/helpers/EnumHelper';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { AppUserModel } from '../../user/types/AppUserModel';
+import useMessageCreate from '../hooks/useMessageCreate';
 import type { GroupChatUserModel } from '../types/GroupChatUserModel';
-
-const chatType = {
-    personal: 0,
-    group: 1
-};
 
 const emptyMessageNotificationTimeout = 4000;
 
@@ -17,25 +13,14 @@ interface MessageInputProps {
     initiator: (GroupChatUserModel | AppUserModel) | null;
     targetChatType: number;
     t: (key: string) => string;
-    recipientId?: string;
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetChatType, t, recipientId }) => {
-    const chatHub = useChatHub();
-
+const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetChatType, t }) => {
     const messageInput = useRef<HTMLInputElement | null>(null);
 
     const [isEmptyMessage, setIsEmptyMessage] = useState(false);
 
-    useEffect(() => {
-        if (!chatHub) {
-            return;
-        }
-
-        if (targetChatType === chatType["group"]) {
-            chatHub.subscribeToGroupMessageDelivered(chatId);
-        }
-    }, []);
+    const { createPersonalMessageAsync, createGrouplMessageAsync } = useMessageCreate();
 
     const sendMessageByKeyHandle = async (code: string) => {
         if (code !== "Enter") {
@@ -46,15 +31,11 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetCh
     };
 
     const sendMessageHandle = async () => {
-        if (!chatHub) {
-            return;
-        }
-
         await sendMessageAsync();
     };
 
     const sendMessageAsync = async () => {
-        if (!chatHub || !messageInput || !messageInput.current) {
+        if (!messageInput || !messageInput.current || !initiator) {
             return;
         }
 
@@ -64,37 +45,11 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetCh
             return;
         }
 
-        if (targetChatType === chatType["group"]) {
-            const groupChatMessage = {
-                id: 0,
-                username: initiator?.username,
-                message: messageInput.current.value,
-                time: new Date(),
-                status: 0,
-                type: 0,
-                markedType: 0,
-                isEdited: false,
-                groupChatId: chatId,
-                groupChatUserId: initiator?.id
-            };
-
-            await chatHub.groupChatMessagesHubConnectionRef.current?.invoke("SendMessage", groupChatMessage);
+        if (targetChatType === ChatMessageType["GROUP"]) {
+            await createGrouplMessageAsync(initiator.id ?? "0", initiator.username, messageInput.current.value, chatId);
         }
         else {
-            const personalChatMessage = {
-                id: 0,
-                username: initiator?.username,
-                message: messageInput.current.value,
-                time: new Date(),
-                status: 0,
-                type: 0,
-                markedType: 0,
-                isEdited: false,
-                personalChatId: chatId,
-                appUserId: initiator?.id
-            };
-
-            await chatHub.personalChatMessagesHubConnectionRef.current?.invoke("SendMessage", personalChatMessage, recipientId);
+            await createPersonalMessageAsync(initiator.id ?? "0", initiator.username, messageInput.current.value, chatId);
         }
 
         messageInput.current.value = "";

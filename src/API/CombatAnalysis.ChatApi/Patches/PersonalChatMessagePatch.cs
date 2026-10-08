@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace CombatAnalysis.ChatAPI.Patches;
 
 public record PersonalChatMessagePatch(
-        [Required] int Id,
+        [Required] Guid Id,
         [StringLength(PersonalChatMessage.MESSAGE_MAX_LENGTH, MinimumLength = 1)] string? Message,
         MessageStatus? Status,
         MessageMarkedType? MarkedType

@@ -1,5 +1,6 @@
 ﻿using Chat.Domain.Entities;
 using Chat.Domain.Enums.GroupChatRules;
+using Chat.Domain.Exceptions;
 using Chat.Domain.Interfaces;
 using Chat.Domain.ValueObjects;
 
@@ -94,5 +95,14 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         ArgumentNullException.ThrowIfNull(Rules, nameof(Rules));
 
         Rules.Update(invitePeople, removePeople, pinMessage, announcements);
+    }
+
+    public void RemoveMessage(Guid messageId)
+    {
+        var message = _messages
+            .FirstOrDefault(x => x.Id.Equals(messageId))
+                ?? throw new GroupChatMessageNotFoundException(messageId);
+
+        _messages.Remove(message);
     }
 }

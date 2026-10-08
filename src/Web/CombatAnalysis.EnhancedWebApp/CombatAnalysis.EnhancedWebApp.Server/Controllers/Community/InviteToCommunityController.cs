@@ -46,14 +46,14 @@ public class InviteToCommunityController : ControllerBase
     [HttpDelete("accept/{id:int:min(1)}")]
     public async Task<IActionResult> AcceptRequest(int id, int communityId, string appUserId)
     {
-        await _httpClient.DeletAsync($"InviteToCommunity/accept/{id}?communityId={communityId}&appUserId={appUserId}");
+        await _httpClient.DeleteAsync($"InviteToCommunity/accept/{id}?communityId={communityId}&appUserId={appUserId}");
         return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int communityId)
     {
-        await _httpClient.DeletAsync($"InviteToCommunity/{id}?communityId={communityId}");
+        await _httpClient.DeleteAsync($"InviteToCommunity/{id}?communityId={communityId}");
         return NoContent();
     }
 }

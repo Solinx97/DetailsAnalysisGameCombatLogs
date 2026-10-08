@@ -14,7 +14,7 @@ const useGroupChatHub = (
     groupChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
 ) => {
     const groupChatHubURL = `${APP_CONFIG.hubs.url}${APP_CONFIG.hubs.groupChat}`;
-    const groupChatMessagesHubURL = `${APP_CONFIG.hubs.url}${APP_CONFIG.hubs.groupChatMessages}`;
+    const groupChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatMessages}`;
     const groupChatUnreadMessagesHubURL = `${APP_CONFIG.hubs.url}${APP_CONFIG.hubs.groupChatUnreadMessage}`;
 
     const createHubConnection = (url: string): signalR.HubConnection => {

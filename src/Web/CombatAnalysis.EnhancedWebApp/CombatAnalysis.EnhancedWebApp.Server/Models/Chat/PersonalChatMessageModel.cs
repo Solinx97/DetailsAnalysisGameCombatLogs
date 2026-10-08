@@ -1,7 +1,7 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.Chat;
 
 public record PersonalChatMessageModel(
-    int Id,
+    string Id,
     string Username,
     string Message,
     DateTimeOffset Time,

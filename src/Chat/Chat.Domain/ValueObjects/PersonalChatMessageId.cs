@@ -2,14 +2,14 @@
 
 public record PersonalChatMessageId
 {
-    public PersonalChatMessageId(int value)
+    public PersonalChatMessageId(Guid value)
     {
         Value = value;
     }
 
-    public int Value { get; }
+    public Guid Value { get; }
 
-    public static implicit operator int(PersonalChatMessageId id) => id.Value;
+    public static implicit operator Guid(PersonalChatMessageId id) => id.Value;
 
-    public static implicit operator PersonalChatMessageId(int value) => new(value);
+    public static implicit operator PersonalChatMessageId(Guid value) => new(value);
 }

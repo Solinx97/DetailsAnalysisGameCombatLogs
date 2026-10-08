@@ -4,11 +4,16 @@ using Chat.Application.Consts;
 using Chat.Application.Extensions;
 using Chat.Application.Mappers.Profiles;
 using Chat.Infrastructure.Extensions;
+using CombatAnalysis.ChatAPI.BackgroundServices;
 using CombatAnalysis.ChatAPI.Consts;
+using CombatAnalysis.ChatAPI.Enums;
 using CombatAnalysis.ChatAPI.Helpers;
+using CombatAnalysis.ChatAPI.Hubs;
 using CombatAnalysis.ChatAPI.Interfaces;
 using CombatAnalysis.ChatAPI.Kafka;
+using CombatAnalysis.ChatAPI.Kafka.Producer;
 using CombatAnalysis.ChatAPI.Mapping;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -66,6 +71,24 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKeys = keySet.Keys,
             ClockSkew = TimeSpan.Zero,
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
+                {
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && MessageReceivedHelper.IsHubExist(path))
+                    {
+                        context.Token = accessToken;
+                    }
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+
         // Skip checking HTTPS (should be HTTPS in production)
         options.RequireHttpsMetadata = false;
     });
@@ -77,13 +100,31 @@ builder.Services.AddAuthorizationBuilder()
         builder.RequireClaim("scope", authenticationClientOptions.Scopes.Split(','));
     });
 
-builder.Services.AddTransient<IChatHubHelper, ChatHubHelper>();
+var cors = new CORS();
+builder.Configuration.Bind("Cors", cors);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder.WithOrigins(cors.WebApp)
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
+    });
+});
+
+builder.Services.AddSignalR()
+        .AddJsonProtocol();
+
 builder.Services.AddHostedService<PersonalChatMessageConsumer>();
-builder.Services.AddHostedService<GroupChatConsumer>();
-builder.Services.AddHostedService<GroupChatMemberConsumer>();
+//builder.Services.AddHostedService<GroupChatConsumer>();
+//builder.Services.AddHostedService<GroupChatMemberConsumer>();
 builder.Services.AddHostedService<GroupChatMessageConsumer>();
 
-builder.Services.AddSingleton<IKafkaProducerService<string, string>, KafkaProducer<string, string>>();
+builder.Services.AddHostedService<OutboxWorker>();
+
+builder.Services.AddSingleton<IKafkaProducerService<string, string>, KafkaProducerService<string, string>>();
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
@@ -134,10 +175,15 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-app.UseRouting();
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
+
+app.MapHub<PersonalChatMessagesHub>(HubPatterns.PERSONAL_CHAT_MESSAGE);
+app.MapHub<GroupChatMessagesHub>(HubPatterns.GROUP_CHAT_MESSAGE);
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

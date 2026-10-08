@@ -77,7 +77,7 @@ public class FriendController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"Friend/{id}");
+        var responseMessage = await _httpClient.DeleteAsync($"Friend/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

@@ -18,7 +18,11 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connectionString);
         });
 
+        services.AddScoped<IOutboxRepository, OutboxRepository>();
+
         services.AddScoped<IGenericRepository<PersonalChat, PersonalChatId>, GenericRepository<PersonalChat, PersonalChatId>>();
+        services.AddScoped<IGenericRepository<PersonalChatMessage, PersonalChatMessageId>, GenericRepository<PersonalChatMessage, PersonalChatMessageId>>();
+        services.AddScoped<IGenericRepository<GroupChatMessage, GroupChatMessageId>, GenericRepository<GroupChatMessage, GroupChatMessageId>>();
         services.AddScoped<IGenericRepository<GroupChat, GroupChatId>, GenericRepository<GroupChat, GroupChatId>>();
         services.AddScoped<IGenericRepository<GroupChatUser, GroupChatUserId>, GenericRepository<GroupChatUser, GroupChatUserId>>();
         services.AddScoped<IGenericRepository<VoiceChat, VoiceChatId>, GenericRepository<VoiceChat, VoiceChatId>>();
@@ -27,5 +31,7 @@ public static class DataCollectionExtensions
         services.AddScoped<IGroupChatUserRepository, GroupChatUserRepository>();
         services.AddScoped<IPersonalChatRepository, PersonalChatRepository>();
         services.AddScoped<IPersonalChatMessageRepository, PersonalChatMessageRepository>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }

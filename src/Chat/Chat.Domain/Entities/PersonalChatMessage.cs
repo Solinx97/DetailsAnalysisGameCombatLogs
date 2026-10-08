@@ -12,15 +12,10 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
 
     private PersonalChatMessage() { }
 
-    public PersonalChatMessage(string username, string message, PersonalChatId chatId, UserId appUserId,
-                    MessageStatus status = MessageStatus.Sending,
-                    MessageType type = MessageType.Default,
-                    MessageMarkedType markedType = MessageMarkedType.None)
+    private PersonalChatMessage(string username, string message, PersonalChatId chatId, UserId appUserId,
+                    MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset time)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(username.Length, USERNAME_MAX_LENGTH, nameof(username));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
-
+        Id = Guid.NewGuid();
         Username = username;
         Message = message;
         PersonalChatId = chatId;
@@ -28,7 +23,7 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
         Type = type;
         MarkedType = markedType;
         AppUserId = appUserId;
-        Time = DateTimeOffset.UtcNow;
+        Time = time;
     }
 
     public PersonalChatMessageId Id { get; private set; }
@@ -53,7 +48,17 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
 
     public PersonalChat PersonalChat { get; private set; } = null!;
 
-    public void EditMessage(string newMessage)
+    public static PersonalChatMessage Create(string username, string message, PersonalChatId chatId, UserId appUserId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+        ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
+
+        var time = DateTimeOffset.UtcNow;
+        return new PersonalChatMessage(username, message, chatId, appUserId, MessageStatus.Sending, MessageType.Default, MessageMarkedType.None, time);
+    }
+
+    public void EditMessage(string? newMessage)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(newMessage, nameof(newMessage));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(newMessage.Length, MESSAGE_MAX_LENGTH, nameof(newMessage));

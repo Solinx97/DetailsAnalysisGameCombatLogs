@@ -16,6 +16,7 @@ internal class GenericRepository<TModel, TId>(ChatContext context) : IGenericRep
     {
         var entityEntry = await _context.Set<TModel>()
             .AddAsync(item);
+
         await _context.SaveChangesAsync();
 
         return entityEntry.Entity;

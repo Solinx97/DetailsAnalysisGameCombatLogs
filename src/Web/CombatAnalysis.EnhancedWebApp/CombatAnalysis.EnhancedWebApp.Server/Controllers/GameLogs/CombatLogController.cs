@@ -88,7 +88,7 @@ public class CombatLogController : ControllerBase
     {
         try
         {
-            var responseMessage = await _httpClient.DeletAsync($"CombatLog/{id}");
+            var responseMessage = await _httpClient.DeleteAsync($"CombatLog/{id}");
             responseMessage.EnsureSuccessStatusCode();
 
             return NoContent();

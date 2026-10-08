@@ -1,84 +1,81 @@
-﻿using Chat.Domain.DTOs;
+﻿using Chat.Domain.Consts;
 using Chat.Domain.Entities;
-using Chat.Domain.Enums;
 using Chat.Domain.Repositories;
-using Chat.Domain.ValueObjects;
+using Chat.Infrastructure.Exceptions;
+using Chat.Infrastructure.Outbox.Events;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Chat.Infrastructure.Repositories;
 
-internal class GroupChatMessageRepository(ChatContext context) : GenericRepository<GroupChatMessage, GroupChatMessageId>(context), IGroupChatMessageRepository
+internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessageRepository
 {
-    public async Task<IEnumerable<GroupChatMessageDto>> GetByChatIdAsync(int chatId, int page, int pageSize)
+    private readonly ChatContext _context = context;
+
+    public async Task AddAsync(GroupChatMessage message, CancellationToken cancelationToken)
     {
-        var messages = await (
-            from m in _context.Set<GroupChatMessage>()
-            join gu in _context.Set<GroupChatUser>() on m.GroupChatUserId equals gu.Id
-            select new GroupChatMessageDto(
-                m.Id,
-                m.Username,
-                m.Message,
-                m.Time,
-                m.Status,
-                m.Type,
-                m.MarkedType,
-                m.IsEdited,
-                m.GroupChatId,
-                m.GroupChatUserId,
-                gu.AppUserId
-            )
-        )
-        .Skip(page * pageSize)
-        .Take(pageSize)
-        .ToListAsync();
+        await _context.GroupChatMessage
+                     .AddAsync(message, cancelationToken);
+
+        var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, message.GroupChatUserId, message.Message);
+        var outbox = new OutboxMessage
+        {
+            Id = @event.EventId,
+            Topic = KafkaTopics.PERSONAL_CHAT_MESSAGE,
+            Key = message.GroupChatId.ToString(),
+            Payload = JsonSerializer.Serialize(@event)
+        };
+
+        await _context.OutboxMessages
+                    .AddAsync(outbox, cancelationToken);
+    }
+
+    public async Task<IEnumerable<GroupChatMessage>> GetByChatIdAsync(int chatId, int page, int pageSize, CancellationToken cancelationToken)
+    {
+        var messages = await _context.GroupChatMessage
+                    .AsNoTracking()
+                    .Where(m => m.GroupChatId == chatId)
+                    .OrderBy(m => m.Time)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync(cancelationToken);
 
         return messages;
     }
 
-    public async Task ReadMessagesLessThanAsync(int chatId, int messageId)
+    public async Task<IEnumerable<GroupChatMessage>> GetAllAsync(CancellationToken cancelationToken)
     {
-        var messages = await _context.GroupChatMessage
-                            .Where(m => m.GroupChatId == chatId
-                                        && m.Type == MessageType.Default
-                                        && m.Id <= messageId)
-                            .ToListAsync();
+        var collection = await _context.GroupChatMessage
+            .AsNoTracking()
+            .ToListAsync(cancelationToken);
 
-        foreach (var item in messages)
-        {
-            item.UpdateStatus(MessageStatus.Read);
-        }
-
-        await _context.SaveChangesAsync();
+        return collection;
     }
 
-    public async Task<int> CountReadUnreadMessagesAsync(int chatId, int chatMessageId, int lastReadMessageId)
+    public async Task<GroupChatMessage> GetByIdAsync(int id, CancellationToken cancelationToken)
     {
-        var countReadUnreadMessages = await _context.GroupChatMessage
-                                            .AsNoTracking()
-                                            .Where(m => m.GroupChatId == chatId 
-                                                        && m.Type == MessageType.Default)
-                                            .CountAsync(m => m.Id > lastReadMessageId && m.Id <= chatMessageId);
+        var entity = await _context.GroupChatMessage
+            .SingleOrDefaultAsync(g => g.Id.Equals(id), cancelationToken)
+                        ?? throw new EntityNotFoundException(typeof(GroupChatMessage), id);
 
-        return countReadUnreadMessages;
+        return entity;
     }
 
-    public async Task<int> CountReadUnreadMessagesAsync(int chatId, int chatMessageId)
-    {
-        var countReadUnreadMessages = await _context.GroupChatMessage
-                                            .AsNoTracking()
-                                            .Where(m => m.GroupChatId == chatId
-                                                        && m.Type == MessageType.Default)
-                                            .CountAsync(m => m.Id <= chatMessageId);
-
-        return countReadUnreadMessages;
-    }
-
-    public async Task<int> CountByChatIdAsync(int chatId)
+    public async Task<int> CountAsync(int chatId, CancellationToken cancelationToken)
     {
         var count = await _context.GroupChatMessage
-                     .CountAsync(c => c.GroupChatId == chatId);
+                     .CountAsync(c => c.GroupChatId == chatId, cancelationToken);
 
         return count;
+    }
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancelationToken)
+    {
+        var entity = await _context.GroupChatMessage
+            .SingleOrDefaultAsync(g => g.Id.Equals(id), cancelationToken)
+                    ?? throw new EntityNotFoundException(typeof(GroupChatMessage), id);
+
+        _context.GroupChatMessage.Remove(entity);
     }
 }

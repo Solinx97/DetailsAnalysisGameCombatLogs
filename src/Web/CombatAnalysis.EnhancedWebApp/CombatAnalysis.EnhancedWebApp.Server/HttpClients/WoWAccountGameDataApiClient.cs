@@ -13,7 +13,7 @@ public class WoWAccountGameDataApiClient(HttpClient httpClient) : IWoWAccountGam
     {
         var response = await _httpClient.GetAsync($"profile/user/wow?namespace=profile-{regionName}&locale={WoWDataLocale.Locale}", cancellationToken);
 
-        var result = await response.Content.ReadFromJsonAsync<WoWAccountRespone>();
+        var result = await response.Content.ReadFromJsonAsync<WoWAccountRespone>(cancellationToken);
         return result ?? throw new InvalidOperationException("The WoW API returned an empty response.");
     }
 

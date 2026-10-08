@@ -18,21 +18,17 @@ internal static class GroupChatMessageTestData
         MessageMarkedType? markedType = null
     )
     {
-        var entity = new GroupChatMessage(
+        var entity = GroupChatMessage.Create(
             username: username ?? "chat-1",
             message: message ?? "test message",
             chatId: chatId ?? 1,
-            groupChatUserId: groupChatUserId ?? "uid-1",
-            status: status ?? MessageStatus.Sent,
-            type: type ?? MessageType.Default,
-            markedType: markedType ?? MessageMarkedType.None
+            groupChatUserId: groupChatUserId ?? "uid-1"
         );
 
         return entity;
     }
 
     public static GroupChatMessageDto CreateDto(
-        int? id = null,
         string? username = null,
         string? message = null,
         int? chatId = null,
@@ -44,14 +40,11 @@ internal static class GroupChatMessageTestData
     {
         var entity = new GroupChatMessageDto
         {
-            Id = id ?? 1,
+            Id = Guid.NewGuid(),
             Username = username ?? "check",
             Message = message ?? "test message",
             GroupChatId = chatId ?? 1,
-            GroupChatUserId = groupChatUserId ?? "uid-1",
-            Status = status ?? MessageStatus.Sent,
-            Type = type ?? MessageType.Default,
-            MarkedType = markedType ?? MessageMarkedType.None
+            GroupChatUserId = groupChatUserId ?? "uid-1"
         };
 
         return entity;
@@ -64,14 +57,11 @@ internal static class GroupChatMessageTestData
         var collection = new GroupChatMessage[size];
         for (var i = 0; i < size; i++)
         {
-            collection[i] = new GroupChatMessage(
+            collection[i] = GroupChatMessage.Create(
                 username: $"chat-{i}",
                 message: $"test message {i}",
                 chatId: i + 1,
-                groupChatUserId: $"uid-{i}",
-                status: MessageStatus.Sent,
-                type: MessageType.Default,
-                markedType: MessageMarkedType.None
+                groupChatUserId: $"uid-{i}"
             );
         }
 
@@ -87,7 +77,7 @@ internal static class GroupChatMessageTestData
         {
             collection[i] = new GroupChatMessageDto
             {
-                Id = 1 + i,
+                Id = Guid.NewGuid(),
                 Username = $"check-{i}",
                 Message = $"test message {i}",
                 GroupChatId = 1 + i,

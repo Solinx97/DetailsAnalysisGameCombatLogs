@@ -1,14 +1,15 @@
 ﻿import Store, { type RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
+import { ChatMessageType } from '@/shared/helpers/EnumHelper';
 import { useChatHub } from '@/shared/hooks/useChatHub';
 import logger from '@/utils/Logger';
-import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChatApi } from '../../api/Chat.api';
-import { useFindGroupChatUsersByChatIdQuery } from '../../api/GroupChatUser.api';
+import { useSelector } from 'react-redux';
+import { ChatApi, useGetMessagesByGroupChatIdQuery } from '../../api/Chat.api';
 import { usePartialUpdateGroupChatMessageMutation } from '../../api/GroupChatMessage.api';
-import { useGetMessagesByGroupChatIdQuery } from '../../api/Chat.api';
+import { useFindGroupChatUsersByChatIdQuery } from '../../api/GroupChatUser.api';
 import type { GroupChatMessageModel } from '../../types/GroupChatMessageModel';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { ChatMessagePatch } from '../../types/patches/ChatMessagePatch';
@@ -17,7 +18,6 @@ import ChatMessage from '../ChatMessage';
 import MessageInput from '../MessageInput';
 import GroupChatMenu from './GroupChatMenu';
 import GroupChatTitle from './GroupChatTitle';
-import { useSelector } from 'react-redux';
 
 import './GroupChat.scss';
 
@@ -166,7 +166,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                     <MessageInput
                         chatId={chat.id}
                         initiator={groupChatUser}
-                        targetChatType={1}
+                        targetChatType={ChatMessageType["GROUP"]}
                         t={t}
                     />
                 }

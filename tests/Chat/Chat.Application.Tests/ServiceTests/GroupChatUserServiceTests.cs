@@ -57,7 +57,7 @@ public class GroupChatUserServiceTests
     {
         // Arrange
         GroupChatUserId id = "uid-1";
-        GroupChatMessageId lastReadMessageId = 1;
+        GroupChatMessageId lastReadMessageId = Guid.NewGuid();
         const int unreadMessages = 0;
 
         var groupChatUserDto = GroupChatUserTestData.CreateDto();
@@ -79,7 +79,6 @@ public class GroupChatUserServiceTests
 
         // Assert
         Assert.NotNull(groupChatUser.LastReadMessageId);
-        Assert.True(groupChatUser.LastReadMessageId.HasValue);
         Assert.Equal(lastReadMessageId.Value, groupChatUser.LastReadMessageId.Value);
         Assert.Equal(unreadMessages, groupChatUser.UnreadMessages);
 

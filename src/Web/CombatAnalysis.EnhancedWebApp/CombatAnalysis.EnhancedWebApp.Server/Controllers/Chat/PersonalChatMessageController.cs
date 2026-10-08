@@ -1,162 +1,48 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Chat;
 using CombatAnalysis.EnhancedWebApp.Server.Patches;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using System.Net;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Chat;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class PersonalChatMessageController : ControllerBase
+public class PersonalChatMessageController(IPersonalChatApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-    private readonly ILogger<PersonalChatMessageController> _logger;
-
-    public PersonalChatMessageController(IOptions<Cluster> cluster, IHttpClientHelper httpClient, ILogger<PersonalChatMessageController> logger)
-    {
-        _httpClient = httpClient;
-        _logger = logger;
-
-        _httpClient.APIUrl = cluster.Value.Chat;
-    }
+    private readonly IPersonalChatApiClient _httpClient = httpClient;
 
     [HttpGet("count/{chatId:int:min(1)}")]
-    public async Task<IActionResult> Count(int chatId)
+    public async Task<IActionResult> Count(int chatId, CancellationToken cancellationToken)
     {
-        try
-        {
-            var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/count/{chatId}");
-            var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
-            return Ok(count);
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            _logger.LogError(ex, "Get personal chat messages count by chat {ChatId} failed. User should be authorize to get personal chat messages count.", chatId);
-
-            return Unauthorized();
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Get personal chat messages count by chat {ChatId} failed: received unsuccessful request.", chatId);
-
-            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
-        }
+        var count = await _httpClient.CountAsync(chatId, cancellationToken);
+        return Ok(count);
     }
 
-    [HttpGet("getByChatId")]
-    public async Task<IActionResult> GetByChatId(int chatId, int page, int pageSize)
+    [HttpGet("getByChatId/{chatId:int:min(1)}")]
+    public async Task<IActionResult> GetByChatId(int chatId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        try
-        {
-            var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/getByChatId?chatId={chatId}&page={page}&pageSize={pageSize}");
-            responseMessage.EnsureSuccessStatusCode();
-
-            var messages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
-
-            return Ok(messages);
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            _logger.LogError(ex, "Get more personal chat messages for chat {ChatId} failed. User should be authorize to get more personal chat messages.", chatId);
-
-            return Unauthorized();
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Get more personal chat messages for chat {ChatId} failed. Something wrong during getting personal chat message by chat.", chatId);
-
-            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
-        }
+        var messages = await _httpClient.GetByChatIdAsync(chatId, page, pageSize, cancellationToken);
+        return Ok(messages);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] PersonalChatMessageModel message)
+    public async Task<IActionResult> Create([FromBody] PersonalChatMessageModel message, CancellationToken cancellationToken)
     {
-        try
-        {
-            var responseMessage = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(message));
-            responseMessage.EnsureSuccessStatusCode();
-
-            var personalChatMessage = await responseMessage.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
-            return Ok(personalChatMessage);
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            _logger.LogError(ex, "Create personal chat message failed. User should be authorize to create personal chat message.");
-
-            return Unauthorized();
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Create personal chat message failed. Something wrong during creating personal chat message.");
-
-            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
-        }
+        await _httpClient.CreateAsync(message, cancellationToken);
+        return NoContent();
     }
 
-    [HttpPatch("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] PersonalChatMessagePatch message)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> PartialUpdate(string id, [FromBody] PersonalChatMessagePatch message, CancellationToken cancellationToken)
     {
-        try
-        {
-            var responseMessage = await _httpClient.PatchAsync($"PersonalChatMessage/{id}", JsonContent.Create(message));
-            responseMessage.EnsureSuccessStatusCode();
-
-            return NoContent();
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            _logger.LogError(ex, "Update personal chat message {Id} failed. User should be authorize to update chat personal chat message.", id);
-
-            return Unauthorized();
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-        {
-            _logger.LogError(ex, "Delete personal chat message {Id} failed. Personal chat message not found.", id);
-
-            return NotFound();
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Update personal chat message {Id} failed. Something wrong during updating personal chat message.", id);
-
-            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
-        }
+        await _httpClient.PatchAsync(id, message, cancellationToken);
+        return NoContent();
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessage/{id}");
-            responseMessage.EnsureSuccessStatusCode();
-
-            return NoContent();
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            _logger.LogError(ex, "Delete personal chat message {Id} failed. User should be authorize to delete personal chat message.", id);
-
-            return Unauthorized();
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-        {
-            _logger.LogError(ex, "Delete personal chat message {Id} failed. Personal chat message not found.", id);
-
-            return NotFound();
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Delete personal chat message {Id} failed. Something wrong during deleting personal chat message.", id);
-
-            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
-        }
+        await _httpClient.DeleteAsync(id, cancellationToken);
+        return NoContent();
     }
 }

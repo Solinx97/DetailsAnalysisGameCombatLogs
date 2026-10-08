@@ -1,11 +1,9 @@
-import type { MessageStatus } from './enums/MessageStatus';
-
 export type PersonalChatMessageModel = {
-    id: number;
+    id: string;
     username: string;
     message: string;
     time: Date;
-    status: MessageStatus;
+    status: number;
     type: number;
     markedType: number;
     isEdited: boolean;

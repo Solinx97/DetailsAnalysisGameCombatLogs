@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.Hubs.Consts;
 
-public static class HubPatterns
+public class HubPatterns
 {
     public const string PersonalChat = "/personalChatHub";
 

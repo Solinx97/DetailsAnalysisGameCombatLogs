@@ -58,7 +58,7 @@ public class UserPostCommentController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id, int userPostId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"UserPostComment/{id}?userPostId={userPostId}");
+        var responseMessage = await _httpClient.DeleteAsync($"UserPostComment/{id}?userPostId={userPostId}");
         return NoContent();
     }
 }

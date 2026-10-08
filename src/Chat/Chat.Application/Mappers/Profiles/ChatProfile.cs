@@ -26,16 +26,7 @@ public class ChatProfile : Profile
                      dto.CompanionUnreadMessages ?? 0
                  )).ReverseMap();
 
-        CreateMap<PersonalChatMessageDto, PersonalChatMessage>()
-                 .ConstructUsing(dto => new PersonalChatMessage(
-                     dto.Username,
-                     dto.Message,
-                     dto.PersonalChatId,
-                     dto.AppUserId,
-                     dto.Status,
-                     dto.Type,
-                     dto.MarkedType
-                 )).ReverseMap();
+        CreateMap<PersonalChatMessageDto, PersonalChatMessage>().ReverseMap();
 
         CreateMap<GroupChatDto, GroupChat>()
                  .ConstructUsing(dto => new GroupChat(
@@ -53,16 +44,7 @@ public class ChatProfile : Profile
                  )).ReverseMap();
 
         CreateMap<Domain.DTOs.GroupChatMessageDto, GroupChatMessageDto>().ReverseMap();
-        CreateMap<GroupChatMessageDto, GroupChatMessage>()
-                 .ConstructUsing(dto => new GroupChatMessage(
-                     dto.Username,
-                     dto.Message,
-                     dto.GroupChatId,
-                     dto.GroupChatUserId,
-                     dto.Status,
-                     dto.Type,
-                     dto.MarkedType
-                 )).ReverseMap();
+        CreateMap<GroupChatMessageDto, GroupChatMessage>().ReverseMap();
         
         CreateMap<GroupChatUserDto, GroupChatUser>()
                  .ConstructUsing(dto => new GroupChatUser(
@@ -88,10 +70,10 @@ public class ChatProfile : Profile
         CreateMap<string, GroupChatUserId>()
             .ConvertUsing(src => new GroupChatUserId(src));
 
-        CreateMap<GroupChatMessageId, int>()
+        CreateMap<GroupChatMessageId, Guid>()
             .ConvertUsing(src => src.Value);
 
-        CreateMap<int, GroupChatMessageId>()
+        CreateMap<Guid, GroupChatMessageId>()
             .ConvertUsing(src => new GroupChatMessageId(src));
 
         CreateMap<GroupChatRulesId, int>()
@@ -106,10 +88,10 @@ public class ChatProfile : Profile
         CreateMap<int, PersonalChatId>()
             .ConvertUsing(src => new PersonalChatId(src));
 
-        CreateMap<PersonalChatMessageId, int>()
+        CreateMap<PersonalChatMessageId, Guid>()
             .ConvertUsing(src => src.Value);
 
-        CreateMap<int, PersonalChatMessageId>()
+        CreateMap<Guid, PersonalChatMessageId>()
             .ConvertUsing(src => new PersonalChatMessageId(src));
 
         CreateMap<UserId, string>()

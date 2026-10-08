@@ -51,7 +51,7 @@ public class UserPostController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _httpClient.DeletAsync($"UserPost/{id}");
+        await _httpClient.DeleteAsync($"UserPost/{id}");
         return NoContent();
     }
 }

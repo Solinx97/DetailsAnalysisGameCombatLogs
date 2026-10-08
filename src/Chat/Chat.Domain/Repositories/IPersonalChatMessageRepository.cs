@@ -1,11 +1,18 @@
 ﻿using Chat.Domain.Entities;
-using Chat.Domain.ValueObjects;
 
 namespace Chat.Domain.Repositories;
 
-public interface IPersonalChatMessageRepository : IGenericRepository<PersonalChatMessage, PersonalChatMessageId>
+public interface IPersonalChatMessageRepository
 {
-    Task<IEnumerable<PersonalChatMessage>> GetByChatIdAsync(int chatId, int page, int pageSize);
+    Task AddAsync(PersonalChatMessage message, CancellationToken cancelationToken);
 
-    Task<int> CountByChatIdAsync(int chatId);
+    Task<IEnumerable<PersonalChatMessage>> GetAllAsync(CancellationToken cancelationToken);
+
+    Task<PersonalChatMessage> GetByIdAsync(int id, CancellationToken cancelationToken);
+
+    Task<IEnumerable<PersonalChatMessage>> GetByChatIdAsync(int chatId, int page, int pageSize, CancellationToken cancelationToken);
+
+    Task<int> CountAsync(int chatId, CancellationToken cancelationToken);
+
+    Task DeleteAsync(Guid id, CancellationToken cancelationToken);
 }

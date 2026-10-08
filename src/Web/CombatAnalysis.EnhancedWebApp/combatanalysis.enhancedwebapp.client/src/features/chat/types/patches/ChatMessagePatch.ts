@@ -1,9 +1,7 @@
-import type { MessageStatus } from '../enums/MessageStatus';
-
 export type ChatMessagePatch = {
-    id: number;
+    id: string;
     chatId: number;
     message?: string;
-    status?: MessageStatus;
+    status?: number;
     markedType?: number;
 }

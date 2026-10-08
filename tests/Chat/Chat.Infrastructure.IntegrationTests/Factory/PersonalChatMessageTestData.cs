@@ -16,14 +16,11 @@ internal static class PersonalChatMessageTestData
         MessageMarkedType? markedType = null
     )
     {
-        var entity = new PersonalChatMessage(
+        var entity = PersonalChatMessage.Create(
             username: username ?? "check",
             message: message ?? "test message",
             chatId: chatId ?? 1,
-            appUserId: appUserId ?? "uid-1",
-            status: status ?? MessageStatus.Sent,
-            type: type ?? MessageType.Default,
-            markedType: markedType ?? MessageMarkedType.None
+            appUserId: appUserId ?? "uid-1"
         );
 
         return entity;
@@ -36,14 +33,11 @@ internal static class PersonalChatMessageTestData
         var collection = new PersonalChatMessage[size];
         for (var i = 0; i < size; i++)
         {
-            collection[i] = new PersonalChatMessage(
+            collection[i] = PersonalChatMessage.Create(
                 username: $"chat-{i}",
                 message: $"test message {i}",
                 chatId: i + 1,
-                appUserId: $"uid-{i}",
-                status: MessageStatus.Sent,
-                type: MessageType.Default,
-                markedType: MessageMarkedType.None
+                appUserId: $"uid-{i}"
             );
         }
 

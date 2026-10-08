@@ -11,14 +11,14 @@ export const PersonalChatMessageApi = ChatApi.injectEndpoints({
                 method: 'POST'
             }),
         }),
-        partialUpdatePersonalChatMessage: builder.mutation<void, { id: number, message: ChatMessagePatch }>({
+        partialUpdatePersonalChatMessage: builder.mutation<void, { id: string, message: ChatMessagePatch }>({
             query: ({ id, message }) => ({
                 body: message,
                 url: `/PersonalChatMessage/${id}`,
                 method: 'PATCH'
             }),
         }),
-        removePersonalChatMessage: builder.mutation<void, number>({
+        removePersonalChatMessage: builder.mutation<void, string>({
             query: id => ({
                 url: `/PersonalChatMessage/${id}`,
                 method: 'DELETE'
@@ -26,8 +26,8 @@ export const PersonalChatMessageApi = ChatApi.injectEndpoints({
             invalidatesTags: (_result, _error, id) => [{ type: 'PersonalChatMessage', id }],
         }),
         removePersonalChatMessageByChatId: builder.mutation<void, number>({
-            query: id => ({
-                url: `/PersonalChatMessage/deleteByChatId/${id}`,
+            query: chatId => ({
+                url: `/PersonalChatMessage/deleteByChatId/${chatId}`,
                 method: 'DELETE'
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'PersonalChatMessage', id }],

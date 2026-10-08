@@ -1,12 +1,15 @@
 ﻿namespace Chat.Domain.ValueObjects;
 
-public class GroupChatMessageId(int value)
+public record GroupChatMessageId
 {
-    public int Value { get; } = value;
+    public GroupChatMessageId(Guid value)
+    {
+        Value = value;
+    }
 
-    public bool HasValue => Value > 0;
+    public Guid Value { get; }
 
-    public static implicit operator int(GroupChatMessageId id) => id.Value;
+    public static implicit operator Guid(GroupChatMessageId id) => id.Value;
 
-    public static implicit operator GroupChatMessageId(int value) => new(value);
+    public static implicit operator GroupChatMessageId(Guid value) => new(value);
 }

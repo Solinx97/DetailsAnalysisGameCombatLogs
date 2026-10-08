@@ -80,3 +80,14 @@ export const WoWAccountTransmogType = {
     SET: 0,
     SLOT: 1,
 } as const;
+
+export const ChatMessageType = {
+    PERSONAL: 0,
+    GROUP: 1,
+} as const;
+
+export const MessageStatus = {
+    SENDING: 0,
+    SENT: 1,
+    READ: 2,
+} as const;

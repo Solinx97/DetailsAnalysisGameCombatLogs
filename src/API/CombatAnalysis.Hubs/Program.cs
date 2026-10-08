@@ -93,20 +93,15 @@ var app = builder.Build();
 
 app.UseCors("CorsPolicy");
 
-app.UseRouting()
-   .UseAuthentication()
-   .UseAuthorization()
-   .UseEndpoints(endpoints =>
-{
-    app.MapHub<PersonalChatHub>(HubPatterns.PersonalChat);
-    app.MapHub<PersonalChatMessagesHub>(HubPatterns.PersonalChatMessages);
-    app.MapHub<PersonalChatUnreadMessageHub>(HubPatterns.PersonalChatUnreadMessage);
-    app.MapHub<GroupChatHub>(HubPatterns.GroupChat);
-    app.MapHub<GroupChatMessagesHub>(HubPatterns.GroupChatMessages);
-    app.MapHub<GroupChatUnreadMessageHub>(HubPatterns.GroupChatUnreadMessage);
-    app.MapHub<VoiceChatHub>(HubPatterns.VoiceChat);
-    app.MapHub<NotificationHub>(HubPatterns.Notification);
-});
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapHub<PersonalChatHub>(HubPatterns.PersonalChat);
+app.MapHub<PersonalChatUnreadMessageHub>(HubPatterns.PersonalChatUnreadMessage);
+app.MapHub<GroupChatHub>(HubPatterns.GroupChat);
+app.MapHub<GroupChatUnreadMessageHub>(HubPatterns.GroupChatUnreadMessage);
+app.MapHub<VoiceChatHub>(HubPatterns.VoiceChat);
+app.MapHub<NotificationHub>(HubPatterns.Notification); ;
 
 app.UseHttpsRedirection();
 

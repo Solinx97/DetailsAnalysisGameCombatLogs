@@ -4,11 +4,11 @@ namespace Chat.Application.DTOs;
 
 public class PersonalChatMessageDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    public string Username { get; set; }
+    public string Username { get; set; } = string.Empty;
 
-    public string Message { get; set; }
+    public string Message { get; set; } = string.Empty;
 
     public DateTimeOffset Time { get; set; }
 
@@ -20,5 +20,5 @@ public class PersonalChatMessageDto
 
     public int PersonalChatId { get; set; }
 
-    public string AppUserId { get; set; }
+    public string AppUserId { get; set; } = string.Empty;
 }

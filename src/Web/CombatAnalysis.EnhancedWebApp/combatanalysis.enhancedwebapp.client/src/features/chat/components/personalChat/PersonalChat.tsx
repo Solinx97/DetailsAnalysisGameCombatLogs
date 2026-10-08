@@ -1,11 +1,13 @@
 ﻿import Store, { type RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import Loading from '@/shared/components/Loading';
+import { ChatMessageType, MessageStatus } from '@/shared/helpers/EnumHelper';
 import { useChatHub } from '@/shared/hooks/useChatHub';
 import logger from '@/utils/Logger';
 import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { useGetUserByIdQuery } from '../../../user/api/Account.api';
 import { ChatApi, useGetMessagesByPersonalChatIdQuery } from '../../api/Chat.api';
 import {
@@ -18,7 +20,6 @@ import type { PersonalChatModel } from '../../types/PersonalChatModel';
 import ChatMessage from '../ChatMessage';
 import MessageInput from '../MessageInput';
 import PersonalChatTitle from './PersonalChatTitle';
-import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 
 import './PersonalChat.scss';
 
@@ -41,7 +42,6 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
-    // const { data: count, isLoading: countIsLoading } = useGetPersonalChatMessageCountByChatIdQuery(chat.id);
     const { data: messages, isLoading } = useGetMessagesByPersonalChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
 
     const { data: companion, isLoading: companionIsLoading } = useGetUserByIdQuery(companionId);
@@ -64,6 +64,7 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
             await chatHub.connectToPersonalChatMessagesAsync(chat.id);
 
             chatHub.subscribeToPersonalChatMessages((message: PersonalChatMessageModel) => {
+                console.log(message);
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByPersonalChatId',
@@ -85,7 +86,7 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                             if (message && messagePatch) {
                                 const updatedMessage = Object.assign({}, message);
                                 updatedMessage.message = messagePatch.message ?? "";
-                                updatedMessage.status = messagePatch.status ?? "Sent";
+                                updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"];
                                 updatedMessage.markedType = messagePatch.markedType ?? 0;
 
                                 Object.assign(message, updatedMessage);
@@ -154,9 +155,8 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                 <MessageInput
                     chatId={chat.id}
                     initiator={myself}
-                    targetChatType={0}
+                    targetChatType={ChatMessageType["PERSONAL"]}
                     t={t}
-                    recipientId={chat.initiatorId === myself?.id ? chat.companionId : chat.initiatorId}
                 />
             </div>
         </div>

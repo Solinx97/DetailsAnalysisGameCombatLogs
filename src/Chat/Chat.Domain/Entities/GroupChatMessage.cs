@@ -12,15 +12,10 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     private GroupChatMessage() { }
 
-    public GroupChatMessage(string username, string message, int chatId, GroupChatUserId groupChatUserId,
-                    MessageStatus status = MessageStatus.Sent,
-                    MessageType type = MessageType.Default,
-                    MessageMarkedType markedType = MessageMarkedType.None)
+    private GroupChatMessage(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId,
+                    MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset time)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
-        ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
-
+        Id = Guid.NewGuid();
         Username = username;
         Message = message;
         GroupChatId = chatId;
@@ -28,7 +23,7 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
         Status = status;
         Type = type;
         MarkedType = markedType;
-        Time = DateTimeOffset.UtcNow;
+        Time = time;
     }
 
     public GroupChatMessageId Id { get; private set; }
@@ -53,8 +48,19 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     public GroupChat GroupChat { get; private set; } = null!;
 
-    public void EditMessage(string newMessage)
+    public static GroupChatMessage Create(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+        ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
+
+        var time = DateTimeOffset.UtcNow;
+        return new GroupChatMessage(username, message, chatId, groupChatUserId, MessageStatus.Sending, MessageType.Default, MessageMarkedType.None, time);
+    }
+
+    public void EditMessage(string? newMessage)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(newMessage, nameof(newMessage));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(newMessage.Length, MESSAGE_MAX_LENGTH, nameof(newMessage));
 
         if (!string.Equals(Message, newMessage, StringComparison.Ordinal))

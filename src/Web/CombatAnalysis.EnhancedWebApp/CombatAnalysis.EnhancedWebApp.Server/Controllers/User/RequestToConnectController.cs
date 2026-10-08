@@ -124,7 +124,7 @@ public class RequestToConnectController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"RequestToConnect/{id}");
+        var responseMessage = await _httpClient.DeleteAsync($"RequestToConnect/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

@@ -46,7 +46,7 @@ export const ChatApi = createApi({
         }),
         getMessagesByPersonalChatId: builder.query<PersonalChatMessageModel[], { chatId: number, page: number, pageSize: number }>({
             query: ({ chatId, page, pageSize }) => ({
-                url: `/PersonalChatMessage/getByChatId?chatId=${chatId}&page=${page}&pageSize=${pageSize}`,
+                url: `/PersonalChatMessage/getByChatId/${chatId}?page=${page}&pageSize=${pageSize}`,
             }),
             transformResponse: (response: PersonalChatMessageModel[]) => response.reverse(),
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.chatId}`,

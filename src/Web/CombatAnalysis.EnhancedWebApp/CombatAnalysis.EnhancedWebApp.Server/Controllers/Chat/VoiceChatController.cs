@@ -144,7 +144,7 @@ public class VoiceChatController : ControllerBase
     {
         try
         {
-            var responseMessage = await _httpClient.DeletAsync($"VoiceChat/{id}");
+            var responseMessage = await _httpClient.DeleteAsync($"VoiceChat/{id}");
             responseMessage.EnsureSuccessStatusCode();
 
             return NoContent();

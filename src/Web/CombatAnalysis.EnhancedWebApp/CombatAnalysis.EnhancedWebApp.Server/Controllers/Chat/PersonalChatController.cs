@@ -172,7 +172,7 @@ public class PersonalChatController : ControllerBase
     {
         try
         {
-            var responseMessage = await _httpClient.DeletAsync($"PersonalChat/{id}");
+            var responseMessage = await _httpClient.DeleteAsync($"PersonalChat/{id}");
             responseMessage.EnsureSuccessStatusCode();
 
             return NoContent();

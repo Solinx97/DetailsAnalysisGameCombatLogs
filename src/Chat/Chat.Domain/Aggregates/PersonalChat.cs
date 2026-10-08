@@ -1,4 +1,5 @@
 ﻿using Chat.Domain.Entities;
+using Chat.Domain.Exceptions;
 using Chat.Domain.Interfaces;
 using Chat.Domain.ValueObjects;
 
@@ -48,5 +49,14 @@ public class PersonalChat : IRepositoryEntity<PersonalChatId>
         {
             CompanionUnreadMessages = count;
         }
+    }
+
+    public void RemoveMessage(Guid messageId)
+    {
+        var message = _messages
+            .FirstOrDefault(x => x.Id.Equals(messageId))
+                ?? throw new PersonalChatMessageNotFoundException(messageId);
+
+        _messages.Remove(message);
     }
 }

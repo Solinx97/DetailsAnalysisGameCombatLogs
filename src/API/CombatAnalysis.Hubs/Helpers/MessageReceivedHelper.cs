@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.Hubs.Helpers;
 
-public static class MessageReceivedHelper
+internal static class MessageReceivedHelper
 {
     public static bool IsHubExist(PathString pathString)
     {

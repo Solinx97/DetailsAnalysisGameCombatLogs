@@ -67,14 +67,14 @@ public class CommunityUserController : ControllerBase
     [HttpDelete("leave")]
     public async Task<IActionResult> Leave(string appUserId, int communityId)
     {
-        await _httpClient.DeletAsync($"CommunityUser/leave?appUserId={appUserId}&communityId={communityId}");
+        await _httpClient.DeleteAsync($"CommunityUser/leave?appUserId={appUserId}&communityId={communityId}");
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id, int communityId)
     {
-        await _httpClient.DeletAsync($"CommunityUser/{id}?communityId={communityId}");
+        await _httpClient.DeleteAsync($"CommunityUser/{id}?communityId={communityId}");
         return NoContent();
     }
 }

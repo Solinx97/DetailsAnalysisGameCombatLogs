@@ -41,7 +41,7 @@ public class GroupChatUser : IRepositoryEntity<GroupChatUserId>
         ArgumentNullException.ThrowIfNull(messageId, nameof(messageId));
 
         if (LastReadMessageId == null
-            || (LastReadMessageId != null && (LastReadMessageId.Value == messageId.Value || messageId > LastReadMessageId)))
+            || (LastReadMessageId != null && (LastReadMessageId.Value == messageId.Value || messageId.Value > LastReadMessageId.Value)))
         {
             LastReadMessageId = messageId;
         }

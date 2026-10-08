@@ -30,11 +30,14 @@
     "url": "https://localhost:7026/",
     "notification": "notificationHub",
     "personalChat": "personalChatHub",
-    "personalChatMessages": "personalChatMessagesHub",
     "personalChatUnreadMessage": "personalChatUnreadMessageHub",
     "groupChat": "groupChatHub",
-    "groupChatMessages": "groupChatMessagesHub",
     "groupChatUnreadMessage": "groupChatUnreadMessageHub",
     "voiceChat": "voiceChatHub"
+  },
+  "chatApiHubs": {
+    "url": "https://localhost:5007/",
+    "personalChatMessages": "personalChatMessagesHub",
+    "groupChatMessages": "groupChatMessagesHub"
   }
 }

@@ -87,11 +87,9 @@ namespace Chat.Infrastructure.Migrations
 
             modelBuilder.Entity("Chat.Domain.Entities.GroupChatMessage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("GroupChatId")
                         .HasColumnType("int");
@@ -144,8 +142,8 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<int>("GroupChatId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LastReadMessageId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("LastReadMessageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("UnreadMessages")
                         .HasColumnType("int");
@@ -162,13 +160,46 @@ namespace Chat.Infrastructure.Migrations
                     b.ToTable("GroupChatUser");
                 });
 
-            modelBuilder.Entity("Chat.Domain.Entities.PersonalChatMessage", b =>
+            modelBuilder.Entity("Chat.Domain.Entities.OutboxMessage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("ProcessedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("RetryCount")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages");
+                });
+
+            modelBuilder.Entity("Chat.Domain.Entities.PersonalChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
