@@ -88,8 +88,8 @@ const usePersonalChatHub = (
         });
     }
 
-    const subscribeToPersonalMessageHasBeenRead = (callback: (messageId: number) => void) => {
-        personalChatMessagesHubConnectionRef.current?.on("ReceiveMessageHasBeenRead", (messageId: number) => {
+    const subscribeToPersonalMessageHasBeenRead = (callback: (messageId: string) => void) => {
+        personalChatMessagesHubConnectionRef.current?.on("ReceiveMessageHasBeenRead", (messageId: string) => {
             callback(messageId);
         });
     }

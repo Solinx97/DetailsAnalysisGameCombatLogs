@@ -26,7 +26,7 @@ const ChatMessageTitle: React.FC<ChatMessageTitleProps> = ({ itIsMe, message }) 
                         <div>{getMessageTime()}</div>
                     </div>
                     <User
-                        targetUserId={message?.appUserId}
+                        targetUserId={'appUserId' in message ? message.appUserId : message.groupChatUserId}
                         targetUsername={message?.username}
                         setUserInformation={setUserInformation}
                     />

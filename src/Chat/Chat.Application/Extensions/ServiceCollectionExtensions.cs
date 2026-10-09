@@ -9,7 +9,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddChatApplication(this IServiceCollection services)
     {
-        services.AddScoped<IGroupChatUserService, GroupChatUserService>();
         services.AddScoped<IVoiceChatService, VoiceChatService>();
 
         services.AddMediatR(cfg =>

@@ -1,10 +1,11 @@
+import type { RootState } from '@/app/Store';
+import { MessageStatus } from '@/shared/helpers/EnumHelper';
 import { faCircle, faCircleUp, faClock, faCloudArrowUp, faEye, faFaceMeh, faUpRightFromSquare, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as signalR from '@microsoft/signalr';
-import type { RootState } from '@/app/Store';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import type { GroupChatMessageModel } from '../types/GroupChatMessageModel';
 import type { PersonalChatMessageModel } from '../types/PersonalChatMessageModel';
 import type { ChatMessagePatch } from '../types/patches/ChatMessagePatch';
@@ -14,9 +15,9 @@ import ChatMessageTitle from './ChatMessageTitle';
 interface DefaultChatMessageProps {
     message: GroupChatMessageModel | PersonalChatMessageModel;
     updateMessageAsync: (targetMessage: ChatMessagePatch) => Promise<void>;
-    subscribeToChatMessageHasBeenRead: (callback: (targetMessageId: number) => void) => void;
+    subscribeToChatMessageHasBeenRead: (callback: (targetMessageId: string) => void) => void;
     hubConnection: signalR.HubConnection | null;
-    lastReadMessageId?: number;
+    lastReadMessageId?: string;
 }
 
 const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, updateMessageAsync, subscribeToChatMessageHasBeenRead, hubConnection, lastReadMessageId }) => {
@@ -30,7 +31,7 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
     const editMessageInput = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
-        subscribeToChatMessageHasBeenRead((targetMessageId: number) => {
+        subscribeToChatMessageHasBeenRead((targetMessageId: string) => {
             if (message.id !== targetMessageId) {
                 return;
             }
@@ -76,7 +77,7 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
     }
 
     const handleOpenMessageMenu = () => {
-        if (reviewer?.id !== message.appUserId) {
+        if ('appUserId' in message && reviewer?.id !== message.appUserId) {
             return;
         }
 
@@ -84,8 +85,8 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
     }
 
     const personalChatMessageHasBeenReadHandle = async (): Promise<void> => {
-        if (!hubConnection || reviewer?.id === message.appUserId
-            || message.status === "Read") {
+        if (!hubConnection || ('appUserId' in message && reviewer?.id === message.appUserId)
+            || message.status === MessageStatus["READ"]) {
             return;
         }
 
@@ -93,7 +94,7 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
     }
 
     const groupChatMessageHasBeenReadHandle = async (): Promise<void> => {
-        if (!hubConnection || reviewer?.id === message.appUserId) {
+        if (!hubConnection || ('appUserId' in message && reviewer?.id === message.appUserId)) {
             return;
         }
 
@@ -111,19 +112,19 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
 
     const getMessageStatus = () => {
         switch (message.status) {
-            case "Sending":
+            case MessageStatus["SENDING"]:
                 return <FontAwesomeIcon
                     icon={faClock}
                     className="status"
                     title={t("Delivery") || ""}
                 />;
-            case "Sent":
+            case MessageStatus["SENT"]:
                 return <FontAwesomeIcon
                     icon={faCircleUp}
                     className="status"
                     title={t("Delivered") || ""}
                 />;
-            case "Read":
+            case MessageStatus["READ"]:
                 return <FontAwesomeIcon
                     icon={faEye}
                     className="status"
@@ -143,11 +144,11 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
     }
 
     const getMessage = () => {
-        let isAlreadyRead = message.status === "Read";
-        if ("groupChatUserId" in message && reviewer?.id !== message.appUserId && lastReadMessageId) {
+        let isAlreadyRead = message.status === MessageStatus["READ"];
+        if ("appUserId" in message && reviewer?.id !== message.appUserId && lastReadMessageId) {
             isAlreadyRead = message.id <= lastReadMessageId;
         }
-        else if ("groupChatUserId" in message && reviewer?.id !== message.appUserId && !lastReadMessageId) {
+        else if ("appUserId" in message && reviewer?.id !== message.appUserId && !lastReadMessageId) {
             isAlreadyRead = false;
         }
 
@@ -170,12 +171,12 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
     }
 
     return (
-        <div className={`chat-messages__content${reviewer?.id === message.appUserId ? ' my-message' : ''}`}>
+        <div className={`chat-messages__content${"appUserId" in message && reviewer?.id === message.appUserId ? ' my-message' : ''}`}>
             <ChatMessageTitle
-                itIsMe={reviewer?.id !== message.appUserId}
+                itIsMe={"appUserId" in message && reviewer?.id !== message.appUserId}
                 message={message}
             />
-            {editModeIsOn && reviewer?.id === message.appUserId
+            {editModeIsOn && "appUserId" in message && reviewer?.id === message.appUserId
                 ? <div className="edit-message">
                     <input className="form-control" type="text" defaultValue={message.message} ref={editMessageInput} />
                     <FontAwesomeIcon
@@ -185,9 +186,9 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
                     />
                 </div>
                 : <div className="message">
-                    {reviewer?.id === message.appUserId
+                    {"appUserId" in message && reviewer?.id === message.appUserId
                         ? getMessageStatus()
-                        : message.status === "Sent" &&
+                        : message.status === MessageStatus["SENT"] &&
                         <FontAwesomeIcon
                             icon={faCircle}
                             className="status"

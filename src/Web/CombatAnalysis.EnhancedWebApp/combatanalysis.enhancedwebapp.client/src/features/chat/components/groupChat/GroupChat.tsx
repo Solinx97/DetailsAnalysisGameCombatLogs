@@ -8,8 +8,8 @@ import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { ChatApi, useGetMessagesByGroupChatIdQuery } from '../../api/Chat.api';
-import { usePartialUpdateGroupChatMessageMutation } from '../../api/GroupChatMessage.api';
-import { useFindGroupChatUsersByChatIdQuery } from '../../api/GroupChatUser.api';
+import { useCountGroupChatMessagesQuery, usePartialUpdateGroupChatMessageMutation } from '../../api/GroupChatMessage.api';
+import { useFindAllChatUsersQuery } from '../../api/GroupChatUser.api';
 import type { GroupChatMessageModel } from '../../types/GroupChatMessageModel';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { ChatMessagePatch } from '../../types/patches/ChatMessagePatch';
@@ -43,17 +43,19 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
     const { data: messages, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
-    const { data: groupChatUsers, isLoading: usersIsLoading } = useFindGroupChatUsersByChatIdQuery(chat.id);
+    const { data: count } = useCountGroupChatMessagesQuery(chat.id);
+
+    const { data: groupChatUsers, isLoading: usersIsLoading } = useFindAllChatUsersQuery(chat.id);
 
     const [partialUpdateGroupChatMessage] = usePartialUpdateGroupChatMessageMutation();
 
     useEffect(() => {
-        if (!messages) {
+        if (!messages || !count) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < messages.length);
-    }, [page, messages]);
+        setHasMore(page * pageSizeRef.current < count);
+    }, [messages, count]);
 
     useEffect(() => {
         if (!chatHub) {
@@ -129,6 +131,8 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
         }
     }
 
+    console.log(chat.id);
+    console.log(messages);
     if (isLoading || !messages || !chatHub
         || usersIsLoading || !groupChatUsers) {
         return (<></>);

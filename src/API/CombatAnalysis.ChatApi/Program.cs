@@ -120,6 +120,7 @@ builder.Services.AddSignalR()
 builder.Services.AddHostedService<PersonalChatConsumer>();
 builder.Services.AddHostedService<PersonalChatMessageConsumer>();
 builder.Services.AddHostedService<GroupChatConsumer>();
+builder.Services.AddHostedService<GroupChatMemberConsumer>();
 builder.Services.AddHostedService<GroupChatMessageConsumer>();
 
 builder.Services.AddHostedService<OutboxWorker>();

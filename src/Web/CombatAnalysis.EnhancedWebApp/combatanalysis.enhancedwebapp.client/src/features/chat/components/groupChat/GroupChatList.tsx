@@ -4,7 +4,7 @@ import { useChatHub } from '@/shared/hooks/useChatHub';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState, type SetStateAction } from 'react';
-import { useFindGroupChatUsersByAppUserIdQuery } from '../../api/GroupChatUser.api';
+import { useFindChatUsersQuery } from '../../api/GroupChatUser.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { GroupChatUserModel } from '../../types/GroupChatUserModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
@@ -21,7 +21,7 @@ interface GroupChatListProps {
 }
 
 const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat, t }) => {
-    const { data: myselfInGroupChats, isLoading } = useFindGroupChatUsersByAppUserIdQuery(myselfId);
+    const { data: myselfInGroupChats, isLoading } = useFindChatUsersQuery(myselfId);
 
     const chatHub = useChatHub();
 
@@ -49,7 +49,7 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
 
             chatHub?.subscribeToGroupChat((groupChatUser) => {
                 Store.dispatch(
-                    GroupChatUserApi.util.updateQueryData("findGroupChatUsersByAppUserId", myselfId, (draft) => {
+                    GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
                         draft.push(groupChatUser);
                     })
                 );

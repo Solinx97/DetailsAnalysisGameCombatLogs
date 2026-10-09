@@ -1,6 +1,6 @@
 ﻿using Chat.Domain.Aggregates;
-using Chat.Domain.Entities;
 using Chat.Domain.Repositories;
+using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,22 +16,22 @@ internal class PersonalChatRepository(ChatContext context) : IPersonalChatReposi
                      .AddAsync(chat, cancelationToken);
     }
 
-    public async Task<IEnumerable<PersonalChat>> GetByUserIdAsync(Guid userId, CancellationToken cancelationToken)
+    public async Task<IEnumerable<PersonalChat>> GetByUserIdAsync(UserId userId, CancellationToken cancelationToken)
     {
         var chats = await _context.PersonalChat
             .AsNoTracking()
-            .Where(x => x.InitiatorId.Equals(userId) || x.CompanionId.Equals(userId))
+            .Where(x => x.InitiatorId == userId || x.CompanionId == userId)
             .ToListAsync(cancelationToken);
 
         return chats;
     }
 
-    public async Task<bool> IsExistAsync(Guid initiatorId, Guid companionId, CancellationToken cancelationToken)
+    public async Task<bool> IsExistAsync(UserId initiatorId, UserId companionId, CancellationToken cancelationToken)
     {
         var count = await _context.PersonalChat
                     .AsNoTracking()
-                    .CountAsync(m => (m.InitiatorId.Equals(initiatorId) && m.CompanionId.Equals(companionId))
-                        || (m.InitiatorId.Equals(companionId) && m.CompanionId.Equals(initiatorId)), cancelationToken);
+                    .CountAsync(m => (m.InitiatorId == initiatorId && m.CompanionId == companionId)
+                        || (m.InitiatorId == companionId && m.CompanionId == initiatorId), cancelationToken);
 
         return count > 0;
     }

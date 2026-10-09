@@ -18,8 +18,8 @@ interface ChatMessageProps {
     message: PersonalChatMessageModel | GroupChatMessageModel;
     updateMessageAsync: (message: ChatMessagePatch) => Promise<void>;
     hubConnection: signalR.HubConnection | null;
-    subscribeToChatMessageHasBeenRead: (callback: (messageId: number) => void) => void;
-    lastReadMessageId?: number;
+    subscribeToChatMessageHasBeenRead: (callback: (messageId: string) => void) => void;
+    lastReadMessageId?: string;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message, updateMessageAsync, hubConnection, subscribeToChatMessageHasBeenRead, lastReadMessageId }) => {

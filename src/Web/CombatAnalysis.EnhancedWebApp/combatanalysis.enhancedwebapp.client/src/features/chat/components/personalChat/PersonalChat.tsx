@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { useGetUserByIdQuery } from '../../../user/api/Account.api';
 import { ChatApi, useGetMessagesByPersonalChatIdQuery } from '../../api/Chat.api';
 import {
+    useCountPersonalChatMessagesQuery,
     usePartialUpdatePersonalChatMessageMutation
 } from '../../api/PersonalChatMessage.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
@@ -43,17 +44,19 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
     const { data: messages, isLoading } = useGetMessagesByPersonalChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
+    const { data: count } = useCountPersonalChatMessagesQuery(chat.id);
 
     const { data: companion, isLoading: companionIsLoading } = useGetUserByIdQuery(companionId);
+
     const [paerialUpdatePersonalChatMessage] = usePartialUpdatePersonalChatMessageMutation();
 
     useEffect(() => {
-        if (!messages) {
+        if (!messages || !count) {
             return;
         }
 
-        setHasMore(((page - 1) * pageSizeRef.current) < messages.length);
-    }, [page, messages]);
+        setHasMore(page * pageSizeRef.current  < count);
+    }, [messages, count]);
 
     useEffect(() => {
         if (!chatHub) {

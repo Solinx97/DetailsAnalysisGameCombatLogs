@@ -4,7 +4,7 @@ public record GroupChatUserModel(
     string Id,
     string Username,
     int UnreadMessages,
-    int? LastReadMessageId,
+    string? LastReadMessageId,
     int GroupChatId,
     string AppUserId
     );

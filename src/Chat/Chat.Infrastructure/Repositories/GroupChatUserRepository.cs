@@ -1,4 +1,5 @@
 ﻿using Chat.Domain.Entities;
+using Chat.Domain.Exceptions;
 using Chat.Domain.Repositories;
 using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Persistence;
@@ -6,34 +7,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chat.Infrastructure.Repositories;
 
-internal class GroupChatUserRepository(ChatContext context) : GenericRepository<GroupChatUser, GroupChatUserId>(context), IGroupChatUserRepository
+internal class GroupChatUserRepository(ChatContext context) : IGroupChatUserRepository
 {
-    public async Task<IEnumerable<GroupChatUser>> FindAllAsync(int chatId)
-    {
-        var users = await _context.GroupChatUser
-                            .AsNoTracking()
-                            .Where(user => user.GroupChatId == chatId)
-                            .ToListAsync();
+    private readonly ChatContext _context = context;
 
-        return users;
-    }
-
-    public async Task<IEnumerable<GroupChatUser>> FindAllByAppUserIdAsync(Guid appUserId)
-    {
-        var users = await _context.GroupChatUser
-                            .AsNoTracking()
-                            .Where(user => user.AppUserId.Equals(appUserId))
-                            .ToListAsync();
-
-        return users;
-    }
-
-    public async Task<GroupChatUser?> FindByAppUserIdAsync(int chatId, Guid appUserId)
+    public async Task<GroupChatUser> FindChatUserAsync(UserId appUserId, GroupChatId chatId, CancellationToken cancelationToken)
     {
         var user = await _context.GroupChatUser
-                            .AsNoTracking()
-                            .FirstOrDefaultAsync(user => user.AppUserId.Equals(appUserId) && user.GroupChatId == chatId);
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.AppUserId == appUserId && m.GroupChatId == chatId, cancelationToken)
+                        ?? throw new GroupChatUserNotFoundException(appUserId);
 
         return user;
+    }
+
+    public async Task<IEnumerable<GroupChatUser>> FindChatUsersAsync(UserId appUserId, CancellationToken cancelationToken)
+    {
+        var users = await _context.GroupChatUser
+                    .AsNoTracking()
+                    .Where(m => m.AppUserId.Equals(appUserId))
+                    .ToListAsync(cancelationToken);
+
+        return users;
+    }
+
+    public async Task<IEnumerable<GroupChatUser>> FindAllChatUsersAsync(GroupChatId chatId, CancellationToken cancelationToken)
+    {
+        var users = await _context.GroupChatUser
+                    .AsNoTracking()
+                    .Where(m => m.GroupChatId == chatId)
+                    .ToListAsync(cancelationToken);
+
+        return users;
     }
 }

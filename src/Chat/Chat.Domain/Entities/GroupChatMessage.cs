@@ -48,14 +48,15 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     public GroupChat GroupChat { get; private set; } = null!;
 
-    public static GroupChatMessage Create(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId)
+    public static GroupChatMessage Create(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId,
+            MessageStatus status = MessageStatus.Sending, MessageType messageType = MessageType.Default, MessageMarkedType markedType = MessageMarkedType.None)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
 
         var time = DateTimeOffset.UtcNow;
-        return new GroupChatMessage(username, message, chatId, groupChatUserId, MessageStatus.Sending, MessageType.Default, MessageMarkedType.None, time);
+        return new GroupChatMessage(username, message, chatId, groupChatUserId, status, messageType, markedType, time);
     }
 
     public void EditMessage(string? newMessage)

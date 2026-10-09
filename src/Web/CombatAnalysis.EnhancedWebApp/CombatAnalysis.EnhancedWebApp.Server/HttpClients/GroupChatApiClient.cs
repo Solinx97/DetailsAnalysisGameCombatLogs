@@ -54,6 +54,11 @@ internal class GroupChatApiClient(HttpClient httpClient) : IGroupChatApiClient
         await _httpClient.DeleteAsync($"GroupChat/{id}", cancellationToken);
     }
 
+    public async Task CreateMessageAsync(GroupChatMessageModel message, CancellationToken cancellationToken)
+    {
+        await _httpClient.PostAsync("GroupChatMessage", JsonContent.Create(message), cancellationToken);
+    }
+
     public async Task<int> CountMessagesAsync(int chatId, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"GroupChatMessage/count/{chatId}", cancellationToken);
@@ -70,11 +75,6 @@ internal class GroupChatApiClient(HttpClient httpClient) : IGroupChatApiClient
         return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
     }
 
-    public async Task CreateMessageAsync(GroupChatMessageModel message, CancellationToken cancellationToken)
-    {
-        await _httpClient.PostAsync("GroupChatMessage", JsonContent.Create(message), cancellationToken);
-    }
-
     public async Task UpdateMessageAsync(Guid id, GroupChatMessagePatch message, CancellationToken cancellationToken)
     {
         if (id != message.Id)
@@ -88,5 +88,47 @@ internal class GroupChatApiClient(HttpClient httpClient) : IGroupChatApiClient
     public async Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken)
     {
         await _httpClient.DeleteAsync($"GroupChatMessage/{id}", cancellationToken);
+    }
+
+    public async Task AddUserAsync(CreateGroupChatUserModel user, CancellationToken cancellationToken)
+    {
+        await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(user), cancellationToken);
+    }
+
+    public async Task<GroupChatUserModel> GetUserByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"GroupChatUser/{id}", cancellationToken);
+
+        var messages = await response.Content.ReadFromJsonAsync<GroupChatUserModel>(cancellationToken);
+        return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
+    }
+
+    public async Task<IEnumerable<GroupChatUserModel>> FindAllChatUsersAsync(int chatId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"GroupChatUser/findAllChatUsers/{chatId}", cancellationToken);
+
+        var messages = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>(cancellationToken);
+        return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
+    }
+
+    public async Task<GroupChatUserModel> FindChatUserAsync(Guid appUserId, int chatId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"GroupChatUser/findChatUser/{appUserId}?chatId={chatId}", cancellationToken);
+
+        var messages = await response.Content.ReadFromJsonAsync<GroupChatUserModel>(cancellationToken);
+        return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
+    }
+
+    public async Task<IEnumerable<GroupChatUserModel>> FindChatUsersAsync(Guid appUserId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"GroupChatUser/findChatUsers/{appUserId}", cancellationToken);
+
+        var messages = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>(cancellationToken);
+        return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
+    }
+
+    public async Task DeleteChatUserAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await _httpClient.DeleteAsync($"GroupChatUser/{id}", cancellationToken);
     }
 }

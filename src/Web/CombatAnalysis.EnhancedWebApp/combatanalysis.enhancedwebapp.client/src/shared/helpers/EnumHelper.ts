@@ -91,3 +91,8 @@ export const MessageStatus = {
     SENT: 1,
     READ: 2,
 } as const;
+
+export const GroupChatRulesType = {
+    ANYONE: 0,
+    OWNER: 1,
+} as const;

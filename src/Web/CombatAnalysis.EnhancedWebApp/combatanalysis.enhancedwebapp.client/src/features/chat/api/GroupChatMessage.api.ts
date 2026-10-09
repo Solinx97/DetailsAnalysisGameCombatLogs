@@ -32,6 +32,9 @@ export const GroupChatMessageApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'GroupChatMessage', id }],
         }),
+        countGroupChatMessages: builder.query<number, number>({
+            query: chatId => `/GroupChatMessage/count/${chatId}`,
+        }),
     })
 })
 
@@ -40,4 +43,5 @@ export const {
     usePartialUpdateGroupChatMessageMutation,
     useRemoveGroupChatMessageMutation,
     useRemoveGroupChatMessageByChatIdMutation,
+    useCountGroupChatMessagesQuery,
 } = GroupChatMessageApi;

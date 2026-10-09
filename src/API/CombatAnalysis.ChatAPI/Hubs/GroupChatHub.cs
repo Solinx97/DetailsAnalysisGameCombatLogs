@@ -1,5 +1,4 @@
-﻿using Chat.Application.DTOs;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace CombatAnalysis.ChatAPI.Hubs;
@@ -59,37 +58,6 @@ public class GroupChatHub(ILogger<GroupChatHub> logger) : Hub
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "Request unsuccessful. Status code: '{StatusCode}'", ex.StatusCode);
-        }
-    }
-
-    public async Task AddUserToChat(string chatOwnerId, GroupChatUserDto groupChatUser)
-    {
-        try
-        {
-            //ArgumentNullException.ThrowIfNullOrEmpty(chatOwnerId, nameof(chatOwnerId));
-            //ArgumentNullException.ThrowIfNull(groupChatUser, nameof(groupChatUser));
-
-            //var encryptedAccessToken = string.Empty;
-            //var accessToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.AccessToken)];
-
-            //if (!string.IsNullOrEmpty(accessToken))
-            //{
-            //    encryptedAccessToken = AesEncryption.Encrypt(accessToken, Convert.FromBase64String(_kafkaSettings.Security.SecurityKey), Convert.FromBase64String(_kafkaSettings.Security.IV));
-            //}
-
-            //var chatAction = JsonSerializer.Serialize(new GroupChatMemberAction
-            //{
-            //    User = groupChatUser,
-            //    ChatOwnerId = chatOwnerId,
-            //    State = ChatMembersActionState.AddUser,
-            //    When = DateTimeOffset.UtcNow,
-            //    AccessToken = encryptedAccessToken
-            //});
-            //await _kafkaProducer.ProduceAsync(KafkaTopics.GroupChatMember, Guid.NewGuid().ToString(), chatAction);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, "Add user to chat failed: Parameter '{ParamName}' was null.", ex.ParamName);
         }
     }
 

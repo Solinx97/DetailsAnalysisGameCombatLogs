@@ -1,15 +1,15 @@
+import type { CreateGroupChatUserModel } from '../types/CreateGroupChatUserModel';
 import type { GroupChatUserModel } from '../types/GroupChatUserModel';
 import { ChatApi } from './Chat.api';
 
 export const GroupChatUserApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
-        createGroupChatUserAsync: builder.mutation<GroupChatUserModel, GroupChatUserModel>({
+        createGroupChatUserAsync: builder.mutation<void, CreateGroupChatUserModel>({
             query: groupChatUser => ({
                 body: groupChatUser,
                 url: '/GroupChatUser',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'GroupChatUser', id: result.id }] : [],
         }),
         removeGroupChatUserAsync: builder.mutation<void, string>({
             query: id => ({
@@ -22,11 +22,11 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
             query: id => `/GroupChatUser/${id}`,
             providesTags: result => result ? [{ type: 'GroupChatUser', id: result.id }] : [],
         }),
-        findGroupChatUserByAppUserId: builder.query<GroupChatUserModel, { chatId: number, appUserId: string }>({
-            query: ({ chatId, appUserId }) => `/GroupChatUser/findByAppUserId?chatId=${chatId}&appUserId=${appUserId}`,
+        findChatUser: builder.query<GroupChatUserModel, { chatId: number, appUserId: string }>({
+            query: ({ chatId, appUserId }) => `/GroupChatUser/findChatUser?chatId=${chatId}&appUserId=${appUserId}`,
         }),
-        findGroupChatUsersByAppUserId: builder.query<GroupChatUserModel[], string>({
-            query: appUserId => `/GroupChatUser/findAllByAppUserId/${appUserId}`,
+        findAllChatUsers: builder.query<GroupChatUserModel[], number>({
+            query: chatId => `/GroupChatUser/findAllChatUsers/${chatId}`,
             providesTags: result =>
                 result
                     ? [
@@ -35,8 +35,8 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
                     ]
                     : [{ type: 'GroupChatUser', id: 'LIST' }],
         }),
-        findGroupChatUsersByChatId: builder.query<GroupChatUserModel[], number>({
-            query: chatId => `/GroupChatUser/findAll/${chatId}`,
+        findChatUsers: builder.query<GroupChatUserModel[], string>({
+            query: appUserId => `/GroupChatUser/findChatUsers/${appUserId}`,
             providesTags: result =>
                 result
                     ? [
@@ -52,8 +52,8 @@ export const {
     useCreateGroupChatUserAsyncMutation,
     useRemoveGroupChatUserAsyncMutation,
     useGetGroupChatUserByIdQuery,
-    useFindGroupChatUserByAppUserIdQuery,
-    useFindGroupChatUsersByAppUserIdQuery,
-    useLazyFindGroupChatUsersByAppUserIdQuery,
-    useFindGroupChatUsersByChatIdQuery,
+    useFindChatUserQuery,
+    useFindChatUsersQuery,
+    useLazyFindChatUsersQuery,
+    useFindAllChatUsersQuery,
 } = GroupChatUserApi;

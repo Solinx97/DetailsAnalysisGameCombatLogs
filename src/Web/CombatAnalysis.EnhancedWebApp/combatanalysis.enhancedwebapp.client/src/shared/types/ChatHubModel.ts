@@ -20,7 +20,7 @@ export type ChatHubContextModel = {
     subscribeToPersonalChat: (callback: (chat: PersonalChatModel) => void) => void;
     subscribeToPersonalChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
     subscribeToPersonalChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
-    subscribeToPersonalMessageHasBeenRead: (callback: (messageId: number) => void) => void;
+    subscribeToPersonalMessageHasBeenRead: (callback: (messageId: string) => void) => void;
     subscribeToUnreadPersonalMessagesUpdated: (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => void;
 
     disconnectFromPersonalChatHubAsync: () => Promise<void>;
@@ -35,7 +35,7 @@ export type ChatHubContextModel = {
     subscribeToGroupChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
     subscribeToGroupMessageDelivered: (chatId: number) => void;
     subscribeToUnreadGroupMessagesUpdated: (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => void;
-    subscribeToGroupMessageHasBeenRead: (callback: (messageId: number) => void) => void;
+    subscribeToGroupMessageHasBeenRead: (callback: (messageId: string) => void) => void;
 
     disconnectFromGroupChatHubAsync: () => Promise<void>;
     disconnectFromGroupChatMessageHubAsync: () => Promise<void>;

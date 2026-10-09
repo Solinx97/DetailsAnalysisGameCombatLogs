@@ -44,6 +44,5 @@ internal class CreateChatHandler(IGroupChatRepository repository, IOutboxReposit
 
             throw;
         }
-
     }
 }

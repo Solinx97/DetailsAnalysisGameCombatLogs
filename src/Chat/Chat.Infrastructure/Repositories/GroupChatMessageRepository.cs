@@ -2,6 +2,7 @@
 using Chat.Domain.Entities;
 using Chat.Domain.Entities.Events;
 using Chat.Domain.Repositories;
+using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -17,7 +18,7 @@ internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessa
         await _context.GroupChatMessage
                      .AddAsync(message, cancelationToken);
 
-        var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, message.GroupChatUserId, message.Username, message.Message);
+        var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, (int)message.Type, message.GroupChatUserId, message.Username, message.Message);
         var outbox = new OutboxMessage
         {
             Id = @event.EventId,
@@ -30,11 +31,11 @@ internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessa
                     .AddAsync(outbox, cancelationToken);
     }
 
-    public async Task<IEnumerable<GroupChatMessage>> GetByChatIdAsync(int chatId, int page, int pageSize, CancellationToken cancelationToken)
+    public async Task<IEnumerable<GroupChatMessage>> GetByChatIdAsync(GroupChatId chatId, int page, int pageSize, CancellationToken cancelationToken)
     {
         var messages = await _context.GroupChatMessage
                     .AsNoTracking()
-                    .Where(m => m.GroupChatId.Equals(chatId))
+                    .Where(m => m.GroupChatId == chatId)
                     .OrderBy(m => m.Time)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
@@ -43,10 +44,10 @@ internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessa
         return messages;
     }
 
-    public async Task<int> CountAsync(int chatId, CancellationToken cancelationToken)
+    public async Task<int> CountAsync(GroupChatId chatId, CancellationToken cancelationToken)
     {
         var count = await _context.GroupChatMessage
-                     .CountAsync(c => c.GroupChatId.Equals(chatId), cancelationToken);
+                     .CountAsync(c => c.GroupChatId == chatId, cancelationToken);
 
         return count;
     }

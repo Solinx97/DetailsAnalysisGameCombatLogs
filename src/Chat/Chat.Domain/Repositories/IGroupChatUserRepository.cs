@@ -3,11 +3,11 @@ using Chat.Domain.ValueObjects;
 
 namespace Chat.Domain.Repositories;
 
-public interface IGroupChatUserRepository : IGenericRepository<GroupChatUser, GroupChatUserId>
+public interface IGroupChatUserRepository
 {
-    Task<IEnumerable<GroupChatUser>> FindAllAsync(int chatId);
+    Task<GroupChatUser> FindChatUserAsync(UserId appUserId, GroupChatId chatId, CancellationToken cancelationToken);
 
-    Task<IEnumerable<GroupChatUser>> FindAllByAppUserIdAsync(Guid appUserId);
+    Task<IEnumerable<GroupChatUser>> FindChatUsersAsync(UserId appUserId, CancellationToken cancelationToken);
 
-    Task<GroupChatUser?> FindByAppUserIdAsync(int chatId, Guid appUserId);
+    Task<IEnumerable<GroupChatUser>> FindAllChatUsersAsync(GroupChatId chatId, CancellationToken cancelationToken);
 }

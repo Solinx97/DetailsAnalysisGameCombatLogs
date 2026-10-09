@@ -1,43 +1,50 @@
-﻿import AddPeople from '@/shared/components/AddPeople';
-import type { ChatHubContextModel } from '@/shared/types/ChatHubModel';
+﻿import type { RootState } from '@/app/Store';
+import AddPeople from '@/shared/components/AddPeople';
 import logger from '@/utils/Logger';
 import { useState, type SetStateAction } from 'react';
+import { useSelector } from 'react-redux';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
-import type { GroupChatUserModel } from '../../types/GroupChatUserModel';
+import { useCreateGroupChatUserAsyncMutation } from '../../api/GroupChatUser.api';
+import type { CreateGroupChatUserModel } from '../../types/CreateGroupChatUserModel';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 
 interface GroupChatAddUserProps {
     chat: GroupChatModel;
     groupChatUsersId: string[];
     setShowAddPeople: (value: SetStateAction<boolean>) => void;
-    chatHub: ChatHubContextModel | null;
     t: (key: string) => string;
 }
 
-const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ chat, groupChatUsersId, setShowAddPeople, chatHub, t }) => {
+const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ chat, groupChatUsersId, setShowAddPeople, t }) => {
+    const myself = useSelector((state: RootState) => state.user.value);
+    
     const [peopleToJoin, setPeopleToJoin] = useState<AppUserModel[]>([]);
 
-    const createGroupChatUserAsync = async () => {
-        try {
-            if (!chatHub || !chatHub.groupChatHubConnectionRef.current) {
-                return;
-            }
+    const [addUser] = useCreateGroupChatUserAsyncMutation();
 
+    const createGroupChatUserAsync = async () => {
+        if (!myself) {
+            return;
+        }
+
+        try {
             for (let i = 0; i < peopleToJoin.length; i++) {
-                const newGroupChatUser: GroupChatUserModel = {
+                const newGroupChatUser: CreateGroupChatUserModel = {
+                    id: "",
                     username: peopleToJoin[i].username,
                     unreadMessages: 0,
                     groupChatId: chat.id,
                     appUserId: peopleToJoin[i].id,
+                    whoAddAppUserId: myself.id
                 };
 
-                await chatHub.groupChatHubConnectionRef.current.invoke("AddUserToChat", chat.ownerId, newGroupChatUser);
+                await addUser(newGroupChatUser).unwrap();
             }
 
             setPeopleToJoin([]);
             setShowAddPeople(false);
         } catch (e) {
-            logger.error("Failed to remove group chat users", e);
+            logger.error("Failed to add group chat users", e);
         }
     }
 

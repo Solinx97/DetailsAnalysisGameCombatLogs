@@ -100,8 +100,8 @@ const useGroupChatHub = (
         });
     }
 
-    const subscribeToGroupMessageHasBeenRead = (callback: (messageId: number) => void) => {
-        groupChatMessagesHubConnectionRef.current?.on("ReceiveMessageHasBeenRead", (messageId: number) => {
+    const subscribeToGroupMessageHasBeenRead = (callback: (messageId: string) => void) => {
+        groupChatMessagesHubConnectionRef.current?.on("ReceiveMessageHasBeenRead", (messageId: string) => {
             callback(messageId);
         });
     }

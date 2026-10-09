@@ -46,10 +46,21 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         return chat;
     }
 
-    public void AddUser(string username, UserId appUserId)
+    public GroupChatUser AddUser(string username, UserId appUserId)
     {
         var user = GroupChatUser.Create(username, appUserId, 0);
         _users.Add(user);
+
+        return user;
+    }
+
+    public void RemoveUser(Guid userId)
+    {
+        var user = _users
+            .FirstOrDefault(x => x.Id.Equals(userId))
+                ?? throw new GroupChatUserNotFoundException(userId);
+
+        _users.Remove(user);
     }
 
     public void AddRules(InvitePeopleRestrictions invitePeople = InvitePeopleRestrictions.Anyone,

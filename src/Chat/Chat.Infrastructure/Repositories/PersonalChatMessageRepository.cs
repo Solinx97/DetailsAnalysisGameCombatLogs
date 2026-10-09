@@ -2,6 +2,7 @@
 using Chat.Domain.Entities;
 using Chat.Domain.Entities.Events;
 using Chat.Domain.Repositories;
+using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Exceptions;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,7 @@ internal class PersonalChatMessageRepository(ChatContext context) : IPersonalCha
                     .AddAsync(outbox, cancelationToken);
     }
 
-    public async Task<IEnumerable<PersonalChatMessage>> GetByChatIdAsync(int chatId, int page, int pageSize, CancellationToken cancelationToken)
+    public async Task<IEnumerable<PersonalChatMessage>> GetByChatIdAsync(PersonalChatId chatId, int page, int pageSize, CancellationToken cancelationToken)
     {
         var messages = await _context.PersonalChatMessage
                     .AsNoTracking()
@@ -53,16 +54,16 @@ internal class PersonalChatMessageRepository(ChatContext context) : IPersonalCha
         return collection;
     }
 
-    public async Task<PersonalChatMessage> GetByIdAsync(int id, CancellationToken cancelationToken)
+    public async Task<PersonalChatMessage> GetByIdAsync(PersonalChatMessageId id, CancellationToken cancelationToken)
     {
         var entity = await _context.PersonalChatMessage
-            .SingleOrDefaultAsync(g => g.Id.Equals(id), cancelationToken)
+            .SingleOrDefaultAsync(g => g.Id == id, cancelationToken)
                         ?? throw new EntityNotFoundException(typeof(PersonalChatMessage), id);
 
         return entity;
     }
 
-    public async Task<int> CountAsync(int chatId, CancellationToken cancelationToken)
+    public async Task<int> CountAsync(PersonalChatId chatId, CancellationToken cancelationToken)
     {
         var count = await _context.PersonalChatMessage
                      .CountAsync(c => c.PersonalChatId == chatId, cancelationToken);
@@ -70,10 +71,10 @@ internal class PersonalChatMessageRepository(ChatContext context) : IPersonalCha
         return count;
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancelationToken)
+    public async Task DeleteAsync(PersonalChatMessageId id, CancellationToken cancelationToken)
     {
         var entity = await _context.PersonalChatMessage
-            .SingleOrDefaultAsync(g => g.Id.Equals(id), cancelationToken)
+            .SingleOrDefaultAsync(g => g.Id == id, cancelationToken)
                     ?? throw new EntityNotFoundException(typeof(PersonalChatMessage), id);
 
         _context.PersonalChatMessage.Remove(entity);

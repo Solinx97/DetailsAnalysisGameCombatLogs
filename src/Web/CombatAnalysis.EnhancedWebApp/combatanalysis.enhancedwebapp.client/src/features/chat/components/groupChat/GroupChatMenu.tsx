@@ -1,8 +1,10 @@
+import type { RootState } from '@/app/Store';
 import VerificationRestriction from '@/shared/components/VerificationRestriction';
+import { GroupChatRulesType } from '@/shared/helpers/EnumHelper';
 import { useChatHub } from '@/shared/hooks/useChatHub';
 import logger from '@/utils/Logger';
-import type { RootState } from '@/app/Store';
 import { useEffect, useState, type SetStateAction } from 'react';
+import { useSelector } from 'react-redux';
 import { useRemoveGroupChatMutation } from '../../api/GroupChat.api';
 import { useGetGroupChatRulesByChatIdQuery, useUpdateGroupChatRulesMutation } from '../../api/GroupChatRules.api';
 import {
@@ -14,18 +16,12 @@ import type { PersonalChatModel } from '../../types/PersonalChatModel';
 import ChatRulesItem from '../create/ChatRulesItem';
 import GroupChatAddUser from './GroupChatAddUser';
 import GroupChatMembers from './GroupChatMembers';
-import { useSelector } from 'react-redux';
 
-const rulesEnum = {
-    anyone: 0,
-    owner: 1,
-};
-
-const defaultPayload = {
-    invitePeople: rulesEnum["anyone"],
-    removePeople: rulesEnum["anyone"],
-    pinMessage: rulesEnum["anyone"],
-    announcements: rulesEnum["anyone"],
+interface GroupChatRules {
+    invitePeople: number,
+    removePeople: number,
+    pinMessage: number,
+    announcements: number,
 };
 
 interface GroupChatMenuProps {
@@ -38,7 +34,7 @@ interface GroupChatMenuProps {
 const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupChatUsersId, chat, t }) => {
     const myself = useSelector((state: RootState) => state.user.value);
     const groupChatUser = useSelector((state: RootState) => state.groupChatUser.value);
-    
+
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [peopleInspectionModeOn, setPeopleInspectionModeOn] = useState(false);
     const [rulesInspectionModeOn, setRulesInspectionModeOn] = useState(false);
@@ -47,7 +43,12 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
     const [removePeople, setRemovePeople] = useState(0);
     const [pinMessage, setPinMessage] = useState(0);
     const [announcements, setAnnouncements] = useState(0);
-    const [payload, setPayload] = useState(defaultPayload);
+    const [payload, setPayload] = useState<GroupChatRules>({
+        invitePeople: GroupChatRulesType["ANYONE"],
+        removePeople: GroupChatRulesType["ANYONE"],
+        pinMessage: GroupChatRulesType["ANYONE"],
+        announcements: GroupChatRulesType["ANYONE"],
+    });
 
     const chatHub = useChatHub();
 
@@ -127,7 +128,7 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
     }
 
     const canInvitePeople = (): boolean => {
-        const canAnyone = rules?.invitePeople === rulesEnum["anyone"];
+        const canAnyone = rules?.invitePeople === GroupChatRulesType["ANYONE"];
         if (canAnyone) {
             return true;
         }
@@ -136,7 +137,7 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
     }
 
     const canRemovePeople = (): boolean => {
-        const canAnyone = rules?.removePeople === rulesEnum["anyone"];
+        const canAnyone = rules?.removePeople === GroupChatRulesType["ANYONE"];
         if (canAnyone) {
             return true;
         }
@@ -174,23 +175,21 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
                     }
                 </div>
             </div>
+            {peopleInspectionModeOn &&
+                <GroupChatMembers
+                    chatId={chat.id}
+                    removeUsersAsync={removeGroupChatUsersAsync}
+                    setShowMembers={setPeopleInspectionModeOn}
+                    isPopup={true}
+                    canRemovePeople={canRemovePeople}
+                />
+            }
             {showAddPeople &&
                 <GroupChatAddUser
                     chat={chat}
                     groupChatUsersId={groupChatUsersId}
                     setShowAddPeople={setShowAddPeople}
-                    chatHub={chatHub}
                     t={t}
-                />
-            }
-            {peopleInspectionModeOn &&
-                <GroupChatMembers
-                    communicationId={chat.id}
-                    removeUsersAsync={removeGroupChatUsersAsync}
-                    setShowMembers={setPeopleInspectionModeOn}
-                    isPopup={true}
-                    canRemovePeople={canRemovePeople}
-                    chatHub={chatHub}
                 />
             }
             {rulesInspectionModeOn &&

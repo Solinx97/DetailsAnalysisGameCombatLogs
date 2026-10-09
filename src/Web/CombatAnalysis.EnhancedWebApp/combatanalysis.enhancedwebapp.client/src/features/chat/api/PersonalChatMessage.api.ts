@@ -32,6 +32,9 @@ export const PersonalChatMessageApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'PersonalChatMessage', id }],
         }),
+        countPersonalChatMessages: builder.query<number, number>({
+            query: chatId => `/PersonalChatMessage/count/${chatId}`,
+        }),
     })
 })
 
@@ -40,4 +43,5 @@ export const {
     usePartialUpdatePersonalChatMessageMutation,
     useRemovePersonalChatMessageMutation,
     useRemovePersonalChatMessageByChatIdMutation,
+    useCountPersonalChatMessagesQuery,
 } = PersonalChatMessageApi;
