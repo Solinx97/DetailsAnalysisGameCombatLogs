@@ -1,16 +1,18 @@
 ﻿using Chat.Application.Consts;
+using Chat.Application.DTOs;
 using CombatAnalysis.ChatAPI.Interfaces;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace CombatAnalysis.ChatAPI.Kafka.Producer;
 
-internal class KafkaProducerService<TKey, TValue> : IKafkaProducerService<TKey, TValue>
+internal class KafkaProducerService : IKafkaProducerService
 {
-    private readonly IProducer<TKey, TValue> _producer;
-    private readonly ILogger<KafkaProducerService<TKey, TValue>> _logger;
+    private readonly IProducer<string, string> _producer;
+    private readonly ILogger<KafkaProducerService> _logger;
 
-    public KafkaProducerService(IOptions<KafkaSettings> kafkaSettings, ILogger<KafkaProducerService<TKey, TValue>> logger)
+    public KafkaProducerService(IOptions<KafkaSettings> kafkaSettings, ILogger<KafkaProducerService> logger)
     {
         var producerConfig = kafkaSettings.Value.Producer ?? new ProducerConfig();
         producerConfig.BootstrapServers ??= kafkaSettings.Value.BootstrapServers;
@@ -20,43 +22,37 @@ internal class KafkaProducerService<TKey, TValue> : IKafkaProducerService<TKey, 
             throw new ArgumentException("Kafka BootstrapServers configuration is missing or invalid.");
         }
 
-        _producer = new ProducerBuilder<TKey, TValue>(producerConfig).Build();
+        _producer = new ProducerBuilder<string, string>(producerConfig).Build();
         _logger = logger;
     }
 
-    public async Task ProduceAsync(string topic, TKey key, TValue value, CancellationToken stoppingToken)
+    public async Task ProduceAsync(OutboxMessageDto outboxMessage, CancellationToken stoppingToken)
     {
         try
         {
-            var message = new Message<TKey, TValue> { Key = key, Value = value };
-            var deliveryResult = await _producer.ProduceAsync(topic, message, stoppingToken);
+            var message = new Message<string, string>
+            {
+                Key = outboxMessage.Key,
+                Value = outboxMessage.Payload,
+                Headers = new Headers
+                {
+                    {
+                        "event-type",
+                        Encoding.UTF8.GetBytes(outboxMessage.EventType)
+                    }
+                }
+            };
+            var deliveryResult = await _producer.ProduceAsync(outboxMessage.Topic, message, stoppingToken);
 
-            _logger.LogInformation($"Message delivered to '{topic}' - Partition: {deliveryResult.Partition}, Offset: {deliveryResult.Offset}");
+            _logger.LogInformation($"Message delivered to '{outboxMessage.Topic}' - Partition: {deliveryResult.Partition}, Offset: {deliveryResult.Offset}");
         }
-        catch (ProduceException<TKey, TValue> ex)
+        catch (ProduceException<string, string> ex)
         {
-            _logger.LogError($"Failed to deliver message to '{topic}': {ex.Error.Reason}");
+            _logger.LogError($"Failed to deliver message to '{outboxMessage.Topic}': {ex.Error.Reason}");
         }
         catch (Exception ex)
         {
-            _logger.LogError($"An unexpected error occurred while producing to '{topic}': {ex.Message}");
-        }
-    }
-
-    public async Task ProduceAsync(string topic, Message<TKey, TValue> message, CancellationToken stoppingToken)
-    {
-        try
-        {
-            var deliveryResult = await _producer.ProduceAsync(topic, message, stoppingToken);
-            _logger.LogInformation($"Message delivered to '{topic}' - Partition: {deliveryResult.Partition}, Offset: {deliveryResult.Offset}");
-        }
-        catch (ProduceException<TKey, TValue> ex)
-        {
-            _logger.LogError($"Failed to deliver message to '{topic}': {ex.Error.Reason}");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"An unexpected error occurred while producing to '{topic}': {ex.Message}");
+            _logger.LogError($"An unexpected error occurred while producing to '{outboxMessage.Topic}': {ex.Message}");
         }
     }
 

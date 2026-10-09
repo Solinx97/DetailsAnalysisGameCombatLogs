@@ -127,8 +127,13 @@ internal class GroupChatApiClient(HttpClient httpClient) : IGroupChatApiClient
         return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
     }
 
-    public async Task DeleteChatUserAsync(Guid id, CancellationToken cancellationToken)
+    public async Task LeaveFromChatAsync(Guid id, int chatId, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteAsync($"GroupChatUser/{id}", cancellationToken);
+        await _httpClient.DeleteAsync($"GroupChatUser/{id}?chatId={chatId}", cancellationToken);
+    }
+
+    public async Task DeleteChatUserAsync(Guid id, int chatId, Guid whoDeleteId, CancellationToken cancellationToken)
+    {
+        await _httpClient.DeleteAsync($"GroupChatUser/deleteUser/{id}?chatId={chatId}&whoDeleteId={whoDeleteId}", cancellationToken);
     }
 }

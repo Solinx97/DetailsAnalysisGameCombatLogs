@@ -1,6 +1,6 @@
-﻿using Chat.Domain.Interfaces;
+﻿using Chat.Application.Interfaces;
 
-namespace Chat.Domain.Entities.Events;
+namespace Chat.Application.Events;
 
 public record PersonalChatMessageCreatedEvent(
     Guid EventId,

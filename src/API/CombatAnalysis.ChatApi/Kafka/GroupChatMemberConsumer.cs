@@ -1,6 +1,6 @@
 ﻿using Chat.Application.Consts;
 using Chat.Application.DTOs;
-using Chat.Domain.Entities.Events;
+using Chat.Application.Events;
 using Chat.Domain.Enums;
 using CombatAnalysis.ChatAPI.Consts;
 using CombatAnalysis.ChatAPI.Hubs;

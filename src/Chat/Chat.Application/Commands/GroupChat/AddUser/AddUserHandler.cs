@@ -1,18 +1,18 @@
-﻿using Chat.Domain.Consts;
+﻿using Chat.Application.Events;
+using Chat.Application.Interfaces.Persistence;
+using Chat.Domain.Consts;
 using Chat.Domain.Entities;
-using Chat.Domain.Entities.Events;
 using Chat.Domain.Enums;
 using Chat.Domain.Repositories;
-using Chat.Domain.ValueObjects;
 using MediatR;
 using System.Text.Json;
 
 namespace Chat.Application.Commands.GroupChat.AddUser;
 
-internal class AddUserHandler(IGenericRepository<Domain.Aggregates.GroupChat, GroupChatId> repository, IGroupChatMessageRepository messageRepository, IGroupChatUserRepository userRepository,
+internal class AddUserHandler(IGroupChatRepository repository, IGroupChatMessageRepository messageRepository, IGroupChatUserRepository userRepository,
         IOutboxRepository boxRepository, IUnitOfWork unitOfWork) : IRequestHandler<AddUserCommand>
 {
-    private readonly IGenericRepository<Domain.Aggregates.GroupChat, GroupChatId> _repository = repository;
+    private readonly IGroupChatRepository _repository = repository;
     private readonly IGroupChatMessageRepository _messageRepository = messageRepository;
     private readonly IGroupChatUserRepository _userRepository = userRepository;
     private readonly IOutboxRepository _boxRepository = boxRepository;
@@ -24,26 +24,22 @@ internal class AddUserHandler(IGenericRepository<Domain.Aggregates.GroupChat, Gr
 
         try
         {
-            var chat = await _repository.GetByIdAsync(request.GroupChatId);
+            var chat = await _repository.GetWithUsersAsync(request.GroupChatId, cancellationToken);
             var user = chat.AddUser(request.Username, request.AppUserId);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var whoaddUser = await _userRepository.FindChatUserAsync(request.WhoAddAppUserId, request.GroupChatId, cancellationToken);
+            var whoAddUser = await _userRepository.FindChatUserAsync(request.WhoAddId, request.GroupChatId, cancellationToken);
 
-            var systemMessage = $"'{whoaddUser.Username}' add user '{request.Username}' to chat";
-            var message = GroupChatMessage.Create(request.Username, systemMessage, request.GroupChatId, whoaddUser.Id, messageType: MessageType.System);
+            var systemMessage = $"'{whoAddUser.Username}' add user '{request.Username}' to chat";
+            var message = GroupChatMessage.Create(request.Username, systemMessage, request.GroupChatId, whoAddUser.Id, messageType: MessageType.System);
             await _messageRepository.AddAsync(message, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, user.GroupChatId, (int)message.Type, whoaddUser.Id, user.Username, systemMessage);
-            var outbox = new OutboxMessage
-            {
-                Id = @event.EventId,
-                Topic = KafkaTopics.GROUP_CHAT_MEMBER,
-                Key = chat.Id.Value.ToString(),
-                Payload = JsonSerializer.Serialize(@event)
-            };
-            await _boxRepository.AddAsync(outbox, cancellationToken);
+            var eventSystemMessage = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, chat.Id, (int)message.Type, whoAddUser.Id, user.Username, systemMessage);
+            await _boxRepository.AddAsync(eventSystemMessage.EventId, nameof(GroupChatMessageCreatedEvent), KafkaTopics.GROUP_CHAT_MESSAGE, chat.Id.Value.ToString(), JsonSerializer.Serialize(eventSystemMessage), cancellationToken);
+
+            var @event = new GroupChatCreatedEvent(Guid.NewGuid(), chat.Id, user.Id, user.Username, user.AppUserId);
+            await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatCreatedEvent), KafkaTopics.GROUP_CHAT, user.AppUserId.Value.ToString(), JsonSerializer.Serialize(@event), cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             await _unitOfWork.CommitTransactionAsync(transaction, cancellationToken);

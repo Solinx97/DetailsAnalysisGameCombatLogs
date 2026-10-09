@@ -54,13 +54,15 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         return user;
     }
 
-    public void RemoveUser(Guid userId)
+    public GroupChatUser RemoveUser(GroupChatUserId userId)
     {
         var user = _users
-            .FirstOrDefault(x => x.Id.Equals(userId))
+            .FirstOrDefault(x => x.Id == userId)
                 ?? throw new GroupChatUserNotFoundException(userId);
 
         _users.Remove(user);
+
+        return user;
     }
 
     public void AddRules(InvitePeopleRestrictions invitePeople = InvitePeopleRestrictions.Anyone,

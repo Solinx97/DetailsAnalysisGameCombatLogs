@@ -1,6 +1,6 @@
-﻿using Chat.Domain.Consts;
-using Chat.Domain.Entities;
-using Chat.Domain.Entities.Events;
+﻿using Chat.Application.Events;
+using Chat.Application.Interfaces.Persistence;
+using Chat.Domain.Consts;
 using Chat.Domain.Repositories;
 using MediatR;
 using System.Text.Json;
@@ -26,14 +26,7 @@ internal class CreateChatHandler(IGroupChatRepository repository, IOutboxReposit
 
             var user = chat.Users.First();
             var @event = new GroupChatCreatedEvent(Guid.NewGuid(), chat.Id, user.Id, user.Username, user.AppUserId);
-            var outbox = new OutboxMessage
-            {
-                Id = @event.EventId,
-                Topic = KafkaTopics.GROUP_CHAT,
-                Key = chat.Id.Value.ToString(),
-                Payload = JsonSerializer.Serialize(@event)
-            };
-            await _boxRepository.AddAsync(outbox, cancellationToken);
+            await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatCreatedEvent), KafkaTopics.GROUP_CHAT, request.OwnerId.ToString(), JsonSerializer.Serialize(@event), cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             await _unitOfWork.CommitTransactionAsync(transaction, cancellationToken);

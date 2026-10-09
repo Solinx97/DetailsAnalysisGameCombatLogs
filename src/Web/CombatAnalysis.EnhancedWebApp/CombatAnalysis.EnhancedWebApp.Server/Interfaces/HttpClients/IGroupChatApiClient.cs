@@ -37,5 +37,7 @@ public interface IGroupChatApiClient
 
     Task<IEnumerable<GroupChatUserModel>> FindChatUsersAsync(Guid appUserId, CancellationToken cancellationToken);
 
-    Task DeleteChatUserAsync(Guid id, CancellationToken cancellationToken);
+    Task LeaveFromChatAsync(Guid id, int chatId, CancellationToken cancellationToken);
+
+    Task DeleteChatUserAsync(Guid id, int chatId, Guid whoDeleteId, CancellationToken cancellationToken);
 }

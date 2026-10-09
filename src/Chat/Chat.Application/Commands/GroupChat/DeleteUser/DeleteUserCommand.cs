@@ -4,5 +4,6 @@ namespace Chat.Application.Commands.GroupChat.DeleteUser;
 
 public record DeleteUserCommand(
     Guid Id,
-    int GroupChatId
+    int GroupChatId,
+    Guid WhoDeleteId
     ) : IRequest;

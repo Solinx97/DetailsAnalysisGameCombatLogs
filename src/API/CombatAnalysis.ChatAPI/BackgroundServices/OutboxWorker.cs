@@ -1,9 +1,10 @@
-﻿using Chat.Domain.Repositories;
+﻿using Chat.Application.Interfaces.Persistence;
+using Chat.Domain.Repositories;
 using CombatAnalysis.ChatAPI.Interfaces;
 
 namespace CombatAnalysis.ChatAPI.BackgroundServices;
 
-public class OutboxWorker(IServiceScopeFactory scopeFactory, IKafkaProducerService<string, string> kafkaProducer, ILogger<OutboxWorker> logger) : BackgroundService
+public class OutboxWorker(IServiceScopeFactory scopeFactory, IKafkaProducerService kafkaProducer, ILogger<OutboxWorker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -23,9 +24,9 @@ public class OutboxWorker(IServiceScopeFactory scopeFactory, IKafkaProducerServi
                 {
                     try
                     {
-                        await kafkaProducer.ProduceAsync(message.Topic, message.Key, message.Payload, cancellationToken);
+                        await kafkaProducer.ProduceAsync(message, cancellationToken);
 
-                        repository.MarkAsProcessed(message);
+                        await repository.MarkAsProcessedAsync(message.Id, cancellationToken);
 
                         await unitOfWork.SaveChangesAsync(cancellationToken);
                     }

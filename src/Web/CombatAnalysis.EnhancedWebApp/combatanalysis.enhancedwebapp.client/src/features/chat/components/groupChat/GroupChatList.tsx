@@ -3,10 +3,9 @@ import { GroupChatUserApi } from '@/features/chat/api/GroupChatUser.api';
 import { useChatHub } from '@/shared/hooks/useChatHub';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState, type SetStateAction } from 'react';
+import React, { useEffect, type SetStateAction } from 'react';
 import { useFindChatUsersQuery } from '../../api/GroupChatUser.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
-import type { GroupChatUserModel } from '../../types/GroupChatUserModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
 import GroupChatListItem from './GroupChatListItem';
 
@@ -21,31 +20,25 @@ interface GroupChatListProps {
 }
 
 const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat, t }) => {
-    const { data: myselfInGroupChats, isLoading } = useFindChatUsersQuery(myselfId);
+    const { data: groupChats, isLoading } = useFindChatUsersQuery(myselfId);
 
     const chatHub = useChatHub();
-
-    const [extendedMyselfInGroupChats, setExtendedMyselfInGroupChats] = useState<GroupChatUserModel[]>([]);
-    const [newChatUser, setNewChatUser] = useState<GroupChatUserModel | null>(null);
 
     useEffect(() => {
         return () => {
             (async () => {
-                await chatHub?.disconnectFromGroupChatUnreadMessagesHubAsync();
+                await chatHub?.disconnectFromGroupChatHubAsync();
             })();
         }
     }, [chatHub]);
 
     useEffect(() => {
-        if (!chatHub || !myselfInGroupChats) {
+        if (!chatHub || !groupChats) {
             return;
         }
 
-        setExtendedMyselfInGroupChats(myselfInGroupChats);
-
         (async () => {
-            const myGroupChatsId = myselfInGroupChats.map((key) => key.groupChatId);
-            await chatHub.connectToGroupChatUnreadMessagesAsync(myGroupChatsId);
+            await chatHub.connectToGroupChatAsync();
 
             chatHub?.subscribeToGroupChat((groupChatUser) => {
                 Store.dispatch(
@@ -53,23 +46,39 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
                         draft.push(groupChatUser);
                     })
                 );
+            });
 
-                setNewChatUser(groupChatUser);
+            chatHub?.subscribeToRemovedFromGroupChat((appUserId, chatId) => {
+                Store.dispatch(
+                    GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
+                        const index = draft.findIndex(
+                            chatUser => chatUser.appUserId === appUserId && chatUser.groupChatId === chatId
+                        );
+
+                        if (index !== -1) {
+                            draft.splice(index, 1);
+                        }
+                    })
+                );
             });
         })();
-    }, [myselfInGroupChats]);
+    }, [groupChats]);
 
     useEffect(() => {
-        if (!newChatUser) {
+        if (!chatHub || !selectedChat) {
             return;
         }
 
-        const updatedChatUsers = Array.from(extendedMyselfInGroupChats);
-        updatedChatUsers.push(newChatUser);
-        setExtendedMyselfInGroupChats(updatedChatUsers);
-    }, [newChatUser]);
+        (async () => {
+            chatHub?.subscribeToRemovedFromGroupChat((_, chatId) => {
+                if (chatId === selectedChat.id) {
+                    setSelectedChat(null);
+                }
+            });
+        })();
+    }, [selectedChat]);
 
-    if (isLoading || !chatHub) {
+    if (!groupChats || isLoading || !chatHub) {
         return (<div>Loading...</div>);
     }
 
@@ -87,12 +96,12 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
                 />
             </div>
             <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
-                {extendedMyselfInGroupChats.length === 0
+                {groupChats.length === 0
                     ? <div className="group-chats not-found">
                         <div>{t("GroupChatsEmptyYet")}</div>
                         <span onClick={() => setShowCreateGroupChat(true)}>{t("Create")}</span>
                     </div>
-                    : extendedMyselfInGroupChats.map((myselfInChat) => (
+                    : groupChats.map((myselfInChat) => (
                         <li key={myselfInChat.id} className={selectedChat && "ownerId" in selectedChat && selectedChat.id === myselfInChat.groupChatId ? `selected` : ``}>
                             <GroupChatListItem
                                 myselfInChat={myselfInChat}

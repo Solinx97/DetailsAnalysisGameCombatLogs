@@ -1,13 +1,11 @@
 ﻿using Chat.Application.Consts;
 using Chat.Application.DTOs;
-using Chat.Domain.Entities.Events;
+using Chat.Application.Events;
 using Chat.Domain.Enums;
-using Chat.Domain.Exceptions;
 using CombatAnalysis.ChatAPI.Consts;
 using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
@@ -46,18 +44,6 @@ public class GroupChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, ILo
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, "Create group chat message from Kafka Consumer (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.GROUP_CHAT_MESSAGE, ex.ParamName);
-        }
-        catch (GroupChatNotFoundException ex)
-        {
-            _logger.LogWarning("Create group chat message from Kafka Consumer (topic: {Topic}) failed. Group chat {Id} not found.", KafkaTopics.GROUP_CHAT_MESSAGE, ex.GroupChatId);
-        }
-        catch (GroupChatUserNotFoundException ex)
-        {
-            _logger.LogWarning("Create group chat message from Kafka Consumer (topic: {Topic}) failed. Group chat user {Id} not found.", KafkaTopics.GROUP_CHAT_MESSAGE, ex.UserId);
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to create group chat message from Kafka Consumer (topic: {Topic}).", KafkaTopics.GROUP_CHAT_MESSAGE);
         }
     }
 }

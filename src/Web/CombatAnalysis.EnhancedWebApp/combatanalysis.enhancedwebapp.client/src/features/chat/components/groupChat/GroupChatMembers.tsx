@@ -1,6 +1,6 @@
 import { faMagnifyingGlassMinus, faMagnifyingGlassPlus, faUserXmark, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, type ChangeEvent, type SetStateAction } from 'react';
+import { useEffect, useState, type ChangeEvent, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { CommunityUserModel } from '../../../community/types/CommunityUserModel';
 import { useFindAllChatUsersQuery } from '../../api/GroupChatUser.api';
@@ -25,7 +25,11 @@ const GroupChatMembers: React.FC<GroupChatMembersProps> = ({ chatId, isPopup, re
     const [usersToRemove, setUsersToRemove] = useState<(GroupChatUserModel | CommunityUserModel)[]>([]);
     const [searchUsername, setSearchUsername] = useState("");
 
-    const { data: chatMembers, isLoading } = useFindAllChatUsersQuery(chatId);
+    const { data: chatMembers, refetch, isLoading } = useFindAllChatUsersQuery(chatId);
+
+    useEffect(() => {
+        refetch();
+    }, []);
 
     const showRemoveUsersHandle = () => {
         setUsersToRemove([]);

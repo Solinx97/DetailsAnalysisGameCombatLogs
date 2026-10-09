@@ -6,5 +6,5 @@ public record AddUserCommand(
     string Username,
     int GroupChatId,
     Guid AppUserId,
-    Guid WhoAddAppUserId
+    Guid WhoAddId
     ) : IRequest;

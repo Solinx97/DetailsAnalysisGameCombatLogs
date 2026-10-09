@@ -35,7 +35,13 @@ export const ChatApi = createApi({
                     }
                 });
             },
-            forceRefetch: ({ currentArg, previousArg }) => currentArg?.page !== previousArg?.page,
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.chatId !== previousArg?.chatId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
             providesTags: result =>
                 result
                     ? [
@@ -60,7 +66,13 @@ export const ChatApi = createApi({
                     }
                 });
             },
-            forceRefetch: ({ currentArg, previousArg }) => currentArg?.page !== previousArg?.page,
+            forceRefetch: ({ currentArg, previousArg }) => {
+                return (
+                    currentArg?.chatId !== previousArg?.chatId ||
+                    currentArg?.page !== previousArg?.page ||
+                    currentArg?.pageSize !== previousArg?.pageSize
+                );
+            },
             providesTags: result =>
                 result
                     ? [

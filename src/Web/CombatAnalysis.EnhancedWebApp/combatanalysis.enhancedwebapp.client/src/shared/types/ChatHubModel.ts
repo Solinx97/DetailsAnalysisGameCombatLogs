@@ -18,6 +18,7 @@ export type ChatHubContextModel = {
     connectToPersonalChatMessagesAsync: (myPersonalChatId: number) => Promise<void>;
     connectToPersonalChatUnreadMessagesAsync: (myPersonalChatsId: number[]) => Promise<void>;
     subscribeToPersonalChat: (callback: (chat: PersonalChatModel) => void) => void;
+    subscribeToRemovedFromPersonalChat: (callback: (appUserId: string, chatId: number) => void) => void;
     subscribeToPersonalChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
     subscribeToPersonalChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
     subscribeToPersonalMessageHasBeenRead: (callback: (messageId: string) => void) => void;
@@ -31,6 +32,7 @@ export type ChatHubContextModel = {
     connectToGroupChatMessagesAsync: (chatId: number) => Promise<void>;
     connectToGroupChatUnreadMessagesAsync: (myGroupChatsId: number[]) => Promise<void>;
     subscribeToGroupChat: (callback: (groupChatUser: GroupChatUserModel) => void) => void;
+    subscribeToRemovedFromGroupChat: (callback: (appUserId: string, chatId: number) => void) => void;
     subscribeToGroupChatMessages: (callback: (message: GroupChatMessageModel) => void) => void;
     subscribeToGroupChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
     subscribeToGroupMessageDelivered: (chatId: number) => void;

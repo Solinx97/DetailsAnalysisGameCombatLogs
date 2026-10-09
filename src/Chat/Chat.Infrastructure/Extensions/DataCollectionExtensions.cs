@@ -1,8 +1,10 @@
-﻿using Chat.Domain.Aggregates;
+﻿using Chat.Application.Interfaces.Persistence;
+using Chat.Domain.Aggregates;
 using Chat.Domain.Entities;
 using Chat.Domain.Repositories;
 using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Persistence;
+using Chat.Infrastructure.Persistence.Outbox;
 using Chat.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

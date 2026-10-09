@@ -1,7 +1,7 @@
 export type PersonalChatModel = {
     id: number;
     initiatorId: string;
-    initiatorUnreadMessages: number;
+    initiatorUnreadMessages?: number;
     companionId: string;
-    companionUnreadMessages: number;
+    companionUnreadMessages?: number;
 }

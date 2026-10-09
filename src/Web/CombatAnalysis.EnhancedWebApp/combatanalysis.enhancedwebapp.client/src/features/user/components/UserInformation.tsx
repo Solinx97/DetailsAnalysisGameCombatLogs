@@ -3,7 +3,7 @@ import type { PersonalChatModel } from '@/features/chat/types/PersonalChatModel'
 import logger from '@/utils/Logger';
 import { faCircleXmark, faCommentDots, faPersonCircleQuestion, faSquarePlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -51,6 +51,14 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
 
     const [createPersonalChat] = useCreatePersonalChatAsyncMutation();
 
+    useEffect(() => {
+        return () => {
+            (async () => {
+                await chatHub?.disconnectFromPersonalChatHubAsync();
+            })();
+        }
+    }, [chatHub]);
+
     const checkExistOfChatsAsync = async (targetUser: AppUserModel) => {
         if (!myself) {
             return;
@@ -75,7 +83,7 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
             await chatHub.connectToPersonalChatAsync();
         }
 
-        chatHub.subscribeToPersonalChat(() => {
+        chatHub.subscribeToPersonalChat((_) => {
             navigate("/chats");
         });
 

@@ -1,8 +1,6 @@
 ﻿using Chat.Application.Consts;
-using CombatAnalysis.ChatAPI.Core;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 
 namespace CombatAnalysis.ChatAPI.Kafka;
 
@@ -35,7 +33,6 @@ public abstract class KafkaConsumerBase : BackgroundService
         var consumerConfig = new ConsumerConfig(_config);
         _consumer = new ConsumerBuilder<string, string>(consumerConfig)
             .SetKeyDeserializer(Deserializers.Utf8)
-            //.SetValueDeserializer(new JsonDocumentDeserializer())
             .SetErrorHandler((_, e) => _logger.LogError($"Kafka Consumer Error: {e.Reason}"))
             .SetStatisticsHandler((_, json) => _logger.LogDebug($"Kafka Statistics: {json}"))
             .Build();

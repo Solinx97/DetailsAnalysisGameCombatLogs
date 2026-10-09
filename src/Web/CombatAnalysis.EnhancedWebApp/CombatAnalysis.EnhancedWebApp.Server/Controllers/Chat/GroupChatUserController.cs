@@ -47,9 +47,16 @@ public class GroupChatUserController(IGroupChatApiClient httpClient) : Controlle
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> LeaveFromChat(Guid id, int chatId, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteChatUserAsync(id, cancellationToken);
+        await _httpClient.LeaveFromChatAsync(id, chatId, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpDelete("deleteUser/{id}")]
+    public async Task<IActionResult> DeleteUser(Guid id, int chatId, Guid whoDeleteId, CancellationToken cancellationToken)
+    {
+        await _httpClient.DeleteChatUserAsync(id, chatId, whoDeleteId, cancellationToken);
         return NoContent();
     }
 }

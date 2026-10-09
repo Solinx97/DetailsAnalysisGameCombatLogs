@@ -1,4 +1,4 @@
-﻿namespace Chat.Domain.Entities;
+﻿namespace Chat.Infrastructure.Persistence.Outbox;
 
 public class OutboxMessage
 {
@@ -7,6 +7,8 @@ public class OutboxMessage
     public string Topic { get; set; } = null!;
 
     public string Key { get; set; } = null!;
+
+    public string EventType { get; set; } = null!;
 
     public string Payload { get; set; } = null!;
 

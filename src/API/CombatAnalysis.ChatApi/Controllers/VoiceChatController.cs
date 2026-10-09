@@ -2,7 +2,6 @@
 using Chat.Application.DTOs;
 using Chat.Application.Interfaces;
 using Chat.Domain.Exceptions;
-using Chat.Infrastructure.Exceptions;
 using CombatAnalysis.ChatAPI.Core;
 using CombatAnalysis.ChatAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -80,23 +79,8 @@ public class VoiceChatController(IVoiceChatService service, IMapper mapper, ILog
     [HttpDelete("{id:minlength(8)}")]
     public async Task<IActionResult> Delete(string id)
     {
-        try
-        {
-            await _service.DeleteAsync(id);
+        await _service.DeleteAsync(id);
 
-            return NoContent();
-        }
-        catch (EntityNotFoundException ex)
-        {
-            _logger.LogWarning("Delete voice chat {Id} failed. Entity '{Entity}' ({EntityId}) not found.", id, nameof(ex.EntityType), ex.EntityId);
-
-            return NotFound();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-        }
+        return NoContent();
     }
 }

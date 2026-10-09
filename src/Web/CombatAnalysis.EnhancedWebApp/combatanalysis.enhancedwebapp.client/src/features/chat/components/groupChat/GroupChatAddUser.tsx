@@ -4,7 +4,7 @@ import logger from '@/utils/Logger';
 import { useState, type SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useCreateGroupChatUserAsyncMutation } from '../../api/GroupChatUser.api';
+import { useCreateGroupChatUserMutation } from '../../api/GroupChatUser.api';
 import type { CreateGroupChatUserModel } from '../../types/CreateGroupChatUserModel';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 
@@ -20,7 +20,7 @@ const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ chat, groupChatUser
     
     const [peopleToJoin, setPeopleToJoin] = useState<AppUserModel[]>([]);
 
-    const [addUser] = useCreateGroupChatUserAsyncMutation();
+    const [addUser] = useCreateGroupChatUserMutation();
 
     const createGroupChatUserAsync = async () => {
         if (!myself) {
@@ -35,7 +35,7 @@ const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ chat, groupChatUser
                     unreadMessages: 0,
                     groupChatId: chat.id,
                     appUserId: peopleToJoin[i].id,
-                    whoAddAppUserId: myself.id
+                    whoAddId: myself.id
                 };
 
                 await addUser(newGroupChatUser).unwrap();

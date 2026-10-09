@@ -1,6 +1,5 @@
 ﻿import type { RootState } from '@/app/Store';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
-import { useChatHub } from '@/shared/hooks/useChatHub';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useMemo, useState } from 'react';
@@ -23,8 +22,6 @@ const Chats: React.FC = () => {
     const { t } = useTranslation('communication/chats/chats');
 
     const location = useLocation();
-
-    const chatHub = useChatHub();
 
     const myself = useSelector((state: RootState) => state.user.value);
 
@@ -66,26 +63,6 @@ const Chats: React.FC = () => {
         })();
     }, []);
 
-    useEffect(() => {
-        if (!myself) {
-            return;
-        }
-
-        (async () => {
-            await chatHub?.connectToGroupChatAsync();
-            await chatHub?.connectToPersonalChatAsync();
-        })();
-    }, [myself]);
-
-    useEffect(() => {
-        return () => {
-            (async () => {
-                await chatHub?.disconnectFromGroupChatHubAsync();
-                await chatHub?.disconnectFromPersonalChatHubAsync();
-            })();
-        }
-    }, [chatHub]);
-
     const getCompanionId = (chat: PersonalChatModel | null) => {
         if (!chat) {
             return "0";
@@ -115,10 +92,12 @@ const Chats: React.FC = () => {
                         {(selectedChat && myself)
                             ? "ownerId" in selectedChat
                                 ? <GroupChat
+                                    key={selectedChat.id}
                                     chat={selectedChat}
                                     setSelectedChat={setSelectedChat}
                                 />
                                 : <PersonalChat
+                                    key={selectedChat.id}                                
                                     chat={selectedChat}
                                     setSelectedChat={setSelectedChat}
                                     companionId={getCompanionId((selectedChat && "initiatorId" in selectedChat) ? selectedChat : null)}
@@ -170,10 +149,12 @@ const Chats: React.FC = () => {
                     {(selectedChat && myself)
                         ? "ownerId" in selectedChat
                             ? <GroupChat
+                                key={selectedChat.id}
                                 chat={selectedChat}
                                 setSelectedChat={setSelectedChat}
                             />
                             : <PersonalChat
+                                key={selectedChat.id}
                                 chat={selectedChat}
                                 setSelectedChat={setSelectedChat}
                                 companionId={getCompanionId((selectedChat && "initiatorId" in selectedChat) ? selectedChat : null)}

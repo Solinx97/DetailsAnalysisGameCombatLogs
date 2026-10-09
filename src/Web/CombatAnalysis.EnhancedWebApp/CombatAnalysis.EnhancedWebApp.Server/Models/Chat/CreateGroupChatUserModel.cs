@@ -9,5 +9,5 @@ public record CreateGroupChatUserModel(
         Guid? LastReadMessageId,
         int GroupChatId,
         Guid AppUserId,
-        Guid WhoAddAppUserId
+        Guid WhoAddId
     );

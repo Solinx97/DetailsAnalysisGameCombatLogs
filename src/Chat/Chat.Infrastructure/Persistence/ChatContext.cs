@@ -1,7 +1,7 @@
 ﻿using Chat.Domain.Aggregates;
 using Chat.Domain.Entities;
 using Chat.Infrastructure.Extensions;
-using Chat.Infrastructure.Outbox;
+using Chat.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chat.Infrastructure.Persistence;

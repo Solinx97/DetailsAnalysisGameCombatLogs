@@ -1,8 +1,9 @@
-﻿import { useChatHub } from '@/shared/hooks/useChatHub';
+﻿import Store from '@/app/Store';
+import { useChatHub } from '@/shared/hooks/useChatHub';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState, type SetStateAction } from 'react';
-import { useGetPersonalChatsByUserIdQuery } from '../../api/PersonalChat.api';
+import { useEffect, type SetStateAction } from 'react';
+import { PersonalChatApi, useGetPersonalChatsByUserIdQuery } from '../../api/PersonalChat.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
 import PersonalChatListItem from './PersonalChatListItem';
@@ -17,19 +18,14 @@ interface PersonalChatListProps {
 }
 
 const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
-    const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(myselfId, {
-        refetchOnMountOrArgChange: true
-    });
+    const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(myselfId);
 
     const chatHub = useChatHub();
-
-    const [chats, setChats] = useState<PersonalChatModel[]>([]);
-    const [newChat, setNewChat] = useState<PersonalChatModel | null>(null);
 
     useEffect(() => {
         return () => {
             (async () => {
-                await chatHub?.disconnectFromPersonalChatUnreadMessagesHubAsync();
+                await chatHub?.disconnectFromPersonalChatHubAsync();
             })();
         }
     }, [chatHub]);
@@ -39,29 +35,48 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
             return;
         }
 
-        setChats(personalChats);
-
         (async () => {
-            const myChatsId = personalChats.map((key) => key.id);
-            await chatHub.connectToPersonalChatUnreadMessagesAsync(myChatsId);
+            await chatHub.connectToPersonalChatAsync();
 
             chatHub?.subscribeToPersonalChat((chat) => {
-                setNewChat(chat);
+                Store.dispatch(
+                    PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
+                        draft.push(chat);
+                    })
+                );
+            });
+
+            chatHub?.subscribeToRemovedFromPersonalChat((appUserId, chatId) => {
+                Store.dispatch(
+                    PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
+                        const index = draft.findIndex(
+                            chat => (chat.initiatorId === appUserId || chat.companionId === appUserId) && chat.id === chatId
+                        );
+
+                        if (index !== -1) {
+                            draft.splice(index, 1);
+                        }
+                    })
+                );
             });
         })();
     }, [personalChats]);
 
     useEffect(() => {
-        if (!newChat) {
+        if (!chatHub || !selectedChat) {
             return;
         }
 
-        const updatedChats = Array.from(chats);
-        updatedChats.push(newChat);
-        setChats(updatedChats);
-    }, [newChat]);
+        (async () => {
+            chatHub?.subscribeToRemovedFromPersonalChat((_, chatId) => {
+                if (chatId === selectedChat.id) {
+                    setSelectedChat(null);
+                }
+            });
+        })();
+    }, [selectedChat]);
 
-    if (!chatHub || isLoading) {
+    if (!personalChats || !chatHub || isLoading) {
         return (<div>Loading...</div>);
     }
 
@@ -76,11 +91,11 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
                 />
             </div>
             <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
-                {chats.length === 0
+                {personalChats.length === 0
                     ? <div className="personal-chats not-found">
                         {t("PersonalChatsEmptyYet")}
                     </div>
-                    : chats.map((chat) => (
+                    : personalChats.map((chat) => (
                         <li key={chat.id} className={selectedChat && "initiatorId" in selectedChat && selectedChat.id === chat.id ? `selected` : ``}>
                             <PersonalChatListItem
                                 chat={chat}

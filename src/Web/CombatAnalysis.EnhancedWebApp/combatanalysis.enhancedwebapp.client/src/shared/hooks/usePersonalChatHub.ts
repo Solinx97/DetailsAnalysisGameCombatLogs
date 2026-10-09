@@ -1,11 +1,11 @@
 import { APP_CONFIG } from '@/config/appConfig';
+import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessagePatch';
 import logger from '@/utils/Logger';
 import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
 import type { PersonalChatMessageModel } from '../../features/chat/types/PersonalChatMessageModel';
 import type { PersonalChatModel } from '../../features/chat/types/PersonalChatModel';
 import type { AppUserModel } from '../../features/user/types/AppUserModel';
-import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessagePatch';
 
 const usePersonalChatHub = (
     myself: AppUserModel | null,
@@ -76,6 +76,12 @@ const usePersonalChatHub = (
         });
     }
 
+    const subscribeToRemovedFromPersonalChat = (callback: (appUserId: string, chatId: number) => void) => {
+        personalChatHubConnectionRef.current?.on("UserRemoved", (appUserId: string, chatId: number) => {
+            callback(appUserId, chatId);
+        });
+    }
+
     const subscribeToPersonalChatMessages = (callback: (message: PersonalChatMessageModel) => void) => {
         personalChatMessagesHubConnectionRef.current?.on("ReceiveMessage", (message: PersonalChatMessageModel) => {
             callback(message);
@@ -117,7 +123,7 @@ const usePersonalChatHub = (
 
     return {
         connectToPersonalChatAsync, connectToPersonalChatMessagesAsync, connectToPersonalChatUnreadMessagesAsync,
-        subscribeToPersonalChat, subscribeToPersonalChatMessages, subscribeToPersonalChatMessageEdit, subscribeToPersonalMessageHasBeenRead, subscribeToUnreadPersonalMessagesUpdated,
+        subscribeToPersonalChat, subscribeToRemovedFromPersonalChat, subscribeToPersonalChatMessages, subscribeToPersonalChatMessageEdit, subscribeToPersonalMessageHasBeenRead, subscribeToUnreadPersonalMessagesUpdated,
         disconnectFromPersonalChatHubAsync, disconnectFromPersonalChatMessageHubAsync, disconnectFromPersonalChatUnreadMessagesHubAsync
     }
 }

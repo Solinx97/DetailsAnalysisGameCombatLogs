@@ -4,19 +4,26 @@ import { ChatApi } from './Chat.api';
 
 export const GroupChatUserApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
-        createGroupChatUserAsync: builder.mutation<void, CreateGroupChatUserModel>({
+        createGroupChatUser: builder.mutation<void, CreateGroupChatUserModel>({
             query: groupChatUser => ({
                 body: groupChatUser,
                 url: '/GroupChatUser',
                 method: 'POST'
             }),
         }),
-        removeGroupChatUserAsync: builder.mutation<void, string>({
-            query: id => ({
-                url: `/GroupChatUser/${id}`,
+        leaveFromGroupChat: builder.mutation<void, { id: string, chatId: number }>({
+            query: ({ id, chatId }) => ({
+                url: `/GroupChatUser/${id}?chatId=${chatId}}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (_result, _error, id) => [{ type: 'GroupChatUser', id }],
+            invalidatesTags: (_result, _error, args) => [{ type: 'GroupChatUser', id: args.id }],
+        }),
+        removeGroupChatUser: builder.mutation<void, { id: string, chatId: number, whoDeleteId: string }>({
+            query: ({ id, chatId, whoDeleteId }) => ({
+                url: `/GroupChatUser/deleteUser/${id}?chatId=${chatId}&whoDeleteId=${whoDeleteId}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: (_result, _error, args) => [{ type: 'GroupChatUser', id: args.id }],
         }),
         getGroupChatUserById: builder.query<GroupChatUserModel, string>({
             query: id => `/GroupChatUser/${id}`,
@@ -49,8 +56,9 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
 })
 
 export const {
-    useCreateGroupChatUserAsyncMutation,
-    useRemoveGroupChatUserAsyncMutation,
+    useCreateGroupChatUserMutation,
+    useLeaveFromGroupChatMutation,
+    useRemoveGroupChatUserMutation,
     useGetGroupChatUserByIdQuery,
     useFindChatUserQuery,
     useFindChatUsersQuery,

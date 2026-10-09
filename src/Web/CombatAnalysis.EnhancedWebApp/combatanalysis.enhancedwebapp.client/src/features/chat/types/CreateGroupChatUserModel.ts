@@ -5,5 +5,5 @@ export type CreateGroupChatUserModel = {
     lastReadMessageId?: string;
     groupChatId: number;
     appUserId: string;
-    whoAddAppUserId: string;
+    whoAddId: string;
 }

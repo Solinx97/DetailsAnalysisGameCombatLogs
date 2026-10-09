@@ -1,5 +1,6 @@
 ﻿using Chat.Application.Commands.GroupChat.AddUser;
 using Chat.Application.Commands.GroupChat.DeleteUser;
+using Chat.Application.Commands.GroupChat.LeaveFromChat;
 using Chat.Application.Queries.GroupChat.FindAllChatUsers;
 using Chat.Application.Queries.GroupChat.FindChatUser;
 using Chat.Application.Queries.GroupChat.FindChatUsers;
@@ -53,16 +54,24 @@ public class GroupChatUserController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateGroupChatUserModel chatUser, CancellationToken cancellationToken)
     {
-        var command = new AddUserCommand(chatUser.Username, chatUser.GroupChatId, chatUser.AppUserId, chatUser.WhoAddAppUserId);
+        var command = new AddUserCommand(chatUser.Username, chatUser.GroupChatId, chatUser.AppUserId, chatUser.WhoAddId);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id, int chatId, CancellationToken cancellationToken)
+    public async Task<IActionResult> LeaveFromChat(Guid id, int chatId, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new DeleteUserCommand(id, chatId), cancellationToken);
+        await _mediator.Send(new LeaveFromChatCommand(id, chatId), cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete("deleteUser/{id}")]
+    public async Task<IActionResult> DeleteUser(Guid id, int chatId, Guid whoDeleteId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteUserCommand(id, chatId, whoDeleteId), cancellationToken);
 
         return NoContent();
     }

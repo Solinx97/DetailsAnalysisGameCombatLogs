@@ -1,12 +1,9 @@
-﻿using Chat.Domain.Consts;
-using Chat.Domain.Entities;
-using Chat.Domain.Entities.Events;
+﻿using Chat.Domain.Entities;
 using Chat.Domain.Repositories;
 using Chat.Domain.ValueObjects;
 using Chat.Infrastructure.Exceptions;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace Chat.Infrastructure.Repositories;
 
@@ -18,18 +15,6 @@ internal class PersonalChatMessageRepository(ChatContext context) : IPersonalCha
     {
         await _context.PersonalChatMessage
                      .AddAsync(message, cancelationToken);
-
-        var @event = new PersonalChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.PersonalChatId, message.AppUserId, message.Message);
-        var outbox = new OutboxMessage
-        {
-            Id = @event.EventId,
-            Topic = KafkaTopics.PERSONAL_CHAT_MESSAGE,
-            Key = message.PersonalChatId.Value.ToString(),
-            Payload = JsonSerializer.Serialize(@event)
-        };
-
-        await _context.OutboxMessages
-                    .AddAsync(outbox, cancelationToken);
     }
 
     public async Task<IEnumerable<PersonalChatMessage>> GetByChatIdAsync(PersonalChatId chatId, int page, int pageSize, CancellationToken cancelationToken)

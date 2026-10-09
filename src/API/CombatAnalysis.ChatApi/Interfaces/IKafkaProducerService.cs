@@ -1,10 +1,8 @@
-﻿using Confluent.Kafka;
+﻿using Chat.Application.DTOs;
 
 namespace CombatAnalysis.ChatAPI.Interfaces;
 
-public interface IKafkaProducerService<TKey, TValue> : IDisposable
+public interface IKafkaProducerService : IDisposable
 {
-    Task ProduceAsync(string topic, TKey key, TValue value, CancellationToken stoppingToken);
-
-    Task ProduceAsync(string topic, Message<TKey, TValue> message, CancellationToken stoppingToken);
+    Task ProduceAsync(OutboxMessageDto outboxMessage, CancellationToken stoppingToken);
 }

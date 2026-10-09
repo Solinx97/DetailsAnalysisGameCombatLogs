@@ -6,9 +6,9 @@ using Chat.Domain.ValueObjects;
 
 namespace Chat.Application.Mappers.Profiles;
 
-public class ChatProfile : Profile
+public class ApplicationChatProfile : Profile
 {
-    public ChatProfile()
+    public ApplicationChatProfile()
     {
         ValueObjectMap();
 

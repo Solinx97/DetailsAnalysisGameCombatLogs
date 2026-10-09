@@ -1,14 +1,14 @@
 import type { RootState } from '@/app/Store';
 import VerificationRestriction from '@/shared/components/VerificationRestriction';
 import { GroupChatRulesType } from '@/shared/helpers/EnumHelper';
-import { useChatHub } from '@/shared/hooks/useChatHub';
 import logger from '@/utils/Logger';
 import { useEffect, useState, type SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import { useRemoveGroupChatMutation } from '../../api/GroupChat.api';
 import { useGetGroupChatRulesByChatIdQuery, useUpdateGroupChatRulesMutation } from '../../api/GroupChatRules.api';
 import {
-    useRemoveGroupChatUserAsyncMutation
+    useLeaveFromGroupChatMutation,
+    useRemoveGroupChatUserMutation
 } from '../../api/GroupChatUser.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { GroupChatUserModel } from '../../types/GroupChatUserModel';
@@ -50,10 +50,9 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
         announcements: GroupChatRulesType["ANYONE"],
     });
 
-    const chatHub = useChatHub();
-
     const [removeGroupChat] = useRemoveGroupChatMutation();
-    const [removeGroupChatUser] = useRemoveGroupChatUserAsyncMutation();
+    const [leaveFromGroupChat] = useLeaveFromGroupChatMutation();
+    const [removeGroupChatUser] = useRemoveGroupChatUserMutation();
     const [updateGroupChatRules] = useUpdateGroupChatRulesMutation();
 
     const { data: rules, isLoading } = useGetGroupChatRulesByChatIdQuery(chat.id);
@@ -73,13 +72,18 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
 
     const removeGroupChatUsersAsync = async (peopleToRemove: GroupChatUserModel[]) => {
         try {
-            if (!chatHub || !chatHub.groupChatHubConnectionRef.current) {
+            if (!myself) {
                 return;
             }
 
+            const tasks = [];
             for (let i = 0; i < peopleToRemove.length; i++) {
-                await chatHub.groupChatHubConnectionRef.current.invoke("RemoveUserFromChat", chat.ownerId, chat.id, peopleToRemove[i].id, peopleToRemove[i].username);
+                tasks.push(
+                    removeGroupChatUser({ id: peopleToRemove[i].id, chatId: chat.id, whoDeleteId: myself.id }).unwrap()
+                );
             }
+
+            await Promise.all(tasks);
 
             setPeopleInspectionModeOn(false);
         } catch (e) {
@@ -87,10 +91,10 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
         }
     }
 
-    const leaveFromChatAsync = async (groupChatUserId: string) => {
+    const leaveFromChatAsync = async (id: string) => {
         try {
             setSelectedChat(null);
-            await removeGroupChatUser(groupChatUserId).unwrap();
+            await leaveFromGroupChat({ id, chatId: chat.id }).unwrap();
         } catch (e) {
             logger.error("Failed to leave from group chat", e);
         }

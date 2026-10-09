@@ -50,12 +50,12 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     const [partialUpdateGroupChatMessage] = usePartialUpdateGroupChatMessageMutation();
 
     useEffect(() => {
-        if (!messages || !count) {
+        if (count === undefined) {
             return;
         }
 
-        setHasMore(page * pageSizeRef.current < count);
-    }, [messages, count]);
+        setHasMore((page * pageSizeRef.current) < count);
+    }, [page, count]);
 
     useEffect(() => {
         if (!chatHub) {
@@ -66,7 +66,6 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
             await chatHub.connectToGroupChatMessagesAsync(chat.id);
 
             chatHub.subscribeToGroupChatMessages((message: GroupChatMessageModel) => {
-                console.log(5)
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByGroupChatId',
@@ -131,8 +130,6 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
         }
     }
 
-    console.log(chat.id);
-    console.log(messages);
     if (isLoading || !messages || !chatHub
         || usersIsLoading || !groupChatUsers) {
         return (<></>);

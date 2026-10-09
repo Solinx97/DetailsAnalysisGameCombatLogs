@@ -4,6 +4,7 @@ using Chat.Application.Consts;
 using Chat.Application.Extensions;
 using Chat.Application.Mappers.Profiles;
 using Chat.Infrastructure.Extensions;
+using Chat.Infrastructure.Mappers;
 using CombatAnalysis.ChatAPI.BackgroundServices;
 using CombatAnalysis.ChatAPI.Consts;
 using CombatAnalysis.ChatAPI.Enums;
@@ -41,7 +42,8 @@ var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddExpressionMapping();
     mc.AddProfile(new ChatMapper());
-    mc.AddProfile(new ChatProfile());
+    mc.AddProfile(new ApplicationChatProfile());
+    mc.AddProfile(new InfrastructureChatProfile());
 }, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
@@ -125,7 +127,7 @@ builder.Services.AddHostedService<GroupChatMessageConsumer>();
 
 builder.Services.AddHostedService<OutboxWorker>();
 
-builder.Services.AddSingleton<IKafkaProducerService<string, string>, KafkaProducerService<string, string>>();
+builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {

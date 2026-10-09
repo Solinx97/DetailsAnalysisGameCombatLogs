@@ -1,12 +1,10 @@
 ﻿using Chat.Application.Consts;
 using Chat.Application.DTOs;
-using Chat.Domain.Entities.Events;
-using Chat.Infrastructure.Exceptions;
+using Chat.Application.Events;
 using CombatAnalysis.ChatAPI.Consts;
 using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
@@ -45,14 +43,6 @@ public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, 
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, "Create personal chat message from Kafka Consumer (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PERSONAL_CHAT_MESSAGE, ex.ParamName);
-        }
-        catch (EntityNotFoundException ex)
-        {
-            _logger.LogWarning("Update personal chat from Kafka Consumer (topic: {Topic}) failed. Personal chat {Id} not found.", KafkaTopics.PERSONAL_CHAT_MESSAGE, ex.EntityId);
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogError(ex, "Update personal chat from Kafka Consumer (topic: {Topic}) failed. Personal chat not found or modified.", KafkaTopics.PERSONAL_CHAT_MESSAGE);
         }
     }
 }

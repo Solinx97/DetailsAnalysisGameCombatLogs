@@ -76,6 +76,12 @@ const useGroupChatHub = (
         });
     }
 
+    const subscribeToRemovedFromGroupChat = (callback: (appUserId: string, chatId: number) => void) => {
+        groupChatHubConnectionRef.current?.on("UserRemoved", (appUserId: string, chatId: number) => {
+            callback(appUserId, chatId);
+        });
+    }
+
     const subscribeToGroupChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
         groupChatMessagesHubConnectionRef.current?.on("ReceiveMessage", (message: GroupChatMessageModel) => {
             callback(message);
@@ -129,7 +135,7 @@ const useGroupChatHub = (
 
     return {
         connectToGroupChatAsync, connectToGroupChatMessagesAsync, connectToGroupChatUnreadMessagesAsync,
-        subscribeToGroupChat, subscribeToGroupChatMessages, subscribeToGroupChatMessageEdit, subscribeToGroupMessageDelivered,
+        subscribeToGroupChat, subscribeToRemovedFromGroupChat, subscribeToGroupChatMessages, subscribeToGroupChatMessageEdit, subscribeToGroupMessageDelivered,
         subscribeToUnreadGroupMessagesUpdated, subscribeToGroupMessageHasBeenRead,
         disconnectFromGroupChatHubAsync, disconnectFromGroupChatMessageHubAsync, disconnectFromGroupChatUnreadMessagesHubAsync,
         subscribeToGroupChatMembers,
