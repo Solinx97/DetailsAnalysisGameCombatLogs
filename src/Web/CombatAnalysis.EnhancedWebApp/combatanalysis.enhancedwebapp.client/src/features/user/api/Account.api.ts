@@ -7,8 +7,12 @@ export const AccountApi = UserApi.injectEndpoints({
             query: id => `/User/${id}`,
             providesTags: result => result ? [{ type: 'User', id: result.id }] : [],
         }),
+        getUserByIdentityUserId: builder.query<AppUserModel, string>({
+            query: identityUserId => `/User/getByIdentityUserId/${identityUserId}`,
+            providesTags: result => result ? [{ type: 'User', id: result.id }] : [],
+        }),
         editAccount: builder.mutation<void, { id: string, user: AppUserModel }>({
-            query: ({id, user }) => ({
+            query: ({ id, user }) => ({
                 body: user,
                 url: `/User/${id}`,
                 method: 'PUT'
@@ -21,5 +25,6 @@ export const AccountApi = UserApi.injectEndpoints({
 export const {
     useGetUserByIdQuery,
     useLazyGetUserByIdQuery,
+    useGetUserByIdentityUserIdQuery,
     useEditAccountMutation,
 } = AccountApi;

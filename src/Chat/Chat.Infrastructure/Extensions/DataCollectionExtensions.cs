@@ -32,6 +32,7 @@ public static class DataCollectionExtensions
         services.AddScoped<IGroupChatRepository, GroupChatRepository>();
         services.AddScoped<IGroupChatUserRepository, GroupChatUserRepository>();
         services.AddScoped<IPersonalChatRepository, PersonalChatRepository>();
+        services.AddScoped<IVoiceChatRepository, VoiceChatRepository>();
         services.AddScoped<IPersonalChatMessageRepository, PersonalChatMessageRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

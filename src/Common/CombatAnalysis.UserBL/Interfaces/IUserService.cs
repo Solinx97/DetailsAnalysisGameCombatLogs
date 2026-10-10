@@ -16,7 +16,7 @@ public interface IUserService
 
     Task<bool> CheckByUsernameAsync(string username);
 
-    Task<AppUserDto?> FindByIdentityUserIdAsync(string identityUserId);
+    Task<AppUserDto?> GetByIdentityUserIdAsync(string identityUserId);
 
     Task<IEnumerable<AppUserDto>> FindByUsernameStartAtAsync(string startAt);
 }

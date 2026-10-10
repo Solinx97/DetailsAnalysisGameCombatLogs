@@ -11,7 +11,7 @@ const useVoiceChatHub = (roomId: string) => {
 
 	const { localStreamRef, setup, startAsync, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanup, addTrackToPeer } = useRTCConnection();
 
-	const connectToChatAsync = async (meselfId: string, signalingAddress: string, setHaveControllBar: (value: SetStateAction<boolean>) => void) => {
+	const connectToChatAsync = async (signalingAddress: string, setHaveControllBar: (value: SetStateAction<boolean>) => void) => {
 		try {
 			const hubConnection = new signalR.HubConnectionBuilder()
 				.withUrl(signalingAddress)
@@ -29,11 +29,16 @@ const useVoiceChatHub = (roomId: string) => {
 			listeningSignalMessages();
 			await listeningAnswersAsync();
 
-			await sendSignalAsync("JoinRoom", meselfId);
-			await sendSignalAsync("RequestConnectedUsers");
+			await sendSignalAsync("JoinRoom");
 		} catch (e) {
 			logger.error("Failed to connect to voice chat", e);
 		}
+	}
+
+	const leaveFromChatAsync = async () => {
+		await sendSignalAsync("LeaveRoom");
+
+		stopMediaData();
 	}
 
 	const switchMicrophoneStatusAsync = async (microphoneStatus: boolean) => {
@@ -193,7 +198,7 @@ const useVoiceChatHub = (roomId: string) => {
 		},
 		methods: {
             connectToChatAsync,
-            stopMediaData,
+			leaveFromChatAsync,
             switchMicrophoneStatusAsync,
 			switchCameraStatusAsync,
 			startScreenSharingAsync,

@@ -64,8 +64,10 @@ namespace Chat.Infrastructure.Migrations
                 name: "VoiceChat",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GroupChatId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastAcrivityAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -169,6 +171,27 @@ namespace Chat.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VoiceChatParticipant",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JoinedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastSeenAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    VoiceChatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VoiceChatParticipant", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VoiceChatParticipant_VoiceChat_VoiceChatId",
+                        column: x => x.VoiceChatId,
+                        principalTable: "VoiceChat",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_GroupChatMessage_GroupChatId",
                 table: "GroupChatMessage",
@@ -189,6 +212,11 @@ namespace Chat.Infrastructure.Migrations
                 name: "IX_PersonalChatMessage_PersonalChatId",
                 table: "PersonalChatMessage",
                 column: "PersonalChatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VoiceChatParticipant_VoiceChatId",
+                table: "VoiceChatParticipant",
+                column: "VoiceChatId");
         }
 
         /// <inheritdoc />
@@ -210,13 +238,16 @@ namespace Chat.Infrastructure.Migrations
                 name: "PersonalChatMessage");
 
             migrationBuilder.DropTable(
-                name: "VoiceChat");
+                name: "VoiceChatParticipant");
 
             migrationBuilder.DropTable(
                 name: "GroupChat");
 
             migrationBuilder.DropTable(
                 name: "PersonalChat");
+
+            migrationBuilder.DropTable(
+                name: "VoiceChat");
         }
     }
 }

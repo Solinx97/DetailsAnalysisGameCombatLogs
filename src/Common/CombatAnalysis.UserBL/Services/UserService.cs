@@ -71,7 +71,7 @@ internal class UserService(IUserRepository repository, IMapper mapper) : IUserSe
         return findByUsername != null;
     }
 
-    public async Task<AppUserDto?> FindByIdentityUserIdAsync(string identityUserId)
+    public async Task<AppUserDto?> GetByIdentityUserIdAsync(string identityUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(identityUserId);
 

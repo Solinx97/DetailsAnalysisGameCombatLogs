@@ -37,10 +37,10 @@ public class UserController(IUserService service, IMapper mapper, ILogger<UserCo
         return Ok(result);
     }
 
-    [HttpGet("find/{identityUserId}")]
-    public async Task<IActionResult> FindByIdentityUserId(string identityUserId)
+    [HttpGet("getByIdentityUserId/{identityUserId}")]
+    public async Task<IActionResult> GetByIdentityUserId(string identityUserId)
     {
-        var result = await _service.FindByIdentityUserIdAsync(identityUserId);
+        var result = await _service.GetByIdentityUserIdAsync(identityUserId);
         if (result == null)
         {
             return NotFound();

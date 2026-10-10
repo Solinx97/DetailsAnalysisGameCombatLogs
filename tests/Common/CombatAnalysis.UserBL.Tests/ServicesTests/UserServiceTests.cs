@@ -427,7 +427,7 @@ public class UserServiceTests
         var service = new UserService(mockRepository.Object, mockMapper.Object);
 
         // Act
-        var result = await service.FindByIdentityUserIdAsync(identityUserId);
+        var result = await service.GetByIdentityUserIdAsync(identityUserId);
 
         // Assert
         Assert.NotNull(result);

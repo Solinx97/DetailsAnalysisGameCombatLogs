@@ -72,8 +72,8 @@ const VoiceChatToolsBar: React.FC<VoiceChatToolsBarProps> = ({
 		switchCameraStatus();
 	}, [properties.hubConnection, turnOnCamera]);
 
-	const leaveFromCallAsync = () => {
-		methods.stopMediaData();
+	const leaveFromCallAsync = async () => {
+		await methods.leaveFromChatAsync();
 
 		navigate("/chats");
 	}

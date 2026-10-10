@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Infrastructure.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20261009172349_Init")]
+    [Migration("20261010084120_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -73,11 +73,17 @@ namespace Chat.Infrastructure.Migrations
 
             modelBuilder.Entity("Chat.Domain.Aggregates.VoiceChat", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid>("AppUserId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("GroupChatId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("LastAcrivityAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
@@ -201,6 +207,30 @@ namespace Chat.Infrastructure.Migrations
                     b.ToTable("PersonalChatMessage");
                 });
 
+            modelBuilder.Entity("Chat.Domain.Entities.VoiceChatParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("JoinedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("LastSeenAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("VoiceChatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VoiceChatId");
+
+                    b.ToTable("VoiceChatParticipant");
+                });
+
             modelBuilder.Entity("Chat.Infrastructure.Persistence.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -312,6 +342,17 @@ namespace Chat.Infrastructure.Migrations
                     b.Navigation("PersonalChat");
                 });
 
+            modelBuilder.Entity("Chat.Domain.Entities.VoiceChatParticipant", b =>
+                {
+                    b.HasOne("Chat.Domain.Aggregates.VoiceChat", "VoiceChat")
+                        .WithMany("Participants")
+                        .HasForeignKey("VoiceChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VoiceChat");
+                });
+
             modelBuilder.Entity("Chat.Domain.Aggregates.GroupChat", b =>
                 {
                     b.Navigation("Messages");
@@ -322,6 +363,11 @@ namespace Chat.Infrastructure.Migrations
             modelBuilder.Entity("Chat.Domain.Aggregates.PersonalChat", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Chat.Domain.Aggregates.VoiceChat", b =>
+                {
+                    b.Navigation("Participants");
                 });
 #pragma warning restore 612, 618
         }

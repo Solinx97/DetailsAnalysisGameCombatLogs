@@ -1,4 +1,6 @@
 export type VoiceChatModel = {
     id: string;
-    appUserId: string;
+    groupChatId: number;
+    createdAt: string;
+    lastAcrivityAt: string;
 }

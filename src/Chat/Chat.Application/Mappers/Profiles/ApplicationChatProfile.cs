@@ -12,11 +12,7 @@ public class ApplicationChatProfile : Profile
     {
         ValueObjectMap();
 
-        CreateMap<VoiceChatDto, VoiceChat>()
-                 .ConstructUsing(dto => new VoiceChat(
-                     dto.Id,
-                     dto.AppUserId
-                 )).ReverseMap();
+        CreateMap<VoiceChatDto, VoiceChat>().ReverseMap();
 
         CreateMap<PersonalChatDto, PersonalChat>().ReverseMap();
 
@@ -76,10 +72,13 @@ public class ApplicationChatProfile : Profile
         CreateMap<Guid, UserId>()
             .ConvertUsing(src => new UserId(src));
 
-        CreateMap<string, VoiceChatId>()
+        CreateMap<Guid, VoiceChatId>()
             .ConvertUsing(src => new VoiceChatId(src));
 
-        CreateMap<VoiceChatId, string>()
+        CreateMap<VoiceChatId, Guid>()
             .ConvertUsing(src => new VoiceChatId(src));
+
+        CreateMap<Guid, VoiceChatParticipantId>()
+            .ConvertUsing(src => new VoiceChatParticipantId(src));
     }
 }

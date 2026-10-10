@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { VoiceChatModel } from '../types/VoiceChatModel';
+import type { CreateVoiceChatModel } from '../types/CreateVoiceChatModel';
 
 const apiURL = '/api/v1';
 
@@ -12,13 +13,12 @@ export const VoiceChatApi = createApi({
         baseUrl: apiURL
     }),
     endpoints: builder => ({
-        createCall: builder.mutation<VoiceChatModel, VoiceChatModel>({
+        createCall: builder.mutation<void, CreateVoiceChatModel>({
             query: groupChat => ({
                 body: groupChat,
                 url: '/VoiceChat',
                 method: 'POST'
             }),
-            invalidatesTags: result => result ? [{ type: 'VoiceChat', id: result.id }] : [],
         }),
         removeCall: builder.mutation<void, number>({
             query: id => ({
@@ -27,19 +27,12 @@ export const VoiceChatApi = createApi({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'VoiceChat', id }]
         }),
-        getCalls: builder.query<VoiceChatModel[], void>({
-            query: () => `/VoiceChat`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(voiceChat => ({ type: 'VoiceChat' as const, id: voiceChat.id })),
-                        { type: 'VoiceChat', id: 'LIST' },
-                    ]
-                    : [{ type: 'VoiceChat', id: 'LIST' }]
-        }),
-        getCallById: builder.query<VoiceChatModel, string>({
-            query: id => `/VoiceChat/${id}`,
+        getCallByChatId: builder.query<VoiceChatModel, number>({
+            query: chatId => `/VoiceChat/getByChatId/${chatId}`,
             providesTags: result => result ? [{ type: 'VoiceChat', id: result.id }] : []
+        }),
+        isVoiceChatExist: builder.query<boolean, number>({
+            query: chatId => `/VoiceChat/isChatExist/${chatId}`,
         }),
     })
 })
@@ -47,6 +40,6 @@ export const VoiceChatApi = createApi({
 export const {
     useCreateCallMutation,
     useRemoveCallMutation,
-    useGetCallsQuery,
-    useGetCallByIdQuery,
+    useGetCallByChatIdQuery,
+    useIsVoiceChatExistQuery,
 } = VoiceChatApi;

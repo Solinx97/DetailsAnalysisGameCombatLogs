@@ -8,7 +8,6 @@ internal static class ServiceCollectionExtension
 {
     public static void AddApiClients(this IServiceCollection sc, ConfigurationManager cm)
     {
-        sc.AddTransient<AuthorizationHandler>();
         sc.AddHttpClient<IGroupChatApiClient, GroupChatApiClient>(client =>
         {
             client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Chat").Value ?? ""}api/v1/");
@@ -16,7 +15,6 @@ internal static class ServiceCollectionExtension
             .AddHttpMessageHandler<AuthorizationHandler>()
             .AddHttpMessageHandler<ApiErrorHandler>();
 
-        sc.AddTransient<AuthorizationHandler>();
         sc.AddHttpClient<IPersonalChatApiClient, PersonalChatApiClient>(client =>
         {
             client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Chat").Value ?? ""}api/v1/");
@@ -24,7 +22,13 @@ internal static class ServiceCollectionExtension
             .AddHttpMessageHandler<AuthorizationHandler>()
             .AddHttpMessageHandler<ApiErrorHandler>();
 
-        sc.AddTransient<WoWCharacterGameDataAuthorizationHandler>();
+        sc.AddHttpClient<IVoiceChatApiClient, VoiceChatApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Chat").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
         sc.AddHttpClient<IWoWAccountGameDataApiClient, WoWAccountGameDataApiClient>(client =>
         {
             client.BaseAddress = new Uri(cm.GetSection("BattleNet:BattleNetAPI").Value ?? "");
@@ -32,7 +36,6 @@ internal static class ServiceCollectionExtension
             .AddHttpMessageHandler<WoWCharacterGameDataAuthorizationHandler>()
             .AddHttpMessageHandler<ExternalApiErrorHandler>();
 
-        sc.AddTransient<WoWGameDataAuthorizationHandler>();
         sc.AddHttpClient<IWoWGameDataApiClient, WoWGameDataApiClient>(client =>
         {
             client.BaseAddress = new Uri(cm.GetSection("BattleNet:BattleNetAPI").Value ?? "");
@@ -47,7 +50,6 @@ internal static class ServiceCollectionExtension
             .AddHttpMessageHandler<WoWGameDataAuthorizationHandler>()
             .AddHttpMessageHandler<ExternalApiErrorHandler>();
 
-        sc.AddTransient<WoWGameDataAuthAuthorizationHandler>();
         sc.AddHttpClient<IWoWGameDataAuthApiClient, WoWGameDataAuthApiClient>(client =>
         {
             client.BaseAddress = new Uri(cm.GetSection("BattleNet:BattleNetAutAPI").Value ?? "");

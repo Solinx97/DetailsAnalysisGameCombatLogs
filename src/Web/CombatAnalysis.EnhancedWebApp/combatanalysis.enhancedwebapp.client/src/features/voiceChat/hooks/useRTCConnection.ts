@@ -40,22 +40,22 @@ const useRTCConnection = () => {
 	}
 
 	const listeningSignalMessages = () => {
-		hubConnectionRef.current?.on("Connected", (userId) => {
-			myConnectionIdRef.current = userId;
+		hubConnectionRef.current?.on("Connected", (identityUserId) => {
+			myConnectionIdRef.current = identityUserId;
 			if (haveControllBarRef.current) {
 				haveControllBarRef.current(true);
 			}
 		});
 
-		hubConnectionRef.current?.on("UserJoined", (userId) => {
-			getOrCreatePeerConnection(userId);
+		hubConnectionRef.current?.on("UserJoined", (identityUserId) => {
+			getOrCreatePeerConnection(identityUserId);
 		});
 
-		hubConnectionRef.current?.on("UserLeft", (userId) => {
-			const peerConnection = peerConnectionsRef.current?.get(userId);
+		hubConnectionRef.current?.on("UserLeft", (identityUserId) => {
+			const peerConnection = peerConnectionsRef.current?.get(identityUserId);
 			if (peerConnection) {
 				peerConnection.close();
-				peerConnectionsRef.current?.delete(userId);
+				peerConnectionsRef.current?.delete(identityUserId);
 			}
 		});
 
@@ -85,22 +85,22 @@ const useRTCConnection = () => {
 			}
 		});
 
-		hubConnectionRef.current?.on("ReceiveCandidate", async (userId, candidate) => {
-			const peerConnection = peerConnectionsRef.current?.get(userId);
+		hubConnectionRef.current?.on("ReceiveCandidate", async (identityUserId, candidate) => {
+			const peerConnection = peerConnectionsRef.current?.get(identityUserId);
 			if (peerConnection) {
 				await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
 			}
 		});
 	}
 
-	const getOrCreatePeerConnection = (userId: string) => {
-		let peerConnection = peerConnectionsRef.current?.get(userId);
+	const getOrCreatePeerConnection = (identityUserId: string) => {
+		let peerConnection = peerConnectionsRef.current?.get(identityUserId);
 		if (peerConnection) {
 			return peerConnection;
 		}
 
 		peerConnection = new RTCPeerConnection(config);
-		peerConnectionsRef.current?.set(userId, peerConnection);
+		peerConnectionsRef.current?.set(identityUserId, peerConnection);
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		peerConnection.addEventListener("negotiationneeded", async (e: any) => {
@@ -109,13 +109,13 @@ const useRTCConnection = () => {
 			const offer = await pc.createOffer();
 			await pc.setLocalDescription(offer);
 
-			await sendSignalAsync("SendOffer", userId, JSON.stringify(pc.localDescription));
+			await sendSignalAsync("SendOffer", null, JSON.stringify(pc.localDescription));
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		peerConnection.addEventListener("icecandidate", async (e: any) => {
 			if (e.candidate) {
-				await sendSignalAsync("SendCandidate", userId, JSON.stringify(e.candidate));
+				await sendSignalAsync("SendCandidate", identityUserId, JSON.stringify(e.candidate));
 			}
 		});
 

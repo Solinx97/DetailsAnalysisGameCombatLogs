@@ -10,6 +10,8 @@ public class ChatContext(DbContextOptions<ChatContext> options) : DbContext(opti
 {
     public DbSet<VoiceChat> VoiceChat { get; set; } = null!;
 
+    public DbSet<VoiceChatParticipant> VoiceChatParticipant { get; set; } = null!;
+
     public DbSet<PersonalChat> PersonalChat { get; set; } = null!;
 
     public DbSet<PersonalChatMessage> PersonalChatMessage { get; set; } = null!;

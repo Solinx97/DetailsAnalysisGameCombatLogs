@@ -61,8 +61,8 @@ internal static class ModelBuilderExtension
         {
             builder.HasKey(m => m.Id);
 
-            builder.Property(m => m.Username).IsRequired().HasMaxLength(Domain.Entities.GroupChatMessage.USERNAME_MAX_LENGTH);
-            builder.Property(m => m.Message).IsRequired().HasMaxLength(Domain.Entities.GroupChatMessage.MESSAGE_MAX_LENGTH);
+            builder.Property(m => m.Username).IsRequired().HasMaxLength(GroupChatMessage.USERNAME_MAX_LENGTH);
+            builder.Property(m => m.Message).IsRequired().HasMaxLength(GroupChatMessage.MESSAGE_MAX_LENGTH);
 
             builder.Property(m => m.Time).IsRequired();
 
@@ -139,8 +139,8 @@ internal static class ModelBuilderExtension
         {
             builder.HasKey(c => c.Id);
 
-            builder.Property(msg => msg.Username).IsRequired().HasMaxLength(Domain.Entities.PersonalChatMessage.USERNAME_MAX_LENGTH);
-            builder.Property(msg => msg.Message).IsRequired().HasMaxLength(Domain.Entities.PersonalChatMessage.MESSAGE_MAX_LENGTH);
+            builder.Property(msg => msg.Username).IsRequired().HasMaxLength(PersonalChatMessage.USERNAME_MAX_LENGTH);
+            builder.Property(msg => msg.Message).IsRequired().HasMaxLength(PersonalChatMessage.MESSAGE_MAX_LENGTH);
 
             builder.Property(m => m.Time).IsRequired();
 
@@ -172,10 +172,37 @@ internal static class ModelBuilderExtension
                            value => new VoiceChatId(value)
                        );
 
-            builder.Property(c => c.AppUserId).HasConversion(
+            builder.Property(c => c.GroupChatId).HasConversion(
                            id => id.Value,
-                           value => new UserId(value)
+                           value => new GroupChatId(value)
                        );
+
+            builder.HasMany(c => c.Participants)
+                   .WithOne(m => m.VoiceChat)
+                   .HasForeignKey(m => m.VoiceChatId)
+                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<VoiceChatParticipant>(builder =>
+        {
+            builder.HasKey(m => m.Id);
+
+            builder.Property(x => x.Id)
+                 .HasConversion(
+                     id => id.Value,
+                     value => new VoiceChatParticipantId(value)
+                 );
+            builder.Property(x => x.VoiceChatId)
+                 .HasConversion(
+                     id => id.Value,
+                     value => new VoiceChatId(value)
+                 );
+
+            builder.Property(x => x.AppUserId)
+                 .HasConversion(
+                     id => id.Value,
+                     value => new UserId(value)
+                 );
         });
     }
 }

@@ -61,7 +61,7 @@ export const UserApi = createApi({
         verifyEmail: builder.query<IdentityRedirectModel, { identityPath: string, email: string }>({
             query: ({ identityPath, email }) => `/Authentication/verifyEmail?identityPath=${identityPath}&email=${email}`,
         }),
-        stateValidate: builder.query <void, string>({
+        stateValidate: builder.query<void, string>({
             query: state => `/Authentication/stateValidate?state=${state}`,
         }),
         cancelAuthorization: builder.query<void, void>({

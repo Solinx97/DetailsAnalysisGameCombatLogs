@@ -1,85 +1,54 @@
-﻿using AutoMapper;
-using Chat.Application.DTOs;
-using Chat.Application.Interfaces;
-using Chat.Domain.Exceptions;
-using CombatAnalysis.ChatAPI.Core;
+﻿using Chat.Application.Commands.VoiceChat.CreateChat;
+using Chat.Application.Commands.VoiceChat.DeleteChat;
+using Chat.Application.Queries.VoiceChat.GetById;
+using Chat.Application.Queries.VoiceChat.IsChatExist;
 using CombatAnalysis.ChatAPI.Models;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.ChatAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class VoiceChatController(IVoiceChatService service, IMapper mapper, ILogger<VoiceChatController> logger)
-    : ControllerBase
+public class VoiceChatController(IMediator mediator) : ControllerBase
 {
-    private readonly IVoiceChatService _service = service;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<VoiceChatController> _logger = logger;
+    private readonly IMediator _mediator = mediator;
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("getByChatId/{chatId:int:min(1)}")]
+    public async Task<IActionResult> GetByChatId(int chatId, CancellationToken cancellationToken)
     {
-        var voiceChats = await _service.GetAllAsync();
-
-        return Ok(voiceChats);
-    }
-
-    [HttpGet("{id:minlength(8)}")]
-    public async Task<IActionResult> GetById(string id)
-    {
-        try
+        var chat = await _mediator.Send(new GetByChatIdQuery(chatId), cancellationToken);
+        if (chat == null)
         {
-            var voiceChat = await _service.GetByIdAsync(id);
-
-            return Ok(voiceChat);
-        }
-        catch (VoiceChatNotFoundException ex)
-        {
-            _logger.LogWarning("Get voice chat {Id} failed. Voice chat not found.", ex.VoiceChatId);
-
             return NotFound();
         }
-        catch (DomainException ex)
-        {
-            _logger.LogError(ex, "Get voice chat {Id} failed. Something wrong during extracting voice chat.", id);
 
-            return this.ExtractDomainCode(ex.Code);
-        }
+        return Ok(chat);
+    }
+
+    [HttpGet("isChatExist/{chatId:int:min(1)}")]
+    public async Task<IActionResult> IsChatExist(int chatId, CancellationToken cancellationToken)
+    {
+        var isChatExist = await _mediator.Send(new IsChatExistQuery(chatId), cancellationToken);
+
+        return Ok(isChatExist);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] VoiceChatModel voiceChat)
+    public async Task<IActionResult> Create([FromBody] CreateVoiceChatModel voiceChat, CancellationToken cancellationToken)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid VoiceChat create received: {@VoiceChat}", voiceChat);
+        var command = new CreateChatCommand(voiceChat.GroupChatId, voiceChat.AppUserId);
+        await _mediator.Send(command, cancellationToken);
 
-                return ValidationProblem(ModelState);
-            }
-
-            var map = _mapper.Map<VoiceChatDto>(voiceChat);
-            var createdVoiceChat = await _service.CreateAsync(map);
-
-            return Ok(createdVoiceChat);
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to create voice chat.");
-
-            return StatusCode(500, "Internal server error.");
-        }
+        return NoContent();
     }
 
-    [HttpDelete("{id:minlength(8)}")]
-    public async Task<IActionResult> Delete(string id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await _service.DeleteAsync(id);
+        await _mediator.Send(new DeleteChatCommand(id), cancellationToken);
 
         return NoContent();
     }

@@ -87,6 +87,38 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpGet("getByIdentityUserId/{identityUserId}")]
+    public async Task<IActionResult> GetByIdentityUserId(string identityUserId)
+    {
+        try
+        {
+            var responseMessage = await _httpClient.GetAsync($"User/getByIdentityUserId/{identityUserId}");
+            responseMessage.EnsureSuccessStatusCode();
+
+            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+
+            return Ok(user);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            _logger.LogError(ex, "Get user {Id} failed. User should be authorize to see this user.", identityUserId);
+
+            return Unauthorized();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            _logger.LogError(ex, "Get user {Id} failed. User not found.", identityUserId);
+
+            return NotFound();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Get user {Id} failed. Something wrong during getting user.", identityUserId);
+
+            return StatusCode((int)(ex.StatusCode ?? HttpStatusCode.InternalServerError), ex.Message);
+        }
+    }
+
     [HttpGet("find")]
     public async Task<IActionResult> FindByUsernameStartAt(string startAt)
     {

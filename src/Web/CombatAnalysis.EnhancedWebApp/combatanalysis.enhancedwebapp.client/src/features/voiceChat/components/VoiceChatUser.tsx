@@ -2,12 +2,10 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as signalR from '@microsoft/signalr';
 import { memo, useEffect, useRef, useState, type RefObject, type SetStateAction } from 'react';
-import { useLazyGetUserByIdQuery } from '../../user/api/Account.api';
-import type { AppUserModel } from '../../user/types/AppUserModel';
-import { useGetCallByIdQuery } from '../api/VoiceChat.api';
+import { useGetUserByIdentityUserIdQuery } from '../../user/api/Account.api';
 
 interface VoiceChatUserProps {
-    userId: string;
+    identityUserId: string;
     hubConnection: signalR.HubConnection | null;
     peerConnection: RTCPeerConnection | undefined;
     otherScreenSharingVideoRef: RefObject<HTMLVideoElement | null>;
@@ -18,7 +16,7 @@ interface VoiceChatUserProps {
 }
 
 const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
-    userId,
+    identityUserId,
     hubConnection,
     peerConnection,
     otherScreenSharingVideoRef,
@@ -27,13 +25,10 @@ const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
     setOtherScreenSharing,
     audioOutputDeviceId
 }) => {
-    const { data: voice } = useGetCallByIdQuery(userId);
-
-    const [getUserByIdAsync] = useLazyGetUserByIdQuery();
+    const { data: user } = useGetUserByIdentityUserIdQuery(identityUserId);
 
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
-    const [user, setUser] = useState<AppUserModel | null>(null);
     const [stream, setStream] = useState(null);
 
     const videoContentRef = useRef<HTMLVideoElement | null>(null);
@@ -85,19 +80,19 @@ const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
         }
 
         const handleReceiveMicrophoneStatus = (from: string, status: boolean) => {
-            if (from === userId) {
+            if (from === identityUserId) {
                 setTurnOnMicrophone(status);
             }
         }
 
         const handleReceiveCameraStatus = (from: string, status: boolean) => {
-            if (from === userId) {
+            if (from === identityUserId) {
                 setTurnOnCamera(status);
             }
         }
 
         const handleReceiveScreenSharingStatus = (from: string, status: boolean) => {
-            if (from === userId) {
+            if (from === identityUserId) {
                 if (status) {
                     otherScreenSharingUserIdRef.current = from;
                     setOtherScreenSharing(true);
@@ -118,21 +113,6 @@ const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
             hubConnection.off("ReceiveScreenSharingStatus", handleReceiveScreenSharingStatus);
         };
     }, [hubConnection, otherScreenSharing]);
-
-    useEffect(() => {
-        if (!voice) {
-            return;
-        }
-
-        const getUserById = async () => {
-            const response = await getUserByIdAsync(voice.appUserId);
-            if (response.data) {
-                setUser(response.data);
-            }
-        }
-
-        getUserById();
-    }, [voice]);
 
     useEffect(() => {
         if (!audioOutputDeviceId || !audioContentRef.current) {
@@ -178,7 +158,7 @@ const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
                             icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
                             title="TurnOffMicrophone"
                         />
-                      </>
+                    </>
                     : <>
                         <div className="another__username">Loading...</div>
                     </>

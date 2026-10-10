@@ -9,7 +9,8 @@ internal static class MessageReceivedHelper
         var isExist = pathString.StartsWithSegments(HubPatterns.PERSONAL_CHAT_MESSAGE)
             || pathString.StartsWithSegments(HubPatterns.GROUP_CHAT_MESSAGE)
             || pathString.StartsWithSegments(HubPatterns.GROUP_CHAT)
-            || pathString.StartsWithSegments(HubPatterns.PERSONAL_CHAT);
+            || pathString.StartsWithSegments(HubPatterns.PERSONAL_CHAT)
+            || pathString.StartsWithSegments(HubPatterns.VOICE_CHAT);
 
         return isExist;
     }

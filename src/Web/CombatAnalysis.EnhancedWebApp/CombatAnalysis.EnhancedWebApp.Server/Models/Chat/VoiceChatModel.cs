@@ -2,5 +2,7 @@
 
 public record VoiceChatModel(
     string Id,
-    string AppUserId
+    int GroupChatId,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset LastAcrivityAt
     );

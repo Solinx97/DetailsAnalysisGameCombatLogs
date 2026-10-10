@@ -22,6 +22,10 @@ builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
 builder.Services.AddTransient<ExternalApiErrorHandler>();
 builder.Services.AddTransient<ApiErrorHandler>();
+builder.Services.AddTransient<AuthorizationHandler>();
+builder.Services.AddTransient<WoWCharacterGameDataAuthorizationHandler>();
+builder.Services.AddTransient<WoWGameDataAuthorizationHandler>();
+builder.Services.AddTransient<WoWGameDataAuthAuthorizationHandler>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -80,6 +84,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/webapp.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7, restrictedToMinimumLevel: LogEventLevel.Error)
     .CreateLogger();
 
+builder.Services.AddExceptionHandler<GlobalAPIExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExternalAPIExceptionHandler>();
 builder.Services.AddProblemDetails();
 

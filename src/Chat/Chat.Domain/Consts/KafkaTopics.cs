@@ -13,4 +13,6 @@ public class KafkaTopics
     public const string GROUP_CHAT_MEMBER = "group-chat-member";
 
     public const string GROUP_CHAT_UNREAD_MESSAGE = "group-chat-unread-message";
+
+    public const string VOICE_CHAT = "voice-chat";
 }

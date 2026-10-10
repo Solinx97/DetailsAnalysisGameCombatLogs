@@ -3,7 +3,6 @@
 namespace CombatAnalysis.ChatAPI.Models;
 
 public record CreateGroupChatUserModel(
-        [Required] string Id,
         [Required][StringLength(8)] string Username,
         [Range(0, int.MaxValue)] int UnreadMessages,
         Guid? LastReadMessageId,

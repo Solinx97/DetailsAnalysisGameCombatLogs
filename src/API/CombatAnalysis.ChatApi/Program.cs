@@ -14,8 +14,10 @@ using CombatAnalysis.ChatAPI.Interfaces;
 using CombatAnalysis.ChatAPI.Kafka;
 using CombatAnalysis.ChatAPI.Kafka.Producer;
 using CombatAnalysis.ChatAPI.Mapping;
+using CombatAnalysis.ChatAPI.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -128,6 +130,7 @@ builder.Services.AddHostedService<GroupChatMessageConsumer>();
 builder.Services.AddHostedService<OutboxWorker>();
 
 builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
@@ -189,6 +192,7 @@ app.MapHub<PersonalChatHub>(HubPatterns.PERSONAL_CHAT);
 app.MapHub<PersonalChatMessagesHub>(HubPatterns.PERSONAL_CHAT_MESSAGE);
 app.MapHub<GroupChatHub>(HubPatterns.GROUP_CHAT);
 app.MapHub<GroupChatMessagesHub>(HubPatterns.GROUP_CHAT_MESSAGE);
+app.MapHub<VoiceChatHub>(HubPatterns.VOICE_CHAT);
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

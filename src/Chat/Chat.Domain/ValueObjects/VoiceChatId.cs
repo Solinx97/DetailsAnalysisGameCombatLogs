@@ -2,20 +2,15 @@
 
 public record VoiceChatId
 {
-    public VoiceChatId(string value)
+    public VoiceChatId(Guid value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("VoiceChatId cannot be empty");
-        }
-
         Value = value;
     }
 
-    public string Value { get; }
+    public Guid Value { get; }
 
-    public static implicit operator string(VoiceChatId id) => id.Value;
+    public static implicit operator Guid(VoiceChatId id) => id.Value;
 
 
-    public static implicit operator VoiceChatId(string value) => new(value);
+    public static implicit operator VoiceChatId(Guid value) => new(value);
 }
