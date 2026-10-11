@@ -12,8 +12,8 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
 
     private PersonalChatMessage() { }
 
-    private PersonalChatMessage(string username, string message, PersonalChatId chatId, UserId appUserId,
-                    MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset time)
+    private PersonalChatMessage(string username, string message, PersonalChatId chatId, UserId appUserId, long sequence,
+                    MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset createdAt)
     {
         Id = Guid.NewGuid();
         Username = username;
@@ -23,7 +23,8 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
         Type = type;
         MarkedType = markedType;
         AppUserId = appUserId;
-        Time = time;
+        CreatedAt = createdAt;
+        Sequence = sequence;
     }
 
     public PersonalChatMessageId Id { get; private set; }
@@ -32,7 +33,7 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
 
     public string Message { get; private set; }
 
-    public DateTimeOffset Time { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
     public MessageStatus Status { get; private set; }
 
@@ -42,20 +43,24 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
 
     public bool IsEdited { get; private set; }
 
+    public long Sequence { get; private set; }
+
     public PersonalChatId PersonalChatId { get; private set; }
 
     public UserId AppUserId { get; private set; }
 
     public PersonalChat PersonalChat { get; private set; } = null!;
 
-    public static PersonalChatMessage Create(string username, string message, PersonalChatId chatId, UserId appUserId)
+    public static PersonalChatMessage Create(string username, string message, PersonalChatId chatId, UserId appUserId, long lastMessageSequence,
+        int status = (int)MessageStatus.Sending, int messageType = (int)MessageType.Default, int markedType = (int)MessageMarkedType.None)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
+        ArgumentOutOfRangeException.ThrowIfNegative(lastMessageSequence, nameof(lastMessageSequence));
 
-        var time = DateTimeOffset.UtcNow;
-        return new PersonalChatMessage(username, message, chatId, appUserId, MessageStatus.Sending, MessageType.Default, MessageMarkedType.None, time);
+        var createdAt = DateTimeOffset.UtcNow;
+        return new PersonalChatMessage(username, message, chatId, appUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
     }
 
     public void EditMessage(string? newMessage)
@@ -70,19 +75,11 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
         }
     }
 
-    public void UpdateStatus(MessageStatus newStatus)
+    public void ReadMessage()
     {
-        if (!Status.Equals(newStatus))
+        if (Status != MessageStatus.Read)
         {
-            Status = newStatus;
-        }
-    }
-
-    public void UpdateMarker(MessageMarkedType newMarkedType)
-    {
-        if (!MarkedType.Equals(newMarkedType))
-        {
-            MarkedType = newMarkedType;
+            Status = MessageStatus.Read;
         }
     }
 }

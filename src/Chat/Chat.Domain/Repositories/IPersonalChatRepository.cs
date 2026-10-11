@@ -10,4 +10,6 @@ public interface IPersonalChatRepository
     Task<IEnumerable<PersonalChat>> GetByUserIdAsync(UserId userId, CancellationToken cancelationToken);
 
     Task<bool> IsExistAsync(UserId initiatorId, UserId companionId, CancellationToken cancelationToken);
+
+    Task<PersonalChat> GetWithMessagesAsync(PersonalChatId id, CancellationToken cancelationToken);
 }

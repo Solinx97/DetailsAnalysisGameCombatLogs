@@ -24,10 +24,12 @@ internal class CreateMessageHandler(IGenericRepository<Domain.Aggregates.Persona
         try
         {
             var chat = await _chatRepository.GetByIdAsync(request.ChatId);
-            chat.IncrementUnreadMessages(request.AppUserId);
 
-            var message = PersonalChatMessage.Create(request.Username, request.Message, request.ChatId, request.AppUserId);
+            var message = PersonalChatMessage.Create(request.Username, request.Message, request.ChatId, request.AppUserId, chat.LastMessageSequence);
             await _repository.AddAsync(message, cancellationToken);
+
+            chat.IncrementSequence();
+            chat.IncrementUnreadMessages(request.AppUserId);
 
             var @event = new PersonalChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.PersonalChatId, message.AppUserId, message.Message);
             await _boxRepository.AddAsync(@event.EventId, nameof(PersonalChatMessageCreatedEvent), KafkaTopics.PERSONAL_CHAT_MESSAGE, message.PersonalChatId.Value.ToString(), JsonSerializer.Serialize(@event), cancellationToken);

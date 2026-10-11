@@ -1,6 +1,6 @@
+import ChatHubContext from '@/context/ChatHubContext';
 import { updateGroupChatUser } from '@/features/chat/store/GroupChatUserSlice';
-import { useChatHub } from '@/shared/hooks/useChatHub';
-import { useEffect, type SetStateAction } from 'react';
+import { useContext, useEffect, type SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 import { useGetGroupChatByIdQuery } from '../../api/GroupChat.api';
 import { useFindChatUsersQuery } from '../../api/GroupChatUser.api';
@@ -21,15 +21,14 @@ interface GroupChatListItemProps {
 const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ myselfInChat, refetch, setSelectedGroupChat }) => {
     const dispatch = useDispatch();
 
-    const chatHub = useChatHub();
+    const context = useContext(ChatHubContext);
+    if (!context) {
+        throw new Error("Child must be inside ChatHubContext.Provider");
+    }
 
     const { data: chat, isLoading } = useGetGroupChatByIdQuery(myselfInChat.groupChatId);
 
     useEffect(() => {
-        if (!chatHub) {
-            return;
-        }
-
         let isCancelled = false;
 
         const handleMessage = async () => {
@@ -37,31 +36,32 @@ const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ myselfInChat, ref
         }
 
         const connect = async () => {
-            await chatHub.connectToGroupChatMessagesAsync(myselfInChat.groupChatId);
-
             if (isCancelled) {
                 return;
             }
 
-            chatHub.subscribeToGroupChatMessages(handleMessage);
+            await context.groupChatEvents.connectToGroupChatMessagesAsync(myselfInChat.groupChatId);
+            context.groupChatEvents.subscribeToGroupChatMessages(handleMessage);
+            context.groupChatEvents.subscribeToGroupMessageRead(handleMessage);
         };
 
-        void connect();
+        connect();
 
         return () => {
             isCancelled = true;
 
-            chatHub.unsubscribeToGroupChatMessages(handleMessage);
-            chatHub.disconnectFromGroupChatMessageHubAsync();
+            context.groupChatEvents.unsubscribeToGroupChatMessages(handleMessage);
+            context.groupChatEvents.disconnectFromGroupChatMessageHubAsync();
         };
-    }, [chatHub, myselfInChat, refetch]);
+    }, []);
 
     const selectChatHandle = () => {
-        setSelectedGroupChat(null);
-
         if (chat) {
             setSelectedGroupChat(chat);
             dispatch(updateGroupChatUser(myselfInChat));
+        }
+        else {
+            setSelectedGroupChat(null);
         }
     }
 

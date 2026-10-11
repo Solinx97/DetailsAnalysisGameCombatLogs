@@ -64,9 +64,9 @@ internal static class ModelBuilderExtension
             builder.Property(m => m.Username).IsRequired().HasMaxLength(GroupChatMessage.USERNAME_MAX_LENGTH);
             builder.Property(m => m.Message).IsRequired().HasMaxLength(GroupChatMessage.MESSAGE_MAX_LENGTH);
 
-            builder.Property(m => m.Time).IsRequired();
+            builder.Property(m => m.CreatedAt).IsRequired();
 
-            builder.Property(c => c.Time)
+            builder.Property(c => c.CreatedAt)
                    .HasConversion(
                        dto => dto.UtcDateTime,
                        dt => new DateTimeOffset(dt)
@@ -124,10 +124,20 @@ internal static class ModelBuilderExtension
                            value => new UserId(value)
                        );
 
+            builder.Property(c => c.LastInitiatorReadMessageId).HasConversion(
+                           id => id.Value,
+                           value => new PersonalChatMessageId(value)
+                       );
+
             builder.Property(c => c.CompanionId).HasConversion(
                             id => id.Value,
                             value => new UserId(value)
                         );
+
+            builder.Property(c => c.LastCompanionReadMessageId).HasConversion(
+                           id => id.Value,
+                           value => new PersonalChatMessageId(value)
+                       );
 
             builder.HasMany(c => c.Messages)
                    .WithOne(m => m.PersonalChat)
@@ -142,9 +152,9 @@ internal static class ModelBuilderExtension
             builder.Property(msg => msg.Username).IsRequired().HasMaxLength(PersonalChatMessage.USERNAME_MAX_LENGTH);
             builder.Property(msg => msg.Message).IsRequired().HasMaxLength(PersonalChatMessage.MESSAGE_MAX_LENGTH);
 
-            builder.Property(m => m.Time).IsRequired();
+            builder.Property(m => m.CreatedAt).IsRequired();
 
-            builder.Property(c => c.Time)
+            builder.Property(c => c.CreatedAt)
                    .HasConversion(
                        dto => dto.UtcDateTime,
                        dt => new DateTimeOffset(dt)

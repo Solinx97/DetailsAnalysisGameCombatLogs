@@ -1,5 +1,5 @@
-import { useChatHub } from '@/shared/hooks/useChatHub';
-import { useEffect, type SetStateAction } from 'react';
+import ChatHubContext from '@/context/ChatHubContext';
+import { useContext, useEffect, type SetStateAction } from 'react';
 import { useGetUserByIdQuery } from '../../../user/api/Account.api';
 import type { useGetPersonalChatsByUserIdQuery } from '../../api/PersonalChat.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
@@ -17,15 +17,14 @@ interface PersonalChatListItemProps {
 }
 
 const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ refetch, chat, isInitiator, setSelectedChat }) => {
-    const chatHub = useChatHub();
+    const context = useContext(ChatHubContext);
+    if (!context) {
+        throw new Error("Child must be inside ChatHubContext.Provider");
+    }
 
     const { data: companion, isLoading } = useGetUserByIdQuery(isInitiator ? chat.companionId : chat.initiatorId);
 
     useEffect(() => {
-        if (!chatHub) {
-            return;
-        }
-
         let isCancelled = false;
 
         const handleMessage = async () => {
@@ -33,24 +32,24 @@ const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ refetch, ch
         }
 
         const connect = async () => {
-            await chatHub.connectToPersonalChatMessagesAsync(chat.id);
-
             if (isCancelled) {
                 return;
             }
+            
+            await context.personalChatEvents.connectToPersonalChatMessagesAsync(chat.id);
+            context.personalChatEvents.subscribeToPersonalChatMessages(handleMessage);
+            context.personalChatEvents.subscribeToPersonalMessageRead(handleMessage);
+        }
 
-            chatHub.subscribeToPersonalChatMessages(handleMessage);
-        };
-
-        void connect();
+        connect();
 
         return () => {
             isCancelled = true;
 
-            chatHub.unsubscribeToPersonalChatMessages(handleMessage);
-            chatHub.disconnectFromPersonalChatMessageHubAsync();
+            context.personalChatEvents.unsubscribeToPersonalChatMessages(handleMessage);
+            context.personalChatEvents.disconnectFromPersonalChatMessageHubAsync();
         };
-    }, [chatHub, chat, refetch]);
+    }, []);
 
     if (isLoading) {
         return (<div className="chat-loading-yet">Loading...</div>);
@@ -70,7 +69,7 @@ const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ refetch, ch
                         <div className="unread-message-count">{chat.companionUnreadMessages > 99 ? "99+" : chat.companionUnreadMessages}</div>
                     </div>
                     : <></>
-                }
+            }
         </span>
     );
 }

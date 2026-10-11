@@ -1,6 +1,7 @@
 ﻿using Chat.Domain.Aggregates;
 using Chat.Domain.Repositories;
 using Chat.Domain.ValueObjects;
+using Chat.Infrastructure.Exceptions;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,5 +35,15 @@ internal class PersonalChatRepository(ChatContext context) : IPersonalChatReposi
                         || (m.InitiatorId == companionId && m.CompanionId == initiatorId), cancelationToken);
 
         return count > 0;
+    }
+
+    public async Task<PersonalChat> GetWithMessagesAsync(PersonalChatId id, CancellationToken cancelationToken)
+    {
+        var entity = await _context.PersonalChat
+            .Include(x => x.Messages)
+            .FirstOrDefaultAsync(g => g.Id == id, cancelationToken)
+                        ?? throw new EntityNotFoundException(typeof(PersonalChat), id);
+
+        return entity;
     }
 }

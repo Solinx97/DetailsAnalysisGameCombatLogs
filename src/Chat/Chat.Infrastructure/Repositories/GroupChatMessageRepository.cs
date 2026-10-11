@@ -21,7 +21,7 @@ internal class GroupChatMessageRepository(ChatContext context) : IGroupChatMessa
         var messages = await _context.GroupChatMessage
                     .AsNoTracking()
                     .Where(m => m.GroupChatId == chatId)
-                    .OrderBy(m => m.Time)
+                    .OrderByDescending(m => m.CreatedAt)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync(cancelationToken);

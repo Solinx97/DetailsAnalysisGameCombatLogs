@@ -1,4 +1,4 @@
-import { ChatMessageType } from '@/shared/helpers/EnumHelper';
+import { ChatType } from '@/shared/helpers/EnumHelper';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
@@ -28,11 +28,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetCh
         }
 
         await sendMessageAsync();
-    };
-
-    const sendMessageHandle = async () => {
-        await sendMessageAsync();
-    };
+    }
 
     const sendMessageAsync = async () => {
         if (!messageInput || !messageInput.current || !initiator) {
@@ -45,7 +41,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetCh
             return;
         }
 
-        if (targetChatType === ChatMessageType["GROUP"]) {
+        if (targetChatType === ChatType["GROUP"]) {
             await createGrouplMessageAsync(initiator.id ?? "0", initiator.username, messageInput.current.value, chatId);
         }
         else {
@@ -53,7 +49,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetCh
         }
 
         messageInput.current.value = "";
-    };
+    }
 
     const sentEmptyMessage = () => {
         setIsEmptyMessage(true);
@@ -72,7 +68,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetCh
                 <FontAwesomeIcon
                     icon={faPaperPlane}
                     title={t("SendMessage")}
-                    onClick={sendMessageHandle} />
+                    onClick={sendMessageAsync} />
             </div>
         </div>
     );

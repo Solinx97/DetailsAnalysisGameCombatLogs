@@ -39,6 +39,13 @@ public class PersonalChatMessageController(IPersonalChatApiClient httpClient) : 
         return NoContent();
     }
 
+    [HttpPatch("read/{id}")]
+    public async Task<IActionResult> ReadMessage(Guid id, [FromBody] GroupChatMessageReadPatch message, CancellationToken cancellationToken)
+    {
+        await _httpClient.ReadMessageIdAsync(id, message, cancellationToken);
+        return NoContent();
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {

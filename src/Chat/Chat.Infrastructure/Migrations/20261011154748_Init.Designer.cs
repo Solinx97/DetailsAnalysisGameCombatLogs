@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Infrastructure.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20261010084120_Init")]
+    [Migration("20261011154748_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -32,6 +32,9 @@ namespace Chat.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long>("LastMessageSequence")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -66,6 +69,15 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<int>("InitiatorUnreadMessages")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("LastCompanionReadMessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("LastInitiatorReadMessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("LastMessageSequence")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.ToTable("PersonalChat");
@@ -96,6 +108,9 @@ namespace Chat.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("GroupChatId")
                         .HasColumnType("int");
 
@@ -113,11 +128,11 @@ namespace Chat.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -172,6 +187,9 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsEdited")
                         .HasColumnType("bit");
 
@@ -186,11 +204,11 @@ namespace Chat.Infrastructure.Migrations
                     b.Property<int>("PersonalChatId")
                         .HasColumnType("int");
 
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");

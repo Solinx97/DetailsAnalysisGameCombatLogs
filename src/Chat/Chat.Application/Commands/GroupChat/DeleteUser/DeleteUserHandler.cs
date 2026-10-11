@@ -31,7 +31,7 @@ internal class DeleteUserHandler(IGroupChatRepository repository, IGroupChatMess
             var whoDeleteUser = await _userRepository.FindChatUserAsync(request.WhoDeleteId, request.GroupChatId, cancellationToken);
 
             var systemMessage = $"'{whoDeleteUser.Username}' remove user '{removedUser.Username}' from chat";
-            var message = GroupChatMessage.Create(removedUser.Username, systemMessage, request.GroupChatId, whoDeleteUser.Id, messageType: MessageType.System);
+            var message = GroupChatMessage.Create(removedUser.Username, systemMessage, request.GroupChatId, whoDeleteUser.Id, chat.LastMessageSequence, messageType: (int)MessageType.System);
             await _messageRepository.AddAsync(message, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

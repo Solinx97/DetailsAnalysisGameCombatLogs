@@ -5,12 +5,13 @@ import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessage
 import logger from '@/utils/Logger';
 import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
+import type { IGroupChatHubEvents } from '../interfaces/IGroupChatHubEvents';
 
 const useGroupChatHub = (
     groupChatHubConnectionRef: RefObject<signalR.HubConnection | null>,
     groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
     groupChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
-) => {
+): IGroupChatHubEvents => {
     const groupChatHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChat}`;
     const groupChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatMessages}`;
     const groupChatUnreadMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatUnreadMessage}`;
@@ -105,10 +106,8 @@ const useGroupChatHub = (
         });
     }
 
-    const subscribeToGroupMessageHasBeenRead = (callback: (messageId: string) => void) => {
-        groupChatMessagesHubConnectionRef.current?.on("ReceiveMessageHasBeenRead", (messageId: string) => {
-            callback(messageId);
-        });
+    const subscribeToGroupMessageRead = (callback: (messageId: string) => void) => {
+        groupChatMessagesHubConnectionRef.current?.on("ReceiveReadMessage", callback);
     }
 
     const subscribeToGroupChatMembers = (callback: (members: GroupChatUserModel[]) => void) => {
@@ -132,13 +131,19 @@ const useGroupChatHub = (
         groupChatUnreadMessagesHubConnectionRef.current = null;
     }
 
-    return {
-        connectToGroupChatAsync, connectToGroupChatMessagesAsync, connectToGroupChatUnreadMessagesAsync,
-        subscribeToGroupChat, subscribeToRemovedFromGroupChat, subscribeToGroupChatMessages, unsubscribeToGroupChatMessages, subscribeToGroupChatMessageEdit, 
-        subscribeToGroupMessageDelivered, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupMessageHasBeenRead,
-        disconnectFromGroupChatHubAsync, disconnectFromGroupChatMessageHubAsync, disconnectFromGroupChatUnreadMessagesHubAsync,
-        subscribeToGroupChatMembers,
+    const getEvents = () => {
+        const events: IGroupChatHubEvents = {
+            connectToGroupChatAsync, connectToGroupChatMessagesAsync, connectToGroupChatUnreadMessagesAsync,
+            subscribeToGroupChat, subscribeToRemovedFromGroupChat, subscribeToGroupChatMessages, unsubscribeToGroupChatMessages, subscribeToGroupChatMessageEdit, 
+            subscribeToGroupMessageDelivered, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupMessageRead,
+            disconnectFromGroupChatHubAsync, disconnectFromGroupChatMessageHubAsync, disconnectFromGroupChatUnreadMessagesHubAsync,
+            subscribeToGroupChatMembers,
+        }
+
+        return events;
     }
+
+    return getEvents();
 }
 
 export default useGroupChatHub;

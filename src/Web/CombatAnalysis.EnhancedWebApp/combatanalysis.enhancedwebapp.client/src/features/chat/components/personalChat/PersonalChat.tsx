@@ -1,11 +1,10 @@
 ﻿import Store, { type RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
+import ChatHubContext from '@/context/ChatHubContext';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import Loading from '@/shared/components/Loading';
-import { ChatMessageType, MessageStatus } from '@/shared/helpers/EnumHelper';
-import { useChatHub } from '@/shared/hooks/useChatHub';
+import { ChatType, MessageStatus } from '@/shared/helpers/EnumHelper';
 import logger from '@/utils/Logger';
-import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
+import { memo, useContext, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetUserByIdQuery } from '../../../user/api/Account.api';
@@ -35,7 +34,10 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
 
     const myself = useSelector((state: RootState) => state.user.value);
 
-    const chatHub = useChatHub();
+    const context = useContext(ChatHubContext);
+    if (!context) {
+        throw new Error("Child must be inside ChatHubContext.Provider");
+    }
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
@@ -43,10 +45,10 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
-    const { data: messages, isLoading } = useGetMessagesByPersonalChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
+    const { data: messages, refetch, isLoading } = useGetMessagesByPersonalChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountPersonalChatMessagesQuery(chat.id);
 
-    const { data: companion, isLoading: companionIsLoading } = useGetUserByIdQuery(companionId);
+    const { data: companion } = useGetUserByIdQuery(companionId);
 
     const [paerialUpdatePersonalChatMessage] = usePartialUpdatePersonalChatMessageMutation();
 
@@ -55,18 +57,16 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
             return;
         }
 
-        setHasMore(page * pageSizeRef.current  < count);
+        setHasMore(page * pageSizeRef.current < count);
     }, [messages, count]);
 
     useEffect(() => {
-        if (!chatHub) {
-            return;
-        }
-
         (async () => {
-            await chatHub.connectToPersonalChatMessagesAsync(chat.id);
+            context.personalChatEvents.subscribeToPersonalMessageRead(async () => {
+                await refetch();
+            });
 
-            chatHub.subscribeToPersonalChatMessages((message: PersonalChatMessageModel) => {
+            context.personalChatEvents?.subscribeToPersonalChatMessages((message: PersonalChatMessageModel) => {
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByPersonalChatId',
@@ -78,7 +78,7 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                 );
             });
 
-            chatHub.subscribeToPersonalChatMessageEdit((messagePatch: ChatMessagePatch) => {
+            context.personalChatEvents?.subscribeToPersonalChatMessageEdit((messagePatch: ChatMessagePatch) => {
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByPersonalChatId',
@@ -101,7 +101,7 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
 
         return () => {
             (async () => {
-                await chatHub.disconnectFromGroupChatMessageHubAsync();
+                await context.personalChatEvents?.disconnectFromPersonalChatMessageHubAsync();
             })();
         }
     }, [chat]);
@@ -110,18 +110,31 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
         try {
             await paerialUpdatePersonalChatMessage({ id: message.id, message }).unwrap();
 
-            if (chatHub && chatHub.personalChatMessagesHubConnectionRef.current) {
-                await chatHub.personalChatMessagesHubConnectionRef.current.invoke("RequestEditedMessage", message);
+            if (context.personalChatMessagesHubConnectionRef.current) {
+                await context.personalChatMessagesHubConnectionRef.current.invoke("RequestEditedMessage", message);
             }
         } catch (e) {
             logger.error("Failed to update personal chat message", e);
         }
     }
 
-    if (!chatHub || isLoading || companionIsLoading) {
+    if (isLoading) {
         return (
-            <div className="chats__selected-chat_loading">
-                <Loading />
+            <div className="chats__selected-chat personal-chat">
+                <div className="messages-container">
+                    <PersonalChatTitle
+                        chat={chat}
+                        companionUsername={companion?.username ?? ""}
+                        setSelectedChat={setSelectedChat}
+                        t={t}
+                    />
+                    <MessageInput
+                        chatId={chat.id}
+                        initiator={myself}
+                        targetChatType={ChatType["PERSONAL"]}
+                        t={t}
+                    />
+                </div>
             </div>
         );
     }
@@ -141,8 +154,6 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                             <ChatMessage
                                 message={message}
                                 updateMessageAsync={updateMessageAsync}
-                                hubConnection={chatHub.personalChatMessagesHubConnectionRef.current}
-                                subscribeToChatMessageHasBeenRead={chatHub.subscribeToPersonalMessageHasBeenRead}
                             />
                         </li>
                     ))}
@@ -157,7 +168,7 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                 <MessageInput
                     chatId={chat.id}
                     initiator={myself}
-                    targetChatType={ChatMessageType["PERSONAL"]}
+                    targetChatType={ChatType["PERSONAL"]}
                     t={t}
                 />
             </div>

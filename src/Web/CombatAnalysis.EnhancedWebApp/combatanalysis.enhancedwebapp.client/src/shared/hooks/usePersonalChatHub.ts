@@ -5,12 +5,13 @@ import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
 import type { PersonalChatMessageModel } from '../../features/chat/types/PersonalChatMessageModel';
 import type { PersonalChatModel } from '../../features/chat/types/PersonalChatModel';
+import type { IPersonalChatHubEvents } from '../interfaces/IPersonalChatHubEvents';
 
 const usePersonalChatHub = (
     personalChatHubConnectionRef: RefObject<signalR.HubConnection | null>,
     personalChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
     personalChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
-) => {
+): IPersonalChatHubEvents => {
     const personalChatHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChat}`;
     const personalChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChatMessages}`;
     const personalChatUnreadMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChatUnreadMessage}`;
@@ -93,16 +94,14 @@ const usePersonalChatHub = (
         });
     }
 
-    const subscribeToPersonalMessageHasBeenRead = (callback: (messageId: string) => void) => {
-        personalChatMessagesHubConnectionRef.current?.on("ReceiveMessageHasBeenRead", (messageId: string) => {
-            callback(messageId);
-        });
-    }
-
     const subscribeToUnreadPersonalMessagesUpdated = (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => {
         personalChatUnreadMessagesHubConnectionRef.current?.on("ReceiveUnreadMessage", (targetChatId: number, targetMeInChatId: string, count: number) => {
             callback(targetChatId, targetMeInChatId, count);
         });
+    }
+
+    const subscribeToPersonalMessageRead = (callback: (messageId: string) => void) => {
+        personalChatMessagesHubConnectionRef.current?.on("ReceiveReadMessage", callback);
     }
 
     const disconnectFromPersonalChatHubAsync = async () => {
@@ -120,11 +119,17 @@ const usePersonalChatHub = (
         personalChatUnreadMessagesHubConnectionRef.current = null;
     }
 
-    return {
-        connectToPersonalChatAsync, connectToPersonalChatMessagesAsync, connectToPersonalChatUnreadMessagesAsync,
-        subscribeToPersonalChat, subscribeToRemovedFromPersonalChat, subscribeToPersonalChatMessages, unsubscribeToPersonalChatMessages, subscribeToPersonalChatMessageEdit, subscribeToPersonalMessageHasBeenRead, 
-        subscribeToUnreadPersonalMessagesUpdated, disconnectFromPersonalChatHubAsync, disconnectFromPersonalChatMessageHubAsync, disconnectFromPersonalChatUnreadMessagesHubAsync
+    const getEvents = () => {
+        const events: IPersonalChatHubEvents = {
+            connectToPersonalChatAsync, connectToPersonalChatMessagesAsync, connectToPersonalChatUnreadMessagesAsync,
+            subscribeToPersonalChat, subscribeToRemovedFromPersonalChat, subscribeToPersonalChatMessages, unsubscribeToPersonalChatMessages, subscribeToPersonalChatMessageEdit, subscribeToPersonalMessageRead, 
+            subscribeToUnreadPersonalMessagesUpdated, disconnectFromPersonalChatHubAsync, disconnectFromPersonalChatMessageHubAsync, disconnectFromPersonalChatUnreadMessagesHubAsync
+        }
+
+        return events;
     }
+
+    return getEvents();
 }
 
 export default usePersonalChatHub;

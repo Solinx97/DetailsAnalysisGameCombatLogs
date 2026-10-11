@@ -33,7 +33,7 @@ internal class LeaveFromChatHandler(IGenericRepository<Domain.Aggregates.GroupCh
             var ownerChatId = await _userRepository.FindChatUserAsync(chat.OwnerId, request.GroupChatId, cancellationToken);
 
             var systemMessage = $"'{removedUser.Username}' leave from chat";
-            var message = GroupChatMessage.Create(removedUser.Username, systemMessage, request.GroupChatId, ownerChatId.Id, messageType: MessageType.System);
+            var message = GroupChatMessage.Create(removedUser.Username, systemMessage, request.GroupChatId, ownerChatId.Id, chat.LastMessageSequence, messageType: (int)MessageType.System);
             await _messageRepository.AddAsync(message, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

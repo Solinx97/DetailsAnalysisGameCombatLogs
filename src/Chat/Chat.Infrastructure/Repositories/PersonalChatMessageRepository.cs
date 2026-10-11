@@ -22,7 +22,7 @@ internal class PersonalChatMessageRepository(ChatContext context) : IPersonalCha
         var messages = await _context.PersonalChatMessage
                     .AsNoTracking()
                     .Where(m => m.PersonalChatId == chatId)
-                    .OrderBy(m => m.Time)
+                    .OrderByDescending(m => m.CreatedAt)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync(cancelationToken);

@@ -1,9 +1,9 @@
 ﻿import Store from '@/app/Store';
+import ChatHubContext from '@/context/ChatHubContext';
 import { GroupChatUserApi } from '@/features/chat/api/GroupChatUser.api';
-import { useChatHub } from '@/shared/hooks/useChatHub';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, type SetStateAction } from 'react';
+import React, { useContext, useEffect, type SetStateAction } from 'react';
 import { useFindChatUsersQuery } from '../../api/GroupChatUser.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
@@ -22,29 +22,22 @@ interface GroupChatListProps {
 const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat, t }) => {
     const { data: groupChats, refetch, isLoading } = useFindChatUsersQuery(myselfId);
 
-    const chatHub = useChatHub();
+    const context = useContext(ChatHubContext);
+    if (!context) {
+        throw new Error("Child must be inside ChatHubContext.Provider");
+    }
 
     useEffect(() => {
-        console.log("groupChats updated:", groupChats);
-    }, [groupChats]);
+        let isCancelled = false;
 
-    useEffect(() => {
-        return () => {
-            (async () => {
-                await chatHub?.disconnectFromGroupChatHubAsync();
-            })();
-        }
-    }, [chatHub]);
+        const connect = async () => {
+            if (isCancelled) {
+                return;
+            }
 
-    useEffect(() => {
-        if (!chatHub || !groupChats) {
-            return;
-        }
+            await context.groupChatEvents.connectToGroupChatAsync();
 
-        (async () => {
-            await chatHub.connectToGroupChatAsync();
-
-            chatHub?.subscribeToGroupChat((groupChatUser) => {
+            context.groupChatEvents.subscribeToGroupChat((groupChatUser) => {
                 Store.dispatch(
                     GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
                         draft.push(groupChatUser);
@@ -52,7 +45,7 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
                 );
             });
 
-            chatHub?.subscribeToRemovedFromGroupChat((appUserId, chatId) => {
+            context.groupChatEvents.subscribeToRemovedFromGroupChat((appUserId, chatId) => {
                 Store.dispatch(
                     GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
                         const index = draft.findIndex(
@@ -65,16 +58,24 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
                     })
                 );
             });
-        })();
-    }, [groupChats]);
+        }
+
+        connect();
+
+        return () => {
+            isCancelled = true;
+
+            context.personalChatEvents.disconnectFromPersonalChatHubAsync();
+        };
+    }, []);
 
     useEffect(() => {
-        if (!chatHub || !selectedChat) {
+        if (!selectedChat) {
             return;
         }
 
         (async () => {
-            chatHub?.subscribeToRemovedFromGroupChat((_, chatId) => {
+            context.groupChatEvents.subscribeToRemovedFromGroupChat((_, chatId) => {
                 if (chatId === selectedChat.id) {
                     setSelectedChat(null);
                 }
@@ -82,7 +83,7 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
         })();
     }, [selectedChat]);
 
-    if (!groupChats || isLoading || !chatHub) {
+    if (!groupChats || isLoading) {
         return (<div>Loading...</div>);
     }
 

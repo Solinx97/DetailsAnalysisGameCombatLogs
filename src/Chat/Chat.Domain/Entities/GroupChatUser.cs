@@ -40,24 +40,19 @@ public class GroupChatUser : IRepositoryEntity<GroupChatUserId>
         return new GroupChatUser(username, appUserId, unreadMessages);
     }
 
-    public void MarkAsRead(GroupChatMessageId? messageId)
+    public void ReadUnreadMessages(GroupChatMessageId messageId, int countUnreadMessagesRead)
     {
-        ArgumentNullException.ThrowIfNull(messageId, nameof(messageId));
+        ArgumentOutOfRangeException.ThrowIfNegative(countUnreadMessagesRead, nameof(countUnreadMessagesRead));
 
-        if (LastReadMessageId == null
-            || (LastReadMessageId != null && (LastReadMessageId.Value == messageId.Value || messageId.Value > LastReadMessageId.Value)))
-        {
-            LastReadMessageId = messageId;
-        }
+        LastReadMessageId = messageId;
+
+        UnreadMessages = countUnreadMessagesRead > UnreadMessages
+            ? 0
+            : UnreadMessages - countUnreadMessagesRead;
     }
 
     public void IncrementUnreadMessages()
     {
         UnreadMessages++;
-    }
-
-    public void DecrementUnreadMessages()
-    {
-        UnreadMessages--;
     }
 }

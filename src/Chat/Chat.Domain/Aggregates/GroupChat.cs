@@ -15,10 +15,11 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
 
     private GroupChat() { }
 
-    private GroupChat(string name, UserId ownerId)
+    private GroupChat(string name, UserId ownerId, long lastMessageSequence)
     {
         Name = name;
         OwnerId = ownerId;
+        LastMessageSequence = lastMessageSequence;
     }
 
     public GroupChatId Id { get; private set; }
@@ -28,6 +29,8 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
     public UserId OwnerId { get; private set; }
 
     public GroupChatRules? Rules { get; private set; }
+
+    public long LastMessageSequence { get; private set; }
 
     public IReadOnlyCollection<GroupChatMessage> Messages => _messages.AsReadOnly();
 
@@ -39,11 +42,16 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(name.Length, NAME_MAX_LENGTH, nameof(name));
 
-        var chat = new GroupChat(name, ownerId);
+        var chat = new GroupChat(name, ownerId, 0);
         chat.AddUser(ownerUsername, ownerId);
         chat.AddRules((InvitePeopleRestrictions)invitePeople, (RemovePeopleRestrictions)removePeople, (PinMessageRestrictions)pinMessage, (AnnouncementsRestrictions)announcements);
 
         return chat;
+    }
+
+    public void IncrementSequence()
+    {
+        LastMessageSequence++;
     }
 
     public GroupChatUser AddUser(string username, UserId appUserId)
@@ -73,11 +81,6 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         Rules = GroupChatRules.Create(invitePeople, removePeople, pinMessage, announcements);
     }
 
-    public void EnsureUserIsMember(GroupChatUser user)
-    {
-        ArgumentOutOfRangeException.ThrowIfNotEqual(user.GroupChatId, Id, nameof(user));
-    }
-
     public void UpdateName(string newName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(newName, nameof(newName));
@@ -89,7 +92,7 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         }
     }
 
-    public void IncreaseUnreadMessagesCount(GroupChatUserId senderId)
+    public void IncreaseUnreadMessages(GroupChatUserId senderId)
     {
         var otherUsers = _users.Where(x => x.Id != senderId).ToList();
         foreach (var user in otherUsers)
@@ -98,48 +101,58 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         }
     }
 
-    public void EditMessage(GroupChatMessageId messageId, string newMessage)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(newMessage, nameof(newMessage));
-
-        var groupChatMessage = Messages.SingleOrDefault(m => m.Id == messageId);
-        if (groupChatMessage != null)
-        {
-            groupChatMessage.EditMessage(newMessage);
-        }
-    }
-
-    public void PassOwner(UserId ownerId)
-    {
-        ArgumentNullException.ThrowIfNull(ownerId, nameof(ownerId));
-
-        if (!OwnerId.Equals(ownerId))
-        {
-            OwnerId = ownerId;
-        }
-    }
-
-    public void RemoveRules()
-    {
-        Rules = null;
-    }
-
-    public void UpdateRules(int invitePeople,
-        int removePeople,
-        int pinMessage,
-        int announcements)
+    public void UpdateRules(int invitePeople, int removePeople, int pinMessage, int announcements)
     {
         ArgumentNullException.ThrowIfNull(Rules, nameof(Rules));
 
         Rules.Update((InvitePeopleRestrictions)invitePeople, (RemovePeopleRestrictions)removePeople, (PinMessageRestrictions)pinMessage, (AnnouncementsRestrictions)announcements);
     }
 
-    public void RemoveMessage(Guid messageId)
+    public void ReadMessage(GroupChatMessageId messageId, GroupChatUserId readerId)
     {
         var message = _messages
-            .FirstOrDefault(x => x.Id.Equals(messageId))
+            .FirstOrDefault(x => x.Id == messageId)
+                ?? throw new GroupChatMessageNotFoundException(messageId);
+
+        ReadUnreadMessages(message, readerId);
+    }
+
+    public void RemoveMessage(GroupChatMessageId messageId)
+    {
+        var message = _messages
+            .FirstOrDefault(x => x.Id ==  messageId)
                 ?? throw new GroupChatMessageNotFoundException(messageId);
 
         _messages.Remove(message);
+    }
+
+    private void ReadUnreadMessages(GroupChatMessage message, GroupChatUserId readerId)
+    {
+        var user = _users
+            .FirstOrDefault(x => x.Id == readerId)
+                ?? throw new GroupChatUserNotFoundException(readerId);
+
+        long lastReadMessageSequence = 0;
+        if (user.LastReadMessageId != null)
+        {
+            var lastReadMessage = _messages
+                .FirstOrDefault(x => x.Id == user.LastReadMessageId)
+                    ?? throw new GroupChatMessageNotFoundException(user.LastReadMessageId);
+            lastReadMessageSequence = lastReadMessage.Sequence;
+        }
+
+        var messages = _messages
+            .Where(x => x.Sequence > lastReadMessageSequence
+                        && x.Sequence <= message.Sequence
+                        && x.GroupChatUserId != readerId
+                        && x.Type != Enums.MessageType.System)
+            .ToList();
+
+        foreach (var item in messages)
+        {
+            item.ReadMessage();
+        }
+
+        user.ReadUnreadMessages(message.Id, messages.Count);
     }
 }

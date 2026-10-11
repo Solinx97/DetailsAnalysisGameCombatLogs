@@ -25,6 +25,8 @@ public interface IGroupChatApiClient
 
     Task UpdateMessageAsync(Guid id, GroupChatMessagePatch message, CancellationToken cancellationToken);
 
+    Task ReadMessageIdAsync(Guid id, GroupChatMessageReadPatch message, CancellationToken cancellationToken);
+
     Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken);
 
     Task AddUserAsync(CreateGroupChatUserModel user, CancellationToken cancellationToken);

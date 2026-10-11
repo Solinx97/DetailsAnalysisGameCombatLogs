@@ -23,11 +23,16 @@ export const ChatApi = createApi({
             query: ({ chatId, page, pageSize }) => ({
                 url: `/GroupChatMessage/getByChatId/${chatId}?page=${page}&pageSize=${pageSize}`,
             }),
-            transformResponse: (response: GroupChatMessageModel[]) => response.reverse(),
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.chatId}`,
-            merge: (currentCache, newItems) => {
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.length = 0;
+                    currentCache.push(...newItems);
+                    return;
+                }
+
                 newItems.forEach(item => {
-                    const index = currentCache.findIndex(d => d.id === item.id);
+                    const index = currentCache.findIndex(x => x.id === item.id);
                     if (index === -1) {
                         currentCache.push(item);
                     } else {
@@ -42,23 +47,28 @@ export const ChatApi = createApi({
                     currentArg?.pageSize !== previousArg?.pageSize
                 );
             },
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(chatMessage => ({ type: 'GroupChatMessage' as const, id: chatMessage.id })),
-                        { type: 'GroupChatMessage', id: 'LIST' },
-                    ]
-                    : [{ type: 'GroupChatMessage', id: 'LIST' }],
+            providesTags: result => [
+                { type: 'GroupChatMessage', id: 'LIST' },
+                ...(result?.map(message => ({
+                    type: 'GroupChatMessage' as const,
+                    id: message.id
+                })) ?? [])
+            ]
         }),
         getMessagesByPersonalChatId: builder.query<PersonalChatMessageModel[], { chatId: number, page: number, pageSize: number }>({
             query: ({ chatId, page, pageSize }) => ({
                 url: `/PersonalChatMessage/getByChatId/${chatId}?page=${page}&pageSize=${pageSize}`,
             }),
-            transformResponse: (response: PersonalChatMessageModel[]) => response.reverse(),
             serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.chatId}`,
-            merge: (currentCache, newItems) => {
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.page === 1) {
+                    currentCache.length = 0;
+                    currentCache.push(...newItems);
+                    return;
+                }
+
                 newItems.forEach(item => {
-                    const index = currentCache.findIndex(d => d.id === item.id);
+                    const index = currentCache.findIndex(x => x.id === item.id);
                     if (index === -1) {
                         currentCache.push(item);
                     } else {
@@ -73,13 +83,13 @@ export const ChatApi = createApi({
                     currentArg?.pageSize !== previousArg?.pageSize
                 );
             },
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(chatMessage => ({ type: 'PersonalChatMessage' as const, id: chatMessage.id })),
-                        { type: 'PersonalChatMessage', id: 'LIST' },
-                    ]
-                    : [{ type: 'PersonalChatMessage', id: 'LIST' }],
+            providesTags: result => [
+                { type: 'PersonalChatMessage', id: 'LIST' },
+                ...(result?.map(message => ({
+                    type: 'PersonalChatMessage' as const,
+                    id: message.id
+                })) ?? [])
+            ]
         }),
     })
 })

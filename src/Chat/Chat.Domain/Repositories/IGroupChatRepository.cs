@@ -8,4 +8,6 @@ public interface IGroupChatRepository
     Task AddAsync(GroupChat chat, CancellationToken cancelationToken);
 
     Task<GroupChat> GetWithUsersAsync(GroupChatId id, CancellationToken cancelationToken);
+
+    Task<GroupChat> GetWithAllAsync(GroupChatId id, CancellationToken cancelationToken);
 }

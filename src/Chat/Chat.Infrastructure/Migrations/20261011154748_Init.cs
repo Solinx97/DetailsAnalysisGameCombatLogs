@@ -18,7 +18,8 @@ namespace Chat.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastMessageSequence = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,8 +53,11 @@ namespace Chat.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InitiatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     InitiatorUnreadMessages = table.Column<int>(type: "int", nullable: false),
+                    LastInitiatorReadMessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CompanionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanionUnreadMessages = table.Column<int>(type: "int", nullable: false)
+                    CompanionUnreadMessages = table.Column<int>(type: "int", nullable: false),
+                    LastCompanionReadMessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastMessageSequence = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,11 +85,12 @@ namespace Chat.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     MarkedType = table.Column<int>(type: "int", nullable: false),
                     IsEdited = table.Column<bool>(type: "bit", nullable: false),
+                    Sequence = table.Column<long>(type: "bigint", nullable: false),
                     GroupChatId = table.Column<int>(type: "int", nullable: false),
                     GroupChatUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -152,11 +157,12 @@ namespace Chat.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     MarkedType = table.Column<int>(type: "int", nullable: false),
                     IsEdited = table.Column<bool>(type: "bit", nullable: false),
+                    Sequence = table.Column<long>(type: "bigint", nullable: false),
                     PersonalChatId = table.Column<int>(type: "int", nullable: false),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },

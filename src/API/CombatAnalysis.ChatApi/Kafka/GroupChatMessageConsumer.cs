@@ -7,6 +7,7 @@ using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
+using System.Text;
 using System.Text.Json;
 
 namespace CombatAnalysis.ChatAPI.Kafka;
@@ -35,11 +36,26 @@ public class GroupChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, ILo
     {
         try
         {
-            var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatMessageCreatedEvent>();
-            ArgumentNullException.ThrowIfNull(@event, nameof(@event));
+            var eventTypeHeader = kafkaData.Message.Headers?.LastOrDefault(x => x.Key == "event-type")
+                ?? throw new InvalidOperationException("Missing event-type header.");
 
-            var message = new GroupChatMessageDto { Id = @event.MessageId, Type = (MessageType)@event.MessageType, Username = @event.Username, Message = @event.Message, GroupChatId = @event.ChatId, GroupChatUserId = @event.SenderId };
-            await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
+            var eventType = Encoding.UTF8.GetString(eventTypeHeader.GetValueBytes());
+            switch (eventType)
+            {
+                case nameof(GroupChatMessageCreatedEvent):
+                    var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatMessageCreatedEvent>();
+                    ArgumentNullException.ThrowIfNull(@event, nameof(@event));
+
+                    var message = new GroupChatMessageDto { Id = @event.MessageId, Type = (MessageType)@event.MessageType, Username = @event.Username, Message = @event.Message, GroupChatId = @event.ChatId, GroupChatUserId = @event.SenderId };
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
+                    break;
+                case nameof(GroupChatMessageReadEvent):
+                    var eventRead = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatMessageReadEvent>();
+                    ArgumentNullException.ThrowIfNull(eventRead, nameof(eventRead));
+
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveReadMessage", eventRead.MessageId, cancellationToken);
+                    break;
+            }
         }
         catch (ArgumentNullException ex)
         {

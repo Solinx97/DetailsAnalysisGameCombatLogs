@@ -85,6 +85,16 @@ internal class GroupChatApiClient(HttpClient httpClient) : IGroupChatApiClient
         await _httpClient.PatchAsync($"GroupChatMessage/{id}", JsonContent.Create(message), cancellationToken);
     }
 
+    public async Task ReadMessageIdAsync(Guid id, GroupChatMessageReadPatch message, CancellationToken cancellationToken)
+    {
+        if (id != message.Id)
+        {
+            throw new InvalidOperationException("Id is not equal message id.");
+        }
+
+        await _httpClient.PatchAsync($"GroupChatMessage/read/{id}", JsonContent.Create(message), cancellationToken);
+    }
+
     public async Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken)
     {
         await _httpClient.DeleteAsync($"GroupChatMessage/{id}", cancellationToken);

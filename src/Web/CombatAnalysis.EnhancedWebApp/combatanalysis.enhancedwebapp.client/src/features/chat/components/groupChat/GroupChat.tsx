@@ -1,10 +1,10 @@
 ﻿import Store, { type RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
+import ChatHubContext from '@/context/ChatHubContext';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import { ChatMessageType, MessageStatus } from '@/shared/helpers/EnumHelper';
-import { useChatHub } from '@/shared/hooks/useChatHub';
+import { ChatType, MessageStatus } from '@/shared/helpers/EnumHelper';
 import logger from '@/utils/Logger';
-import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
+import { memo, useContext, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { ChatApi, useGetMessagesByGroupChatIdQuery } from '../../api/Chat.api';
@@ -31,7 +31,10 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
     const groupChatUser = useSelector((state: RootState) => state.groupChatUser.value);
 
-    const chatHub = useChatHub();
+    const context = useContext(ChatHubContext);
+    if (!context) {
+        throw new Error("Child must be inside ChatHubContext.Provider");
+    }
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
@@ -42,7 +45,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
-    const { data: messages, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
+    const { data: messages, refetch, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountGroupChatMessagesQuery(chat.id);
 
     const { data: groupChatUsers, isLoading: usersIsLoading } = useFindAllChatUsersQuery(chat.id);
@@ -58,14 +61,12 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     }, [page, count]);
 
     useEffect(() => {
-        if (!chatHub) {
-            return;
-        }
-
         (async () => {
-            await chatHub.connectToGroupChatMessagesAsync(chat.id);
+            context.groupChatEvents.subscribeToGroupMessageRead(async () => {
+                await refetch();
+            });
 
-            chatHub.subscribeToGroupChatMessages((message: GroupChatMessageModel) => {
+            context.groupChatEvents.subscribeToGroupChatMessages((message: GroupChatMessageModel) => {
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByGroupChatId',
@@ -77,7 +78,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                 );
             });
 
-            chatHub.subscribeToGroupChatMessageEdit((messagePatch: ChatMessagePatch) => {
+            context.groupChatEvents.subscribeToGroupChatMessageEdit((messagePatch: ChatMessagePatch) => {
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByGroupChatId',
@@ -100,7 +101,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
         return () => {
             (async () => {
-                await chatHub.disconnectFromGroupChatMessageHubAsync();
+                await context.groupChatEvents.disconnectFromGroupChatMessageHubAsync();
             })();
         }
     }, [chat]);
@@ -122,15 +123,15 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
         try {
             await partialUpdateGroupChatMessage({ id: message.id, message }).unwrap();
 
-            if (chatHub && chatHub.groupChatMessagesHubConnectionRef.current) {
-                await chatHub.groupChatMessagesHubConnectionRef.current.invoke("RequestEditedMessage", message);
+            if (context.groupChatMessagesHubConnectionRef.current) {
+                await context.groupChatMessagesHubConnectionRef.current.invoke("RequestEditedMessage", message);
             }
         } catch (e) {
             logger.error("Failed to update group chat message", e);
         }
     }
 
-    if (isLoading || !messages || !chatHub
+    if (isLoading || !messages
         || usersIsLoading || !groupChatUsers) {
         return (<></>);
     }
@@ -150,8 +151,6 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                             <ChatMessage
                                 message={message}
                                 updateMessageAsync={updateMessageAsync}
-                                hubConnection={chatHub.groupChatMessagesHubConnectionRef.current}
-                                subscribeToChatMessageHasBeenRead={chatHub.subscribeToGroupMessageHasBeenRead}
                                 lastReadMessageId={groupChatUser?.lastReadMessageId}
                             />
                         </li>
@@ -168,7 +167,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                     <MessageInput
                         chatId={chat.id}
                         initiator={groupChatUser}
-                        targetChatType={ChatMessageType["GROUP"]}
+                        targetChatType={ChatType["GROUP"]}
                         t={t}
                     />
                 }

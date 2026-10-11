@@ -1,5 +1,6 @@
 ﻿using Chat.Application.Commands.GroupChat.CreateMessage;
 using Chat.Application.Commands.GroupChat.DeleteMessage;
+using Chat.Application.Commands.GroupChat.ReadMessage;
 using Chat.Application.Commands.GroupChat.UpdateMessageText;
 using Chat.Application.Queries.GroupChat.CountMessages;
 using Chat.Application.Queries.GroupChat.GetMessagesByChatId;
@@ -52,6 +53,20 @@ public class GroupChatMessageController(IMediator mediator) : ControllerBase
         }
 
         var command = new UpdateMessageTextCommand(chatMessage.Id, chatMessage.Message);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPatch("read/{id}")]
+    public async Task<IActionResult> ReadMessage(Guid id, [FromBody] GroupChatMessageReadPatch chatMessage, CancellationToken cancellationToken)
+    {
+        if (id != chatMessage.Id)
+        {
+            return BadRequest("Route ID and body ID do not match.");
+        }
+
+        var command = new ReadMessageCommand(chatMessage.Id, chatMessage.ChatId, chatMessage.ReaderId);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

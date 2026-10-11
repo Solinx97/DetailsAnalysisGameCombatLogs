@@ -23,10 +23,12 @@ internal class CreateMessageHandler(IGroupChatRepository chatRepository, IGroupC
         try
         {
             var chat = await _chatRepository.GetWithUsersAsync(request.ChatId, cancellationToken);
-            chat.IncreaseUnreadMessagesCount(request.GroupChatUserId);
 
-            var message = GroupChatMessage.Create(request.Username, request.Message, request.ChatId, request.GroupChatUserId);
+            var message = GroupChatMessage.Create(request.Username, request.Message, request.ChatId, request.GroupChatUserId, chat.LastMessageSequence);
             await _repository.AddAsync(message, cancellationToken);
+
+            chat.IncrementSequence();
+            chat.IncreaseUnreadMessages(request.GroupChatUserId);
 
             var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, (int)message.Type, message.GroupChatUserId, message.Username, message.Message);
             await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatMessageCreatedEvent), KafkaTopics.GROUP_CHAT_MESSAGE, message.GroupChatId.Value.ToString(), JsonSerializer.Serialize(@event), cancellationToken);

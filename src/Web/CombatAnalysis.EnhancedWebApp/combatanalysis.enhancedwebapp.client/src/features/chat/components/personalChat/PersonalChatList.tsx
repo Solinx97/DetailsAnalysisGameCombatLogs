@@ -1,8 +1,8 @@
 ﻿import Store from '@/app/Store';
-import { useChatHub } from '@/shared/hooks/useChatHub';
+import ChatHubContext from '@/context/ChatHubContext';
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, type SetStateAction } from 'react';
+import { useContext, useEffect, type SetStateAction } from 'react';
 import { PersonalChatApi, useGetPersonalChatsByUserIdQuery } from '../../api/PersonalChat.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
@@ -20,25 +20,22 @@ interface PersonalChatListProps {
 const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
     const { data: personalChats, refetch, isLoading } = useGetPersonalChatsByUserIdQuery(myselfId);
 
-    const chatHub = useChatHub();
+    const context = useContext(ChatHubContext);
+    if (!context) {
+        throw new Error("Child must be inside ChatHubContext.Provider");
+    }
 
     useEffect(() => {
-        return () => {
-            (async () => {
-                await chatHub?.disconnectFromPersonalChatHubAsync();
-            })();
-        }
-    }, [chatHub]);
+        let isCancelled = false;
 
-    useEffect(() => {
-        if (!chatHub || !personalChats) {
-            return;
-        }
+        const connect = async () => {
+            if (isCancelled) {
+                return;
+            }
+            
+            await context.personalChatEvents.connectToPersonalChatAsync();
 
-        (async () => {
-            await chatHub.connectToPersonalChatAsync();
-
-            chatHub?.subscribeToPersonalChat((chat) => {
+            context.personalChatEvents.subscribeToPersonalChat((chat) => {
                 Store.dispatch(
                     PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
                         draft.push(chat);
@@ -46,7 +43,7 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
                 );
             });
 
-            chatHub?.subscribeToRemovedFromPersonalChat((appUserId, chatId) => {
+            context.personalChatEvents.subscribeToRemovedFromPersonalChat((appUserId, chatId) => {
                 Store.dispatch(
                     PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
                         const index = draft.findIndex(
@@ -59,16 +56,24 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
                     })
                 );
             });
-        })();
-    }, [personalChats]);
+        }
+
+        connect();
+
+        return () => {
+            isCancelled = true;
+
+            context.personalChatEvents.disconnectFromPersonalChatHubAsync();
+        };
+    }, []);
 
     useEffect(() => {
-        if (!chatHub || !selectedChat) {
+        if (!selectedChat) {
             return;
         }
 
         (async () => {
-            chatHub?.subscribeToRemovedFromPersonalChat((_, chatId) => {
+            context.personalChatEvents.subscribeToRemovedFromPersonalChat((_, chatId) => {
                 if (chatId === selectedChat.id) {
                     setSelectedChat(null);
                 }
@@ -76,7 +81,7 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
         })();
     }, [selectedChat]);
 
-    if (!personalChats || !chatHub || isLoading) {
+    if (!personalChats || isLoading) {
         return (<div>Loading...</div>);
     }
 

@@ -3,11 +3,10 @@ import type { PersonalChatModel } from '@/features/chat/types/PersonalChatModel'
 import logger from '@/utils/Logger';
 import { faCircleXmark, faCommentDots, faPersonCircleQuestion, faSquarePlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useChatHub } from '../../../shared/hooks/useChatHub';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistQuery } from '../../chat/api/PersonalChat.api';
 import { useGetUserByIdQuery } from '../api/Account.api';
 import { useFindFriendByUserIdQuery } from '../api/Friend.api';
@@ -31,8 +30,6 @@ interface UserInformationProps {
 const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserInformation }) => {
     const { t } = useTranslation("communication/userInformation");
 
-    const chatHub = useChatHub();
-
     const navigate = useNavigate();
 
     const myself = useSelector((state: RootState) => state.user.value);
@@ -51,14 +48,6 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
 
     const [createPersonalChat] = useCreatePersonalChatAsyncMutation();
 
-    useEffect(() => {
-        return () => {
-            (async () => {
-                await chatHub?.disconnectFromPersonalChatHubAsync();
-            })();
-        }
-    }, [chatHub]);
-
     const checkExistOfChatsAsync = async (targetUser: AppUserModel) => {
         if (!myself) {
             return;
@@ -69,7 +58,7 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
     }
 
     const createChatAsync = async (targetUser: AppUserModel) => {
-        if (!chatHub || !myself) {
+        if (!myself) {
             return;
         }
 
@@ -78,14 +67,6 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
             navigate("/chats");
             return;
         }
-
-        if (!chatHub.personalChatHubConnectionRef.current) {
-            await chatHub.connectToPersonalChatAsync();
-        }
-
-        chatHub.subscribeToPersonalChat((_) => {
-            navigate("/chats");
-        });
 
         try {
             const chat: PersonalChatModel = {
@@ -97,6 +78,8 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
             };
 
             await createPersonalChat(chat).unwrap();
+
+            navigate("/chats");
         } catch (error) {
             logger.error("Failed to create personal chat:", error);
         }

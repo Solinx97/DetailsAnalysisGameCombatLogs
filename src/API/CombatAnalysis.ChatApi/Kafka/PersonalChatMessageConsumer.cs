@@ -6,6 +6,7 @@ using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
+using System.Text;
 using System.Text.Json;
 
 namespace CombatAnalysis.ChatAPI.Kafka;
@@ -34,11 +35,26 @@ public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, 
     {
         try
         {
-            var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageCreatedEvent>();
-            ArgumentNullException.ThrowIfNull(@event, nameof(@event));
+            var eventTypeHeader = kafkaData.Message.Headers?.LastOrDefault(x => x.Key == "event-type")
+                ?? throw new InvalidOperationException("Missing event-type header.");
 
-            var message = new PersonalChatMessageDto { Id = @event.MessageId, Message = @event.Message, PersonalChatId = @event.ChatId, AppUserId = @event.SenderId };
-            await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
+            var eventType = Encoding.UTF8.GetString(eventTypeHeader.GetValueBytes());
+            switch (eventType)
+            {
+                case nameof(PersonalChatMessageCreatedEvent):
+                    var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageCreatedEvent>();
+                    ArgumentNullException.ThrowIfNull(@event, nameof(@event));
+
+                    var message = new PersonalChatMessageDto { Id = @event.MessageId, Message = @event.Message, PersonalChatId = @event.ChatId, AppUserId = @event.SenderId };
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
+                    break;
+                case nameof(PersonalChatMessageReadEvent):
+                    var eventRead = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageReadEvent>();
+                    ArgumentNullException.ThrowIfNull(eventRead, nameof(eventRead));
+
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveReadMessage", eventRead.MessageId, cancellationToken);
+                    break;
+            }
         }
         catch (ArgumentNullException ex)
         {

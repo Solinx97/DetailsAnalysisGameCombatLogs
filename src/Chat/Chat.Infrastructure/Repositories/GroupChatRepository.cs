@@ -26,4 +26,16 @@ internal class GroupChatRepository(ChatContext context) : IGroupChatRepository
 
         return entity;
     }
+
+    public async Task<GroupChat> GetWithAllAsync(GroupChatId id, CancellationToken cancelationToken)
+    {
+        var entity = await _context.GroupChat
+            .Include(x => x.Messages)
+            .Include(x => x.Users)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(g => g.Id == id, cancelationToken)
+                        ?? throw new EntityNotFoundException(typeof(GroupChat), id);
+
+        return entity;
+    }
 }

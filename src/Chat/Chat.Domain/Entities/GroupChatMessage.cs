@@ -12,18 +12,19 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     private GroupChatMessage() { }
 
-    private GroupChatMessage(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId,
-                    MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset time)
+    private GroupChatMessage(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId, long sequence,
+                    MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset createdAt)
     {
         Id = Guid.NewGuid();
         Username = username;
         Message = message;
         GroupChatId = chatId;
-        GroupChatUserId = groupChatUserId;
         Status = status;
         Type = type;
         MarkedType = markedType;
-        Time = time;
+        GroupChatUserId = groupChatUserId;
+        CreatedAt = createdAt;
+        Sequence = sequence;
     }
 
     public GroupChatMessageId Id { get; private set; }
@@ -32,7 +33,7 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     public string Message { get; private set; }
 
-    public DateTimeOffset Time { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
     public MessageStatus Status { get; private set; }
 
@@ -42,21 +43,23 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     public bool IsEdited { get; private set; }
 
+    public long Sequence { get; private set; }
+
     public GroupChatId GroupChatId { get; private set; }
 
     public GroupChatUserId GroupChatUserId { get; private set; }
 
     public GroupChat GroupChat { get; private set; } = null!;
 
-    public static GroupChatMessage Create(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId,
-            MessageStatus status = MessageStatus.Sending, MessageType messageType = MessageType.Default, MessageMarkedType markedType = MessageMarkedType.None)
+    public static GroupChatMessage Create(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId, long lastMessageSequence,
+            int status = (int)MessageStatus.Sending, int messageType = (int)MessageType.Default, int markedType = (int)MessageMarkedType.None)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
 
-        var time = DateTimeOffset.UtcNow;
-        return new GroupChatMessage(username, message, chatId, groupChatUserId, status, messageType, markedType, time);
+        var createdAt = DateTimeOffset.UtcNow;
+        return new GroupChatMessage(username, message, chatId, groupChatUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
     }
 
     public void EditMessage(string? newMessage)
@@ -71,19 +74,11 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
         }
     }
 
-    public void UpdateStatus(MessageStatus newStatus)
+    public void ReadMessage()
     {
-        if (!Status.Equals(newStatus))
+        if (Status != MessageStatus.Read)
         {
-            Status = newStatus;
-        }
-    }
-
-    public void UpdateMarker(MessageMarkedType newMarkedType)
-    {
-        if (!MarkedType.Equals(newMarkedType))
-        {
-            MarkedType = newMarkedType;
+            Status = MessageStatus.Read;
         }
     }
 }

@@ -21,7 +21,8 @@ internal static class PersonalChatMessageTestData
             username: username ?? "check",
             message: message ?? "test message",
             chatId: chatId ?? 1,
-            appUserId: appUserId ?? Guid.NewGuid()
+            appUserId: appUserId ?? Guid.NewGuid(),
+            lastMessageSequence: 0
         );
 
         return entity;
@@ -65,7 +66,8 @@ internal static class PersonalChatMessageTestData
                 username: $"chat-{i}",
                 message: $"test message {i}",
                 chatId: i + 1,
-                appUserId: Guid.NewGuid()
+                appUserId: Guid.NewGuid(),
+                lastMessageSequence: 0
             );
         }
 

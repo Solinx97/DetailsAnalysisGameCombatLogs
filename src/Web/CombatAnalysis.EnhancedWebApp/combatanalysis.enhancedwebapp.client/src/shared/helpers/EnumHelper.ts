@@ -81,9 +81,15 @@ export const WoWAccountTransmogType = {
     SLOT: 1,
 } as const;
 
-export const ChatMessageType = {
+export const ChatType = {
     PERSONAL: 0,
     GROUP: 1,
+} as const;
+
+export const ChatMessageType = {
+    DEFAULT: 0,
+    SYSTEM: 1,
+    LOG: 2,
 } as const;
 
 export const MessageStatus = {
