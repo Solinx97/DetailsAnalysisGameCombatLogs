@@ -31,13 +31,19 @@ internal class UserAuthorizationService(IMapper mapper, IOptions<Cluster> api, I
 
     async Task<bool> IUserAuthorizationService.AuthorizationAsync(HttpContext context, string email, string password)
     {
-        var user = await _identityUserService.GetByEmailAsync(email);
+        var identityUser = await _identityUserService.GetByEmailAsync(email);
+        if (identityUser == null)
+        {
+            return false;
+        }
+
+        var user = await _appUserService.GetByIdentityUserIdAsync(identityUser.Id);
         if (user == null)
         {
             return false;
         }
 
-        var passwordIsValid = PasswordHashing.VerifyPassword(password, user.PasswordHash, user.Salt);
+        var passwordIsValid = PasswordHashing.VerifyPassword(password, identityUser.PasswordHash, identityUser.Salt);
         if (!passwordIsValid)
         {
             return false;
@@ -45,8 +51,8 @@ internal class UserAuthorizationService(IMapper mapper, IOptions<Cluster> api, I
 
         var claims = new List<Claim>
         {
-            new(JwtClaimTypes.Subject, user.Id),
-            new(JwtClaimTypes.Name, user.Email)
+            new(JwtClaimTypes.Subject, identityUser.Id),
+            new("user_id", user.Id),
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, IdentityServerConstants.DefaultCookieAuthenticationScheme);

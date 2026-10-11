@@ -28,9 +28,7 @@
   },
   "hubs": {
     "url": "https://localhost:7026/",
-    "notification": "notificationHub",
-    "personalChatUnreadMessage": "personalChatUnreadMessageHub",
-    "groupChatUnreadMessage": "groupChatUnreadMessageHub"
+    "notification": "notificationHub"
   },
   "chatApiHubs": {
     "url": "https://localhost:5007/",
@@ -38,6 +36,8 @@
     "personalChatMessages": "personalChatMessagesHub",
     "groupChat": "groupChatHub",
     "groupChatMessages": "groupChatMessagesHub",
-    "voiceChat": "voiceChatHub"
+    "voiceChat": "voiceChatHub",
+    "personalChatUnreadMessage": "personalChatUnreadMessageHub",
+    "groupChatUnreadMessage": "groupChatUnreadMessageHub"
   }
 }

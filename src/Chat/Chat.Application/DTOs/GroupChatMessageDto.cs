@@ -23,6 +23,4 @@ public class GroupChatMessageDto
     public int GroupChatId { get; set; }
 
     public Guid GroupChatUserId { get; set; }
-
-    public Guid AppUserId { get; set; }
 }

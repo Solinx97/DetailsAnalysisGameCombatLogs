@@ -37,7 +37,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     const [hasMore, setHasMore] = useState(false);
 
     const [settingsIsShow, setSettingsIsShow] = useState(false);
-    const [groupChatUsersId, setGroupChatUsersId] = useState<string[]>([]);
+    const [usersId, setUsersId] = useState<string[]>([]);
 
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
@@ -110,12 +110,12 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
             return;
         }
 
-        const customersId: string[] = [];
+        const receivedUsersId: string[] = [];
         for (let i = 0; i < groupChatUsers.length; i++) {
-            customersId.push(groupChatUsers[i].appUserId);
+            receivedUsersId.push(groupChatUsers[i].appUserId);
         }
 
-        setGroupChatUsersId(customersId);
+        setUsersId(receivedUsersId);
     }, [groupChatUsers]);
 
     const updateMessageAsync = async (message: ChatMessagePatch) => {
@@ -176,7 +176,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
             {(settingsIsShow && groupChatUser) &&
                 <GroupChatMenu
                     setSelectedChat={setSelectedChat}
-                    groupChatUsersId={groupChatUsersId}
+                    usersId={usersId}
                     chat={chat}
                     t={t}
                 />

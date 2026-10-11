@@ -188,11 +188,13 @@ public class IdentityController : ControllerBase
                 ArgumentNullException.ThrowIfNullOrEmpty(refreshToken, nameof(refreshToken));
             }
 
-            var body = new StringContent(
-                $"token={refreshToken}&token_type_hint=refresh_token&client_id={_authenticationClient.ClientId}",
-                Encoding.UTF8,
-                "application/x-www-form-urlencoded"
-            );
+            using var body = new FormUrlEncodedContent(
+                new Dictionary<string, string>
+                {
+                    ["token"] = refreshToken,
+                    ["token_type_hint"] = "refresh_token",
+                    ["client_id"] = _authenticationClient.ClientId
+                });
 
             if (!string.IsNullOrEmpty(refreshToken))
             {

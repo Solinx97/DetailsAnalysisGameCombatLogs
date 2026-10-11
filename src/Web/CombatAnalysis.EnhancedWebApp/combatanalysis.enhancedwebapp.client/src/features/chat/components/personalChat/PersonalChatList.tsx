@@ -18,7 +18,7 @@ interface PersonalChatListProps {
 }
 
 const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
-    const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(myselfId);
+    const { data: personalChats, refetch, isLoading } = useGetPersonalChatsByUserIdQuery(myselfId);
 
     const chatHub = useChatHub();
 
@@ -98,11 +98,10 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
                     : personalChats.map((chat) => (
                         <li key={chat.id} className={selectedChat && "initiatorId" in selectedChat && selectedChat.id === chat.id ? `selected` : ``}>
                             <PersonalChatListItem
+                                refetch={refetch}
                                 chat={chat}
+                                isInitiator={chat.initiatorId === myselfId}
                                 setSelectedChat={setSelectedChat}
-                                companionId={chat.initiatorId === myselfId ? chat.companionId : chat.initiatorId}
-                                userId={myselfId}
-                                chatHub={chatHub}
                             />
                         </li>
                     ))

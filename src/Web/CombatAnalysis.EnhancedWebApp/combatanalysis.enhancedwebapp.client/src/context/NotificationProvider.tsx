@@ -31,7 +31,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
             const connection = createHubConnection(notificationHubURL);
 
             await connection.start();
-            await connection.invoke("JoinRoom", user?.id);
+            await connection.invoke("JoinToRoom", user?.id);
 
             notificationHubConnectionRef.current = connection;
         } catch (e) {

@@ -20,9 +20,13 @@ interface GroupChatListProps {
 }
 
 const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat, t }) => {
-    const { data: groupChats, isLoading } = useFindChatUsersQuery(myselfId);
+    const { data: groupChats, refetch, isLoading } = useFindChatUsersQuery(myselfId);
 
     const chatHub = useChatHub();
+
+    useEffect(() => {
+        console.log("groupChats updated:", groupChats);
+    }, [groupChats]);
 
     useEffect(() => {
         return () => {
@@ -104,9 +108,9 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
                     : groupChats.map((myselfInChat) => (
                         <li key={myselfInChat.id} className={selectedChat && "ownerId" in selectedChat && selectedChat.id === myselfInChat.groupChatId ? `selected` : ``}>
                             <GroupChatListItem
+                                refetch={refetch}
                                 myselfInChat={myselfInChat}
                                 setSelectedGroupChat={setSelectedChat}
-                                chatHub={chatHub}
                             />
                         </li>
                     ))

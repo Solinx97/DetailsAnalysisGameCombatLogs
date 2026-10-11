@@ -26,12 +26,12 @@ interface GroupChatRules {
 
 interface GroupChatMenuProps {
     setSelectedChat: (value: SetStateAction<PersonalChatModel | GroupChatModel | null>) => void;
-    groupChatUsersId: string[];
+    usersId: string[];
     chat: GroupChatModel;
     t: (key: string) => string;
 }
 
-const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupChatUsersId, chat, t }) => {
+const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, usersId, chat, t }) => {
     const myself = useSelector((state: RootState) => state.user.value);
     const groupChatUser = useSelector((state: RootState) => state.groupChatUser.value);
 
@@ -191,7 +191,7 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, groupCha
             {showAddPeople &&
                 <GroupChatAddUser
                     chat={chat}
-                    groupChatUsersId={groupChatUsersId}
+                    usersId={usersId}
                     setShowAddPeople={setShowAddPeople}
                     t={t}
                 />

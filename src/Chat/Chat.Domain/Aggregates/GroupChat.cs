@@ -89,6 +89,15 @@ public class GroupChat : IRepositoryEntity<GroupChatId>
         }
     }
 
+    public void IncreaseUnreadMessagesCount(GroupChatUserId senderId)
+    {
+        var otherUsers = _users.Where(x => x.Id != senderId).ToList();
+        foreach (var user in otherUsers)
+        {
+            user.IncrementUnreadMessages();
+        }
+    }
+
     public void EditMessage(GroupChatMessageId messageId, string newMessage)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(newMessage, nameof(newMessage));

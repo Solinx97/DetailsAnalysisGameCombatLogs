@@ -5,17 +5,15 @@ import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
 import type { PersonalChatMessageModel } from '../../features/chat/types/PersonalChatMessageModel';
 import type { PersonalChatModel } from '../../features/chat/types/PersonalChatModel';
-import type { AppUserModel } from '../../features/user/types/AppUserModel';
 
 const usePersonalChatHub = (
-    myself: AppUserModel | null,
     personalChatHubConnectionRef: RefObject<signalR.HubConnection | null>,
     personalChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
     personalChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
 ) => {
     const personalChatHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChat}`;
     const personalChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChatMessages}`;
-    const personalChatUnreadMessagesHubURL = `${APP_CONFIG.hubs.url}${APP_CONFIG.hubs.personalChatUnreadMessage}`;
+    const personalChatUnreadMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.personalChatUnreadMessage}`;
 
     const createHubConnection = (url: string): signalR.HubConnection => {
         const hubConnection = new signalR.HubConnectionBuilder()
@@ -34,7 +32,6 @@ const usePersonalChatHub = (
             const connection = createHubConnection(personalChatHubURL);
 
             await connection.start();
-            await connection.invoke("JoinRoom", myself?.id);
 
             personalChatHubConnectionRef.current = connection;
         } catch (e) {
@@ -47,7 +44,7 @@ const usePersonalChatHub = (
             const connection = createHubConnection(personalChatMessagesHubURL);
 
             await connection.start();
-            await connection.invoke("JoinRoom", myPersonalChatId);
+            await connection.invoke("JoinToRoom", myPersonalChatId);
 
             personalChatMessagesHubConnectionRef.current = connection;
         } catch (e) {
@@ -61,7 +58,7 @@ const usePersonalChatHub = (
 
             await connection.start();
             for (let i = 0; i < myPersonalChatsId.length; i++) {
-                await connection.invoke("JoinRoom", myPersonalChatsId[i]);
+                await connection.invoke("JoinToRoom", myPersonalChatsId[i]);
             }
 
             personalChatUnreadMessagesHubConnectionRef.current = connection;
@@ -83,9 +80,11 @@ const usePersonalChatHub = (
     }
 
     const subscribeToPersonalChatMessages = (callback: (message: PersonalChatMessageModel) => void) => {
-        personalChatMessagesHubConnectionRef.current?.on("ReceiveMessage", (message: PersonalChatMessageModel) => {
-            callback(message);
-        });
+        personalChatMessagesHubConnectionRef.current?.on("ReceiveMessage", callback);
+    }
+
+    const unsubscribeToPersonalChatMessages = (callback: (message: PersonalChatMessageModel) => void) => {
+        personalChatMessagesHubConnectionRef.current?.off("ReceiveMessage", callback);
     }
 
     const subscribeToPersonalChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
@@ -123,8 +122,8 @@ const usePersonalChatHub = (
 
     return {
         connectToPersonalChatAsync, connectToPersonalChatMessagesAsync, connectToPersonalChatUnreadMessagesAsync,
-        subscribeToPersonalChat, subscribeToRemovedFromPersonalChat, subscribeToPersonalChatMessages, subscribeToPersonalChatMessageEdit, subscribeToPersonalMessageHasBeenRead, subscribeToUnreadPersonalMessagesUpdated,
-        disconnectFromPersonalChatHubAsync, disconnectFromPersonalChatMessageHubAsync, disconnectFromPersonalChatUnreadMessagesHubAsync
+        subscribeToPersonalChat, subscribeToRemovedFromPersonalChat, subscribeToPersonalChatMessages, unsubscribeToPersonalChatMessages, subscribeToPersonalChatMessageEdit, subscribeToPersonalMessageHasBeenRead, 
+        subscribeToUnreadPersonalMessagesUpdated, disconnectFromPersonalChatHubAsync, disconnectFromPersonalChatMessageHubAsync, disconnectFromPersonalChatUnreadMessagesHubAsync
     }
 }
 

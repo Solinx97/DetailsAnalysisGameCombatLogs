@@ -20,6 +20,7 @@ export type ChatHubContextModel = {
     subscribeToPersonalChat: (callback: (chat: PersonalChatModel) => void) => void;
     subscribeToRemovedFromPersonalChat: (callback: (appUserId: string, chatId: number) => void) => void;
     subscribeToPersonalChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
+    unsubscribeToPersonalChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
     subscribeToPersonalChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
     subscribeToPersonalMessageHasBeenRead: (callback: (messageId: string) => void) => void;
     subscribeToUnreadPersonalMessagesUpdated: (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => void;
@@ -34,6 +35,7 @@ export type ChatHubContextModel = {
     subscribeToGroupChat: (callback: (groupChatUser: GroupChatUserModel) => void) => void;
     subscribeToRemovedFromGroupChat: (callback: (appUserId: string, chatId: number) => void) => void;
     subscribeToGroupChatMessages: (callback: (message: GroupChatMessageModel) => void) => void;
+    unsubscribeToGroupChatMessages: (callback: (message: GroupChatMessageModel) => void) => void;
     subscribeToGroupChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
     subscribeToGroupMessageDelivered: (chatId: number) => void;
     subscribeToUnreadGroupMessagesUpdated: (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => void;

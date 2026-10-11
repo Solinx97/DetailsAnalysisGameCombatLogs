@@ -39,7 +39,7 @@ public class GroupChatMemberConsumer(IOptions<KafkaSettings> kafkaSettings, ILog
             var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatMessageCreatedEvent>();
             ArgumentNullException.ThrowIfNull(@event, nameof(@event));
 
-            var message = new GroupChatMessageDto { Id = @event.MessageId, Type = (MessageType)@event.MessageType, Username = @event.Username, Message = @event.Message, GroupChatId = @event.ChatId, GroupChatUserId = @event.SenderId, AppUserId = @event.SenderId };
+            var message = new GroupChatMessageDto { Id = @event.MessageId, Type = (MessageType)@event.MessageType, Username = @event.Username, Message = @event.Message, GroupChatId = @event.ChatId, GroupChatUserId = @event.SenderId };
             await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
         }
         catch (ArgumentNullException ex)

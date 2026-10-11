@@ -46,13 +46,13 @@ public class GroupChatConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger<Gr
                     ArgumentNullException.ThrowIfNull(eventCreate, nameof(eventCreate));
 
                     var owner = new GroupChatUserDto { Id = eventCreate.GroupChatUserId, Username = eventCreate.Username, GroupChatId = eventCreate.ChatId, AppUserId = eventCreate.AppUserId };
-                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveJoinedUser", owner, cancellationToken);
+                    await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("ReceiveJoinedUser", owner, cancellationToken);
                     break;
                 case nameof(GroupChatUserRemovedEvent):
                     var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatUserRemovedEvent>();
                     ArgumentNullException.ThrowIfNull(@event, nameof(@event));
 
-                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("UserRemoved", @event.AppUserId.ToString(), @event.ChatId, cancellationToken);
+                    await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("UserRemoved", @event.AppUserId.ToString(), @event.ChatId, cancellationToken);
                     break;
             }
         }

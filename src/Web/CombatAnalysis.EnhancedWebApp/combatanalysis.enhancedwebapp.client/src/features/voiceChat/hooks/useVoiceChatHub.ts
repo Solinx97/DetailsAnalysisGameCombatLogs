@@ -29,14 +29,14 @@ const useVoiceChatHub = (roomId: string) => {
 			listeningSignalMessages();
 			await listeningAnswersAsync();
 
-			await sendSignalAsync("JoinRoom");
+			await sendSignalAsync("JoinToRoom");
 		} catch (e) {
 			logger.error("Failed to connect to voice chat", e);
 		}
 	}
 
 	const leaveFromChatAsync = async () => {
-		await sendSignalAsync("LeaveRoom");
+		await sendSignalAsync("LeaveFromRoom");
 
 		stopMediaData();
 	}

@@ -1,41 +1,56 @@
-import type { ChatHubContextModel } from '@/shared/types/ChatHubModel';
-import { useEffect, useState, type SetStateAction } from 'react';
+import { useChatHub } from '@/shared/hooks/useChatHub';
+import { useEffect, type SetStateAction } from 'react';
 import { useGetUserByIdQuery } from '../../../user/api/Account.api';
+import type { useGetPersonalChatsByUserIdQuery } from '../../api/PersonalChat.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
 
+type RefetchType = ReturnType<
+    typeof useGetPersonalChatsByUserIdQuery
+>["refetch"];
+
 interface PersonalChatListItemProps {
+    refetch: RefetchType;
     chat: PersonalChatModel;
+    isInitiator: boolean;
     setSelectedChat: (value: SetStateAction<PersonalChatModel | GroupChatModel | null>) => void;
-    companionId: string;
-    userId: string;
-    chatHub: ChatHubContextModel;
 }
 
-const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ chat, setSelectedChat, companionId, userId, chatHub }) => {
-    const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
+const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ refetch, chat, isInitiator, setSelectedChat }) => {
+    const chatHub = useChatHub();
 
-    const { data: companion, isLoading } = useGetUserByIdQuery(companionId);
+    const { data: companion, isLoading } = useGetUserByIdQuery(isInitiator ? chat.companionId : chat.initiatorId);
 
     useEffect(() => {
-        if (!chatHub.personalChatUnreadMessagesHubConnectionRef.current) {
+        if (!chatHub) {
             return;
         }
 
-        chatHub.subscribeToUnreadPersonalMessagesUpdated((targetChatId: number, taregtUserInChat: string, count: number) => {
-            if (targetChatId === chat?.id && taregtUserInChat === userId) {
-                setUnreadMessageCount(count);
+        let isCancelled = false;
+
+        const handleMessage = async () => {
+            await refetch();
+        }
+
+        const connect = async () => {
+            await chatHub.connectToPersonalChatMessagesAsync(chat.id);
+
+            if (isCancelled) {
+                return;
             }
-        });
-    }, [chatHub.personalChatUnreadMessagesHubConnectionRef.current]);
 
-    useEffect(() => {
-        if (!chat) {
-            return;
-        }
+            chatHub.subscribeToPersonalChatMessages(handleMessage);
+        };
 
-        setUnreadMessageCount(chat.initiatorId === userId ? chat.initiatorUnreadMessages : chat.companionUnreadMessages);
-    }, [chat]);
+        void connect();
+
+        return () => {
+            isCancelled = true;
+
+            chatHub.unsubscribeToPersonalChatMessages(handleMessage);
+            chatHub.disconnectFromPersonalChatMessageHubAsync();
+        };
+    }, [chatHub, chat, refetch]);
 
     if (isLoading) {
         return (<div className="chat-loading-yet">Loading...</div>);
@@ -44,11 +59,18 @@ const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ chat, setSe
     return (
         <span className="chat-card" onClick={() => setSelectedChat(chat)}>
             <div className="username">{companion?.username}</div>
-            {unreadMessageCount > 0 &&
-                <div className="chat-tooltip">
-                    <div className="unread-message-count">{unreadMessageCount > 99 ? "99+" : unreadMessageCount}</div>
-                </div>
-            }
+            {isInitiator
+                ? (chat.initiatorUnreadMessages && chat.initiatorUnreadMessages > 0)
+                    ? <div className="chat-tooltip">
+                        <div className="unread-message-count">{chat.initiatorUnreadMessages > 99 ? "99+" : chat.initiatorUnreadMessages}</div>
+                    </div>
+                    : <></>
+                : (chat.companionUnreadMessages && chat.companionUnreadMessages > 0)
+                    ? <div className="chat-tooltip">
+                        <div className="unread-message-count">{chat.companionUnreadMessages > 99 ? "99+" : chat.companionUnreadMessages}</div>
+                    </div>
+                    : <></>
+                }
         </span>
     );
 }

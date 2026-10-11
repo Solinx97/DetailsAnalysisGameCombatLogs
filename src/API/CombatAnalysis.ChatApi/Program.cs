@@ -190,8 +190,10 @@ app.MapControllers();
 
 app.MapHub<PersonalChatHub>(HubPatterns.PERSONAL_CHAT);
 app.MapHub<PersonalChatMessagesHub>(HubPatterns.PERSONAL_CHAT_MESSAGE);
+app.MapHub<PersonalChatUnreadMessageHub>(HubPatterns.PERSONAL_CHAT_UNREAD_MESSAGE);
 app.MapHub<GroupChatHub>(HubPatterns.GROUP_CHAT);
 app.MapHub<GroupChatMessagesHub>(HubPatterns.GROUP_CHAT_MESSAGE);
+app.MapHub<GroupChatUnreadMessageHub>(HubPatterns.GROUP_CHAT_UNREAD_MESSAGE);
 app.MapHub<VoiceChatHub>(HubPatterns.VOICE_CHAT);
 
 app.UseSwagger();

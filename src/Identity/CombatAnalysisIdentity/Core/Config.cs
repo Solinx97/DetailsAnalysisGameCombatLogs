@@ -87,7 +87,7 @@ internal class Config
             new ApiResource("chat-api", "Protected Chat API")
             {
                 Scopes = { "api.read", "api.write" },
-                UserClaims = { "aud" }
+                UserClaims = { "aud", "user_id" }
             },
             new ApiResource("communication-api", "Protected Communication API")
             {

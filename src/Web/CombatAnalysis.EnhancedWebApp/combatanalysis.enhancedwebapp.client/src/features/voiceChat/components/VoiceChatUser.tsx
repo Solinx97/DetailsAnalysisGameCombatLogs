@@ -2,10 +2,10 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as signalR from '@microsoft/signalr';
 import { memo, useEffect, useRef, useState, type RefObject, type SetStateAction } from 'react';
-import { useGetUserByIdentityUserIdQuery } from '../../user/api/Account.api';
+import { useGetUserByIdQuery } from '../../user/api/Account.api';
 
 interface VoiceChatUserProps {
-    identityUserId: string;
+    userId: string;
     hubConnection: signalR.HubConnection | null;
     peerConnection: RTCPeerConnection | undefined;
     otherScreenSharingVideoRef: RefObject<HTMLVideoElement | null>;
@@ -16,7 +16,7 @@ interface VoiceChatUserProps {
 }
 
 const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
-    identityUserId,
+    userId,
     hubConnection,
     peerConnection,
     otherScreenSharingVideoRef,
@@ -25,7 +25,7 @@ const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
     setOtherScreenSharing,
     audioOutputDeviceId
 }) => {
-    const { data: user } = useGetUserByIdentityUserIdQuery(identityUserId);
+    const { data: user } = useGetUserByIdQuery(userId);
 
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
@@ -80,19 +80,19 @@ const VoiceChatUser: React.FC<VoiceChatUserProps> = ({
         }
 
         const handleReceiveMicrophoneStatus = (from: string, status: boolean) => {
-            if (from === identityUserId) {
+            if (from === userId) {
                 setTurnOnMicrophone(status);
             }
         }
 
         const handleReceiveCameraStatus = (from: string, status: boolean) => {
-            if (from === identityUserId) {
+            if (from === userId) {
                 setTurnOnCamera(status);
             }
         }
 
         const handleReceiveScreenSharingStatus = (from: string, status: boolean) => {
-            if (from === identityUserId) {
+            if (from === userId) {
                 if (status) {
                     otherScreenSharingUserIdRef.current = from;
                     setOtherScreenSharing(true);

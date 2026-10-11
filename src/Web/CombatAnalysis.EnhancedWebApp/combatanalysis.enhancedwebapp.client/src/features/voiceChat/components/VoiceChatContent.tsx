@@ -30,7 +30,7 @@ const VoiceChatContent: React.FC<VoiceChatContentProps> = ({
 	screenSharingVideoRef,
 	audioOutputDeviceId
 }) => {
-	const [identityUsersId, setIdentityUsersId] = useState<Set<string>>(new Set<string>());
+	const [usersId, setUsersId] = useState<Set<string>>(new Set<string>());
 	const [myId, setMyId] = useState("");
 	const [otherScreenSharing, setOtherScreenSharing] = useState(false);
 
@@ -56,26 +56,26 @@ const VoiceChatContent: React.FC<VoiceChatContentProps> = ({
 			return;
 		}
 
-		const handleUserLeft = (identityUserId: string) => {
-			if (identityUserId === otherScreenSharingUserIdRef.current) {
+		const handleUserLeft = (userId: string) => {
+			if (userId === otherScreenSharingUserIdRef.current) {
 				setOtherScreenSharing(false);
 				otherScreenSharingUserIdRef.current = "";
 			}
 
-			const anotherUsers = new Set<string>(identityUsersId);
-			anotherUsers.delete(identityUserId)
-			setIdentityUsersId(anotherUsers);
+			const anotherUsers = new Set<string>(usersId);
+			anotherUsers.delete(userId)
+			setUsersId(anotherUsers);
 		}
 
-		const handleUserJoined = (identityUserId: string) => {
-			const anotherUsers = new Set<string>(identityUsersId);
-			anotherUsers.add(identityUserId)
-			setIdentityUsersId(anotherUsers);
+		const handleUserJoined = (userId: string) => {
+			const anotherUsers = new Set<string>(usersId);
+			anotherUsers.add(userId)
+			setUsersId(anotherUsers);
 		}
 
 		const getConnectedUsersAsync = async () => {
 			const connectedUsers = await hubConnection.invoke<string[]>("GetOtherConnectedUsers", roomId);
-			setIdentityUsersId(new Set<string>(connectedUsers));
+			setUsersId(new Set<string>(connectedUsers));
 
 			await mediaRequestsAsync();
 		}
@@ -117,12 +117,12 @@ const VoiceChatContent: React.FC<VoiceChatContentProps> = ({
 						localStream={stream}
 					/>
 				</li>
-				{Array.from(identityUsersId.entries()).map(([identityUserId]) =>
-					<li key={identityUserId}>
+				{Array.from(usersId.entries()).map(([userId]) =>
+					<li key={userId}>
 						<VoiceChatUser
-							identityUserId={identityUserId}
+							userId={userId}
 							hubConnection={hubConnection}
-							peerConnection={peerConnections.get(identityUserId)}
+							peerConnection={peerConnections.get(userId)}
 							otherScreenSharingVideoRef={otherScreenSharingVideoRef}
 							otherScreenSharingUserIdRef={otherScreenSharingUserIdRef}
 							otherScreenSharing={otherScreenSharing}

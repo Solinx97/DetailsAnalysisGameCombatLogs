@@ -10,12 +10,12 @@ import type { GroupChatModel } from '../../types/GroupChatModel';
 
 interface GroupChatAddUserProps {
     chat: GroupChatModel;
-    groupChatUsersId: string[];
+    usersId: string[];
     setShowAddPeople: (value: SetStateAction<boolean>) => void;
     t: (key: string) => string;
 }
 
-const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ chat, groupChatUsersId, setShowAddPeople, t }) => {
+const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ chat, usersId, setShowAddPeople, t }) => {
     const myself = useSelector((state: RootState) => state.user.value);
     
     const [peopleToJoin, setPeopleToJoin] = useState<AppUserModel[]>([]);
@@ -51,7 +51,7 @@ const GroupChatAddUser: React.FC<GroupChatAddUserProps> = ({ chat, groupChatUser
     return (
         <div className="add-people-to-chat box-shadow">
             <AddPeople
-                usersId={groupChatUsersId}
+                usersId={usersId}
                 peopleToJoin={peopleToJoin}
                 setPeopleToJoin={setPeopleToJoin}
             />

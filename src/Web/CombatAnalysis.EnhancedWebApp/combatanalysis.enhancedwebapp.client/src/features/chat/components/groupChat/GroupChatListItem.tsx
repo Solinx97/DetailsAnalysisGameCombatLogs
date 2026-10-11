@@ -1,44 +1,60 @@
-import type { ChatHubContextModel } from '@/shared/types/ChatHubModel';
 import { updateGroupChatUser } from '@/features/chat/store/GroupChatUserSlice';
-import { useEffect, useState, type SetStateAction } from 'react';
+import { useChatHub } from '@/shared/hooks/useChatHub';
+import { useEffect, type SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 import { useGetGroupChatByIdQuery } from '../../api/GroupChat.api';
+import { useFindChatUsersQuery } from '../../api/GroupChatUser.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { GroupChatUserModel } from '../../types/GroupChatUserModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
 
+type RefetchType = ReturnType<
+    typeof useFindChatUsersQuery
+>["refetch"];
+
 interface GroupChatListItemProps {
+    refetch: RefetchType;
     myselfInChat: GroupChatUserModel;
     setSelectedGroupChat: (value: SetStateAction<GroupChatModel | PersonalChatModel | null>) => void;
-    chatHub: ChatHubContextModel;
 }
 
-const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ myselfInChat, setSelectedGroupChat, chatHub }) => {
+const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ myselfInChat, refetch, setSelectedGroupChat }) => {
     const dispatch = useDispatch();
-    
-    const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
+
+    const chatHub = useChatHub();
 
     const { data: chat, isLoading } = useGetGroupChatByIdQuery(myselfInChat.groupChatId);
 
     useEffect(() => {
-        if (!chatHub.groupChatUnreadMessagesHubConnectionRef.current) {
+        if (!chatHub) {
             return;
         }
 
-        chatHub.subscribeToUnreadGroupMessagesUpdated((targetChatId: number, targetChatUserId: string, count: number) => {
-            if (targetChatId === myselfInChat.groupChatId && targetChatUserId === myselfInChat.id) {
-                setUnreadMessageCount(count);
+        let isCancelled = false;
+
+        const handleMessage = async () => {
+            await refetch();
+        }
+
+        const connect = async () => {
+            await chatHub.connectToGroupChatMessagesAsync(myselfInChat.groupChatId);
+
+            if (isCancelled) {
+                return;
             }
-        });
-    }, [chatHub.groupChatUnreadMessagesHubConnectionRef.current]);
 
-    useEffect(() => {
-        if (!myselfInChat) {
-            return;
-        }
+            chatHub.subscribeToGroupChatMessages(handleMessage);
+        };
 
-        setUnreadMessageCount(myselfInChat.unreadMessages);
-    }, [myselfInChat]);
+        void connect();
+
+        return () => {
+            isCancelled = true;
+
+            chatHub.unsubscribeToGroupChatMessages(handleMessage);
+            chatHub.disconnectFromGroupChatMessageHubAsync();
+        };
+    }, [chatHub, myselfInChat, refetch]);
 
     const selectChatHandle = () => {
         setSelectedGroupChat(null);
@@ -56,9 +72,9 @@ const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ myselfInChat, set
     return (
         <span className="chat-card" onClick={selectChatHandle}>
             <div className="username">{chat?.name}</div>
-            {unreadMessageCount > 0 &&
+            {myselfInChat.unreadMessages > 0 &&
                 <div className="chat-tooltip">
-                    <div className="unread-message-count">{unreadMessageCount > 99 ? "99+" : unreadMessageCount}</div>
+                    <div className="unread-message-count">{myselfInChat.unreadMessages > 99 ? "99+" : myselfInChat.unreadMessages}</div>
                 </div>
             }
         </span>

@@ -2,20 +2,18 @@ import { APP_CONFIG } from '@/config/appConfig';
 import type { GroupChatMessageModel } from '@/features/chat/types/GroupChatMessageModel';
 import type { GroupChatUserModel } from '@/features/chat/types/GroupChatUserModel';
 import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessagePatch';
-import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import logger from '@/utils/Logger';
 import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
 
 const useGroupChatHub = (
-    myself: AppUserModel | null,
     groupChatHubConnectionRef: RefObject<signalR.HubConnection | null>,
     groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
     groupChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
 ) => {
     const groupChatHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChat}`;
     const groupChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatMessages}`;
-    const groupChatUnreadMessagesHubURL = `${APP_CONFIG.hubs.url}${APP_CONFIG.hubs.groupChatUnreadMessage}`;
+    const groupChatUnreadMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatUnreadMessage}`;
 
     const createHubConnection = (url: string): signalR.HubConnection => {
         const hubConnection = new signalR.HubConnectionBuilder()
@@ -34,7 +32,6 @@ const useGroupChatHub = (
             const connection = createHubConnection(groupChatHubURL);
 
             await connection.start();
-            await connection.invoke("JoinRoom", myself?.id);
 
             groupChatHubConnectionRef.current = connection;
         } catch (e) {
@@ -47,7 +44,7 @@ const useGroupChatHub = (
             const connection = createHubConnection(groupChatMessagesHubURL);
 
             await connection.start();
-            await connection.invoke("JoinRoom", chatId);
+            await connection.invoke("JoinToRoom", chatId);
 
             groupChatMessagesHubConnectionRef.current = connection;
         } catch (e) {
@@ -61,7 +58,7 @@ const useGroupChatHub = (
 
             await connection.start();
             for (let i = 0; i < myGroupChatsId.length; i++) {
-                await connection.invoke("JoinRoom", myGroupChatsId[i]);
+                await connection.invoke("JoinToRoom", myGroupChatsId[i]);
             }
 
             groupChatUnreadMessagesHubConnectionRef.current = connection;
@@ -83,9 +80,11 @@ const useGroupChatHub = (
     }
 
     const subscribeToGroupChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
-        groupChatMessagesHubConnectionRef.current?.on("ReceiveMessage", (message: GroupChatMessageModel) => {
-            callback(message);
-        });
+        groupChatMessagesHubConnectionRef.current?.on("ReceiveMessage", callback);
+    }
+
+    const unsubscribeToGroupChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
+        groupChatMessagesHubConnectionRef.current?.off("ReceiveMessage", callback);
     }
 
     const subscribeToGroupChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
@@ -135,8 +134,8 @@ const useGroupChatHub = (
 
     return {
         connectToGroupChatAsync, connectToGroupChatMessagesAsync, connectToGroupChatUnreadMessagesAsync,
-        subscribeToGroupChat, subscribeToRemovedFromGroupChat, subscribeToGroupChatMessages, subscribeToGroupChatMessageEdit, subscribeToGroupMessageDelivered,
-        subscribeToUnreadGroupMessagesUpdated, subscribeToGroupMessageHasBeenRead,
+        subscribeToGroupChat, subscribeToRemovedFromGroupChat, subscribeToGroupChatMessages, unsubscribeToGroupChatMessages, subscribeToGroupChatMessageEdit, 
+        subscribeToGroupMessageDelivered, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupMessageHasBeenRead,
         disconnectFromGroupChatHubAsync, disconnectFromGroupChatMessageHubAsync, disconnectFromGroupChatUnreadMessagesHubAsync,
         subscribeToGroupChatMembers,
     }

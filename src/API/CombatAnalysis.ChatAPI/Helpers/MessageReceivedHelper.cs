@@ -6,10 +6,12 @@ internal static class MessageReceivedHelper
 {
     public static bool IsHubExist(PathString pathString)
     {
-        var isExist = pathString.StartsWithSegments(HubPatterns.PERSONAL_CHAT_MESSAGE)
+        var isExist = pathString.StartsWithSegments(HubPatterns.GROUP_CHAT)
             || pathString.StartsWithSegments(HubPatterns.GROUP_CHAT_MESSAGE)
-            || pathString.StartsWithSegments(HubPatterns.GROUP_CHAT)
+            || pathString.StartsWithSegments(HubPatterns.GROUP_CHAT_UNREAD_MESSAGE)
             || pathString.StartsWithSegments(HubPatterns.PERSONAL_CHAT)
+            || pathString.StartsWithSegments(HubPatterns.PERSONAL_CHAT_MESSAGE)
+            || pathString.StartsWithSegments(HubPatterns.PERSONAL_CHAT_UNREAD_MESSAGE)
             || pathString.StartsWithSegments(HubPatterns.VOICE_CHAT);
 
         return isExist;

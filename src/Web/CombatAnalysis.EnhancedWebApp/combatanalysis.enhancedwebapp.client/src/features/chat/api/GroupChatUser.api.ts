@@ -44,13 +44,7 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
         }),
         findChatUsers: builder.query<GroupChatUserModel[], string>({
             query: appUserId => `/GroupChatUser/findChatUsers/${appUserId}`,
-            providesTags: result =>
-                result
-                    ? [
-                        ...result.map(chatUser => ({ type: 'GroupChatUser' as const, id: chatUser.id })),
-                        { type: 'GroupChatUser', id: 'LIST' },
-                    ]
-                    : [{ type: 'GroupChatUser', id: 'LIST' }],
+            providesTags: [{ type: "GroupChatUser", id: "LIST" }]
         }),
     })
 })

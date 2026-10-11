@@ -96,8 +96,6 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<PersonalChatUnreadMessageHub>(HubPatterns.PersonalChatUnreadMessage);
-app.MapHub<GroupChatUnreadMessageHub>(HubPatterns.GroupChatUnreadMessage);
 app.MapHub<NotificationHub>(HubPatterns.Notification);
 
 app.UseHttpsRedirection();

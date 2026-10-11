@@ -51,13 +51,13 @@ public class GroupChatUser : IRepositoryEntity<GroupChatUserId>
         }
     }
 
-    public void UpdateUnreadMessages(int count)
+    public void IncrementUnreadMessages()
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(count, 0, nameof(count));
+        UnreadMessages++;
+    }
 
-        if (UnreadMessages != count)
-        {
-            UnreadMessages = count;
-        }
+    public void DecrementUnreadMessages()
+    {
+        UnreadMessages--;
     }
 }

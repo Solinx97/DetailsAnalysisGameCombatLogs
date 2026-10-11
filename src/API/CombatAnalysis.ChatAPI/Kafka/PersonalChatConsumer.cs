@@ -27,7 +27,7 @@ public class PersonalChatConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, "Consume Personal Chat data (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PERSONAL_CHAT_MESSAGE, ex.ParamName);
+            _logger.LogError(ex, "Consume Personal Chat data (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PERSONAL_CHAT, ex.ParamName);
         }
     }
 
@@ -46,21 +46,21 @@ public class PersonalChatConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger
                     ArgumentNullException.ThrowIfNull(eventCreate, nameof(eventCreate));
 
                     var chat = new PersonalChatDto { Id = eventCreate.ChatId, InitiatorId = eventCreate.InitiatorId, CompanionId = eventCreate.CompanionId };
-                    await _hubContext.Clients.Group(chat.CompanionId.ToString()).SendAsync("ReceivePersonalChat", chat, cancellationToken);
-                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceivePersonalChat", chat, cancellationToken);
+                    await _hubContext.Clients.User(chat.CompanionId.ToString()).SendAsync("ReceivePersonalChat", chat, cancellationToken);
+                    await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("ReceivePersonalChat", chat, cancellationToken);
                     break;
                 case nameof(PersonalChatRemovedEvent):
                     var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatRemovedEvent>();
                     ArgumentNullException.ThrowIfNull(@event, nameof(@event));
 
-                    await _hubContext.Clients.Group(@event.CompanionId.ToString()).SendAsync("UserRemoved", @event.CompanionId.ToString(), @event.ChatId, cancellationToken);
-                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("UserRemoved", @event.InitiatorId.ToString(), @event.ChatId, cancellationToken);
+                    await _hubContext.Clients.User(@event.CompanionId.ToString()).SendAsync("UserRemoved", @event.CompanionId.ToString(), @event.ChatId, cancellationToken);
+                    await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("UserRemoved", @event.InitiatorId.ToString(), @event.ChatId, cancellationToken);
                     break;
             }
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, "Create personal chat from Kafka Consumer (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PERSONAL_CHAT_MESSAGE, ex.ParamName);
+            _logger.LogError(ex, "Create personal chat from Kafka Consumer (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.PERSONAL_CHAT, ex.ParamName);
         }
     }
 }

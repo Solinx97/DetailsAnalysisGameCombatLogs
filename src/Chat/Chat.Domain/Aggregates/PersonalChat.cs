@@ -36,23 +36,27 @@ public class PersonalChat : IRepositoryEntity<PersonalChatId>
         return new PersonalChat(initiatorId, companionId, 0, 0);
     }
 
-    public void UpdateInitiatorUnreadMessageCount(int count)
+    public void IncrementUnreadMessages(UserId messageOwnerId)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(count, 0, nameof(count));
-
-        if (InitiatorUnreadMessages != count)
+        if (InitiatorId == messageOwnerId)
         {
-            InitiatorUnreadMessages = count;
+            CompanionUnreadMessages++;
+        }
+        else if (CompanionId == messageOwnerId)
+        {
+            InitiatorUnreadMessages++;
         }
     }
 
-    public void UpdateCompanionUnreadMessageCount(int count)
+    public void DecrementUnreadMessages(UserId messageReaderId)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(count, 0, nameof(count));
-
-        if (CompanionUnreadMessages != count)
+        if (InitiatorId == messageReaderId)
         {
-            CompanionUnreadMessages = count;
+            InitiatorUnreadMessages--;
+        }
+        else if (CompanionId == messageReaderId)
+        {
+            CompanionUnreadMessages--;
         }
     }
 

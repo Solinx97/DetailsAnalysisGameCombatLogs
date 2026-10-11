@@ -65,19 +65,20 @@ var server = new Server();
 builder.Configuration.Bind("Server", server);
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-.AddOpenIdConnect(options =>
-{
-    options.Authority = server.Identity;
-    options.ClientId = "web-app";
-    options.ResponseType = "code";
-    options.SaveTokens = true;
-    options.SignedOutCallbackPath = "/";
-});
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddOpenIdConnect(options =>
+    {
+        options.Authority = server.Identity;
+        options.ClientId = "web-app";
+        options.ResponseType = "code";
+        options.SaveTokens = true;
+        options.SignedOutCallbackPath = "/signout-callback-oidc";
+        options.SignedOutRedirectUri = "/";
+    });
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Debug)

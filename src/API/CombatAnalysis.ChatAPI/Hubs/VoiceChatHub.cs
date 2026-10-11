@@ -10,22 +10,15 @@ public class VoiceChatHub(ILogger<VoiceChatHub> logger) : Hub
     private readonly ILogger<VoiceChatHub> _logger = logger;
     private static readonly ConcurrentDictionary<string, HashSet<string>> _groupUsers = new();
 
-    public async Task JoinRoom(string voiceChatId)
+    public async Task JoinToRoom(string voiceChatId)
     {
-        try
-        {
-            var connectedUserId = await AddUserToRoomAsync(voiceChatId);
+        var connectedUserId = await AddUserToRoomAsync(voiceChatId);
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, voiceChatId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, voiceChatId);
 
-            await Clients.Caller.SendAsync("Connected", connectedUserId);
+        await Clients.Caller.SendAsync("Connected", connectedUserId);
 
-            await Clients.OthersInGroup(voiceChatId).SendAsync("UserJoined", connectedUserId);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, "Join user to room failed: Parameter '{ParamName}' was null.", ex.ParamName);
-        }
+        await Clients.OthersInGroup(voiceChatId).SendAsync("UserJoined", connectedUserId);
     }
 
     public Task<string[]> GetOtherConnectedUsers(string voiceChatId)
@@ -103,29 +96,22 @@ public class VoiceChatHub(ILogger<VoiceChatHub> logger) : Hub
         await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveRequestScreenSharingStatus");
     }
 
-    public async Task LeaveRoom(string voiceChatId)
+    public async Task LeaveFromRoom(string voiceChatId)
     {
-        try
-        {
-            var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
+        var userId = Context.UserIdentifier
+            ?? throw new HubException("User is not authenticated.");
 
-            if (_groupUsers.TryGetValue(voiceChatId, out var users))
+        if (_groupUsers.TryGetValue(voiceChatId, out var users))
+        {
+            lock (users)
             {
-                lock (users)
-                {
-                    users.Remove(userId);
-                }
+                users.Remove(userId);
             }
-
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, voiceChatId);
-
-            await Clients.OthersInGroup(voiceChatId).SendAsync("UserLeft", userId);
         }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, "Join user to room failed: Parameter '{ParamName}' was null.", ex.ParamName);
-        }
+
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, voiceChatId);
+
+        await Clients.OthersInGroup(voiceChatId).SendAsync("UserLeft", userId);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -134,7 +120,7 @@ public class VoiceChatHub(ILogger<VoiceChatHub> logger) : Hub
         {
             if (group.Value.Contains(Context.ConnectionId))
             {
-                await LeaveRoom(group.Key);
+                await LeaveFromRoom(group.Key);
             }
         }
 

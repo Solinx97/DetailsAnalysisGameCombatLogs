@@ -8,8 +8,10 @@ using System.Text.Json;
 
 namespace Chat.Application.Commands.GroupChat.CreateMessage;
 
-internal class CreateMessageHandler(IGroupChatMessageRepository repository, IOutboxRepository boxRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateMessageCommand>
+internal class CreateMessageHandler(IGroupChatRepository chatRepository, IGroupChatMessageRepository repository, IOutboxRepository boxRepository, IUnitOfWork unitOfWork) 
+    : IRequestHandler<CreateMessageCommand>
 {
+    private readonly IGroupChatRepository _chatRepository = chatRepository;
     private readonly IGroupChatMessageRepository _repository = repository;
     private readonly IOutboxRepository _boxRepository = boxRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
@@ -20,10 +22,11 @@ internal class CreateMessageHandler(IGroupChatMessageRepository repository, IOut
 
         try
         {
+            var chat = await _chatRepository.GetWithUsersAsync(request.ChatId, cancellationToken);
+            chat.IncreaseUnreadMessagesCount(request.GroupChatUserId);
+
             var message = GroupChatMessage.Create(request.Username, request.Message, request.ChatId, request.GroupChatUserId);
             await _repository.AddAsync(message, cancellationToken);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, (int)message.Type, message.GroupChatUserId, message.Username, message.Message);
             await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatMessageCreatedEvent), KafkaTopics.GROUP_CHAT_MESSAGE, message.GroupChatId.Value.ToString(), JsonSerializer.Serialize(@event), cancellationToken);
