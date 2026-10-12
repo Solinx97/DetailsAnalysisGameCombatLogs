@@ -1,5 +1,4 @@
-﻿using Chat.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chat.Infrastructure.Persistence.Outbox;
@@ -11,11 +10,11 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Topic)
-            .HasMaxLength(200)
+            .HasMaxLength(OutboxMessage.TOPIC_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Key)
-            .HasMaxLength(200)
+            .HasMaxLength(OutboxMessage.KEY_MAX_LENGTH)
             .IsRequired();
 
         builder.Property(x => x.Payload)

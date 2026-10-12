@@ -1,102 +1,63 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.Security;
-using CombatAnalysis.NotificationAPI.Consts;
-using CombatAnalysis.NotificationAPI.Enums;
-using CombatAnalysis.NotificationAPI.Interfaces;
-using CombatAnalysis.NotificationAPI.Kafka.Actions;
-using CombatAnalysis.NotificationBL.DTO;
-using CombatAnalysis.NotificationBL.Interfaces;
+﻿using CombatAnalysis.NotificationAPI.Hubs;
 using Confluent.Kafka;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
+using Notification.Application.Consts;
+using Notification.Application.DTOs;
+using Notification.Application.Events;
+using System.Text;
 using System.Text.Json;
 
 namespace CombatAnalysis.NotificationAPI.Kafka;
 
-public class NotificationConsumer(IOptions<KafkaSettings> kafkaSettings, IOptions<Hubs> hubs, ILogger<NotificationConsumer> logger,
-    IServiceScopeFactory serviceScopeFactory) : KafkaConsumerBase(kafkaSettings, KafkaTopics.Notification, logger)
+public class NotificationConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger<NotificationConsumer> logger, IHubContext<NotificationHub> hubContext)
+    : KafkaConsumerBase(kafkaSettings, KafkaTopics.NOTIFICATION, logger)
 {
-    private readonly IOptions<Hubs> _hubs = hubs;
-    private readonly KafkaSettings _kafkaSettings = kafkaSettings.Value;
     private readonly ILogger<NotificationConsumer> _logger = logger;
-    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
+    private readonly IHubContext<NotificationHub> _hubContext = hubContext;
 
-    protected override async Task ConsumeMessageAsync(ConsumeResult<string, JsonDocument> kafkaData, CancellationToken stoppingToken)
+    protected override async Task ConsumeMessageAsync(ConsumeResult<string, string> kafkaData, CancellationToken cancellationToken)
     {
         try
         {
-            using var scope = _serviceScopeFactory.CreateScope();
+            ArgumentNullException.ThrowIfNull(kafkaData, nameof(kafkaData));
 
-            var notificationService = scope.ServiceProvider.GetService<IService<NotificationDto, int>>();
-            ArgumentNullException.ThrowIfNull(notificationService, nameof(notificationService));
+            await ExecuteAsync(kafkaData, cancellationToken);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, "Consume Group Chat data (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.NOTIFICATION, ex.ParamName);
+        }
+    }
 
-            var chatHubHelper = scope.ServiceProvider.GetService<IChatHubHelper>();
-            ArgumentNullException.ThrowIfNull(chatHubHelper, nameof(chatHubHelper));
+    private async Task ExecuteAsync(ConsumeResult<string, string> kafkaData, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var eventTypeHeader = kafkaData.Message.Headers?.LastOrDefault(x => x.Key == "event-type")
+                ?? throw new InvalidOperationException("Missing event-type header.");
 
-            var notificationAction = kafkaData.Message.Value.Deserialize<NotificationAction>();
-            ArgumentNullException.ThrowIfNull(notificationAction, nameof(notificationAction));
-
-            var accessToken = AesEncryption.Decrypt(notificationAction.AccessToken, Convert.FromBase64String(_kafkaSettings.Security.SecurityKey), Convert.FromBase64String(_kafkaSettings.Security.IV));
-
-            await chatHubHelper.ConnectToHubAsync($"{_hubs.Value.Server}{_hubs.Value.NotificationAddress}", accessToken);
-            await chatHubHelper.JoinRoomAsync(notificationAction.RecipientId);
-
-            if (notificationAction.State == (int)NotificationActionState.Read)
+            var eventType = Encoding.UTF8.GetString(eventTypeHeader.GetValueBytes());
+            switch (eventType)
             {
-                await ReadNotificationAsync(chatHubHelper, notificationAction, notificationService);
-            }
-            else if (notificationAction.State == (int)NotificationActionState.Remove)
-            {
-                await RemoveNotificationAsync(chatHubHelper, notificationAction, notificationService);
-            }
-            else if (notificationAction.State == (int)NotificationActionState.ReadAll)
-            {
-                await ReadRecipientNotificationsAsync(chatHubHelper, notificationAction, notificationService);
+                case nameof(NotificationCreatedEvent):
+                    var eventCreate = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<NotificationCreatedEvent>();
+                    ArgumentNullException.ThrowIfNull(eventCreate, nameof(eventCreate));
+
+                    var notification = new NotificationDto { Id = eventCreate.NotificationId, Type = eventCreate.Type, InitiatorId = eventCreate.InitiatorId, RecipientId = eventCreate.RecipientId, InitiatorName = eventCreate.InitiatorName };
+                    await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("ReceiveNotification", notification, cancellationToken);
+                    break;
+                //case nameof(GroupChatUserRemovedEvent):
+                //    var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatUserRemovedEvent>();
+                //    ArgumentNullException.ThrowIfNull(@event, nameof(@event));
+
+                //    await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("UserRemoved", @event.AppUserId.ToString(), @event.ChatId, cancellationToken);
+                //    break;
             }
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, "Consume Notification API data failed: Parameter '{ParamName}' was null.", ex.ParamName);
+            _logger.LogError(ex, "Create group chat from Kafka Consumer (topic: {Topic}) failed. Parameter '{ParamName}' was null.", KafkaTopics.NOTIFICATION, ex.ParamName);
         }
-        catch (ArgumentOutOfRangeException ex)
-        {
-            _logger.LogError(ex, "Invalid argument: Parameter '{ParamName}' was out of range.", ex.ParamName);
-        }
-    }
-
-    private static async Task ReadNotificationAsync(IChatHubHelper chatHubHelper, NotificationAction notificationAction, IService<NotificationDto, int> notificationService)
-    {
-        var notification = await notificationService.GetByIdAsync(notificationAction.NotificationId);
-        ArgumentNullException.ThrowIfNull(notification, nameof(notification));
-
-        notification.Status = (int)NotificationStatus.Read;
-        notification.ReadAt = DateTime.UtcNow;
-        await notificationService.UpdateAsync(notification.Id, notification);
-
-        await chatHubHelper.RequestRecipientNotifications(notificationAction.RecipientId);
-    }
-
-    private static async Task RemoveNotificationAsync(IChatHubHelper chatHubHelper, NotificationAction notificationAction, IService<NotificationDto, int> notificationService)
-    {
-        var notification = await notificationService.GetByIdAsync(notificationAction.NotificationId);
-        ArgumentNullException.ThrowIfNull(notification, nameof(notification));
-
-        notification.Status = (int)NotificationStatus.Read;
-        await notificationService.UpdateAsync(notification.Id, notification);
-
-        await chatHubHelper.RequestRecipientNotifications(notificationAction.RecipientId);
-    }
-
-    private static async Task ReadRecipientNotificationsAsync(IChatHubHelper chatHubHelper, NotificationAction notificationAction, IService<NotificationDto, int> notificationService)
-    {
-        var notifications = await notificationService.GetByParamAsync(n => n.RecipientId, notificationAction.RecipientId);
-        ArgumentNullException.ThrowIfNull(notifications, nameof(notifications));
-
-        foreach (var notification in notifications)
-        {
-            notification.Status = (int)NotificationStatus.Read;
-            await notificationService.UpdateAsync(notification.Id, notification);
-        }
-
-        await chatHubHelper.RequestRecipientNotifications(notificationAction.RecipientId);
     }
 }

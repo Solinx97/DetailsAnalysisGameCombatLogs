@@ -1,9 +1,9 @@
 import type { RootState } from '@/app/Store';
-import { useNotificationHub } from '@/shared/hooks/useNotificationHub';
+import NotificationHubContext from '@/context/NotificationHubContext';
 import logger from '@/utils/Logger';
 import { faBell, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,10 @@ const Notification: React.FC = () => {
 
     const user = useSelector((state: RootState) => state.user.value);
 
-    const notificationHub = useNotificationHub();
+    const context = useContext(NotificationHubContext);
+    if (!context) {
+        throw new Error("Child must be inside ChatHubContext.Provider");
+    }
 
     const [getUnreadNotificationsByRecipientIdAsync] = useLazyGetUnreadNotificationsByRecipientIdQuery();
 
@@ -25,17 +28,26 @@ const Notification: React.FC = () => {
     const [notifications, setNotifications] = useState<AppNotificationModel[]>([]);
 
     useEffect(() => {
-        if (!notificationHub) {
-            return;
-        }
-
         (async () => {
-            await notificationHub.connectToNotificationAsync();
+            await context.notificationEvents.connectToNotificationAsync();
+
+            context.notificationEvents.subscribeToRecipientNotifications(async () => {
+                if (!user) {
+                    return;
+                }
+
+                try {
+                    const notifications = await getUnreadNotificationsByRecipientIdAsync(user.id).unwrap();
+                    setNotifications(notifications);
+                } catch (e) {
+                    logger.error("Faield to receive user notifications", e);
+                }
+            });
         })();
 
         return () => {
             (async () => {
-                await notificationHub.disconnectNotificationsHubAsync();
+                await context.notificationEvents.disconnectNotificationsHubAsync();
             })();
         }
     }, []);
@@ -54,29 +66,6 @@ const Notification: React.FC = () => {
             }
         })();
     }, [user]);
-
-    useEffect(() => {
-        if (!notificationHub || !notificationHub.notificationHubConnectionRef.current) {
-            return;
-        }
-
-        notificationHub.subscribeToNotifications((notification: AppNotificationModel) => {
-            setNotifications(prevNot => [...prevNot, notification]);
-        });
-
-        notificationHub.subscribeToRecipientNotifications(async () => {
-            if (!user) {
-                return;
-            }
-
-            try {
-                const notifications = await getUnreadNotificationsByRecipientIdAsync(user.id).unwrap();
-                setNotifications(notifications);
-            } catch (e) {
-                logger.error("Faield to receive user notifications", e);
-            }
-        });
-    }, [notificationHub?.notificationHubConnectionRef.current]);
 
     const personalChatNotifications = (notification: AppNotificationModel) => {
         const navigateToChats = async () => await seeNotificationAsync(notification);
@@ -103,29 +92,25 @@ const Notification: React.FC = () => {
     }
 
     const seeNotificationAsync = async (notification: AppNotificationModel) => {
-        if (!notificationHub || !user) {
+        if (!user) {
             return;
         }
 
-        notificationHub.notificationHubConnectionRef.current?.invoke("ReadNotification", notification.id, user.id)
+        context.notificationHubConnectionRef.current?.invoke("ReadNotification", notification.id, user.id)
             .then(() => navigate(`/chats?personal=${notification.initiatorId}`))
             .catch((e) => logger.error("Faield to read notification", e));
     }
 
     const removeNotificationAsync = async (notification: AppNotificationModel) => {
-        if (!notificationHub || !user) {
+        if (!user) {
             return;
         }
 
-        await notificationHub.notificationHubConnectionRef.current?.invoke("RemoveNotification", notification.id, user.id);
+        await context.notificationHubConnectionRef.current?.invoke("RemoveNotification", notification.id, user.id);
     }
 
     const readAllNotifications = async () => {
-        if (!notificationHub) {
-            return;
-        }
-
-        await notificationHub.notificationHubConnectionRef.current?.invoke("ReadRecipientNotifications", user?.id);
+        await context.notificationHubConnectionRef.current?.invoke("ReadRecipientNotifications", user?.id);
     }
 
     return (

@@ -1,123 +1,61 @@
-﻿using AutoMapper;
-using CombatAnalysis.NotificationAPI.Models;
-using CombatAnalysis.NotificationBL.DTO;
-using CombatAnalysis.NotificationBL.Interfaces;
+﻿using CombatAnalysis.NotificationAPI.Models;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Notification.Application.Commands.CreateNotification;
+using Notification.Application.Commands.DeleteNotification;
+using Notification.Application.Queries.GetNotificationById;
+using Notification.Application.Queries.GetNotificationByRecipientId;
+using Notification.Application.Queries.GetUnreadNotification;
 
 namespace CombatAnalysis.NotificationAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class NotificationController(IService<NotificationDto, int> notificationService, IMapper mapper, ILogger<NotificationController> logger) : ControllerBase
+public class NotificationController(IMediator mediator) : ControllerBase
 {
-    private readonly IService<NotificationDto, int> _notificationService = notificationService;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<NotificationController> _logger = logger;
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var allNotifications = await _notificationService.GetAllAsync();
-
-        return Ok(allNotifications);
-    }
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var notification = await _notificationService.GetByIdAsync(id);
+        var notification = await _mediator.Send(new GetNotificationByIdQuery(id), cancellationToken);
 
         return Ok(notification);
     }
 
     [HttpGet("getByRecipientId/{recipientId}")]
-    public async Task<IActionResult> GetByRecipientId(string recipientId)
+    public async Task<IActionResult> GetByRecipientId(Guid recipientId, CancellationToken cancellationToken)
     {
-        var recipientNotifications = await _notificationService.GetByParamAsync(n => n.RecipientId, recipientId);
+        var notifications = await _mediator.Send(new GetNotificationByRecipientIdQuery(recipientId), cancellationToken);
 
-        return Ok(recipientNotifications);
+        return Ok(notifications);
     }
 
     [HttpGet("getUnreadByRecipientId/{recipientId}")]
-    public async Task<IActionResult> GetUnreadByRecipientId(string recipientId)
+    public async Task<IActionResult> GetUnreadByRecipientId(Guid recipientId, CancellationToken cancellationToken)
     {
-        var recipientNotifications = await _notificationService.GetByParamAsync(n => n.RecipientId, recipientId);
-        var unreadNotifications = recipientNotifications.Where(n => n.Status == 0).ToList();
+        var notifications = await _mediator.Send(new GetUnreadNotificationQuery(recipientId), cancellationToken);
 
-        return Ok(unreadNotifications);
+        return Ok(notifications);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] NotificationModel notification)
+    public async Task<IActionResult> Create([FromBody] CreateNotificationModel notification, CancellationToken cancellationToken)
     {
-        try
-        {
-            ArgumentNullException.ThrowIfNull(notification, nameof(notification));
+        var command = new CreateNotificationCommand(notification.Type, notification.InitiatorId,
+            notification.RecipientId, notification.InitiatorName);
+        await _mediator.Send(command, cancellationToken);
 
-            var mappedNotification = _mapper.Map<NotificationDto>(notification);
-            var createdNotification = await _notificationService.CreateAsync(mappedNotification);
-
-            return Ok(createdNotification);
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to create notification.");
-
-            return StatusCode(500, "Internal server error.");
-        }
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] NotificationModel notification)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Notification update request received: {@Notification}", notification);
-
-                return ValidationProblem(ModelState);
-            }
-
-            if (id != notification.Id)
-            {
-                return BadRequest("Route ID and body ID do not match.");
-            }
-
-            var mappedNotification = _mapper.Map<NotificationDto>(notification);
-            await _notificationService.UpdateAsync(id, mappedNotification);
-
-            return NoContent();
-        }
-        catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to update notification.");
-
-            return StatusCode(500, "Internal server error.");
-        }
+        return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var entityDeleted = await _notificationService.DeleteAsync(id);
-            if (!entityDeleted)
-            {
-                return NotFound();
-            }
+        await _mediator.Send(new DeleteNotificationCommand(id), cancellationToken);
 
-            return NoContent();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            _logger.LogWarning(ex, "The resource was modified by another user. Please refresh and try again.");
-
-            return Conflict(new { message = "The resource was modified by another user. Please refresh and try again." });
-        }
+        return NoContent();
     }
 }

@@ -2,6 +2,9 @@
 
 public class OutboxMessage
 {
+    public const int TOPIC_MAX_LENGTH = 200;
+    public const int KEY_MAX_LENGTH = 200;
+
     public Guid Id { get; set; }
 
     public string Topic { get; set; } = null!;

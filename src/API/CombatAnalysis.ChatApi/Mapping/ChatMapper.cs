@@ -17,10 +17,6 @@ internal class ChatMapper : Profile
         CreateMap<GroupChatMessageDto, GroupChatMessageModel>().ReverseMap();
         CreateMap<GroupChatUserDto, GroupChatUserModel>().ReverseMap();
 
-        CreateMap<PersonalChatPatch, PersonalChatDto>()
-         .ConstructUsing(dto => new PersonalChatDto {
-             InitiatorUnreadMessages = dto.InitiatorUnreadMessages,
-             CompanionUnreadMessages = dto.CompanionUnreadMessages
-         }).ReverseMap();
+        CreateMap<PersonalChatPatch, PersonalChatDto>().ReverseMap();
     }
 }

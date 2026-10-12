@@ -26,10 +26,6 @@
       "communityDiscussionCommentContentMaxLength": 256
     }
   },
-  "hubs": {
-    "url": "https://localhost:7026/",
-    "notification": "notificationHub"
-  },
   "chatApiHubs": {
     "url": "https://localhost:5007/",
     "personalChat": "personalChatHub",
@@ -39,5 +35,9 @@
     "voiceChat": "voiceChatHub",
     "personalChatUnreadMessage": "personalChatUnreadMessageHub",
     "groupChatUnreadMessage": "groupChatUnreadMessageHub"
+  },
+  "notificationApiHubs": {
+    "url": "https://localhost:5244/",
+    "notification": "notificationHub"
   }
 }

@@ -1,36 +1,46 @@
 using AutoMapper;
-using AutoMapper.Extensions.ExpressionMapping;
-using Chat.Application.Consts;
 using CombatAnalysis.NotificationAPI.Consts;
+using CombatAnalysis.NotificationAPI.Enums;
 using CombatAnalysis.NotificationAPI.Helpers;
+using CombatAnalysis.NotificationAPI.Hubs;
 using CombatAnalysis.NotificationAPI.Interfaces;
 using CombatAnalysis.NotificationAPI.Kafka;
+using CombatAnalysis.NotificationAPI.Kafka.Producer;
 using CombatAnalysis.NotificationAPI.Mapping;
-using CombatAnalysis.NotificationBL.Extensions;
-using CombatAnalysis.NotificationBL.Mapping;
+using CombatAnalysis.NotificationAPI.Providers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Notification.Application.Consts;
+using Notification.Application.Extensions;
+using Notification.Application.Mappers;
+using Notification.Infrastructure.Extensions;
+using Notification.Infrastructure.Mappers;
 using Serilog;
 using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// For testing secrets
+builder.Configuration.AddUserSecrets<Program>();
+
 builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("Kafka"));
-builder.Services.Configure<Hubs>(builder.Configuration.GetSection("Hubs"));
 
 var databasePropsOptions = new DatabaseProps();
 builder.Configuration.Bind("Database", databasePropsOptions);
 
-builder.Services.NotificationBLDependencies(databasePropsOptions.DefaultConnection);
+builder.Services.AddNotificationApplication();
+builder.Services.AddNotificationInfrastructure(databasePropsOptions.DefaultConnection);
 
 var loggerFactory = LoggerFactory.Create(builder => { });
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
-    mc.AddExpressionMapping();
     mc.AddProfile(new NotificationMapper());
-    mc.AddProfile(new NotificationBLMapper());
+    mc.AddProfile(new ApplicationNotificationProfile());
+    mc.AddProfile(new InfrastructureNotificationProfile());
 }, loggerFactory);
 
 var mapper = mappingConfig.CreateMapper();
@@ -40,8 +50,6 @@ var authenticationOptions = new Authentication();
 builder.Configuration.Bind("Authentication", authenticationOptions);
 var authenticationClientOptions = new AuthenticationClient();
 builder.Configuration.Bind("Authentication:Client", authenticationClientOptions);
-var apiOptions = new API();
-builder.Configuration.Bind("API", apiOptions);
 
 var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
@@ -60,6 +68,24 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKeys = keySet.Keys,
             ClockSkew = TimeSpan.Zero
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
+                {
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && MessageReceivedHelper.IsHubExist(path))
+                    {
+                        context.Token = accessToken;
+                    }
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+
         // Skip checking HTTPS (should be HTTPS in production)
         options.RequireHttpsMetadata = false;
     });
@@ -71,11 +97,34 @@ builder.Services.AddAuthorizationBuilder()
         builder.RequireClaim("scope", authenticationClientOptions.Scopes.Split(','));
     });
 
-builder.Services.AddTransient<IChatHubHelper, ChatHubHelper>();
-//builder.Services.AddHostedService<PersonalChatMessageNotificationConsumer>();
+var cors = new CORS();
+builder.Configuration.Bind("Cors", cors);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder.WithOrigins(cors.WebApp)
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
+    });
+});
+
+
+builder.Services.AddSignalR()
+        .AddJsonProtocol();
+
 builder.Services.AddHostedService<NotificationConsumer>();
 
-builder.Services.AddControllers();
+builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -120,10 +169,14 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<NotificationHub>(HubPatterns.NOTIFICATION);
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

@@ -59,6 +59,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CombatAnalysis.Notification.publish.xml" />
-    <None Include="InitialCreate.sql" />
   </ItemGroup>
 </Project>

@@ -6,9 +6,9 @@ public record NotificationModel(
     [Range(0, int.MaxValue)] int Id,
     [Required] int Type,
     [Required] int Status,
-    [Required] string InitiatorId,
+    [Required] Guid InitiatorId,
     string? InitiatorName,
-    [Required] string RecipientId,
+    [Required] Guid RecipientId,
     [Required] DateTime CreatedAt,
     DateTime? ReadAt
     );

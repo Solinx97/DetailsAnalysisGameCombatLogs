@@ -1,5 +1,5 @@
 import { AuthProvider } from '@/context/AuthProvider';
-import NotificationProvider from '@/context/NotificationProvider';
+import NotificationProvider from '@/providers/NotificationProvider';
 import Layout from '@/shared/components/Layout';
 import { Route, Routes } from 'react-router-dom';
 import AppRoutes from './Routes';

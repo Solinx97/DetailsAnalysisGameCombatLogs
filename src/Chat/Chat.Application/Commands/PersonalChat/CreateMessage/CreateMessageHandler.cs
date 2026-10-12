@@ -1,6 +1,6 @@
-﻿using Chat.Application.Events;
+﻿using Chat.Application.Consts;
+using Chat.Application.Events;
 using Chat.Application.Interfaces.Persistence;
-using Chat.Domain.Consts;
 using Chat.Domain.Entities;
 using Chat.Domain.Repositories;
 using Chat.Domain.ValueObjects;

@@ -6,5 +6,5 @@ public class GroupChatDto
 
     public string Name { get; set; }
 
-    public string OwnerId { get; set; }
+    public Guid OwnerId { get; set; }
 }

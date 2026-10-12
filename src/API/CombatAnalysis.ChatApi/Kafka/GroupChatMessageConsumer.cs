@@ -2,7 +2,6 @@
 using Chat.Application.DTOs;
 using Chat.Application.Events;
 using Chat.Domain.Enums;
-using CombatAnalysis.ChatAPI.Consts;
 using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;

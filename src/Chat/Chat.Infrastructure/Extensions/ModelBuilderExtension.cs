@@ -23,7 +23,7 @@ internal static class ModelBuilderExtension
                            value => new UserId(value)
                        );
 
-            builder.Property(c => c.Name).IsRequired().HasMaxLength(100);
+            builder.Property(c => c.Name).IsRequired().HasMaxLength(GroupChat.NAME_MAX_LENGTH);
 
             builder.OwnsOne(c => c.Rules, r =>
             {
@@ -64,8 +64,6 @@ internal static class ModelBuilderExtension
             builder.Property(m => m.Username).IsRequired().HasMaxLength(GroupChatMessage.USERNAME_MAX_LENGTH);
             builder.Property(m => m.Message).IsRequired().HasMaxLength(GroupChatMessage.MESSAGE_MAX_LENGTH);
 
-            builder.Property(m => m.CreatedAt).IsRequired();
-
             builder.Property(c => c.CreatedAt)
                    .HasConversion(
                        dto => dto.UtcDateTime,
@@ -89,7 +87,7 @@ internal static class ModelBuilderExtension
         {
             builder.HasKey(m => m.Id);
 
-            builder.Property(m => m.Username).IsRequired().HasMaxLength(Domain.Entities.GroupChatUser.USERNAME_MAX_LENGTH);
+            builder.Property(m => m.Username).IsRequired().HasMaxLength(GroupChatUser.USERNAME_MAX_LENGTH);
 
             builder.Property(x => x.Id)
                  .HasConversion(
@@ -151,8 +149,6 @@ internal static class ModelBuilderExtension
 
             builder.Property(msg => msg.Username).IsRequired().HasMaxLength(PersonalChatMessage.USERNAME_MAX_LENGTH);
             builder.Property(msg => msg.Message).IsRequired().HasMaxLength(PersonalChatMessage.MESSAGE_MAX_LENGTH);
-
-            builder.Property(m => m.CreatedAt).IsRequired();
 
             builder.Property(c => c.CreatedAt)
                    .HasConversion(

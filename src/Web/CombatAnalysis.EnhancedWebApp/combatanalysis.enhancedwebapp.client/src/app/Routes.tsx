@@ -2,7 +2,7 @@ import PlayerDiethDetails from '@/features/gameLogs/components/player/PlayerDiet
 import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
 import BattleNetAuthorizationCallback from '@/features/wowGameData/components/auth/BattleNetAuthorizationCallback';
 import SelectWoWGameData from '@/features/wowGameData/components/SelectWoWGameData';
-import ChatsApp from '../features/chat/components/ChatsApp';
+import ChatApp from '../features/chat/components/ChatApp';
 import AllCommunities from '../features/community/components/AllCommunities';
 import SelectedCommunity from '../features/community/components/selectedCommunity/SelectedCommunity';
 import UserEnvironmentCommunities from '../features/community/components/userEnvironment/UserEnvironmentCommunities';
@@ -46,7 +46,7 @@ const AppRoutes: Route[] = [
     },
     {
         path: '/chats',
-        element: <ChatsApp />
+        element: <ChatApp />
     },
     {
         path: '/chats/voice/:roomId/:chatName',

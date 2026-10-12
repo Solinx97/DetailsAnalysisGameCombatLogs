@@ -1,8 +1,7 @@
 using AutoMapper;
-using AutoMapper.Extensions.ExpressionMapping;
 using Chat.Application.Consts;
 using Chat.Application.Extensions;
-using Chat.Application.Mappers.Profiles;
+using Chat.Application.Mappers;
 using Chat.Infrastructure.Extensions;
 using Chat.Infrastructure.Mappers;
 using CombatAnalysis.ChatAPI.BackgroundServices;
@@ -29,20 +28,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("Kafka"));
-builder.Services.Configure<Hubs>(builder.Configuration.GetSection("Hubs"));
 
 var databasePropsOptions = new DatabaseProps();
 builder.Configuration.Bind("Database", databasePropsOptions);
 
-var connectionString = databasePropsOptions.DefaultConnection;
 builder.Services.AddChatApplication();
-builder.Services.AddChatInfrastructure(connectionString);
+builder.Services.AddChatInfrastructure(databasePropsOptions.DefaultConnection);
 
 var loggerFactory = LoggerFactory.Create(builder => { });
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
-    mc.AddExpressionMapping();
     mc.AddProfile(new ChatMapper());
     mc.AddProfile(new ApplicationChatProfile());
     mc.AddProfile(new InfrastructureChatProfile());
@@ -55,8 +51,6 @@ var authenticationOptions = new Authentication();
 builder.Configuration.Bind("Authentication", authenticationOptions);
 var authenticationClientOptions = new AuthenticationClient();
 builder.Configuration.Bind("Authentication:Client", authenticationClientOptions);
-var apiOptions = new API();
-builder.Configuration.Bind("API", apiOptions);
 
 var audiences = authenticationClientOptions.Audiences.Split(',');
 builder.Services.AddAuthentication("Bearer")
@@ -183,17 +177,15 @@ var app = builder.Build();
 
 app.UseCors("CorsPolicy");
 
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.MapHub<PersonalChatHub>(HubPatterns.PERSONAL_CHAT);
 app.MapHub<PersonalChatMessagesHub>(HubPatterns.PERSONAL_CHAT_MESSAGE);
-app.MapHub<PersonalChatUnreadMessageHub>(HubPatterns.PERSONAL_CHAT_UNREAD_MESSAGE);
 app.MapHub<GroupChatHub>(HubPatterns.GROUP_CHAT);
 app.MapHub<GroupChatMessagesHub>(HubPatterns.GROUP_CHAT_MESSAGE);
-app.MapHub<GroupChatUnreadMessageHub>(HubPatterns.GROUP_CHAT_UNREAD_MESSAGE);
 app.MapHub<VoiceChatHub>(HubPatterns.VOICE_CHAT);
 
 app.UseSwagger();

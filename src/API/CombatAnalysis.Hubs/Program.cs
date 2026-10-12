@@ -2,7 +2,6 @@ using Chat.Application.Consts;
 using CombatAnalysis.Hubs.Consts;
 using CombatAnalysis.Hubs.Enums;
 using CombatAnalysis.Hubs.Helpers;
-using CombatAnalysis.Hubs.Hubs;
 using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Kafka;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -95,8 +94,6 @@ app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapHub<NotificationHub>(HubPatterns.Notification);
 
 app.UseHttpsRedirection();
 

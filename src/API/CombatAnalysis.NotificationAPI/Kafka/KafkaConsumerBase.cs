@@ -1,8 +1,6 @@
-﻿using Chat.Application.Consts;
-using CombatAnalysis.NotificationAPI.Core;
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
+using Notification.Application.Consts;
 
 namespace CombatAnalysis.NotificationAPI.Kafka;
 
@@ -11,7 +9,7 @@ public abstract class KafkaConsumerBase : BackgroundService
     private readonly ConsumerConfig _config;
     private readonly string _topic;
     private readonly ILogger _logger;
-    private IConsumer<string, JsonDocument>? _consumer;
+    private IConsumer<string, string>? _consumer;
 
     protected KafkaConsumerBase(IOptions<KafkaSettings> kafkaSettings, string topic, ILogger logger)
     {
@@ -21,14 +19,13 @@ public abstract class KafkaConsumerBase : BackgroundService
         _logger = logger;
     }
 
-    protected abstract Task ConsumeMessageAsync(ConsumeResult<string, JsonDocument> result, CancellationToken stoppingToken);
+    protected abstract Task ConsumeMessageAsync(ConsumeResult<string, string> result, CancellationToken stoppingToken);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var consumerConfig = new ConsumerConfig(_config);
-        _consumer = new ConsumerBuilder<string, JsonDocument>(consumerConfig)
+        _consumer = new ConsumerBuilder<string, string>(consumerConfig)
             .SetKeyDeserializer(Deserializers.Utf8)
-            .SetValueDeserializer(new JsonDocumentDeserializer())
             .SetErrorHandler((_, e) => _logger.LogError($"Kafka Consumer Error: {e.Reason}"))
             .SetStatisticsHandler((_, json) => _logger.LogDebug($"Kafka Statistics: {json}"))
             .Build();
