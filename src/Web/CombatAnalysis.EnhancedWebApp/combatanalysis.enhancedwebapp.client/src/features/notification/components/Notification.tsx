@@ -1,6 +1,7 @@
 import type { RootState } from '@/app/Store';
 import Store from '@/app/Store';
 import NotificationHubContext from '@/context/NotificationHubContext';
+import { NotificationStatus } from '@/shared/helpers/EnumHelper';
 import logger from '@/utils/Logger';
 import { faBell, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,8 +9,12 @@ import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { NotificationApi, useGetNotificationsByRecipientIdQuery, useRemoveNotificationMutation } from '../api/Notification.api';
+import { NotificationApi, useReadAllNotificationsMutation, useReadNotificationMutation, useRemoveNotificationMutation } from '../api/Notification.api';
+import useNotifications from '../hooks/useNotifications';
 import type { AppNotificationModel } from '../types/AppNotificationModel';
+import type { ReadNotificationModel } from '../types/ReadNotificationModel';
+
+import './Notification.scss';
 
 const Notification: React.FC = () => {
     const { t } = useTranslation('notification');
@@ -23,11 +28,15 @@ const Notification: React.FC = () => {
         throw new Error("Child must be inside ChatHubContext.Provider");
     }
 
-    const { data: notifciations } = useGetNotificationsByRecipientIdQuery(user ? user.id : "0");
-
+    const [readNotification] = useReadNotificationMutation();
+    const [readAllNotifications] = useReadAllNotificationsMutation();
     const [removeNotification] = useRemoveNotificationMutation();
 
     const [showNotifications, setShowNotifications] = useState(false);
+    const [showOnlyUnreadNotifications, setShowOnlyUnreadNotifications] = useState(true);
+    const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+
+    const notifications = useNotifications(showOnlyUnreadNotifications, user ? user.id : "0");
 
     useEffect(() => {
         let isCancelled = false;
@@ -63,12 +72,21 @@ const Notification: React.FC = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (!notifications) {
+            return;
+        }
+
+        setUnreadNotificationsCount(notifications.filter(x => x.status === NotificationStatus["UNREAD"])?.length);
+    }, [notifications]);
+
     const personalChatNotifications = (notification: AppNotificationModel) => {
         const navigateToChats = async () => await seeNotificationAsync();
         const removeNotification = async () => await removeNotificationAsync(notification.id);
 
         return (
-            <li className="notification-message" key={notification.id}>
+            <li key={notification.id} className={`notification-message ${notification.status == NotificationStatus["UNREAD"] ? 'unread' : 'read'}`}
+                onMouseEnter={async () => await readNotificationAsync(notification.id)}>
                 <div className="notification-message__time">{getNotificationTime(notification)}</div>
                 <div>{t("PersonalChatNotification")} '{notification.initiatorName}'. <span className="notifications-container__see" onClick={navigateToChats}>{t("See")}</span></div>
                 <FontAwesomeIcon
@@ -94,6 +112,23 @@ const Notification: React.FC = () => {
         navigate('/chats');
     }
 
+    const readNotificationAsync = async (notificationId: number) => {
+        if (!user) {
+            return;
+        }
+
+        try {
+            const notification: ReadNotificationModel = {
+                id: notificationId,
+                status: NotificationStatus["READ"]
+            }
+
+            await readNotification({ id: notificationId, notification }).unwrap();
+        } catch (error) {
+            logger.error("Failed to remove notification:", error);
+        }
+    }
+
     const removeNotificationAsync = async (notificationId: number) => {
         if (!user) {
             return;
@@ -115,8 +150,16 @@ const Notification: React.FC = () => {
         }
     }
 
-    const readAllNotifications = async () => {
-        await context.notificationHubConnectionRef.current?.invoke("ReadRecipientNotifications", user?.id);
+    const readAllNotificationsAsync = async () => {
+        if (!user) {
+            return;
+        }
+
+        try {
+            await readAllNotifications(user.id).unwrap();
+        } catch (error) {
+            logger.error("Failed to read all notifications:", error);
+        }
     }
 
     return (
@@ -124,25 +167,30 @@ const Notification: React.FC = () => {
             <div className="notifications__alert">
                 <FontAwesomeIcon
                     icon={faBell}
-                    title={t("Notifications") || ""}
+                    color={showNotifications ? 'green' : 'white'}
                     onClick={() => setShowNotifications(!showNotifications)}
                 />
-                {(notifciations && notifciations.length > 0) &&
+                {unreadNotificationsCount > 0 &&
                     <div className="notifications-count">
-                        <div>{notifciations.length > 9 ? '9+' : notifciations.length}</div>
+                        <div>{unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}</div>
                     </div>
                 }
             </div>
             {showNotifications &&
                 <div className="notifications-container">
-                    <div className="notifications-container__title">{t("Notifications")}</div>
+                    <div className="notifications-container__title">
+                        <div className={`${showOnlyUnreadNotifications ? 'active' : 'inactive'}`}
+                            onClick={() => setShowOnlyUnreadNotifications(true)}>{t("Notifications")}</div>
+                        <div className={`${showOnlyUnreadNotifications ? 'inactive' : 'active'}`}
+                            onClick={() => setShowOnlyUnreadNotifications(false)}>{t("AllNotifications")}</div>
+                    </div>
                     <ul className="notifications-container__content">
-                        {!notifciations || notifciations.length === 0
+                        {(notifications && notifications.length === 0)
                             ? <li className="notifications-container__empty">{t("Empty")}</li>
-                            : notifciations && notifciations.map((notification) => personalChatNotifications(notification))}
+                            : notifications && notifications.map((notification) => personalChatNotifications(notification))}
                     </ul>
-                    {(notifciations && notifciations.length > 0) &&
-                        <div className="notifications-container__read-all" onClick={readAllNotifications}>{t("ClearAll")}</div>
+                    {unreadNotificationsCount > 0 &&
+                        <div className="notifications-container__read-all" onClick={readAllNotificationsAsync}>{t("ReadAll")}</div>
                     }
                 </div>
             }

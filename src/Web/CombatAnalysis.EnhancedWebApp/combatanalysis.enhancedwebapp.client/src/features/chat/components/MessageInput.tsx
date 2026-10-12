@@ -9,18 +9,19 @@ import type { GroupChatUserModel } from '../types/GroupChatUserModel';
 const emptyMessageNotificationTimeout = 4000;
 
 interface MessageInputProps {
+    page: number;
     chatId: number;
     initiator: (GroupChatUserModel | AppUserModel) | null;
     targetChatType: number;
     t: (key: string) => string;
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ chatId, initiator, targetChatType, t }) => {
+const MessageInput: React.FC<MessageInputProps> = ({ page, chatId, initiator, targetChatType, t }) => {
     const messageInput = useRef<HTMLInputElement | null>(null);
 
     const [isEmptyMessage, setIsEmptyMessage] = useState(false);
 
-    const { createPersonalMessageAsync, createGrouplMessageAsync } = useMessageCreate();
+    const { createPersonalMessageAsync, createGrouplMessageAsync } = useMessageCreate(page);
 
     const sendMessageByKeyHandle = async (code: string) => {
         if (code !== "Enter") {

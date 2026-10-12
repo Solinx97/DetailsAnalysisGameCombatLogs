@@ -38,7 +38,7 @@ public class PersonalChatMessageController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] PersonalChatMessageModel chatMessage, CancellationToken cancellationToken)
     {
-        var command = new CreateMessageCommand(chatMessage.Username, chatMessage.Message, chatMessage.PersonalChatId, chatMessage.AppUserId);
+        var command = new CreateMessageCommand(chatMessage.Id, chatMessage.Username, chatMessage.Message, chatMessage.PersonalChatId, chatMessage.AppUserId);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

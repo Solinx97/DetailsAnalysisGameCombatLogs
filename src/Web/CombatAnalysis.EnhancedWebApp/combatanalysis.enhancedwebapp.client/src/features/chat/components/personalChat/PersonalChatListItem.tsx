@@ -36,9 +36,9 @@ const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ refetch, ch
                 return;
             }
             
-            await context.personalChatEvents.connectToPersonalChatMessagesAsync(chat.id);
-            context.personalChatEvents.subscribeToPersonalChatMessages(handleMessage);
-            context.personalChatEvents.subscribeToPersonalMessageRead(handleMessage);
+            await context.personalChatEvents.connectToChatMessagesAsync(chat.id);
+            context.personalChatEvents.subscribeToChatMessages(handleMessage);
+            context.personalChatEvents.subscribeToMessageRead(handleMessage);
         }
 
         connect();
@@ -46,8 +46,9 @@ const PersonalChatListItem: React.FC<PersonalChatListItemProps> = ({ refetch, ch
         return () => {
             isCancelled = true;
 
-            context.personalChatEvents.unsubscribeToPersonalChatMessages(handleMessage);
-            context.personalChatEvents.disconnectFromPersonalChatMessageHubAsync();
+            context.personalChatEvents.unsubscribeToChatMessages(handleMessage);
+            context.personalChatEvents.unsubscribeToMessageRead(handleMessage);
+            context.personalChatEvents.disconnectFromChatMessageHubAsync();
         };
     }, []);
 

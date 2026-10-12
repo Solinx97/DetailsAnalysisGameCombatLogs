@@ -8,6 +8,7 @@ import { useFindChatUsersQuery } from '../../api/GroupChatUser.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
 import GroupChatListItem from './GroupChatListItem';
+import type { GroupChatUserModel } from '../../types/GroupChatUserModel';
 
 interface GroupChatListProps {
     myselfId: string;
@@ -30,33 +31,36 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
     useEffect(() => {
         let isCancelled = false;
 
+        const handle = (groupChatUser: GroupChatUserModel) => {
+            Store.dispatch(
+                GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
+                    draft.push(groupChatUser);
+                })
+            );
+        }
+
+        const handleRemoveFromChat = (appUserId: string, chatId: number) => {
+            Store.dispatch(
+                GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
+                    const index = draft.findIndex(
+                        chatUser => chatUser.appUserId === appUserId && chatUser.groupChatId === chatId
+                    );
+
+                    if (index !== -1) {
+                        draft.splice(index, 1);
+                    }
+                })
+            );
+        }
+
         const connect = async () => {
             if (isCancelled) {
                 return;
             }
 
-            await context.groupChatEvents.connectToGroupChatAsync();
-            context.groupChatEvents.subscribeToGroupChat((groupChatUser) => {
-                Store.dispatch(
-                    GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
-                        draft.push(groupChatUser);
-                    })
-                );
-            });
-
-            context.groupChatEvents.subscribeToRemovedFromGroupChat((appUserId, chatId) => {
-                Store.dispatch(
-                    GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
-                        const index = draft.findIndex(
-                            chatUser => chatUser.appUserId === appUserId && chatUser.groupChatId === chatId
-                        );
-
-                        if (index !== -1) {
-                            draft.splice(index, 1);
-                        }
-                    })
-                );
-            });
+            await context.groupChatEvents.connectToChatAsync();
+            context.groupChatEvents.subscribeToChat(handle);
+            context.groupChatEvents.subscribeToRemovedFromChat(handleRemoveFromChat);
         }
 
         connect();
@@ -64,7 +68,9 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
         return () => {
             isCancelled = true;
 
-            context.personalChatEvents.disconnectFromPersonalChatHubAsync();
+            context.groupChatEvents.unsubscribeToChat(handle);
+            context.groupChatEvents.unsubscribeToRemovedFromChat(handleRemoveFromChat);
+            context.groupChatEvents.disconnectFromChatHubAsync();
         };
     }, []);
 
@@ -73,13 +79,29 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
             return;
         }
 
-        (async () => {
-            context.groupChatEvents.subscribeToRemovedFromGroupChat((_, chatId) => {
-                if (chatId === selectedChat.id) {
-                    setSelectedChat(null);
-                }
-            });
-        })();
+        let isCancelled = false;
+
+        const handleRemoveFromChat = (_: string, chatId: number) => {
+            if (chatId === selectedChat.id) {
+                setSelectedChat(null);
+            }
+        }
+
+        const connect = async () => {
+            if (isCancelled) {
+                return;
+            }
+
+            context.groupChatEvents.subscribeToRemovedFromChat(handleRemoveFromChat);
+        }
+
+        connect();
+
+        return () => {
+            isCancelled = true;
+
+            context.groupChatEvents.unsubscribeToRemovedFromChat(handleRemoveFromChat);
+        };
     }, [selectedChat]);
 
     if (!groupChats || isLoading) {

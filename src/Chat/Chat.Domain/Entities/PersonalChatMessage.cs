@@ -12,10 +12,10 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
 
     private PersonalChatMessage() { }
 
-    private PersonalChatMessage(string username, string message, PersonalChatId chatId, UserId appUserId, long sequence,
+    private PersonalChatMessage(PersonalChatMessageId id, string username, string message, PersonalChatId chatId, UserId appUserId, long sequence,
                     MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset createdAt)
     {
-        Id = Guid.NewGuid();
+        Id = id;
         Username = username;
         Message = message;
         PersonalChatId = chatId;
@@ -51,7 +51,7 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
 
     public PersonalChat PersonalChat { get; private set; } = null!;
 
-    public static PersonalChatMessage Create(string username, string message, PersonalChatId chatId, UserId appUserId, long lastMessageSequence,
+    public static PersonalChatMessage Create(PersonalChatMessageId id, string username, string message, PersonalChatId chatId, UserId appUserId, long lastMessageSequence,
         int status = (int)MessageStatus.Sent, int messageType = (int)MessageType.Default, int markedType = (int)MessageMarkedType.None)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
@@ -60,7 +60,7 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
         ArgumentOutOfRangeException.ThrowIfNegative(lastMessageSequence, nameof(lastMessageSequence));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new PersonalChatMessage(username, message, chatId, appUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
+        return new PersonalChatMessage(id, username, message, chatId, appUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
     }
 
     public void EditMessage(string? newMessage)

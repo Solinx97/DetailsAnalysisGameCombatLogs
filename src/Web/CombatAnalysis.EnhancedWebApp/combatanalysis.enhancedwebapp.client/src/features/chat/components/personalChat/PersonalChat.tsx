@@ -45,7 +45,7 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
-    const { data: messages, refetch, isLoading } = useGetMessagesByPersonalChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
+    const { data: messages, isLoading } = useGetMessagesByPersonalChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountPersonalChatMessagesQuery(chat.id);
 
     const { data: companion } = useGetUserByIdQuery(companionId);
@@ -61,50 +61,86 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
     }, [messages, count]);
 
     useEffect(() => {
-        (async () => {
-            context.personalChatEvents.subscribeToPersonalMessageRead(async () => {
-                await refetch();
-            });
+        let isCancelled = false;
 
-            context.personalChatEvents?.subscribeToPersonalChatMessages((message: PersonalChatMessageModel) => {
-                Store.dispatch(
-                    ChatApi.util.updateQueryData(
-                        'getMessagesByPersonalChatId',
-                        { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                        draft => {
+        const handleMessageRead = (messageId: string) => {
+            Store.dispatch(
+                ChatApi.util.updateQueryData(
+                    'getMessagesByPersonalChatId',
+                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
+                    draft => {
+                        const findMessage = draft.find(m => m.id === messageId);
+                        if (findMessage) {
+                            const updatedMessage = Object.assign({}, findMessage);
+                            updatedMessage.status = MessageStatus["READ"];
+                            Object.assign(findMessage, updatedMessage);
+                        }
+                    }
+                )
+            );
+        }
+
+        const handleMessage = (message: PersonalChatMessageModel) => {
+            Store.dispatch(
+                ChatApi.util.updateQueryData(
+                    'getMessagesByPersonalChatId',
+                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
+                    draft => {
+                        const findMessage = draft.find(m => m.id === message.id);
+                        if (findMessage) {
+                            Object.assign(findMessage, message);
+                        }
+                        else {
                             draft.unshift(message);
                         }
-                    )
-                );
-            });
+                    }
+                )
+            );
+        }
 
-            context.personalChatEvents?.subscribeToPersonalChatMessageEdit((messagePatch: ChatMessagePatch) => {
-                Store.dispatch(
-                    ChatApi.util.updateQueryData(
-                        'getMessagesByPersonalChatId',
-                        { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                        draft => {
-                            const message = draft.find(m => m.id === messagePatch.id);
-                            if (message && messagePatch) {
-                                const updatedMessage = Object.assign({}, message);
-                                updatedMessage.message = messagePatch.message ?? "";
-                                updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"];
-                                updatedMessage.markedType = messagePatch.markedType ?? 0;
+        const handleMessageEdit = (messagePatch: ChatMessagePatch) => {
+            Store.dispatch(
+                ChatApi.util.updateQueryData(
+                    'getMessagesByPersonalChatId',
+                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
+                    draft => {
+                        const message = draft.find(m => m.id === messagePatch.id);
+                        if (message && messagePatch) {
+                            const updatedMessage = Object.assign({}, message);
+                            updatedMessage.message = messagePatch.message ?? "";
+                            updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"];
+                            updatedMessage.markedType = messagePatch.markedType ?? 0;
 
-                                Object.assign(message, updatedMessage);
-                            }
+                            Object.assign(message, updatedMessage);
                         }
-                    )
-                );
-            });
-        })();
+                    }
+                )
+            );
+        }
+
+        const connect = async () => {
+            if (isCancelled) {
+                return;
+            }
+
+            await context.personalChatEvents.connectToChatMessagesAsync(chat.id);
+
+            context.personalChatEvents.subscribeToChatMessages(handleMessage);
+            context.personalChatEvents.subscribeToMessageRead(handleMessageRead);
+            context.personalChatEvents.subscribeToChatMessageEdit(handleMessageEdit);
+        }
+
+        connect();
 
         return () => {
-            (async () => {
-                await context.personalChatEvents?.disconnectFromPersonalChatMessageHubAsync();
-            })();
-        }
-    }, [chat]);
+            isCancelled = true;
+
+            context.personalChatEvents.unsubscribeToChatMessages(handleMessage);
+            context.personalChatEvents.unsubscribeToMessageRead(handleMessageRead);
+            context.personalChatEvents.unsubscribeToChatMessageEdit(handleMessageEdit);
+            context.personalChatEvents.disconnectFromChatMessageHubAsync();
+        };
+    }, []);
 
     const updateMessageAsync = async (message: ChatMessagePatch) => {
         try {
@@ -128,7 +164,9 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                         setSelectedChat={setSelectedChat}
                         t={t}
                     />
+                    <ul className="chat-messages" ref={chatContainerRef}></ul>
                     <MessageInput
+                        page={page}
                         chatId={chat.id}
                         initiator={myself}
                         targetChatType={ChatType["PERSONAL"]}
@@ -166,6 +204,7 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                     </li>
                 </ul>
                 <MessageInput
+                    page={page}
                     chatId={chat.id}
                     initiator={myself}
                     targetChatType={ChatType["PERSONAL"]}

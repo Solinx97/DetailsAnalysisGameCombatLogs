@@ -29,6 +29,21 @@ internal class NotificationApiClient(HttpClient httpClient) : INotificationApiCl
         return messages ?? throw new InvalidOperationException("The Notification API returned an empty response.");
     }
 
+    public async Task ReadNotificationAsync(int id, ReadNotificationModel notification, CancellationToken cancellationToken)
+    {
+        if (id != notification.Id)
+        {
+            throw new InvalidOperationException("Id is not equal message id.");
+        }
+
+        await _httpClient.PatchAsync($"Notification/read/{id}", JsonContent.Create(notification), cancellationToken);
+    }
+
+    public async Task ReadAllNotificationsAsync(Guid recipientId, CancellationToken cancellationToken)
+    {
+        await _httpClient.PatchAsync($"Notification/readAll/{recipientId}", null, cancellationToken);
+    }
+
     public async Task DeleteNotificationAsync(int id, CancellationToken cancellationToken)
     {
         await _httpClient.DeleteAsync($"Notification/{id}", cancellationToken);

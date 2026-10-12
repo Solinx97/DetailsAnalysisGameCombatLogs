@@ -1,0 +1,90 @@
+.notifications {
+    &__alert {
+        display: flex;
+        align-items: center;
+
+        .notifications-count {
+            div {
+                font-size: 0.8em;
+                text-align: start;
+                border: 1px solid yellow;
+                border-radius: 10px;
+                padding: 0 5px;
+                margin-top: -20px;
+            }
+        }
+    }
+
+    &-container {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        padding: 15px 20px;
+        border-radius: 20px;
+        border: 2px solid gray;
+        background: #0c192c;
+        margin-top: 20px;
+        margin-left: -125px;
+        max-height: 200px;
+        cursor: default;
+        z-index: 9999;
+
+        &__title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+
+            .active {
+                font-weight: bold;
+            }
+
+            .inactive {
+                opacity: 0.5;
+                font-size: 0.9em;
+            }
+        }
+
+        &__content {
+            display: flex;
+            flex-direction: column;
+            padding: 5px 15px !important;
+            margin: 0;
+            gap: 5px;
+            overflow-y: auto;
+        }
+
+        &__empty,
+        .notification-message {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.9em;
+            text-align: center;
+
+            &__time {
+                font-size: 0.9em;
+                opacity: 0.6;
+            }
+        }
+
+        &__see {
+            color: aqua;
+            opacity: 0.7;
+            cursor: pointer;
+        }
+
+        &__read-all {
+            font-size: 0.8em;
+            opacity: 0.7;
+            color: cornflowerblue;
+            cursor: pointer;
+        }
+
+        .read {
+            opacity: 0.4;
+        }
+    }
+}

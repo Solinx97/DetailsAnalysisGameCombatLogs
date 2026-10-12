@@ -28,42 +28,46 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
     useEffect(() => {
         let isCancelled = false;
 
+        const handle = (chat: PersonalChatModel) => {
+            Store.dispatch(
+                PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
+                    draft.push(chat);
+                })
+            );
+        }
+
+        const handleRemoveFromChat = (appUserId: string, chatId: number) => {
+            Store.dispatch(
+                PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
+                    const index = draft.findIndex(
+                        chat => (chat.initiatorId === appUserId || chat.companionId === appUserId) && chat.id === chatId
+                    );
+
+                    if (index !== -1) {
+                        draft.splice(index, 1);
+                    }
+                })
+            );
+        }
+
         const connect = async () => {
             if (isCancelled) {
                 return;
             }
-            
-            await context.personalChatEvents.connectToPersonalChatAsync();
 
-            context.personalChatEvents.subscribeToPersonalChat((chat) => {
-                Store.dispatch(
-                    PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
-                        draft.push(chat);
-                    })
-                );
-            });
-
-            context.personalChatEvents.subscribeToRemovedFromPersonalChat((appUserId, chatId) => {
-                Store.dispatch(
-                    PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
-                        const index = draft.findIndex(
-                            chat => (chat.initiatorId === appUserId || chat.companionId === appUserId) && chat.id === chatId
-                        );
-
-                        if (index !== -1) {
-                            draft.splice(index, 1);
-                        }
-                    })
-                );
-            });
+            await context.personalChatEvents.connectToChatAsync();
+            context.personalChatEvents.subscribeToChat(handle);
+            context.personalChatEvents.subscribeToRemovedFromChat(handleRemoveFromChat);
         }
 
         connect();
 
         return () => {
             isCancelled = true;
-
-            context.personalChatEvents.disconnectFromPersonalChatHubAsync();
+            
+            context.personalChatEvents.unsubscribeToChat(handle);
+            context.personalChatEvents.unsubscribeToRemovedFromChat(handleRemoveFromChat);
+            context.personalChatEvents.disconnectFromChatHubAsync();
         };
     }, []);
 
@@ -71,14 +75,29 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
         if (!selectedChat) {
             return;
         }
+        let isCancelled = false;
 
-        (async () => {
-            context.personalChatEvents.subscribeToRemovedFromPersonalChat((_, chatId) => {
-                if (chatId === selectedChat.id) {
-                    setSelectedChat(null);
-                }
-            });
-        })();
+        const handleRemoveFromChat = (_: string, chatId: number) => {
+            if (chatId === selectedChat.id) {
+                setSelectedChat(null);
+            }
+        }
+
+        const connect = async () => {
+            if (isCancelled) {
+                return;
+            }
+
+            context.personalChatEvents.subscribeToRemovedFromChat(handleRemoveFromChat);
+        }
+
+        connect();
+
+        return () => {
+            isCancelled = true;
+
+            context.personalChatEvents.unsubscribeToRemovedFromChat(handleRemoveFromChat);
+        };
     }, [selectedChat]);
 
     if (!personalChats || isLoading) {

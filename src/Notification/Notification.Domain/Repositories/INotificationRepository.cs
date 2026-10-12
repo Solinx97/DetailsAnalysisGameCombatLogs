@@ -12,5 +12,7 @@ public interface INotificationRepository
 
     Task<Aggregates.Notification> GetByIdAsync(NotificationId id, CancellationToken cancelationToken);
 
+    Task ReadAllUnreadAsync(UserId recipientId, CancellationToken cancellationToken);
+
     Task DeleteAsync(int id, CancellationToken cancelationToken);
 }

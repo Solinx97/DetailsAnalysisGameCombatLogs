@@ -11,5 +11,9 @@ public interface INotificationApiClient
 
     Task<IEnumerable<NotificationModel>> GetUnreadByRecipientIdAsync(Guid recipientId, CancellationToken cancellationToken);
 
+    Task ReadNotificationAsync(int id, ReadNotificationModel notification, CancellationToken cancellationToken);
+
+    Task ReadAllNotificationsAsync(Guid recipientId, CancellationToken cancellationToken);
+
     Task DeleteNotificationAsync(int id, CancellationToken cancellationToken);
 }

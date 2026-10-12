@@ -25,7 +25,7 @@ internal class CreateMessageHandler(IGenericRepository<Domain.Aggregates.Persona
         {
             var chat = await _chatRepository.GetByIdAsync(request.ChatId);
 
-            var message = PersonalChatMessage.Create(request.Username, request.Message, request.ChatId, request.AppUserId, chat.LastMessageSequence);
+            var message = PersonalChatMessage.Create(request.Id, request.Username, request.Message, request.ChatId, request.AppUserId, chat.LastMessageSequence);
             await _repository.AddAsync(message, cancellationToken);
 
             chat.IncrementSequence();

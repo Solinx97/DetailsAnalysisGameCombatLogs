@@ -3,19 +3,18 @@ import type { GroupChatUserModel } from '@/features/chat/types/GroupChatUserMode
 import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessagePatch';
 
 export interface IGroupChatHubEvents {
-    connectToGroupChatAsync: () => Promise<void>;
-    connectToGroupChatMessagesAsync: (chatId: number) => Promise<void>;
-    connectToGroupChatUnreadMessagesAsync: (myGroupChatsId: number[]) => Promise<void>;
-    subscribeToGroupChat: (callback: (groupChatUser: GroupChatUserModel) => void) => void;
-    subscribeToRemovedFromGroupChat: (callback: (appUserId: string, chatId: number) => void) => void;
-    subscribeToGroupChatMessages: (callback: (message: GroupChatMessageModel) => void) => void;
-    unsubscribeToGroupChatMessages: (callback: (message: GroupChatMessageModel) => void) => void;
-    subscribeToGroupChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
-    subscribeToGroupMessageDelivered: (chatId: number) => void;
-    subscribeToUnreadGroupMessagesUpdated: (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => void;
-    subscribeToGroupMessageRead: (callback: (messageId: string) => void) => void;
-    disconnectFromGroupChatHubAsync: () => Promise<void>;
-    disconnectFromGroupChatMessageHubAsync: () => Promise<void>;
-    disconnectFromGroupChatUnreadMessagesHubAsync: () => Promise<void>;
-    subscribeToGroupChatMembers: (callback: (members: GroupChatUserModel[]) => void) => void;
+    connectToChatAsync: () => Promise<void>;
+    connectToChatMessagesAsync: (chatId: number) => Promise<void>;
+    subscribeToChat: (callback: (groupChatUser: GroupChatUserModel) => void) => void;
+    unsubscribeToChat: (callback: (groupChatUser: GroupChatUserModel) => void) => void;
+    subscribeToRemovedFromChat: (callback: (appUserId: string, chatId: number) => void) => void;
+    unsubscribeToRemovedFromChat: (callback: (appUserId: string, chatId: number) => void) => void;
+    subscribeToChatMessages: (callback: (message: GroupChatMessageModel) => void) => void;
+    unsubscribeToChatMessages: (callback: (message: GroupChatMessageModel) => void) => void;
+    subscribeToChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
+    unsubscribeToChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
+    subscribeToMessageRead: (callback: (messageId: string) => void) => void;
+    unsubscribeToMessageRead: (callback: (messageId: string) => void) => void;
+    disconnectFromChatHubAsync: () => Promise<void>;
+    disconnectFromChatMessageHubAsync: () => Promise<void>;
 }

@@ -18,6 +18,7 @@ internal static class PersonalChatMessageTestData
     )
     {
         var entity = PersonalChatMessage.Create(
+            id: Guid.NewGuid(),
             username: username ?? "check",
             message: message ?? "test message",
             chatId: chatId ?? 1,
@@ -63,6 +64,7 @@ internal static class PersonalChatMessageTestData
         for (var i = 0; i < size; i++)
         {
             collection[i] = PersonalChatMessage.Create(
+                id: Guid.NewGuid(),
                 username: $"chat-{i}",
                 message: $"test message {i}",
                 chatId: i + 1,

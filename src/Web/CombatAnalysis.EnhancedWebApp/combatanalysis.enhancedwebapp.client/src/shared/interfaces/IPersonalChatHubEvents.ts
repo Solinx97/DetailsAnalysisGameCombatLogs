@@ -3,17 +3,18 @@ import type { PersonalChatMessageModel } from '@/features/chat/types/PersonalCha
 import type { PersonalChatModel } from '@/features/chat/types/PersonalChatModel';
 
 export interface IPersonalChatHubEvents {
-    connectToPersonalChatAsync: () => Promise<void>;
-    connectToPersonalChatMessagesAsync: (myPersonalChatId: number) => Promise<void>;
-    connectToPersonalChatUnreadMessagesAsync: (myPersonalChatsId: number[]) => Promise<void>;
-    subscribeToPersonalChat: (callback: (chat: PersonalChatModel) => void) => void;
-    subscribeToRemovedFromPersonalChat: (callback: (appUserId: string, chatId: number) => void) => void;
-    subscribeToPersonalChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
-    unsubscribeToPersonalChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
-    subscribeToPersonalChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
-    subscribeToPersonalMessageRead: (callback: (messageId: string) => void) => void;
-    subscribeToUnreadPersonalMessagesUpdated: (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => void;
-    disconnectFromPersonalChatHubAsync: () => Promise<void>;
-    disconnectFromPersonalChatMessageHubAsync: () => Promise<void>;
-    disconnectFromPersonalChatUnreadMessagesHubAsync: () => Promise<void>;
+    connectToChatAsync: () => Promise<void>;
+    connectToChatMessagesAsync: (myPersonalChatId: number) => Promise<void>;
+    subscribeToChat: (callback: (chat: PersonalChatModel) => void) => void;
+    unsubscribeToChat: (callback: (chat: PersonalChatModel) => void) => void;
+    subscribeToChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
+    unsubscribeToChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
+    subscribeToRemovedFromChat: (callback: (appUserId: string, chatId: number) => void) => void;
+    unsubscribeToRemovedFromChat: (callback: (appUserId: string, chatId: number) => void) => void;
+    subscribeToChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
+    unsubscribeToChatMessageEdit: (callback: (mssagePatch: ChatMessagePatch) => void) => void;
+    subscribeToMessageRead: (callback: (messageId: string) => void) => void;
+    unsubscribeToMessageRead: (callback: (messageId: string) => void) => void;
+    disconnectFromChatHubAsync: () => Promise<void>;
+    disconnectFromChatMessageHubAsync: () => Promise<void>;
 }

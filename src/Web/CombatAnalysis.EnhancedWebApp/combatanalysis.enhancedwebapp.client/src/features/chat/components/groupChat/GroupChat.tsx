@@ -45,7 +45,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
-    const { data: messages, refetch, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
+    const { data: messages, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountGroupChatMessagesQuery(chat.id);
 
     const { data: groupChatUsers, isLoading: usersIsLoading } = useFindAllChatUsersQuery(chat.id);
@@ -61,54 +61,86 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     }, [page, count]);
 
     useEffect(() => {
-        (async () => {
-            context.groupChatEvents.subscribeToGroupMessageRead(async () => {
-                await refetch();
-            });
+        let isCancelled = false;
 
-            await context.groupChatEvents.connectToGroupChatMessagesAsync(chat.id);
-            context.groupChatEvents.subscribeToGroupChatMessages((message: GroupChatMessageModel) => {
-                Store.dispatch(
-                    ChatApi.util.updateQueryData(
-                        'getMessagesByGroupChatId',
-                        { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                        draft => {
-                            const findMessage = draft.find(m => m.id === message.id);
-                            if (findMessage && message) {
-                                Object.assign(findMessage, message);
-                            }
+        const handleMessageRead = (messageId: string) => {
+            Store.dispatch(
+                ChatApi.util.updateQueryData(
+                    'getMessagesByGroupChatId',
+                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
+                    draft => {
+                        const findMessage = draft.find(m => m.id === messageId);
+                        if (findMessage) {
+                            const updatedMessage = Object.assign({}, findMessage);
+                            updatedMessage.status = MessageStatus["READ"];
+                            Object.assign(findMessage, updatedMessage);
                         }
-                    )
-                );
-            });
+                    }
+                )
+            );
+        }
 
-            context.groupChatEvents.subscribeToGroupChatMessageEdit((messagePatch: ChatMessagePatch) => {
-                Store.dispatch(
-                    ChatApi.util.updateQueryData(
-                        'getMessagesByGroupChatId',
-                        { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                        draft => {
-                            const message = draft.find(m => m.id === messagePatch.id);
-                            if (message && messagePatch) {
-                                const updatedMessage = Object.assign({}, message);
-                                updatedMessage.message = messagePatch.message ?? "";
-                                updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"]
-                                updatedMessage.markedType = messagePatch.markedType ?? 0;
-
-                                Object.assign(message, updatedMessage);
-                            }
+        const handleMessage = (message: GroupChatMessageModel) => {
+            Store.dispatch(
+                ChatApi.util.updateQueryData(
+                    'getMessagesByGroupChatId',
+                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
+                    draft => {
+                        const findMessage = draft.find(m => m.id === message.id);
+                        if (findMessage) {
+                            Object.assign(findMessage, message);
                         }
-                    )
-                );
-            });
-        })();
+                        else {
+                            draft.unshift(message);
+                        }
+                    }
+                )
+            );
+        }
+
+        const handleMessageEdit = (messagePatch: ChatMessagePatch) => {
+            Store.dispatch(
+                ChatApi.util.updateQueryData(
+                    'getMessagesByGroupChatId',
+                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
+                    draft => {
+                        const message = draft.find(m => m.id === messagePatch.id);
+                        if (message && messagePatch) {
+                            const updatedMessage = Object.assign({}, message);
+                            updatedMessage.message = messagePatch.message ?? "";
+                            updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"]
+                            updatedMessage.markedType = messagePatch.markedType ?? 0;
+
+                            Object.assign(message, updatedMessage);
+                        }
+                    }
+                )
+            );
+        }
+
+        const connect = async () => {
+            if (isCancelled) {
+                return;
+            }
+
+            await context.groupChatEvents.connectToChatMessagesAsync(chat.id);
+
+            context.groupChatEvents.subscribeToChatMessages(handleMessage);
+            context.groupChatEvents.subscribeToMessageRead(handleMessageRead);
+            context.groupChatEvents.subscribeToChatMessageEdit(handleMessageEdit);
+        }
+
+        connect();
 
         return () => {
-            (async () => {
-                await context.groupChatEvents.disconnectFromGroupChatMessageHubAsync();
-            })();
-        }
-    }, [chat]);
+            isCancelled = true;
+
+            context.groupChatEvents.unsubscribeToChatMessages(handleMessage);
+            context.groupChatEvents.unsubscribeToMessageRead(handleMessageRead);
+            context.groupChatEvents.unsubscribeToChatMessageEdit(handleMessageEdit);
+            context.groupChatEvents.disconnectFromChatMessageHubAsync();
+        };
+    }, []);
 
     useEffect(() => {
         if (!groupChatUsers) {
@@ -137,7 +169,36 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
     if (isLoading || !messages
         || usersIsLoading || !groupChatUsers) {
-        return (<></>);
+        return (
+            <div className="chats__selected-chat personal-chat">
+                <div className="messages-container">
+                    <GroupChatTitle
+                        chat={chat}
+                        settingsIsShow={settingsIsShow}
+                        setSettingsIsShow={setSettingsIsShow}
+                        t={t}
+                    />
+                    <ul className="chat-messages" ref={chatContainerRef}></ul>
+                    {groupChatUser &&
+                        <MessageInput
+                            page={page}
+                            chatId={chat.id}
+                            initiator={groupChatUser}
+                            targetChatType={ChatType["GROUP"]}
+                            t={t}
+                        />
+                    }
+                </div>
+                {(settingsIsShow && groupChatUser) &&
+                    <GroupChatMenu
+                        setSelectedChat={setSelectedChat}
+                        usersId={usersId}
+                        chat={chat}
+                        t={t}
+                    />
+                }
+            </div>
+        );
     }
 
     return (
@@ -169,6 +230,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                 </ul>
                 {groupChatUser &&
                     <MessageInput
+                        page={page}
                         chatId={chat.id}
                         initiator={groupChatUser}
                         targetChatType={ChatType["GROUP"]}

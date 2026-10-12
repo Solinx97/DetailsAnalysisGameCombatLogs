@@ -102,3 +102,8 @@ export const GroupChatRulesType = {
     ANYONE: 0,
     OWNER: 1,
 } as const;
+
+export const NotificationStatus = {
+    UNREAD: 0,
+    READ: 1,
+} as const;

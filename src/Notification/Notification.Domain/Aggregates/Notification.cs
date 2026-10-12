@@ -42,4 +42,13 @@ public class Notification
         var createdAt = DateTimeOffset.UtcNow;
         return new Notification((NotificationType)type, NotificationStatus.Unread, initiatorId, recipientId, createdAt, initiatorName);
     }
+
+    public void Read()
+    {
+        if (Status == NotificationStatus.Unread)
+        {
+            Status = NotificationStatus.Read;
+            ReadAt = DateTimeOffset.UtcNow;
+        }
+    }
 }

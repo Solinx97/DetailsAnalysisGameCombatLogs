@@ -9,12 +9,10 @@ import type { IGroupChatHubEvents } from '../interfaces/IGroupChatHubEvents';
 
 const useGroupChatHub = (
     groupChatHubConnectionRef: RefObject<signalR.HubConnection | null>,
-    groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
-    groupChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
+    groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>
 ): IGroupChatHubEvents => {
     const groupChatHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChat}`;
     const groupChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatMessages}`;
-    const groupChatUnreadMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatUnreadMessage}`;
 
     const createHubConnection = (url: string): signalR.HubConnection => {
         const hubConnection = new signalR.HubConnectionBuilder()
@@ -28,7 +26,7 @@ const useGroupChatHub = (
         return hubConnection;
     }
 
-    const connectToGroupChatAsync = async () => {
+    const connectToChatAsync = async () => {
         try {
             const connection = createHubConnection(groupChatHubURL);
 
@@ -40,7 +38,7 @@ const useGroupChatHub = (
         }
     }
 
-    const connectToGroupChatMessagesAsync = async (chatId: number) => {
+    const connectToChatMessagesAsync = async (chatId: number) => {
         try {
             const connection = createHubConnection(groupChatMessagesHubURL);
 
@@ -53,91 +51,62 @@ const useGroupChatHub = (
         }
     }
 
-    const connectToGroupChatUnreadMessagesAsync = async (myGroupChatsId: number[]) => {
-        try {
-            const connection = createHubConnection(groupChatUnreadMessagesHubURL);
-
-            await connection.start();
-            for (let i = 0; i < myGroupChatsId.length; i++) {
-                await connection.invoke("JoinToRoom", myGroupChatsId[i]);
-            }
-
-            groupChatUnreadMessagesHubConnectionRef.current = connection;
-        } catch (e) {
-            logger.error("Failed to connect to Group chat unread messages hub", e);
-        }
+    const subscribeToChat = (callback: (groupChatUser: GroupChatUserModel) => void) => {
+        groupChatHubConnectionRef.current?.on("ReceiveJoinedUser", callback);
     }
 
-    const subscribeToGroupChat = (callback: (groupChatUser: GroupChatUserModel) => void) => {
-        groupChatHubConnectionRef.current?.on("ReceiveJoinedUser", (groupChatUser: GroupChatUserModel) => {
-            callback(groupChatUser);
-        });
+    const unsubscribeToChat = (callback: (groupChatUser: GroupChatUserModel) => void) => {
+        groupChatHubConnectionRef.current?.off("ReceiveJoinedUser", callback);
     }
 
-    const subscribeToRemovedFromGroupChat = (callback: (appUserId: string, chatId: number) => void) => {
-        groupChatHubConnectionRef.current?.on("UserRemoved", (appUserId: string, chatId: number) => {
-            callback(appUserId, chatId);
-        });
+    const subscribeToRemovedFromChat = (callback: (appUserId: string, chatId: number) => void) => {
+        groupChatHubConnectionRef.current?.on("UserRemoved", callback);
     }
 
-    const subscribeToGroupChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
+    const unsubscribeToRemovedFromChat = (callback: (appUserId: string, chatId: number) => void) => {
+        groupChatHubConnectionRef.current?.off("UserRemoved", callback);
+    }
+
+    const subscribeToChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
         groupChatMessagesHubConnectionRef.current?.on("ReceiveMessage", callback);
     }
 
-    const unsubscribeToGroupChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
+    const unsubscribeToChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
         groupChatMessagesHubConnectionRef.current?.off("ReceiveMessage", callback);
     }
 
-    const subscribeToGroupChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
-        groupChatMessagesHubConnectionRef.current?.on("ReceiveEditedMessage", (mssagePatch: ChatMessagePatch) => {
-            callback(mssagePatch);
-        });
+    const subscribeToChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
+        groupChatMessagesHubConnectionRef.current?.on("ReceiveEditedMessage", callback);
     }
 
-    const subscribeToGroupMessageDelivered = (chatId: number) => {
-        groupChatMessagesHubConnectionRef.current?.on("ReceiveMessageDelivered", async () => {
-            await groupChatMessagesHubConnectionRef.current?.invoke("SendUnreadMessageUpdated", chatId);
-        });
+    const unsubscribeToChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
+        groupChatMessagesHubConnectionRef.current?.off("ReceiveEditedMessage", callback);
     }
 
-    const subscribeToUnreadGroupMessagesUpdated = (callback: (targetChatId: number, targetMeInChatId: string, count: number) => void) => {
-        groupChatUnreadMessagesHubConnectionRef.current?.on("ReceiveUnreadMessage", (targetChatId: number, targetMeInChatId: string, count: number) => {
-            callback(targetChatId, targetMeInChatId, count);
-        });
-    }
-
-    const subscribeToGroupMessageRead = (callback: (messageId: string) => void) => {
+    const subscribeToMessageRead = (callback: (messageId: string) => void) => {
         groupChatMessagesHubConnectionRef.current?.on("ReceiveReadMessage", callback);
     }
 
-    const subscribeToGroupChatMembers = (callback: (members: GroupChatUserModel[]) => void) => {
-        groupChatHubConnectionRef.current?.on("ReceiveMembers", (message) => {
-            callback(message);
-        });
+    const unsubscribeToMessageRead = (callback: (messageId: string) => void) => {
+        groupChatMessagesHubConnectionRef.current?.off("ReceiveReadMessage", callback);
     }
 
-    const disconnectFromGroupChatHubAsync = async () => {
+    const disconnectFromChatHubAsync = async () => {
         await groupChatHubConnectionRef.current?.stop();
         groupChatHubConnectionRef.current = null;
     }
 
-    const disconnectFromGroupChatMessageHubAsync = async () => {
+    const disconnectFromChatMessageHubAsync = async () => {
         await groupChatMessagesHubConnectionRef.current?.stop();
         groupChatMessagesHubConnectionRef.current = null;
     }
 
-    const disconnectFromGroupChatUnreadMessagesHubAsync = async () => {
-        await groupChatUnreadMessagesHubConnectionRef.current?.stop();
-        groupChatUnreadMessagesHubConnectionRef.current = null;
-    }
-
     const getEvents = () => {
         const events: IGroupChatHubEvents = {
-            connectToGroupChatAsync, connectToGroupChatMessagesAsync, connectToGroupChatUnreadMessagesAsync,
-            subscribeToGroupChat, subscribeToRemovedFromGroupChat, subscribeToGroupChatMessages, unsubscribeToGroupChatMessages, subscribeToGroupChatMessageEdit, 
-            subscribeToGroupMessageDelivered, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupMessageRead,
-            disconnectFromGroupChatHubAsync, disconnectFromGroupChatMessageHubAsync, disconnectFromGroupChatUnreadMessagesHubAsync,
-            subscribeToGroupChatMembers,
+            connectToChatAsync, connectToChatMessagesAsync, subscribeToChat, unsubscribeToChat, 
+            subscribeToRemovedFromChat, unsubscribeToRemovedFromChat, subscribeToChatMessages, unsubscribeToChatMessages,
+            subscribeToChatMessageEdit, unsubscribeToChatMessageEdit, subscribeToMessageRead, unsubscribeToMessageRead,
+            disconnectFromChatHubAsync, disconnectFromChatMessageHubAsync
         }
 
         return events;

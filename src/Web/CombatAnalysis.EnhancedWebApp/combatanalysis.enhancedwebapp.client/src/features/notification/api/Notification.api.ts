@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { AppNotificationModel } from '../types/AppNotificationModel';
+import type { ReadNotificationModel } from '../types/ReadNotificationModel';
 
 const apiURL = '/api/v1';
 
@@ -18,6 +19,21 @@ export const NotificationApi = createApi({
                 method: 'DELETE'
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'Notification', id }],
+        }),
+        readNotification: builder.mutation<void, { id: number, notification: ReadNotificationModel }>({
+            query: ({ id, notification }) => ({
+                body: notification,
+                url: `/Notification/read/${id}`,
+                method: 'PATCH'
+            }),
+            invalidatesTags: () => [{ type: 'Notification', id: 'LIST' }]
+        }),
+        readAllNotifications: builder.mutation<void, string>({
+            query: appUserId => ({
+                url: `/Notification/readAll/${appUserId}`,
+                method: 'PATCH'
+            }),
+            invalidatesTags: () => [{ type: 'Notification', id: 'LIST' }]
         }),
         getNotificationsByRecipientId: builder.query<AppNotificationModel[], string>({
             query: recipientId => ({
@@ -48,6 +64,8 @@ export const NotificationApi = createApi({
 
 export const {
     useRemoveNotificationMutation,
+    useReadNotificationMutation,
+    useReadAllNotificationsMutation,
     useGetNotificationsByRecipientIdQuery,
-    useLazyGetUnreadNotificationsByRecipientIdQuery,
+    useGetUnreadNotificationsByRecipientIdQuery,
 } = NotificationApi;

@@ -1,4 +1,5 @@
 ﻿using Chat.Application.DTOs;
+using Chat.Domain.Enums;
 using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
 using MessageBroker.Kafka.Consts;
@@ -44,7 +45,7 @@ public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, 
                     var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageCreatedEvent>();
                     ArgumentNullException.ThrowIfNull(@event, nameof(@event));
 
-                    var message = new PersonalChatMessageDto { Id = @event.MessageId, Message = @event.Message, PersonalChatId = @event.ChatId, AppUserId = @event.SenderId };
+                    var message = new PersonalChatMessageDto { Id = @event.MessageId, Status = MessageStatus.Sent, Message = @event.Message, PersonalChatId = @event.ChatId, AppUserId = @event.SenderId };
                     await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
                     break;
                 case nameof(PersonalChatMessageReadEvent):

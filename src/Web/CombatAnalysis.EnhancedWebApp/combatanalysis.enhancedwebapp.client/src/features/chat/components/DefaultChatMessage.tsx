@@ -184,7 +184,6 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
                         icon={faUpRightFromSquare}
                         className="open-link"
                         onClick={() => openLink(message.message)}
-                        title={t("OpenLink") || ""}
                     />
                 }
             </div>
@@ -210,11 +209,11 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
                     {checkIfReviewerMessageOwner()
                         ? getMessageStatus()
                         : message.status === MessageStatus["SENT"] &&
-                        <FontAwesomeIcon
-                            icon={faCircle}
-                            className="status"
-                            title={t("Delivered") || ""}
-                        />
+                            <FontAwesomeIcon
+                                icon={faCircle}
+                                className="status"
+                                title={t("Delivered") || ""}
+                            />
                     }
                     {getMessage()}
                     {message.markedType === 1 &&

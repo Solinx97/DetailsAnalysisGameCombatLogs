@@ -2,9 +2,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Application.Commands.CreateNotification;
 using Notification.Application.Commands.DeleteNotification;
-using Notification.Application.Queries.GetNotificationById;
+using Notification.Application.Commands.ReadNotification;
+using Notification.Application.Commands.ReadUnreadNotifications;
 using Notification.Application.Queries.GetNotificationByRecipientId;
 using Notification.Application.Queries.GetUnreadNotification;
 
@@ -16,14 +16,6 @@ namespace CombatAnalysis.NotificationAPI.Controllers;
 public class NotificationController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
-
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
-    {
-        var notification = await _mediator.Send(new GetNotificationByIdQuery(id), cancellationToken);
-
-        return Ok(notification);
-    }
 
     [HttpGet("getByRecipientId/{recipientId}")]
     public async Task<IActionResult> GetByRecipientId(Guid recipientId, CancellationToken cancellationToken)
@@ -41,11 +33,24 @@ public class NotificationController(IMediator mediator) : ControllerBase
         return Ok(notifications);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateNotificationModel notification, CancellationToken cancellationToken)
+    [HttpPatch("read/{id:int:min(1)}")]
+    public async Task<IActionResult> ReadNotificaiton(int id, [FromBody] ReadNotificationModel notification, CancellationToken cancellationToken)
     {
-        var command = new CreateNotificationCommand(notification.Type, notification.InitiatorId,
-            notification.RecipientId, notification.InitiatorName);
+        if (id != notification.Id)
+        {
+            return BadRequest("Route ID and body ID do not match.");
+        }
+
+        var command = new ReadNotificationCommand(notification.Id);
+        await _mediator.Send(command, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPatch("readAll/{recipientId}")]
+    public async Task<IActionResult> ReadAllNotificaitons(Guid recipientId, CancellationToken cancellationToken)
+    {
+        var command = new ReadUnreadNotificationsCommand(recipientId);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();
