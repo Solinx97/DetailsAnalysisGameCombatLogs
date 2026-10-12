@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
+using MessageBroker.Kafka.Consts;
 using Microsoft.Extensions.Options;
-using Notification.Application.Consts;
 
 namespace CombatAnalysis.NotificationAPI.Kafka;
 

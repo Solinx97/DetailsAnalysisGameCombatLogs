@@ -1,9 +1,9 @@
-using Chat.Application.Consts;
 using CombatAnalysis.Hubs.Consts;
 using CombatAnalysis.Hubs.Enums;
 using CombatAnalysis.Hubs.Helpers;
 using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Kafka;
+using MessageBroker.Kafka.Consts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;

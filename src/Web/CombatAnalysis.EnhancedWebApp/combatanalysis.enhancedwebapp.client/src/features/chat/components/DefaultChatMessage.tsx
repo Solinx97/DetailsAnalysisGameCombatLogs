@@ -207,7 +207,7 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
                     />
                 </div>
                 : <div className="message">
-                    {!checkIfReviewerMessageOwner()
+                    {checkIfReviewerMessageOwner()
                         ? getMessageStatus()
                         : message.status === MessageStatus["SENT"] &&
                         <FontAwesomeIcon

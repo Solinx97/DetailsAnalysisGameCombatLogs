@@ -1,6 +1,6 @@
-﻿using Chat.Application.Interfaces;
+﻿using MessageBroker.Kafka.Interfaces;
 
-namespace Chat.Application.Events;
+namespace MessageBroker.Kafka.Events.Chat;
 
 public record PersonalChatMessageReadEvent(
     Guid EventId,

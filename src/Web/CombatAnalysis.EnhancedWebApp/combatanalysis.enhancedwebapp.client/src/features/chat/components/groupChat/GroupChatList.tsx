@@ -36,7 +36,6 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
             }
 
             await context.groupChatEvents.connectToGroupChatAsync();
-
             context.groupChatEvents.subscribeToGroupChat((groupChatUser) => {
                 Store.dispatch(
                     GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {

@@ -1,6 +1,6 @@
-﻿using Notification.Application.Interfaces;
+﻿using MessageBroker.Kafka.Interfaces;
 
-namespace Notification.Application.Events;
+namespace MessageBroker.Kafka.Events.Notification;
 
 public record NotificationCreatedEvent(
     Guid EventId,

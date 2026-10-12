@@ -1,10 +1,10 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.Events;
-using Chat.Application.Interfaces.Persistence;
+﻿using Chat.Application.Interfaces.Persistence;
 using Chat.Domain.Entities;
 using Chat.Domain.Enums;
 using Chat.Domain.Repositories;
 using MediatR;
+using MessageBroker.Kafka.Consts;
+using MessageBroker.Kafka.Events.Chat;
 using System.Text.Json;
 
 namespace Chat.Application.Commands.GroupChat.DeleteUser;
@@ -31,11 +31,12 @@ internal class DeleteUserHandler(IGroupChatRepository repository, IGroupChatMess
             var whoDeleteUser = await _userRepository.FindChatUserAsync(request.WhoDeleteId, request.GroupChatId, cancellationToken);
 
             var systemMessage = $"'{whoDeleteUser.Username}' remove user '{removedUser.Username}' from chat";
-            var message = GroupChatMessage.Create(removedUser.Username, systemMessage, request.GroupChatId, whoDeleteUser.Id, chat.LastMessageSequence, messageType: (int)MessageType.System);
+            var messageId = Guid.NewGuid();
+            var message = GroupChatMessage.Create(messageId, removedUser.Username, systemMessage, request.GroupChatId, whoDeleteUser.Id, chat.LastMessageSequence, messageType: (int)MessageType.System);
             await _messageRepository.AddAsync(message, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var eventSystemMessage = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, chat.Id, (int)message.Type, whoDeleteUser.Id, removedUser.Username, systemMessage);
+            var eventSystemMessage = new GroupChatMessageCreatedEvent(Guid.NewGuid(), messageId, chat.Id, (int)message.Type, whoDeleteUser.Id, removedUser.Username, systemMessage);
             await _boxRepository.AddAsync(eventSystemMessage.EventId, nameof(GroupChatMessageCreatedEvent), KafkaTopics.GROUP_CHAT_MESSAGE, chat.Id.Value.ToString(), JsonSerializer.Serialize(eventSystemMessage), cancellationToken);
 
             var @event = new GroupChatUserRemovedEvent(Guid.NewGuid(), chat.Id, removedUser.AppUserId);

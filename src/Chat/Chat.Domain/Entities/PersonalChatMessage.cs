@@ -52,7 +52,7 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
     public PersonalChat PersonalChat { get; private set; } = null!;
 
     public static PersonalChatMessage Create(string username, string message, PersonalChatId chatId, UserId appUserId, long lastMessageSequence,
-        int status = (int)MessageStatus.Sending, int messageType = (int)MessageType.Default, int markedType = (int)MessageMarkedType.None)
+        int status = (int)MessageStatus.Sent, int messageType = (int)MessageType.Default, int markedType = (int)MessageMarkedType.None)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));

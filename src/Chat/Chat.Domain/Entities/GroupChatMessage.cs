@@ -12,10 +12,10 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     private GroupChatMessage() { }
 
-    private GroupChatMessage(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId, long sequence,
+    private GroupChatMessage(GroupChatMessageId id, string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId, long sequence,
                     MessageStatus status, MessageType type, MessageMarkedType markedType, DateTimeOffset createdAt)
     {
-        Id = Guid.NewGuid();
+        Id = id;
         Username = username;
         Message = message;
         GroupChatId = chatId;
@@ -51,15 +51,15 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
 
     public GroupChat GroupChat { get; private set; } = null!;
 
-    public static GroupChatMessage Create(string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId, long lastMessageSequence,
-            int status = (int)MessageStatus.Sending, int messageType = (int)MessageType.Default, int markedType = (int)MessageMarkedType.None)
+    public static GroupChatMessage Create(GroupChatMessageId id, string username, string message, GroupChatId chatId, GroupChatUserId groupChatUserId, long lastMessageSequence,
+            int status = (int)MessageStatus.Sent, int messageType = (int)MessageType.Default, int markedType = (int)MessageMarkedType.None)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
         ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(message.Length, MESSAGE_MAX_LENGTH, nameof(message));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new GroupChatMessage(username, message, chatId, groupChatUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
+        return new GroupChatMessage(id, username, message, chatId, groupChatUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
     }
 
     public void EditMessage(string? newMessage)

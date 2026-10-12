@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace Chat.Application.Security;
+namespace MessageBroker.Kafka.Security;
 
 public static class AesEncryption
 {

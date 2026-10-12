@@ -38,7 +38,7 @@ public class GroupChatMessageController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GroupChatMessageModel chatMessage, CancellationToken cancellationToken)
     {
-        var command = new CreateMessageCommand(chatMessage.Username, chatMessage.Message, chatMessage.GroupChatId, chatMessage.GroupChatUserId);
+        var command = new CreateMessageCommand(chatMessage.Id, chatMessage.Username, chatMessage.Message, chatMessage.GroupChatId, chatMessage.GroupChatUserId);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

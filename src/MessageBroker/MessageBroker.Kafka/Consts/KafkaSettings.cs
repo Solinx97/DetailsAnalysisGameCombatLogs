@@ -1,7 +1,7 @@
-﻿using Chat.Application.Security;
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
+using MessageBroker.Kafka.Security;
 
-namespace Chat.Application.Consts;
+namespace MessageBroker.Kafka.Consts;
 
 public class KafkaSettings
 {

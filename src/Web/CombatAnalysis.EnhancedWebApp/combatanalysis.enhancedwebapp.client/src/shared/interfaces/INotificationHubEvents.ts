@@ -4,5 +4,5 @@ export interface INotificationHubEvents {
     connectToNotificationAsync: () => Promise<void>;
     subscribeToNotifications: (callback: (notification: AppNotificationModel) => void) => void;
     subscribeToRecipientNotifications: (callback: () => void) => void;
-    disconnectNotificationsHubAsync: () => void;
+    disconnectNotificationsHubAsync: () => Promise<void>;
 }

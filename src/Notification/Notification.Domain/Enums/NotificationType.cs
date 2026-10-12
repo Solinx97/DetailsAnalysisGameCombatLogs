@@ -5,5 +5,6 @@ public enum NotificationType
     PersonalChatMessage,
     GroupChatMessage,
     MentionedInGroupChat,
-    IniviteToCommunity
+    IniviteToCommunity,
+    AddToGroupChat
 }

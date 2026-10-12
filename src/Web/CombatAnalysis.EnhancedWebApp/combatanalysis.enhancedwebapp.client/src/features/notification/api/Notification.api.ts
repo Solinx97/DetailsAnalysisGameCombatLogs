@@ -40,6 +40,6 @@ export const NotificationApi = createApi({
 })
 
 export const {
-    useLazyGetNotificationsByRecipientIdQuery,
+    useGetNotificationsByRecipientIdQuery,
     useLazyGetUnreadNotificationsByRecipientIdQuery,
 } = NotificationApi;

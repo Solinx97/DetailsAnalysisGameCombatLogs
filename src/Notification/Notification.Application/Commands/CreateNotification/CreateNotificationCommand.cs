@@ -7,4 +7,4 @@ public record CreateNotificationCommand(
     Guid InitiatorId,
     Guid RecipientId,
     string? InitiatorName
-    ) : IRequest;
+    ) : IRequest<int>;

@@ -1,9 +1,9 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.Events;
-using Chat.Application.Interfaces.Persistence;
+﻿using Chat.Application.Interfaces.Persistence;
 using Chat.Domain.Entities;
 using Chat.Domain.Repositories;
 using MediatR;
+using MessageBroker.Kafka.Consts;
+using MessageBroker.Kafka.Events.Chat;
 using System.Text.Json;
 
 namespace Chat.Application.Commands.GroupChat.CreateMessage;
@@ -24,7 +24,7 @@ internal class CreateMessageHandler(IGroupChatRepository chatRepository, IGroupC
         {
             var chat = await _chatRepository.GetWithUsersAsync(request.ChatId, cancellationToken);
 
-            var message = GroupChatMessage.Create(request.Username, request.Message, request.ChatId, request.GroupChatUserId, chat.LastMessageSequence);
+            var message = GroupChatMessage.Create(request.Id, request.Username, request.Message, request.ChatId, request.GroupChatUserId, chat.LastMessageSequence);
             await _repository.AddAsync(message, cancellationToken);
 
             chat.IncrementSequence();

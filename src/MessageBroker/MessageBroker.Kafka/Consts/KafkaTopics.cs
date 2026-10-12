@@ -1,4 +1,4 @@
-﻿namespace Chat.Application.Consts;
+﻿namespace MessageBroker.Kafka.Consts;
 
 public class KafkaTopics
 {

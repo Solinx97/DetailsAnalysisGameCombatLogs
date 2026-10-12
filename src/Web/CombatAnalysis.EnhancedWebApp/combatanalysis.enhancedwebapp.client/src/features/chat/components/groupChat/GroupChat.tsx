@@ -66,13 +66,17 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                 await refetch();
             });
 
+            await context.groupChatEvents.connectToGroupChatMessagesAsync(chat.id);
             context.groupChatEvents.subscribeToGroupChatMessages((message: GroupChatMessageModel) => {
                 Store.dispatch(
                     ChatApi.util.updateQueryData(
                         'getMessagesByGroupChatId',
                         { chatId: chat.id, page, pageSize: pageSizeRef.current },
                         draft => {
-                            draft.unshift(message);
+                            const findMessage = draft.find(m => m.id === message.id);
+                            if (findMessage && message) {
+                                Object.assign(findMessage, message);
+                            }
                         }
                     )
                 );

@@ -1,11 +1,11 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.Events;
-using Chat.Application.Interfaces.Persistence;
+﻿using Chat.Application.Interfaces.Persistence;
 using Chat.Domain.Entities;
 using Chat.Domain.Enums;
 using Chat.Domain.Repositories;
 using Chat.Domain.ValueObjects;
 using MediatR;
+using MessageBroker.Kafka.Consts;
+using MessageBroker.Kafka.Events.Chat;
 using System.Text.Json;
 
 namespace Chat.Application.Commands.GroupChat.LeaveFromChat;
@@ -33,11 +33,12 @@ internal class LeaveFromChatHandler(IGenericRepository<Domain.Aggregates.GroupCh
             var ownerChatId = await _userRepository.FindChatUserAsync(chat.OwnerId, request.GroupChatId, cancellationToken);
 
             var systemMessage = $"'{removedUser.Username}' leave from chat";
-            var message = GroupChatMessage.Create(removedUser.Username, systemMessage, request.GroupChatId, ownerChatId.Id, chat.LastMessageSequence, messageType: (int)MessageType.System);
+            var messageId = Guid.NewGuid();
+            var message = GroupChatMessage.Create(messageId, removedUser.Username, systemMessage, request.GroupChatId, ownerChatId.Id, chat.LastMessageSequence, messageType: (int)MessageType.System);
             await _messageRepository.AddAsync(message, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, chat.Id, (int)message.Type, ownerChatId.Id, ownerChatId.Username, systemMessage);
+            var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), messageId, chat.Id, (int)message.Type, ownerChatId.Id, ownerChatId.Username, systemMessage);
             await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatMessageCreatedEvent), KafkaTopics.GROUP_CHAT_MEMBER, chat.Id.Value.ToString(), JsonSerializer.Serialize(@event), cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

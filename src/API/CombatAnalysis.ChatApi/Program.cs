@@ -1,5 +1,4 @@
 using AutoMapper;
-using Chat.Application.Consts;
 using Chat.Application.Extensions;
 using Chat.Application.Mappers;
 using Chat.Infrastructure.Extensions;
@@ -14,6 +13,7 @@ using CombatAnalysis.ChatAPI.Kafka;
 using CombatAnalysis.ChatAPI.Kafka.Producer;
 using CombatAnalysis.ChatAPI.Mapping;
 using CombatAnalysis.ChatAPI.Providers;
+using MessageBroker.Kafka.Consts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.SignalR;

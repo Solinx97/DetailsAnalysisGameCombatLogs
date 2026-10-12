@@ -1,4 +1,4 @@
-﻿namespace Chat.Application.Security;
+﻿namespace MessageBroker.Kafka.Security;
 
 public class KafkaSecurity
 {

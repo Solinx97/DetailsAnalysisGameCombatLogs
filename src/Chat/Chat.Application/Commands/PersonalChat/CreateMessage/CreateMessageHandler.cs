@@ -1,10 +1,10 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.Events;
-using Chat.Application.Interfaces.Persistence;
+﻿using Chat.Application.Interfaces.Persistence;
 using Chat.Domain.Entities;
 using Chat.Domain.Repositories;
 using Chat.Domain.ValueObjects;
 using MediatR;
+using MessageBroker.Kafka.Consts;
+using MessageBroker.Kafka.Events.Chat;
 using System.Text.Json;
 
 namespace Chat.Application.Commands.PersonalChat.CreateMessage;

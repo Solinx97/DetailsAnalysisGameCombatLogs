@@ -1,7 +1,7 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.DTOs;
+﻿using Chat.Application.DTOs;
 using CombatAnalysis.ChatAPI.Interfaces;
 using Confluent.Kafka;
+using MessageBroker.Kafka.Consts;
 using Microsoft.Extensions.Options;
 using System.Text;
 

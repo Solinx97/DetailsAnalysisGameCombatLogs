@@ -3,17 +3,15 @@ using CombatAnalysis.NotificationAPI.Consts;
 using CombatAnalysis.NotificationAPI.Enums;
 using CombatAnalysis.NotificationAPI.Helpers;
 using CombatAnalysis.NotificationAPI.Hubs;
-using CombatAnalysis.NotificationAPI.Interfaces;
 using CombatAnalysis.NotificationAPI.Kafka;
-using CombatAnalysis.NotificationAPI.Kafka.Producer;
 using CombatAnalysis.NotificationAPI.Mapping;
 using CombatAnalysis.NotificationAPI.Providers;
+using MessageBroker.Kafka.Consts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Notification.Application.Consts;
 using Notification.Application.Extensions;
 using Notification.Application.Mappers;
 using Notification.Infrastructure.Extensions;
@@ -117,7 +115,6 @@ builder.Services.AddSignalR()
 
 builder.Services.AddHostedService<NotificationConsumer>();
 
-builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>

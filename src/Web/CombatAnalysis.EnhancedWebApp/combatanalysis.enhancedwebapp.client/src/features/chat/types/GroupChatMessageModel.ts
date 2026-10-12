@@ -2,7 +2,7 @@ export type GroupChatMessageModel = {
     id: string;
     username: string;
     message: string;
-    time: Date;
+    time: string;
     status: number;
     type: number;
     markedType: number;

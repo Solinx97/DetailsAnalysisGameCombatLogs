@@ -1,6 +1,6 @@
-﻿using Chat.Application.Consts;
-using CombatAnalysis.Hubs.Interfaces;
+﻿using CombatAnalysis.Hubs.Interfaces;
 using Confluent.Kafka;
+using MessageBroker.Kafka.Consts;
 using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.Hubs.Kafka;

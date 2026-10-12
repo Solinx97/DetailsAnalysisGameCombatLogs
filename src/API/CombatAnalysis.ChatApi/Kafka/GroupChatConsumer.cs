@@ -1,8 +1,8 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.DTOs;
-using Chat.Application.Events;
+﻿using Chat.Application.DTOs;
 using CombatAnalysis.ChatAPI.Hubs;
 using Confluent.Kafka;
+using MessageBroker.Kafka.Consts;
+using MessageBroker.Kafka.Events.Chat;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using System.Text;
@@ -46,6 +46,13 @@ public class GroupChatConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger<Gr
 
                     var owner = new GroupChatUserDto { Id = eventCreate.GroupChatUserId, Username = eventCreate.Username, GroupChatId = eventCreate.ChatId, AppUserId = eventCreate.AppUserId };
                     await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("ReceiveJoinedUser", owner, cancellationToken);
+                    break;
+                case nameof(GroupUserAddedEvent):
+                    var eventAdd = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupUserAddedEvent>();
+                    ArgumentNullException.ThrowIfNull(eventAdd, nameof(eventAdd));
+
+                    var user = new GroupChatUserDto { Id = eventAdd.RecipientId, Username = eventAdd.RecipientUsername, GroupChatId = eventAdd.ChatId, AppUserId = eventAdd.RecipientAppUserId };
+                    await _hubContext.Clients.User(kafkaData.Message.Key).SendAsync("ReceiveJoinedUser", user, cancellationToken);
                     break;
                 case nameof(GroupChatUserRemovedEvent):
                     var @event = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatUserRemovedEvent>();

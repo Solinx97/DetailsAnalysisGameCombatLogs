@@ -1,8 +1,8 @@
-﻿using Chat.Application.Consts;
-using Chat.Application.Events;
-using Chat.Application.Interfaces.Persistence;
+﻿using Chat.Application.Interfaces.Persistence;
 using Chat.Domain.Repositories;
 using MediatR;
+using MessageBroker.Kafka.Consts;
+using MessageBroker.Kafka.Events.Chat;
 using System.Text.Json;
 
 namespace Chat.Application.Commands.GroupChat.CreateChat;
@@ -24,8 +24,8 @@ internal class CreateChatHandler(IGroupChatRepository repository, IOutboxReposit
             await _repository.AddAsync(chat, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var user = chat.Users.First();
-            var @event = new GroupChatCreatedEvent(Guid.NewGuid(), chat.Id, user.Id, user.Username, user.AppUserId);
+            var groupChatUser = chat.Users.First();
+            var @event = new GroupChatCreatedEvent(Guid.NewGuid(), chat.Id, groupChatUser.Id, groupChatUser.Username, groupChatUser.AppUserId);
             await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatCreatedEvent), KafkaTopics.GROUP_CHAT, request.OwnerId.ToString(), JsonSerializer.Serialize(@event), cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
