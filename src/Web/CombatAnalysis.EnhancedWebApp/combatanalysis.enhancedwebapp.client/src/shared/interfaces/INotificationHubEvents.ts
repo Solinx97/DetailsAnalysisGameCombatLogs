@@ -3,6 +3,6 @@ import type { AppNotificationModel } from '@/features/notification/types/AppNoti
 export interface INotificationHubEvents {
     connectToNotificationAsync: () => Promise<void>;
     subscribeToNotifications: (callback: (notification: AppNotificationModel) => void) => void;
-    subscribeToRecipientNotifications: (callback: () => void) => void;
+    unsubscribeToNotifications: (callback: (notification: AppNotificationModel) => void) => void;
     disconnectNotificationsHubAsync: () => Promise<void>;
 }

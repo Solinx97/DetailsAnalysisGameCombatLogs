@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { NotificationApi, useGetNotificationsByRecipientIdQuery } from '../api/Notification.api';
+import { NotificationApi, useGetNotificationsByRecipientIdQuery, useRemoveNotificationMutation } from '../api/Notification.api';
 import type { AppNotificationModel } from '../types/AppNotificationModel';
 
 const Notification: React.FC = () => {
@@ -25,33 +25,47 @@ const Notification: React.FC = () => {
 
     const { data: notifciations } = useGetNotificationsByRecipientIdQuery(user ? user.id : "0");
 
+    const [removeNotification] = useRemoveNotificationMutation();
+
     const [showNotifications, setShowNotifications] = useState(false);
 
     useEffect(() => {
-        (async () => {
-            await context.notificationEvents.connectToNotificationAsync();
+        let isCancelled = false;
 
-            context.notificationEvents.subscribeToNotifications((notification: AppNotificationModel) => {
-                if (user) {
-                    Store.dispatch(
-                        NotificationApi.util.updateQueryData("getNotificationsByRecipientId", user.id, (draft) => {
-                            draft.push(notification);
-                        })
-                    );
-                }
-            });
-        })();
+        const handle = (notification: AppNotificationModel) => {
+            if (!user) {
+                return;
+            }
+
+            Store.dispatch(
+                NotificationApi.util.updateQueryData("getNotificationsByRecipientId", user.id, (draft) => {
+                    draft.push(notification);
+                })
+            );
+        }
+
+        const connect = async () => {
+            if (isCancelled) {
+                return;
+            }
+
+            await context.notificationEvents.connectToNotificationAsync();
+            context.notificationEvents.subscribeToNotifications(handle);
+        }
+
+        connect();
 
         return () => {
-            (async () => {
-                await context.notificationEvents.disconnectNotificationsHubAsync();
-            })();
-        }
+            isCancelled = true;
+
+            context.notificationEvents.unsubscribeToNotifications(handle);
+            context.notificationEvents.disconnectNotificationsHubAsync();
+        };
     }, []);
 
     const personalChatNotifications = (notification: AppNotificationModel) => {
-        const navigateToChats = async () => await seeNotificationAsync(notification);
-        const removeNotification = async () => await removeNotificationAsync(notification);
+        const navigateToChats = async () => await seeNotificationAsync();
+        const removeNotification = async () => await removeNotificationAsync(notification.id);
 
         return (
             <li className="notification-message" key={notification.id}>
@@ -59,7 +73,6 @@ const Notification: React.FC = () => {
                 <div>{t("PersonalChatNotification")} '{notification.initiatorName}'. <span className="notifications-container__see" onClick={navigateToChats}>{t("See")}</span></div>
                 <FontAwesomeIcon
                     icon={faXmark}
-                    title={t("Remove") || ""}
                     onClick={removeNotification}
                 />
             </li>
@@ -73,22 +86,33 @@ const Notification: React.FC = () => {
         return time;
     }
 
-    const seeNotificationAsync = async (notification: AppNotificationModel) => {
+    const seeNotificationAsync = async () => {
         if (!user) {
             return;
         }
 
-        context.notificationHubConnectionRef.current?.invoke("ReadNotification", notification.id, user.id)
-            .then(() => navigate(`/chats?personal=${notification.initiatorId}`))
-            .catch((e) => logger.error("Faield to read notification", e));
+        navigate('/chats');
     }
 
-    const removeNotificationAsync = async (notification: AppNotificationModel) => {
+    const removeNotificationAsync = async (notificationId: number) => {
         if (!user) {
             return;
         }
 
-        await context.notificationHubConnectionRef.current?.invoke("RemoveNotification", notification.id, user.id);
+        try {
+            await removeNotification(notificationId).unwrap();
+
+            Store.dispatch(
+                NotificationApi.util.updateQueryData("getNotificationsByRecipientId", user.id, draft => {
+                    const notification = draft.find(x => x.id === notificationId);
+                    if (notification) {
+                        draft.unshift(notification);
+                    }
+                })
+            );
+        } catch (error) {
+            logger.error("Failed to remove notification:", error);
+        }
     }
 
     const readAllNotifications = async () => {

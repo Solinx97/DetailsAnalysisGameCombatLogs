@@ -12,6 +12,13 @@ export const NotificationApi = createApi({
         baseUrl: apiURL
     }),
     endpoints: builder => ({
+        removeNotification: builder.mutation<void, number>({
+            query: id => ({
+                url: `/Notification/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: (_result, _error, id) => [{ type: 'Notification', id }],
+        }),
         getNotificationsByRecipientId: builder.query<AppNotificationModel[], string>({
             query: recipientId => ({
                 url: `/Notification/getByRecipientId/${recipientId}`,
@@ -40,6 +47,7 @@ export const NotificationApi = createApi({
 })
 
 export const {
+    useRemoveNotificationMutation,
     useGetNotificationsByRecipientIdQuery,
     useLazyGetUnreadNotificationsByRecipientIdQuery,
 } = NotificationApi;

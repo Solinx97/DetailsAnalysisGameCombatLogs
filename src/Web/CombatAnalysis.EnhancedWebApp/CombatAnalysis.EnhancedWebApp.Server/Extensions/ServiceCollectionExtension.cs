@@ -29,6 +29,13 @@ internal static class ServiceCollectionExtension
             .AddHttpMessageHandler<AuthorizationHandler>()
             .AddHttpMessageHandler<ApiErrorHandler>();
 
+        sc.AddHttpClient<INotificationApiClient, NotificationApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Notification").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
         sc.AddHttpClient<IWoWAccountGameDataApiClient, WoWAccountGameDataApiClient>(client =>
         {
             client.BaseAddress = new Uri(cm.GetSection("BattleNet:BattleNetAPI").Value ?? "");

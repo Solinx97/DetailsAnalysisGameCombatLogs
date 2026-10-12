@@ -27,7 +27,6 @@ const useNotificationHub = (
             const connection = createHubConnection(notificationHubURL);
 
             await connection.start();
-            await connection.invoke("JoinToRoom");
 
             notificationHubConnectionRef.current = connection;
         } catch (e) {
@@ -39,8 +38,8 @@ const useNotificationHub = (
         notificationHubConnectionRef.current?.on("ReceiveNotification", callback);
     }
 
-    const subscribeToRecipientNotifications = (callback: () => void) => {
-        notificationHubConnectionRef.current?.on("ReceiveRequestRecipientNotifications", callback);
+    const unsubscribeToNotifications = (callback: (notification: AppNotificationModel) => void) => {
+        notificationHubConnectionRef.current?.off("ReceiveNotification", callback);
     }
 
     const disconnectNotificationsHubAsync = async () => {
@@ -50,7 +49,7 @@ const useNotificationHub = (
 
     const getEvents = () => {
         const events: INotificationHubEvents = {
-            connectToNotificationAsync, subscribeToNotifications, subscribeToRecipientNotifications, disconnectNotificationsHubAsync
+            connectToNotificationAsync, subscribeToNotifications, unsubscribeToNotifications, disconnectNotificationsHubAsync
         }
 
         return events;

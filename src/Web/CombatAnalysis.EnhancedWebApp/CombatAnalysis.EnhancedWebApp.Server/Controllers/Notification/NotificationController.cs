@@ -1,58 +1,32 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
-using CombatAnalysis.EnhancedWebApp.Server.Models.Notification;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Notification;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class NotificationController : ControllerBase
+public class NotificationController(INotificationApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public NotificationController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Notification;
-    }
+    private readonly INotificationApiClient _httpClient = httpClient;
 
     [HttpGet("getByRecipientId/{recipientId}")]
-    public async Task<IActionResult> GetByRecipientId(string recipientId)
+    public async Task<IActionResult> GetByRecipientId(Guid recipientId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Notification/getByRecipientId/{recipientId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var recipientNotifications = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<NotificationModel>>();
-
-            return Ok(recipientNotifications);
-        }
-
-        return BadRequest();
+        var notifications = await _httpClient.GetByRecipientIdAsync(recipientId, cancellationToken);
+        return Ok(notifications);
     }
 
     [HttpGet("getUnreadByRecipientId/{recipientId}")]
-    public async Task<IActionResult> GetUnreadByRecipientId(string recipientId)
+    public async Task<IActionResult> GetUnreadByRecipientId(Guid recipientId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Notification/getUnreadByRecipientId/{recipientId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var recipientNotifications = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<NotificationModel>>();
+        var notifications = await _httpClient.GetUnreadByRecipientIdAsync(recipientId, cancellationToken);
+        return Ok(notifications);
+    }
 
-            return Ok(recipientNotifications);
-        }
-
-        return BadRequest();
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await _httpClient.DeleteNotificationAsync(id, cancellationToken);
+        return NoContent();
     }
 }
