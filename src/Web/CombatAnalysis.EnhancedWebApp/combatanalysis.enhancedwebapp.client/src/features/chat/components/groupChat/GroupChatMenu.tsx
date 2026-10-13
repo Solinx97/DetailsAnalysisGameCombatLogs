@@ -150,11 +150,13 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, usersId,
     }
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (<div className="settings">
+            <div>Loading...</div>
+        </div>);
     }
 
     return (
-        <>
+        <div className="settings">
             <div className="settings__content">
                 <div className="main-settings">
                     <div className="btn-border-shadow" onClick={() => setPeopleInspectionModeOn((item) => !item)}>{t("Members")}</div>
@@ -222,7 +224,7 @@ const GroupChatMenu: React.FC<GroupChatMenuProps> = ({ setSelectedChat, usersId,
                     </div>
                 </div>
             }
-        </>
+        </div>
     );
 }
 

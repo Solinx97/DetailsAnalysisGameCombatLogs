@@ -8,16 +8,21 @@ import type { IGroupChatHubEvents } from '../interfaces/IGroupChatHubEvents';
 
 const useGroupChatHub = (
     groupChatHubConnectionRef: RefObject<signalR.HubConnection | null>,
-    groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>
+    groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>,
+    groupChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>
 ): IGroupChatHubEvents => {
-    const groupChatHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChat}`;
-    const groupChatMessagesHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.groupChatMessages}`;
+    const groupChatHubURL = APP_CONFIG.chatApiHubs.groupChat;
+    const groupChatMessagesHubURL = APP_CONFIG.chatApiHubs.groupChatMessages;
+    const groupChatUnreadMessagesHubURL = APP_CONFIG.chatApiHubs.groupChatUnreadMessages;
+    const useLongPoll = import.meta.env.VITE_USE_HUB_LOONG_POLL === "true" ? true : false;
 
     const createHubConnection = (url: string): signalR.HubConnection => {
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl(url, {
                 withCredentials: true,
-                transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+                transport: useLongPoll
+                    ? signalR.HttpTransportType.LongPolling
+                    : signalR.HttpTransportType.LongPolling | signalR.HttpTransportType.WebSockets
             })
             .withAutomaticReconnect()
             .build();
@@ -50,6 +55,19 @@ const useGroupChatHub = (
         }
     }
 
+    const connectToChatUnreadMessagesAsync = async (chatId: number) => {
+        try {
+            const connection = createHubConnection(groupChatUnreadMessagesHubURL);
+            
+            await connection.start();
+            await connection.invoke("JoinToRoom", chatId);
+            
+            groupChatUnreadMessagesHubConnectionRef.current = connection;
+        } catch (e) {
+            logger.error("Failed to connect to Group chat messages hub", e);
+        }
+    }
+
     const subscribeToChat = (callback: (groupChatUser: GroupChatUserModel) => void) => {
         groupChatHubConnectionRef.current?.on("ReceiveJoinedUser", callback);
     }
@@ -72,6 +90,14 @@ const useGroupChatHub = (
 
     const unsubscribeToChatMessages = (callback: (message: GroupChatMessageModel) => void) => {
         groupChatMessagesHubConnectionRef.current?.off("ReceiveMessage", callback);
+    }
+
+    const subscribeToChatUnreadMessages = (callback: () => void) => {
+        groupChatUnreadMessagesHubConnectionRef.current?.on("ReceiveUnreadMessage", callback);
+    }
+
+    const unsubscribeToChatUnreadMessages = (callback: () => void) => {
+        groupChatUnreadMessagesHubConnectionRef.current?.off("ReceiveUnreadMessage", callback);
     }
 
     const subscribeToChatMessageTextEdit = (callback: (mssageId: string, newMessage: string) => void) => {
@@ -108,12 +134,19 @@ const useGroupChatHub = (
         groupChatMessagesHubConnectionRef.current = null;
     }
 
+    const disconnectFromChatUnreadMessageHubAsync = async () => {
+        await groupChatUnreadMessagesHubConnectionRef.current?.stop();
+        groupChatUnreadMessagesHubConnectionRef.current = null;
+    }
+
     const getEvents = () => {
         const events: IGroupChatHubEvents = {
-            connectToChatAsync, connectToChatMessagesAsync, subscribeToChat, unsubscribeToChat, 
+            connectToChatAsync, connectToChatMessagesAsync, connectToChatUnreadMessagesAsync, 
+            subscribeToChat, unsubscribeToChat, 
             subscribeToRemovedFromChat, unsubscribeToRemovedFromChat, subscribeToChatMessages, unsubscribeToChatMessages,
+            subscribeToChatUnreadMessages, unsubscribeToChatUnreadMessages,
             subscribeToChatMessageTextEdit, unsubscribeToChatMessageTextEdit, subscribeToChatMessageMarkEdit, unsubscribeToChatMessageMarkEdit, 
-            subscribeToMessageRead, unsubscribeToMessageRead, disconnectFromChatHubAsync, disconnectFromChatMessageHubAsync
+            subscribeToMessageRead, unsubscribeToMessageRead, disconnectFromChatHubAsync, disconnectFromChatMessageHubAsync, disconnectFromChatUnreadMessageHubAsync
         }
 
         return events;

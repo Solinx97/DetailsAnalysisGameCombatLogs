@@ -1,3 +1,5 @@
+$mobile-max-width: 425px;
+
 .chat-messages {
     display: flex;
     flex-direction: column;
@@ -298,5 +300,11 @@
         svg:hover {
             transform: scale(1.1);
         }
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .chat-messages {
+        height: 56vh;
     }
 }

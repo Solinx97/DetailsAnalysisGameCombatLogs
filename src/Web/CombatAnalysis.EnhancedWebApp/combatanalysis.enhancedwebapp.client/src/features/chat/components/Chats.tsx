@@ -1,8 +1,7 @@
 ﻿import type { RootState } from '@/app/Store';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useMemo, useState } from 'react';
+import useMediaQuery from '@/shared/hooks/useMediaQuery';
+import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -33,11 +32,7 @@ const Chats: React.FC = () => {
     const [groupChatsHidden, setGroupChatsHidden] = useState(false);
     const [showCreateGroupChat, setShowCreateGroupChat] = useState(false);
 
-    const maxWidth = 425;
-    const screenSize = useMemo(() => ({
-        width: window.innerWidth,
-        height: window.innerHeight
-    }), []);
+    const isMobile = useMediaQuery("(max-width: 425px)");
 
     useEffect(() => {
         (() => {
@@ -73,7 +68,7 @@ const Chats: React.FC = () => {
         return id;
     }
 
-    if (screenSize.width <= maxWidth) {
+    if (isMobile) {
         return (
             <>
                 {showCreateGroupChat &&
@@ -83,12 +78,27 @@ const Chats: React.FC = () => {
                 }
                 <div className="communication-content">
                     <div className="chats">
-                        <div className="chats__title">
-                            <FontAwesomeIcon
-                                icon={faArrowLeft}
-                                onClick={() => setSelectedChat(null)}
-                            />
-                        </div>
+                        {(myself && !selectedChat) &&
+                            <div className="chats__my-chats">
+                                <GroupChatList
+                                    myselfId={myself.id}
+                                    t={t}
+                                    selectedChat={selectedChat}
+                                    setSelectedChat={setSelectedChat}
+                                    chatsHidden={groupChatsHidden}
+                                    toggleChatsHidden={() => setGroupChatsHidden(prev => !prev)}
+                                    setShowCreateGroupChat={setShowCreateGroupChat}
+                                />
+                                <PersonalChatList
+                                    myselfId={myself.id}
+                                    t={t}
+                                    selectedChat={selectedChat}
+                                    setSelectedChat={setSelectedChat}
+                                    chatsHidden={personalChatsHidden}
+                                    toggleChatsHidden={() => setPersonalChatsHidden(prev => !prev)}
+                                />
+                            </div>
+                        }
                         {(selectedChat && myself)
                             ? "ownerId" in selectedChat
                                 ? <GroupChat
@@ -97,14 +107,12 @@ const Chats: React.FC = () => {
                                     setSelectedChat={setSelectedChat}
                                 />
                                 : <PersonalChat
-                                    key={selectedChat.id}                                
+                                    key={selectedChat.id}
                                     chat={selectedChat}
                                     setSelectedChat={setSelectedChat}
                                     companionId={getCompanionId((selectedChat && "initiatorId" in selectedChat) ? selectedChat : null)}
                                 />
-                            : <div className="select-chat">
-                                {t("SelectChat")} <span onClick={() => setShowCreateGroupChat(true)}>{t("Create")}</span> {t("NewChat")}
-                            </div>
+                            : <></>
                         }
                     </div>
                 </div>

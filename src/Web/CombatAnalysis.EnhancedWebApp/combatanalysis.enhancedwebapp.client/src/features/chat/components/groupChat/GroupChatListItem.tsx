@@ -40,8 +40,8 @@ const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ myselfInChat, ref
                 return;
             }
 
-            await context.groupChatEvents.connectToChatMessagesAsync(myselfInChat.groupChatId);
-            context.groupChatEvents.subscribeToChatMessages(handleMessage);
+            await context.groupChatEvents.connectToChatUnreadMessagesAsync(myselfInChat.groupChatId);
+            context.groupChatEvents.subscribeToChatUnreadMessages(handleMessage);
             context.groupChatEvents.subscribeToMessageRead(handleMessage);
         };
 
@@ -50,9 +50,9 @@ const GroupChatListItem: React.FC<GroupChatListItemProps> = ({ myselfInChat, ref
         return () => {
             isCancelled = true;
 
-            context.groupChatEvents.unsubscribeToChatMessages(handleMessage);
+            context.groupChatEvents.unsubscribeToChatUnreadMessages(handleMessage);
             context.groupChatEvents.unsubscribeToMessageRead(handleMessage);
-            context.groupChatEvents.disconnectFromChatMessageHubAsync();
+            context.groupChatEvents.disconnectFromChatUnreadMessageHubAsync();
         };
     }, []);
 

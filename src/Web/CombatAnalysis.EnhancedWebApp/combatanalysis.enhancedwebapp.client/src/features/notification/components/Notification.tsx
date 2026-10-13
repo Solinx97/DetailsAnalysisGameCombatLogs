@@ -47,6 +47,12 @@ const Notification: React.FC = () => {
             }
 
             Store.dispatch(
+                NotificationApi.util.updateQueryData("getUnreadNotificationsByRecipientId", user.id, (draft) => {
+                    draft.push(notification);
+                })
+            );
+
+            Store.dispatch(
                 NotificationApi.util.updateQueryData("getNotificationsByRecipientId", user.id, (draft) => {
                     draft.push(notification);
                 })

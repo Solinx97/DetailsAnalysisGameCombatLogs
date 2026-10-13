@@ -7,6 +7,7 @@ using CombatAnalysis.EnhancedWebApp.Server.Helpers;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.Services;
 using CombatAnalysis.EnhancedWebApp.Server.Mapping;
+using CombatAnalysis.EnhancedWebApp.Server.Providers;
 using CombatAnalysis.EnhancedWebApp.Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -89,6 +90,11 @@ builder.Services.AddExceptionHandler<GlobalAPIExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExternalAPIExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+builder.Services
+    .AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .AddTransforms<AuthorizationTransformProvider>();
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -99,7 +105,10 @@ app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapReverseProxy();
 
 app.MapControllers();
 

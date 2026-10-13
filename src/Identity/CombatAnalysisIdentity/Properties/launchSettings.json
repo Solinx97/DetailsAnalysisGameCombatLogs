@@ -35,21 +35,7 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7067"
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
     }
   },
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:18136",
-      "sslPort": 44352
-    }
-  }
+  "$schema": "https://json.schemastore.org/launchsettings.json"
 }

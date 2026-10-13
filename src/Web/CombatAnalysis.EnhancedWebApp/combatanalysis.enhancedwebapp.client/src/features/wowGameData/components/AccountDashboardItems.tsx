@@ -3,7 +3,7 @@ import useMediaQuery from '@/shared/hooks/useMediaQuery';
 import { useGetDashboardQuery } from '../api/WoWAccount.api';
 
 const AccountDashboardItems: React.FC<{ regionName: string, serverName: string, characterName: string, t: (key: string) => string }> = ({ regionName, serverName, characterName, t }) => {
-    const isMobile = useMediaQuery("(max-width: 393px)");
+    const isMobile = useMediaQuery("(max-width: 425px)");
 
     const { data: dashboard, isLoading, isFetching, error } = useGetDashboardQuery({ regionName, serverName, characterName },
         {

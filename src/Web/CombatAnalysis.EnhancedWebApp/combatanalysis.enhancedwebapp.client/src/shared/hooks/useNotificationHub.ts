@@ -8,13 +8,16 @@ import type { INotificationHubEvents } from '../interfaces/INotificationHubEvent
 const useNotificationHub = (
     notificationHubConnectionRef: RefObject<signalR.HubConnection | null>,
 ) : INotificationHubEvents => {
-    const notificationHubURL = `${APP_CONFIG.notificationApiHubs.url}${APP_CONFIG.notificationApiHubs.notification}`;
+    const notificationHubURL = APP_CONFIG.notificationApiHubs.notification;
+    const useLongPoll = import.meta.env.VITE_USE_HUB_LOONG_POLL === "true" ? true : false;
 
     const createHubConnection = (url: string): signalR.HubConnection => {
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl(url, {
                 withCredentials: true,
-                transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+                transport: useLongPoll
+                    ? signalR.HttpTransportType.LongPolling
+                    : signalR.HttpTransportType.LongPolling | signalR.HttpTransportType.WebSockets
             })
             .withAutomaticReconnect()
             .build();

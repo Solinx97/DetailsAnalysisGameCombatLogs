@@ -5,7 +5,7 @@ $background-dark: #135D66;
 $background-light: #496989;
 $combat-win: green;
 $combat-lose: red;
-$mobile-max-width: 393px;
+$mobile-max-width: 425px;
 
 @mixin box-shadow($type: 'standard') {
     @if $type =='standard' {

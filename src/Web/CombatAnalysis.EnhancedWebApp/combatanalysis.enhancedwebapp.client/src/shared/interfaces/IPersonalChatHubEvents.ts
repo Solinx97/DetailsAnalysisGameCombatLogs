@@ -4,10 +4,13 @@ import type { PersonalChatModel } from '@/features/chat/types/PersonalChatModel'
 export interface IPersonalChatHubEvents {
     connectToChatAsync: () => Promise<void>;
     connectToChatMessagesAsync: (myPersonalChatId: number) => Promise<void>;
+    connectToChatUnreadMessagesAsync: (myPersonalChatId: number) => Promise<void>;
     subscribeToChat: (callback: (chat: PersonalChatModel) => void) => void;
     unsubscribeToChat: (callback: (chat: PersonalChatModel) => void) => void;
     subscribeToChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
     unsubscribeToChatMessages: (callback: (message: PersonalChatMessageModel) => void) => void;
+    subscribeToChatUnreadMessages: (callback: () => void) => void;
+    unsubscribeToChatUnreadMessages: (callback: () => void) => void;
     subscribeToRemovedFromChat: (callback: (appUserId: string, chatId: number) => void) => void;
     unsubscribeToRemovedFromChat: (callback: (appUserId: string, chatId: number) => void) => void;
     subscribeToChatMessageTextEdit: (callback: (mssageId: string, newMessage: string) => void) => void;
@@ -18,4 +21,5 @@ export interface IPersonalChatHubEvents {
     unsubscribeToMessageRead: (callback: (messageId: string) => void) => void;
     disconnectFromChatHubAsync: () => Promise<void>;
     disconnectFromChatMessageHubAsync: () => Promise<void>;
+    disconnectFromChatUnreadMessageHubAsync: () => Promise<void>;
 }

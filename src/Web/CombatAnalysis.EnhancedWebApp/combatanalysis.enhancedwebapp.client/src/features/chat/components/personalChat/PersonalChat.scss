@@ -1,11 +1,4 @@
 ﻿.chats__selected-chat {
-    .title {
-        &__content {
-            display: flex;
-            gap: 100px;
-        }
-    }
-
     .remove-chat, .remove-chat_active {
         margin: 15px 5px;
         cursor: pointer;

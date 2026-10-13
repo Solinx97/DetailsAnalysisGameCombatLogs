@@ -7,18 +7,20 @@ import { useRef } from 'react';
 const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const personalChatHubConnectionRef = useRef<signalR.HubConnection | null>(null);
     const personalChatMessagesHubConnectionRef = useRef<signalR.HubConnection | null>(null);
+    const personalChatUnreadMessagesHubConnectionRef = useRef<signalR.HubConnection | null>(null);
     const groupChatHubConnectionRef = useRef<signalR.HubConnection | null>(null);
     const groupChatMessagesHubConnectionRef = useRef<signalR.HubConnection | null>(null);
+    const groupChatUnreadMessagesHubConnectionRef = useRef<signalR.HubConnection | null>(null);
 
-    const personalChatEvents = usePersonalChatHub(personalChatHubConnectionRef, personalChatMessagesHubConnectionRef);
+    const personalChatEvents = usePersonalChatHub(personalChatHubConnectionRef, personalChatMessagesHubConnectionRef, personalChatUnreadMessagesHubConnectionRef);
 
-    const groupChatEvents = useGroupChatHub(groupChatHubConnectionRef, groupChatMessagesHubConnectionRef);
+    const groupChatEvents = useGroupChatHub(groupChatHubConnectionRef, groupChatMessagesHubConnectionRef, groupChatUnreadMessagesHubConnectionRef);
 
     return (
         <ChatHubContext.Provider value={{
-            personalChatHubConnectionRef, personalChatMessagesHubConnectionRef,
+            personalChatHubConnectionRef, personalChatMessagesHubConnectionRef, personalChatUnreadMessagesHubConnectionRef,
             personalChatEvents,
-            groupChatHubConnectionRef, groupChatMessagesHubConnectionRef,
+            groupChatHubConnectionRef, groupChatMessagesHubConnectionRef, groupChatUnreadMessagesHubConnectionRef,
             groupChatEvents
         }}>
             {children}

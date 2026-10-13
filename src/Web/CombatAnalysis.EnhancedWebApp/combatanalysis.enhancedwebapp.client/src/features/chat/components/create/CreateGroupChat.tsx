@@ -72,10 +72,10 @@ const CreateGroupChat: React.FC<{ setShowCreateGroupChat: (value: SetStateAction
     }
 
     return (
-        <div className="communication-content create-communication-object box-shadow">
+        <div className="communication-content create-group-chat box-shadow">
             <div>{t("CreateGroupChat")}</div>
-            <div className="create-communication-object__content">
-                <div className="create-communication-object__item">
+            <div className="create-group-chat__content">
+                <div className="create-group-chat__item">
                     <div className="form-group">
                         <label htmlFor="name">{t("Name")}</label>
                         <input type="text" className="form-control" name="name" id="name"

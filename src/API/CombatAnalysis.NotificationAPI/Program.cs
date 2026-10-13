@@ -1,13 +1,11 @@
 using AutoMapper;
 using CombatAnalysis.NotificationAPI.Consts;
-using CombatAnalysis.NotificationAPI.Enums;
 using CombatAnalysis.NotificationAPI.Helpers;
 using CombatAnalysis.NotificationAPI.Hubs;
 using CombatAnalysis.NotificationAPI.Kafka;
 using CombatAnalysis.NotificationAPI.Mapping;
 using CombatAnalysis.NotificationAPI.Providers;
 using MessageBroker.Kafka.Consts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
@@ -67,23 +65,6 @@ builder.Services.AddAuthentication("Bearer")
             ClockSkew = TimeSpan.Zero
         };
 
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                if (context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
-                {
-                    var path = context.HttpContext.Request.Path;
-                    if (!string.IsNullOrEmpty(accessToken) && MessageReceivedHelper.IsHubExist(path))
-                    {
-                        context.Token = accessToken;
-                    }
-                }
-
-                return Task.CompletedTask;
-            }
-        };
-
         // Skip checking HTTPS (should be HTTPS in production)
         options.RequireHttpsMetadata = false;
     });
@@ -108,7 +89,6 @@ builder.Services.AddCors(options =>
                .AllowCredentials();
     });
 });
-
 
 builder.Services.AddSignalR()
         .AddJsonProtocol();
@@ -166,6 +146,8 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+
 app.UseCors("CorsPolicy");
 
 app.UseRouting();
@@ -183,7 +165,6 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseStaticFiles();
-app.UseHttpsRedirection();
 
 app.MapControllers().RequireAuthorization("ApiScope");
 

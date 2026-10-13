@@ -20,8 +20,6 @@ public class GroupChatMessagesHub(ILogger<GroupChatMessagesHub> logger) : Hub
             }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
-
-            _logger.LogInformation("Clients {Clients} in Group chat message Hub", Clients);
         }
         catch (ArgumentOutOfRangeException ex)
         {

@@ -7,8 +7,10 @@ import React from 'react';
 interface ChatHubContextValue {
     personalChatHubConnectionRef: RefObject<signalR.HubConnection | null>;
     personalChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>;
+    personalChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>;
     groupChatHubConnectionRef: RefObject<signalR.HubConnection | null>;
     groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>;
+    groupChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>;
     personalChatEvents: IPersonalChatHubEvents;
     groupChatEvents: IGroupChatHubEvents;
 }

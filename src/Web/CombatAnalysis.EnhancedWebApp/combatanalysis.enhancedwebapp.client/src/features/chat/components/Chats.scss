@@ -40,19 +40,12 @@ $mobile-max-width: 425px;
 
             .title {
                 display: flex;
-                flex-direction: row;
-                justify-content: space-between;
+                justify-content: space-around;
                 align-items: center;
                 box-shadow: $box-shadow $white;
                 border-radius: $border-radius;
                 padding: 5px 20px;
                 cursor: default;
-
-                &__content {
-                    display: flex;
-                    align-items: center;
-                    gap: $padding-small;
-                }
 
                 &__call-started {
                     position: absolute;
@@ -60,11 +53,24 @@ $mobile-max-width: 425px;
                     font-size: 10px;
                 }
 
+                &__content {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    flex-grow: 3;
+
+                    .item {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                }
+
                 &__menu {
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: space-around;
                     align-items: center;
-                    gap: 25px;
+                    flex-grow: 1;
 
                     .call_active {
                         border: 1px solid $blue;
@@ -87,6 +93,9 @@ $mobile-max-width: 425px;
                     color: $white;
                     padding: 5px $padding-small;
                     border-radius: $border-radius;
+                    max-width: 125px;
+                    text-align: center;
+                    font-size: 0.9em;
                 }
             }
 
@@ -151,7 +160,9 @@ $mobile-max-width: 425px;
         }
 
         .chat-list {
-            &__chats, &__chats_active {
+
+            &__chats,
+            &__chats_active {
                 max-height: 50vh;
                 overflow-y: auto;
                 padding: 0;
@@ -159,8 +170,6 @@ $mobile-max-width: 425px;
 
             &__chats {
                 display: none;
-
-
 
                 &_active {
                     .selected {
@@ -175,7 +184,8 @@ $mobile-max-width: 425px;
                         font-size: 12px;
                     }
 
-                    .chat-loading-yet, .chat-card {
+                    .chat-loading-yet,
+                    .chat-card {
                         padding: 10px;
                     }
 

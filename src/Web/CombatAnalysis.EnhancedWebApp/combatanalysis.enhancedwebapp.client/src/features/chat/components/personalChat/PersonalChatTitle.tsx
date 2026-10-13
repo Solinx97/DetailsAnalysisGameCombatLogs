@@ -1,5 +1,5 @@
 ﻿import logger from '@/utils/Logger';
-import { faUserXmark } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faUserXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, type SetStateAction } from 'react';
 import { useRemovePersonalChatAsyncMutation } from '../../api/PersonalChat.api';
@@ -30,6 +30,10 @@ const PersonalChatTitle: React.FC<PersonalChatTitleProps> = ({ chat, companionUs
     return (
         <>
             <div className="title">
+                <FontAwesomeIcon
+                    icon={faArrowLeft}
+                    onClick={() => setSelectedChat(null)}
+                />
                 <div className="name">{companionUsername}</div>
                 <FontAwesomeIcon
                     icon={faUserXmark}

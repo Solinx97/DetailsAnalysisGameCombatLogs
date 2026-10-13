@@ -5,7 +5,6 @@ using Chat.Infrastructure.Extensions;
 using Chat.Infrastructure.Mappers;
 using CombatAnalysis.ChatAPI.BackgroundServices;
 using CombatAnalysis.ChatAPI.Consts;
-using CombatAnalysis.ChatAPI.Enums;
 using CombatAnalysis.ChatAPI.Helpers;
 using CombatAnalysis.ChatAPI.Hubs;
 using CombatAnalysis.ChatAPI.Interfaces;
@@ -14,7 +13,6 @@ using CombatAnalysis.ChatAPI.Kafka.Producer;
 using CombatAnalysis.ChatAPI.Mapping;
 using CombatAnalysis.ChatAPI.Providers;
 using MessageBroker.Kafka.Consts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
@@ -68,23 +66,6 @@ builder.Services.AddAuthentication("Bearer")
             ValidateIssuerSigningKey = true,
             IssuerSigningKeys = keySet.Keys,
             ClockSkew = TimeSpan.Zero,
-        };
-
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                if (context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
-                {
-                    var path = context.HttpContext.Request.Path;
-                    if (!string.IsNullOrEmpty(accessToken) && MessageReceivedHelper.IsHubExist(path))
-                    {
-                        context.Token = accessToken;
-                    }
-                }
-
-                return Task.CompletedTask;
-            }
         };
 
         // Skip checking HTTPS (should be HTTPS in production)
@@ -175,17 +156,21 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-app.UseCors("CorsPolicy");
+app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<PersonalChatHub>(HubPatterns.PERSONAL_CHAT);
 app.MapHub<PersonalChatMessagesHub>(HubPatterns.PERSONAL_CHAT_MESSAGE);
+app.MapHub<PersonalChatUnreadMessagesHub>(HubPatterns.PERSONAL_CHAT_UNREAD_MESSAGES);
 app.MapHub<GroupChatHub>(HubPatterns.GROUP_CHAT);
 app.MapHub<GroupChatMessagesHub>(HubPatterns.GROUP_CHAT_MESSAGE);
+app.MapHub<GroupChatUnreadMessagesHub>(HubPatterns.GROUP_CHAT_UNREAD_MESSAGES);
 app.MapHub<VoiceChatHub>(HubPatterns.VOICE_CHAT);
 
 app.UseSwagger();
@@ -196,7 +181,6 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseStaticFiles();
-app.UseHttpsRedirection();
 
 app.MapControllers().RequireAuthorization("ApiScope");
 

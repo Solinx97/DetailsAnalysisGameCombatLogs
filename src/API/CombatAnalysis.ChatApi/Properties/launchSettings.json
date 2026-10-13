@@ -23,7 +23,6 @@
     "http (prod)": {
       "commandName": "Project",
       "launchBrowser": false,
-      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
@@ -33,7 +32,6 @@
     "https (prod)": {
       "commandName": "Project",
       "launchBrowser": false,
-      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       },

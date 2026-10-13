@@ -27,17 +27,15 @@
     }
   },
   "chatApiHubs": {
-    "url": "https://localhost:5007/",
     "personalChat": "personalChatHub",
     "personalChatMessages": "personalChatMessagesHub",
+    "personalChatUnreadMessages": "personalChatUnreadMessagesHub",
     "groupChat": "groupChatHub",
     "groupChatMessages": "groupChatMessagesHub",
-    "voiceChat": "voiceChatHub",
-    "personalChatUnreadMessage": "personalChatUnreadMessageHub",
-    "groupChatUnreadMessage": "groupChatUnreadMessageHub"
+    "groupChatUnreadMessages": "groupChatUnreadMessagesHub",
+    "voiceChat": "voiceChatHub"
   },
   "notificationApiHubs": {
-    "url": "https://localhost:5244/",
     "notification": "notificationHub"
   }
 }

@@ -108,6 +108,19 @@ const notificationEnddpoints = (target: string, changeOrigin: boolean, apiVersio
     }
 }
 
+const hubsEnddpoints = (target: string, changeOrigin: boolean, ws: boolean) => {
+    return {
+        [`^/groupChatHub`]: { target, changeOrigin, ws, secure: false },
+        [`^/groupChatMessagesHub`]: { target, changeOrigin, ws, secure: false },
+        [`^/groupChatUnreadMessagesHub`]: { target, changeOrigin, ws, secure: false },
+        [`^/personalChatHub`]: { target, changeOrigin, ws, secure: false },
+        [`^/personalChatMessagesHub`]: { target, changeOrigin, ws, secure: false },
+        [`^/personalChatUnreadMessagesHub`]: { target, changeOrigin, ws, secure: false },
+        [`^/notificationHub`]: { target, changeOrigin, ws, secure: false },
+    }
+}
+
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
@@ -133,6 +146,7 @@ export default defineConfig(({ mode }) => {
                 ...feedEndpoints(target, changeOrigin, apiVersion),
                 ...chatEndpoints(target, changeOrigin, apiVersion),
                 ...notificationEnddpoints(target, changeOrigin, apiVersion),
+                ...hubsEnddpoints(target, changeOrigin, true),
             },
             port: parseInt(env.VITE_DEV_SERVER_PORT || '5173', 10)
         }

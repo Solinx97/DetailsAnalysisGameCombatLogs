@@ -17,7 +17,7 @@ import './VoiceChat.scss';
 const VoiceChat: React.FC = () => {
 	const { t } = useTranslation('communication/chats/voiceChat');
 
-	const voiceHubURL = `${APP_CONFIG.chatApiHubs.url}${APP_CONFIG.chatApiHubs.voiceChat}`;
+	const voiceHubURL = APP_CONFIG.chatApiHubs.voiceChat;
 
 	const myself = useSelector((state: RootState) => state.user.value);
 

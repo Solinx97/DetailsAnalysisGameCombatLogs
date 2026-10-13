@@ -11,11 +11,12 @@ using System.Text.Json;
 
 namespace CombatAnalysis.ChatAPI.Kafka;
 
-public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger<PersonalChatMessageConsumer> logger, IHubContext<PersonalChatMessagesHub> hubContext) 
-    : KafkaConsumerBase(kafkaSettings, KafkaTopics.PERSONAL_CHAT_MESSAGE, logger)
+public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, ILogger<PersonalChatMessageConsumer> logger, IHubContext<PersonalChatMessagesHub> hubContext,
+    IHubContext<PersonalChatUnreadMessagesHub> unreadMessagesHubContext) : KafkaConsumerBase(kafkaSettings, KafkaTopics.PERSONAL_CHAT_MESSAGE, logger)
 {
     private readonly ILogger<PersonalChatMessageConsumer> _logger = logger;
     private readonly IHubContext<PersonalChatMessagesHub> _hubContext = hubContext;
+    private readonly IHubContext<PersonalChatUnreadMessagesHub> _unreadMessagesHubContext = unreadMessagesHubContext;
 
     protected override async Task ConsumeMessageAsync(ConsumeResult<string, string> kafkaData, CancellationToken cancellationToken)
     {
@@ -47,6 +48,7 @@ public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, 
 
                     var message = new PersonalChatMessageDto { Id = @event.MessageId, Status = MessageStatus.Sent, Message = @event.Message, PersonalChatId = @event.ChatId, AppUserId = @event.SenderId };
                     await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
+                    await _unreadMessagesHubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveUnreadMessage", cancellationToken);
                     break;
                 case nameof(PersonalChatMessageTextEditedEvent):
                     var eventEditText = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageTextEditedEvent>();

@@ -45,7 +45,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
     const { groupChatEvents } = useMessageEvents(chat.id, page);
-    
+
     const { data: messages, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountGroupChatMessagesQuery(chat.id);
 
@@ -133,6 +133,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                         chat={chat}
                         settingsIsShow={settingsIsShow}
                         setSettingsIsShow={setSettingsIsShow}
+                        setSelectedChat={setSelectedChat}
                         t={t}
                     />
                     <ul className="chat-messages" ref={chatContainerRef}></ul>
@@ -163,6 +164,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                     chat={chat}
                     settingsIsShow={settingsIsShow}
                     setSettingsIsShow={setSettingsIsShow}
+                    setSelectedChat={setSelectedChat}
                     t={t}
                 />
                 <ul className="chat-messages" ref={chatContainerRef}>
