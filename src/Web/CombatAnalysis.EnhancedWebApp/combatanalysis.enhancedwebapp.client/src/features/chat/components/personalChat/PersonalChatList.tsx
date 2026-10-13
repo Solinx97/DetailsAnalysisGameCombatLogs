@@ -31,7 +31,10 @@ const PersonalChatList: React.FC<PersonalChatListProps> = ({ myselfId, t, select
         const handle = (chat: PersonalChatModel) => {
             Store.dispatch(
                 PersonalChatApi.util.updateQueryData("getPersonalChatsByUserId", myselfId, (draft) => {
-                    draft.push(chat);
+                    const findChat = draft.find(m => m.id === chat.id);
+                    if (!findChat) {
+                        draft.push(chat);
+                    }
                 })
             );
         }

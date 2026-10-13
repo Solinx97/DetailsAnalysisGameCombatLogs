@@ -34,7 +34,10 @@ const GroupChatList: React.FC<GroupChatListProps> = ({ myselfId, selectedChat, s
         const handle = (groupChatUser: GroupChatUserModel) => {
             Store.dispatch(
                 GroupChatUserApi.util.updateQueryData("findChatUsers", myselfId, (draft) => {
-                    draft.push(groupChatUser);
+                    const findUser = draft.find(m => m.id === groupChatUser.id);
+                    if (!findUser) {
+                        draft.push(groupChatUser);
+                    }
                 })
             );
         }
