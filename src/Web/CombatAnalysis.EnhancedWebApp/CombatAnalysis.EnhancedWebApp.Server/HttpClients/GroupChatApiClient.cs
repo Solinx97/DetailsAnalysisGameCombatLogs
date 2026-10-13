@@ -75,14 +75,14 @@ internal class GroupChatApiClient(HttpClient httpClient) : IGroupChatApiClient
         return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
     }
 
-    public async Task UpdateMessageAsync(Guid id, GroupChatMessagePatch message, CancellationToken cancellationToken)
+    public async Task UpdateMessageTextAsync(Guid id, string newMessage, CancellationToken cancellationToken)
     {
-        if (id != message.Id)
-        {
-            throw new InvalidOperationException("Id is not equal message id.");
-        }
+        await _httpClient.PatchAsync($"GroupChatMessage/updateMessageText/{id}?newMessage={newMessage}", null, cancellationToken);
+    }
 
-        await _httpClient.PatchAsync($"GroupChatMessage/{id}", JsonContent.Create(message), cancellationToken);
+    public async Task UpdateMessageMarkAsync(Guid id, int newMark, CancellationToken cancellationToken)
+    {
+        await _httpClient.PatchAsync($"GroupChatMessage/updateMessageMark/{id}?newMark={newMark}", null, cancellationToken);
     }
 
     public async Task ReadMessageIdAsync(Guid id, GroupChatMessageReadPatch message, CancellationToken cancellationToken)

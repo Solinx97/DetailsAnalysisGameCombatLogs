@@ -1,6 +1,7 @@
 ﻿using Chat.Application.Commands.GroupChat.CreateMessage;
 using Chat.Application.Commands.GroupChat.DeleteMessage;
 using Chat.Application.Commands.GroupChat.ReadMessage;
+using Chat.Application.Commands.GroupChat.UpdateMessageMark;
 using Chat.Application.Commands.GroupChat.UpdateMessageText;
 using Chat.Application.Queries.GroupChat.CountMessages;
 using Chat.Application.Queries.GroupChat.GetMessagesByChatId;
@@ -44,15 +45,19 @@ public class GroupChatMessageController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpPatch("{id}")]
-    public async Task<IActionResult> PartialUpdate(Guid id, [FromBody] GroupChatMessagePatch chatMessage, CancellationToken cancellationToken)
+    [HttpPatch("updateMessageText/{id}")]
+    public async Task<IActionResult> UpdateMessageText(Guid id, [FromQuery] string newMessage, CancellationToken cancellationToken)
     {
-        if (id != chatMessage.Id)
-        {
-            return BadRequest("Route ID and body ID do not match.");
-        }
+        var command = new UpdateMessageTextCommand(id, newMessage);
+        await _mediator.Send(command, cancellationToken);
 
-        var command = new UpdateMessageTextCommand(chatMessage.Id, chatMessage.Message);
+        return NoContent();
+    }
+
+    [HttpPatch("updateMessageMark/{id}")]
+    public async Task<IActionResult> UpdateMessageMark(Guid id, [FromQuery] int newMark, CancellationToken cancellationToken)
+    {
+        var command = new UpdateMessageMarkCommand(id, newMark);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

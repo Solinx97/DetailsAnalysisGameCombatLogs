@@ -1,21 +1,21 @@
-﻿import Store, { type RootState } from '@/app/Store';
+﻿import { type RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
 import ChatHubContext from '@/context/ChatHubContext';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import { ChatType, MessageStatus } from '@/shared/helpers/EnumHelper';
+import { ChatType } from '@/shared/helpers/EnumHelper';
 import logger from '@/utils/Logger';
 import { memo, useContext, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetUserByIdQuery } from '../../../user/api/Account.api';
-import { ChatApi, useGetMessagesByPersonalChatIdQuery } from '../../api/Chat.api';
+import { useGetMessagesByPersonalChatIdQuery } from '../../api/Chat.api';
 import {
     useCountPersonalChatMessagesQuery,
-    usePartialUpdatePersonalChatMessageMutation
+    useUpdatePersonalChatMessageMarkMutation,
+    useUpdatePersonalChatMessageTextMutation
 } from '../../api/PersonalChatMessage.api';
+import useMessageEvents from '../../hooks/useMessageEvents';
 import type { GroupChatModel } from '../../types/GroupChatModel';
-import type { ChatMessagePatch } from '../../types/patches/ChatMessagePatch';
-import type { PersonalChatMessageModel } from '../../types/PersonalChatMessageModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
 import ChatMessage from '../ChatMessage';
 import MessageInput from '../MessageInput';
@@ -44,13 +44,16 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
 
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
-
+    
+    const { personalChatEvents } = useMessageEvents(chat.id, page);
+  
     const { data: messages, isLoading } = useGetMessagesByPersonalChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountPersonalChatMessagesQuery(chat.id);
 
     const { data: companion } = useGetUserByIdQuery(companionId);
 
-    const [paerialUpdatePersonalChatMessage] = usePartialUpdatePersonalChatMessageMutation();
+    const [updateMessageText] = useUpdatePersonalChatMessageTextMutation();
+    const [updateMessageMark] = useUpdatePersonalChatMessageMarkMutation();
 
     useEffect(() => {
         if (!messages || !count) {
@@ -63,61 +66,6 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
     useEffect(() => {
         let isCancelled = false;
 
-        const handleMessageRead = (messageId: string) => {
-            Store.dispatch(
-                ChatApi.util.updateQueryData(
-                    'getMessagesByPersonalChatId',
-                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                    draft => {
-                        const findMessage = draft.find(m => m.id === messageId);
-                        if (findMessage) {
-                            const updatedMessage = Object.assign({}, findMessage);
-                            updatedMessage.status = MessageStatus["READ"];
-                            Object.assign(findMessage, updatedMessage);
-                        }
-                    }
-                )
-            );
-        }
-
-        const handleMessage = (message: PersonalChatMessageModel) => {
-            Store.dispatch(
-                ChatApi.util.updateQueryData(
-                    'getMessagesByPersonalChatId',
-                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                    draft => {
-                        const findMessage = draft.find(m => m.id === message.id);
-                        if (findMessage) {
-                            Object.assign(findMessage, message);
-                        }
-                        else {
-                            draft.unshift(message);
-                        }
-                    }
-                )
-            );
-        }
-
-        const handleMessageEdit = (messagePatch: ChatMessagePatch) => {
-            Store.dispatch(
-                ChatApi.util.updateQueryData(
-                    'getMessagesByPersonalChatId',
-                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                    draft => {
-                        const message = draft.find(m => m.id === messagePatch.id);
-                        if (message && messagePatch) {
-                            const updatedMessage = Object.assign({}, message);
-                            updatedMessage.message = messagePatch.message ?? "";
-                            updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"];
-                            updatedMessage.markedType = messagePatch.markedType ?? 0;
-
-                            Object.assign(message, updatedMessage);
-                        }
-                    }
-                )
-            );
-        }
-
         const connect = async () => {
             if (isCancelled) {
                 return;
@@ -125,9 +73,10 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
 
             await context.personalChatEvents.connectToChatMessagesAsync(chat.id);
 
-            context.personalChatEvents.subscribeToChatMessages(handleMessage);
-            context.personalChatEvents.subscribeToMessageRead(handleMessageRead);
-            context.personalChatEvents.subscribeToChatMessageEdit(handleMessageEdit);
+            context.personalChatEvents.subscribeToChatMessages(personalChatEvents.handleMessage);
+            context.personalChatEvents.subscribeToMessageRead(personalChatEvents.handleMessageRead);
+            context.personalChatEvents.subscribeToChatMessageTextEdit(personalChatEvents.handleMessageTextEdit);
+            context.personalChatEvents.subscribeToChatMessageMarkEdit(personalChatEvents.handleMessageMarkEdit);
         }
 
         connect();
@@ -135,22 +84,31 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
         return () => {
             isCancelled = true;
 
-            context.personalChatEvents.unsubscribeToChatMessages(handleMessage);
-            context.personalChatEvents.unsubscribeToMessageRead(handleMessageRead);
-            context.personalChatEvents.unsubscribeToChatMessageEdit(handleMessageEdit);
+            context.personalChatEvents.unsubscribeToChatMessages(personalChatEvents.handleMessage);
+            context.personalChatEvents.unsubscribeToMessageRead(personalChatEvents.handleMessageRead);
+            context.personalChatEvents.unsubscribeToChatMessageTextEdit(personalChatEvents.handleMessageTextEdit);
+            context.personalChatEvents.unsubscribeToChatMessageMarkEdit(personalChatEvents.handleMessageMarkEdit);
             context.personalChatEvents.disconnectFromChatMessageHubAsync();
         };
     }, []);
 
-    const updateMessageAsync = async (message: ChatMessagePatch) => {
-        try {
-            await paerialUpdatePersonalChatMessage({ id: message.id, message }).unwrap();
+    const updateMessageTextAsync = async (messageId: string, newMessage: string | undefined) => {
+        if (!newMessage) {
+            return;
+        }
 
-            if (context.personalChatMessagesHubConnectionRef.current) {
-                await context.personalChatMessagesHubConnectionRef.current.invoke("RequestEditedMessage", message);
-            }
+        try {
+            await updateMessageText({ id: messageId, newMessage }).unwrap();
         } catch (e) {
             logger.error("Failed to update personal chat message", e);
+        }
+    }
+
+    const updateMessageMarkAsync = async (messageId: string, newMark: number) => {
+        try {
+            await updateMessageMark({ id: messageId, newMark }).unwrap();
+        } catch (e) {
+            logger.error("Failed to update group chat message", e);
         }
     }
 
@@ -191,7 +149,8 @@ const PersonalChat: React.FC<PersonalChatProps> = ({ chat, setSelectedChat, comp
                         <li key={message.id}>
                             <ChatMessage
                                 message={message}
-                                updateMessageAsync={updateMessageAsync}
+                                updateMessageTextAsync={updateMessageTextAsync}
+                                updateMessageMarkAsync={updateMessageMarkAsync}
                             />
                         </li>
                     ))}

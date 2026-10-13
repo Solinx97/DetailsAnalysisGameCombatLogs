@@ -6,7 +6,6 @@ import App from './app/App.tsx';
 import { loadConfig } from './app/configLoader.ts';
 import Store from './app/Store.ts';
 import { APP_CONFIG } from './config/appConfig.ts';
-import Loading from './shared/components/Loading.tsx';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -19,7 +18,7 @@ loadConfig().then((config) => {
     createRoot(document.getElementById('root')!).render(
         <Provider store={Store}>
             <BrowserRouter>
-                <Suspense fallback={<Loading />}>
+                <Suspense >
                     <App />
                 </Suspense>
             </BrowserRouter>

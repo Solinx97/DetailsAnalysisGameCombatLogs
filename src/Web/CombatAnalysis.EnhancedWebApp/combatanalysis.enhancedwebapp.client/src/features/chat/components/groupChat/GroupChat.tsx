@@ -1,18 +1,17 @@
-﻿import Store, { type RootState } from '@/app/Store';
+﻿import { type RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
 import ChatHubContext from '@/context/ChatHubContext';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
-import { ChatType, MessageStatus } from '@/shared/helpers/EnumHelper';
+import { ChatType, } from '@/shared/helpers/EnumHelper';
 import logger from '@/utils/Logger';
 import { memo, useContext, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { ChatApi, useGetMessagesByGroupChatIdQuery } from '../../api/Chat.api';
-import { useCountGroupChatMessagesQuery, usePartialUpdateGroupChatMessageMutation } from '../../api/GroupChatMessage.api';
+import { useGetMessagesByGroupChatIdQuery } from '../../api/Chat.api';
+import { useCountGroupChatMessagesQuery, useUpdateGroupChatMessageMarkMutation, useUpdateGroupChatMessageTextMutation } from '../../api/GroupChatMessage.api';
 import { useFindAllChatUsersQuery } from '../../api/GroupChatUser.api';
-import type { GroupChatMessageModel } from '../../types/GroupChatMessageModel';
+import useMessageEvents from '../../hooks/useMessageEvents';
 import type { GroupChatModel } from '../../types/GroupChatModel';
-import type { ChatMessagePatch } from '../../types/patches/ChatMessagePatch';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
 import ChatMessage from '../ChatMessage';
 import MessageInput from '../MessageInput';
@@ -45,12 +44,15 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
 
+    const { groupChatEvents } = useMessageEvents(chat.id, page);
+    
     const { data: messages, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountGroupChatMessagesQuery(chat.id);
 
     const { data: groupChatUsers, isLoading: usersIsLoading } = useFindAllChatUsersQuery(chat.id);
 
-    const [partialUpdateGroupChatMessage] = usePartialUpdateGroupChatMessageMutation();
+    const [updateMessageText] = useUpdateGroupChatMessageTextMutation();
+    const [updateMessageMark] = useUpdateGroupChatMessageMarkMutation();
 
     useEffect(() => {
         if (count === undefined) {
@@ -63,61 +65,6 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     useEffect(() => {
         let isCancelled = false;
 
-        const handleMessageRead = (messageId: string) => {
-            Store.dispatch(
-                ChatApi.util.updateQueryData(
-                    'getMessagesByGroupChatId',
-                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                    draft => {
-                        const findMessage = draft.find(m => m.id === messageId);
-                        if (findMessage) {
-                            const updatedMessage = Object.assign({}, findMessage);
-                            updatedMessage.status = MessageStatus["READ"];
-                            Object.assign(findMessage, updatedMessage);
-                        }
-                    }
-                )
-            );
-        }
-
-        const handleMessage = (message: GroupChatMessageModel) => {
-            Store.dispatch(
-                ChatApi.util.updateQueryData(
-                    'getMessagesByGroupChatId',
-                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                    draft => {
-                        const findMessage = draft.find(m => m.id === message.id);
-                        if (findMessage) {
-                            Object.assign(findMessage, message);
-                        }
-                        else {
-                            draft.unshift(message);
-                        }
-                    }
-                )
-            );
-        }
-
-        const handleMessageEdit = (messagePatch: ChatMessagePatch) => {
-            Store.dispatch(
-                ChatApi.util.updateQueryData(
-                    'getMessagesByGroupChatId',
-                    { chatId: chat.id, page, pageSize: pageSizeRef.current },
-                    draft => {
-                        const message = draft.find(m => m.id === messagePatch.id);
-                        if (message && messagePatch) {
-                            const updatedMessage = Object.assign({}, message);
-                            updatedMessage.message = messagePatch.message ?? "";
-                            updatedMessage.status = messagePatch.status ?? MessageStatus["SENT"]
-                            updatedMessage.markedType = messagePatch.markedType ?? 0;
-
-                            Object.assign(message, updatedMessage);
-                        }
-                    }
-                )
-            );
-        }
-
         const connect = async () => {
             if (isCancelled) {
                 return;
@@ -125,9 +72,10 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
             await context.groupChatEvents.connectToChatMessagesAsync(chat.id);
 
-            context.groupChatEvents.subscribeToChatMessages(handleMessage);
-            context.groupChatEvents.subscribeToMessageRead(handleMessageRead);
-            context.groupChatEvents.subscribeToChatMessageEdit(handleMessageEdit);
+            context.groupChatEvents.subscribeToChatMessages(groupChatEvents.handleMessage);
+            context.groupChatEvents.subscribeToMessageRead(groupChatEvents.handleMessageRead);
+            context.groupChatEvents.subscribeToChatMessageTextEdit(groupChatEvents.handleMessageTextEdit);
+            context.groupChatEvents.subscribeToChatMessageMarkEdit(groupChatEvents.handleMessageMarkEdit);
         }
 
         connect();
@@ -135,9 +83,10 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
         return () => {
             isCancelled = true;
 
-            context.groupChatEvents.unsubscribeToChatMessages(handleMessage);
-            context.groupChatEvents.unsubscribeToMessageRead(handleMessageRead);
-            context.groupChatEvents.unsubscribeToChatMessageEdit(handleMessageEdit);
+            context.groupChatEvents.unsubscribeToChatMessages(groupChatEvents.handleMessage);
+            context.groupChatEvents.unsubscribeToMessageRead(groupChatEvents.handleMessageRead);
+            context.groupChatEvents.unsubscribeToChatMessageTextEdit(groupChatEvents.handleMessageTextEdit);
+            context.groupChatEvents.unsubscribeToChatMessageMarkEdit(groupChatEvents.handleMessageMarkEdit);
             context.groupChatEvents.disconnectFromChatMessageHubAsync();
         };
     }, []);
@@ -155,13 +104,21 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
         setUsersId(receivedUsersId);
     }, [groupChatUsers]);
 
-    const updateMessageAsync = async (message: ChatMessagePatch) => {
-        try {
-            await partialUpdateGroupChatMessage({ id: message.id, message }).unwrap();
+    const updateMessageTextAsync = async (messageId: string, newMessage: string | undefined) => {
+        if (!newMessage) {
+            return;
+        }
 
-            if (context.groupChatMessagesHubConnectionRef.current) {
-                await context.groupChatMessagesHubConnectionRef.current.invoke("RequestEditedMessage", message);
-            }
+        try {
+            await updateMessageText({ id: messageId, newMessage }).unwrap();
+        } catch (e) {
+            logger.error("Failed to update group chat message", e);
+        }
+    }
+
+    const updateMessageMarkAsync = async (messageId: string, newMark: number) => {
+        try {
+            await updateMessageMark({ id: messageId, newMark }).unwrap();
         } catch (e) {
             logger.error("Failed to update group chat message", e);
         }
@@ -179,15 +136,13 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                         t={t}
                     />
                     <ul className="chat-messages" ref={chatContainerRef}></ul>
-                    {groupChatUser &&
-                        <MessageInput
-                            page={page}
-                            chatId={chat.id}
-                            initiator={groupChatUser}
-                            targetChatType={ChatType["GROUP"]}
-                            t={t}
-                        />
-                    }
+                    <MessageInput
+                        page={page}
+                        chatId={chat.id}
+                        initiator={groupChatUser}
+                        targetChatType={ChatType["GROUP"]}
+                        t={t}
+                    />
                 </div>
                 {(settingsIsShow && groupChatUser) &&
                     <GroupChatMenu
@@ -215,8 +170,9 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                         <li className="message" key={message.id}>
                             <ChatMessage
                                 message={message}
-                                updateMessageAsync={updateMessageAsync}
                                 lastReadMessageId={groupChatUser?.lastReadMessageId}
+                                updateMessageTextAsync={updateMessageTextAsync}
+                                updateMessageMarkAsync={updateMessageMarkAsync}
                             />
                         </li>
                     ))}
@@ -228,15 +184,13 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
                         />
                     </li>
                 </ul>
-                {groupChatUser &&
-                    <MessageInput
-                        page={page}
-                        chatId={chat.id}
-                        initiator={groupChatUser}
-                        targetChatType={ChatType["GROUP"]}
-                        t={t}
-                    />
-                }
+                <MessageInput
+                    page={page}
+                    chatId={chat.id}
+                    initiator={groupChatUser}
+                    targetChatType={ChatType["GROUP"]}
+                    t={t}
+                />
             </div>
             {(settingsIsShow && groupChatUser) &&
                 <GroupChatMenu

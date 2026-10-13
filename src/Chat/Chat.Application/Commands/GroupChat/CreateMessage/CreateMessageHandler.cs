@@ -18,29 +18,16 @@ internal class CreateMessageHandler(IGroupChatRepository chatRepository, IGroupC
 
     public async Task Handle(CreateMessageCommand request, CancellationToken cancellationToken)
     {
-        using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        var chat = await _chatRepository.GetWithUsersAsync(request.ChatId, cancellationToken);
 
-        try
-        {
-            var chat = await _chatRepository.GetWithUsersAsync(request.ChatId, cancellationToken);
+        var message = GroupChatMessage.Create(request.Id, request.Username, request.Message, request.ChatId, request.GroupChatUserId, chat.LastMessageSequence);
+        await _repository.AddAsync(message, cancellationToken);
 
-            var message = GroupChatMessage.Create(request.Id, request.Username, request.Message, request.ChatId, request.GroupChatUserId, chat.LastMessageSequence);
-            await _repository.AddAsync(message, cancellationToken);
+        chat.IncrementSequence();
+        chat.IncreaseUnreadMessages(request.GroupChatUserId);
 
-            chat.IncrementSequence();
-            chat.IncreaseUnreadMessages(request.GroupChatUserId);
-
-            var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, (int)message.Type, message.GroupChatUserId, message.Username, message.Message);
-            await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatMessageCreatedEvent), KafkaTopics.GROUP_CHAT_MESSAGE, message.GroupChatId.Value.ToString(), JsonSerializer.Serialize(@event), cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            await _unitOfWork.CommitTransactionAsync(transaction, cancellationToken);
-        }
-        catch (Exception)
-        {
-            await _unitOfWork.RollbackAsync(transaction, cancellationToken);
-
-            throw;
-        }
+        var @event = new GroupChatMessageCreatedEvent(Guid.NewGuid(), message.Id, message.GroupChatId, (int)message.Type, message.GroupChatUserId, message.Username, message.Message);
+        await _boxRepository.AddAsync(@event.EventId, nameof(GroupChatMessageCreatedEvent), KafkaTopics.GROUP_CHAT_MESSAGE, message.GroupChatId.Value.ToString(), JsonSerializer.Serialize(@event), cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

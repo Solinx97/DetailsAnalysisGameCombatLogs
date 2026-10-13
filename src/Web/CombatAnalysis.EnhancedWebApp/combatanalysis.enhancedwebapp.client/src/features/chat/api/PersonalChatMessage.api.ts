@@ -1,4 +1,3 @@
-import type { ChatMessagePatch } from '../types/patches/ChatMessagePatch';
 import type { PersonalChatMessageReadPatch } from '../types/patches/PersonalChatMessageReadPatch';
 import type { PersonalChatMessageModel } from '../types/PersonalChatMessageModel';
 import { ChatApi } from './Chat.api';
@@ -12,10 +11,15 @@ export const PersonalChatMessageApi = ChatApi.injectEndpoints({
                 method: 'POST'
             }),
         }),
-        partialUpdatePersonalChatMessage: builder.mutation<void, { id: string, message: ChatMessagePatch }>({
-            query: ({ id, message }) => ({
-                body: message,
-                url: `/PersonalChatMessage/${id}`,
+        updatePersonalChatMessageText: builder.mutation<void, { id: string, newMessage: string }>({
+            query: ({ id, newMessage }) => ({
+                url: `/PersonalChatMessage/updateMessageText/${id}?newMessage=${newMessage}`,
+                method: 'PATCH'
+            }),
+        }),
+        updatePersonalChatMessageMark: builder.mutation<void, { id: string, newMark: number }>({
+            query: ({ id, newMark }) => ({
+                url: `/PersonalChatMessage/updateMessageMark/${id}?newMark=${newMark}`,
                 method: 'PATCH'
             }),
         }),
@@ -48,7 +52,8 @@ export const PersonalChatMessageApi = ChatApi.injectEndpoints({
 
 export const {
     useCreatePersonalChatMessageMutation,
-    usePartialUpdatePersonalChatMessageMutation,
+    useUpdatePersonalChatMessageTextMutation,
+    useUpdatePersonalChatMessageMarkMutation,
     useReadPersonalChatMessageMutation,
     useRemovePersonalChatMessageMutation,
     useRemovePersonalChatMessageByChatIdMutation,

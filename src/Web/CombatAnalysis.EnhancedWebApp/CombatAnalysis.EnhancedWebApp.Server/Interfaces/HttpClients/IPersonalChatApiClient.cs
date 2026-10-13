@@ -21,7 +21,9 @@ public interface IPersonalChatApiClient
 
     Task CreateMessageAsync(PersonalChatMessageModel message, CancellationToken cancellationToken);
 
-    Task UpdateMessageAsync(Guid id, PersonalChatMessagePatch message, CancellationToken cancellationToken);
+    Task UpdateMessageTextAsync(Guid id, string newMessage, CancellationToken cancellationToken);
+
+    Task UpdateMessageMarkAsync(Guid id, int newMark, CancellationToken cancellationToken);
 
     Task ReadMessageIdAsync(Guid id, GroupChatMessageReadPatch message, CancellationToken cancellationToken);
 

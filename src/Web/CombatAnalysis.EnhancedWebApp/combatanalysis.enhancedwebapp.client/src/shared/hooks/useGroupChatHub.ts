@@ -1,7 +1,6 @@
 import { APP_CONFIG } from '@/config/appConfig';
 import type { GroupChatMessageModel } from '@/features/chat/types/GroupChatMessageModel';
 import type { GroupChatUserModel } from '@/features/chat/types/GroupChatUserModel';
-import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessagePatch';
 import logger from '@/utils/Logger';
 import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
@@ -75,12 +74,20 @@ const useGroupChatHub = (
         groupChatMessagesHubConnectionRef.current?.off("ReceiveMessage", callback);
     }
 
-    const subscribeToChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
-        groupChatMessagesHubConnectionRef.current?.on("ReceiveEditedMessage", callback);
+    const subscribeToChatMessageTextEdit = (callback: (mssageId: string, newMessage: string) => void) => {
+        groupChatMessagesHubConnectionRef.current?.on("ReceiveTextEditedMessage", callback);
     }
 
-    const unsubscribeToChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
-        groupChatMessagesHubConnectionRef.current?.off("ReceiveEditedMessage", callback);
+    const unsubscribeToChatMessageTextEdit = (callback: (mssageId: string, newMessage: string) => void) => {
+        groupChatMessagesHubConnectionRef.current?.off("ReceiveTextEditedMessage", callback);
+    }
+
+    const subscribeToChatMessageMarkEdit = (callback: (mssageId: string, newMark: number) => void) => {
+        groupChatMessagesHubConnectionRef.current?.on("ReceiveMarkEditedMessage", callback);
+    }
+
+    const unsubscribeToChatMessageMarkEdit = (callback: (mssageId: string, newMark: number) => void) => {
+        groupChatMessagesHubConnectionRef.current?.off("ReceiveMarkEditedMessage", callback);
     }
 
     const subscribeToMessageRead = (callback: (messageId: string) => void) => {
@@ -105,8 +112,8 @@ const useGroupChatHub = (
         const events: IGroupChatHubEvents = {
             connectToChatAsync, connectToChatMessagesAsync, subscribeToChat, unsubscribeToChat, 
             subscribeToRemovedFromChat, unsubscribeToRemovedFromChat, subscribeToChatMessages, unsubscribeToChatMessages,
-            subscribeToChatMessageEdit, unsubscribeToChatMessageEdit, subscribeToMessageRead, unsubscribeToMessageRead,
-            disconnectFromChatHubAsync, disconnectFromChatMessageHubAsync
+            subscribeToChatMessageTextEdit, unsubscribeToChatMessageTextEdit, subscribeToChatMessageMarkEdit, unsubscribeToChatMessageMarkEdit, 
+            subscribeToMessageRead, unsubscribeToMessageRead, disconnectFromChatHubAsync, disconnectFromChatMessageHubAsync
         }
 
         return events;

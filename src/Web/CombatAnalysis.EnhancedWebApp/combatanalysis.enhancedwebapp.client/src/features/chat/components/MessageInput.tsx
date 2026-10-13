@@ -1,5 +1,5 @@
 import { ChatType } from '@/shared/helpers/EnumHelper';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faCancel } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import type { AppUserModel } from '../../user/types/AppUserModel';
@@ -36,20 +36,20 @@ const MessageInput: React.FC<MessageInputProps> = ({ page, chatId, initiator, ta
             return;
         }
 
-        if (messageInput.current.value === "") {
+        const message = messageInput.current.value;
+        messageInput.current.value = "";
+        if (message === "") {
             sentEmptyMessage();
 
             return;
         }
 
         if (targetChatType === ChatType["GROUP"]) {
-            await createGrouplMessageAsync(initiator.id ?? "0", initiator.username, messageInput.current.value, chatId);
+            await createGrouplMessageAsync(initiator.id ?? "0", initiator.username, message, chatId);
         }
         else {
-            await createPersonalMessageAsync(initiator.id ?? "0", initiator.username, messageInput.current.value, chatId);
+            await createPersonalMessageAsync(initiator.id ?? "0", initiator.username, message, chatId);
         }
-
-        messageInput.current.value = "";
     }
 
     const sentEmptyMessage = () => {
@@ -60,6 +60,21 @@ const MessageInput: React.FC<MessageInputProps> = ({ page, chatId, initiator, ta
         }, emptyMessageNotificationTimeout);
     };
 
+    if (!initiator) {
+        return (
+            <div>
+                <div className={`empty-message${isEmptyMessage ? "_show" : ""}`}>{t("CanNotSendEmpty")}</div>
+                <div className="form-group input-message">
+                    <input type="text" className="form-control" disabled />
+                    <FontAwesomeIcon
+                        icon={faCancel}
+                        color='orange'
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div>
             <div className={`empty-message${isEmptyMessage ? "_show" : ""}`}>{t("CanNotSendEmpty")}</div>
@@ -68,7 +83,6 @@ const MessageInput: React.FC<MessageInputProps> = ({ page, chatId, initiator, ta
                     ref={messageInput} onKeyDown={async (e) => await sendMessageByKeyHandle(e.code)} />
                 <FontAwesomeIcon
                     icon={faPaperPlane}
-                    title={t("SendMessage")}
                     onClick={sendMessageAsync} />
             </div>
         </div>

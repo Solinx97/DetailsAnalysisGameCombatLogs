@@ -1,5 +1,4 @@
 import type { GroupChatMessageModel } from '../types/GroupChatMessageModel';
-import type { ChatMessagePatch } from '../types/patches/ChatMessagePatch';
 import type { GroupChatMessageReadPatch } from '../types/patches/GroupChatMessageReadPatch';
 import { ChatApi } from './Chat.api';
 
@@ -12,10 +11,15 @@ export const GroupChatMessageApi = ChatApi.injectEndpoints({
                 method: 'POST'
             }),
         }),
-        partialUpdateGroupChatMessage: builder.mutation<void, { id: string, message: ChatMessagePatch }>({
-            query: ({ id, message }) => ({
-                body: message,
-                url: `/GroupChatMessage/${id}`,
+        updateGroupChatMessageText: builder.mutation<void, { id: string, newMessage: string }>({
+            query: ({ id, newMessage }) => ({
+                url: `/GroupChatMessage/updateMessageText/${id}?newMessage=${newMessage}`,
+                method: 'PATCH'
+            }),
+        }),
+        updateGroupChatMessageMark: builder.mutation<void, { id: string, newMark: number }>({
+            query: ({ id, newMark }) => ({
+                url: `/GroupChatMessage/updateMessageMark/${id}?newMark=${newMark}`,
                 method: 'PATCH'
             }),
         }),
@@ -48,7 +52,8 @@ export const GroupChatMessageApi = ChatApi.injectEndpoints({
 
 export const {
     useCreateGroupChatMessageMutation,
-    usePartialUpdateGroupChatMessageMutation,
+    useUpdateGroupChatMessageTextMutation,
+    useUpdateGroupChatMessageMarkMutation,
     useReadGroupChatMessageMutation,
     useRemoveGroupChatMessageMutation,
     useRemoveGroupChatMessageByChatIdMutation,

@@ -63,7 +63,7 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
         return new PersonalChatMessage(id, username, message, chatId, appUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
     }
 
-    public void EditMessage(string? newMessage)
+    public void EditMessageText(string newMessage)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(newMessage, nameof(newMessage));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(newMessage.Length, MESSAGE_MAX_LENGTH, nameof(newMessage));
@@ -72,6 +72,14 @@ public class PersonalChatMessage : IRepositoryEntity<PersonalChatMessageId>
         {
             Message = newMessage;
             IsEdited = true;
+        }
+    }
+
+    public void EditMark(int mark)
+    {
+        if (MarkedType != (MessageMarkedType)mark)
+        {
+            MarkedType = (MessageMarkedType)mark;
         }
     }
 

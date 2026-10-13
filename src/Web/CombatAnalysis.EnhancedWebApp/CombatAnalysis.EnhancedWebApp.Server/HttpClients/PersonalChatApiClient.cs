@@ -63,14 +63,14 @@ internal class PersonalChatApiClient(HttpClient httpClient) : IPersonalChatApiCl
         await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(message), cancellationToken);
     }
 
-    public async Task UpdateMessageAsync(Guid id, PersonalChatMessagePatch message, CancellationToken cancellationToken)
+    public async Task UpdateMessageTextAsync(Guid id, string newMessage, CancellationToken cancellationToken)
     {
-        if (id != message.Id)
-        {
-            throw new InvalidOperationException("Id is not equal message id.");
-        }
+        await _httpClient.PatchAsync($"PersonalChatMessage/updateMessageText/{id}?newMessage={newMessage}", null, cancellationToken);
+    }
 
-        await _httpClient.PatchAsync($"PersonalChatMessage/{id}", JsonContent.Create(message), cancellationToken);
+    public async Task UpdateMessageMarkAsync(Guid id, int newMark, CancellationToken cancellationToken)
+    {
+        await _httpClient.PatchAsync($"PersonalChatMessage/updateMessageMark/{id}?newMark={newMark}", null, cancellationToken);
     }
 
     public async Task ReadMessageIdAsync(Guid id, GroupChatMessageReadPatch message, CancellationToken cancellationToken)

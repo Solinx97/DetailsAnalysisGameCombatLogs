@@ -1,5 +1,4 @@
 import { APP_CONFIG } from '@/config/appConfig';
-import type { ChatMessagePatch } from '@/features/chat/types/patches/ChatMessagePatch';
 import logger from '@/utils/Logger';
 import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
@@ -75,12 +74,20 @@ const usePersonalChatHub = (
         personalChatHubConnectionRef.current?.off("UserRemoved", callback);
     }
 
-    const subscribeToChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
-        personalChatMessagesHubConnectionRef.current?.on("ReceiveEditedMessage", callback);
+    const subscribeToChatMessageTextEdit = (callback: (mssageId: string, newMessage: string) => void) => {
+        personalChatMessagesHubConnectionRef.current?.on("ReceiveTextEditedMessage", callback);
     }
 
-    const unsubscribeToChatMessageEdit = (callback: (mssagePatch: ChatMessagePatch) => void) => {
-        personalChatMessagesHubConnectionRef.current?.off("ReceiveEditedMessage", callback);
+    const unsubscribeToChatMessageTextEdit = (callback: (mssageId: string, newMessage: string) => void) => {
+        personalChatMessagesHubConnectionRef.current?.off("ReceiveTextEditedMessage", callback);
+    }
+
+    const subscribeToChatMessageMarkEdit = (callback: (mssageId: string, newMark: number) => void) => {
+        personalChatMessagesHubConnectionRef.current?.on("ReceiveMarkEditedMessage", callback);
+    }
+
+    const unsubscribeToChatMessageMarkEdit = (callback: (mssageId: string, newMark: number) => void) => {
+        personalChatMessagesHubConnectionRef.current?.off("ReceiveMarkEditedMessage", callback);
     }
 
     const subscribeToMessageRead = (callback: (messageId: string) => void) => {
@@ -104,7 +111,8 @@ const usePersonalChatHub = (
     const getEvents = () => {
         const events: IPersonalChatHubEvents = {
             connectToChatAsync, connectToChatMessagesAsync, subscribeToChat, unsubscribeToChat,
-            subscribeToChatMessages, unsubscribeToChatMessages, subscribeToRemovedFromChat, unsubscribeToRemovedFromChat, subscribeToChatMessageEdit, unsubscribeToChatMessageEdit, 
+            subscribeToChatMessages, unsubscribeToChatMessages, subscribeToRemovedFromChat, unsubscribeToRemovedFromChat,
+            subscribeToChatMessageTextEdit, unsubscribeToChatMessageTextEdit, subscribeToChatMessageMarkEdit, unsubscribeToChatMessageMarkEdit,
             subscribeToMessageRead, unsubscribeToMessageRead, disconnectFromChatHubAsync, disconnectFromChatMessageHubAsync
         }
 

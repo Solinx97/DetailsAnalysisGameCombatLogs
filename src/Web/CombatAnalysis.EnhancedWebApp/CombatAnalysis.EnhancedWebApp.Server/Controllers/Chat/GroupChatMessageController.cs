@@ -32,10 +32,17 @@ public class GroupChatMessageController(IGroupChatApiClient httpClient) : Contro
         return NoContent();
     }
 
-    [HttpPatch("{id}")]
-    public async Task<IActionResult> PartialUpdate(Guid id, [FromBody] GroupChatMessagePatch message, CancellationToken cancellationToken)
+    [HttpPatch("updateMessageText/{id}")]
+    public async Task<IActionResult> UpdateMessageText(Guid id, [FromQuery] string newMessage, CancellationToken cancellationToken)
     {
-        await _httpClient.UpdateMessageAsync(id, message, cancellationToken);
+        await _httpClient.UpdateMessageTextAsync(id, newMessage, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPatch("updateMessageMark/{id}")]
+    public async Task<IActionResult> UpdateMessageMark(Guid id, [FromQuery] int newMark, CancellationToken cancellationToken)
+    {
+        await _httpClient.UpdateMessageMarkAsync(id, newMark, cancellationToken);
         return NoContent();
     }
 

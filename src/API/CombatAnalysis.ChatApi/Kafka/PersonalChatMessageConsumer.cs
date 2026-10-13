@@ -48,6 +48,18 @@ public class PersonalChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, 
                     var message = new PersonalChatMessageDto { Id = @event.MessageId, Status = MessageStatus.Sent, Message = @event.Message, PersonalChatId = @event.ChatId, AppUserId = @event.SenderId };
                     await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
                     break;
+                case nameof(PersonalChatMessageTextEditedEvent):
+                    var eventEditText = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageTextEditedEvent>();
+                    ArgumentNullException.ThrowIfNull(eventEditText, nameof(eventEditText));
+
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveTextEditedMessage", eventEditText.MessageId, eventEditText.NewMessage, cancellationToken);
+                    break;
+                case nameof(PersonalChatMessageMarkEditedEvent):
+                    var eventEditMark = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageMarkEditedEvent>();
+                    ArgumentNullException.ThrowIfNull(eventEditMark, nameof(eventEditMark));
+
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMarkEditedMessage", eventEditMark.MessageId, eventEditMark.NewMark, cancellationToken);
+                    break;
                 case nameof(PersonalChatMessageReadEvent):
                     var eventRead = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<PersonalChatMessageReadEvent>();
                     ArgumentNullException.ThrowIfNull(eventRead, nameof(eventRead));

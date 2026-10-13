@@ -9,25 +9,25 @@ interface ChatMessageMenuProps {
     message: PersonalChatMessageModel | GroupChatMessageModel;
     setEditModeIsOn: (value: SetStateAction<boolean>) => void;
     setOpenMessageMenu: (value: SetStateAction<boolean>) => void;
-    updateMessageMarkedTypeAsync: (type: number) => Promise<void>;
+    updateMessageMarkAsync: (type: number) => Promise<void>;
 }
 
-const ChatMessageMenu: React.FC<ChatMessageMenuProps> = ({ message, setEditModeIsOn, setOpenMessageMenu, updateMessageMarkedTypeAsync }) => {
+const ChatMessageMenu: React.FC<ChatMessageMenuProps> = ({ message, setEditModeIsOn, setOpenMessageMenu, updateMessageMarkAsync }) => {
     const { t } = useTranslation('communication/chats/chatMessage');
 
     const handleMarkAsNotRelevant = async () => {
         if (message.markedType === 1) {
-            await updateMessageMarkedTypeAsync(0);
+            await updateMessageMarkAsync(0);
         } else {
-            await updateMessageMarkedTypeAsync(1);
+            await updateMessageMarkAsync(1);
         }
     }
 
     const handleMarkAsWithEmotions = async () => {
         if (message.markedType === 2) {
-            await updateMessageMarkedTypeAsync(0);
+            await updateMessageMarkAsync(0);
         } else {
-            await updateMessageMarkedTypeAsync(2);
+            await updateMessageMarkAsync(2);
         }
     }
 

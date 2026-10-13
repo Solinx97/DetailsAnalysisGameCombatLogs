@@ -62,7 +62,7 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
         return new GroupChatMessage(id, username, message, chatId, groupChatUserId, ++lastMessageSequence, (MessageStatus)status, (MessageType)messageType, (MessageMarkedType)markedType, createdAt);
     }
 
-    public void EditMessage(string? newMessage)
+    public void EditMessageText(string newMessage)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(newMessage, nameof(newMessage));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(newMessage.Length, MESSAGE_MAX_LENGTH, nameof(newMessage));
@@ -71,6 +71,14 @@ public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEnti
         {
             Message = newMessage;
             IsEdited = true;
+        }
+    }
+
+    public void EditMark(int mark)
+    {
+        if (MarkedType != (MessageMarkedType)mark)
+        {
+            MarkedType = (MessageMarkedType)mark;
         }
     }
 

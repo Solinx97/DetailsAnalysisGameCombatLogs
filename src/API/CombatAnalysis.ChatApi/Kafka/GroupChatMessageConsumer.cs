@@ -48,6 +48,18 @@ public class GroupChatMessageConsumer(IOptions<KafkaSettings> kafkaSettings, ILo
                     var message = new GroupChatMessageDto { Id = @event.MessageId, Status = MessageStatus.Sent, Type = (MessageType)@event.MessageType, Username = @event.Username, Message = @event.Message, GroupChatId = @event.ChatId, GroupChatUserId = @event.SenderId };
                     await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMessage", message, cancellationToken);
                     break;
+                case nameof(GroupChatMessageTextEditedEvent):
+                    var eventEditText = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatMessageTextEditedEvent>();
+                    ArgumentNullException.ThrowIfNull(eventEditText, nameof(eventEditText));
+
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveTextEditedMessage", eventEditText.MessageId, eventEditText.NewMessage, cancellationToken);
+                    break;
+                case nameof(GroupChatMessageMarkEditedEvent):
+                    var eventEditMark = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatMessageMarkEditedEvent>();
+                    ArgumentNullException.ThrowIfNull(eventEditMark, nameof(eventEditMark));
+
+                    await _hubContext.Clients.Group(kafkaData.Message.Key).SendAsync("ReceiveMarkEditedMessage", eventEditMark.MessageId, eventEditMark.NewMark, cancellationToken);
+                    break;
                 case nameof(GroupChatMessageReadEvent):
                     var eventRead = JsonDocument.Parse(kafkaData.Message.Value).Deserialize<GroupChatMessageReadEvent>();
                     ArgumentNullException.ThrowIfNull(eventRead, nameof(eventRead));

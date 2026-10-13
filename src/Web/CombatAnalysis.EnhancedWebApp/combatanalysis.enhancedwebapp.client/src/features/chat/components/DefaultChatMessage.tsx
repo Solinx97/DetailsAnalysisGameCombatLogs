@@ -11,7 +11,6 @@ import { useReadGroupChatMessageMutation } from '../api/GroupChatMessage.api';
 import { useReadPersonalChatMessageMutation } from '../api/PersonalChatMessage.api';
 import type { GroupChatMessageModel } from '../types/GroupChatMessageModel';
 import type { PersonalChatMessageModel } from '../types/PersonalChatMessageModel';
-import type { ChatMessagePatch } from '../types/patches/ChatMessagePatch';
 import type { GroupChatMessageReadPatch } from '../types/patches/GroupChatMessageReadPatch';
 import type { PersonalChatMessageReadPatch } from '../types/patches/PersonalChatMessageReadPatch';
 import ChatMessageMenu from './ChatMessageMenu';
@@ -19,11 +18,12 @@ import ChatMessageTitle from './ChatMessageTitle';
 
 interface DefaultChatMessageProps {
     message: GroupChatMessageModel | PersonalChatMessageModel;
-    updateMessageAsync: (targetMessage: ChatMessagePatch) => Promise<void>;
+    updateMessageTextAsync: (messageId: string, newMessage: string | undefined) => Promise<void>;
+    updateMessageMarkAsync: (messageId: string, mark: number) => Promise<void>;
     lastReadMessageId?: string;
 }
 
-const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, updateMessageAsync, lastReadMessageId }) => {
+const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, updateMessageTextAsync, updateMessageMarkAsync, lastReadMessageId }) => {
     const { t } = useTranslation('communication/chats/chatMessage');
 
     const groupChatUser = useSelector((state: RootState) => state.groupChatUser.value);
@@ -49,26 +49,14 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
     }, [openMessageMenu]);
 
     const handleUpdateMessageAsync = async () => {
-        const updatedMessage: ChatMessagePatch = {
-            id: message.id,
-            message: editMessageInput.current?.value,
-            chatId: "groupChatId" in message ? message.groupChatId : message.personalChatId
-        }
-
-        await updateMessageAsync(updatedMessage);
+        await updateMessageTextAsync(message.id, editMessageInput.current?.value);
 
         setEditModeIsOn(false);
         setOpenMessageMenu(false);
     }
 
-    const updateMessageMarkedTypeAsync = async (type: number) => {
-        const updatedMessage: ChatMessagePatch = {
-            id: message.id,
-            markedType: type,
-            chatId: "groupChatId" in message ? message.groupChatId : message.personalChatId
-        }
-
-        await updateMessageAsync(updatedMessage);
+    const updateMessageMark = async (mark: number) => {
+        await updateMessageMarkAsync(message.id, mark);
     }
 
     const handleOpenMessageMenu = () => {
@@ -220,14 +208,12 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
                         <FontAwesomeIcon
                             icon={faXmark}
                             className="not-relevant"
-                            title={t("NotRelevant") || ""}
                         />
                     }
                     {message.markedType === 2 &&
                         <FontAwesomeIcon
                             icon={faFaceMeh}
                             className="emotions"
-                            title={t("WithEmotions") || ""}
                         />
                     }
                 </div>
@@ -240,7 +226,7 @@ const DefaultChatMessage: React.FC<DefaultChatMessageProps> = ({ message, update
                     message={message}
                     setEditModeIsOn={setEditModeIsOn}
                     setOpenMessageMenu={setOpenMessageMenu}
-                    updateMessageMarkedTypeAsync={updateMessageMarkedTypeAsync}
+                    updateMessageMarkAsync={updateMessageMark}
                 />
             }
         </div>

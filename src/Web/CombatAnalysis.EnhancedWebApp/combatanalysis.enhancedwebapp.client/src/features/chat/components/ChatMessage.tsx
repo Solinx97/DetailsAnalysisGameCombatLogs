@@ -1,5 +1,4 @@
 import type { GroupChatMessageModel } from '../types/GroupChatMessageModel';
-import type { ChatMessagePatch } from '../types/patches/ChatMessagePatch';
 import type { PersonalChatMessageModel } from '../types/PersonalChatMessageModel';
 import DefaultChatMessage from './DefaultChatMessage';
 import LogChatMessage from './LogChatMessage';
@@ -10,17 +9,19 @@ import './ChatMessage.scss';
 
 interface ChatMessageProps {
     message: PersonalChatMessageModel | GroupChatMessageModel;
-    updateMessageAsync: (message: ChatMessagePatch) => Promise<void>;
+    updateMessageTextAsync: (messageId: string, newMessage: string | undefined) => Promise<void>;
+    updateMessageMarkAsync: (messageId: string, mark: number) => Promise<void>;
     lastReadMessageId?: string;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, updateMessageAsync, lastReadMessageId }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, updateMessageTextAsync, updateMessageMarkAsync, lastReadMessageId }) => {
     return (
         <>
             {message.type === ChatMessageType["DEFAULT"]
                 ? <DefaultChatMessage
                     message={message}
-                    updateMessageAsync={updateMessageAsync}
+                    updateMessageTextAsync={updateMessageTextAsync}
+                    updateMessageMarkAsync={updateMessageMarkAsync}
                     lastReadMessageId={lastReadMessageId}
                 />
                 : message.type === ChatMessageType["LOG"]
