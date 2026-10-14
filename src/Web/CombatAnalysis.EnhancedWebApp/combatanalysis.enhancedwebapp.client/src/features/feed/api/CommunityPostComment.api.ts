@@ -1,5 +1,6 @@
 ﻿import type { AllCommunityPostCommentsModel } from '../types/AllCommunityPostCommentsModel';
 import type { CommunityPostCommentModel } from '../types/CommunityPostCommentModel';
+import type { CommunityPostCommentPatch } from '../types/patches/CommunityPostCommentPatch';
 import { PostApi } from './Post.api';
 import { UserFeedApi } from './UserFeed.api';
 
@@ -86,11 +87,11 @@ export const CommunityPostCommentApi = PostApi.injectEndpoints({
                 }
             }
         }),
-        updateCommunityPostComment: builder.mutation<void, { id: number, comment: CommunityPostCommentModel }>({
-            query: ({ id, comment }) => ({
-                body: comment,
+        updateCommunityPostComment: builder.mutation<void, { id: number, patch: CommunityPostCommentPatch }>({
+            query: ({ id, patch }) => ({
+                body: patch,
                 url: `/CommunityPostComment/${id}`,
-                method: 'PUT'
+                method: 'PATCH'
             }),
             invalidatesTags: (_result, _error, communityPostComment) => [{ type: 'CommunityPostComment', id: communityPostComment.id }],
         }),

@@ -6,10 +6,24 @@ using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Extensions;
 
-internal static class ServiceCollectionExtension
+internal static class HttpClientExtension
 {
     public static void AddApiClients(this IServiceCollection sc, ConfigurationManager cm)
     {
+        sc.AddHttpClient<IUserApiClient, UserApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:User").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<INotificationApiClient, NotificationApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Notification").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
         sc.AddHttpClient<IGroupChatApiClient, GroupChatApiClient>(client =>
         {
             client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Chat").Value ?? ""}api/v1/");
@@ -59,9 +73,44 @@ internal static class ServiceCollectionExtension
             .AddHttpMessageHandler<AuthorizationHandler>()
             .AddHttpMessageHandler<ApiErrorHandler>();
 
-        sc.AddHttpClient<INotificationApiClient, NotificationApiClient>(client =>
+        sc.AddHttpClient<IInviteToCommunityApiClient, InviteToCommunityApiClient>(client =>
         {
-            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Notification").Value ?? ""}api/v1/");
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<ICommunityPostApiClient, CommunityPostApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<ICommunityPostReactionsApiClient, CommunityPostReactionsApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<IUserPostApiClient, UserPostApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<IUserPostReactionsApiClient, UserPostReactionsApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<IUserFeedApiClient, UserFeedApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
         })
             .AddHttpMessageHandler<AuthorizationHandler>()
             .AddHttpMessageHandler<ApiErrorHandler>();

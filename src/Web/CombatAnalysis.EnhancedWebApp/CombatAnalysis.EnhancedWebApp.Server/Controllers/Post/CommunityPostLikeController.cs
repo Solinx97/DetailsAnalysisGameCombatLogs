@@ -1,40 +1,26 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Post;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CommunityPostLikeController : ControllerBase
+public class CommunityPostLikeController(ICommunityPostReactionsApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public CommunityPostLikeController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly ICommunityPostReactionsApiClient _httpClient = httpClient;
 
     [HttpGet("count/{communityPostId:int:min(1)}")]
-    public async Task<IActionResult> Count(int communityPostId)
+    public async Task<IActionResult> Count(int communityPostId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/count/{communityPostId}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
+        var count = await _httpClient.CountLikeAsync(communityPostId, cancellationToken);
         return Ok(count);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CommunityPostLikeModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityPostLikeModel like, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPostLike", JsonContent.Create(request));
-        var like = await responseMessage.Content.ReadFromJsonAsync<CommunityPostLikeModel>();
-
-        return Ok(like);
+        var createdLike = await _httpClient.CreateLikeAsync(like, cancellationToken);
+        return Ok(createdLike);
     }
 }

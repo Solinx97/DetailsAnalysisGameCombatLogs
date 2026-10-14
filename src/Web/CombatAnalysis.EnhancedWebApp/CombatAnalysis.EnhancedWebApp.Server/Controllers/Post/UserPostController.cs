@@ -1,57 +1,33 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Post;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class UserPostController : ControllerBase
+public class UserPostController(IUserPostApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public UserPostController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly IUserPostApiClient _httpClient = httpClient;
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"UserPost/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
-        var posts = await responseMessage.Content.ReadFromJsonAsync<UserPostsResponse>();
-
+        var posts = await _httpClient.GetByUserIdAsync(appUserId, page, pageSize, cancellationToken);
         return Ok(posts);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] UserPostModel request)
+    public async Task<IActionResult> Create([FromBody] UserPostModel post, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(request));
-        var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
-
-        return Ok(post);
-    }
-
-    [HttpGet("count/{appUserId}")]
-    public async Task<IActionResult> Count(Guid appUserId, CancellationToken cancellationToken)
-    {
-        var responseMessage = await _httpClient.GetAsync($"UserPost/count/{appUserId}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
-        return Ok(count);
+        var createdPost = await _httpClient.CreateAsync(post, cancellationToken);
+        return Ok(createdPost);
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteAsync($"UserPost/{id}");
+        await _httpClient.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

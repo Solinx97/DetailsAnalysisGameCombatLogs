@@ -1,24 +1,14 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.Post;
 
-public class UserPostModel
-{
-    public int Id { get; set; }
-
-    public string Content { get; set; } = string.Empty;
-
-    public int PublicType { get; set; }
-
-    public string Tags { get; set; } = string.Empty;
-
-    public DateTimeOffset CreatedAt { get; set; }
-
-    public Guid AppUserId { get; set; }
-
-    public int LikeCount { get; set; }
-
-    public int DislikeCount { get; set; }
-
-    public int CommentCount { get; set; }
-
-    public int Reaction { get; set; }
-}
+public record UserPostModel(
+    int Id,
+    string Content,
+    int PublicType,
+    string? Tags,
+    DateTimeOffset CreatedAt,
+    Guid AppUserId,
+    int LikeCount,
+    int DislikeCount,
+    int CommentCount,
+    int Reaction
+    );

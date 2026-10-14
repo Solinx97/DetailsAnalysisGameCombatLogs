@@ -38,7 +38,6 @@ builder.Services.AddScoped<IWoWCharacterService, WoWCharacterService>();
 builder.Services.AddScoped<IMythicKeystoneService, MythicKeystoneService>();
 builder.Services.AddScoped<IWoWItemService, WoWItemService>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
-builder.Services.AddScoped<RequireRefreshTokenAttribute>();
 
 builder.Services.Configure<Server>(builder.Configuration.GetSection("Server"));
 builder.Services.Configure<BattleNet>(builder.Configuration.GetSection("BattleNet"));

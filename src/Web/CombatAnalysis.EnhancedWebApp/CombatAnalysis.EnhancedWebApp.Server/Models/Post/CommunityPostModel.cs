@@ -1,32 +1,18 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.Post;
 
-public class CommunityPostModel
-{
-    public int Id { get; set; }
-
-    public string Content { get; set; } = string.Empty;
-
-    public string? CommunityName { get; set; }
-
-    public int PostType { get; set; }
-
-    public int PublicType { get; set; }
-
-    public int Restrictions { get; set; }
-
-    public string Tags { get; set; } = string.Empty;
-
-    public DateTimeOffset CreatedAt { get; set; }
-
-    public int CommunityId { get; set; }
-
-    public Guid AppUserId { get; set; }
-
-    public int LikeCount { get; set; }
-
-    public int DislikeCount { get; set; }
-
-    public int CommentCount { get; set; }
-
-    public int Reaction { get; set; }
-}
+public record CommunityPostModel(
+    int Id,
+    string Content,
+    string? CommunityName,
+    int PostType,
+    int PublicType,
+    int Restrictions,
+    string? Tags,
+    DateTimeOffset CreatedAt,
+    int CommunityId,
+    Guid AppUserId,
+    int LikeCount,
+    int DislikeCount,
+    int CommentCount,
+    int Reaction
+    );

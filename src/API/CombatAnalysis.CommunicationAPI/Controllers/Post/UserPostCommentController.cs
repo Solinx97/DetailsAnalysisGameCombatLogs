@@ -35,7 +35,7 @@ public class UserPostCommentController(IMediator mediator) : ControllerBase
         return Ok(comment);
     }
 
-    [HttpPut("{id:int:min(1)}")]
+    [HttpPatch("{id:int:min(1)}")]
     public async Task<IActionResult> Update(int id, [FromBody] UserPostCommentPartial request, CancellationToken cancellationToken)
     {
         if (id != request.Id)

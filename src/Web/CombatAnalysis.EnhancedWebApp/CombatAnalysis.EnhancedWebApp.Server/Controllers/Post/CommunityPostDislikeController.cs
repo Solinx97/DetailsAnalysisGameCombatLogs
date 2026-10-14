@@ -1,40 +1,26 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Post;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CommunityPostDislikeController : ControllerBase
+public class CommunityPostDislikeController(ICommunityPostReactionsApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public CommunityPostDislikeController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly ICommunityPostReactionsApiClient _httpClient = httpClient;
 
     [HttpGet("count/{communityPostId:int:min(1)}")]
-    public async Task<IActionResult> Count(int communityPostId)
+    public async Task<IActionResult> Count(int communityPostId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostDislike/count/{communityPostId}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
+        var count = await _httpClient.CountDislikeAsync(communityPostId, cancellationToken);
         return Ok(count);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CommunityPostDislikeModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityPostDislikeModel dislike, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPostDislike", JsonContent.Create(request));
-        var dislike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostDislikeModel>();
-
-        return Ok(dislike);
+        var createdDislike = await _httpClient.CreateDislikeAsync(dislike, cancellationToken);
+        return Ok(createdDislike);
     }
 }

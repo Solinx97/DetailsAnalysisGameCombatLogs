@@ -1,68 +1,40 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Post;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CommunityPostController : ControllerBase
+public class CommunityPostController(ICommunityPostApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public CommunityPostController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
-
-    [HttpGet("countNewPosts/{communityId:int:min(0)}")]
-    public async Task<IActionResult> CountNewPosts(int communityId, [FromQuery] DateTimeOffset lastCheck)
-    {
-        var lastCheckValue = Uri.EscapeDataString(lastCheck.ToString("O"));
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/countNewPosts/{communityId}?lastCheck={lastCheckValue}");
-
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
-        return Ok(count);
-    }
+    private readonly ICommunityPostApiClient _httpClient = httpClient;
 
     [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId, Guid appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByCommunityId(int communityId, Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId/{communityId}?appUserId={appUserId}&page={page}&pageSize={pageSize}");
-        var comunityPosts = await responseMessage.Content.ReadFromJsonAsync<ComunityPostsResponse>();
-
+        var comunityPosts = await _httpClient.GetByCommunityIdAsync(communityId, appUserId, page, pageSize, cancellationToken);
         return Ok(comunityPosts);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CommunityPostModel request)
+    [HttpGet("countNewPosts/{communityId:int:min(0)}")]
+    public async Task<IActionResult> CountNewPosts(int communityId, [FromQuery] DateTimeOffset lastCheck, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPost", JsonContent.Create(request));
-        var communityPost = await responseMessage.Content.ReadFromJsonAsync<CommunityPostModel>();
-
-        return Ok(communityPost);
-    }
-
-    [HttpGet("count/{communityId:int:min(0)}")]
-    public async Task<IActionResult> Count(int communityId)
-    {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/count/{communityId}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
+        var count = await _httpClient.CountNewPostsAsync(communityId, lastCheck, cancellationToken);
         return Ok(count);
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CommunityPostModel post, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteAsync($"CommunityPost/{id}");
+        var communityPost = await _httpClient.CreateAsync(post, cancellationToken);
+        return Ok(communityPost);
+    }
+
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await _httpClient.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

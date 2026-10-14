@@ -59,14 +59,6 @@ export const UserPostApi = PostApi.injectEndpoints({
                 }
             }
         }),
-        updateUserPost: builder.mutation<void, UserPostModel>({
-            query: post => ({
-                body: post,
-                url: '/UserPost',
-                method: 'PUT'
-            }),
-            invalidatesTags: (_result, _error, post) => [{ type: 'UserPost', id: post.id }],
-        }),
         removeUserPost: builder.mutation<void, { id: number, appUserId: string, feedVersion: number }>({
             query: ({ id }) => ({
                 url: `/UserPost/${id}`,
@@ -125,9 +117,6 @@ export const UserPostApi = PostApi.injectEndpoints({
             query: id => `/UserPost/${id}`,
             providesTags: result => result ? [{ type: 'UserPost', id: result.id }] : [],
         }),
-        getUserPostCountByUserId: builder.query<number, string>({
-            query: appUserId => `/UserPost/count/${appUserId}`,
-        }),
         getUserPostCountByListOfUserId: builder.query<number, string>({
             query: collectionUserId => `/UserPost/countByListOfUserId/${collectionUserId}`,
         }),
@@ -136,9 +125,7 @@ export const UserPostApi = PostApi.injectEndpoints({
 
 export const {
     useCreateUserPostMutation,
-    useUpdateUserPostMutation,
     useRemoveUserPostMutation,
-    useGetUserPostCountByUserIdQuery,
     useGetUserPostCountByListOfUserIdQuery,
     useLazyGetUserPostCountByListOfUserIdQuery,
     useGetUserPostByIdQuery,

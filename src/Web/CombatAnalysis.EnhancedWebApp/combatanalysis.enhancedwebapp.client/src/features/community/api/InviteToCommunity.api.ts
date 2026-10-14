@@ -25,11 +25,7 @@ export const InviteToCommunityApi = CommunityApi.injectEndpoints({
             }),
             invalidatesTags: (_result, _error, args) => [{ type: 'InviteToCommunity', id: args.id }],
         }),
-        getInviteToCommunityById: builder.query<InviteToCommunityModel, number>({
-            query: id => `/InviteToCommunity/${id}`,
-            providesTags: result => result ? [{ type: 'InviteToCommunity', id: result.id }] : [],
-        }),
-        inviteGetByUserId: builder.query<InviteToCommunityModel[], string>({
+        getInvitesByUserId: builder.query<InviteToCommunityModel[], string>({
             query: appUserId => `/InviteToCommunity/getByUserId/${appUserId}`,
             providesTags: result =>
                 result
@@ -46,6 +42,5 @@ export const {
     useCreateInviteAsyncMutation,
     useRemoveCommunityInviteMutation,
     useAcceptCommunityInviteMutation,
-    useGetInviteToCommunityByIdQuery,
-    useInviteGetByUserIdQuery,
+    useGetInvitesByUserIdQuery,
 } = InviteToCommunityApi;

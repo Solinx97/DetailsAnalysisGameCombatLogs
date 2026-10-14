@@ -41,14 +41,6 @@ export const CommunityPostApi = PostApi.injectEndpoints({
                 }
             }
         }),
-        updateCommunityPost: builder.mutation<void, CommunityPostModel>({
-            query: post => ({
-                body: post,
-                url: '/CommunityPost',
-                method: 'PUT'
-            }),
-            invalidatesTags: (_result, _error, post) => [{ type: 'CommunityPost', id: post.id }],
-        }),
         removeCommunityPost: builder.mutation<void, { id: number, communityId: number, appUserId: string, feedVersion: number }>({
             query: ({ id }) => ({
                 url: `/CommunityPost/${id}`,
@@ -123,7 +115,6 @@ export const CommunityPostApi = PostApi.injectEndpoints({
 
 export const {
     useCreateCommunityPostMutation,
-    useUpdateCommunityPostMutation,
     useRemoveCommunityPostMutation,
     useCountCommunityNewPostsQuery,
     useGetCommunityPostByIdQuery,

@@ -1,67 +1,25 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
-using CombatAnalysis.EnhancedWebApp.Server.Models.User;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Post;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class UserFeedController(IOptions<Cluster> cluster, IHttpClientHelper httpClient) : ControllerBase
+public class UserFeedController(IUserFeedApiClient httpClient) : ControllerBase
 {
-    private readonly IOptions<Cluster> _cluster = cluster;
-    private readonly IHttpClientHelper _httpClient = httpClient;
+    private readonly IUserFeedApiClient _httpClient = httpClient;
 
     [HttpGet("countNewPosts/{appUserId}")]
-    public async Task<IActionResult> CountNewPosts(Guid appUserId, [FromQuery] DateTimeOffset lastCheck)
+    public async Task<IActionResult> CountNewPosts(Guid appUserId, [FromQuery] DateTimeOffset lastCheck, CancellationToken cancellationToken)
     {
-        _httpClient.APIUrl = _cluster.Value.User;
-        var responseMessage = await _httpClient.GetAsync($"Friend/findByUserId/{appUserId}");
-        var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>()
-            ?? Enumerable.Empty<FriendModel>();
-
-        var friendIds = friends
-            .Select(x =>
-                x.WhoFriendId == appUserId
-                    ? x.ForWhomId
-                    : x.WhoFriendId)
-            .ToList();
-
-        _httpClient.APIUrl = _cluster.Value.Communication;
-        var query = string.Join("&", friendIds.Select(id => $"friendIds={Uri.EscapeDataString(id.ToString())}"));
-        var lastCheckValue = Uri.EscapeDataString(lastCheck.ToString("O"));
-        responseMessage = await _httpClient.GetAsync($"UserFeed/countNewPosts/{appUserId}?{query}&lastCheck={lastCheckValue}");
-
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
+        var count = await _httpClient.CountNewPostsAsync(appUserId, lastCheck, cancellationToken);
         return Ok(count);
     }
 
     [HttpGet("{appUserId}")]
-    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        _httpClient.APIUrl = _cluster.Value.User;
-        var responseMessage = await _httpClient.GetAsync($"Friend/findByUserId/{appUserId}");
-        var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>() 
-            ?? Enumerable.Empty<FriendModel>();
-
-        var friendIds = friends
-            .Select(x =>
-                x.WhoFriendId == appUserId
-                    ? x.ForWhomId
-                    : x.WhoFriendId)
-            .ToList();
-
-        _httpClient.APIUrl = _cluster.Value.Communication;
-        var query = string.Join("&", friendIds.Select(id => $"friendIds={Uri.EscapeDataString(id.ToString())}"));
-        responseMessage = await _httpClient.GetAsync($"UserFeed/{appUserId}?{query}&page={page}&pageSize={pageSize}");
-
-        var userFeed = await responseMessage.Content.ReadFromJsonAsync<UserFeedResponse>();
-
-        return Ok(userFeed);
+        var posts = await _httpClient.GetByUserIdAsync(appUserId, page, pageSize, cancellationToken);
+        return Ok(posts);
     }
 }

@@ -1,64 +1,48 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
+using CombatAnalysis.EnhancedWebApp.Server.Patches;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Post;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class UserPostCommentController : ControllerBase
+public class UserPostCommentController(IUserPostReactionsApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public UserPostCommentController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly IUserPostReactionsApiClient _httpClient = httpClient;
 
     [HttpGet("getByUserPostId/{userPostId:int:min(1)}")]
-    public async Task<IActionResult> GetByUserPostId(int userPostId, int page, int pageSize)
+    public async Task<IActionResult> GetByUserPostId(int userPostId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"UserPostComment/getByUserPostId/{userPostId}?page={page}&pageSize={pageSize}");
-        var comments = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentResponse>();
-
+        var comments = await _httpClient.GetCommentsAsync(userPostId, page, pageSize, cancellationToken);
         return Ok(comments);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] UserPostCommentModel request)
+    public async Task<IActionResult> Create([FromBody] UserPostCommentModel request, CancellationToken cancellationToken)
     {
-        var responseMessage =  await _httpClient.PostAsync("UserPostComment", JsonContent.Create(request));
-        var comment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
-
+        var comment =  await _httpClient.CreateCommentAsync(request, cancellationToken);
         return Ok(comment);
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UserPostCommentModel request)
+    [HttpPatch("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UserPostCommentPatch request, CancellationToken cancellationToken)
     {
-        await _httpClient.PutAsync($"UserPostComment/{id}", JsonContent.Create(request));
+        await _httpClient.UpdateCommentAsync(id, request, cancellationToken);
         return NoContent();
     }
 
     [HttpGet("count/{userPostId:int:min(1)}")]
-    public async Task<IActionResult> Count(int userPostId)
+    public async Task<IActionResult> Count(int userPostId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"UserPostComment/count/{userPostId}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
+        var count = await _httpClient.CountCommentsAsync(userPostId, cancellationToken);
         return Ok(count);
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, int userPostId)
+    public async Task<IActionResult> Delete(int id, int userPostId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.DeleteAsync($"UserPostComment/{id}?userPostId={userPostId}");
+        await _httpClient.DeleteCommentAsync(id, userPostId, cancellationToken);
         return NoContent();
     }
 }

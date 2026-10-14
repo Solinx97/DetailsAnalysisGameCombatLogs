@@ -1,64 +1,48 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Post;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
+using CombatAnalysis.EnhancedWebApp.Server.Patches;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Post;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CommunityPostCommentController : ControllerBase
+public class CommunityPostCommentController(ICommunityPostReactionsApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public CommunityPostCommentController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly ICommunityPostReactionsApiClient _httpClient = httpClient;
 
     [HttpGet("getByCommunityPostId/{communityPostId:int:min(1)}")]
-    public async Task<IActionResult> GetByCommunityPostId(int communityPostId, int page, int pageSize)
+    public async Task<IActionResult> GetByCommunityPostId(int communityPostId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/getByCommunityPostId/{communityPostId}?page={page}&pageSize={pageSize}");
-        var comments = await responseMessage.Content.ReadFromJsonAsync<CommunityPostCommentResponse>();
-
+        var comments = await _httpClient.GetCommentsAsync(communityPostId, page, pageSize, cancellationToken);
         return Ok(comments);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CommunityPostCommentModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityPostCommentModel comment, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPostComment", JsonContent.Create(request));
-        var comment = await responseMessage.Content.ReadFromJsonAsync<CommunityPostCommentModel>();
-
-        return Ok(comment);
+        var createdComment = await _httpClient.CreateCommentAsync(comment, cancellationToken);
+        return Ok(createdComment);
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CommunityPostCommentModel request)
+    [HttpPatch("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CommunityPostCommentPatch comment, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.PutAsync($"CommunityPostComment/{id}", JsonContent.Create(request));
+        await _httpClient.UpdateCommentAsync(id, comment, cancellationToken);
         return NoContent();
     }
 
     [HttpGet("count/{communityPostId:int:min(1)}")]
-    public async Task<IActionResult> Count(int communityPostId)
+    public async Task<IActionResult> Count(int communityPostId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPostComment/count/{communityPostId}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-      
+        var count = await _httpClient.CountCommentsAsync(communityPostId, cancellationToken);
         return Ok(count);
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, int communityPostId)
+    public async Task<IActionResult> Delete(int id, int communityPostId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.DeleteAsync($"CommunityPostComment/{id}?communityPostId={communityPostId}");
+        await _httpClient.DeleteCommentAsync(id, communityPostId, cancellationToken);
         return NoContent();
     }
 }

@@ -1,14 +1,9 @@
 ﻿namespace CombatAnalysis.EnhancedWebApp.Server.Models.Community;
 
-public class CommunityModel
-{
-    public int Id { get; set; }
-
-    public string Name { get; set; } = string.Empty;
-
-    public string Description { get; set; } = string.Empty;
-
-    public int PolicyType { get; set; }
-
-    public Guid AppUserId { get; set; }
-}
+public record CommunityModel(
+    int Id,
+    string Name,
+    string Description,
+    int PolicyType,
+    Guid AppUserId
+    );

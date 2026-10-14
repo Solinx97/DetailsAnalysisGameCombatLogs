@@ -2,11 +2,13 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdateUserPostCommentMutation } from '../../api/UserPostComment.api';
 import type { useUpdateCommunityPostCommentMutation } from '../../api/CommunityPostComment.api';
+import { useUpdateUserPostCommentMutation } from '../../api/UserPostComment.api';
 import type { CommentModel } from '../../types/CommentModel';
 import type { CommunityPostCommentModel } from '../../types/CommunityPostCommentModel';
 import type { UserPostCommentModel } from '../../types/UserPostCommentModel';
+import type { CommunityPostCommentPatch } from '../../types/patches/CommunityPostCommentPatch';
+import type { UserPostCommentPatch } from '../../types/patches/UserPostCommentPatch';
 
 interface UserPostCommentContentProps {
     userId: string;
@@ -48,16 +50,22 @@ const PostCommentContent: React.FC<UserPostCommentContentProps> = ({ userId, com
             }
 
             if (isCommunityPostComment(comment) && updateCommunityPostComment) {
-                const postCommentForUpdate = Object.assign({}, comment);
-                postCommentForUpdate.content = commentContentRef.current?.value;
+                const patch: CommunityPostCommentPatch = {
+                    id: comment.id,
+                    communityPostId: comment.communityPostId,
+                    content: commentContentRef.current?.value
+                }
 
-                await updateCommunityPostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
+                await updateCommunityPostComment({ id: comment.id, patch }).unwrap();
             }
             else if (isUserPostComment(comment) && updateUserPostComment) {
-                const postCommentForUpdate = Object.assign({}, comment);
-                postCommentForUpdate.content = commentContentRef.current?.value;
+                const patch: UserPostCommentPatch = {
+                    id: comment.id,
+                    userPostId: comment.userPostId,
+                    content: commentContentRef.current?.value
+                }
 
-                await updateUserPostComment({ id: postCommentForUpdate.id, comment: postCommentForUpdate }).unwrap();
+                await updateUserPostComment({ id: comment.id, patch }).unwrap();
             }
 
             setEditModeOne(false);

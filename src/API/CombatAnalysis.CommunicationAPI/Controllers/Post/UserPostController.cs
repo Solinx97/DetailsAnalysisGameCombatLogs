@@ -1,7 +1,6 @@
 ﻿using CombatAnalysis.CommunicationAPI.Models.Post;
 using Communication.Application.Commands.CreateUserPost;
 using Communication.Application.Commands.DeleteUserPost;
-using Communication.Application.Queries.CountUserPost;
 using Communication.Application.Queries.GetUserPostByUserId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -31,14 +30,6 @@ public class UserPostController(IMediator mediator) : ControllerBase
         var post = await _mediator.Send(command, cancellationToken);
 
         return Ok(post);
-    }
-
-    [HttpGet("count/{appUserId}")]
-    public async Task<IActionResult> Count(Guid appUserId, CancellationToken cancellationToken)
-    {
-        var count = await _mediator.Send(new CountUserPostQuery(appUserId), cancellationToken);
-
-        return Ok(count);
     }
 
     [HttpDelete("{id:int:min(1)}")]

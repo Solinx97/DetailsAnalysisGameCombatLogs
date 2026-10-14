@@ -1,4 +1,5 @@
 import type { AllUserPostCommentsModel } from '../types/AllUserPostCommentsModel';
+import type { UserPostCommentPatch } from '../types/patches/UserPostCommentPatch';
 import type { UserPostCommentModel } from '../types/UserPostCommentModel';
 import { PostApi } from './Post.api';
 import { UserFeedApi } from './UserFeed.api';
@@ -84,11 +85,11 @@ export const UserPostCommentApi = PostApi.injectEndpoints({
                 }
             }
         }),
-        updateUserPostComment: builder.mutation<void, { id: number, comment: UserPostCommentModel }>({
-            query: ({ id, comment }) => ({
-                body: comment,
+        updateUserPostComment: builder.mutation<void, { id: number, patch: UserPostCommentPatch }>({
+            query: ({ id, patch }) => ({
+                body: patch,
                 url: `/UserPostComment/${id}`,
-                method: 'PUT'
+                method: 'PATCH'
             }),
             invalidatesTags: (_result, _error, userPostComment) => [{ type: 'UserPostComment', id: userPostComment.id }],
         }),
