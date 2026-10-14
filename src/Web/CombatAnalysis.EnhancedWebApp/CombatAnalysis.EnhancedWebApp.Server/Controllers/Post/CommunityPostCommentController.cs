@@ -31,7 +31,7 @@ public class CommunityPostCommentController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityPostCommentModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityPostCommentModel request)
     {
         var responseMessage = await _httpClient.PostAsync("CommunityPostComment", JsonContent.Create(request));
         var comment = await responseMessage.Content.ReadFromJsonAsync<CommunityPostCommentModel>();
@@ -40,7 +40,7 @@ public class CommunityPostCommentController : ControllerBase
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, CommunityPostCommentModel request)
+    public async Task<IActionResult> Update(int id, [FromBody] CommunityPostCommentModel request)
     {
         var responseMessage = await _httpClient.PutAsync($"CommunityPostComment/{id}", JsonContent.Create(request));
         return NoContent();

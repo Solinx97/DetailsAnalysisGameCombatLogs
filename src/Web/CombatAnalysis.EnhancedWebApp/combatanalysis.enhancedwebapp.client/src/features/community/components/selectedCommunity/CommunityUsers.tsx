@@ -102,7 +102,7 @@ const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, removeUsersAsyn
             <div className="divide"></div>
             <ul className="list">
                 {searchUsername === ""
-                    ? communityUsers.users.map((communityUser: CommunityUserModel) => (
+                    ? communityUsers.users.map((communityUser) => (
                         <li className="user-target-community" key={communityUser.id}>
                             <CommunityUsersItem
                                 myself={myself}
@@ -113,7 +113,7 @@ const CommunityUsers: React.FC<CommunityUsersProps> = ({ myself, removeUsersAsyn
                             />
                         </li>
                     ))
-                    : communityUsers.users.filter((communityUser: CommunityUserModel) => communityUser.username.toLowerCase().startsWith(searchUsername.toLowerCase())).map((communityUser: CommunityUserModel) => (
+                    : communityUsers.users.filter((communityUser) => communityUser.username && communityUser.username.toLowerCase().startsWith(searchUsername.toLowerCase())).map((communityUser: CommunityUserModel) => (
                         <li className="user-target-community" key={communityUser.id}>
                             <CommunityUsersItem
                                 myself={myself}

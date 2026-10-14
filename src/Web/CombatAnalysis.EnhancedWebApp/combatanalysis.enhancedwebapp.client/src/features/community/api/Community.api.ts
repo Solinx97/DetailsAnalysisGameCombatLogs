@@ -57,7 +57,7 @@ export const CommunityApi = createApi({
             query: ({ id, community }) => ({
                 body: community,
                 url: `/Community/${id}`,
-                method: 'PUT'
+                method: 'PATCH'
             }),
             invalidatesTags: (_result, _error, community) => [{ type: 'Community', id: community.id }]
         }),
@@ -65,7 +65,7 @@ export const CommunityApi = createApi({
             query: ({ id, community }) => ({
                 body: community,
                 url: `/Community/updateRules/${id}`,
-                method: 'PUT'
+                method: 'PATCH'
             }),
             invalidatesTags: (_result, _error, community) => [{ type: 'Community', id: community.id }]
         }),
@@ -112,9 +112,6 @@ export const CommunityApi = createApi({
         getCommunityById: builder.query<CommunityModel, number>({
             query: id => `/Community/${id}`,
             providesTags: result => result ? [{ type: 'Community', id: result.id }] : [],
-        }),
-        getCommunitiesCount: builder.query<number, void>({
-            query: () => '/Community/count',
         }),
         getCommunityByUserId: builder.query<AllCommunityModel, { appUserId: string, page: number, pageSize: number }>({
             query: ({ appUserId, page, pageSize }) => `/Community/getByUserId/${appUserId}?page=${page}&pageSize=${pageSize}`,
@@ -166,8 +163,6 @@ export const {
     useLazyGetCommunitiesQuery,
     useGetCommunityByIdQuery,
     useLazyGetCommunityByIdQuery,
-    useGetCommunitiesCountQuery,
-    useLazyGetCommunitiesCountQuery,
     useGetCommunityByUserIdQuery,
     useGetInviteToCommunityByIdQuery,
     useLazyGetInviteToCommunityByIdQuery,

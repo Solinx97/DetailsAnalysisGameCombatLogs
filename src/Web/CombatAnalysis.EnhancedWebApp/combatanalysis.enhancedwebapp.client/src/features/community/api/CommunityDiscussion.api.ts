@@ -16,7 +16,7 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
             query: ({ id, discussion }) => ({
                 body: discussion,
                 url: `/CommunityDiscussion/${id}`,
-                method: 'PUT'
+                method: 'PATCH'
             }),
             invalidatesTags: (_result, _error, discussion) => [{ type: 'CommunityDiscussion', id: discussion.id }]
         }),
@@ -31,8 +31,8 @@ export const CommunityDiscussionApi = CommunityApi.injectEndpoints({
             query: id => `/CommunityDiscussion/${id}`,
             providesTags: result => result ? [{ type: 'CommunityDiscussion', id: result.id }] : [],
         }),
-        getShortListCommunityDiscussionByCommunityId: builder.query<AllDiscussionModel, { communityId: number, pageSize: number }>({
-            query: ({ communityId, pageSize }) => `/CommunityDiscussion/getShortListByDiscussionId/${communityId}?pageSize=${pageSize}`,
+        getCommunityDiscussionShortList: builder.query<AllDiscussionModel, { communityId: number, pageSize: number }>({
+            query: ({ communityId, pageSize }) => `/CommunityDiscussion/getShortList/${communityId}?pageSize=${pageSize}`,
             providesTags: () => [{ type: 'CommunityDiscussion', id: 'LIST' }],
         }),
         getCommunityDiscussionByCommunityId: builder.query<AllDiscussionModel, { communityId: number, page: number, pageSize: number }>({
@@ -83,6 +83,6 @@ export const {
     useUpdateCommunityDiscussionMutation,
     useRemoveCommunityDiscussionMutation,
     useGetCommunityDiscussionByIdQuery,
-    useGetShortListCommunityDiscussionByCommunityIdQuery,
+    useGetCommunityDiscussionShortListQuery,
     useGetCommunityDiscussionByCommunityIdQuery,
 } = CommunityDiscussionApi;

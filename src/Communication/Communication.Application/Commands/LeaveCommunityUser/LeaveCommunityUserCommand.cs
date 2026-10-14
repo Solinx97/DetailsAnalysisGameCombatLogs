@@ -3,6 +3,6 @@
 namespace Communication.Application.Commands.LeaveCommunityUser;
 
 public record LeaveCommunityUserCommand(
-    string AppUserId,
+    Guid AppUserId,
     int CommunityId
     ) : IRequest;

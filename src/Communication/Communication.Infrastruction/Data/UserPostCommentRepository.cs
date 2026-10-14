@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Data;
 using Communication.Domain.Entities.Post;
+using Communication.Domain.ValueObjects;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +10,9 @@ internal class UserPostCommentRepository(CommunicationContext context) : IUserPo
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<(IEnumerable<UserPostComment>, int)> GetByUserPostIdAsync(int userPostId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserPostComment>, int)> GetByUserPostIdAsync(UserPostId userPostId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var query = _context.Set<UserPostComment>()
+        var query = _context.UserPostComment
             .AsNoTracking()
             .Where(x => x.UserPostId == userPostId);
 

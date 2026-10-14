@@ -6,5 +6,5 @@ namespace Communication.Application.Commands.CreateDiscussionComment;
 public record CreateDiscussionCommentCommand(
     int CommunityDiscussionId,
     string Content,
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<CommunityDiscussionCommentDto>;

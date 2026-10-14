@@ -2,11 +2,11 @@
 
 public class CommunityUserModel
 {
-    public string Id { get; set; } = string.Empty;
-
-    public string Username { get; set; } = string.Empty;
-
-    public string AppUserId { get; set; } = string.Empty;
+    public Guid Id { get; set; }
 
     public int CommunityId { get; set; }
+
+    public Guid AppUserId { get; set; }
+
+    public string? Username { get; set; }
 }

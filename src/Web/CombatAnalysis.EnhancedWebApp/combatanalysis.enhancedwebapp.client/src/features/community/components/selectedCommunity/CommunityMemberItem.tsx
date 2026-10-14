@@ -15,7 +15,7 @@ const CommunityMemberItem: React.FC<{ comunityUser: CommunityUserModel }> = ({ c
     return (
         <>
             <User
-                targetUserId={member?.id}
+                targetUserId={member.id}
                 targetUsername={member.username}
                 setUserInformation={setUserInformation}
             />

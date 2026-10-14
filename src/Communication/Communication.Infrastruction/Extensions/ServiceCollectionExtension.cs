@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
+using Communication.Domain.ValueObjects;
 using Communication.Infrastruction.Data;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,10 @@ public static class ServiceCollectionExtension
             options.UseSqlServer(connectionString);
         });
 
-        services.AddScoped<IGenericRepository<Community, int>, GenericRepository<Community, int>>();
-        services.AddScoped<IGenericRepository<CommunityDiscussion, int>, GenericRepository<CommunityDiscussion, int>>();
-        services.AddScoped<IGenericRepository<UserPost, int>, GenericRepository<UserPost, int>>();
-        services.AddScoped<IGenericRepository<CommunityPost, int>, GenericRepository<CommunityPost, int>>();
+        services.AddScoped<IGenericRepository<Community, CommunityId>, GenericRepository<Community, CommunityId>>();
+        services.AddScoped<IGenericRepository<CommunityDiscussion, CommunityDiscussionId>, GenericRepository<CommunityDiscussion, CommunityDiscussionId>>();
+        services.AddScoped<IGenericRepository<UserPost, UserPostId>, GenericRepository<UserPost, UserPostId>>();
+        services.AddScoped<IGenericRepository<CommunityPost, CommunityPostId>, GenericRepository<CommunityPost, CommunityPostId>>();
 
         services.AddScoped<ICommunityRepository, CommunityRepository>();
         services.AddScoped<IInviteToCommunityRepository, InviteToCommunityRepository>();

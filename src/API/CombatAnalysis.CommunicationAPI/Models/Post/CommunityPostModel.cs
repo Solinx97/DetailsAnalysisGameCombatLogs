@@ -12,6 +12,6 @@ public record CommunityPostModel(
     string Tags,
     [Required] DateTimeOffset CreatedAt,
     [Range(0, int.MaxValue)] int CommunityId,
-    [Required] string AppUserId,
+    [Required] Guid AppUserId,
     int Reaction
     );

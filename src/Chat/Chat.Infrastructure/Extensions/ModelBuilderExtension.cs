@@ -64,23 +64,23 @@ internal static class ModelBuilderExtension
             builder.Property(m => m.Username).IsRequired().HasMaxLength(GroupChatMessage.USERNAME_MAX_LENGTH);
             builder.Property(m => m.Message).IsRequired().HasMaxLength(GroupChatMessage.MESSAGE_MAX_LENGTH);
 
-            builder.Property(c => c.CreatedAt)
-                   .HasConversion(
-                       dto => dto.UtcDateTime,
-                       dt => new DateTimeOffset(dt)
-                   );
-
             builder.Property(x => x.Id)
                      .HasConversion(
                          id => id.Value,
                          value => new GroupChatMessageId(value)
-                     ).ValueGeneratedOnAdd();
+                     );
 
             builder.Property(x => x.GroupChatUserId)
                      .HasConversion(
                          id => id.Value,
                          value => new GroupChatUserId(value)
                      );
+
+            builder.Property(c => c.CreatedAt)
+                   .HasConversion(
+                       dto => dto.UtcDateTime,
+                       dt => new DateTimeOffset(dt)
+                   );
         });
 
         modelBuilder.Entity<GroupChatUser>(builder =>
@@ -150,17 +150,17 @@ internal static class ModelBuilderExtension
             builder.Property(msg => msg.Username).IsRequired().HasMaxLength(PersonalChatMessage.USERNAME_MAX_LENGTH);
             builder.Property(msg => msg.Message).IsRequired().HasMaxLength(PersonalChatMessage.MESSAGE_MAX_LENGTH);
 
+            builder.Property(x => x.Id)
+                     .HasConversion(
+                         id => id.Value,
+                         value => new PersonalChatMessageId(value)
+                     );
+
             builder.Property(c => c.CreatedAt)
                    .HasConversion(
                        dto => dto.UtcDateTime,
                        dt => new DateTimeOffset(dt)
                    );
-
-            builder.Property(x => x.Id)
-                     .HasConversion(
-                         id => id.Value,
-                         value => new PersonalChatMessageId(value)
-                     ).ValueGeneratedOnAdd();
 
             builder.Property(x => x.AppUserId)
                      .HasConversion(

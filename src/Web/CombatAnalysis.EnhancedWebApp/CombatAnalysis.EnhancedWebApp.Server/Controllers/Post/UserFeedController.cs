@@ -17,7 +17,7 @@ public class UserFeedController(IOptions<Cluster> cluster, IHttpClientHelper htt
     private readonly IHttpClientHelper _httpClient = httpClient;
 
     [HttpGet("countNewPosts/{appUserId}")]
-    public async Task<IActionResult> CountNewPosts(string appUserId, [FromQuery] DateTimeOffset lastCheck)
+    public async Task<IActionResult> CountNewPosts(Guid appUserId, [FromQuery] DateTimeOffset lastCheck)
     {
         _httpClient.APIUrl = _cluster.Value.User;
         var responseMessage = await _httpClient.GetAsync($"Friend/findByUserId/{appUserId}");
@@ -32,7 +32,7 @@ public class UserFeedController(IOptions<Cluster> cluster, IHttpClientHelper htt
             .ToList();
 
         _httpClient.APIUrl = _cluster.Value.Communication;
-        var query = string.Join("&", friendIds.Select(id => $"friendIds={Uri.EscapeDataString(id)}"));
+        var query = string.Join("&", friendIds.Select(id => $"friendIds={Uri.EscapeDataString(id.ToString())}"));
         var lastCheckValue = Uri.EscapeDataString(lastCheck.ToString("O"));
         responseMessage = await _httpClient.GetAsync($"UserFeed/countNewPosts/{appUserId}?{query}&lastCheck={lastCheckValue}");
 
@@ -42,7 +42,7 @@ public class UserFeedController(IOptions<Cluster> cluster, IHttpClientHelper htt
     }
 
     [HttpGet("{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize)
     {
         _httpClient.APIUrl = _cluster.Value.User;
         var responseMessage = await _httpClient.GetAsync($"Friend/findByUserId/{appUserId}");
@@ -57,7 +57,7 @@ public class UserFeedController(IOptions<Cluster> cluster, IHttpClientHelper htt
             .ToList();
 
         _httpClient.APIUrl = _cluster.Value.Communication;
-        var query = string.Join("&", friendIds.Select(id => $"friendIds={Uri.EscapeDataString(id)}"));
+        var query = string.Join("&", friendIds.Select(id => $"friendIds={Uri.EscapeDataString(id.ToString())}"));
         responseMessage = await _httpClient.GetAsync($"UserFeed/{appUserId}?{query}&page={page}&pageSize={pageSize}");
 
         var userFeed = await responseMessage.Content.ReadFromJsonAsync<UserFeedResponse>();

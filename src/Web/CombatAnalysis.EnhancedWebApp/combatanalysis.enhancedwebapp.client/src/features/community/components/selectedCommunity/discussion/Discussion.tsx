@@ -49,6 +49,7 @@ const Discussion: React.FC<DiscussionProps> = ({ user, discussionId, communityId
     const [updateCommunityDiscussionAsync] = useUpdateCommunityDiscussionMutation();
     const [removeCommunityDiscussionAsyncMut] = useRemoveCommunityDiscussionMutation();
     const [createCommunityDiscussionCommentAsyncMut] = useCreateCommunityDiscussionCommentAsyncMutation();
+    
     const { data: discussion, isLoading } = useGetCommunityDiscussionByIdQuery(discussionId);
 
     useEffect(() => {

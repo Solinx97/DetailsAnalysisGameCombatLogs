@@ -79,20 +79,6 @@ builder.Services.AddAuthorizationBuilder()
         builder.RequireClaim("scope", authenticationClientOptions.Scopes.Split(','));
     });
 
-//var cors = new CORS();
-//builder.Configuration.Bind("Cors", cors);
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("CorsPolicy", builder =>
-//    {
-//        builder.WithOrigins(cors.WebApp)
-//               .AllowAnyMethod()
-//               .AllowAnyHeader()
-//               .AllowCredentials();
-//    });
-//});
-
 builder.Services.AddSignalR()
         .AddJsonProtocol();
 
@@ -159,8 +145,6 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
-//app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

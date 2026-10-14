@@ -73,5 +73,8 @@ public class ApplicationChatProfile : Profile
 
         CreateMap<Guid, VoiceChatParticipantId>()
             .ConvertUsing(src => new VoiceChatParticipantId(src));
+
+        CreateMap<VoiceChatParticipantId, Guid>()
+            .ConvertUsing(src => new VoiceChatParticipantId(src));
     }
 }

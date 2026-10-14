@@ -4,5 +4,5 @@ using MediatR;
 namespace Communication.Application.Queries.GetInvitesToCommunity;
 
 public record GetInvitesToCommunityQuery(
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<IEnumerable<InviteToCommunityDto>>;

@@ -4,11 +4,7 @@ public interface IGenericRepository<TModel, TId>
     where TModel : class
     where TId : notnull
 {
-    Task AddAsync(TModel item, CancellationToken ct = default);
+    Task AddAsync(TModel item, CancellationToken ct);
 
-    Task<IEnumerable<TModel>> GetAllAsync(CancellationToken ct = default);
-
-    Task<IEnumerable<TModel>> GetAsync(int page, int pageSize, CancellationToken cancelationToken);
-
-    Task<TModel> GetByIdAsync(TId id, CancellationToken ct = default);
+    Task<TModel> GetByIdAsync(TId id, CancellationToken ct);
 }

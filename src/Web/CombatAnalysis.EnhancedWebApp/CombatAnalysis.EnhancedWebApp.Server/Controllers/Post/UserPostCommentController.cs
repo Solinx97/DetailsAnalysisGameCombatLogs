@@ -31,7 +31,7 @@ public class UserPostCommentController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserPostCommentModel request)
+    public async Task<IActionResult> Create([FromBody] UserPostCommentModel request)
     {
         var responseMessage =  await _httpClient.PostAsync("UserPostComment", JsonContent.Create(request));
         var comment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
@@ -40,7 +40,7 @@ public class UserPostCommentController : ControllerBase
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, UserPostCommentModel request)
+    public async Task<IActionResult> Update(int id, [FromBody] UserPostCommentModel request)
     {
         await _httpClient.PutAsync($"UserPostComment/{id}", JsonContent.Create(request));
         return NoContent();

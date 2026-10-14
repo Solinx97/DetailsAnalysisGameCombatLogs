@@ -12,11 +12,11 @@ import './User.scss';
 interface UserProps {
     targetUserId: string;
     setUserInformation: (value: SetStateAction<JSX.Element | null>) => void;
-    targetUsername?: string | "";
-    friendId?: number | 0;
+    targetUsername?: string;
+    friendId?: number;
 }
 
-const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, targetUsername = "", friendId = 0 }) => {
+const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, targetUsername, friendId }) => {
     const { t } = useTranslation('communication/myEnvironment/friends');
 
     const [getUserById] = useLazyGetUserByIdQuery();
@@ -26,13 +26,15 @@ const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, targetUse
     const [username, setUsername] = useState(targetUsername);
 
     useEffect(() => {
-        if (targetUserId && (!targetUsername || targetUsername.length === 0)) {
-            const getUsernameByUserId = async () => {
-                await getUsernameByUserIdAsync();
-            }
-
-            getUsernameByUserId();
+        if (targetUsername) {
+            return;
         }
+
+        const getUsernameByUserId = async () => {
+            await getUsernameByUserIdAsync();
+        }
+
+        getUsernameByUserId();
     }, []);
 
     const getUsernameByUserIdAsync = async () => {
@@ -45,6 +47,10 @@ const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, targetUse
     }
 
     const removeFriendAsync = async () => {
+        if (!friendId) {
+            return;
+        }
+
         await removeFriend(friendId);
     }
 
@@ -80,7 +86,7 @@ const User: React.FC<UserProps> = ({ targetUserId, setUserInformation, targetUse
                 onClick={openUserInformation}
             />
             <div className="username" title={username}>{username}</div>
-            {friendId > 0 &&
+            {(friendId && friendId > 0) &&
                 <FontAwesomeIcon
                     icon={faCircleXmark}
                     title={t("Remove") || ""}

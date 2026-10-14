@@ -1,80 +1,61 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Community;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CommunityUserController : ControllerBase
+public class CommunityUserController(ICommunityUserApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public CommunityUserController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly ICommunityUserApiClient _httpClient = httpClient;
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
-        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
-
+        var users = await _httpClient.GetByUserIdAsync(appUserId, page, pageSize, cancellationToken);
         return Ok(users);
     }
 
     [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
+    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
-        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
-
+        var users = await _httpClient.GetByCommunityIdAsync(communityId, page, pageSize, cancellationToken);
         return Ok(users);
     }
 
-    [HttpGet("getShortListByCommunityId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> GetShortListByCommunityId(int communityId, int pageSize)
+    [HttpGet("getShortList/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetShortList(int communityId, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/getByCommunityId/{communityId}?page=1&pageSize={pageSize}");
-        var users = await responseMessage.Content.ReadFromJsonAsync<CommunityUserResponse>();
-
+        var users = await _httpClient.GetShortListAsync(communityId, pageSize, cancellationToken);
         return Ok(users);
     }
 
     [HttpGet("canJoin/{appUserId}")]
-    public async Task<IActionResult> CanJoin(string appUserId, int communityId)
+    public async Task<IActionResult> CanJoin(Guid appUserId, int communityId, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/canJoin/{appUserId}?communityId={communityId}");
-        var canJoin = await responseMessage.Content.ReadFromJsonAsync<bool>();
-
+        var canJoin = await _httpClient.CanJoinAsync(appUserId, communityId, cancellationToken);
         return Ok(canJoin);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityUserModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityUserModel user, CancellationToken cancellationToken)
     {
-        await _httpClient.PostAsync("CommunityUser", JsonContent.Create(request));
+        await _httpClient.CreateAsync(user, cancellationToken);
         return NoContent();
     }
 
     [HttpDelete("leave")]
-    public async Task<IActionResult> Leave(string appUserId, int communityId)
+    public async Task<IActionResult> Leave(Guid appUserId, int communityId, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteAsync($"CommunityUser/leave?appUserId={appUserId}&communityId={communityId}");
+        await _httpClient.LeaveAsync(appUserId, communityId, cancellationToken);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id, int communityId)
+    public async Task<IActionResult> Delete(Guid id, int communityId, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteAsync($"CommunityUser/{id}?communityId={communityId}");
+        await _httpClient.DeleteAsync(id, communityId, cancellationToken);
         return NoContent();
     }
 }

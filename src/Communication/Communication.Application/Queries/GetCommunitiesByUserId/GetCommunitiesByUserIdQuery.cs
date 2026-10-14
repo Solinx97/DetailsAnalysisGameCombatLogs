@@ -4,7 +4,7 @@ using MediatR;
 namespace Communication.Application.Queries.GetCommunitiesByUserId;
 
 public record GetCommunitiesByUserIdQuery(
-    string AppUserId,
+    Guid AppUserId,
     int Page,
     int PageSize
     ) : IRequest<AllCommunityDto>;

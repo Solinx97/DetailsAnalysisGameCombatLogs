@@ -19,7 +19,7 @@ public class CommunityUserController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var communitityUsers = await _mediator.Send(new GetCommunityUsersByUserIdQuery(appUserId, page, pageSize), cancellationToken);
 
@@ -35,7 +35,7 @@ public class CommunityUserController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("canJoin/{appUserId}")]
-    public async Task<IActionResult> CanJoin(string appUserId, int communityId, CancellationToken cancellationToken)
+    public async Task<IActionResult> CanJoin(Guid appUserId, int communityId, CancellationToken cancellationToken)
     {
         var canJoin = await _mediator.Send(new CanJoinToCommunityQuery(appUserId, communityId), cancellationToken);
 
@@ -51,8 +51,8 @@ public class CommunityUserController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("leave")]
-    public async Task<IActionResult> Leave(string appUserId, int communityId, CancellationToken cancellationToken)
+    [HttpDelete("leave/{appUserId}")]
+    public async Task<IActionResult> Leave(Guid appUserId, int communityId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new LeaveCommunityUserCommand(appUserId, communityId), cancellationToken);
 
@@ -60,7 +60,7 @@ public class CommunityUserController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id, int communityId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id, int communityId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new DeleteCommunityUserCommand(id, communityId), cancellationToken);
 

@@ -10,7 +10,7 @@ public sealed record CommunityPostReadModel(
     string Tags,
     DateTimeOffset CreatedAt,
     int CommunityId,
-    string AppUserId,
+    Guid AppUserId,
     int LikeCount,
     int DislikeCount,
     int CommentCount,

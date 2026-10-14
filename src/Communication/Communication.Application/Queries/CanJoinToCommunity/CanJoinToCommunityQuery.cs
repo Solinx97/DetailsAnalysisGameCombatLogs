@@ -3,6 +3,6 @@
 namespace Communication.Application.Queries.CanJoinToCommunity;
 
 public record CanJoinToCommunityQuery(
-    string AppUserId,
+    Guid AppUserId,
     int CommunityId
     ) : IRequest<bool>;

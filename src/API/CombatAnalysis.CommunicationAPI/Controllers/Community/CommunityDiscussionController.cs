@@ -43,7 +43,7 @@ public class CommunityDiscussionController(IMediator mediator) : ControllerBase
         return Ok(discussion);
     }
 
-    [HttpPut("{id:int:min(1)}")]
+    [HttpPatch("{id:int:min(1)}")]
     public async Task<IActionResult> Update(int id, [FromBody] CommunityDiscussionPartial request, CancellationToken cancellationToken)
     {
         if (id != request.Id)

@@ -3,7 +3,7 @@
 namespace Communication.Application.Queries.CountFeedNewPosts;
 
 public record CountFeedNewPostsQuery(
-    string AppUserId,
-    List<string> FriendsId,
+    Guid AppUserId,
+    List<Guid> FriendsId,
     DateTimeOffset LastCheck
     ) : IRequest<int>;

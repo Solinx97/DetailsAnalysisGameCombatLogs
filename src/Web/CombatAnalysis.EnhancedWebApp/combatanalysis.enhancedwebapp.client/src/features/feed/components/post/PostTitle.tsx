@@ -1,19 +1,19 @@
-﻿import logger from '@/utils/Logger';
+﻿import User from '@/features/user/components/User';
+import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import useFormatting from '@/shared/hooks/useFormatting';
+import logger from '@/utils/Logger';
 import { faCircleXmark, faComments } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import User from '@/features/user/components/User';
-import type { AppUserModel } from '@/features/user/types/AppUserModel';
 import { useState, type JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRemoveCommunityPostMutation } from '../../api/CommunityPost.api';
-import type { CommunityPostModel } from '../../types/CommunityPostModel';
 import type { useRemoveUserPostMutation } from '../../api/UserPost.api';
-import type { PostModel } from '../../types/PostModel';
+import type { CommunityPostModel } from '../../types/CommunityPostModel';
+import type { UserPostModel } from '../../types/UserPostModel';
 
 interface PostTitleProps {
     user: AppUserModel;
-    post: PostModel;
+    post: CommunityPostModel | UserPostModel;
     isMyPost: boolean;
     feedVersion: number;
     t: (key: string) => string;
@@ -32,8 +32,8 @@ const PostTitle: React.FC<PostTitleProps> = ({ user, post, isMyPost, removeUserP
 
     const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
 
-    const isCommunityPost = (post: PostModel): post is CommunityPostModel => {
-        return "communityId" in post;
+    const isCommunityPost = (post: CommunityPostModel | UserPostModel): post is CommunityPostModel => {
+        return "communityId" in post && post.communityId > 0;
     }
 
     const removeCommunityPostAsync = async () => {
@@ -74,8 +74,7 @@ const PostTitle: React.FC<PostTitleProps> = ({ user, post, isMyPost, removeUserP
         else {
             return (
                 <User
-                    targetUserId={user.id}
-                    targetUsername={user.username}
+                    targetUserId={post.appUserId}
                     setUserInformation={setUserInformation}
                 />
             );

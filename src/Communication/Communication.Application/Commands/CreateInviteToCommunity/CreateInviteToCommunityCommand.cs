@@ -4,6 +4,6 @@ namespace Communication.Application.Commands.CreateInviteToCommunity;
 
 public record CreateInviteToCommunityCommand(
     int CommunityId,
-    string AppUserId,
-    string ToAppUserId
+    Guid AppUserId,
+    Guid ToAppUserId
     ) : IRequest;

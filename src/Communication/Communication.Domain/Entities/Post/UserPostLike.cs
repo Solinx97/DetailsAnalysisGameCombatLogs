@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Aggregates;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Entities.Post;
 
@@ -8,23 +9,21 @@ public class UserPostLike
     {
     }
 
-    private UserPostLike(string appUserId)
+    private UserPostLike(UserId appUserId)
     {
         AppUserId = appUserId;
     }
 
-    public int Id { get; private set; }
+    public UserPostLikeId Id { get; private set; }
 
-    public int UserPostId { get; private set; }
+    public UserPostId UserPostId { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public UserPost UserPost { get; private set; }
 
-    public static UserPostLike Create(string appUserId)
+    public static UserPostLike Create(UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         return new UserPostLike(appUserId);
     }
 }

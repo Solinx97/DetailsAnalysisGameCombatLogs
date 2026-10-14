@@ -10,5 +10,5 @@ public class CommunityDto
 
     public int PolicyType { get; set; }
 
-    public string AppUserId { get; set; } = string.Empty;
+    public Guid AppUserId { get; set; }
 }

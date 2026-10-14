@@ -8,5 +8,5 @@ public record CreateCommunityPostCommentCommand(
     int CommunityPostId,
     string Content,
     int CommentType,
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<CommunityPostCommentDto>;

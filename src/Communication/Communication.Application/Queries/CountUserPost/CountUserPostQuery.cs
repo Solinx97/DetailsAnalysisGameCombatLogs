@@ -3,5 +3,5 @@
 namespace Communication.Application.Queries.CountUserPost;
 
 public record CountUserPostQuery(
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<int>;

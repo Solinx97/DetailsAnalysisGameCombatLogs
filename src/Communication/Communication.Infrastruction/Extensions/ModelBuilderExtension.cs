@@ -1,6 +1,7 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Entities.Community;
 using Communication.Domain.Entities.Post;
+using Communication.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Communication.Infrastruction.Extensions;
@@ -9,122 +10,353 @@ internal static class ModelBuilderExtension
 {
     public static void Creating(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Community>(c =>
+        modelBuilder.Entity<Community>(builder =>
         {
-            c.Property(c => c.Name)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(c => c.Name)
                 .HasMaxLength(Community.NAME_MAX_LENGTH);
 
-            c.Property(c => c.Description)
+            builder.Property(c => c.Description)
                 .HasMaxLength(Community.DESCRIPTION_MAX_LENGTH);
         });
 
-        modelBuilder.Entity<CommunityPost>(cp =>
+        modelBuilder.Entity<CommunityPost>(builder =>
         {
-            cp.Property(cp => cp.Content)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityPostId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.CommunityId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(cp => cp.Content)
                 .HasMaxLength(CommunityPost.CONTENT_MAX_LENGTH);
 
-            cp.HasOne(cp => cp.Community)
+            builder.HasOne(cp => cp.Community)
                 .WithMany(c => c.CommunityPosts)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityPostComment>(cpc =>
+        modelBuilder.Entity<CommunityPostComment>(builder =>
         {
-            cpc.Property(cp => cp.Content)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityPostCommentId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.CommunityId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       );
+
+            builder.Property(c => c.CommunityPostId).HasConversion(
+                            id => id.Value,
+                            value => new CommunityPostId(value)
+                        );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(cp => cp.Content)
                 .HasMaxLength(CommunityPostComment.CONTENT_MAX_LENGTH);
 
-            cpc.HasOne(cpc => cpc.CommunityPost)
+            builder.HasOne(cpc => cpc.CommunityPost)
                 .WithMany(c => c.CommunityPostComments)
                 .HasForeignKey(uh => uh.CommunityPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityPostDislike>(cpd =>
+        modelBuilder.Entity<CommunityPostDislike>(builder =>
         {
-            cpd.HasOne(cpd => cpd.CommunityPost)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityPostDislikeId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.CommunityId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       );
+
+            builder.Property(c => c.CommunityPostId).HasConversion(
+                            id => id.Value,
+                            value => new CommunityPostId(value)
+                        );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.HasOne(cpd => cpd.CommunityPost)
                 .WithMany(c => c.CommunityPostDislikes)
                 .HasForeignKey(uh => uh.CommunityPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityPostLike>(cpl =>
+        modelBuilder.Entity<CommunityPostLike>(builder =>
         {
-            cpl.HasOne(cpl => cpl.CommunityPost)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityPostLikeId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.CommunityId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       );
+
+            builder.Property(c => c.CommunityPostId).HasConversion(
+                            id => id.Value,
+                            value => new CommunityPostId(value)
+                        );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.HasOne(cpl => cpl.CommunityPost)
                 .WithMany(c => c.CommunityPostLikes)
                 .HasForeignKey(uh => uh.CommunityPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityUser>(cu =>
+        modelBuilder.Entity<CommunityUser>(builder =>
         {
-            cu.HasOne(uh => uh.Community)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityUserId(value)
+                       );
+
+            builder.Property(c => c.CommunityId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.HasOne(uh => uh.Community)
                 .WithMany(c => c.CommunityUsers)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<InviteToCommunity>(itc =>
+        modelBuilder.Entity<InviteToCommunity>(builder =>
         {
-            itc.HasOne(itc => itc.Community)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new InviteToCommunityId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.CommunityId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       );
+
+            builder.Property(c => c.ToAppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.HasOne(itc => itc.Community)
                 .WithMany(c => c.InvitesToCommunity)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityDiscussion>(cd =>
+        modelBuilder.Entity<CommunityDiscussion>(builder =>
         {
-            cd.Property(cd => cd.Title)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityDiscussionId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.CommunityId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(cd => cd.Title)
                 .HasMaxLength(CommunityDiscussion.TITLE_MAX_LENGTH);
 
-            cd.Property(cd => cd.Content)
+            builder.Property(cd => cd.Content)
                 .HasMaxLength(CommunityDiscussion.CONTENT_MAX_LENGTH);
 
-            cd.HasOne(cd => cd.Community)
+            builder.HasOne(cd => cd.Community)
                 .WithMany(c => c.CommunityDiscussions)
                 .HasForeignKey(uh => uh.CommunityId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CommunityDiscussionComment>(cdm =>
+        modelBuilder.Entity<CommunityDiscussionComment>(builder =>
         {
-            cdm.Property(cdm => cdm.Content)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new CommunityDiscussionCommentId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.CommunityDiscussionId).HasConversion(
+                           id => id.Value,
+                           value => new CommunityDiscussionId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(cdm => cdm.Content)
                 .HasMaxLength(CommunityDiscussionComment.CONTENT_MAX_LENGTH);
 
-            cdm.HasOne(cdm => cdm.CommunityDiscussion)
+            builder.HasOne(cdm => cdm.CommunityDiscussion)
                 .WithMany(c => c.CommunityDiscussionComments)
                 .HasForeignKey(uh => uh.CommunityDiscussionId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<UserPost>(up =>
+        modelBuilder.Entity<UserPost>(builder =>
         {
-            up.Property(up => up.Content)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new UserPostId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(up => up.Content)
                 .HasMaxLength(UserPost.CONTENT_MAX_LENGTH);
         });
 
-        modelBuilder.Entity<UserPostComment>(upc =>
+        modelBuilder.Entity<UserPostComment>(builder =>
         {
-            upc.Property(upc => upc.Content)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new UserPostCommentId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.UserPostId).HasConversion(
+                           id => id.Value,
+                           value => new UserPostId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.Property(upc => upc.Content)
                 .HasMaxLength(UserPostComment.CONTENT_MAX_LENGTH);
 
-            upc.HasOne(upc => upc.UserPost)
+            builder.HasOne(upc => upc.UserPost)
                 .WithMany(c => c.UserPostComments)
                 .HasForeignKey(uh => uh.UserPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<UserPostDislike>(upd =>
+        modelBuilder.Entity<UserPostDislike>(builder =>
         {
-            upd.HasOne(upd => upd.UserPost)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new UserPostDislikeId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.UserPostId).HasConversion(
+                           id => id.Value,
+                           value => new UserPostId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.HasOne(upd => upd.UserPost)
                 .WithMany(c => c.UserPostDislikes)
                 .HasForeignKey(uh => uh.UserPostId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<UserPostLike>(upl =>
+        modelBuilder.Entity<UserPostLike>(builder =>
         {
-            upl.HasOne(upl => upl.UserPost)
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Id).HasConversion(
+                           id => id.Value,
+                           value => new UserPostLikeId(value)
+                       ).ValueGeneratedOnAdd();
+
+            builder.Property(c => c.UserPostId).HasConversion(
+                           id => id.Value,
+                           value => new UserPostId(value)
+                       );
+
+            builder.Property(c => c.AppUserId).HasConversion(
+                           id => id.Value,
+                           value => new UserId(value)
+                       );
+
+            builder.HasOne(upl => upl.UserPost)
                 .WithMany(c => c.UserPostLikes)
                 .HasForeignKey(uh => uh.UserPostId)
                 .OnDelete(DeleteBehavior.Cascade);

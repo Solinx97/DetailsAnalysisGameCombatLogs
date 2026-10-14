@@ -12,7 +12,7 @@ public class UserPostModel
 
     public DateTimeOffset CreatedAt { get; set; }
 
-    public string AppUserId { get; set; } = string.Empty;
+    public Guid AppUserId { get; set; }
 
     public int LikeCount { get; set; }
 

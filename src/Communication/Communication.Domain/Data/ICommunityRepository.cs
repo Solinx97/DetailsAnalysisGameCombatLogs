@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Entities.Community;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Data;
 
@@ -7,23 +8,19 @@ public interface ICommunityRepository
 {
     Task<(IEnumerable<Community>, int)> GetAsync(int page, int pageSize, CancellationToken cancellationToken);
 
-    Task<(IEnumerable<Community>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<(IEnumerable<Community>, int)> GetByUserIdAsync(UserId appUserId, int page, int pageSize, CancellationToken cancellationToken);
 
-    Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersAsync(int communityId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersAsync(CommunityId communityId, int page, int pageSize, CancellationToken cancellationToken);
 
-    Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersByUserIdAsync(UserId appUserId, int page, int pageSize, CancellationToken cancellationToken);
 
-    Task<bool> CanJoinAsync(string appUserId, int communityId, CancellationToken cancellationToken);
+    Task<bool> CanJoinAsync(UserId appUserId, CommunityId communityId, CancellationToken cancellationToken);
 
-    Task<IEnumerable<InviteToCommunity>> GetInvitesToCommunityAsync(int id, CancellationToken cancellationToken);
+    Task<Community> GetWithUsersAsync(CommunityId id, CancellationToken cancellationToken);
 
-    Task<Community> GetWithUsersAsync(int id, CancellationToken cancellationToken);
+    Task<Community> GetWithInvitesAsync(CommunityId id, CancellationToken cancellationToken);
 
-    Task<Community> GetWithInvitesAsync(int id, CancellationToken cancellationToken);
+    Task<Community> GetWithInvitesAndUsersAsync(CommunityId id, CancellationToken cancellationToken);
 
-    Task<Community> GetWithInvitesAndUsersAsync(int id, CancellationToken cancellationToken);
-
-    Task DeleteAsync(int id, CancellationToken cancelationToken);
-
-    Task<int> CountAsync(CancellationToken cancellationToken);
+    Task DeleteAsync(CommunityId id, CancellationToken cancelationToken);
 }

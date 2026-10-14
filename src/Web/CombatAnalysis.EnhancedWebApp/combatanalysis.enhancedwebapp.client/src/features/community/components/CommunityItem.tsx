@@ -24,6 +24,7 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser, my
     const [userInformation, setUserInformation] = useState<JSX.Element | null>(null);
 
     const [createCommunityUser] = useCreateCommunityUserMutation();
+
     const { data: canJoin, isLoading } = useGetCanJoinByUserIdQuery({ appUserId: myself.id, communityId: community.id });
 
     const createCommunityUserAsync = async () => {
@@ -36,7 +37,7 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser, my
             };
 
             await createCommunityUser(newCommunityUser).unwrap();
-            navigate(`/community?id=${community.id}`);
+            navigate(`/community/${community.id}`);
         } catch (e) {
             logger.error(`Failed to create community user to community: ${community.id}`, e);
         }
@@ -48,20 +49,20 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser, my
 
     return (
         <div>
-            {community?.policyType !== 0 &&
+            {community.policyType !== 0 &&
                 <div className="private-container">
                     <div className="private">{t("Private")}</div>
                 </div>
             }
             <div className="card box-shadow">
                 <div className="card-body">
-                    <h5 className="card-title">{community?.name}</h5>
-                    <p className="card-text">{community?.description}</p>
-                    {community?.policyType === 0 &&
+                    <h5 className="card-title">{community.name}</h5>
+                    <p className="card-text">{community.description}</p>
+                    {community.policyType === 0 &&
                         <>
                             <div className="links">
                                 <div className="open-community">
-                                    <div className="btn-shadow" onClick={() => navigate(`/community?id=${community?.id}`)}>
+                                    <div className="btn-shadow" onClick={() => navigate(`/community/${community.id}`)}>
                                         <FontAwesomeIcon
                                             icon={faCircleQuestion}
                                         />
@@ -86,7 +87,7 @@ const CommunityItem: React.FC<CommunityItemProps> = ({ community, targetUser, my
             <div className="owner-container">
                 <div className="owner">
                     <User
-                        targetUserId={community?.appUserId ?? ""}
+                        targetUserId={community.appUserId ?? ""}
                         setUserInformation={setUserInformation}
                     />
                 </div>

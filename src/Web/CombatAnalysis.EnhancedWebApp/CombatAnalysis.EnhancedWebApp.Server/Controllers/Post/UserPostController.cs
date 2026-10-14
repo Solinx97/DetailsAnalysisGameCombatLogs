@@ -22,7 +22,7 @@ public class UserPostController : ControllerBase
     }
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"UserPost/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
         var posts = await responseMessage.Content.ReadFromJsonAsync<UserPostsResponse>();
@@ -31,7 +31,7 @@ public class UserPostController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserPostModel request)
+    public async Task<IActionResult> Create([FromBody] UserPostModel request)
     {
         var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(request));
         var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
@@ -40,7 +40,7 @@ public class UserPostController : ControllerBase
     }
 
     [HttpGet("count/{appUserId}")]
-    public async Task<IActionResult> Count(string appUserId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Count(Guid appUserId, CancellationToken cancellationToken)
     {
         var responseMessage = await _httpClient.GetAsync($"UserPost/count/{appUserId}");
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();

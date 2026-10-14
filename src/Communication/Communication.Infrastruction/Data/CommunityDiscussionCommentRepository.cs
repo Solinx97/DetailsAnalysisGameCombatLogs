@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Data;
 using Communication.Domain.Entities.Community;
+using Communication.Domain.ValueObjects;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +10,9 @@ internal class CommunityDiscussionCommentRepository(CommunicationContext context
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<(IEnumerable<CommunityDiscussionComment>, int)> GetByDiscussionIdAsync(int discussionId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<CommunityDiscussionComment>, int)> GetByDiscussionIdAsync(CommunityDiscussionId discussionId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var query = _context.Set<CommunityDiscussionComment>()
+        var query = _context.CommunityDiscussionComment
             .AsNoTracking()
             .Where(x => x.CommunityDiscussionId == discussionId);
 

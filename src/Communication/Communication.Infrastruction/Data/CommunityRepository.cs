@@ -1,6 +1,7 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
 using Communication.Domain.Entities.Community;
+using Communication.Domain.ValueObjects;
 using Communication.Infrastruction.Exceptions;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
 
     public async Task<(IEnumerable<Community>, int)> GetAsync(int page, int pageSize, CancellationToken cancellationToken)
     {
-        var query = _context.Set<CommunityUser>()
+        var query = _context.CommunityUser
             .AsNoTracking();
 
         var communities = await query
@@ -29,9 +30,9 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return (communities, count);
     }
 
-    public async Task<(IEnumerable<Community>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<Community>, int)> GetByUserIdAsync(UserId appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var query = _context.Set<CommunityUser>()
+        var query = _context.CommunityUser
             .AsNoTracking()
             .Where(x => x.AppUserId == appUserId);
 
@@ -48,9 +49,9 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return (communities, count);
     }
 
-    public async Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersAsync(int communityId, int page, int pageSize,  CancellationToken cancellationToken)
+    public async Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersAsync(CommunityId communityId, int page, int pageSize,  CancellationToken cancellationToken)
     {
-        var query = _context.Set<CommunityUser>()
+        var query = _context.CommunityUser
             .AsNoTracking()
             .Where(x => x.CommunityId == communityId);
 
@@ -64,9 +65,10 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
 
         return (communityUsers, count);
     }
-    public async Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+
+    public async Task<(IEnumerable<CommunityUser>, int)> GetCommunityUsersByUserIdAsync(UserId appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var query = _context.Set<CommunityUser>()
+        var query = _context.CommunityUser
             .AsNoTracking()
             .Where(x => x.AppUserId == appUserId);
 
@@ -81,9 +83,9 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return (communityUsers, count);
     }
 
-    public async Task<bool> CanJoinAsync(string appUserId, int communityId, CancellationToken cancellationToken)
+    public async Task<bool> CanJoinAsync(UserId appUserId, CommunityId communityId, CancellationToken cancellationToken)
     {
-        var count = await _context.Set<CommunityUser>()
+        var count = await _context.CommunityUser
             .AsNoTracking()
             .Where(x => x.AppUserId == appUserId && x.CommunityId == communityId)
             .CountAsync(cancellationToken);
@@ -91,20 +93,9 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return count == 0;
     }
 
-    public async Task<IEnumerable<InviteToCommunity>> GetInvitesToCommunityAsync(int id, CancellationToken cancellationToken)
+    public async Task<Community> GetWithUsersAsync(CommunityId id, CancellationToken cancellationToken)
     {
-        var community = await _context.Set<Community>()
-            .Where(x => x.Id == id)
-            .Include(x => x.InvitesToCommunity)
-            .FirstOrDefaultAsync(cancellationToken)
-                ?? throw new EntityNotFoundException(typeof(Community), id);
-
-        return community.InvitesToCommunity;
-    }
-
-    public async Task<Community> GetWithUsersAsync(int id, CancellationToken cancellationToken)
-    {
-        var community = await _context.Set<Community>()
+        var community = await _context.Community
             .Where(x => x.Id == id)
             .Include(x => x.CommunityUsers)
             .FirstOrDefaultAsync(cancellationToken)
@@ -113,9 +104,9 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return community;
     }
 
-    public async Task<Community> GetWithInvitesAsync(int id, CancellationToken cancellationToken)
+    public async Task<Community> GetWithInvitesAsync(CommunityId id, CancellationToken cancellationToken)
     {
-        var community = await _context.Set<Community>()
+        var community = await _context.Community
             .Where(x => x.Id == id)
             .Include(x => x.InvitesToCommunity)
             .FirstOrDefaultAsync(cancellationToken)
@@ -124,28 +115,22 @@ internal class CommunityRepository(CommunicationContext context) : ICommunityRep
         return community;
     }
 
-    public async Task<Community> GetWithInvitesAndUsersAsync(int id, CancellationToken cancellationToken)
+    public async Task<Community> GetWithInvitesAndUsersAsync(CommunityId id, CancellationToken cancellationToken)
     {
-        var community = await _context.Set<Community>()
+        var community = await _context.Community
             .Where(x => x.Id == id)
             .Include(x => x.InvitesToCommunity)
             .Include(x => x.CommunityUsers)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(cancellationToken)
                 ?? throw new EntityNotFoundException(typeof(Community), id);
 
         return community;
     }
 
-    public async Task<int> CountAsync(CancellationToken cancellationToken)
+    public async Task DeleteAsync(CommunityId id, CancellationToken cancelationToken)
     {
-        var count = await _context.Set<Community>().CountAsync(cancellationToken);
-
-        return count;
-    }
-
-    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
-    {
-        await _context.Set<Community>()
+        await _context.Community
             .Where(cl => cl.Id == id)
             .ExecuteDeleteAsync(cancelationToken);
     }

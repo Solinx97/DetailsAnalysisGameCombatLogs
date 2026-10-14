@@ -14,5 +14,5 @@ public class CommunityPostCommentDto
 
     public int CommunityPostId { get; set; }
 
-    public string AppUserId { get; set; } = string.Empty;
+    public Guid AppUserId { get; set; }
 }

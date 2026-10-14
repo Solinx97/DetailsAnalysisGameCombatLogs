@@ -5,7 +5,7 @@ using Chat.Domain.ValueObjects;
 
 namespace Chat.Domain.Entities;
 
-public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>, IChatEntity
+public class GroupChatMessage : IRepositoryEntity<GroupChatMessageId>
 {
     public const int USERNAME_MAX_LENGTH = 64;
     public const int MESSAGE_MAX_LENGTH = 256;

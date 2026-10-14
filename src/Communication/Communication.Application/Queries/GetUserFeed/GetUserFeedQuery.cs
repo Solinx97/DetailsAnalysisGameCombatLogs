@@ -4,7 +4,8 @@ using MediatR;
 namespace Communication.Application.Queries.GetUserFeed;
 
 public record GetUserFeedQuery(
-    string AppUserId,
-    List<string> FriendsId,
-    int Page, int PageSize
+    Guid AppUserId,
+    List<Guid> FriendsId,
+    int Page,
+    int PageSize
     ) : IRequest<AllUserFeedDto>;

@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Entities.Community;
 using Communication.Domain.Exceptions;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Aggregates;
 
@@ -17,7 +18,7 @@ public class Community
     {
     }
 
-    private Community(string name, string description, int policyType, string appUserId)
+    private Community(string name, string description, int policyType, UserId appUserId)
     {
         Name = name;
         Description = description;
@@ -25,7 +26,7 @@ public class Community
         AppUserId = appUserId;
     }
 
-    public int Id { get; private set; }
+    public CommunityId Id { get; private set; }
 
     public string Name { get; private set; }
 
@@ -33,7 +34,7 @@ public class Community
 
     public int PolicyType { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public IReadOnlyList<CommunityPost> CommunityPosts => _communityPosts;
 
@@ -43,11 +44,10 @@ public class Community
 
     public IReadOnlyList<InviteToCommunity> InvitesToCommunity => _invitesToCommunity;
 
-    public static Community Create(string name, string description, int policyType, string appUserId)
+    public static Community Create(string name, string description, int policyType, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
         ArgumentException.ThrowIfNullOrEmpty(description, nameof(description));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var community = new Community(name, description, policyType, appUserId);
         community.AddMember(appUserId);
@@ -55,18 +55,14 @@ public class Community
         return community;
     }
 
-    public void AddMember(string appUserId)
+    public void AddMember(UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         var communityUser = CommunityUser.Create(appUserId);
         _communityUsers.Add(communityUser);
     }
 
-    public void LeaveCommunity(string appUserId)
+    public void LeaveCommunity(UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         var member = _communityUsers
             .FirstOrDefault(x => x.AppUserId == appUserId)
                 ?? throw new DomainException($"Community user not found with id {appUserId}");
@@ -74,10 +70,8 @@ public class Community
         _communityUsers.Remove(member);
     }
 
-    public void RemoveMember(string communityUserId)
+    public void RemoveMember(CommunityUserId communityUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(communityUserId, nameof(communityUserId));
-
         var member = _communityUsers
             .FirstOrDefault(x => x.Id == communityUserId)
                 ?? throw new DomainException($"Community user not found with id {communityUserId}");
@@ -85,34 +79,25 @@ public class Community
         _communityUsers.Remove(member);
     }
 
-    public void CreateInvite(string appUserId, string toAppUserId)
+    public void CreateInvite(UserId appUserId, UserId toAppUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-        ArgumentException.ThrowIfNullOrEmpty(toAppUserId, nameof(toAppUserId));
-
         if (IsExist(toAppUserId) || InviteAlreadySent(toAppUserId))
         {
             return;
         }
 
-        var createdAt = DateTimeOffset.UtcNow;
-        var invite = InviteToCommunity.Create(toAppUserId, createdAt, appUserId);
+        var invite = InviteToCommunity.Create(toAppUserId, appUserId);
         _invitesToCommunity.Add(invite);
     }
 
-    public void AcceptInvite(int inviteId, string appUserId)
+    public void AcceptInvite(InviteToCommunityId inviteId, UserId appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(inviteId, nameof(inviteId));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         AddMember(appUserId);
         RemoveInvite(inviteId);
     }
 
-    public void RemoveInvite(int inviteId)
+    public void RemoveInvite(InviteToCommunityId inviteId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(inviteId, nameof(inviteId));
-
         var invite = _invitesToCommunity
             .FirstOrDefault(x => x.Id == inviteId)
                 ?? throw new DomainException($"Invite to community not found with id {inviteId}");
@@ -134,14 +119,14 @@ public class Community
         }
     }
 
-    private bool IsExist(string appUserId)
+    private bool IsExist(UserId appUserId)
     {
         var user = _communityUsers
             .FirstOrDefault(x => x.AppUserId == appUserId);
         return user != null;
     }
 
-    private bool InviteAlreadySent(string toAppUserId)
+    private bool InviteAlreadySent(UserId toAppUserId)
     {
         var invite = _invitesToCommunity
             .FirstOrDefault(x => x.ToAppUserId == toAppUserId);

@@ -1,12 +1,13 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
+using Communication.Domain.ValueObjects;
 using MediatR;
 
 namespace Communication.Application.Commands.CreateInviteToCommunity;
 
-internal class CreateInviteToCommunityHandler(IGenericRepository<Community, int> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateInviteToCommunityCommand>
+internal class CreateInviteToCommunityHandler(IGenericRepository<Community, CommunityId> repository, IUnitOfWork unitOfWork) : IRequestHandler<CreateInviteToCommunityCommand>
 {
-    private readonly IGenericRepository<Community, int> _repository = repository;
+    private readonly IGenericRepository<Community, CommunityId> _repository = repository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task Handle(CreateInviteToCommunityCommand request, CancellationToken cancelationToken)

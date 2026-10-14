@@ -14,5 +14,5 @@ public class CommunityPostCommentModel
 
     public int CommunityPostId { get; set; }
 
-    public string AppUserId { get; set; }
+    public Guid AppUserId { get; set; }
 }

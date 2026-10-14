@@ -10,7 +10,7 @@ public class CommunityDiscussionDto
 
     public DateTimeOffset CreatedAt { get; set; }
 
-    public int CommunityId { get; set; }
+    public Guid AppUserId { get; set; }
 
-    public string AppUserId { get; set; } = string.Empty;
+    public int CommunityId { get; set; }
 }

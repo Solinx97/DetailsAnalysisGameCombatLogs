@@ -42,7 +42,7 @@ export const CommunityDiscussionCommentApi = CommunityApi.injectEndpoints({
             query: ({ id, comment }) => ({
                 body: comment,
                 url: `/CommunityDiscussionComment/${id}`,
-                method: 'PUT'
+                method: 'PATCH'
             }),
             invalidatesTags: (_result, _error, discussion) => [{ type: 'CommunityDiscussionComment', id: discussion.id }]
         }),

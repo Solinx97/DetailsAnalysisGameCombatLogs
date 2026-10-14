@@ -4,7 +4,7 @@ using MediatR;
 namespace Communication.Application.Queries.GetUserPostByUserId;
 
 public record GetUserPostByUserIdQuery(
-    string AppUserId,
+    Guid AppUserId,
     int Page,
     int PageSize
     ) : IRequest<AllUserPostsDto>;

@@ -1,29 +1,26 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.ReadModel;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Data;
 
 public interface ICommunityPostRepository
 {
-    Task<CommunityPost> GetWithReactionsAsync(int id, CancellationToken cancellationToken);
+    Task<CommunityPost> GetWithReactionsAsync(CommunityPostId id, CancellationToken cancellationToken);
 
-    Task<CommunityPost> GetWithLikeAsync(int id, CancellationToken cancellationToken);
+    Task<CommunityPost> GetWithCommentsAsync(CommunityPostId id, CancellationToken cancellationToken);
 
-    Task<CommunityPost> GetWithDislikeAsync(int id, CancellationToken cancellationToken);
+    Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(CommunityId communityId, UserId appUserId, int page, int pageSize, CancellationToken cancelationToken);
 
-    Task<CommunityPost> GetWithCommentsAsync(int id, CancellationToken cancellationToken);
+    Task<int> CountNewPostsAsync(CommunityId communityId, DateTimeOffset lastCheck, CancellationToken cancelationToken);
 
-    Task<(IEnumerable<CommunityPostReadModel>, int)> GetByCommunityIdAsync(int communityId, string appUserId, int page, int pageSize, CancellationToken cancelationToken);
+    Task<int> CountAsync(CommunityId communityId, CancellationToken cancellationToken);
 
-    Task<int> CountNewPostsAsync(int communityId, DateTimeOffset lastCheck, CancellationToken cancelationToken);
+    Task<int> CountLikeAsync(CommunityPostId communityPostId, CancellationToken cancellationToken);
 
-    Task<int> CountAsync(int communityId, CancellationToken cancellationToken);
+    Task<int> CountDislikeAsync(CommunityPostId communityPostId, CancellationToken cancellationToken);
 
-    Task<int> CountLikeAsync(int userPostId, CancellationToken cancellationToken);
+    Task<int> CountCommentAsync(CommunityPostId communityPostId, CancellationToken cancellationToken);
 
-    Task<int> CountDislikeAsync(int userPostId, CancellationToken cancellationToken);
-
-    Task<int> CountCommentAsync(int communityPostId, CancellationToken cancellationToken);
-
-    Task DeleteAsync(int id, CancellationToken cancelationToken);
+    Task DeleteAsync(CommunityPostId id, CancellationToken cancelationToken);
 }

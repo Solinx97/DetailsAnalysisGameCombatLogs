@@ -1,89 +1,62 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
+using CombatAnalysis.EnhancedWebApp.Server.Patches;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Community;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CommunityController : ControllerBase
+public class CommunityController(ICommunityApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public CommunityController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly ICommunityApiClient _httpClient = httpClient;
 
     [HttpGet]
-    public async Task<IActionResult> Get(int page, int pageSize)
+    public async Task<IActionResult> Get(int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community?page={page}&pageSize={pageSize}");
-        var communities = await responseMessage.Content.ReadFromJsonAsync<CommunityResponse>();
-
+        var communities = await _httpClient.GetAsync(page, pageSize, cancellationToken);
         return Ok(communities);
     }
 
     [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/{id}");
-        var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
-
+        var community = await _httpClient.GetByIdAsync(id, cancellationToken);
         return Ok(community);
     }
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/getByUserId/{appUserId}?page={page}&pageSize={pageSize}");
-        var communities = await responseMessage.Content.ReadFromJsonAsync<CommunityResponse>();
-
+        var communities = await _httpClient.GetByUserIdAsync(appUserId, page, pageSize, cancellationToken);
         return Ok(communities);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityModel community, CancellationToken cancellationToken) 
     {
-        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(request));
-        var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
-
-        return Ok(community);
+        var createdCommunity = await _httpClient.CreateAsync(community, cancellationToken);
+        return Ok(createdCommunity);
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, CommunityModel request)
+    [HttpPatch("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CommunityPatch community, CancellationToken cancellationToken)
     {
-        await _httpClient.PutAsync($"Community/{id}", JsonContent.Create(request));
+        await _httpClient.UpdateAsync(id, community, cancellationToken);
         return NoContent();
     }
 
-    [HttpPut("updateRules/{id:int:min(1)}")]
-    public async Task<IActionResult> UpdateRules(int id, CommunityModel request)
+    [HttpPatch("updateRules/{id:int:min(1)}")]
+    public async Task<IActionResult> UpdateRules(int id, [FromBody] CommunityRulesPatch rules, CancellationToken cancellationToken)
     {
-        await _httpClient.PutAsync($"Community/updateRules/{id}", JsonContent.Create(request));
+        await _httpClient.UpdatePolicyAsync(id, rules, cancellationToken);
         return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteAsync($"Community/{id}");
+        await _httpClient.DeleteAsync(id, cancellationToken);
         return NoContent();
-    }
-
-    [HttpGet("count")]
-    public async Task<IActionResult> Count()
-    {
-        var responseMessage = await _httpClient.GetAsync("Community/count");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
-        return Ok(count);
     }
 }

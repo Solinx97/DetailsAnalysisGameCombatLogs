@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Aggregates;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Entities.Post;
 
@@ -10,32 +11,31 @@ public class UserPostComment
     {
     }
 
-    private UserPostComment(string content, DateTimeOffset createdAt, string appUserId)
+    private UserPostComment(string content, UserId appUserId, DateTimeOffset createdAt)
     {
         Content = content;
         CreatedAt = createdAt;
         AppUserId = appUserId;
     }
 
-    public int Id { get; private set; }
+    public UserPostCommentId Id { get; private set; }
 
     public string Content { get; private set; }
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public int UserPostId { get; private set; }
+    public UserPostId UserPostId { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public UserPost UserPost { get; private set; }
 
-    public static UserPostComment Create(string content, string appUserId)
+    public static UserPostComment Create(string content, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new UserPostComment(content, createdAt, appUserId);
+        return new UserPostComment(content, appUserId, createdAt);
     }
 
     public void EditContent(string content)

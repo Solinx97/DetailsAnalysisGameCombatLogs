@@ -1,73 +1,55 @@
-﻿using CombatAnalysis.EnhancedWebApp.Server.Attributes;
-using CombatAnalysis.EnhancedWebApp.Server.Consts;
-using CombatAnalysis.EnhancedWebApp.Server.Interfaces;
+﻿using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Models.Community;
-using CombatAnalysis.EnhancedWebApp.Server.Response;
+using CombatAnalysis.EnhancedWebApp.Server.Patches;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Controllers.Community;
 
-[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CommunityDiscussionController : ControllerBase
+public class CommunityDiscussionController(ICommunityDiscussionApiClient httpClient) : ControllerBase
 {
-    private readonly IHttpClientHelper _httpClient;
-
-    public CommunityDiscussionController(IOptions<Cluster> cluster, IHttpClientHelper httpClient)
-    {
-        _httpClient = httpClient;
-        _httpClient.APIUrl = cluster.Value.Communication;
-    }
+    private readonly ICommunityDiscussionApiClient _httpClient = httpClient;
 
     [HttpGet("getByCommunityId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize)
+    public async Task<IActionResult> GetByCommunityId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/getByCommunityId/{communityId}?page={page}&pageSize={pageSize}");
-        var discussions = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionResponse>();
-
+        var discussions = await _httpClient.GetAsync(communityId, page, pageSize, cancellationToken);
         return Ok(discussions);
     }
 
-    [HttpGet("getShortListByDiscussionId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> GetShortListByDiscussionId(int communityId, int pageSize)
+    [HttpGet("getShortList/{communityId:int:min(1)}")]
+    public async Task<IActionResult> GetShortList(int communityId, int pageSize, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/getByCommunityId/{communityId}?page=1&pageSize={pageSize}");
-        var discussions = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionResponse>();
-
+        var discussions = await _httpClient.GetShortListAsync(communityId, pageSize, cancellationToken);
         return Ok(discussions);
     }
 
     [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/{id}");
-        var discussion = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionModel>();
-
+        var discussion = await _httpClient.GetByIdAsync(id, cancellationToken);
         return Ok(discussion);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityDiscussionModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityDiscussionModel discussion, CancellationToken cancellationToken)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(request));
-        var discussion = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionModel>();
-
-        return Ok(discussion);
+        var createdDiscussion = await _httpClient.CreateAsync(discussion, cancellationToken);
+        return Ok(createdDiscussion);
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Update(int id, CommunityDiscussionModel request)
+    [HttpPatch("{id:int:min(1)}")]
+    public async Task<IActionResult> Update(int id, CommunityDiscussionPatch discussion, CancellationToken cancellationToken)
     {
-        await _httpClient.PutAsync($"CommunityDiscussion/{id}", JsonContent.Create(request));
+        await _httpClient.UpdateAsync(id, discussion, cancellationToken);
         return NoContent();
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        await _httpClient.DeleteAsync($"CommunityDiscussion/{id}");
+        await _httpClient.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
 }

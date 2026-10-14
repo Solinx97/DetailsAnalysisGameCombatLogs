@@ -10,5 +10,5 @@ public class UserPostCommentModel
 
     public int UserPostId { get; set; }
 
-    public string AppUserId { get; set; }
+    public Guid AppUserId { get; set; }
 }

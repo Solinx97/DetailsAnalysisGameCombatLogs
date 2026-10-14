@@ -26,16 +26,9 @@ public class GroupChatController(IGroupChatApiClient httpClient) : ControllerBas
     }
 
     [HttpPatch("{id:int:min(1)}")]
-    public async Task<IActionResult> PartialUpdate(int id, [FromBody] GroupChatPatch chat, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateChatName(int id, [FromBody] GroupChatPatch chat, CancellationToken cancellationToken)
     {
         await _httpClient.UpdateChatNameAsync(id, chat, cancellationToken);
-        return NoContent();
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
-    {
-        await _httpClient.DeleteChatAsync(id, cancellationToken);
         return NoContent();
     }
 
@@ -51,5 +44,12 @@ public class GroupChatController(IGroupChatApiClient httpClient) : ControllerBas
     {
         var rules = await _httpClient.GetRulesAsync(chatId, cancellationToken);
         return Ok(rules);
+    }
+
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await _httpClient.DeleteChatAsync(id, cancellationToken);
+        return NoContent();
     }
 }

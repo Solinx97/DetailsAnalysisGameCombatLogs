@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { AppUserModel } from '../../../user/types/AppUserModel';
-import { useGetShortListUsersByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
+import { useGetShortListQuery, useRemoveCommunityUserMutation } from '../../api/CommunityUser.api';
 import { useCreateInviteAsyncMutation } from '../../api/InviteToCommunity.api';
 import type { CommunityModel } from '../../types/CommunityModel';
 import type { CommunityUserModel } from '../../types/CommunityUserModel';
@@ -35,7 +35,7 @@ const CommunityMembers: React.FC<CommunityMembersProps> = ({ community, myself, 
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const { data: communityUsers, isLoading } = useGetShortListUsersByCommunityIdQuery({ communityId: community.id, pageSize: pageSizeRef.current });
+    const { data: communityUsers, isLoading } = useGetShortListQuery({ communityId: community.id, pageSize: pageSizeRef.current });
     const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
 
     useEffect(() => {

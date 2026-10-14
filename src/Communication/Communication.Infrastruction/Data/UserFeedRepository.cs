@@ -1,8 +1,7 @@
-﻿using Communication.Domain.Aggregates;
-using Communication.Domain.Data;
-using Communication.Domain.Entities.Community;
+﻿using Communication.Domain.Data;
 using Communication.Domain.Enums;
 using Communication.Domain.ReadModel;
+using Communication.Domain.ValueObjects;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,128 +11,110 @@ internal class UserFeedRepository(CommunicationContext context) : IUserFeedRepos
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<int> CountNewPostsAsync(string appUserIds, List<string> friendsId, DateTimeOffset lastCheck, CancellationToken cancellationToken)
+    public async Task<int> CountNewPostsAsync(UserId appUserId, List<UserId> friendsIds, DateTimeOffset lastCheck, CancellationToken cancellationToken)
     {
-        var userPosts = _context.Set<UserPost>()
+        var userPosts = await _context.UserPost
             .AsNoTracking()
-            .Where(x => (x.AppUserId == appUserIds || friendsId.Contains(x.AppUserId)) 
+            .Where(x => (x.AppUserId == appUserId || friendsIds.Contains(x.AppUserId)) 
                             && x.CreatedAt > lastCheck)
-            .Select(x => new { x.Id });
+            .CountAsync(cancellationToken);
 
         var communityPosts =
-            from post in _context.Set<CommunityPost>().AsNoTracking()
-            join member in _context.Set<CommunityUser>().AsNoTracking()
+            from post in _context.CommunityPost
+                                    .AsNoTracking()
+            join member in _context.CommunityUser
+                                    .AsNoTracking()
                 on post.CommunityId equals member.CommunityId
-            where member.AppUserId == appUserIds 
+            where member.AppUserId == appUserId
                     && post.CreatedAt > lastCheck
             select new
             {
-                post.Id
+                post.Id.Value
             };
 
-        var count = await userPosts
-            .Concat(communityPosts)
+        var communityPostsCount = await communityPosts
             .CountAsync(cancellationToken);
 
-        return count;
+        return userPosts + communityPostsCount;
     }
 
-    public async Task<(IEnumerable<UserFeedReadModel>, int)> GetUserFeedAsync(string appUserIds, List<string> friendsId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserFeedReadModel>, int)> GetUserFeedAsync(UserId appUserId, List<UserId> friendsIds, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var userPosts = _context.Set<UserPost>()
+        var userPosts = await _context.UserPost
             .AsNoTracking()
-            .Where(x => x.AppUserId == appUserIds || friendsId.Contains(x.AppUserId))
-            .Select(x => new
-            {
-                x.Id,
+            .Where(x => x.AppUserId == appUserId || friendsIds.Contains(x.AppUserId))
+            .Select(x => new UserFeedReadModel
+            (
+                x.Id.Value,
                 x.Content,
                 x.PublicType,
                 x.Tags,
                 x.CreatedAt,
                 x.AppUserId,
 
-                LikeCount = x.UserPostLikes.Count(),
-                DislikeCount = x.UserPostDislikes.Count(),
-                CommentCount = x.UserPostComments.Count(),
+                x.UserPostLikes.Count(),
+                x.UserPostDislikes.Count(),
+                x.UserPostComments.Count(),
 
-                Reaction = x.UserPostLikes.Any(l => l.AppUserId == appUserIds)
+                x.UserPostLikes.Any(l => l.AppUserId == appUserId)
                     ? (int)PostReaction.Like
-                    : x.UserPostDislikes.Any(d => d.AppUserId == appUserIds)
+                    : x.UserPostDislikes.Any(d => d.AppUserId == appUserId)
                         ? (int)PostReaction.Dislike
 
                         : (int)PostReaction.None,
 
-                CommunityName = (string)null,
-                PostType = 0,
-                Restrictions = 0,
-                CommunityId = 0
-            });
+                (string?)null,
+                0,
+                0,
+                0
+            ))
+            .ToListAsync(cancellationToken);
 
         var communityPosts =
-            from post in _context.Set<CommunityPost>().AsNoTracking()
-            join community in _context.Set<Community>().AsNoTracking()
+            from post in _context.CommunityPost
+                                    .AsNoTracking()
+            join community in _context.Community
+                                    .AsNoTracking()
                 on post.CommunityId equals community.Id
-            join member in _context.Set<CommunityUser>().AsNoTracking()
+            join member in _context.CommunityUser
+                                    .AsNoTracking()
                 on post.CommunityId equals member.CommunityId
-            where member.AppUserId == appUserIds
-            select new
-            {
-                post.Id,
+            where member.AppUserId == appUserId
+            select new UserFeedReadModel
+            (
+                post.Id.Value,
                 post.Content,
                 post.PublicType,
                 post.Tags,
                 post.CreatedAt,
                 post.AppUserId,
 
-                LikeCount = post.CommunityPostLikes.Count(),
-                DislikeCount = post.CommunityPostDislikes.Count(),
-                CommentCount = post.CommunityPostComments.Count(),
+                post.CommunityPostLikes.Count(),
+                post.CommunityPostDislikes.Count(),
+                post.CommunityPostComments.Count(),
 
-                Reaction = post.CommunityPostLikes.Any(l => l.AppUserId == appUserIds)
+                post.CommunityPostLikes.Any(l => l.AppUserId == appUserId)
                     ? (int)PostReaction.Like
-                    : post.CommunityPostDislikes.Any(d => d.AppUserId == appUserIds)
+                    : post.CommunityPostDislikes.Any(d => d.AppUserId == appUserId)
                         ? (int)PostReaction.Dislike
                         : (int)PostReaction.None,
 
-                CommunityName = community.Name,
+                community.Name,
                 post.PostType,
                 post.Restrictions,
-                post.CommunityId
-            };
+                post.CommunityId.Value
+            );
 
-        var feed = await userPosts
-            .Concat(communityPosts)
+        var communityPostsItmes = await communityPosts
+            .ToListAsync(cancellationToken);
+
+        var feed = userPosts
+            .Concat(communityPostsItmes)
             .OrderByDescending(x => x.CreatedAt)
             .ThenByDescending(x => x.Id)
             .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(x => new UserFeedReadModel(
-                x.Id,
-                x.Content,
-                x.PublicType,
-                x.Tags,
-                x.CreatedAt,
-                x.AppUserId,
+            .Take(pageSize);
 
-                x.LikeCount,
-                x.DislikeCount,
-                x.CommentCount,
-                x.Reaction,
-
-                x.CommunityName,
-                x.PostType,
-                x.Restrictions,
-                x.CommunityId))
-            .ToListAsync(cancellationToken);
-
-        var count = await userPosts
-            .Concat(communityPosts)
-            .Select(x => new
-            {
-                x.Id
-            })
-            .CountAsync(cancellationToken);
-
-        return (feed, count);
+        return (feed, feed.Count());
     }
 }

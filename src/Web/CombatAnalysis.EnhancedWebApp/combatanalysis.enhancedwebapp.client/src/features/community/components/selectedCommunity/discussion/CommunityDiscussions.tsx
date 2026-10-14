@@ -1,12 +1,12 @@
-import { APP_CONFIG } from '@/config/appConfig';
 import type { RootState } from '@/app/Store';
-import { faPlus, faBars } from '@fortawesome/free-solid-svg-icons';
+import { APP_CONFIG } from '@/config/appConfig';
+import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { AppUserModel } from '../../../../user/types/AppUserModel';
-import { useGetShortListCommunityDiscussionByCommunityIdQuery } from '../../../api/CommunityDiscussion.api';
+import { useGetCommunityDiscussionShortListQuery } from '../../../api/CommunityDiscussion.api';
 import type { CommunityDiscussionModel } from '../../../types/CommunityDiscussionModel';
 import type { CommunityModel } from '../../../types/CommunityModel';
 import CreateDiscussion from './CreateDiscussion';
@@ -34,7 +34,7 @@ const CommunityDiscussions: React.FC<CommunityDiscussionsProps> = ({ community, 
     const [showCreateDiscussion, setShowCreateDiscussion] = useState(false);
     const [showAllDiscussions, setShowAllDiscussions] = useState(false);
 
-    const { data: discussions, isLoading } = useGetShortListCommunityDiscussionByCommunityIdQuery({ communityId: community.id, pageSize: pageSizeRef.current });
+    const { data: discussions, isLoading } = useGetCommunityDiscussionShortListQuery({ communityId: community.id, pageSize: pageSizeRef.current });
 
     const handleDiscussion = (discussion: CommunityDiscussionModel) => {
         setDiscussion(discussion);

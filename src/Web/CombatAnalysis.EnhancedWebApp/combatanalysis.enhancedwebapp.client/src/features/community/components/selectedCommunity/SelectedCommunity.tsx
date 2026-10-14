@@ -2,12 +2,12 @@ import type { RootState } from '@/app/Store';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import Loading from '@/shared/components/Loading';
 import logger from '@/utils/Logger';
-import { faBars, faChevronLeft, faChevronRight, faEarthEurope, faEye, faEyeSlash, faShieldHalved, faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronLeft, faChevronRight, faDeleteLeft, faEarthEurope, faEye, faEyeSlash, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLazyGetCommunityByIdQuery } from '../../api/Community.api';
 import type { CommunityDiscussionModel } from '../../types/CommunityDiscussionModel';
 import type { CommunityModel } from '../../types/CommunityModel';
@@ -32,27 +32,29 @@ const SelectedCommunity = () => {
     const [isCommunityMember, setIsCommunityMember] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showMenu, setShowMenu] = useState(false);
-    const [communityId, setCommunityId] = useState(0);
+    // const [communityId, setCommunityId] = useState(0);
     const [community, setCommunity] = useState<CommunityModel | null>(null);
     const [showDiscussion, setShowDiscussion] = useState(false);
     const [discussion, setDiscussion] = useState<CommunityDiscussionModel | null>(null);
     const [showActions, setShowActions] = useState(true);
+    
+	const { communityId } = useParams();
 
     const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
 
-    useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        setCommunityId(parseInt(queryParams.get("id") ?? "0"));
-    }, []);
+    // useEffect(() => {
+    //     const queryParams = new URLSearchParams(window.location.search);
+    //     setCommunityId(parseInt(queryParams.get("id") ?? "0"));
+    // }, []);
 
     useEffect(() => {
-        if (communityId === 0) {
+        if (!communityId) {
             return;
         }
 
         const searchByCommunityId = async () => {
             try {
-                const community = await getCommunityByIdAsync(communityId).unwrap();
+                const community = await getCommunityByIdAsync(parseInt(communityId)).unwrap();
                 setCommunity(community);
             } catch (e) {
                 logger.error("Could not find community by provided community id", e);
@@ -125,7 +127,7 @@ const SelectedCommunity = () => {
                     {(discussion && showDiscussion) &&
                         <Discussion
                             discussionId={discussion.id}
-                            communityId={communityId}
+                            communityId={parseInt(communityId || "0")}
                             setShowDiscussion={setShowDiscussion}
                             user={myself}
                         />
@@ -141,7 +143,7 @@ const SelectedCommunity = () => {
                         }
                         <SelectedCommunityItem
                             user={myself}
-                            communityId={communityId}
+                            communityId={parseInt(communityId || "0")}
                             lastCheck={lastCheck}
                             setLastCheck={setLastCheck}
                             feedVersion={feedVersion}

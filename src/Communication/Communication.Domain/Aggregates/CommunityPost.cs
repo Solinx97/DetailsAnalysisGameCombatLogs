@@ -1,6 +1,7 @@
 ﻿using Communication.Domain.Entities.Post;
 using Communication.Domain.Enums;
 using Communication.Domain.Exceptions;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Aggregates;
 
@@ -17,19 +18,19 @@ public class CommunityPost
     }
 
     private CommunityPost(string content, int postType, int publicType, int restrictions, 
-        string tags,  DateTimeOffset createdAt, int communityId, string appUserId)
+        string tags, int communityId, UserId appUserId, DateTimeOffset createdAt)
     {
         Content = content;
         PostType = postType;
         PublicType = publicType;
         Restrictions = restrictions;
         Tags = tags;
-        CreatedAt = createdAt;
         CommunityId = communityId;
         AppUserId = appUserId;
+        CreatedAt = createdAt;
     }
 
-    public int Id { get; private set; }
+    public CommunityPostId Id { get; private set; }
 
     public string Content { get; private set; }
 
@@ -43,9 +44,9 @@ public class CommunityPost
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public int CommunityId { get; private set; }
+    public CommunityId CommunityId { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public Community Community { get; private set; }
 
@@ -56,21 +57,16 @@ public class CommunityPost
     public IReadOnlyList<CommunityPostLike> CommunityPostLikes => _communityPostLikes;
 
     public static CommunityPost Create(string content, int postType, int publicType, int restrictions,
-        string tags, int communityId, string appUserId)
+        string tags, CommunityId communityId, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityPost(content, postType, publicType, restrictions, tags, createdAt, communityId, appUserId);
+        return new CommunityPost(content, postType, publicType, restrictions, tags, communityId, appUserId, createdAt);
     }
 
-    public (CommunityPostLike, PostReactionStatus) AddLike(int communityId, string appUserId)
+    public (CommunityPostLike, PostReactionStatus) AddLike(CommunityId communityId, UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
-
         var existLike = _communityPostLikes
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existLike != null)
@@ -103,11 +99,8 @@ public class CommunityPost
         }
     }
 
-    public (CommunityPostDislike, PostReactionStatus) AddDislike(int communityId, string appUserId)
+    public (CommunityPostDislike, PostReactionStatus) AddDislike(CommunityId communityId, UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
-
         var existDislike = _communityPostDislikes
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existDislike != null)
@@ -140,11 +133,9 @@ public class CommunityPost
         }
     }
 
-    public CommunityPostComment AddComment(string content, int commentType, int communityId, string appUserId)
+    public CommunityPostComment AddComment(string content, int commentType, CommunityId communityId, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
 
         var comment = CommunityPostComment.Create(content, commentType, communityId, appUserId);
         _communityPostComments.Add(comment);

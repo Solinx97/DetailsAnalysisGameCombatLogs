@@ -17,7 +17,7 @@ public class InviteToCommunityController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, CancellationToken cancellationToken)
     {
         var invites = await _mediator.Send(new GetInvitesToCommunityQuery(appUserId), cancellationToken);
 
@@ -34,7 +34,7 @@ public class InviteToCommunityController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("accept/{id:int:min(1)}")]
-    public async Task<IActionResult> AcceptRequest(int id, int communityId, string appUserId, CancellationToken cancellationToken)
+    public async Task<IActionResult> AcceptRequest(int id, int communityId, Guid appUserId, CancellationToken cancellationToken)
     {
         await _mediator.Send(new AcceptInviteToCommunityCommand(id, communityId, appUserId), cancellationToken);
 

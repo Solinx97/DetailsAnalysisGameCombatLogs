@@ -6,5 +6,5 @@ namespace Communication.Application.Commands.CreateCommunityPostLike;
 public record CreateCommunityPostLikeCommand(
     int CommunityId,
     int CommunityPostId,
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<CommunityPostLikeDto>;

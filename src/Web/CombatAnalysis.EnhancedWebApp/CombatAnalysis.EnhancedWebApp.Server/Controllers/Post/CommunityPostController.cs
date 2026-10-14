@@ -33,7 +33,7 @@ public class CommunityPostController : ControllerBase
     }
 
     [HttpGet("getByCommunityId/{communityId:int:min(0)}")]
-    public async Task<IActionResult> GetByCommunityId(int communityId, string appUserId, int page, int pageSize)
+    public async Task<IActionResult> GetByCommunityId(int communityId, Guid appUserId, int page, int pageSize)
     {
         var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId/{communityId}?appUserId={appUserId}&page={page}&pageSize={pageSize}");
         var comunityPosts = await responseMessage.Content.ReadFromJsonAsync<ComunityPostsResponse>();
@@ -42,7 +42,7 @@ public class CommunityPostController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityPostModel request)
+    public async Task<IActionResult> Create([FromBody] CommunityPostModel request)
     {
         var responseMessage = await _httpClient.PostAsync("CommunityPost", JsonContent.Create(request));
         var communityPost = await responseMessage.Content.ReadFromJsonAsync<CommunityPostModel>();
@@ -51,7 +51,7 @@ public class CommunityPostController : ControllerBase
     }
 
     [HttpGet("count/{communityId:int:min(0)}")]
-    public async Task<IActionResult> Count(int communityId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Count(int communityId)
     {
         var responseMessage = await _httpClient.GetAsync($"CommunityPost/count/{communityId}");
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();

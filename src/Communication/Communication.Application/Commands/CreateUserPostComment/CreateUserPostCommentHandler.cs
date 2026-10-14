@@ -2,13 +2,14 @@
 using Communication.Application.DTOs.Post;
 using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
+using Communication.Domain.ValueObjects;
 using MediatR;
 
 namespace Communication.Application.Commands.CreateUserPostComment;
 
-internal class CreateUserPostCommentHandler(IGenericRepository<UserPost, int> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateUserPostCommentCommand, UserPostCommentDto>
+internal class CreateUserPostCommentHandler(IGenericRepository<UserPost, UserPostId> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateUserPostCommentCommand, UserPostCommentDto>
 {
-    private readonly IGenericRepository<UserPost, int> _repository = repository;
+    private readonly IGenericRepository<UserPost, UserPostId> _repository = repository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
 

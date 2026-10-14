@@ -1,6 +1,8 @@
 ﻿using CombatAnalysis.EnhancedWebApp.Server.Handlers;
 using CombatAnalysis.EnhancedWebApp.Server.HttpClients;
+using CombatAnalysis.EnhancedWebApp.Server.HttpClients.Communications;
 using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients;
+using CombatAnalysis.EnhancedWebApp.Server.Interfaces.HttpClients.Communications;
 
 namespace CombatAnalysis.EnhancedWebApp.Server.Extensions;
 
@@ -25,6 +27,34 @@ internal static class ServiceCollectionExtension
         sc.AddHttpClient<IVoiceChatApiClient, VoiceChatApiClient>(client =>
         {
             client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Chat").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<ICommunityApiClient, CommunityApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<ICommunityDiscussionApiClient, CommunityDiscussionApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<ICommunityDiscussionCommentApiClient, CommunityDiscussionCommentApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
+        })
+            .AddHttpMessageHandler<AuthorizationHandler>()
+            .AddHttpMessageHandler<ApiErrorHandler>();
+
+        sc.AddHttpClient<ICommunityUserApiClient, CommunityUserApiClient>(client =>
+        {
+            client.BaseAddress = new Uri($"{cm.GetSection("Cluster:Communication").Value ?? ""}api/v1/");
         })
             .AddHttpMessageHandler<AuthorizationHandler>()
             .AddHttpMessageHandler<ApiErrorHandler>();

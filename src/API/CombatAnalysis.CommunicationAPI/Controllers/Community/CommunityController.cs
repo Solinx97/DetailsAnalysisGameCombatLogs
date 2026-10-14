@@ -4,7 +4,6 @@ using Communication.Application.Commands.CreateCommunity;
 using Communication.Application.Commands.DeleteCommunity;
 using Communication.Application.Commands.UpdateCommunity;
 using Communication.Application.Commands.UpdateCommunityRules;
-using Communication.Application.Queries.CountCommunity;
 using Communication.Application.Queries.GetCommunitiesByUserId;
 using Communication.Application.Queries.GetCommunity;
 using Communication.Application.Queries.GetCommunityById;
@@ -38,7 +37,7 @@ public class CommunityController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var communities = await _mediator.Send(new GetCommunitiesByUserIdQuery(appUserId, page, pageSize), cancellationToken);
 
@@ -54,7 +53,7 @@ public class CommunityController(IMediator mediator) : ControllerBase
         return Ok(community);
     }
 
-    [HttpPut("{id:int:min(1)}")]
+    [HttpPatch("{id:int:min(1)}")]
     public async Task<IActionResult> Update(int id, [FromBody] CommunityPartial request, CancellationToken cancellationToken)
     {
         if (id != request.Id)
@@ -68,7 +67,7 @@ public class CommunityController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("updateRules/{id:int:min(1)}")]
+    [HttpPatch("updateRules/{id:int:min(1)}")]
     public async Task<IActionResult> UpdateRules(int id, [FromBody] CommunityRulesPartial request, CancellationToken cancellationToken)
     {
         if (id != request.Id)
@@ -88,13 +87,5 @@ public class CommunityController(IMediator mediator) : ControllerBase
         await _mediator.Send(new DeleteCommunityCommand(id), cancellationToken);
 
         return NoContent();
-    }
-
-    [HttpGet("count")]
-    public async Task<IActionResult> Count(CancellationToken cancellationToken)
-    {
-        var count = await _mediator.Send(new CountCommunityQuery(), cancellationToken);
-
-        return Ok(count);
     }
 }

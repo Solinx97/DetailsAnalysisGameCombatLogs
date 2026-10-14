@@ -3,6 +3,6 @@
 namespace Communication.Application.Commands.DeleteCommunityUser;
 
 public record DeleteCommunityUserCommand(
-    string Id,
+    Guid Id,
     int CommunityId
     ) : IRequest;

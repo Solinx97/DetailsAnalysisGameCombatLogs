@@ -7,5 +7,5 @@ public record CreateCommunityCommand(
     string Name,
     string Description,
     int PolicyType,
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<CommunityDto>;

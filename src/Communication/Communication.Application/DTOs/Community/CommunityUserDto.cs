@@ -2,9 +2,9 @@
 
 public class CommunityUserDto
 {
-    public string Id { get; set; } = string.Empty;
+    public Guid Id { get; set; }
 
     public int CommunityId { get; set; }
 
-    public string AppUserId { get; set; } = string.Empty;
+    public Guid AppUserId { get; set; }
 }

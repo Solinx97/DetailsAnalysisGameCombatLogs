@@ -7,5 +7,5 @@ public record CreateUserPostCommand(
     string Content,
     int PublicType,
     string Tags,
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<UserPostDto>;

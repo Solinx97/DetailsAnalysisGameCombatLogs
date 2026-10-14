@@ -21,7 +21,7 @@ public class InviteToCommunityController : ControllerBase
     }
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId)
+    public async Task<IActionResult> GetByUserId(Guid appUserId)
     {
         var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/getByUserId/{appUserId}");
         var invites = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
@@ -30,21 +30,21 @@ public class InviteToCommunityController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(InviteToCommunityModel request)
+    public async Task<IActionResult> Create([FromBody] InviteToCommunityModel request)
     {
         await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(request));
         return NoContent();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(InviteToCommunityModel request)
+    public async Task<IActionResult> Update([FromBody] InviteToCommunityModel request)
     {
         await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(request));
         return NoContent();
     }
 
     [HttpDelete("accept/{id:int:min(1)}")]
-    public async Task<IActionResult> AcceptRequest(int id, int communityId, string appUserId)
+    public async Task<IActionResult> AcceptRequest(int id, int communityId, Guid appUserId)
     {
         await _httpClient.DeleteAsync($"InviteToCommunity/accept/{id}?communityId={communityId}&appUserId={appUserId}");
         return NoContent();

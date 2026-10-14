@@ -7,7 +7,7 @@ internal class UnitOfWork(CommunicationContext dbContext) : IUnitOfWork
 {
     private readonly CommunicationContext _dbContext = dbContext;
 
-    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
         return _dbContext.SaveChangesAsync(cancellationToken);
     }

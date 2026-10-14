@@ -2,13 +2,14 @@
 using Communication.Application.DTOs.Community;
 using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
+using Communication.Domain.ValueObjects;
 using MediatR;
 
 namespace Communication.Application.Commands.CreateDiscussionComment;
 
-internal class CreateDiscussionCommentHandler(IGenericRepository<CommunityDiscussion, int> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateDiscussionCommentCommand, CommunityDiscussionCommentDto>
+internal class CreateDiscussionCommentHandler(IGenericRepository<CommunityDiscussion, CommunityDiscussionId> repository, IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateDiscussionCommentCommand, CommunityDiscussionCommentDto>
 {
-    private readonly IGenericRepository<CommunityDiscussion, int> _repository = repository;
+    private readonly IGenericRepository<CommunityDiscussion, CommunityDiscussionId> _repository = repository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
 

@@ -1,4 +1,6 @@
-﻿namespace Communication.Domain.Entities.Community;
+﻿using Communication.Domain.ValueObjects;
+
+namespace Communication.Domain.Entities.Community;
 
 public class CommunityUser
 {
@@ -6,24 +8,22 @@ public class CommunityUser
     {
     }
 
-    private CommunityUser(string appUserId)
+    private CommunityUser(UserId appUserId)
     {
-        Id = Guid.NewGuid().ToString();
+        Id = Guid.NewGuid();
         AppUserId = appUserId;
     }
 
-    public string Id { get; private set; }
+    public CommunityUserId Id { get; private set; }
 
-    public int CommunityId { get; private set; }
+    public CommunityId CommunityId { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public Aggregates.Community Community { get; private set; }
 
-    public static CommunityUser Create(string appUserId)
+    public static CommunityUser Create(UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         return new CommunityUser(appUserId);
     }
 }

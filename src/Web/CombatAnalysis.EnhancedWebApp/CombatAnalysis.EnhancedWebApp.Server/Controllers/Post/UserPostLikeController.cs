@@ -30,7 +30,7 @@ public class UserPostLikeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserPostLikeModel request)
+    public async Task<IActionResult> Create([FromBody] UserPostLikeModel request)
     {
         var responseMessage = await _httpClient.PostAsync("UserPostLike", JsonContent.Create(request));
         var like = await responseMessage.Content.ReadFromJsonAsync<UserPostLikeModel>();

@@ -14,7 +14,7 @@ public class UserFeedController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("countNewPosts/{appUserId}")]
-    public async Task<IActionResult> CountNewPosts(string appUserId, [FromQuery] List<string> friendIds, [FromQuery] DateTimeOffset lastCheck, CancellationToken cancellationToken)
+    public async Task<IActionResult> CountNewPosts(Guid appUserId, [FromQuery] List<Guid> friendIds, [FromQuery] DateTimeOffset lastCheck, CancellationToken cancellationToken)
     {
         var count = await _mediator.Send(new CountFeedNewPostsQuery(appUserId, friendIds, lastCheck), cancellationToken);
 
@@ -22,7 +22,7 @@ public class UserFeedController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, [FromQuery] List<string> friendIds, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, [FromQuery] List<Guid> friendIds, int page, int pageSize, CancellationToken cancellationToken)
     {
         var userFeed = await _mediator.Send(new GetUserFeedQuery(appUserId, friendIds, page, pageSize), cancellationToken);
 

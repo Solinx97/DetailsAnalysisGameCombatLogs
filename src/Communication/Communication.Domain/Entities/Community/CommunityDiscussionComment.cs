@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Aggregates;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Entities.Community;
 
@@ -10,32 +11,31 @@ public class CommunityDiscussionComment
     {
     }
 
-    private CommunityDiscussionComment(string content, DateTimeOffset createdAt, string appUserId)
+    private CommunityDiscussionComment(string content, UserId appUserId, DateTimeOffset createdAt)
     {
-        Content = content;
         CreatedAt = createdAt;
+        Content = content;
         AppUserId = appUserId;
     }
 
-    public int Id { get; private set; }
+    public CommunityDiscussionCommentId Id { get; private set; }
 
     public string Content { get; private set; }
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public int CommunityDiscussionId { get; private set; }
+    public CommunityDiscussionId CommunityDiscussionId { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public CommunityDiscussion CommunityDiscussion { get; private set; }
 
-    public static CommunityDiscussionComment Create(string content, string appUserId)
+    public static CommunityDiscussionComment Create(string content, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityDiscussionComment(content, createdAt, appUserId);
+        return new CommunityDiscussionComment(content, appUserId, createdAt);
     }
 
     public void EditContent(string content)

@@ -5,7 +5,7 @@ namespace CombatAnalysis.CommunicationAPI.Models.Community;
 public record InviteToCommunityModel(
     [Range(0, int.MaxValue)] int Id,
     [Range(0, int.MaxValue)] int CommunityId,
-    [Required] string ToAppUserId,
+    [Required] Guid ToAppUserId,
     [Required] DateTimeOffset CreatedAt,
-    [Required] string AppUserId
+    [Required] Guid AppUserId
     );

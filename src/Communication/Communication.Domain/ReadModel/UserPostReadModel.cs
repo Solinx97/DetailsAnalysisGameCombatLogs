@@ -6,7 +6,7 @@ public sealed record UserPostReadModel(
     int PublicType,
     string Tags,
     DateTimeOffset CreatedAt,
-    string AppUserId,
+    Guid AppUserId,
     int LikeCount,
     int DislikeCount,
     int CommentCount,

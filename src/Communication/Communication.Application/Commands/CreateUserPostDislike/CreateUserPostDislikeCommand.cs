@@ -5,5 +5,5 @@ namespace Communication.Application.Commands.CreateUserPostDislike;
 
 public record CreateUserPostDislikeCommand(
     int UserPostId,
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<UserPostDislikeDto>;

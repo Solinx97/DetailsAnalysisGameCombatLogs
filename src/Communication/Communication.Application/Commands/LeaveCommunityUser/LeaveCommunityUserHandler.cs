@@ -11,7 +11,7 @@ internal class LeaveCommunityUserHandler(ICommunityRepository repository, IUnitO
     public async Task Handle(LeaveCommunityUserCommand request, CancellationToken cancellationToken)
     {
         var community = await _repository.GetWithUsersAsync(request.CommunityId, cancellationToken);
-        if (community.AppUserId == request.AppUserId)
+        if (community.AppUserId.Value == request.AppUserId)
         {
             await _repository.DeleteAsync(request.CommunityId, cancellationToken);
         }

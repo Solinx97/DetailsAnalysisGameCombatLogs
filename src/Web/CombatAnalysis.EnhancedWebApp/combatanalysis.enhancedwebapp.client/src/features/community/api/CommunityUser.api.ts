@@ -21,7 +21,7 @@ export const CommunityUserApi = CommunityApi.injectEndpoints({
         }),
         leaveCommunityUser: builder.mutation<void, { appUserId: string, communityId: number }>({
             query: ({ appUserId, communityId }) => ({
-                url: `/CommunityUser/leave?appUserId=${appUserId}&communityId=${communityId}`,
+                url: `/CommunityUser/leave/${appUserId}?communityId=${communityId}`,
                 method: 'DELETE'
             }),
         }),
@@ -59,8 +59,8 @@ export const CommunityUserApi = CommunityApi.injectEndpoints({
                 })) ?? [])
             ]
         }),
-        getShortListUsersByCommunityId: builder.query<AllCommunityUserModel, { communityId: number, pageSize: number }>({
-            query: ({ communityId, pageSize }) => `/CommunityUser/getShortListByCommunityId/${communityId}?pageSize=${pageSize}`,
+        getShortList: builder.query<AllCommunityUserModel, { communityId: number, pageSize: number }>({
+            query: ({ communityId, pageSize }) => `/CommunityUser/getShortList/${communityId}?pageSize=${pageSize}`,
             providesTags: () => [{ type: 'CommunityUser', id: 'LIST' }],
         }),
         getCommunityUsersByUserId: builder.query<AllCommunityUserModel, { appUserId: string, page: number, pageSize: number }>({
@@ -105,7 +105,7 @@ export const CommunityUserApi = CommunityApi.injectEndpoints({
 
 export const {
     useGetUsersByCommunityIdQuery,
-    useGetShortListUsersByCommunityIdQuery,
+    useGetShortListQuery,
     useGetCommunityUsersByUserIdQuery,
     useCreateCommunityUserMutation,
     useRemoveCommunityUserMutation,

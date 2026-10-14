@@ -17,7 +17,7 @@ public class UserPostController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("getByUserId/{appUserId}")]
-    public async Task<IActionResult> GetByUserId(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetByUserId(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
         var userPosts = await _mediator.Send(new GetUserPostByUserIdQuery(appUserId, page, pageSize), cancellationToken);
 
@@ -34,7 +34,7 @@ public class UserPostController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("count/{appUserId}")]
-    public async Task<IActionResult> Count(string appUserId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Count(Guid appUserId, CancellationToken cancellationToken)
     {
         var count = await _mediator.Send(new CountUserPostQuery(appUserId), cancellationToken);
 

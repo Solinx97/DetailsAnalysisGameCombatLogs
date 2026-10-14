@@ -32,7 +32,7 @@ const UserCommunitiesItem: React.FC<UserCommunitiesItemProps> = ({ myCommunity, 
                 </div>
                 <p className="card-text">{myCommunity.description}</p>
                 <div className="open-community">
-                    <div className="btn-shadow" onClick={() => navigate(`/community?id=${myCommunity?.id}`)}>
+                    <div className="btn-shadow" onClick={() => navigate(`/community/${myCommunity.id}`)}>
                         <FontAwesomeIcon
                             icon={faCommentDots}
                         />

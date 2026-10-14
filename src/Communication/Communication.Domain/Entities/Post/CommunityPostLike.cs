@@ -1,4 +1,5 @@
 ﻿using Communication.Domain.Aggregates;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Entities.Post;
 
@@ -8,31 +9,28 @@ public class CommunityPostLike
     {
     }
 
-    private CommunityPostLike(DateTimeOffset createdAt, int communityId, string appUserId)
+    private CommunityPostLike(CommunityId communityId, UserId appUserId, DateTimeOffset createdAt)
     {
-        CreatedAt = createdAt;
         CommunityId = communityId;
         AppUserId = appUserId;
+        CreatedAt = createdAt;
     }
 
-    public int Id { get; private set; }
+    public CommunityPostLikeId Id { get; private set; }
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public int CommunityId { get; private set; }
+    public CommunityId CommunityId { get; private set; }
 
-    public int CommunityPostId { get; private set; }
+    public CommunityPostId CommunityPostId { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public CommunityPost CommunityPost { get; private set; }
 
-    public static CommunityPostLike Create(int communityId, string appUserId)
+    public static CommunityPostLike Create(CommunityId communityId, UserId appUserId)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityPostLike(createdAt, communityId, appUserId);
+        return new CommunityPostLike(communityId, appUserId, createdAt);
     }
 }

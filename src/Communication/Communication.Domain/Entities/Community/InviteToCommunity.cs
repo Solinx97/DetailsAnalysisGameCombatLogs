@@ -1,4 +1,6 @@
-﻿namespace Communication.Domain.Entities.Community;
+﻿using Communication.Domain.ValueObjects;
+
+namespace Communication.Domain.Entities.Community;
 
 public class InviteToCommunity
 {
@@ -6,30 +8,28 @@ public class InviteToCommunity
     {
     }
 
-    private InviteToCommunity(string toAppUserId, DateTimeOffset createdAt, string appUserId)
+    private InviteToCommunity(UserId toAppUserId, UserId appUserId, DateTimeOffset createdAt)
     {
         ToAppUserId = toAppUserId;
-        CreatedAt = createdAt;
         AppUserId = appUserId;
+        CreatedAt = createdAt;
     }
 
-    public int Id { get; private set; }
+    public InviteToCommunityId Id { get; private set; }
 
-    public int CommunityId { get; private set; }
+    public CommunityId CommunityId { get; private set; }
 
-    public string ToAppUserId { get; private set; }
+    public UserId ToAppUserId { get; private set; }
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public Aggregates.Community Community { get; private set; }
 
-    public static InviteToCommunity Create(string toAppUserId, DateTimeOffset createdAt, string appUserId)
+    public static InviteToCommunity Create(UserId toAppUserId, UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(toAppUserId, nameof(toAppUserId));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
-        return new InviteToCommunity(toAppUserId, createdAt, appUserId);
+        var createdAt = DateTimeOffset.UtcNow;
+        return new InviteToCommunity(toAppUserId, appUserId, createdAt);
     }
 }

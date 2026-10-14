@@ -1,14 +1,13 @@
 ﻿using Communication.Domain.Aggregates;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Data;
 
 public interface ICommunityDiscussionRepository
 {
-    Task<IEnumerable<CommunityDiscussion>> GetShortListAsync(int communityId, int pageSize, CancellationToken cancellationToken);
+    Task<(IEnumerable<CommunityDiscussion>, int)> GetAsync(CommunityId communityId, int page, int pageSize, CancellationToken cancellationToken);
 
-    Task<(IEnumerable<CommunityDiscussion>, int)> GetAsync(int communityId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<CommunityDiscussion> GetWithCommentsAsync(CommunityDiscussionId id, CancellationToken cancellationToken);
 
-    Task<CommunityDiscussion> GetWithCommentsAsync(int id, CancellationToken cancellationToken);
-
-    Task DeleteAsync(int id, CancellationToken cancelationToken);
+    Task DeleteAsync(CommunityDiscussionId id, CancellationToken cancelationToken);
 }

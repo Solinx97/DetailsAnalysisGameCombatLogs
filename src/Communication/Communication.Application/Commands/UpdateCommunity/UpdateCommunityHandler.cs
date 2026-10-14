@@ -1,12 +1,13 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
+using Communication.Domain.ValueObjects;
 using MediatR;
 
 namespace Communication.Application.Commands.UpdateCommunity;
 
-internal class UpdateCommunityHandler(IGenericRepository<Community, int> repository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCommunityCommand>
+internal class UpdateCommunityHandler(IGenericRepository<Community, CommunityId> repository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCommunityCommand>
 {
-    private readonly IGenericRepository<Community, int> _repository = repository;
+    private readonly IGenericRepository<Community, CommunityId> _repository = repository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task Handle(UpdateCommunityCommand request, CancellationToken cancellationToken)

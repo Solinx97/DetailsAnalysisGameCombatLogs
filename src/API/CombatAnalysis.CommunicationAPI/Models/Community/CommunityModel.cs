@@ -7,5 +7,5 @@ public record CommunityModel(
     [Required] string Name,
     [Required] string Description,
     [Range(0, int.MaxValue)] int PolicyType,
-    [Required] string AppUserId
+    [Required] Guid AppUserId
     );

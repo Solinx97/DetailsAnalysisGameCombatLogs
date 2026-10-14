@@ -1,6 +1,7 @@
 ﻿using Communication.Domain.Entities.Post;
 using Communication.Domain.Enums;
 using Communication.Domain.Exceptions;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Aggregates;
 
@@ -16,17 +17,17 @@ public class UserPost
     {
     }
 
-    private UserPost(string content, int publicType, string tags, DateTimeOffset createdAt,
-        string appUserId)
+    private UserPost(string content, int publicType, string tags,
+        UserId appUserId, DateTimeOffset createdAt)
     {
         Content = content;
         PublicType = publicType;
         Tags = tags;
-        CreatedAt = createdAt;
         AppUserId = appUserId;
+        CreatedAt = createdAt;
     }
 
-    public int Id { get; private set; }
+    public UserPostId Id { get; private set; }
 
     public string Content { get; private set; }
 
@@ -36,7 +37,7 @@ public class UserPost
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public IReadOnlyList<UserPostComment> UserPostComments => _userPostComments;
 
@@ -44,20 +45,16 @@ public class UserPost
 
     public IReadOnlyList<UserPostLike> UserPostLikes => _userPostLikes;
 
-    public static UserPost Create(string content, int publicType, string tags, string appUserId)
+    public static UserPost Create(string content, int publicType, string tags, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new UserPost(content, publicType, tags, createdAt, appUserId);
+        return new UserPost(content, publicType, tags, appUserId, createdAt);
     }
 
-    public (UserPostLike, PostReactionStatus) AddLike(string appUserId)
+    public (UserPostLike, PostReactionStatus) AddLike(UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         var existLike = _userPostLikes
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existLike != null)
@@ -90,10 +87,8 @@ public class UserPost
         }
     }
 
-    public (UserPostDislike, PostReactionStatus) AddDislike(string appUserId)
+    public (UserPostDislike, PostReactionStatus) AddDislike(UserId appUserId)
     {
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
-
         var existDislike = _userPostDislikes
             .FirstOrDefault(x => x.AppUserId == appUserId);
         if (existDislike != null)
@@ -126,10 +121,9 @@ public class UserPost
         }
     }
 
-    public UserPostComment AddComment(string content, string appUserId)
+    public UserPostComment AddComment(string content, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var comment = UserPostComment.Create(content, appUserId);
         _userPostComments.Add(comment);
@@ -158,9 +152,8 @@ public class UserPost
         }
     }
 
-    public void EditCommentContent(int userPostId, string content)
+    public void EditCommentContent(UserPostId userPostId, string content)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userPostId, nameof(userPostId));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
 
         var comment = _userPostComments

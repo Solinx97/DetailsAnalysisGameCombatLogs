@@ -7,7 +7,6 @@ using Communication.Application.Queries.GetCommunityDiscussionComments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
 
 namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
 
@@ -18,10 +17,10 @@ public class CommunityDiscussionCommentController(IMediator mediator) : Controll
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpGet("getByDiscussionId/{communityId:int:min(1)}")]
-    public async Task<IActionResult> GetByDiscussionId(int communityId, int page, int pageSize, CancellationToken cancellationToken)
+    [HttpGet("getByDiscussionId/{discussionId:int:min(1)}")]
+    public async Task<IActionResult> GetByDiscussionId(int discussionId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var comments = await _mediator.Send(new GetCommunityDiscussionCommentsQuery(communityId, page, pageSize), cancellationToken);
+        var comments = await _mediator.Send(new GetCommunityDiscussionCommentsQuery(discussionId, page, pageSize), cancellationToken);
 
         return Ok(comments);
     }
@@ -35,7 +34,7 @@ public class CommunityDiscussionCommentController(IMediator mediator) : Controll
         return Ok(comment);
     }
 
-    [HttpPut("{id:int:min(1)}")]
+    [HttpPatch("{id:int:min(1)}")]
     public async Task<IActionResult> Update(int id, [FromBody] CommunityDiscussionCommentPartial request, CancellationToken cancellationToken)
     {
         if (id != request.Id)

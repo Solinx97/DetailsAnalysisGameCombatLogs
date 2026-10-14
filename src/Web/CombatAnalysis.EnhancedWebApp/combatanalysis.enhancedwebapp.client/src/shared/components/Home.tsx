@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import useMediaQuery from '../hooks/useMediaQuery';
 
 import './Home.scss';
 
@@ -24,6 +25,7 @@ const Home: React.FC = () => {
     const myself = useSelector((state: RootState) => state.user.value);
 
     const auth = useAuth();
+    const isMobile = useMediaQuery("(max-width: 425px)");
 
     const [authorization] = useLazyAuthorizationQuery();
 
@@ -69,6 +71,44 @@ const Home: React.FC = () => {
     const navigateToFeed = () => navigate("/feed");
     const navigateToGameCombatLogs = () => navigate("/game-combat-logs");
     const navigateToWoWGameData = () => navigate("/wow-game-data");
+
+    if (isMobile) {
+        return (
+            <div className="home">
+                <div className="home__item">
+                    <div className="title">
+                        <div>{t("Communication")}</div>
+                        {!myself &&
+                            <div className="btn-shadow authorize-alert" onClick={loginHandle} title={t("GoToLogin") || ""}>
+                                <FontAwesomeIcon
+                                    icon={faTriangleExclamation}
+                                />
+                                <div>{t("ShouldAuthorize")}</div>
+                            </div>
+                        }
+                    </div>
+                    {myself !== null &&
+                        <div className="go-to-communication" data-testid="go-to-communication" onClick={navigateToFeed}>{t("Open")}</div>
+                    }
+                </div>
+                <div className="home__item">
+                    <div className="title">{t("Analyzing")}</div>
+                    <div className="go-to-combat-logs" data-testid="go-to-combat-logs" onClick={navigateToGameCombatLogs}>{t("Open")}</div>
+                </div>
+                <div className="home__item">
+                    <div className="title">{t("WoWExplorer")}</div>
+                    <div className="go-to-combat-logs" data-testid="go-to-combat-logs" onClick={navigateToWoWGameData}>{t("Open")}</div>
+                </div>
+                {shouldBeAuthorize &&
+                    <div className="should-be-authorize" data-testid="should-be-authorize">
+                        <div className="alert alert-success" role="alert">
+                            {t("YouNeed")} <span onClick={loginHandle}>{t("Login")}</span> {t("InApp")}
+                        </div>
+                    </div>
+                }
+            </div>
+        );
+    }
 
     return (
         <div className="home">

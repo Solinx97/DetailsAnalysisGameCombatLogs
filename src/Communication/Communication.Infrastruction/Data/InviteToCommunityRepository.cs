@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Data;
 using Communication.Domain.Entities.Community;
+using Communication.Domain.ValueObjects;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +10,9 @@ internal class InviteToCommunityRepository(CommunicationContext context) : IInvi
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<IEnumerable<InviteToCommunity>> GetByUserIdAsync(string appUserId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<InviteToCommunity>> GetByUserIdAsync(UserId appUserId, CancellationToken cancellationToken)
     {
-        var invitesToCommunity = await _context.Set<InviteToCommunity>()
+        var invitesToCommunity = await _context.InviteToCommunity
             .Where(x => x.ToAppUserId == appUserId)
             .ToListAsync(cancellationToken);
 

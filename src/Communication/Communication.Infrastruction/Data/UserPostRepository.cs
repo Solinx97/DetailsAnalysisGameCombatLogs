@@ -1,8 +1,8 @@
 ﻿using Communication.Domain.Aggregates;
 using Communication.Domain.Data;
-using Communication.Domain.Entities.Post;
 using Communication.Domain.Enums;
 using Communication.Domain.ReadModel;
+using Communication.Domain.ValueObjects;
 using Communication.Infrastruction.Exceptions;
 using Communication.Infrastruction.Persistent;
 using Microsoft.EntityFrameworkCore;
@@ -13,21 +13,22 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
 {
     private readonly CommunicationContext _context = context;
 
-    public async Task<UserPost> GetWithReactionsAsync(int id, CancellationToken cancellationToken)
+    public async Task<UserPost> GetWithReactionsAsync(UserPostId id, CancellationToken cancellationToken)
     {
-        var post = await _context.Set<UserPost>()
+        var post = await _context.UserPost
             .Where(x => x.Id == id)
             .Include(x => x.UserPostLikes)
             .Include(x => x.UserPostDislikes)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(cancellationToken)
                 ?? throw new EntityNotFoundException(typeof(UserPost), id);
 
         return post;
     }
 
-    public async Task<(IEnumerable<UserPostReadModel>, int)> GetByUserIdAsync(string appUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<UserPostReadModel>, int)> GetByUserIdAsync(UserId appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var query = _context.Set<UserPost>()
+        var query = _context.UserPost
             .AsNoTracking()
             .Where(x => x.AppUserId == appUserId);
 
@@ -62,9 +63,9 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
         return (posts, count);
     }
 
-    public async Task<UserPost> GetWithCommentsAsync(int id, CancellationToken cancellationToken)
+    public async Task<UserPost> GetWithCommentsAsync(UserPostId id, CancellationToken cancellationToken)
     {
-        var post = await _context.Set<UserPost>()
+        var post = await _context.UserPost
             .Where(x => x.Id == id)
             .Include(x => x.UserPostComments)
             .FirstOrDefaultAsync(cancellationToken)
@@ -73,54 +74,45 @@ internal class UserPostRepository(CommunicationContext context) : IUserPostRepos
         return post;
     }
 
-    public async Task<UserPostLike> GetLikeByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<int> CountAsync(UserId appUserId, CancellationToken cancellationToken)
     {
-        var like = await _context.Set<UserPostLike>()
-            .FirstAsync(x => x.Id == id, cancellationToken)
-                ?? throw new EntityNotFoundException(typeof(UserPostLike), id);
-
-        return like;
-    }
-
-    public async Task<int> CountAsync(string appUserId, CancellationToken cancellationToken)
-    {
-        var count = await _context.Set<UserPost>()
+        var count = await _context.UserPost
             .Where(x => x.AppUserId == appUserId)
             .CountAsync(cancellationToken);
 
         return count;
     }
 
-    public async Task<int> CountLikeAsync(int userPostId, CancellationToken cancellationToken)
+    public async Task<int> CountLikeAsync(UserPostId userPostId, CancellationToken cancellationToken)
     {
-        var count = await _context.Set<UserPostLike>()
+        var count = await _context.UserPostLike
             .Where(x => x.UserPostId == userPostId)
             .CountAsync(cancellationToken);
 
         return count;
     }
 
-    public async Task<int> CountDislikeAsync(int userPostId, CancellationToken cancellationToken)
+    public async Task<int> CountDislikeAsync(UserPostId userPostId, CancellationToken cancellationToken)
     {
-        var count = await _context.Set<UserPostDislike>()
+        var count = await _context.UserPostDislike
             .Where(x => x.UserPostId == userPostId)
             .CountAsync(cancellationToken);
 
         return count;
     }
 
-    public async Task<int> CountCommentAsync(int userPostId, CancellationToken cancellationToken)
+    public async Task<int> CountCommentAsync(UserPostId userPostId, CancellationToken cancellationToken)
     {
-        var count = await _context.Set<UserPostComment>()
+        var count = await _context.UserPostComment
             .Where(x => x.UserPostId == userPostId)
             .CountAsync(cancellationToken);
 
         return count;
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancelationToken)
+    public async Task DeleteAsync(UserPostId id, CancellationToken cancelationToken)
     {
-        await _context.Set<UserPost>()
+        await _context.UserPost
             .Where(cl => cl.Id == id)
             .ExecuteDeleteAsync(cancelationToken);
     }

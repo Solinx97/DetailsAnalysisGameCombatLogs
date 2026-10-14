@@ -7,5 +7,5 @@ public record CreateCommunityDescussionCommand(
     string Title,
     string Content,
     int CommunityId,
-    string AppUserId
+    Guid AppUserId
     ) : IRequest<CommunityDiscussionDto>;

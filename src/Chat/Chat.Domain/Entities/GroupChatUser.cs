@@ -10,7 +10,7 @@ public class GroupChatUser : IRepositoryEntity<GroupChatUserId>
 
     private GroupChatUser() { }
 
-    private GroupChatUser(string username, UserId appUserId, int unreadMessages = 0)
+    private GroupChatUser(string username, UserId appUserId, int unreadMessages)
     {
         Id = Guid.NewGuid();
         Username = username;

@@ -81,7 +81,7 @@ const AppRoutes: Route[] = [
         element: <Profile />
     },
     {
-        path: '/community',
+        path: '/community/:communityId',
         element: <SelectedCommunity />
     },
     {

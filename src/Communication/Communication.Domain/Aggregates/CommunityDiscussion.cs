@@ -1,5 +1,6 @@
 ﻿using Communication.Domain.Entities.Community;
 using Communication.Domain.Exceptions;
+using Communication.Domain.ValueObjects;
 
 namespace Communication.Domain.Aggregates;
 
@@ -14,17 +15,17 @@ public class CommunityDiscussion
     {
     }
 
-    private CommunityDiscussion(string title, string content, DateTimeOffset createdAt, int communityId,
-        string appUserId)
+    private CommunityDiscussion(string title, string content, CommunityId communityId,
+        UserId appUserId, DateTimeOffset createdAt)
     {
         Title = title;
         Content = content;
-        CreatedAt = createdAt;
         CommunityId = communityId;
         AppUserId = appUserId;
+        CreatedAt = createdAt;
     }
 
-    public int Id { get; private set; }
+    public CommunityDiscussionId Id { get; private set; }
 
     public string Title { get; private set; }
 
@@ -32,23 +33,21 @@ public class CommunityDiscussion
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    public int CommunityId { get; private set; }
+    public CommunityId CommunityId { get; private set; }
 
-    public string AppUserId { get; private set; }
+    public UserId AppUserId { get; private set; }
 
     public Community Community { get; private set; }
 
     public IReadOnlyList<CommunityDiscussionComment> CommunityDiscussionComments => _communityDiscussionComments;
 
-    public static CommunityDiscussion Create(string title, string content, int communityId, string appUserId)
+    public static CommunityDiscussion Create(string title, string content, CommunityId communityId, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(title, nameof(title));
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communityId, nameof(communityId));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var createdAt = DateTimeOffset.UtcNow;
-        return new CommunityDiscussion(title, content, createdAt, communityId, appUserId);
+        return new CommunityDiscussion(title, content, communityId, appUserId, createdAt);
     }
 
     public void Edit(string title, string content)
@@ -57,10 +56,9 @@ public class CommunityDiscussion
         EditContent(content);
     }
 
-    public CommunityDiscussionComment AddComment(string content, string appUserId)
+    public CommunityDiscussionComment AddComment(string content, UserId appUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(content, nameof(content));
-        ArgumentException.ThrowIfNullOrEmpty(appUserId, nameof(appUserId));
 
         var comment = CommunityDiscussionComment.Create(content, appUserId);
         _communityDiscussionComments.Add(comment);
