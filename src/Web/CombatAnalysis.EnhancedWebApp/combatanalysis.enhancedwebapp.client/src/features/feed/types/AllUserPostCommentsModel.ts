@@ -1,6 +1,6 @@
 import type { UserPostCommentModel } from './UserPostCommentModel';
 
-export interface AllUserPostCommentsModel {
+export type AllUserPostCommentsModel = {
     comments: UserPostCommentModel[];
     count: number;
 }

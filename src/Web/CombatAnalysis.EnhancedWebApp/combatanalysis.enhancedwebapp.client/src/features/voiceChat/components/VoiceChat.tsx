@@ -1,5 +1,4 @@
 ﻿import type { RootState } from '@/app/Store';
-import { APP_CONFIG } from '@/config/appConfig';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import logger from '@/utils/Logger';
 import { memo, useEffect, useRef, useState } from 'react';
@@ -16,8 +15,6 @@ import './VoiceChat.scss';
 
 const VoiceChat: React.FC = () => {
 	const { t } = useTranslation('communication/chats/voiceChat');
-
-	const voiceHubURL = APP_CONFIG.chatApiHubs.voiceChat;
 
 	const myself = useSelector((state: RootState) => state.user.value);
 
@@ -79,7 +76,7 @@ const VoiceChat: React.FC = () => {
 		}
 
 		(async () => {
-			await methods.connectToChatAsync(voiceHubURL, setHaveControllBar);
+			await methods.connectToChatAsync(setHaveControllBar);
 		})();
 	}, [myself]);
 

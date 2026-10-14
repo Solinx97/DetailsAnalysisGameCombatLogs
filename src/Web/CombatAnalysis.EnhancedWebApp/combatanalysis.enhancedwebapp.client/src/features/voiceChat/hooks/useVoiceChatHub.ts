@@ -1,27 +1,42 @@
-﻿import logger from '@/utils/Logger';
+﻿import { APP_CONFIG } from '@/config/appConfig';
+import logger from '@/utils/Logger';
 import * as signalR from '@microsoft/signalr';
 import { useRef, useState, type SetStateAction } from 'react';
 import useRTCConnection from './useRTCConnection';
 
 const useVoiceChatHub = (roomId: string) => {
+	const voiceHubURL = APP_CONFIG.chatApiHubs.voiceChat;
+	const useLongPoll = import.meta.env.VITE_USE_HUB_LOONG_POLL === "true" ? true : false;
+	
 	const [hubConnection, setHubConnection] = useState<signalR.HubConnection | null>(null);
 
 	const peerConnectionsRef = useRef<Map<string, RTCPeerConnection>>(new Map());
 	const connectionIsActiveRef = useRef(false);
 
 	const { localStreamRef, setup, startAsync, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanup, addTrackToPeer } = useRTCConnection();
+	
+	const createHubConnection = (url: string): signalR.HubConnection => {
+		const hubConnection = new signalR.HubConnectionBuilder()
+			.withUrl(url, {
+				withCredentials: true,
+				transport: useLongPoll
+					? signalR.HttpTransportType.LongPolling
+					: signalR.HttpTransportType.LongPolling | signalR.HttpTransportType.WebSockets
+			})
+			.withAutomaticReconnect()
+			.build();
 
-	const connectToChatAsync = async (signalingAddress: string, setHaveControllBar: (value: SetStateAction<boolean>) => void) => {
+		return hubConnection;
+	}
+
+	const connectToChatAsync = async (setHaveControllBar: (value: SetStateAction<boolean>) => void) => {
 		try {
-			const hubConnection = new signalR.HubConnectionBuilder()
-				.withUrl(signalingAddress)
-				.withAutomaticReconnect()
-				.build();
-			setHubConnection(hubConnection);
+			const connection = createHubConnection(voiceHubURL);
+			setHubConnection(connection);
 
-			await hubConnection.start();
+			await connection.start();
 
-			const connectionIsActive = setup(hubConnection, roomId, peerConnectionsRef.current, setHaveControllBar);
+			const connectionIsActive = setup(connection, roomId, peerConnectionsRef.current, setHaveControllBar);
 			connectionIsActiveRef.current = connectionIsActive;
 
 			await startAsync();
@@ -192,18 +207,18 @@ const useVoiceChatHub = (roomId: string) => {
 
 	return {
 		properties: {
-            hubConnection,
+			hubConnection,
 			peerConnectionsRef,
 			localStreamRef,
 		},
 		methods: {
-            connectToChatAsync,
+			connectToChatAsync,
 			leaveFromChatAsync,
-            switchMicrophoneStatusAsync,
+			switchMicrophoneStatusAsync,
 			switchCameraStatusAsync,
 			startScreenSharingAsync,
 			mediaRequestsAsync,
-        }
+		}
 	};
 }
 

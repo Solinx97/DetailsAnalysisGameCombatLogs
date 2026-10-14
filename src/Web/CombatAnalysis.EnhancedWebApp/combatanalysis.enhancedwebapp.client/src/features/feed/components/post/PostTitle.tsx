@@ -50,13 +50,13 @@ const PostTitle: React.FC<PostTitleProps> = ({ user, post, isMyPost, removeUserP
     }
 
     const goToCommunityAsync = async () => {
-        if (isCommunityPost(post) && removeCommunityPost) {
+        if (isCommunityPost(post)) {
             navigate(`/community?id=${post.communityId}`);
         }
     }
 
     const getPostTitle = () => {
-        if (isCommunityPost(post) && removeCommunityPost) {
+        if (isCommunityPost(post)) {
             return (
                 <div className="community-post"
                     onClick={goToCommunityAsync}

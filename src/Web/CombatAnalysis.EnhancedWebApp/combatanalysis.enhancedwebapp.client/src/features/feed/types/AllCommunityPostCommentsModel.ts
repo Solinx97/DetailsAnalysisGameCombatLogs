@@ -1,6 +1,6 @@
 import type { CommunityPostCommentModel } from './CommunityPostCommentModel';
 
-export interface AllCommunityPostCommentsModel {
+export type AllCommunityPostCommentsModel = {
     comments: CommunityPostCommentModel[];
     count: number;
 }

@@ -1,6 +1,6 @@
 import type { UserPostModel } from './UserPostModel';
 
-export interface AllUserPostsModel {
+export type AllUserPostsModel = {
     posts: UserPostModel[];
     count: number;
 }

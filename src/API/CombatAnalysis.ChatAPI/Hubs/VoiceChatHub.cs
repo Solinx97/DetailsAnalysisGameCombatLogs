@@ -5,9 +5,8 @@ using System.Collections.Concurrent;
 namespace CombatAnalysis.ChatAPI.Hubs;
 
 [Authorize]
-public class VoiceChatHub(ILogger<VoiceChatHub> logger) : Hub
+public class VoiceChatHub : Hub
 {
-    private readonly ILogger<VoiceChatHub> _logger = logger;
     private static readonly ConcurrentDictionary<string, HashSet<string>> _groupUsers = new();
 
     public async Task JoinToRoom(string voiceChatId)

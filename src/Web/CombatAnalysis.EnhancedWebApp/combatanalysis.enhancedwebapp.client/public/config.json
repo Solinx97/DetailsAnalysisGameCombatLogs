@@ -27,13 +27,13 @@
     }
   },
   "chatApiHubs": {
-    "personalChat": "personalChatHub",
-    "personalChatMessages": "personalChatMessagesHub",
-    "personalChatUnreadMessages": "personalChatUnreadMessagesHub",
-    "groupChat": "groupChatHub",
-    "groupChatMessages": "groupChatMessagesHub",
-    "groupChatUnreadMessages": "groupChatUnreadMessagesHub",
-    "voiceChat": "voiceChatHub"
+    "personalChat": "/personalChatHub",
+    "personalChatMessages": "/personalChatMessagesHub",
+    "personalChatUnreadMessages": "/personalChatUnreadMessagesHub",
+    "groupChat": "/groupChatHub",
+    "groupChatMessages": "/groupChatMessagesHub",
+    "groupChatUnreadMessages": "/groupChatUnreadMessagesHub",
+    "voiceChat": "/voiceChatHub"
   },
   "notificationApiHubs": {
     "notification": "notificationHub"

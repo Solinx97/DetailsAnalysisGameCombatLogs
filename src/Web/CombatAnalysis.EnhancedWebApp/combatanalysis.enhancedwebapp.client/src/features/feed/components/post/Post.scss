@@ -222,11 +222,12 @@ $mobile-max-width: 425px;
             margin: $padding-small;
             padding: $padding-small;
             gap: $gap-small;
-            width: $width-reactions;
+            width: auto;
             font-size: $font-size;
 
             .item {
                 display: flex;
+                align-items: center;
 
                 &__comment_active {
                     color: yellow;

@@ -1,6 +1,6 @@
 import type { PostModel } from './PostModel';
 
-export interface CommunityPostModel extends PostModel {
+export type CommunityPostModel = PostModel & {
     communityName?: string;
     postType: number;
     restrictions: number;

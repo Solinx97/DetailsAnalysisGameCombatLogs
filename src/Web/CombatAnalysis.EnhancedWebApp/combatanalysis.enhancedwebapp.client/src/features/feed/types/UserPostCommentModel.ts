@@ -1,5 +1,5 @@
 import type { CommentModel } from './CommentModel';
 
-export interface UserPostCommentModel extends CommentModel {
+export type UserPostCommentModel = CommentModel & {
     userPostId: number;
 }

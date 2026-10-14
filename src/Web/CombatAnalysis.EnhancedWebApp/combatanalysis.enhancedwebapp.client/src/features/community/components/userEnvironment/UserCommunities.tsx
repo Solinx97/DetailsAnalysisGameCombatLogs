@@ -1,9 +1,8 @@
-import { APP_CONFIG } from '@/config/appConfig';
 import type { RootState } from '@/app/Store';
-import CommunicationMenu from '@/shared/components/CommunicationMenu';
+import { APP_CONFIG } from '@/config/appConfig';
+import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import Loading from '@/shared/components/Loading';
 import VerificationRestriction from '@/shared/components/VerificationRestriction';
-import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
@@ -48,13 +47,7 @@ const UserCommunities: React.FC = () => {
 
     if (!myCommunities || isLoading || !userPrivacy) {
         return (
-            <>
-                <CommunicationMenu
-                    currentMenuItem={7}
-                    hasSubMenu={true}
-                />
-                <Loading />
-            </>
+            <Loading />
         );
     }
 

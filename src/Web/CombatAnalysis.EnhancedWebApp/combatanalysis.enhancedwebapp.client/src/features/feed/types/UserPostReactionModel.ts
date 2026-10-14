@@ -1,5 +1,5 @@
 import type { PostReactionModel } from './PostReactionModel';
 
-export interface UserPostReactionModel extends PostReactionModel {
+export type UserPostReactionModel = PostReactionModel & {
     userPostId: number;
 }

@@ -23,22 +23,20 @@
     "http (prod)": {
       "commandName": "Project",
       "launchBrowser": false,
-      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:6006"
+      "applicationUrl": "http://localhost:6016"
     },
     "https (prod)": {
       "commandName": "Project",
       "launchBrowser": false,
-      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:5607"
+      "applicationUrl": "https://localhost:5610"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json"

@@ -32,11 +32,7 @@ const UserFeed: React.FC = () => {
         setHasMore(((page - 1) * pageSizeRef.current) < posts.count);
     }, [page, posts]);
 
-    if (!posts || isLoading) {
-        return (<Loading />);
-    }
-
-    if (!myself) {
+    if (!posts || isLoading || !myself) {
         return (
             <>
                 <CommunicationMenu

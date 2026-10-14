@@ -116,6 +116,7 @@ const hubsEnddpoints = (target: string, changeOrigin: boolean, ws: boolean) => {
         [`^/personalChatHub`]: { target, changeOrigin, ws, secure: false },
         [`^/personalChatMessagesHub`]: { target, changeOrigin, ws, secure: false },
         [`^/personalChatUnreadMessagesHub`]: { target, changeOrigin, ws, secure: false },
+        [`^/voiceChatHub`]: { target, changeOrigin, ws, secure: false },
         [`^/notificationHub`]: { target, changeOrigin, ws, secure: false },
     }
 }

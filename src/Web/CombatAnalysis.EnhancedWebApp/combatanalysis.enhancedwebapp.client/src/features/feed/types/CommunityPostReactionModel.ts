@@ -1,6 +1,6 @@
 import type { PostReactionModel } from './PostReactionModel';
 
-export interface CommunityPostReactionModel extends PostReactionModel {
+export type CommunityPostReactionModel = PostReactionModel & {
     communityId: number;
     communityPostId: number;
 }
