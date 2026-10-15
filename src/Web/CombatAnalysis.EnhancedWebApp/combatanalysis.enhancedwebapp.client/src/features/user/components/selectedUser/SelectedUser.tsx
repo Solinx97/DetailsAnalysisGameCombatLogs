@@ -2,13 +2,14 @@ import type { RootState } from '@/app/Store';
 import { APP_CONFIG } from '@/config/appConfig';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { useGetFeedQuery } from '@/features/feed/api/UserFeed.api';
+import CommunityPost from '@/features/feed/components/post/CommunityPost';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import UserPost from '../../../feed/components/post/UserPost';
 import { useGetUserByIdQuery } from '../../api/Account.api';
 import Friends from '../userEnvironment/Friends';
@@ -24,25 +25,17 @@ const SelectedUser: React.FC = () => {
 
     const myself = useSelector((state: RootState) => state.user.value);
 
-    const location = useLocation();
-
-    const [personId, setPersonId] = useState<string>("0");
     const [currentMenuItem, setMenuItem] = useState(0);
 
     const [page, setPage] = useState(1);;
     const [hasMore, setHasMore] = useState(false);
 
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.userPostSize ?? 5);
+    
+	const { userId } = useParams();
 
-    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId: myself?.id ?? "0", page, pageSize: pageSizeRef.current, feedVersion });
-    const { data: person, isLoading: personIsLoading } = useGetUserByIdQuery(personId);
-
-    useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        const id: string = queryParams.get("id") || "0";
-
-        setPersonId(id);
-    }, []);
+    const { data: userFeed, isLoading, isFetching } = useGetFeedQuery({ appUserId: userId ?? "0", page, pageSize: pageSizeRef.current, feedVersion });
+    const { data: person, isLoading: personIsLoading } = useGetUserByIdQuery(userId ?? "0");
 
     useEffect(() => {
         if (!userFeed) {
@@ -53,7 +46,7 @@ const SelectedUser: React.FC = () => {
     }, [page, userFeed]);
 
     if (!myself || !userFeed || isLoading || !person || personIsLoading) {
-        return (<></>);
+        return (<div>Loading...</div>);
     }
 
     return (
@@ -109,25 +102,32 @@ const SelectedUser: React.FC = () => {
                             <ul className="posts">
                                 {userFeed.posts.length === 0
                                     ? <div>{t("Empty")}</div>
-                                    : userFeed.posts.map(post => (
-                                        <li key={post.id}>
-                                            <UserPost
-                                                user={myself}
-                                                post={post}
-                                                feedVersion={feedVersion}
-                                            />
-                                        </li>
-                                    ))
-                                }
-                                {userFeed.posts.length > 0 &&
-                                    < li className="posts__item">
-                                        <InfiniteScrollTrigger
-                                            onLoadMore={() => setPage(p => p + 1)}
-                                            hasMore={hasMore}
-                                            isLoading={isFetching}
-                                        />
-                                    </li>
-                                }
+                                    : userFeed.posts.map((post, index) => (
+                                        post.communityId
+                                            ? <li key={`${post.id}-${index}`}>
+                                                <CommunityPost
+                                                    user={myself}
+                                                    communityId={post.communityId ?? 0}
+                                                    post={post}
+                                                    feedVersion={feedVersion}
+                                                />
+                                            </li>
+                                            : <li key={`${post.id}-${index}`}>
+                                                <UserPost
+                                                    user={myself}
+                                                    post={post}
+                                                    feedVersion={feedVersion}
+                                                />
+                                            </li>
+
+                                    ))}
+                                <li className="posts__item">
+                                    <InfiniteScrollTrigger
+                                        onLoadMore={() => setPage(p => p + 1)}
+                                        hasMore={hasMore}
+                                        isLoading={isFetching}
+                                    />
+                                </li>
                             </ul>
                         }
                         {currentMenuItem === 2 &&

@@ -2,11 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useGetGenericChartDamageDoneQuery } from '../api/DamageDone.api';
 import { useLazyGetCombatPlayersByCombatIdQuery } from '../api/GameLogs.api';
 import { useGetGenericChartHealDoneQuery } from '../api/HealDone.api';
-import type { CombatDetailsModel } from '../types/CombatDetailsModel';
 import type { CombatPlayerModel } from '../types/CombatPlayerModel';
 import SelectedCombatChart from './charts/SelectedCombatChart';
 import Details from './details/Details';
@@ -20,17 +19,16 @@ const SelectedCombat: React.FC = () => {
     const { t } = useTranslation('combatDetails/selectedCombat');
 
     const navigate = useNavigate();
+    
+	const { combatId } = useParams();
 
-    const [details, setDetails] = useState<CombatDetailsModel>({
-        id: 0,
-        detailsType: 0,
-        combatLogId: 0,
-        name: '',
-        number: 0,
-        isWin: false,
-        duration: 0,
-        gameVersion: -1
-    });
+    const [searchParams] = useSearchParams();
+    const combatLogId = searchParams.get("combatLogId");
+    const name = searchParams.get("name");
+    const number = Number(searchParams.get("number"));
+    const isWin = searchParams.get("isWin") === "true";
+    const gameVersion = Number(searchParams.get("gameVersion"));
+    
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [selectedPlayers, setSelectedPlayers] = useState<CombatPlayerModel[]>([]);
     const [showCommonStatistics, setShowCommonStatistics] = useState(false);
@@ -47,39 +45,12 @@ const SelectedCombat: React.FC = () => {
     const filterContent = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-
-        const id: number = parseInt(queryParams.get("id") || '0');
-        const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
-        const name: string = queryParams.get("name") || '';
-        const number: number = parseInt(queryParams.get("number") || '0');
-        const isWin: boolean = queryParams.get("isWin") === 'true';
-        const duration: number = parseInt(queryParams.get("duration") || "1");
-        const gameVersion: number = parseInt(queryParams.get("gameVersion") || '-1');
-
-        setDetails({
-            id,
-            detailsType: 0,
-            combatLogId,
-            name,
-            number,
-            isWin,
-            duration,
-            gameVersion
-        });
-    }, []);
-
-    useEffect(() => {
-        if (details.id <= 0) {
-            return;
-        }
-
         const fetchData = async () => {
             await getCombatPlayersAsync();
         }
 
         fetchData();
-    }, [details.id]);
+    }, []);
 
     const handlerSearch = (e: ChangeEvent<HTMLInputElement> | undefined) => {
         const foundPlayers = combatPlayers.filter((item) => item.player.username.toLowerCase().startsWith(e?.target.value.toLowerCase() || ""));
@@ -88,7 +59,7 @@ const SelectedCombat: React.FC = () => {
 
     const getCombatPlayersAsync = async () => {
         try {
-            const combatPlayersResult = await getCombatPlayersByCombatIdAsync(details.id).unwrap();
+            const combatPlayersResult = await getCombatPlayersByCombatIdAsync(parseInt(combatId || "0")).unwrap();
             setCombatPlayers(combatPlayersResult);
             setSelectedPlayers(combatPlayersResult);
 
@@ -136,7 +107,7 @@ const SelectedCombat: React.FC = () => {
         <div className="selected-combat">
             <div className="selected-combat__container">
                 <div className="selected-combat__navigate">
-                    <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${details.combatLogId}&gameVersion=${details.gameVersion}`)}>
+                    <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis/${combatLogId}?gameVersion=${gameVersion}`)}>
                         <FontAwesomeIcon
                             icon={faDeleteLeft}
                         />
@@ -150,8 +121,8 @@ const SelectedCombat: React.FC = () => {
                         <div>{t("Search")}</div>
                     </div>
                     <div className="boss">
-                        <div>{details.name}</div>
-                        <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
+                        <div>{name}</div>
+                        <div className={`combat-number ${isWin ? 'win' : 'lose'}`}>{number}</div>
                     </div>
                 </div>
                 {showSearch &&
@@ -183,7 +154,7 @@ const SelectedCombat: React.FC = () => {
                                 header: t("Damage"),
                                 content: <SelectedCombatChart
                                     combatPlayers={selectedPlayers}
-                                    combatId={details.id}
+                                    combatId={parseInt(combatId || "0")}
                                     colors={getRandomColors(selectedPlayers.length)}
                                     useGetGenericChartQuery={useGetGenericChartDamageDoneQuery}
                                 />
@@ -193,7 +164,7 @@ const SelectedCombat: React.FC = () => {
                                 header: t("Healing"),
                                 content: <SelectedCombatChart
                                     combatPlayers={selectedPlayers}
-                                    combatId={details.id}
+                                    combatId={parseInt(combatId || "0")}
                                     colors={getRandomColors(selectedPlayers.length)}
                                     useGetGenericChartQuery={useGetGenericChartHealDoneQuery}
                                 />
@@ -203,7 +174,6 @@ const SelectedCombat: React.FC = () => {
                     />
                 }
                 <Details
-                    details={details}
                     combatPlayers={selectedPlayers}
                     getValueShortName={getValueShortName}
                     t={t}

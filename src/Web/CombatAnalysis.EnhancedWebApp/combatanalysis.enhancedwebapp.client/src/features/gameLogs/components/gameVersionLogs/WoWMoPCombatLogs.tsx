@@ -1,5 +1,4 @@
 import type { RootState } from '@/app/Store';
-import Loading from '@/shared/components/Loading';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useGetCombatLogsQuery } from '../../api/GameLogs.api';
@@ -16,14 +15,14 @@ const WoWMoPCombatLogs: React.FC<CombatLogsProps> = ({ selectedLogType, gameVers
 
     const { data: combatLogs, isLoading } = useGetCombatLogsQuery({ logType: selectedLogType, gameVersion, appUserId: user ? user.id : null });
 
-    if (isLoading) {
-        return (<Loading />);
+    if (isLoading || !combatLogs) {
+        return (<div>Loading...</div>);
     }
 
     return (
         <div className="main-information__container">
             <ul className="combats__container">
-                {combatLogs?.map((item) => (
+                {combatLogs.map((item) => (
                     <li key={item.id}>
                         <GameCombatLogItem
                             t={t}

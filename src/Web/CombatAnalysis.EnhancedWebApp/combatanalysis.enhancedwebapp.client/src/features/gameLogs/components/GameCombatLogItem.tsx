@@ -78,7 +78,7 @@ const GameCombatLogItem: React.FC<CombatLogItemProps> = ({ t, appUserId, combatL
             {(combatLog.statuses.at(-1)?.status === CombatLogStatus["Creating"]
                 || combatLog.statuses.at(-1)?.status === CombatLogStatus["Created"]) &&
                 <div className="card-body">
-                    <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${combatLog.id}&gameVersion=${gameVersion}`)}>
+                    <div className="btn-shadow" onClick={() => navigate(`/general-analysis/${combatLog.id}?gameVersion=${gameVersion}`)}>
                         <FontAwesomeIcon
                             icon={faMagnifyingGlassChart}
                         />

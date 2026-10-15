@@ -37,7 +37,7 @@ const AppRoutes: Route[] = [
         element: <AuthorizationCallback />
     },
     {
-        path: '/game-combat-logs',
+        path: '/game-combat-logs/:gameVersion',
         element: <GameCombatLogs />
     },
     {
@@ -61,7 +61,7 @@ const AppRoutes: Route[] = [
         element: <People />
     },
     {
-        path: '/people/user',
+        path: '/people/user/:userId',
         element: <SelectedUser />
     },
     {
@@ -85,23 +85,23 @@ const AppRoutes: Route[] = [
         element: <SelectedCommunity />
     },
     {
-        path: '/general-analysis',
+        path: '/general-analysis/:combatLogId',
         element: <GeneralAnalysis />
     },
     {
-        path: '/general-analysis/auras',
+        path: '/general-analysis/auras/:combatId',
         element: <CombatAuras />
     },
     {
-        path: '/general-analysis/watch',
+        path: '/general-analysis/watch/:combatId',
         element: <CombatReply />
     },
     {
-        path: '/selected-combat',
+        path: '/selected-combat/:combatId',
         element: <SelectedCombat />
     },
     {
-        path: '/combat-details',
+        path: '/combat-details/:combatId',
         element: <CombatDetails />
     },
     {

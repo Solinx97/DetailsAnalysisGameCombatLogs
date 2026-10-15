@@ -36,6 +36,6 @@
     "voiceChat": "/voiceChatHub"
   },
   "notificationApiHubs": {
-    "notification": "notificationHub"
+    "notification": "/notificationHub"
   }
 }

@@ -69,7 +69,7 @@ const Home: React.FC = () => {
     }
 
     const navigateToFeed = () => navigate("/feed");
-    const navigateToGameCombatLogs = () => navigate("/game-combat-logs");
+    const navigateToGameCombatLogs = () => navigate("/game-combat-logs/1");
     const navigateToWoWGameData = () => navigate("/wow-game-data");
 
     if (isMobile) {

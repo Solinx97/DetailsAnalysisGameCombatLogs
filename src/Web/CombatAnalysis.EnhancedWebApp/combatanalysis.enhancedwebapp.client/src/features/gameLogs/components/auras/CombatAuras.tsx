@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLazyGetCombatByIdQuery, useLazyGetCombatPlayersByCombatIdQuery } from '../../api/GameLogs.api';
 import type { CombatPlayerAuraModel } from '../../types/CombatPlayerAuraModel';
 import type { CombatModel } from '../../types/CombatModel';
@@ -16,12 +16,13 @@ const CombatAuras: React.FC = () => {
     const { t } = useTranslation('combatDetails/auras');
 
     const navigate = useNavigate();
-    const location = useLocation();
+    const { combatId } = useParams();
+
+    const [searchParams] = useSearchParams();
+    const combatLogId = Number(searchParams.get("combatLog"));
 
     const searchRef = useRef<HTMLInputElement | null>(null);
 
-    const [combatId, setCombatId] = useState<number>(0);
-    const [combatLogId, setCombatLogId] = useState<number>(0);
     const [combat, setCombat] = useState<CombatModel | null>(null);
     const [combatPlayers, setCombatPlayers] = useState<CombatPlayerModel[]>([]);
     const [selectedCombatPlayerId, setSelectedCombatPlayerId] = useState<number>(0);
@@ -34,24 +35,11 @@ const CombatAuras: React.FC = () => {
     const [getCombatPlayersByCombatId] = useLazyGetCombatPlayersByCombatIdQuery();
 
     useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const combatId = parseInt(searchParams.get("combat") ?? "1");
-        const combatLogId = parseInt(searchParams.get("combatLog") ?? "1");
-
-        setCombatId(combatId);
-        setCombatLogId(combatLogId);
-    }, []);
-
-    useEffect(() => {
-        if (combatId < 1) {
-            return;
-        }
-
         const loadData = async () => {
             try {
                 const [combat, combatPLayers] = await Promise.all([
-                    getCombatById(combatId).unwrap(),
-                    getCombatPlayersByCombatId(combatId).unwrap(),
+                    getCombatById(parseInt(combatId || "0")).unwrap(),
+                    getCombatPlayersByCombatId(parseInt(combatId || "0")).unwrap(),
                 ]);
 
                 setCombat(combat);
@@ -62,7 +50,7 @@ const CombatAuras: React.FC = () => {
         };
 
         loadData();
-    }, [combatId]);
+    }, []);
 
     useEffect(() => {
         handleCleanSearch();
@@ -105,7 +93,7 @@ const CombatAuras: React.FC = () => {
     return (
         <div className="auras">
             <div className="auras__navigate">
-                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>
+                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis/${combatLogId}`)}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />
@@ -154,13 +142,13 @@ const CombatAuras: React.FC = () => {
                 </ul>
             }
             <CombatPreAuraItem
-                combatId={combatId}
+                combatId={parseInt(combatId || "0")}
             />
             <CombatAuraItem
                 onlyPinnedAuras={onlyPinnedAuras}
                 pinnedAuras={pinnedAuras}
                 setPinnedAuras={setPinnedAuras}
-                combatId={combatId}
+                combatId={parseInt(combatId || "0")}
                 combatPlayerId={selectedCombatPlayerId}
                 searchAura={searchAura}
                 t={t}

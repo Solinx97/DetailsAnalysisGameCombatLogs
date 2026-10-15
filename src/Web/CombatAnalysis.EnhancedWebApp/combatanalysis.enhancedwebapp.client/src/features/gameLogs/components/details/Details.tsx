@@ -3,17 +3,16 @@ import { faArrowsToEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import Select from 'react-select';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import type { UnitInfoModel } from '../../types/UnitInfoModel';
 import CombatPreAuraItem from '../auras/CombatPreAuraItem';
 import DetailsItem from './DetailsItem';
 import PlayerParams from './PlayerParams';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import '../auras/CombatAuras.scss';
 
 interface DetailsProps {
-    details: CombatDetailsModel;
     combatPlayers: CombatPlayerModel[];
     getValueShortName(value: number): string;
     t(key: string): string;
@@ -24,9 +23,14 @@ type Option = {
     label: string;
 }
 
-const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShortName, t }) => {
+const Details: React.FC<DetailsProps> = ({ combatPlayers, getValueShortName, t }) => {
     const [filteredCombatPlayers, setFilteredCombatPlayers] = useState<CombatPlayerModel[]>(combatPlayers);
     const [playerStatsCombatPlayerId, setPlayerStatsCombatPlayerId] = useState(0);
+
+	const { combatId } = useParams();
+
+    const [searchParams] = useSearchParams();
+    const gameVersion = Number(searchParams.get("gameVersion"));
 
     const sortOptions: Option[] = [
         { value: 0, label: t("Damage") },
@@ -94,14 +98,13 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             </div>
                         </div>
                         <CombatPreAuraItem
-                            combatId={details.id}
+                            combatId={parseInt(combatId || "")}
                             unitId={combatPlayer.unitId}
                         />
                         <DetailsItem
                             avgilvl={combatPlayer.averageItemLevel}
                             playerId={combatPlayer.id}
                             unitInfo={combatPlayer.unit.unitInfo}
-                            details={details}
                             getValueShortName={getValueShortName}
                             deathCount={combatPlayer.deathCount}
                         />
@@ -109,7 +112,7 @@ const Details: React.FC<DetailsProps> = ({ details, combatPlayers, getValueShort
                             <PlayerParams
                                 t={t}
                                 combatPlayerId={combatPlayer.id}
-                                gameVersion={details.gameVersion}
+                                gameVersion={gameVersion}
                                 setPlayerStatsCombatPlayerId={setPlayerStatsCombatPlayerId}
                             />
                         }

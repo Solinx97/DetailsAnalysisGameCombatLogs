@@ -2,10 +2,11 @@ import CombatPlayerBuild from '@/shared/components/combatLogBuild/CombatPlayerBu
 import Loading from '@/shared/components/Loading';
 import { UnitHealthStatus } from '@/shared/helpers/EnumHelper';
 import useTime from '@/shared/hooks/useTime';
-import { faSkull, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import {
     useLazyGetCombatPlayerByIdQuery,
     useLazyGetCombatPlayerDeathCountQuery,
@@ -13,7 +14,6 @@ import {
     useLazyGetUnitsHealthByIntervalQuery,
     useLazyGetWhenCombatPlayerDeathQuery,
 } from '../../api/GameLogs.api';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import type { CombatPlayerDeathModel } from '../../types/CombatPlayerDeathModel';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 import type { UnitHealthModel } from '../../types/UnitHealthModel';
@@ -24,19 +24,11 @@ import './PlayerDiethDetails.scss';
 const PlayerDiethDetails: React.FC = () => {
     const { t } = useTranslation('combatDetails/combatGeneralDetails');
 
-    const [details, setDetails] = useState<CombatDetailsModel>({
-        id: 0,
-        detailsType: 0,
-        combatLogId: 0,
-        name: '',
-        number: 0,
-        isWin: false,
-        duration: 0,
-        gameVersion: -1
-    });
-    const [playerId, setPlayerId] = useState<number>(0);
+    const [searchParams] = useSearchParams();
+    const unitId = searchParams.get("unitId");
+    const playerId = Number(searchParams.get("playerId"));
+
     const [combatPlayer, setCombatPlayer] = useState<CombatPlayerModel>();
-    const [unitId, setUnitId] = useState<string>("0");
     const [selectedPlayerDeathCount, setSelectedPlayerDeathCount] = useState<number>(0);
     const [playerDeathCount, setPlayerDeathCount] = useState<number>(0);
     const [whenPlayerDeath, setWhenPlayerDeath] = useState<string>("");
@@ -52,36 +44,6 @@ const PlayerDiethDetails: React.FC = () => {
     const [getCombatPlayerById] = useLazyGetCombatPlayerByIdQuery();
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-
-        const id: number = parseInt(queryParams.get("id") || '0');
-        const detailsType: number = +(queryParams.get("detailsType") ?? 0);
-        const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
-        const name: string = queryParams.get("name") || '';
-        const number: number = parseInt(queryParams.get("number") || '0');
-        const isWin: boolean = queryParams.get("isWin") === 'true';
-        const duration: number = parseInt(queryParams.get("duration") || '1');
-        const gameVersion: number = parseInt(queryParams.get("gameVersion") || '-1');
-
-        const playerId: number = parseInt(queryParams.get("playerId") || '0');
-        setPlayerId(playerId);
-
-        const uniId: string = queryParams.get("unitId") || '0';
-        setUnitId(uniId);
-
-        setDetails({
-            id,
-            detailsType,
-            combatLogId,
-            name,
-            number,
-            isWin,
-            duration,
-            gameVersion
-        });
-    }, []);
-
-    useEffect(() => {
         if (unitId === "0") {
             return;
         }
@@ -89,7 +51,7 @@ const PlayerDiethDetails: React.FC = () => {
         const loadData = async () => {
             try {
                 const [deathCount] = await Promise.all([
-                    getCombatPlayerDeathCount(unitId).unwrap(),
+                    getCombatPlayerDeathCount(unitId ?? "0").unwrap(),
                 ]);
 
                 setPlayerDeathCount(deathCount);
@@ -109,7 +71,7 @@ const PlayerDiethDetails: React.FC = () => {
         const loadData = async () => {
             try {
                 const [whenDeath] = await Promise.all([
-                    getWhenCombatPlayerDeath({ unitId, skipCount: selectedPlayerDeathCount }).unwrap(),
+                    getWhenCombatPlayerDeath({ unitId: unitId ?? "0", skipCount: selectedPlayerDeathCount }).unwrap(),
                 ]);
 
                 setWhenPlayerDeath(whenDeath);
@@ -149,7 +111,7 @@ const PlayerDiethDetails: React.FC = () => {
         const loadData = async () => {
             try {
                 const [death, playerHealth] = await Promise.all([
-                    getCombatPlayerDeath({ unitId, whenDied: whenPlayerDeath }).unwrap(),
+                    getCombatPlayerDeath({ unitId: unitId ?? "0", whenDied: whenPlayerDeath }).unwrap(),
                     getUnitHealthBeforeInterval({ unitId: combatPlayer.unitId, whenDied: whenPlayerDeath }).unwrap(),
                 ]);
 
@@ -172,7 +134,6 @@ const PlayerDiethDetails: React.FC = () => {
             <div className="general-details__container">
                 <div className="general-details__navigate">
                     <CombatDetailsHeader
-                        details={details}
                         combatPlayer={combatPlayer}
                         t={t}
                     />
@@ -186,7 +147,6 @@ const PlayerDiethDetails: React.FC = () => {
         <div className="general-details__container">
             <div className="general-details__navigate">
                 <CombatDetailsHeader
-                    details={details}
                     combatPlayer={combatPlayer}
                     t={t}
                 />

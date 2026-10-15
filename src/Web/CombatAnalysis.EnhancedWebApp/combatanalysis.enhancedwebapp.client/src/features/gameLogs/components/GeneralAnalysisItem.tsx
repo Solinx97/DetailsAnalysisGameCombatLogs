@@ -3,7 +3,7 @@ import { faBolt, faCircleNodes, faDatabase, faHourglassStart, faKhanda, faLocati
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { CombatModel } from '../types/CombatModel';
 import GeneralAnalysisCombats from './GeneralAnalysisCombats';
 
@@ -18,17 +18,13 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
 
     const navigate = useNavigate();
 
-    const [gameVersion, setgGameVersion] = useState<number>(-1);
+    const [searchParams] = useSearchParams();
+    const gameVersion = Number(searchParams.get("gameVersion"));
+
     const [selectedCombatIndex, setSelectedCombatIndex] = useState<number>(uniqueCombats.length - 1);
     const [selectedCombat, setSelectedCombat] = useState<CombatModel>(uniqueCombats[selectedCombatIndex]);
 
     const { getTotalSeconds, formatDate } = useTime();
-
-    useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        const version: number = parseInt(queryParams.get("gameVersion") || '-1');
-        setgGameVersion(version);
-    }, []);
 
     useEffect(() => {
         setSelectedCombat(uniqueCombats[selectedCombatIndex]);
@@ -58,7 +54,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                             </div>
                         </div>
                         <div className="see-reply btn-shadow"
-                            onClick={() => navigate(`/general-analysis/watch?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
+                            onClick={() => navigate(`/general-analysis/watch/${selectedCombat.id}?combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}`)}>
                             <FontAwesomeIcon
                                 icon={faLocationCrosshairs}
                             />
@@ -129,7 +125,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                         </li>
                     </ul>
                     <div className="list-group-item combat-information__buffs"
-                        onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}&combatLog=${combatLogId}`)}>
+                        onClick={() => navigate(`/general-analysis/auras/${selectedCombat.id}?combatLog=${combatLogId}`)}>
                         <FontAwesomeIcon
                             icon={faCircleNodes}
                             className="list-group-item__player-statistic-item"
@@ -140,7 +136,7 @@ const GeneralAnalysisItem: React.FC<GeneralAnalysisItemProps> = ({ uniqueCombats
                 </div>
                 <div className="details">
                     <div className="btn-shadow"
-                        onClick={() => navigate(`/selected-combat?id=${selectedCombat.id}&combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}&gameVersion=${gameVersion}`)}>
+                        onClick={() => navigate(`/selected-combat/${selectedCombat.id}?combatLogId=${combatLogId}&name=${selectedCombat.boss.name}&number=${selectedCombatIndex + 1}&isWin=${selectedCombat.isWin}&duration=${getTotalSeconds(selectedCombat.duration)}&gameVersion=${gameVersion}`)}>
                         <FontAwesomeIcon
                             icon={faDatabase}
                         />

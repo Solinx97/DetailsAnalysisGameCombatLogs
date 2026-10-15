@@ -10,7 +10,7 @@ internal class UserPostApiClient(HttpClient httpClient) : IUserPostApiClient
 
     public async Task<UserPostsResponse> GetByUserIdAsync(Guid appUserId, int page, int pageSize, CancellationToken cancellationToken)
     {
-        var response = await _httpClient.GetAsync($"UserPost/getByUserId/{appUserId}&page={page}&pageSize={pageSize}", cancellationToken);
+        var response = await _httpClient.GetAsync($"UserPost/getByUserId/{appUserId}?page={page}&pageSize={pageSize}", cancellationToken);
 
         var messages = await response.Content.ReadFromJsonAsync<UserPostsResponse>(cancellationToken);
         return messages ?? throw new InvalidOperationException("The Communication API returned an empty response.");

@@ -1,10 +1,11 @@
 ﻿import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import type { RootState } from '../../../app/Store';
 import PersonalTabs from './PersonalTabs';
-import WoWMoPCombatLogs from './gameVersionLogs/WoWMoPCombatLogs';
 import WoWMidnightCombatLogs from './gameVersionLogs/WoWMidnightCombatLogs';
+import WoWMoPCombatLogs from './gameVersionLogs/WoWMoPCombatLogs';
 
 import './GameCombatLogs.scss';
 
@@ -15,6 +16,8 @@ const GameCombatLogs: React.FC = () => {
     };
 
     const { t } = useTranslation('combatDetails/mainInformation');
+
+    const { gameVersion } = useParams();
 
     const user = useSelector((state: RootState) => state.user.value);
 
@@ -30,10 +33,19 @@ const GameCombatLogs: React.FC = () => {
                 </div>
             </div>
             <PersonalTabs
-                tab={0}
+                tab={parseInt(gameVersion || "1")}
                 tabs={[
                     {
                         id: 0,
+                        header: t("WoW MoP"),
+                        content: <WoWMoPCombatLogs
+                            selectedLogType={selectedLogType}
+                            gameVersion={GAME_VERSION.WoWMoP}
+                            t={t}
+                        />
+                    },
+                    {
+                        id: 1,
                         header: t("WoW Midnight"),
                         content: <WoWMidnightCombatLogs
                             selectedLogType={selectedLogType}
@@ -41,15 +53,6 @@ const GameCombatLogs: React.FC = () => {
                             t={t}
                         />
                     },
-                    {
-                        id: 1,
-                        header: t("WoW MoP"),
-                        content: <WoWMoPCombatLogs
-                            selectedLogType={selectedLogType}
-                            gameVersion={GAME_VERSION.WoWMoP}
-                            t={t}
-                        />
-                    }
                 ]}
                 tabsClassName={"charts"}
             />

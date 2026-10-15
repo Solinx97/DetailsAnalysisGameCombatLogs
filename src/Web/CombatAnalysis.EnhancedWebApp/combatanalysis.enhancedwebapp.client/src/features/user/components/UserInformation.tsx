@@ -128,7 +128,7 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
     }
 
     const moreDetails = () => {
-        navigate(`/people/user?id=${person?.id}`);
+        navigate(`/people/user/${person?.id}`);
     }
 
     const isFriend = () => {
@@ -142,7 +142,7 @@ const UserInformation: React.FC<UserInformationProps> = ({ personId, closeUserIn
     }
 
     if (isLoading || personIsLoading || !myFriends || !person) {
-        return (<></>);
+        return (<div>Loading...</div>);
     }
 
     return (

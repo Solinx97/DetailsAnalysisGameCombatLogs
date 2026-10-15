@@ -1,9 +1,8 @@
-﻿import { faUser, faBookDead, faPlus } from '@fortawesome/free-solid-svg-icons';
+﻿import { faBookDead, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import type { UnitInfoModel } from '../../types/UnitInfoModel';
 import DetailsItemParam from './DetailsItemParam';
 
@@ -11,22 +10,31 @@ interface DetailsItemProps {
     avgilvl: number;
     playerId: number;
     unitInfo: UnitInfoModel;
-    details: CombatDetailsModel;
     getValueShortName(value: number): string;
     deathCount: number;
 }
 
-const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, details, getValueShortName, deathCount }) => {
+const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, getValueShortName, deathCount }) => {
     const { t } = useTranslation('childs/playerInformation');
 
     const navigate = useNavigate();
+    
+	const { combatId } = useParams();
+
+    const [searchParams] = useSearchParams();
+    const combatLogId = searchParams.get("combatLogId");
+    const name = searchParams.get("name");
+    const number = Number(searchParams.get("number"));
+    const isWin = searchParams.get("isWin") === "true";
+    const duration = Number(searchParams.get("duration"));
+    const gameVersion = Number(searchParams.get("gameVersion"));
 
     const navigateToDetails = (detailsType: number) => {
-        navigate(`/combat-details?id=${details.id}&playerId=${playerId}&detailsType=${detailsType}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}&gameVersion=${details.gameVersion}`);
+        navigate(`/combat-details/${combatId}?playerId=${playerId}&detailsType=${detailsType}&combatLogId=${combatLogId}&name=${name}&number=${number}&isWin=${isWin}&duration=${duration}&gameVersion=${gameVersion}`);
     }
 
     const navigateToDeathetails = () => {
-        navigate(`/player-dieth-details?id=${details.id}&playerId=${playerId}&unitId=${unitInfo.unitId}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}&gameVersion=${details.gameVersion}`);
+        navigate(`/player-dieth-details/${combatId}?playerId=${playerId}&unitId=${unitInfo.unitId}&combatLogId=${combatLogId}&name=${name}&number=${number}&isWin=${isWin}&duration=${duration}&gameVersion=${gameVersion}`);
     }
 
     return (
@@ -36,7 +44,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, 
                     topName={t("Damage")}
                     topValue={getValueShortName(Math.round(unitInfo.damageDone))}
                     bottomName={t("DPS")}
-                    bottomValue={getValueShortName(Math.round(unitInfo.damageDone / details.duration))}
+                    bottomValue={getValueShortName(Math.round(unitInfo.damageDone / duration))}
                     title={t("OpenDamageAnalyzing") || ""}
                     isActive={unitInfo.damageDone > 0}
                     navigate={() => navigateToDetails(0)}
@@ -47,7 +55,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, 
                     topName={t("Healing")}
                     topValue={getValueShortName(Math.round(unitInfo.healDone))}
                     bottomName={t("HPS")}
-                    bottomValue={getValueShortName(Math.round(unitInfo.healDone / details.duration))}
+                    bottomValue={getValueShortName(Math.round(unitInfo.healDone / duration))}
                     title={t("OpenHealingAnalyzing") || ""}
                     isActive={unitInfo.healDone > 0}
                     navigate={() => navigateToDetails(1)}
@@ -58,7 +66,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, 
                     topName={t("DamageTaken")}
                     topValue={getValueShortName(Math.round(unitInfo.damageTaken))}
                     bottomName={t("DTPS")}
-                    bottomValue={getValueShortName(Math.round(unitInfo.damageTaken / details.duration))}
+                    bottomValue={getValueShortName(Math.round(unitInfo.damageTaken / duration))}
                     title={t("OpenDamageTakenAnalyzing") || ""}
                     isActive={unitInfo.damageTaken > 0}
                     navigate={() => navigateToDetails(2)}
@@ -69,7 +77,7 @@ const DetailsItem: React.FC<DetailsItemProps> = ({ avgilvl, playerId, unitInfo, 
                     topName={t("ResourcesRecovery")}
                     topValue={getValueShortName(Math.round(unitInfo.resourcesRecovery))}
                     bottomName={t("RPS")}
-                    bottomValue={getValueShortName(Math.round(unitInfo.resourcesRecovery / details.duration))}
+                    bottomValue={getValueShortName(Math.round(unitInfo.resourcesRecovery / duration))}
                     title={t("OpenResourcesRecoveryAnalyzing") || ""}
                     isActive={unitInfo.resourcesRecovery > 0}
                     navigate={() => navigateToDetails(3)}

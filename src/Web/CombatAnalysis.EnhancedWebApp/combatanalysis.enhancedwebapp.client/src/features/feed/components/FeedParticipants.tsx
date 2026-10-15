@@ -1,13 +1,12 @@
 import { APP_CONFIG } from '@/config/appConfig';
-import Loading from '@/shared/components/Loading';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState, type SetStateAction } from 'react';
 import type { AppUserModel } from '../../user/types/AppUserModel';
+import { useCountFeedNewPostsQuery, useGetFeedQuery } from '../api/UserFeed.api';
 import CommunityPost from './post/CommunityPost';
 import UserPost from './post/UserPost';
-import { useCountFeedNewPostsQuery, useGetFeedQuery } from '../api/UserFeed.api';
 
 interface FeedParticipantsProps {
     myself: AppUserModel;
@@ -60,7 +59,7 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, lastCheck, 
     }
 
     if (!userFeed || isLoading) {
-        return (<Loading />);
+        return (<></>);
     }
 
     return (
@@ -76,11 +75,11 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, lastCheck, 
                 </div>
             }
             <ul className="posts">
-                {!userFeed.posts
-                    ? <Loading />
-                    : userFeed.posts.map(post => (
+                {userFeed.posts.length === 0
+                    ? <div>{t("Empty")}</div>
+                    : userFeed.posts.map((post, index) => (
                         post.communityId
-                            ? <li key={`${post.id} c`}>
+                            ? <li key={`${post.id}-${index}`}>
                                 <CommunityPost
                                     user={myself}
                                     communityId={post.communityId ?? 0}
@@ -88,7 +87,7 @@ const FeedParticipants: React.FC<FeedParticipantsProps> = ({ myself, lastCheck, 
                                     feedVersion={feedVersion}
                                 />
                             </li>
-                            : <li key={`${post.id} u`}>
+                            : <li key={`${post.id}-${index}`}>
                                 <UserPost
                                     user={myself}
                                     post={post}

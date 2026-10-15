@@ -5,12 +5,11 @@ import { faDeleteLeft, faPause, faPlay } from '@fortawesome/free-solid-svg-icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
     useGetCombatUnitsByCombatIdQuery
 } from '../../api/GameLogs.api';
 import useCombatReply from '../../hooks/useCombatReply';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
 import type { UnitModel } from '../../types/UnitModel';
 import CombatReplyUnits from './CombatReplyUnits';
 
@@ -20,19 +19,17 @@ const CombatReply: React.FC = () => {
     const { t } = useTranslation('combatDetails/reply');
 
     const navigate = useNavigate();
-    const location = useLocation();
+    
+	const { combatId } = useParams();
 
+    const [searchParams] = useSearchParams();
+    const combatLogId = searchParams.get("combatLogId");
+    const name = searchParams.get("name");
+    const number = Number(searchParams.get("number"));
+    const isWin = searchParams.get("isWin") === "true";
+    const duration = Number(searchParams.get("duration"));
+    
     const [colors, setColors] = useState<Map<string, string>>(new Map());
-    const [details, setDetails] = useState<CombatDetailsModel>({
-        id: 0,
-        detailsType: 0,
-        combatLogId: 0,
-        name: '',
-        number: 0,
-        isWin: false,
-        duration: 0,
-        gameVersion: -1,
-    });
 
     const [playing, setPlaying] = useState(false);
     const [selectedGameId, setSelectedGameId] = useState<string>("");
@@ -42,33 +39,10 @@ const CombatReply: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const lastFrameRef = useRef<number>(0);
 
-    const { data: combatUnits, isLoading } = useGetCombatUnitsByCombatIdQuery(details.id);
+    const { data: combatUnits, isLoading } = useGetCombatUnitsByCombatIdQuery(parseInt(combatId || "0"));
 
     const { view, currentTime, setCurrentTime, stop } = useCombatReply(selectedGameId, canvasRef, combatUnits, colors);
     const { formatSeconds } = useTime();
-
-    useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-
-        const id: number = parseInt(queryParams.get("id") || '0');
-        const combatLogId: number = parseInt(queryParams.get("combatLogId") || '0');
-        const name: string = queryParams.get("name") || '';
-        const number: number = parseInt(queryParams.get("number") || '0');
-        const isWin: boolean = queryParams.get("isWin") === 'true';
-        const duration: number = parseInt(queryParams.get("duration") || "1");
-        const gameVersion: number = parseInt(queryParams.get("gameVersion") || "-1");
-
-        setDetails({
-            id,
-            detailsType: 0,
-            combatLogId,
-            name,
-            number,
-            isWin,
-            duration,
-            gameVersion,
-        });
-    }, []);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -114,14 +88,14 @@ const CombatReply: React.FC = () => {
             const delta = timestamp - lastFrameRef.current;
             lastFrameRef.current = timestamp;
 
-            const duration = details.duration * 1000;
+            const calcDuration = duration * 1000;
 
             setCurrentTime(prev => {
                 const next = prev + delta;
 
-                if (next >= duration) {
+                if (next >= calcDuration) {
                     setPlaying(false);
-                    return duration;
+                    return calcDuration;
                 }
 
                 return next;
@@ -158,7 +132,7 @@ const CombatReply: React.FC = () => {
         canvasRef.current = null;
         stop();
 
-        navigate(`/general-analysis?id=${details.combatLogId}`);
+        navigate(`/general-analysis/${combatLogId}`);
     }
 
     if (!combatUnits || combatUnits.length === 0 || isLoading) {
@@ -174,8 +148,8 @@ const CombatReply: React.FC = () => {
                     <h5>{t("Combats")}</h5>
                     <div className="boss-container">
                         <div className="boss">
-                            <h5>{details.name}</h5>
-                            <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
+                            <h5>{name}</h5>
+                            <div className={`combat-number ${isWin ? 'win' : 'lose'}`}>{number}</div>
                         </div>
                     </div>
                 </div>
@@ -196,8 +170,8 @@ const CombatReply: React.FC = () => {
                 <h5>{t("Combats")}</h5>
                 <div className="boss-container">
                     <div className="boss">
-                        <h5>{details.name}</h5>
-                        <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
+                        <h5>{name}</h5>
+                        <div className={`combat-number ${isWin ? 'win' : 'lose'}`}>{number}</div>
                     </div>
                 </div>
             </div>
@@ -219,7 +193,7 @@ const CombatReply: React.FC = () => {
                 <input
                     type="range"
                     min={0}
-                    max={details.duration * 1000}
+                    max={duration * 1000}
                     value={currentTime}
                     className="range"
 

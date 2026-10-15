@@ -1,23 +1,31 @@
 import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate } from 'react-router-dom';
-import type { CombatDetailsModel } from '../../types/CombatDetailsModel';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import type { CombatPlayerModel } from '../../types/CombatPlayerModel';
 
 interface CombatDetailsHeaderProps {
-    details: CombatDetailsModel;
     combatPlayer: CombatPlayerModel;
     t(key: string): string;
 }
 
-const CombatDetailsHeader: React.FC<CombatDetailsHeaderProps> = ({ details, combatPlayer, t }) => {
+const CombatDetailsHeader: React.FC<CombatDetailsHeaderProps> = ({ combatPlayer, t }) => {
     const navigate = useNavigate();
+    
+	const { combatId } = useParams();
+
+    const [searchParams] = useSearchParams();
+    const combatLogId = searchParams.get("combatLogId");
+    const name = searchParams.get("name");
+    const number = searchParams.get("number");
+    const isWin = searchParams.get("isWin") === "true";
+    const duration = searchParams.get("duration");
+    const gameVersion = searchParams.get("gameVersion");
 
     return (
         <>
             <div className="player">
                 <div className="btn-shadow select-another-player"
-                    onClick={() => navigate(`/selected-combat?id=${details.id}&combatLogId=${details.combatLogId}&name=${details.name}&number=${details.number}&isWin=${details.isWin}&duration=${details.duration}&gameVersion=${details.gameVersion}`)}>
+                    onClick={() => navigate(`/selected-combat/${combatId}?combatLogId=${combatLogId}&name=${name}&number=${number}&isWin=${isWin}&duration=${duration}&gameVersion=${gameVersion}`)}>
                     <FontAwesomeIcon
                         icon={faDeleteLeft}
                     />
@@ -28,8 +36,8 @@ const CombatDetailsHeader: React.FC<CombatDetailsHeaderProps> = ({ details, comb
                 </div>
             </div>
             <div className="boss">
-                <div>{details.name}</div>
-                <div className={`combat-number ${details.isWin ? 'win' : 'lose'}`}>{details.number}</div>
+                <div>{name}</div>
+                <div className={`combat-number ${isWin ? 'win' : 'lose'}`}>{number}</div>
             </div>
         </>
     );
