@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { VoiceChatModel } from '../types/VoiceChatModel';
 import type { CreateVoiceChatModel } from '../types/CreateVoiceChatModel';
+import type { VoiceChatTokenResponse } from '../types/VoiceChatTokenResponse';
 
 const apiURL = '/api/v1';
 
@@ -27,6 +28,13 @@ export const VoiceChatApi = createApi({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'VoiceChat', id }]
         }),
+        getVoiceChatToken: builder.mutation<VoiceChatTokenResponse, { voiceChatId: number, participantName: string }>({
+            query: ({ voiceChatId, participantName }) => ({
+                body: { Username: participantName },
+                url: `/VoiceChat/token/${voiceChatId}`,
+                method: 'POST'
+            }),
+        }),
         getCallByChatId: builder.query<VoiceChatModel, number>({
             query: chatId => `/VoiceChat/getByChatId/${chatId}`,
             providesTags: result => result ? [{ type: 'VoiceChat', id: result.id }] : []
@@ -40,6 +48,7 @@ export const VoiceChatApi = createApi({
 export const {
     useCreateCallMutation,
     useRemoveCallMutation,
+    useGetVoiceChatTokenMutation,
     useGetCallByChatIdQuery,
     useIsVoiceChatExistQuery,
 } = VoiceChatApi;

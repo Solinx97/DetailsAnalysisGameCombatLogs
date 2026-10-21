@@ -12,6 +12,7 @@ using CombatAnalysis.ChatAPI.Kafka;
 using CombatAnalysis.ChatAPI.Kafka.Producer;
 using CombatAnalysis.ChatAPI.Mapping;
 using CombatAnalysis.ChatAPI.Providers;
+using CombatAnalysis.ChatAPI.Services;
 using MessageBroker.Kafka.Consts;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.SignalR;
@@ -132,6 +133,17 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+builder.Services.AddSingleton<ILiveKitService, LiveKitService>();
+builder.Services
+    .AddOptions<LiveKitOptions>()
+    .BindConfiguration(LiveKitOptions.SectionName)
+    .Validate(
+        x => !string.IsNullOrWhiteSpace(x.Url)
+          && !string.IsNullOrWhiteSpace(x.ApiKey)
+          && !string.IsNullOrWhiteSpace(x.ApiSecret),
+        "LiveKit configuration is incomplete.")
+    .ValidateOnStart();
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Debug)

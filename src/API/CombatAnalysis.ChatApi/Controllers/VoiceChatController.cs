@@ -2,19 +2,25 @@
 using Chat.Application.Commands.VoiceChat.DeleteChat;
 using Chat.Application.Queries.VoiceChat.GetById;
 using Chat.Application.Queries.VoiceChat.IsChatExist;
+using CombatAnalysis.ChatAPI.Consts;
+using CombatAnalysis.ChatAPI.Interfaces;
 using CombatAnalysis.ChatAPI.Models;
+using CombatAnalysis.ChatAPI.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace CombatAnalysis.ChatAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class VoiceChatController(IMediator mediator) : ControllerBase
+public class VoiceChatController(IMediator mediator, ILiveKitService liveKitService, IOptions<LiveKitOptions> options) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
+    private readonly ILiveKitService _liveKitService = liveKitService;
+    private readonly LiveKitOptions _options = options.Value;
 
     [HttpGet("getByChatId/{chatId:int:min(1)}")]
     public async Task<IActionResult> GetByChatId(int chatId, CancellationToken cancellationToken)
@@ -43,6 +49,23 @@ public class VoiceChatController(IMediator mediator) : ControllerBase
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();
+    }
+
+    [HttpPost("token/{voiceChatId}")]
+    public async Task<IActionResult> GetToken(int voiceChatId, [FromBody] GetVoiceChatTokenRequest request)
+    {
+        var userId = User.FindFirst("user_id")?.Value
+            ?? throw new UnauthorizedAccessException("User is not authenticated.");
+
+        var roomName = $"voice-chat-{voiceChatId}";
+
+        var token = _liveKitService.GenerateToken(
+            roomName,
+            participantIdentity: userId,
+            participantName: request.Username);
+
+        var response = new VoiceChatTokenResponse(_options.Url, token);
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]

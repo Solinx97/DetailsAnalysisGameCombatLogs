@@ -31,6 +31,13 @@ public class VoiceChatController(IVoiceChatApiClient httpClient) : ControllerBas
         return NoContent();
     }
 
+    [HttpPost("token/{voiceChatId}")]
+    public async Task<IActionResult> GetToken(int voiceChatId, [FromBody] GetVoiceChatTokenRequest request, CancellationToken cancellationToken)
+    {
+        var tokenResponse = await _httpClient.GetTokenAsync(voiceChatId, request, cancellationToken);
+        return Ok(tokenResponse);
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {

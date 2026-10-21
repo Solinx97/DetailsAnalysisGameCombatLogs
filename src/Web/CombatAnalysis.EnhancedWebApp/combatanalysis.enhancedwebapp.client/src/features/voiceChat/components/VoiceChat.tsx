@@ -1,15 +1,20 @@
 ﻿import type { RootState } from '@/app/Store';
+import ChatHubContext from '@/context/ChatHubContext';
 import CommunicationMenu from '@/shared/components/CommunicationMenu';
 import logger from '@/utils/Logger';
-import { memo, useEffect, useRef, useState } from 'react';
+import {
+	LiveKitRoom,
+} from '@livekit/components-react';
+import { memo, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { useIsVoiceChatExistQuery, useCreateCallMutation } from '../api/VoiceChat.api';
-import useVoiceChatHub from '../hooks/useVoiceChatHub';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useCreateCallMutation, useGetVoiceChatTokenMutation, useIsVoiceChatExistQuery } from '../api/VoiceChat.api';
 import type { CreateVoiceChatModel } from '../types/CreateVoiceChatModel';
-import VoiceChatContent from './VoiceChatContent';
-import VoiceChatToolsBar from './VoiceChatToolsBar';
+import type { VoiceChatTokenResponse } from '../types/VoiceChatTokenResponse';
+import AudioConferenceRoom from './AudioConferenceRoom';
+
+import '@livekit/components-styles';
 
 import './VoiceChat.scss';
 
@@ -17,29 +22,26 @@ const VoiceChat: React.FC = () => {
 	const { t } = useTranslation('communication/chats/voiceChat');
 
 	const myself = useSelector((state: RootState) => state.user.value);
+	const navigate = useNavigate();
 
-	const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
-	const [turnOnCamera, setTurnOnCamera] = useState(false);
-	const [audioOutputDeviceId, setAudioOutputDeviceId] = useState("");
-
-	const [screenSharing, setScreenSharing] = useState(false);
-	const [screenSharingIsActivated, setScreenSharingIsActivated] = useState(false);
-	const [haveControllBar, setHaveControllBar] = useState(false);
-
-	const screenSharingVideoRef = useRef<HTMLVideoElement | null>(null);
+	const [tokenResponse, setTokenResponse] = useState<VoiceChatTokenResponse | null>(null);
 
 	const { roomId, chatName } = useParams();
 
-	const { properties, methods } = useVoiceChatHub(roomId ?? "0");
+	const context = useContext(ChatHubContext);
+	if (!context) {
+		throw new Error("Child must be inside ChatHubContext.Provider");
+	}
 
 	const { data: isChatEixst } = useIsVoiceChatExistQuery(parseInt(roomId ?? "0"));
 	const [createVoiceChat] = useCreateCallMutation();
+	const [getToken] = useGetVoiceChatTokenMutation();
 
 	useEffect(() => {
 		if (isChatEixst === undefined || !myself) {
 			return;
 		}
-		
+
 		const createAsync = async () => {
 			try {
 				const voiceChat: CreateVoiceChatModel = {
@@ -49,108 +51,54 @@ const VoiceChat: React.FC = () => {
 
 				await createVoiceChat(voiceChat).unwrap();
 			} catch (e) {
-            	logger.error("Failed to create voice chat", e);
+				logger.error("Failed to create voice chat", e);
+			}
+		}
+
+		const getTokenAsync = async () => {
+			try {
+				const recToken = await getToken({ voiceChatId: parseInt(roomId ?? "0"), participantName: myself?.username }).unwrap();
+				setTokenResponse(recToken);
+			} catch (e) {
+				logger.error("Failed to connect to voice chat", e);
 			}
 		}
 
 		if (isChatEixst === false) {
 			createAsync();
 		}
+
+		getTokenAsync();
 	}, [isChatEixst]);
 
 	useEffect(() => {
-		if (!properties.hubConnection) {
-			return;
+		let isCancelled = false;
+
+		const connect = async () => {
+			if (isCancelled || !roomId) {
+				return;
+			}
+
+			await context.vocieChatEvents.connectToChatAsync(roomId);
 		}
+
+		connect();
 
 		return () => {
-			(async () => {
-				await methods.leaveFromChatAsync();
-			})();
-		}
-	}, [properties.hubConnection]);
+			isCancelled = true;
 
-	useEffect(() => {
-		if (!myself) {
-			return;
-		}
+			context.vocieChatEvents.leaveFromChatAsync(roomId ?? "0");
+		};
+	}, []);
 
-		(async () => {
-			await methods.connectToChatAsync(setHaveControllBar);
-		})();
-	}, [myself]);
-
-	useEffect(() => {
-		if (!properties.hubConnection) {
-			return;
-		}
-
-		(async () => {
-			await methods.startScreenSharingAsync(screenSharing, setScreenSharingIsActivated);
-		})();
-	}, [properties.hubConnection, screenSharing]);
-
-	useEffect(() => {
-		if (!screenSharing || !screenSharingVideoRef.current) {
-			return;
-		}
-
-		screenSharingVideoRef.current.srcObject = properties.localStreamRef.current;
-		screenSharingVideoRef.current.muted = true;
-		screenSharingVideoRef.current.autoplay = true;
-	}, [screenSharing]);
-
-	useEffect(() => {
-		if (screenSharingIsActivated) {
-			return;
-		}
-
-		screenSharingVideoRef.current = null;
-		setScreenSharing(false);
-	}, [screenSharingIsActivated]);
-
-	const renderVoiceChatContent = () => (
-		<VoiceChatContent
-			roomId={roomId ?? ""}
-			hubConnection={properties.hubConnection}
-			peerConnections={properties.peerConnectionsRef.current}
-			stream={properties.localStreamRef.current}
-			mediaRequestsAsync={methods.mediaRequestsAsync}
-			micStatus={turnOnMicrophone}
-			cameraStatus={turnOnCamera}
-			screenSharing={screenSharing}
-			setScreenSharing={setScreenSharing}
-			screenSharingVideoRef={screenSharingVideoRef}
-			audioOutputDeviceId={audioOutputDeviceId}
-		/>
-	)
-
-	const renderVoiceChatToolsBar = () => (
-		<VoiceChatToolsBar
-			t={t}
-			properties={properties}
-			methods={methods}
-			screenSharing={screenSharing}
-			setScreenSharing={setScreenSharing}
-			turnOnCamera={turnOnCamera}
-			setTurnOnCamera={setTurnOnCamera}
-			turnOnMicrophone={turnOnMicrophone}
-			setTurnOnMicrophone={setTurnOnMicrophone}
-			audioOutputDeviceId={audioOutputDeviceId}
-			setAudioOutputDeviceId={setAudioOutputDeviceId}
-		/>
-	)
-
-	if (!haveControllBar) {
+	if (!tokenResponse) {
 		return (
 			<>
 				<CommunicationMenu currentMenuItem={1} />
 				<div className="voice">
 					<div className="voice__title">
-						<div>{chatName}</div>
 						<div className="tools">{t("Connecting")}</div>
 					</div>
-					{renderVoiceChatContent()}
 				</div>
 			</>
 		);
@@ -159,12 +107,26 @@ const VoiceChat: React.FC = () => {
 	return (
 		<>
 			<CommunicationMenu currentMenuItem={1} />
-			<div className="voice">
-				<div className="voice__title">
-					<div>{chatName}</div>
-					{renderVoiceChatToolsBar()}
+			<div className="voice-chat">
+				<div className="voice-chat__title">
+					<div>{t("ChatName")}:</div>
+					<div className="name">{chatName}</div>
 				</div>
-				{renderVoiceChatContent()}
+				<LiveKitRoom
+					serverUrl={tokenResponse?.serverUrl}
+					token={tokenResponse?.token}
+					connect={true}
+					audio={true}
+					video={false}
+					onError={(error) => {
+						console.error("LiveKit error:", error);
+					}}
+					onDisconnected={() => {
+						navigate('/chats');
+					}}
+				>
+					<AudioConferenceRoom />
+				</LiveKitRoom>
 			</div>
 		</>
 	);

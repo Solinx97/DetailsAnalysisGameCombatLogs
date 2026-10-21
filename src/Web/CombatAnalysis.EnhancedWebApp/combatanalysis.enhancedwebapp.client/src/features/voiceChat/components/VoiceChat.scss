@@ -1,207 +1,65 @@
-.voice {
+.voice-chat {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    height: 500px;
-    gap: 20px;
+    gap: 10px;
 
     &__title {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        width: 100%;
+        gap: 10px;
 
-        .tools {
-            display: flex;
-            gap: 20px;
-
-            .experimental-functions {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                box-shadow: 1px 1px yellow;
-                border-radius: 20px;
-                padding: 10px;
-                gap: 10px;
-                opacity: 0.7;
-
-                &__indicator {
-                    position: absolute;
-                    margin: -20px 0;
-                    font-size: 0.6em;
-                }
-
-                &__content {
-                    display: flex;
-                    justify-content: center;
-                    gap: 25px;
-                }
-            }
-
-            .device {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 10px;
-
-                .device-toolbar {
-                    position: absolute;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    top: 8%;
-                    width: 20vw;
-                    padding: 15px;
-                    box-shadow: 1px 1px 1px 1px yellow;
-                    font-size: 0.9em;
-                    border-radius: 20px;
-                    background: #0c192c;
-                    z-index: 1000;
-
-                    ul {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 5px;
-                        margin-left: 10px !important;
-                        margin: 0;
-                    }
-                }
-
-                .warning {
-                    position: absolute;
-                    width: 0;
-                    height: 0;
-                    margin-bottom: 40px;
-                    border-left: 8px solid transparent;
-                    border-right: 8px solid transparent;
-                    border-top: 8px solid yellow;
-                }
-
-                &__screen-sharing, &__camera, &__microphone {
-                    width: 20px;
-                    height: 20px;
-                    padding: 5px 10px;
-                    border-radius: 10px;
-                    box-shadow: 1px 1px 1px 1px red;
-
-                    :hover {
-                        cursor: pointer;
-                    }
-                }
-
-                .device-use {
-                    box-shadow: 1px 1px 1px 1px green;
-                }
-
-                .busy {
-                    box-shadow: 1px 1px 1px 1px yellow;
-
-                    :hover {
-                        cursor: not-allowed;
-                    }
-                }
-
-                &__settings {
-                    width: 15px;
-                    height: 15px;
-                }
-
-                &__settings:hover {
-                    cursor: pointer;
-                    transform: scale(1.15);
-                }
-            }
-
-            .disabled {
-                opacity: 0.4;
-            }
+        .name {
+            padding: 2px 20px;
+            box-shadow: 1px 1px 1px 1px gray;
+            border-radius: 20px;
         }
     }
 
-    &__content {
+    .lk-audio-conference {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         gap: 10px;
-        width: 100%;
-        height: 100%;
 
-        ul {
-            margin: 0;
-        }
-
-        .sharing {
+        .lk-audio-conference-stage {
             display: flex;
-            align-items: center;
             justify-content: center;
-            flex-basis: 70%;
-            flex-grow: 3;
-            box-shadow: 5px 5px 5px 5px gray;
-            border-radius: 25px;
-            height: 100%;
+            gap: 25px;
+            order: 2;
 
-            video {
-                height: 100%;
-                width: 100%;
-            }
-
-            .username {
-                flex-grow: 0.5;
-                height: auto;
-            }
-        }
-
-        .users {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid gray;
-            border-radius: 20px;
-            gap: 20px;
-            flex-basis: 30%;
-            flex-grow: 1;
-            height: 100%;
-            flex-wrap: wrap;
-            overflow-y: auto;
-
-            .user {
-                display: flex;
-                justify-content: center;
-                box-shadow: 2px 2px 2px 2px gray;
-                border-radius: 20px;
-                height: 40vh;
-                width: 40vh;
-
-                .media-content {
-                    video {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 20px;
-                    }
-                }
-
-                .information {
-                    display: flex;
-                    justify-content: space-around;
-                    align-items: center;
-                }
-            }
-
-            .me {
+            .lk-participant-tile {
+                padding: 10px 20px;
                 box-shadow: 2px 2px 2px 2px green;
+                border-radius: 20px;
+
+                .lk-participant-metadata {
+                    display: flex;
+                    justify-content: center;
+                }
             }
         }
 
-        .sharing-content {
-            li {
-                width: 70%;
-                height: 40%;
+        .lk-control-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 25px;
+
+            .lk-button-group, .lk-disconnect-button {
+                box-shadow: 2px 2px 2px 2px gray;
+                border-radius: 25px;
             }
 
-            .user {
-                height: 100%;
-                width: 100%;
+            .lk-button-group-menu .lk-device-menu {
+                box-shadow: 2px 2px 2px 2px green;
+                border-radius: 20px;
+                margin-top: 10px;
+                background: #0c192c;
+
+                .lk-media-device-select {
+                    margin: 0;
+                    font-size: 0.9em;
+                }
             }
         }
     }

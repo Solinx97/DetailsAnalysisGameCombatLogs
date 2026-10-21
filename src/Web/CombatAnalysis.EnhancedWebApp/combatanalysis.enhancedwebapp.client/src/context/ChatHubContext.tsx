@@ -1,5 +1,6 @@
 import type { IGroupChatHubEvents } from '@/shared/interfaces/IGroupChatHubEvents';
 import type { IPersonalChatHubEvents } from '@/shared/interfaces/IPersonalChatHubEvents';
+import type { IVoiceChatHubEvents } from '@/shared/interfaces/IVoiceChatHubEvents';
 import * as signalR from '@microsoft/signalr';
 import type { RefObject } from 'react';
 import React from 'react';
@@ -11,8 +12,10 @@ interface ChatHubContextValue {
     groupChatHubConnectionRef: RefObject<signalR.HubConnection | null>;
     groupChatMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>;
     groupChatUnreadMessagesHubConnectionRef: RefObject<signalR.HubConnection | null>;
+    voiceChatHubConnectionRef: RefObject<signalR.HubConnection | null>;
     personalChatEvents: IPersonalChatHubEvents;
     groupChatEvents: IGroupChatHubEvents;
+    vocieChatEvents: IVoiceChatHubEvents;
 }
 
 const ChatHubContext = React.createContext<ChatHubContextValue | null>(null);

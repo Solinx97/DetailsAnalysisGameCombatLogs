@@ -7,7 +7,7 @@ type Route = {
 }
 
 const Home = lazy(() => import('../shared/components/Home'));
-const VoiceChat = lazy(() => import('../features/voiceChat/components/VoiceChat'));
+const VoiceChatApp = lazy(() => import('../features/voiceChat/components/VoiceChatApp'));
 const UserFeed = lazy(() => import('../features/user/components/userEnvironment/UserFeed'));
 const Profile = lazy(() => import('../features/user/components/userEnvironment/Profile'));
 const Friends = lazy(() => import('../features/user/components/userEnvironment/Friends'));
@@ -52,7 +52,7 @@ const AppRoutes: Route[] = [
     },
     {
         path: '/chats/voice/:roomId/:chatName',
-        element: <VoiceChat />
+        element: <VoiceChatApp />
     },
     {
         path: '/communities',
