@@ -1,31 +1,33 @@
-import PlayerDiethDetails from '@/features/gameLogs/components/player/PlayerDiethDetails';
-import CombatReply from '@/features/gameLogs/components/reply/CombatReply';
-import BattleNetAuthorizationCallback from '@/features/wowGameData/components/auth/BattleNetAuthorizationCallback';
-import SelectWoWGameData from '@/features/wowGameData/components/SelectWoWGameData';
-import ChatApp from '../features/chat/components/ChatApp';
-import AllCommunities from '../features/community/components/AllCommunities';
-import SelectedCommunity from '../features/community/components/selectedCommunity/SelectedCommunity';
-import UserEnvironmentCommunities from '../features/community/components/userEnvironment/UserEnvironmentCommunities';
-import Feed from '../features/feed/components/Feed';
-import CombatAuras from '../features/gameLogs/components/auras/CombatAuras';
-import CombatDetails from '../features/gameLogs/components/details/CombatDetails';
-import GameCombatLogs from '../features/gameLogs/components/GameCombatLogs';
-import GeneralAnalysis from '../features/gameLogs/components/GeneralAnalysis';
-import SelectedCombat from '../features/gameLogs/components/SelectedCombat';
-import AuthorizationCallback from '../features/user/components/identity/AuthorizationCallback';
-import People from '../features/user/components/people/People';
-import SelectedUser from '../features/user/components/selectedUser/SelectedUser';
-import Friends from '../features/user/components/userEnvironment/Friends';
-import Profile from '../features/user/components/userEnvironment/Profile';
-import UserFeed from '../features/user/components/userEnvironment/UserFeed';
-import VoiceChat from '../features/voiceChat/components/VoiceChat';
-import Home from '../shared/components/Home';
+import { lazy } from 'react';
 
 type Route = {
     index?: boolean;
     path?: string;
     element: React.ReactNode;
 }
+
+const Home = lazy(() => import('../shared/components/Home'));
+const VoiceChat = lazy(() => import('../features/voiceChat/components/VoiceChat'));
+const UserFeed = lazy(() => import('../features/user/components/userEnvironment/UserFeed'));
+const Profile = lazy(() => import('../features/user/components/userEnvironment/Profile'));
+const Friends = lazy(() => import('../features/user/components/userEnvironment/Friends'));
+const SelectedUser = lazy(() => import('../features/user/components/selectedUser/SelectedUser'));
+const People = lazy(() => import('../features/user/components/people/People'));
+const AuthorizationCallback = lazy(() => import('../features/user/components/identity/AuthorizationCallback'));
+const SelectedCombat = lazy(() => import('../features/gameLogs/components/SelectedCombat'));
+const GeneralAnalysis = lazy(() => import('../features/gameLogs/components/GeneralAnalysis'));
+const GameCombatLogs = lazy(() => import('../features/gameLogs/components/GameCombatLogs'));
+const CombatDetails = lazy(() => import('../features/gameLogs/components/details/CombatDetails'));
+const CombatAuras = lazy(() => import('../features/gameLogs/components/auras/CombatAuras'));
+const Feed = lazy(() => import('../features/feed/components/Feed'));
+const UserEnvironmentCommunities = lazy(() => import('../features/community/components/userEnvironment/UserEnvironmentCommunities'));
+const SelectedCommunity = lazy(() => import('../features/community/components/selectedCommunity/SelectedCommunity'));
+const AllCommunities = lazy(() => import('../features/community/components/AllCommunities'));
+const ChatApp = lazy(() => import('../features/chat/components/ChatApp'));
+const SelectWoWGameData = lazy(() => import('../features/wowGameData/components/SelectWoWGameData'));
+const BattleNetAuthorizationCallback = lazy(() => import('../features/wowGameData/components/auth/BattleNetAuthorizationCallback'));
+const CombatReply = lazy(() => import('../features/gameLogs/components/reply/CombatReply'));
+const PlayerDiethDetails = lazy(() => import('../features/gameLogs/components/player/PlayerDiethDetails'));
 
 const AppRoutes: Route[] = [
     {
