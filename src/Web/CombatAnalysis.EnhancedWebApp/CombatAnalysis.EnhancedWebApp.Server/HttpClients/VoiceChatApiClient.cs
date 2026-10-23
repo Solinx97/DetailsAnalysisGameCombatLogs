@@ -21,14 +21,6 @@ public class VoiceChatApiClient(HttpClient httpClient) : IVoiceChatApiClient
         return messages;
     }
 
-    public async Task<int> GetParticipantsCountAsync(int id, CancellationToken cancellationToken)
-    {
-        var response = await _httpClient.GetAsync($"VoiceChat/getParticipantsCount/{id}", cancellationToken);
-
-        var messages = await response.Content.ReadFromJsonAsync<int>(cancellationToken);
-        return messages;
-    }
-
     public async Task<VoiceChatTokenResponse> GetTokenAsync(int voiceChatId, GetVoiceChatTokenRequest request, CancellationToken cancellationToken)
     {
         var response = await _httpClient.PostAsync($"VoiceChat/token/{voiceChatId}", JsonContent.Create(request), cancellationToken);

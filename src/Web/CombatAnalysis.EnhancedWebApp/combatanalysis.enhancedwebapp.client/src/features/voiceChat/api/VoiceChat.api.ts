@@ -34,9 +34,6 @@ export const VoiceChatApi = createApi({
                 method: 'POST'
             }),
         }),
-        getVoiceChatParticipantsCount: builder.query<number, number>({
-            query: chatId => `/VoiceChat/getParticipantsCount/${chatId}`,
-        }),
         isVoiceChatExist: builder.query<boolean, number>({
             query: chatId => `/VoiceChat/isChatExist/${chatId}`,
         }),
@@ -47,6 +44,5 @@ export const {
     useCreateCallMutation,
     useRemoveCallMutation,
     useGetVoiceChatTokenMutation,
-    useLazyGetVoiceChatParticipantsCountQuery,
     useIsVoiceChatExistQuery,
 } = VoiceChatApi;

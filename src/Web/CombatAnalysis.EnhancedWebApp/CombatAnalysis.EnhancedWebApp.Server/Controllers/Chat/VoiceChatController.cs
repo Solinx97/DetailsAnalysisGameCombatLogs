@@ -17,13 +17,6 @@ public class VoiceChatController(IVoiceChatApiClient httpClient) : ControllerBas
         return Ok(isExist);
     }
 
-    [HttpGet("getParticipantsCount/{chatId:int:min(1)}")]
-    public async Task<IActionResult> GetParticipantsCount(int chatId, CancellationToken cancellationToken)
-    {
-        var participantsCount = await _httpClient.GetParticipantsCountAsync(chatId, cancellationToken);
-        return Ok(participantsCount);
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateVoiceChatModel chat, CancellationToken cancellationToken)
     {

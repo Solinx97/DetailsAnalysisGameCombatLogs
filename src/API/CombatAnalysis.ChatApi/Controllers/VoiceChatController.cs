@@ -29,14 +29,6 @@ public class VoiceChatController(IMediator mediator, ILiveKitService liveKitServ
         return Ok(isChatExist);
     }
 
-    [HttpGet("getParticipantsCount/{chatId:int:min(1)}")]
-    public async Task<IActionResult> GetParticipantsCount(int chatId)
-    {
-        var participantsCount = await _liveKitService.GetParticipantsCountAsync(chatId.ToString());
-
-        return Ok(participantsCount);
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateVoiceChatModel voiceChat, CancellationToken cancellationToken)
     {
