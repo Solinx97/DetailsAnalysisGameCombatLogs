@@ -1,11 +1,10 @@
 ﻿import type { RootState } from '@/app/Store';
 import useMediaQuery from '@/shared/hooks/useMediaQuery';
 import logger from '@/utils/Logger';
-import { faArrowLeft, faCloudArrowUp, faGear, faPen, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCloudArrowUp, faGear, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { usePartialUpdateGroupChatMutation } from '../../api/GroupChat.api';
 import type { GroupChatModel } from '../../types/GroupChatModel';
 import type { PersonalChatModel } from '../../types/PersonalChatModel';
@@ -21,8 +20,6 @@ interface GroupChatTitleProps {
 const GroupChatTitle: React.FC<GroupChatTitleProps> = ({ chat, settingsIsShow, setSettingsIsShow, setSelectedChat, t }) => {
     const myself = useSelector((state: RootState) => state.user.value);
 
-    const navigate = useNavigate();
-
     const [editNameOn, setEditNameOn] = useState(false);
     const [chatName, setChatName] = useState("");
 
@@ -37,7 +34,6 @@ const GroupChatTitle: React.FC<GroupChatTitleProps> = ({ chat, settingsIsShow, s
             setChatName(chat.name);
         }
     }, [chat]);
-
 
     const updateGroupChatNameAsync = async () => {
         try {
@@ -57,10 +53,6 @@ const GroupChatTitle: React.FC<GroupChatTitleProps> = ({ chat, settingsIsShow, s
         } catch (e) {
             logger.error("Failed to update group chat name", e);
         }
-    }
-
-    const call = () => {
-        navigate(`/chats/voice/${chat.id}/${chat.name}`);
     }
 
     if (isMobile && editNameOn) {
@@ -123,12 +115,6 @@ const GroupChatTitle: React.FC<GroupChatTitleProps> = ({ chat, settingsIsShow, s
                     </div>
                 </div>
                 <div className="title__menu">
-                    <FontAwesomeIcon
-                        icon={faPhone}
-                        title={t("Call")}
-                        className="call"
-                        onClick={call}
-                    />
                     <FontAwesomeIcon
                         icon={faGear}
                         title={t("Settings")}

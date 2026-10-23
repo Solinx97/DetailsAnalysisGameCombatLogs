@@ -1,6 +1,5 @@
 ﻿using Chat.Application.Commands.VoiceChat.CreateChat;
 using Chat.Application.Commands.VoiceChat.DeleteChat;
-using Chat.Application.Queries.VoiceChat.GetById;
 using Chat.Application.Queries.VoiceChat.IsChatExist;
 using CombatAnalysis.ChatAPI.Consts;
 using CombatAnalysis.ChatAPI.Interfaces;
@@ -22,24 +21,20 @@ public class VoiceChatController(IMediator mediator, ILiveKitService liveKitServ
     private readonly ILiveKitService _liveKitService = liveKitService;
     private readonly LiveKitOptions _options = options.Value;
 
-    [HttpGet("getByChatId/{chatId:int:min(1)}")]
-    public async Task<IActionResult> GetByChatId(int chatId, CancellationToken cancellationToken)
-    {
-        var chat = await _mediator.Send(new GetByChatIdQuery(chatId), cancellationToken);
-        if (chat == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(chat);
-    }
-
     [HttpGet("isChatExist/{chatId:int:min(1)}")]
     public async Task<IActionResult> IsChatExist(int chatId, CancellationToken cancellationToken)
     {
         var isChatExist = await _mediator.Send(new IsChatExistQuery(chatId), cancellationToken);
 
         return Ok(isChatExist);
+    }
+
+    [HttpGet("getParticipantsCount/{chatId:int:min(1)}")]
+    public async Task<IActionResult> GetParticipantsCount(int chatId)
+    {
+        var participantsCount = await _liveKitService.GetParticipantsCountAsync(chatId.ToString());
+
+        return Ok(participantsCount);
     }
 
     [HttpPost]
@@ -51,13 +46,13 @@ public class VoiceChatController(IMediator mediator, ILiveKitService liveKitServ
         return NoContent();
     }
 
-    [HttpPost("token/{voiceChatId}")]
-    public async Task<IActionResult> GetToken(int voiceChatId, [FromBody] GetVoiceChatTokenRequest request)
+    [HttpPost("token/{chatId:int:min(1)}")]
+    public async Task<IActionResult> GetToken(int chatId, [FromBody] GetVoiceChatTokenRequest request)
     {
         var userId = User.FindFirst("user_id")?.Value
             ?? throw new UnauthorizedAccessException("User is not authenticated.");
 
-        var roomName = $"voice-chat-{voiceChatId}";
+        var roomName = $"voice-chat-{chatId}";
 
         var token = _liveKitService.GenerateToken(
             roomName,

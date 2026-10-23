@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { VoiceChatModel } from '../types/VoiceChatModel';
 import type { CreateVoiceChatModel } from '../types/CreateVoiceChatModel';
 import type { VoiceChatTokenResponse } from '../types/VoiceChatTokenResponse';
 
@@ -28,16 +27,15 @@ export const VoiceChatApi = createApi({
             }),
             invalidatesTags: (_result, _error, id) => [{ type: 'VoiceChat', id }]
         }),
-        getVoiceChatToken: builder.mutation<VoiceChatTokenResponse, { voiceChatId: number, participantName: string }>({
-            query: ({ voiceChatId, participantName }) => ({
+        getVoiceChatToken: builder.mutation<VoiceChatTokenResponse, { chatId: number, participantName: string }>({
+            query: ({ chatId, participantName }) => ({
                 body: { Username: participantName },
-                url: `/VoiceChat/token/${voiceChatId}`,
+                url: `/VoiceChat/token/${chatId}`,
                 method: 'POST'
             }),
         }),
-        getCallByChatId: builder.query<VoiceChatModel, number>({
-            query: chatId => `/VoiceChat/getByChatId/${chatId}`,
-            providesTags: result => result ? [{ type: 'VoiceChat', id: result.id }] : []
+        getVoiceChatParticipantsCount: builder.query<number, number>({
+            query: chatId => `/VoiceChat/getParticipantsCount/${chatId}`,
         }),
         isVoiceChatExist: builder.query<boolean, number>({
             query: chatId => `/VoiceChat/isChatExist/${chatId}`,
@@ -49,6 +47,6 @@ export const {
     useCreateCallMutation,
     useRemoveCallMutation,
     useGetVoiceChatTokenMutation,
-    useGetCallByChatIdQuery,
+    useLazyGetVoiceChatParticipantsCountQuery,
     useIsVoiceChatExistQuery,
 } = VoiceChatApi;

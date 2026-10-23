@@ -7,9 +7,9 @@ public interface IVoiceChatApiClient
 {
     Task CreateAsync(CreateVoiceChatModel chat, CancellationToken cancellationToken);
 
-    Task<VoiceChatModel> GetByChatIdAsync(int id, CancellationToken cancellationToken);
-
     Task<bool> IsChatExistAsync(int id, CancellationToken cancellationToken);
+
+    Task<int> GetParticipantsCountAsync(int id, CancellationToken cancellationToken);
 
     Task<VoiceChatTokenResponse> GetTokenAsync(int voiceChatId, GetVoiceChatTokenRequest request, CancellationToken cancellationToken);
 

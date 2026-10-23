@@ -10,18 +10,18 @@ public class VoiceChatController(IVoiceChatApiClient httpClient) : ControllerBas
 {
     private readonly IVoiceChatApiClient _httpClient = httpClient;
 
-    [HttpGet("getByChatId/{id:int:min(1)}")]
-    public async Task<IActionResult> GetByChatId(int id, CancellationToken cancellationToken)
+    [HttpGet("isChatExist/{chatId:int:min(1)}")]
+    public async Task<IActionResult> IsChatExist(int chatId, CancellationToken cancellationToken)
     {
-        var chat = await _httpClient.GetByChatIdAsync(id, cancellationToken);
-        return Ok(chat);
+        var isExist = await _httpClient.IsChatExistAsync(chatId, cancellationToken);
+        return Ok(isExist);
     }
 
-    [HttpGet("isChatExist/{id:int:min(1)}")]
-    public async Task<IActionResult> IsChatExist(int id, CancellationToken cancellationToken)
+    [HttpGet("getParticipantsCount/{chatId:int:min(1)}")]
+    public async Task<IActionResult> GetParticipantsCount(int chatId, CancellationToken cancellationToken)
     {
-        var isExist = await _httpClient.IsChatExistAsync(id, cancellationToken);
-        return Ok(isExist);
+        var participantsCount = await _httpClient.GetParticipantsCountAsync(chatId, cancellationToken);
+        return Ok(participantsCount);
     }
 
     [HttpPost]
@@ -31,10 +31,10 @@ public class VoiceChatController(IVoiceChatApiClient httpClient) : ControllerBas
         return NoContent();
     }
 
-    [HttpPost("token/{voiceChatId}")]
-    public async Task<IActionResult> GetToken(int voiceChatId, [FromBody] GetVoiceChatTokenRequest request, CancellationToken cancellationToken)
+    [HttpPost("token/{chatId:int:min(1)}")]
+    public async Task<IActionResult> GetToken(int chatId, [FromBody] GetVoiceChatTokenRequest request, CancellationToken cancellationToken)
     {
-        var tokenResponse = await _httpClient.GetTokenAsync(voiceChatId, request, cancellationToken);
+        var tokenResponse = await _httpClient.GetTokenAsync(chatId, request, cancellationToken);
         return Ok(tokenResponse);
     }
 

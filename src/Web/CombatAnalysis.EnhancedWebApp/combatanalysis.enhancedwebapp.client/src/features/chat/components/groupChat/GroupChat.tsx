@@ -4,9 +4,12 @@ import ChatHubContext from '@/context/ChatHubContext';
 import InfiniteScrollTrigger from '@/events/InfiniteScrollTrigger';
 import { ChatType, } from '@/shared/helpers/EnumHelper';
 import logger from '@/utils/Logger';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useContext, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useGetMessagesByGroupChatIdQuery } from '../../api/Chat.api';
 import { useCountGroupChatMessagesQuery, useUpdateGroupChatMessageMarkMutation, useUpdateGroupChatMessageTextMutation } from '../../api/GroupChatMessage.api';
 import { useFindAllChatUsersQuery } from '../../api/GroupChatUser.api';
@@ -30,6 +33,8 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
     const groupChatUser = useSelector((state: RootState) => state.groupChatUser.value);
 
+    const navigate = useNavigate();
+
     const context = useContext(ChatHubContext);
     if (!context) {
         throw new Error("Child must be inside ChatHubContext.Provider");
@@ -40,6 +45,7 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [usersId, setUsersId] = useState<string[]>([]);
+    const [voiceChatUsersCount, setVoiceChatUsersCount] = useState<number>(0);
 
     const chatContainerRef = useRef<HTMLUListElement | null>(null);
     const pageSizeRef = useRef<number>(APP_CONFIG.communication.chatPageSize ? +APP_CONFIG.communication.chatPageSize : 10);
@@ -48,9 +54,9 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
     const { data: messages, isLoading } = useGetMessagesByGroupChatIdQuery({ chatId: chat.id, page, pageSize: pageSizeRef.current });
     const { data: count } = useCountGroupChatMessagesQuery(chat.id);
-
+    
     const { data: groupChatUsers, isLoading: usersIsLoading } = useFindAllChatUsersQuery(chat.id);
-
+    
     const [updateMessageText] = useUpdateGroupChatMessageTextMutation();
     const [updateMessageMark] = useUpdateGroupChatMessageMarkMutation();
 
@@ -76,6 +82,11 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
             context.groupChatEvents.subscribeToMessageRead(groupChatEvents.handleMessageRead);
             context.groupChatEvents.subscribeToChatMessageTextEdit(groupChatEvents.handleMessageTextEdit);
             context.groupChatEvents.subscribeToChatMessageMarkEdit(groupChatEvents.handleMessageMarkEdit);
+
+            const count = await context.voiceChatEvents.connectToVoiceChatUsersCount(chat.id.toString());
+            setVoiceChatUsersCount(count);
+            
+            context.voiceChatEvents.subscribeToVoiceChatUsersCount(getVoiceChatUserCount);
         }
 
         connect();
@@ -88,6 +99,9 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
             context.groupChatEvents.unsubscribeToChatMessageTextEdit(groupChatEvents.handleMessageTextEdit);
             context.groupChatEvents.unsubscribeToChatMessageMarkEdit(groupChatEvents.handleMessageMarkEdit);
             context.groupChatEvents.disconnectFromChatMessageHubAsync();
+
+            context.voiceChatEvents.unsubscribeToVoiceChatUsersCount(getVoiceChatUserCount);
+            context.voiceChatEvents.leaveFromChatUsersCountAsync(chat.id.toString());
         };
     }, []);
 
@@ -103,6 +117,10 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
 
         setUsersId(receivedUsersId);
     }, [groupChatUsers]);
+
+    const getVoiceChatUserCount = (count: number) => {
+        setVoiceChatUsersCount(count);
+    }
 
     const updateMessageTextAsync = async (messageId: string, newMessage: string | undefined) => {
         if (!newMessage) {
@@ -122,6 +140,10 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
         } catch (e) {
             logger.error("Failed to update group chat message", e);
         }
+    }
+
+    const call = () => {
+        navigate(`/chats/voice/${chat.id}/${chat.name}`);
     }
 
     if (isLoading || !messages
@@ -160,6 +182,18 @@ const GroupChat: React.FC<GroupChatProps> = ({ chat, setSelectedChat }) => {
     return (
         <div className="chats__selected-chat">
             <div className="messages-container">
+                <div className="voice-chat-actions">
+                    <div className={`voice-chat-actions__call ${voiceChatUsersCount > 0 ? 'active' : ''}`} onClick={call}>
+                        <FontAwesomeIcon
+                            icon={faPhone}
+                            className="call"
+                        />
+                        <div>Voice chat</div>
+                        {voiceChatUsersCount > 0 &&
+                            <div>{voiceChatUsersCount}</div>
+                        }
+                    </div>
+                </div>
                 <GroupChatTitle
                     chat={chat}
                     settingsIsShow={settingsIsShow}

@@ -7,6 +7,7 @@ import {
     type AudioConferenceProps,
 } from '@livekit/components-react';
 import React from 'react';
+import NoiseCancellationToggle from './NoiseCancellationToggle';
 
 import { Track } from 'livekit-client';
 
@@ -21,9 +22,12 @@ const AudioConferenceRoom: React.FC = ({ ...props }: AudioConferenceProps) => {
                         <ParticipantAudioTile />
                     </TrackLoop>
                 </div>
-                <ControlBar
-                    controls={{ microphone: true, screenShare: false, camera: false, chat: false }}
-                />
+                <div className="control">
+                    <NoiseCancellationToggle />
+                    <ControlBar
+                        controls={{ microphone: true, screenShare: false, camera: false, chat: false }}
+                    />
+                </div>
             </div>
         </LayoutContextProvider>
     );

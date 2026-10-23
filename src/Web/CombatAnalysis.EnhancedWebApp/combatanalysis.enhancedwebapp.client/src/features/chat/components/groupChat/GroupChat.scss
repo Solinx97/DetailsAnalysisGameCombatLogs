@@ -23,6 +23,30 @@
     }
 
     .messages-container {
+        .voice-chat-actions {
+            display: flex;
+            justify-content: flex-start;
+            padding: 10px 0;
+
+            &__call {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 5px 20px;
+                border-radius: 20px;
+                box-shadow: 4px 4px gray;
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+
+            &__call.active {
+                box-shadow: 4px 4px green;
+            }
+        }
+
         .settings-handler {
             &_active {
                 color: green;
@@ -67,12 +91,15 @@
             }
         }
 
-        .add-people-to-chat, .rules-container, .people-inspection__popup {
+        .add-people-to-chat,
+        .rules-container,
+        .people-inspection__popup {
             top: 10vh;
             left: 40vw;
         }
 
-        .people-inspection-handler, .add-new-people-handler {
+        .people-inspection-handler,
+        .add-new-people-handler {
             color: black;
 
             &-active {
@@ -91,7 +118,8 @@
             flex-direction: column;
             gap: 125px;
 
-            .main-settings, .danger-settings {
+            .main-settings,
+            .danger-settings {
                 display: flex;
                 flex-direction: column;
                 gap: 30px;
@@ -161,7 +189,9 @@
                 left: 3vw;
             }
 
-            .add-people-to-chat, .rules-container, .people-inspection__popup {
+            .add-people-to-chat,
+            .rules-container,
+            .people-inspection__popup {
                 left: 2vw;
             }
         }

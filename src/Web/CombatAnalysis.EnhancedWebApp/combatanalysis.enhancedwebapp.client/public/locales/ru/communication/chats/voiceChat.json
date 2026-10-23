@@ -9,5 +9,6 @@
   "Leave": "Уйти",
   "TurnOnScreenSharing": "Поделиться экраном",
   "TurnOffScreenSharing": "Перестать делиться экраном",
-  "ExperimentalFunctions": "Эксперементальные функции"
+  "ExperimentalFunctions": "Эксперементальные функции",
+  "NoiseReduction": "Шумоподавление"
 }

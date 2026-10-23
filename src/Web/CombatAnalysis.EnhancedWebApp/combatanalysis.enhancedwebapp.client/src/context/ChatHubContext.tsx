@@ -15,7 +15,7 @@ interface ChatHubContextValue {
     voiceChatHubConnectionRef: RefObject<signalR.HubConnection | null>;
     personalChatEvents: IPersonalChatHubEvents;
     groupChatEvents: IGroupChatHubEvents;
-    vocieChatEvents: IVoiceChatHubEvents;
+    voiceChatEvents: IVoiceChatHubEvents;
 }
 
 const ChatHubContext = React.createContext<ChatHubContextValue | null>(null);

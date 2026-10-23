@@ -1,106 +1,44 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CombatAnalysis.ChatAPI.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
 namespace CombatAnalysis.ChatAPI.Hubs;
 
 [Authorize]
-public class VoiceChatHub : Hub
+public class VoiceChatHub(ILiveKitService liveKitService) : Hub
 {
+    private readonly ILiveKitService _liveKitService = liveKitService;
     private static readonly ConcurrentDictionary<string, HashSet<string>> _groupUsers = new();
 
-    public async Task JoinToRoom(string voiceChatId)
+    public async Task JoinToRoom(string chatId)
     {
-        var connectedUserId = await AddUserToRoomAsync(voiceChatId);
+        await AddUserToRoomAsync(chatId);
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, voiceChatId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
 
-        await Clients.Caller.SendAsync("Connected", connectedUserId);
-
-        await Clients.OthersInGroup(voiceChatId).SendAsync("UserJoined", connectedUserId);
+        await SendParticipantsCountAsync(chatId);
     }
 
-    public Task<string[]> GetOtherConnectedUsers(string voiceChatId)
+    public async Task<int> SubscribeToVoiceChatUsersCount(string chatId)
     {
-        var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"VoiceChatCount_{chatId}");
 
-        var users = _groupUsers.TryGetValue(voiceChatId, out var roomUsers)
-            ? roomUsers.Where(x => x != userId).ToArray()
-            : [];
-
-        return Task.FromResult(users ?? []);
+        var count = await _liveKitService.GetParticipantsCountAsync(chatId);
+        return await Task.FromResult(count);
     }
 
-    public async Task SendOffer(string voiceChatId, string offer)
+    public async Task UnsubscribeFromVoiceChatUsersCount(string chatId)
     {
-        var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
-
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveOffer", userId, offer);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"VoiceChatCount_{chatId}");
     }
 
-    public async Task SendAnswer(string voiceChatId, string answer)
-    {
-        var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
-
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveAnswer", userId, answer);
-    }
-
-    public async Task SendCandidate(string voiceChatId, string candidate)
-    {
-        var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
-
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveCandidate", userId, candidate);
-    }
-
-    public async Task SendMicrophoneStatus(string voiceChatId, bool status)
-    {
-        var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
-
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveMicrophoneStatus", userId, status);
-    }
-
-    public async Task SendRequestMicrophoneStatus(string voiceChatId)
-    {
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveRequestMicrophoneStatus");
-    }
-
-    public async Task SendCameraStatus(string voiceChatId, bool status)
-    {
-        var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
-
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveCameraStatus", userId, status);
-    }
-
-    public async Task SendRequestCameraStatus(string voiceChatId)
-    {
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveRequestCameraStatus");
-    }
-
-    public async Task SendScreenSharingStatus(string voiceChatId, bool status)
-    {
-        var userId = Context.UserIdentifier
-                ?? throw new HubException("User is not authenticated.");
-
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveScreenSharingStatus", userId, status);
-    }
-
-    public async Task SendRequestScreenSharingStatus(string voiceChatId)
-    {
-        await Clients.OthersInGroup(voiceChatId).SendAsync("ReceiveRequestScreenSharingStatus");
-    }
-
-    public async Task LeaveFromRoom(string voiceChatId)
+    public async Task LeaveFromRoom(string chatId)
     {
         var userId = Context.UserIdentifier
             ?? throw new HubException("User is not authenticated.");
 
-        if (_groupUsers.TryGetValue(voiceChatId, out var users))
+        if (_groupUsers.TryGetValue(chatId, out var users))
         {
             lock (users)
             {
@@ -108,9 +46,9 @@ public class VoiceChatHub : Hub
             }
         }
 
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, voiceChatId);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
 
-        await Clients.OthersInGroup(voiceChatId).SendAsync("UserLeft", userId);
+        await SendParticipantsCountAsync(chatId);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -126,27 +64,31 @@ public class VoiceChatHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    private async Task<string> AddUserToRoomAsync(string voiceChatId)
+    private async Task AddUserToRoomAsync(string chatId)
     {
         try
         {
             var userId = Context.UserIdentifier
                 ?? throw new HubException("User is not authenticated.");
 
-            var users = _groupUsers.GetOrAdd(voiceChatId, _ => []);
+            var users = _groupUsers.GetOrAdd(chatId, _ => []);
             lock (users)
             {
                 users.Add(userId);
             }
-
-            return userId;
         }
         catch
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, voiceChatId);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
 
             throw;
         }
+    }
+
+    private async Task SendParticipantsCountAsync(string chatId)
+    {
+        var count = await _liveKitService.GetParticipantsCountAsync(chatId);
+        await Clients.Group($"VoiceChatCount_{chatId}").SendAsync("ConnectedUsersCount", count);
     }
 }
 

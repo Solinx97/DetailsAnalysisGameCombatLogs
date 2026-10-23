@@ -13,19 +13,19 @@ public class VoiceChatApiClient(HttpClient httpClient) : IVoiceChatApiClient
         await _httpClient.PostAsync("VoiceChat", JsonContent.Create(chat), cancellationToken);
     }
 
-    public async Task<VoiceChatModel> GetByChatIdAsync(int id, CancellationToken cancellationToken)
-    {
-        var response = await _httpClient.GetAsync($"VoiceChat/getByChatId/{id}", cancellationToken);
-
-        var messages = await response.Content.ReadFromJsonAsync<VoiceChatModel>(cancellationToken);
-        return messages ?? throw new InvalidOperationException("The Chat API returned an empty response.");
-    }
-
     public async Task<bool> IsChatExistAsync(int id, CancellationToken cancellationToken)
     {
         var response = await _httpClient.GetAsync($"VoiceChat/isChatExist/{id}", cancellationToken);
 
         var messages = await response.Content.ReadFromJsonAsync<bool>(cancellationToken);
+        return messages;
+    }
+
+    public async Task<int> GetParticipantsCountAsync(int id, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"VoiceChat/getParticipantsCount/{id}", cancellationToken);
+
+        var messages = await response.Content.ReadFromJsonAsync<int>(cancellationToken);
         return messages;
     }
 

@@ -20,7 +20,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
     const groupChatEvents = useGroupChatHub(groupChatHubConnectionRef, groupChatMessagesHubConnectionRef, groupChatUnreadMessagesHubConnectionRef);
 
-    const vocieChatEvents = useVoiceChatHub(voiceChatHubConnectionRef);
+    const voiceChatEvents = useVoiceChatHub(voiceChatHubConnectionRef);
 
     return (
         <ChatHubContext.Provider value={{
@@ -29,7 +29,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             groupChatHubConnectionRef, groupChatMessagesHubConnectionRef, groupChatUnreadMessagesHubConnectionRef,
             groupChatEvents,
             voiceChatHubConnectionRef,
-            vocieChatEvents
+            voiceChatEvents
         }}>
             {children}
         </ChatHubContext.Provider>

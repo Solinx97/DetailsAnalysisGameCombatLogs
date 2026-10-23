@@ -57,7 +57,7 @@ const VoiceChat: React.FC = () => {
 
 		const getTokenAsync = async () => {
 			try {
-				const recToken = await getToken({ voiceChatId: parseInt(roomId ?? "0"), participantName: myself?.username }).unwrap();
+				const recToken = await getToken({ chatId: parseInt(roomId ?? "0"), participantName: myself?.username }).unwrap();
 				setTokenResponse(recToken);
 			} catch (e) {
 				logger.error("Failed to connect to voice chat", e);
@@ -79,7 +79,7 @@ const VoiceChat: React.FC = () => {
 				return;
 			}
 
-			await context.vocieChatEvents.connectToChatAsync(roomId);
+			await context.voiceChatEvents.connectToChatAsync(roomId);
 		}
 
 		connect();
@@ -87,7 +87,7 @@ const VoiceChat: React.FC = () => {
 		return () => {
 			isCancelled = true;
 
-			context.vocieChatEvents.leaveFromChatAsync(roomId ?? "0");
+			context.voiceChatEvents.leaveFromChatAsync(roomId ?? "0");
 		};
 	}, []);
 

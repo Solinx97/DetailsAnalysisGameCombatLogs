@@ -27,4 +27,34 @@ internal class LiveKitService(IOptions<LiveKitOptions> options) : ILiveKitServic
 
         return token.ToJwt();
     }
+
+    public async Task<int> GetParticipantsCountAsync(string voiceChatId)
+    {
+        var roomService = new RoomServiceClient(
+            _options.Url,
+            _options.ApiKey,
+            _options.ApiSecret);
+
+        var roomsResponse = await roomService.ListRooms(new ListRoomsRequest
+        {
+            Names = { $"voice-chat-{voiceChatId}" }
+        });
+
+        var roomExists = roomsResponse.Rooms
+            .Any(room => room.Name == $"voice-chat-{voiceChatId}");
+
+        if (!roomExists)
+        {
+            return 0;
+        }
+
+        var response = await roomService.ListParticipants(new ListParticipantsRequest
+        {
+            Room = $"voice-chat-{voiceChatId}"
+        });
+
+        var participantCount = response.Participants.Count;
+
+        return participantCount;
+    }
 }
